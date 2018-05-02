@@ -1,0 +1,39 @@
+<qasm-file> ::= <qubit-def> <line-separator> <qasm-body>
+
+<qasm-body> ::= <qasm-block> | <qasm-block> <qasm-body>
+<qasm-block> ::= <kernel> <statements> | <statements>
+
+<kernel> ::= "." <identifier> <newline> | "." <identifier> "(" <number> ")" <newline>
+
+<statements> ::= <qasm-line> <newline> | <qasm-line> <newline> <statements>
+<qasm-line> ::= <single-qubit-operation>
+
+<single-qubit-operation> ::= <single-qubit-gate> " q" <qubit-address>
+
+<qubit-address> ::= "[" <qubit-identifier-list> "]"
+
+<single-qubit-gate> ::= "H" | "X" | "Y" | "Z"
+
+<qubit-def> ::= "qubits " <number>
+
+<qubit-identifier-list> ::= <qubit-identifier> | <qubit-identifier> "," <qubit-identifier-list>
+<qubit-identifier> ::= <number> | <number> ":" <number>
+
+<line-separator> ::= <newline> | <newline> <line-separator>
+
+<newline> ::= "\n"
+<number> ::= <non-zero-digit> | <non-zero-digit> <digits>
+<digits> ::= <digit> | <digit> <digits>
+<digit> ::= "0" | <non-zero-digit>
+<non-zero-digit> ::= "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+<letter> ::= "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
+<symbol> ::= <letter> | <digit>
+
+<qubit> ::= "q[" <number> "]"
+
+<bit> ::= "b[" <number> "]"
+
+<identifier> ::= <letter> | <letter> <identifier-tail>
+<identifier-tail> ::= <symbol> | <symbol> <identifier-tail>
+
+
