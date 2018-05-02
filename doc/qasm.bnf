@@ -1,39 +1,74 @@
-<qasm-file> ::= <qubit-def> <line-separator> <qasm-body>
+# bnf.gr
+> <qasm-file>
+
+
+
+# Describe the general structure of a qasm file
+<qasm-file> ::= <number-qubit-def> <line-separator> <qasm-body>
 
 <qasm-body> ::= <qasm-block> | <qasm-block> <qasm-body>
-<qasm-block> ::= <kernel> <statements> | <statements>
+<qasm-block> ::= <kernel> <statements> | <function-loop> <statements> | <statements>
 
-<kernel> ::= "." <identifier> <newline> | "." <identifier> "(" <number> ")" <newline>
+<kernel> ::= "." <identifier> <newline>
+<function-loop> ::= "." <identifier> "(" <number> ")" <newline>
 
 <statements> ::= <qasm-line> <newline> | <qasm-line> <newline> <statements>
 <qasm-line> ::= <single-qubit-operation>
 
-<single-qubit-operation> ::= <single-qubit-gate> " q" <qubit-address>
 
-<qubit-address> ::= "[" <qubit-identifier-list> "]"
 
-<single-qubit-gate> ::= "H" | "X" | "Y" | "Z"
-
-<qubit-def> ::= "qubits " <number>
-
-<qubit-identifier-list> ::= <qubit-identifier> | <qubit-identifier> "," <qubit-identifier-list>
-<qubit-identifier> ::= <number> | <number> ":" <number>
-
-<line-separator> ::= <newline> | <newline> <line-separator>
-
+# We define the convenience strings, texts, numbers here....
 <newline> ::= "\n"
+<line-separator> ::= <newline> | <newline> <line-separator>
 <number> ::= <non-zero-digit> | <non-zero-digit> <digits>
 <digits> ::= <digit> | <digit> <digits>
 <digit> ::= "0" | <non-zero-digit>
 <non-zero-digit> ::= "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 <letter> ::= "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
 <symbol> ::= <letter> | <digit>
-
-<qubit> ::= "q[" <number> "]"
-
-<bit> ::= "b[" <number> "]"
-
 <identifier> ::= <letter> | <letter> <identifier-tail>
 <identifier-tail> ::= <symbol> | <symbol> <identifier-tail>
 
 
+
+# Define the single qubit operation line
+<single-qubit-operation> ::= <single-qubit-gate> " " <qubit-selection> | <single-qubit-gate> " " <qubit>
+
+
+## Define the single qubit operations/gates
+<single-qubit-gate> ::= "H" | "X" | "Y" | "Z"
+<prep_measure-gates> ::= <prep-gate> | <measure-gate>
+
+## This is to define the state preparation/measurement
+<prep-gate> ::= <prep> | <prepx> | <prepy> | <prepz>
+<prep> ::= "prep" | "PREP"
+<prepx> ::= "prepx" | "PREPX"
+<prepy> ::= "prepy" | "PREPY"
+<prepz> ::= "prepz" | "PREPZ"
+
+<measure-gate> ::= <measure> | <measurex> | <measurey> | <measurez>
+<measure> ::= "measure" | "MEASURE"
+<measurex> ::= "measurex" | "MEASUREX"
+<measurey> ::= "measurey" | "MEASUREY"
+<measurez> ::= "measurez" | "MEASUREZ"
+
+
+
+# This defines the number of qubits taking part in this qasm file
+<number-qubit-def> ::= "qubits " <number>
+
+
+
+# We define the syntax for selecting the qubits, either by a range or a list
+<qubit> ::= "q[" <number> "]"
+<qubit-selection> ::= "q" <qubit-address>
+<qubit-address> ::= "[" <qubit-identifier-list> "]" | "[" <qubit-identifier-range> "]"
+
+<qubit-identifier-list> ::= <qubit-identifier> | <qubit-identifier> "," <qubit-identifier-list>
+<qubit-identifier-range> ::= <qubit-identifier> | <qubit-identifier> ":" <qubit-identifier>
+<qubit-identifier> ::= <number> | <number> <qubit-identifier>
+
+
+
+# Next we define a classical bit, which is required to perform control gate operations
+<bit> ::= "b[" <number> "]"
