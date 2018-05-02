@@ -13,7 +13,7 @@
 <function-loop> ::= "." <identifier> "(" <number> ")" <newline>
 
 <statements> ::= <qasm-line> <newline> | <qasm-line> <newline> <statements>
-<qasm-line> ::= <single-qubit-operation>
+<qasm-line> ::= <single-qubit-operation> | <single-qubit-operation-args>
 
 
 
@@ -21,6 +21,7 @@
 <newline> ::= "\n"
 <line-separator> ::= <newline> | <newline> <line-separator>
 <number> ::= <non-zero-digit> | <non-zero-digit> <digits>
+<float> ::= <number> | <number> "." <number> | "." <number> | <digit> "." <number>
 <digits> ::= <digit> | <digit> <digits>
 <digit> ::= "0" | <non-zero-digit>
 <non-zero-digit> ::= "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
@@ -32,12 +33,22 @@
 
 
 # Define the single qubit operation line
-<single-qubit-operation> ::= <single-qubit-gate> " " <qubit-selection> | <single-qubit-gate> " " <qubit>
+<single-qubit-operation> ::= <single-qubit-gate> " " <qubit-selection> | <prep_measure-gates> " " <qubit>
+<single-qubit-operation-args> ::= <single-qubit-gate-args> " " <qubit-selection> ", " <float>
 
 
 ## Define the single qubit operations/gates
-<single-qubit-gate> ::= "H" | "X" | "Y" | "Z"
+<single-qubit-gate> ::= "H" | "X" | "Y" | "Z" | <x90> | <y90>
+<single-qubit-gate-args> ::= <rx> | <ry> | <rz>
 <prep_measure-gates> ::= <prep-gate> | <measure-gate>
+
+## The gates definitions
+
+<rx> ::= "rx" | "RX" | "Rx" | "rX"
+<ry> ::= "ry" | "RY" | "Ry" | "rY"
+<rz> ::= "rz" | "RZ" | "Rz" | "rZ"
+<x90> ::= "X90" | "x90"
+<y90> ::= "Y90" | "y90"
 
 ## This is to define the state preparation/measurement
 <prep-gate> ::= <prep> | <prepx> | <prepy> | <prepz>
