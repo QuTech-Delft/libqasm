@@ -16,7 +16,8 @@
 <statements> ::= <qasm-line> <newline> | 
                  <qasm-line> <newline> <statements>
 <qasm-line> ::= <map-operation> | <measure-parity-operation> | <measureall-operation> |
-                <regular-operations> | <binary-controlled-operations> | <parallel-operations>
+                <regular-operations> | <binary-controlled-operations> | <parallel-operations> |
+                <special-operations>
 
 
 
@@ -134,3 +135,11 @@
 <parallel-operations> ::= "{" <parallelizable-ops> "}"
 <all-valid-operations> ::= <regular-operations> | <binary-controlled-operations> 
 <parallelizable-ops> ::= <all-valid-operations> " | " <all-valid-operations> | <all-valid-operations> " | " <parallelizable-ops>
+
+
+
+# Special operations
+<special-operations> ::= <display-operation> | <wait-operation> | <reset-averaging-operation>
+<display-operation> ::= "display" | "display" " " <bit-selection>
+<wait-operation> ::= "wait" " " <number>
+<reset-averaging-operation> ::= "reset-averaging" | "reset-averaging" " " <qubit-selection>

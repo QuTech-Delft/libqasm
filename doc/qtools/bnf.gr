@@ -1,0 +1,6 @@
+# bnf.gr -- an example classical BNF grammar for expressions
+> <expression>
+<expression> ::= <term> | <expression> + <term> | <expression> - <term>
+<term> ::= <factor> | <term> * <factor> | <term> / <factor>
+<factor> ::= <element> | - <element>
+<element> ::= <number> | <identifier> | ( <expression> )

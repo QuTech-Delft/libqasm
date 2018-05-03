@@ -1,0 +1,131 @@
+# gram.gr
+# the grammar for grammars supported by the gtools package
+# note that the .gr ending is a convenience, grammars are
+# plain text files
+
+> grammar   the start or sentence symbol of this grammar
+/ empty     the empty symbol of this grammar
+
+grammar = { metarule | rule | comment }
+
+# In EBNF, curly braces denote zero or more repetitions.
+# In BNF, vertical bars separate alternatives.
+
+metarule = ( '>' | '/' ) spaces symbol anything newline
+
+# Metarules specify the head and empty symbols (if any)
+# There may never be more than one of each.
+
+spaces = { space }
+space = ' ' | tab
+
+# Zero or more spaces or tabs may separate the metarule
+# symbol from the initial character.
+
+symbol = '<' alphanumeric { anything-but-rbrack } '>'
+       | '"' { anything-but-dquote } '"'
+       | "'" { anything-but-squote } "'"
+       | anything-but-quote { nonblank }
+
+# Symbols may be enclosed in <angle brackets> or "quoted"
+# in single or double quotes, or they may consist of any
+# sequence of characters followed by a blank, so long as
+# the first character is not a quote.
+
+# The restriction on <angle brackets> that the first
+# bracketed symbol must be alphanumeric allows symbols
+# such as < <= <- and <> to be used without quotation
+# but it prevents < > from being treated as a bracketed
+# blank.  As presented, this grammar is ambiguous; we can
+# informally fix this by saying that the first rule
+# encountered applies in cases where two rules both match;
+# a formal fix is left as an exercise.
+
+# By convention, <symbol> is a nonterminal symbol; if this
+# convention is followed strictly, no quotes are needed
+# around most terminal symbols.
+
+# By convention, 'symbol' is a terminal symbol; if this
+# convention is followed strictly, no angle brackets are
+# needed around nonterminal symbols.
+
+# Neither of the above conventions is enforced here.
+
+anything = nonblank | space
+nonblank = alphanumeric | punctuation
+alphanumeric = alpha | numeric
+alpha = a-z | A-Z
+numeric = 0-9
+punctuation = '>' | '"' | "'" | other-nonalpha
+anything-but-quote = alphanumeric | '>' | other-nonalpha | spaces
+anything-but-rbrack = alphanumeric | '"' | "'" | other-nonalpha | spaces
+anything-but-dquote = "'" | anything-but-quote
+anything-but-squote = '"' | anything-but-quote
+
+# The above syntactic categories are messy but self explanatory.
+# A more formal treatment of the sets of characters would require
+# enumerating the full character set, something that is extremely
+# difficult in this age of Unicode.
+
+# Note that, more by accident than by design, UTF-8 characters
+# above 0070 end up classified as other-nonalphanumeric.
+
+rule = lhs ( ':' | '=' | ':=' | '::=' ) rhs newline
+
+# Production rules may use any of several separators
+# between the righthand side and the lefthand side:
+# ::= -- as in conventional BNF
+# :=  -- a lazy variant of the above
+# =   -- as used in Wirth's version of EBNF for Pascal
+# :   -- sometimes encountered
+
+# each rule ends with a newline
+
+lhs = symbol spaces
+
+# The occurance of a symbol on the left-hand side of a rule
+# defines that symbol to be nonterminal; any symbol that is
+# not used on the left-hand side of any rule is terminal.
+
+rhs = alternative { continuation '|' alternative }
+continuation = { { newline } space spaces }
+
+# The right-hand side consists of a sequence of alternatives
+# separated by vertical bars, which may be broken across
+# multiple lines so long as each nonblank continuation line
+# begins with at least one space character (blank or tab).
+
+alternative = { continuation } item { [ continuation ] item }
+
+# Each alternative consists of a list of one or more items,
+# possibly continued on successive lines.
+
+item = symbol
+
+# In plain BNF, each item is a symbol and the symbols ( { [
+# ] } and ) have no special meaning.  If these are needed as
+# terminal symbols in EBNF, they must be quoted because of the
+# following added rules:
+
+item = '(' rhs ')'
+     | '[' rhs ']'
+     | '{' rhs '}'
+
+# In extended BNF or EBNF, items may be entire right-hand
+# sides enclosed in ( parentheses ), for grouping, [ square
+# braces ], indicating optional groups, or { curly braces }
+# indicating zero or more repetitions of the indicated group.
+
+# Note that EBNF adds no additional expressive power to the
+# grammar -- every EBNF grammar may be mechanically
+# transformed to a plain BNF grammar, for example, by using
+# the gdeebnf tool provided here.
+
+# Note that two different rules may begin with the same lhs
+# (the same symbol).  Each such rule merely adds its list
+# of alternatives to that symbol.
+
+comment = '#' { anything } newline
+
+# Comments, as you might have guessed, begin with a pound
+# sign, and end with a newline.
