@@ -5,13 +5,12 @@
 
 
 # Describe the general structure of a qasm file
-<qasm-file> ::= <number-qubit-def> <line-separator> <qasm-body>
+<qasm-file> ::= <qubit-register> <line-separator> <circuits>
 
-<qasm-body> ::= <qasm-block> | <qasm-block> <qasm-body>
-<qasm-block> ::= <kernel> <statements> | <function-loop> <statements> | <statements>
+<circuits> ::= <circuit> | <circuit> <circuits>
+<circuit> ::= <subcircuit> <statements> | <statements>
 
-<kernel> ::= "." <identifier> <newline>
-<function-loop> ::= "." <identifier> "(" <number> ")" <newline>
+<subcircuit> ::= "." <identifier> <newline> | "." <identifier> "(" <number> ")" <newline>
 
 <statements> ::= <qasm-line> <newline> | 
                  <qasm-line> <newline> <statements>
@@ -52,7 +51,7 @@
 
 
 # This defines the number of qubits taking part in this qasm file
-<number-qubit-def> ::= "qubits " <number>
+<qubit-register> ::= "qubits " <number>
 
 
 
