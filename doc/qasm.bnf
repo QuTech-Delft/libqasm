@@ -40,7 +40,7 @@
 <identifier> ::= <letter> | <letter> <identifier-tail>
 <identifier-tail> ::= <symbol> | <symbol> <identifier-tail>
 
-<indices> ::= "[" <numerical-identifier-list> "]" | "[" <numerical-identifier-range> "]"
+<indices> ::= <numerical-identifier-list> | <numerical-identifier-range>
 
 <numerical-identifier-list> ::= <number> | <number> "," <numerical-identifier-list>
 <numerical-identifier-range> ::= <number> ":" <number>
@@ -55,18 +55,17 @@
 
 
 # We define the syntax for selecting the qubits/bits, either by a range or a list
-<qubit-nomap> ::= "q[" <number> "]"
-<qubit-selection> ::= "q" <indices> | <identifier>
+<qubit> ::= "q[" <indices> "]" | <identifier>
+<single-qubit> ::= "q[" <number> "]"
 
 ## Next we define a classical bit, which is required to perform control gate operations
-<bit-nomap> ::= "b[" <number> "]"
-<bit-selection> ::= "b" <indices> | <identifier>
-
+<bit> ::= "b[" <indices> "]" | <identifier>
+<single-bit> ::= "b[" <number> "]"
 
 # Define the single qubit operation line
-<single-qubit-operation> ::= <single-qubit-gate> " " <qubit-selection> | <prep_measure-ops> " " <qubit-nomap>
-<single-qubit-operation-args> ::= <parametrized-single-qubit-gate> " " <qubit-selection> ", " <float>
-<map-operation> ::= "map" " " <qubit-selection> "," <identifier> | "map" " " <bit-selection> "," <identifier>
+<single-qubit-operation> ::= <single-qubit-gate> " " <qubit> | <prep_measure-ops> " " <qubit>
+<single-qubit-operation-args> ::= <parametrized-single-qubit-gate> " " <qubit> ", " <float>
+<map-operation> ::= "map" " " <single-qubit> "," <identifier> | "map" " " <single-bit> "," <identifier>
 
 ## Define the single qubit operations/gates
 <single-qubit-gate> ::= "i" | "h" | "x" | "y" | "z" | "x90" | "y90" | 
@@ -79,22 +78,22 @@
 <prep_measure-ops> ::= <prep> | <measure>
 <prep> ::= "prep" | "prep_" <axis>
 <measure> ::= "measure" | "measure_" <axis>
-<measure-parity-operation> ::= <measureparity> " " <qubit-nomap> "," <axis> | <measure-parity-operation> "," <qubit-nomap> "," <axis>
+<measure-parity-operation> ::= <measureparity> " " <qubit> "," <axis> | <measure-parity-operation> "," <qubit> "," <axis>
 <measureparity> ::= "measure_parity"
 <measureall-operation> ::= "measure_all"
 
 
 
 # Qubit-controlled operations
-<two-qubit-operation> ::= <two-qubit-gates> " " <qubit-selection> "," <qubit-selection>
-<two-qubit-operation-args> ::= <two-qubit-gate-args> " " <qubit-selection> "," <qubit-selection> ", " <number>
+<two-qubit-operation> ::= <two-qubit-gates> " " <qubit> "," <qubit>
+<two-qubit-operation-args> ::= <two-qubit-gate-args> " " <qubit> "," <qubit> ", " <number>
 
 ## Define the two qubit gates
 <two-qubit-gates> ::= "cnot" | "cz" | "swap"
 <two-qubit-gate-args> ::= "cr"
 
 ## Define the toffoli gate
-<toffoli-operation> ::= <toffoli-gate> " " <qubit-selection> "," <qubit-selection> "," <qubit-selection>
+<toffoli-operation> ::= <toffoli-gate> " " <qubit> "," <qubit> "," <qubit>
 <toffoli-gate> ::= "toffoli"
 
 ## Define a superset of all general "normal" operations
@@ -109,13 +108,13 @@
                                    <bit-two-qubit-operation> | <bit-two-qubit-operation-args> | <bit-toffoli-operation> |
                                    <negate-binary-operation>
 
-<bit-single-qubit-operation> ::= "c-" <single-qubit-gate> " " <bit-selection> "," <qubit-selection>
-<bit-single-qubit-operation-args> ::= "c-" <parametrized-single-qubit-gate> " " <bit-selection> "," <qubit-selection> ", " <float>
+<bit-single-qubit-operation> ::= "c-" <single-qubit-gate> " " <bit> "," <qubit>
+<bit-single-qubit-operation-args> ::= "c-" <parametrized-single-qubit-gate> " " <bit> "," <qubit> ", " <float>
 
-<bit-two-qubit-operation> ::= "c-" <two-qubit-gates> " " <bit-selection> "," <qubit-selection> "," <qubit-selection>
-<bit-two-qubit-operation-args> ::= "c-" <two-qubit-gate-args> " " <bit-selection> "," <qubit-selection> "," <qubit-selection> ", " <number>
+<bit-two-qubit-operation> ::= "c-" <two-qubit-gates> " " <bit> "," <qubit> "," <qubit>
+<bit-two-qubit-operation-args> ::= "c-" <two-qubit-gate-args> " " <bit> "," <qubit> "," <qubit> ", " <number>
 
-<bit-toffoli-operation> ::= "c-" <toffoli-gate> " " <bit-selection> "," <qubit-selection> "," <qubit-selection> "," <qubit-selection>
+<bit-toffoli-operation> ::= "c-" <toffoli-gate> " " <bit> "," <qubit> "," <qubit> "," <qubit>
 
 <negate-binary-operation> ::= "not " <bit-selection>
 
@@ -130,6 +129,6 @@
 
 # Special operations
 <special-operations> ::= <display-operation> | <wait-operation> | <reset-averaging-operation>
-<display-operation> ::= "display" | "display" " " <bit-selection>
+<display-operation> ::= "display" | "display" " " <bit>
 <wait-operation> ::= "wait" " " <number>
-<reset-averaging-operation> ::= "reset-averaging" | "reset-averaging" " " <qubit-selection>
+<reset-averaging-operation> ::= "reset-averaging" | "reset-averaging" " " <qubit>
