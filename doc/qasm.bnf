@@ -65,17 +65,14 @@
 
 # Define the single qubit operation line
 <single-qubit-operation> ::= <single-qubit-gate> " " <qubit-selection> | <prep_measure-ops> " " <qubit-nomap>
-<single-qubit-operation-args> ::= <single-qubit-gate-args> " " <qubit-selection> ", " <float>
+<single-qubit-operation-args> ::= <parametrized-single-qubit-gate> " " <qubit-selection> ", " <float>
 <map-operation> ::= "map" " " <qubit-selection> "," <identifier> | "map" " " <bit-selection> "," <identifier>
 
 ## Define the single qubit operations/gates
 <single-qubit-gate> ::= "i" | "h" | "x" | "y" | "z" | "x90" | "y90" | 
                         "mx90" | "my90" | "s" | "sdag" | "t" | "tdag"
-<single-qubit-gate-args> ::= <rotations>
-
-## The gates definitions
 <rotations> ::= "r" <axis>
-
+<parametrized-single-qubit-gate> ::= <rotations>
 
 
 # This is to define the state preparation/measurement
@@ -106,14 +103,14 @@
 
 
 # Binary-controlled operations
-<qubit-gates> ::= <single-qubit-gate> | <single-qubit-gate-args> | <rotations> | <two-qubit-gates> | <two-qubit-gate-args> | <toffoli-gate>
+<qubit-gates> ::= <single-qubit-gate> | <parametrized-single-qubit-gate> | <rotations> | <two-qubit-gates> | <two-qubit-gate-args> | <toffoli-gate>
 
 <binary-controlled-operations> ::= <bit-single-qubit-operation> | <bit-single-qubit-operation-args> |
                                    <bit-two-qubit-operation> | <bit-two-qubit-operation-args> | <bit-toffoli-operation> |
                                    <negate-binary-operation>
 
 <bit-single-qubit-operation> ::= "c-" <single-qubit-gate> " " <bit-selection> "," <qubit-selection>
-<bit-single-qubit-operation-args> ::= "c-" <single-qubit-gate-args> " " <bit-selection> "," <qubit-selection> ", " <float>
+<bit-single-qubit-operation-args> ::= "c-" <parametrized-single-qubit-gate> " " <bit-selection> "," <qubit-selection> ", " <float>
 
 <bit-two-qubit-operation> ::= "c-" <two-qubit-gates> " " <bit-selection> "," <qubit-selection> "," <qubit-selection>
 <bit-two-qubit-operation-args> ::= "c-" <two-qubit-gate-args> " " <bit-selection> "," <qubit-selection> "," <qubit-selection> ", " <number>
