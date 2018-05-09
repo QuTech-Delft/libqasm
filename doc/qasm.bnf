@@ -54,22 +54,19 @@
 
 
 
-# We define the syntax for selecting the qubits/bits, either by a range or a list (We could also use mapped qubits: They need to be a minimum 2 characters length)
+# We define the syntax for selecting the qubits/bits, either by a range or a list
 <qubit-nomap> ::= "q[" <number> "]"
-<qubit-selection> ::= "q" <indices> | <mapped-qubit>
-<mapped-qubit> ::= <letter> <identifier>
+<qubit-selection> ::= "q" <indices> | <identifier>
 
 ## Next we define a classical bit, which is required to perform control gate operations
 <bit-nomap> ::= "b[" <number> "]"
-<bit-selection> ::= "b" <indices> | <mapped-bit>
-<mapped-bit> ::= <letter> <identifier>
-
+<bit-selection> ::= "b" <indices> | <identifier>
 
 
 # Define the single qubit operation line
 <single-qubit-operation> ::= <single-qubit-gate> " " <qubit-selection> | <prep_measure-ops> " " <qubit-nomap>
 <single-qubit-operation-args> ::= <single-qubit-gate-args> " " <qubit-selection> ", " <float>
-<map-operation> ::= "map" " " <qubit-selection> "," <letter> <identifier> | "map" " " <bit-selection> "," <letter> <identifier>
+<map-operation> ::= "map" " " <qubit-selection> "," <identifier> | "map" " " <bit-selection> "," <identifier>
 
 ## Define the single qubit operations/gates
 <single-qubit-gate> ::= "i" | "h" | "x" | "y" | "z" | "x90" | "y90" | 
