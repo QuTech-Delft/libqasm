@@ -25,9 +25,9 @@
 <line-separator> ::= <newline> | <newline> <line-separator>
 
 <number> ::= <non-zero-digit> | <non-zero-digit> <digits>
-<number-with-0> ::= <digit> | <digit> <digits>
-<real-number> ::= <number> | <number> "." <number> | "." <number> | <number-with-0> "." <number>
-<float> ::= <real-number> | <real-number> "e" <number-with-0>
+<real-number> ::= <number> | <number> "." <number> | "." <number>
+<float> ::= <real-number> | <real-number> "e" <number>
+
 <digits> ::= <digit> | <digit> <digits>
 <digit> ::= "0" | <non-zero-digit>
 <non-zero-digit> ::= "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
