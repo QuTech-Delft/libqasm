@@ -42,9 +42,8 @@
 
 <indices> ::= "[" <numerical-identifier-list> "]" | "[" <numerical-identifier-range> "]"
 
-<numerical-identifier-list> ::= <numerical-identifier> | <numerical-identifier> "," <numerical-identifier-list>
-<numerical-identifier-range> ::= <numerical-identifier> | <numerical-identifier> ":" <numerical-identifier>
-<numerical-identifier> ::= <number> | <number> <numerical-identifier>
+<numerical-identifier-list> ::= <number> | <number> "," <numerical-identifier-list>
+<numerical-identifier-range> ::= <number> ":" <number>
 
 <axis> ::= "x" | "y" | "z"
 
