@@ -120,10 +120,10 @@
 
 
 
-# Parallel Quantum Gates -> parallelizable-ops have a minimum of two operations
+# Parallel execution
 <parallel-operations> ::= "{" <parallelizable-ops> "}"
 <all-valid-operations> ::= <regular-operations> | <binary-controlled-operations> 
-<parallelizable-ops> ::= <all-valid-operations> " | " <all-valid-operations> | <all-valid-operations> " | " <parallelizable-ops>
+<parallelizable-ops> ::= <all-valid-operations> | <all-valid-operations> " | " <parallelizable-ops>
 
 
 
