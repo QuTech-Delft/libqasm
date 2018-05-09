@@ -55,13 +55,11 @@
 
 
 # We define the syntax for selecting the qubits/bits, either by a range or a list (We could also use mapped qubits: They need to be a minimum 2 characters length)
-<qubit> ::= <qubit-nomap> | <mapped-qubit>
 <qubit-nomap> ::= "q[" <number> "]"
 <qubit-selection> ::= "q" <indices> | <mapped-qubit>
 <mapped-qubit> ::= <letter> <identifier>
 
 ## Next we define a classical bit, which is required to perform control gate operations
-<bit> ::=  <bit-nomap> | <mapped-bit>
 <bit-nomap> ::= "b[" <number> "]"
 <bit-selection> ::= "b" <indices> | <mapped-bit>
 <mapped-bit> ::= <letter> <identifier>
