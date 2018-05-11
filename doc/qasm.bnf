@@ -85,14 +85,14 @@
 <bit> ::=  <bit-nomap> | <mapped-bit>
 <bit-nomap> ::= "b" <indices>
 <bit-selection> ::= <bit>
-                    | bit <ws-separator> <bit-selection>
+                    | <bit> <ws-separator> <bit-selection>
 <mapped-bit> ::= <identifier>
 
 # Define the single qubit operation line
 <single-qubit-operation> ::= <single-qubit-gate> " " <qubit-selection> 
                              | <prep_measure-ops> " " <qubit-selection>
 
-<single-qubit-operation-args> ::= <parameterized-single-qubit-gate> " " <qubit-selection> ", " <float>
+<single-qubit-operation-args> ::= <parameterized-single-qubit-gate> " " <qubit-selection> <ws-separator> <float>
 
 <map-operation> ::= "map" " " <qubit-selection> <ws-separator> <mapped-qubit> | "map" " " <bit-selection> <ws-separator> <mapped-bit>
 
