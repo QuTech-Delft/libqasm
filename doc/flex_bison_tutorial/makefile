@@ -12,7 +12,7 @@ grammar:
 	mv grammar.tab.* compiler
 
 lex:
-	flex compiler/lex.lex
+	flex compiler/lex.l
 	mv lex.yy.* compiler
 
 runTest:
