@@ -9,6 +9,10 @@ extern "C"
 
 int main (int argc, const char* argv)
 {
+    #if YYDEBUG == 1
+    extern int yydebug;
+    yydebug = 1;
+    #endif
     int result = yyparse();
     if (!result)
     {

@@ -34,7 +34,7 @@
 # define YY_YY_GRAMMAR_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+# define YYDEBUG 1
 #endif
 #if YYDEBUG
 extern int yydebug;
@@ -57,7 +57,15 @@ extern int yydebug;
     WAIT = 267,
     DISPLAY = 268,
     RESET_AVERAGING = 269,
-    COMMA_SEPARATOR = 270
+    COMMA_SEPARATOR = 270,
+    BRA = 271,
+    KET = 272,
+    DOT = 273,
+    SBRA = 274,
+    SKET = 275,
+    QBITHEAD = 276,
+    BITHEAD = 277,
+    LS_SEP = 278
   };
 #endif
 

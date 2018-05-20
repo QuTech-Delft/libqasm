@@ -3,19 +3,46 @@
     #include "grammar.tab.h"
 %}
 
-alpha       [a-zA-Z]
-name        {alpha}([0-9]*{alpha}*)+
-whitespace  [ \r\t\v\f]
-linefeed    \n
-float       [-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?
-integer     ^\d+$
-rotations   [r][xX|yY|zZ]
-comma_sep   [ ]*[,][ ]*
+letter       [a-zA-Z]
+identifier   {letter}([0-9]*{letter}*)+
+whitespace   (\t|" "|\r)+
+newline      {whitespace}?\n
+integer      [0-9]+
+axis         ([xX]|[yY]|[zZ])+
+rotations    r{axis}
+comma_sep    {whitespace}?,{whitespace}?
+qubits       [qQ][uU][bB][iI][tT][sS]
+wait         [wW][aA][iI][tT]
+resetavg     [rR][eE][sS][eE][tT]-[aA][vV][eE][rR][aA][gG][iI][nN][gG]
+display      [dD][iI][sS][pP][lL][aA][yY]
+qubithead    [qQ]
+bithead      [bB]
 
 %%
-{name} {
-    printf("Lex:name = \n");
-    return NAME;
+{qubits} {
+    printf("Lex: qubits\n");
+    return QUBITS;
+}
+
+{qubithead} {
+    return QBITHEAD;
+}
+
+{bithead} {
+    return BITHEAD;
+}
+
+{display} {
+    printf("Lex: display\n");
+    return DISPLAY;
+}
+
+{wait} {
+    return WAIT;
+}
+
+{resetavg} {
+    return RESET_AVERAGING;
 }
 
 ":" {
@@ -23,9 +50,24 @@ comma_sep   [ ]*[,][ ]*
     return COLON;
 }
 
-"qubits" {
-    printf("Lex: qubits\n");
-    return QUBITS;
+"." {
+    return DOT;
+}
+
+"(" {
+    return BRA;
+}
+
+"[" {
+    return SBRA;
+}
+
+")" {
+    return KET;
+}
+
+"]" {
+    return SKET;
 }
 
 {comma_sep} {
@@ -38,18 +80,14 @@ comma_sep   [ ]*[,][ ]*
     return ROTATIONS;
 }
 
-{float} {
-    printf("Lex: Encountered float\n");
-    return FLOAT;
-}
-
 {integer} {
     printf("Lex: Encountered integer\n");
     return INTEGER;
 }
 
-{alpha} {
-    return LETTER;
+{identifier} {
+    printf("Lex:name = \n");
+    return NAME;
 }
 
 {whitespace} {
@@ -57,8 +95,9 @@ comma_sep   [ ]*[,][ ]*
     return WS;
 }
 
-{linefeed} {
+{newline} {
     ++yylineno;
+    printf("Lex: Encountered newline\n");
     return NEWLINE;
 }
 
