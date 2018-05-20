@@ -47,13 +47,17 @@ extern int yydebug;
   {
     NAME = 258,
     LETTER = 259,
-    DIGIT = 260,
-    NONZERODIGIT = 261,
-    NUMBER = 262,
-    FLOAT = 263,
-    NEWLINE = 264,
-    WS_SEPARATOR = 265,
-    COLON = 266
+    INTEGER = 260,
+    FLOAT = 261,
+    NEWLINE = 262,
+    WS = 263,
+    COLON = 264,
+    ROTATIONS = 265,
+    QUBITS = 266,
+    WAIT = 267,
+    DISPLAY = 268,
+    RESET_AVERAGING = 269,
+    COMMA_SEPARATOR = 270
   };
 #endif
 

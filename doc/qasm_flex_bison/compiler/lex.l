@@ -8,8 +8,9 @@ name        {alpha}([0-9]*{alpha}*)+
 whitespace  [ \r\t\v\f]
 linefeed    \n
 float       [-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?
-digit       [0-9]
-nzdigit     [1-9]
+integer     ^\d+$
+rotations   [r][xX|yY|zZ]
+comma_sep   [ ]*[,][ ]*
 
 %%
 {name} {
@@ -22,27 +23,38 @@ nzdigit     [1-9]
     return COLON;
 }
 
+"qubits" {
+    printf("Lex: qubits\n");
+    return QUBITS;
+}
+
+{comma_sep} {
+    printf("Lex: ,\n");
+    return COMMA_SEPARATOR;
+}
+
+{rotations} {
+    printf("Lex: r[x|y|z]\n");
+    return ROTATIONS;
+}
+
 {float} {
     printf("Lex: Encountered float\n");
     return FLOAT;
 }
 
-{digit} {
-    printf("Lex: Encountered digit\n");
-    return DIGIT;
+{integer} {
+    printf("Lex: Encountered integer\n");
+    return INTEGER;
 }
 
 {alpha} {
     return LETTER;
 }
 
-{nzdigit} {
-    printf("Lex: Encountered non-zero digit\n");
-    return NONZERODIGIT;
-}
-
 {whitespace} {
     printf("Lex: Encountered whitespace\n");
+    return WS;
 }
 
 {linefeed} {
