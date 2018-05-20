@@ -27,7 +27,7 @@
 %%
 
 //# Describe the general structure of a qasm file
-qasm-file : qubit-register circuits | qubit-register
+qasm-file : qubit-register line-separator circuits
     ;
 circuits : circuit 
                | circuit circuits
@@ -35,11 +35,11 @@ circuits : circuit
 circuit : subcircuit statements 
               | statements
     ;
-subcircuit : DOT NAME NEWLINE 
-                | DOT NAME BRA INTEGER KET NEWLINE
+subcircuit : DOT NAME line-separator 
+                | DOT NAME BRA INTEGER KET line-separator
     ;
-statements : qasm-line NEWLINE 
-                 | qasm-line NEWLINE statements
+statements : qasm-line
+                 | statements line-separator qasm-line
     ;
 qasm-line : special-operations
     ;
@@ -65,7 +65,7 @@ qubit-register : QUBITS WS INTEGER
 //# We define the syntax for selecting the qubits/bits, either by a range or a list
 qubit : qubit-nomap | NAME
     ;
-qubit-nomap : QBITHEAD SBRA INTEGER SKET
+qubit-nomap : QBITHEAD indices
     ;
 qubit-arguments : QBITHEAD indices | NAME
     ;
@@ -84,11 +84,11 @@ bit-selection : bit
 //# Special operations
 special-operations : display-operation | wait-operation | reset-averaging-operation
     ;
-display-operation : DISPLAY | DISPLAY WS bit
+display-operation : DISPLAY | display-operation WS bit-selection
     ;
 wait-operation : WAIT WS INTEGER
     ;
-reset-averaging-operation : RESET_AVERAGING | RESET_AVERAGING WS qubit
+reset-averaging-operation : RESET_AVERAGING | reset-averaging-operation WS qubit-selection
     ;
 
 %%
