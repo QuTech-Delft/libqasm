@@ -63,16 +63,21 @@ extern int yydebug;
     AXIS = 273,
     QUBITS = 274,
     SINGLE_QUBIT_GATES = 275,
-    MAPKEY = 276,
-    PREP = 277,
-    MEASURE = 278,
-    MEASUREPARITY = 279,
-    MEASUREALL = 280,
-    WAIT = 281,
-    DISPLAY = 282,
-    RESET_AVERAGING = 283,
-    QBITHEAD = 284,
-    BITHEAD = 285
+    TWO_QUBIT_GATES = 276,
+    CR = 277,
+    TOFFOLI = 278,
+    CDASH = 279,
+    NOT_TOKEN = 280,
+    MAPKEY = 281,
+    PREP = 282,
+    MEASURE = 283,
+    MEASUREPARITY = 284,
+    MEASUREALL = 285,
+    WAIT = 286,
+    DISPLAY = 287,
+    RESET_AVERAGING = 288,
+    QBITHEAD = 289,
+    BITHEAD = 290
   };
 #endif
 

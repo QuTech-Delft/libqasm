@@ -13,7 +13,8 @@
 %token COMMA_SEPARATOR PARALLEL_SEPARATOR BRA KET DOT SBRA SKET LS_SEP NEWLINE WS COLON
 %token ROTATIONS AXIS
 %token QUBITS
-%token SINGLE_QUBIT_GATES
+%token SINGLE_QUBIT_GATES TWO_QUBIT_GATES CR TOFFOLI
+%token CDASH NOT_TOKEN
 %token MAPKEY PREP MEASURE MEASUREPARITY MEASUREALL
 %token WAIT DISPLAY RESET_AVERAGING
 %token QBITHEAD BITHEAD
@@ -41,6 +42,7 @@ qasm-line : map-operation
           | measureall-operation
           | measure-parity-operation
           | regular-operations
+          | binary-controlled-operations
           | special-operations
     ;
 
@@ -97,9 +99,54 @@ measure-parity-operation : MEASUREPARITY WS qubit COMMA_SEPARATOR AXIS | measure
 measureall-operation : MEASUREALL
     ;
 
+//# Qubit-controlled operations
+two-qubit-operation : two-qubit-gates WS qubit COMMA_SEPARATOR qubit
+    ;
+two-qubit-operation-args : two-qubit-gate-args WS qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR INTEGER
+    ;
+//## Define the two qubit gates
+two-qubit-gates : TWO_QUBIT_GATES
+    ;
+two-qubit-gate-args : CR
+    ;
+//## Define the toffoli gate
+toffoli-operation : toffoli-gate WS qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit
+    ;
+toffoli-gate : TOFFOLI
+    ;
 //## Define a superset of all general "normal" operations
 regular-operations : single-qubit-operation 
-                   | single-qubit-operation-args 
+                   | single-qubit-operation-args
+                   | two-qubit-operation 
+                   | two-qubit-operation-args
+                   | toffoli-operation 
+    ;
+//# Binary-controlled operations
+qubit-gates : single-qubit-gate 
+                  | parameterized-single-qubit-gate
+                  | two-qubit-gates 
+                  | two-qubit-gate-args 
+                  | toffoli-gate
+    ;
+
+binary-controlled-operations : bit-single-qubit-operation 
+                                   | bit-single-qubit-operation-args 
+                                   | bit-two-qubit-operation 
+                                   | bit-two-qubit-operation-args 
+                                   | bit-toffoli-operation 
+                                   | negate-binary-operation
+    ;
+bit-single-qubit-operation : CDASH single-qubit-gate WS bit-selection COMMA_SEPARATOR qubit-selection
+    ;
+bit-single-qubit-operation-args : CDASH parameterized-single-qubit-gate WS bit-selection COMMA_SEPARATOR qubit-selection COMMA_SEPARATOR FLOAT
+    ;
+bit-two-qubit-operation : CDASH two-qubit-gates WS bit-selection COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit
+    ;
+bit-two-qubit-operation-args : CDASH two-qubit-gate-args WS bit-selection COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR INTEGER
+    ;
+bit-toffoli-operation : CDASH toffoli-gate WS bit-selection COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit
+    ;
+negate-binary-operation : NOT_TOKEN WS bit-selection
     ;
 
 //# Special operations

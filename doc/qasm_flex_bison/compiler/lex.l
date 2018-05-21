@@ -12,7 +12,12 @@ integer            [0-9]+
 float              ({integer}\.{integer})[eE]?{integer}?
 axis               ([xX]|[yY]|[zZ])
 single_qubits      ((?i:i)|(?i:h)|(?i:x90)|(?i:y90)|(?i:mx90)|(?i:my90)|(?i:s)|(?i:sdag)|(?i:t)|(?i:tdag))
+two_qubit_gates    ((?i:cnot)|(?i:cz)|(?i:swap))
+toffoli            (?i:toffoli)
 rotations          ([rR]){axis}
+cr                 (?i:cr)
+cdash              (?i:c\-)
+not_token          (?i:not)
 comma_sep          {whitespace}?,{whitespace}?
 parallel_sep       {whitespace}?\|{whitespace}?
 qubits             (?i:qubits)
@@ -39,7 +44,17 @@ measureparity      {measurehead}(_(?i:parity))
 
 {rotations} TOKEN(ROTATIONS)
 
+{cr} TOKEN(CR)
+
+{cdash} TOKEN(CDASH)
+
+{not_token} TOKEN(NOT_TOKEN)
+
 {single_qubits} TOKEN(SINGLE_QUBIT_GATES)
+
+{two_qubit_gates} TOKEN(TWO_QUBIT_GATES)
+
+{toffoli} TOKEN(TOFFOLI)
 
 {mapkey} TOKEN(MAPKEY)
 
