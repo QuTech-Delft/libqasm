@@ -80,9 +80,13 @@ measureparity      {measurehead}(_(?i:parity))
 
 "[" TOKEN(SBRA)
 
+"{" TOKEN(CBRA)
+
 ")" TOKEN(KET)
 
 "]" TOKEN(SKET)
+
+"}" TOKEN(CKET)
 
 {comma_sep} TOKEN(COMMA_SEPARATOR)
 

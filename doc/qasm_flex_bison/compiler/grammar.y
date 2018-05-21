@@ -10,7 +10,7 @@
 
 %token NAME 
 %token INTEGER FLOAT
-%token COMMA_SEPARATOR PARALLEL_SEPARATOR BRA KET DOT SBRA SKET LS_SEP NEWLINE WS COLON
+%token COMMA_SEPARATOR PARALLEL_SEPARATOR BRA KET DOT SBRA SKET CBRA CKET LS_SEP NEWLINE WS COLON
 %token ROTATIONS AXIS
 %token QUBITS
 %token SINGLE_QUBIT_GATES TWO_QUBIT_GATES CR TOFFOLI
@@ -27,12 +27,12 @@
 qasm-file : qubit-register line-separator circuits
     ;
 circuits : circuit 
-               | circuit circuits
+               | circuits circuit
     ;
 circuit : subcircuit statements 
               | statements
     ;
-subcircuit : DOT NAME line-separator 
+subcircuit : DOT NAME line-separator
                 | DOT NAME BRA INTEGER KET line-separator
     ;
 statements : qasm-line
@@ -43,6 +43,7 @@ qasm-line : map-operation
           | measure-parity-operation
           | regular-operations
           | binary-controlled-operations
+          | parallel-operations
           | special-operations
     ;
 
@@ -147,6 +148,14 @@ bit-two-qubit-operation-args : CDASH two-qubit-gate-args WS bit-selection COMMA_
 bit-toffoli-operation : CDASH toffoli-gate WS bit-selection COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit
     ;
 negate-binary-operation : NOT_TOKEN WS bit-selection
+    ;
+
+//# Parallel execution
+parallel-operations : CBRA parallelizable-ops CKET
+    ;
+all-valid-operations : regular-operations | binary-controlled-operations 
+    ;
+parallelizable-ops : all-valid-operations | parallelizable-ops PARALLEL_SEPARATOR all-valid-operations
     ;
 
 //# Special operations

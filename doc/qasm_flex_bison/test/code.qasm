@@ -25,3 +25,9 @@ CR          ghjkls,    q[90:456], 40
 NOT b[90,120], ghsbits
 c-x bitcontroller, q[12:289,56]
 c-swap bitcontbleh, b[1234:789], q[567:452,890,23], qswaps
+
+toffoli q[45:23], mappedqbit, q[67,23,89:23]
+
+c-toffoli b[45:89,234] ,q[45:23], mappedqbit, q[67,23,89:23]
+
+{c-toffoli b[45:89,234] ,q[45:23], mappedqbit, q[67,23,89:23] | rX q[99,56:4], 3.1416E4}
