@@ -1,104 +1,89 @@
 %option noyywrap
 %{
     #include "grammar.tab.h"
+    #define TOKEN(t) {printf("Lex: " #t "\n"); return(t);}
 %}
 
-letter       [a-zA-Z]
-identifier   {letter}([0-9]*{letter}*)+
-whitespace   (\t|" "|\r)+
-newline      {whitespace}?\n
-integer      [0-9]+
-axis         ([xX]|[yY]|[zZ])+
-rotations    r{axis}
-comma_sep    {whitespace}?,{whitespace}?
-qubits       [qQ][uU][bB][iI][tT][sS]
-wait         [wW][aA][iI][tT]
-resetavg     [rR][eE][sS][eE][tT]-[aA][vV][eE][rR][aA][gG][iI][nN][gG]
-display      [dD][iI][sS][pP][lL][aA][yY]
-qubithead    [qQ]
-bithead      [bB]
+letter             [a-zA-Z]
+identifier         {letter}([0-9]*{letter}*)+
+whitespace         (\t|" "|\r)+
+newline            {whitespace}?\n
+integer            [0-9]+
+float              ({integer}\.{integer})[eE]?{integer}?
+axis               ([xX]|[yY]|[zZ])
+single_qubits      ((?i:i)|(?i:h)|(?i:x90)|(?i:y90)|(?i:mx90)|(?i:my90)|(?i:s)|(?i:sdag)|(?i:t)|(?i:tdag))
+rotations          ([rR]){axis}
+comma_sep          {whitespace}?,{whitespace}?
+parallel_sep       {whitespace}?\|{whitespace}?
+qubits             (?i:qubits)
+mapkey             (?i:map)
+wait               (?i:wait)
+resetavg           (?i:reset-averaging)
+display            (?i:display)
+qubithead          [qQ]
+bithead            [bB]
+prep               (?i:prep)(_{axis})?
+measurehead        (?i:measure)
+measure            {measurehead}(_{axis})?
+measureall         {measurehead}(_(?i:all))
+measureparity      {measurehead}(_(?i:parity))
 
 %%
-{qubits} {
-    printf("Lex: qubits\n");
-    return QUBITS;
-}
+{qubits} TOKEN(QUBITS)
 
-{qubithead} {
-    return QBITHEAD;
-}
+{qubithead} TOKEN(QBITHEAD)
 
-{bithead} {
-    return BITHEAD;
-}
+{bithead} TOKEN(BITHEAD)
 
-{display} {
-    printf("Lex: display\n");
-    return DISPLAY;
-}
+{axis}  TOKEN(AXIS)
 
-{wait} {
-    return WAIT;
-}
+{rotations} TOKEN(ROTATIONS)
 
-{resetavg} {
-    return RESET_AVERAGING;
-}
+{single_qubits} TOKEN(SINGLE_QUBIT_GATES)
 
-":" {
-    printf("Lex: :\n");
-    return COLON;
-}
+{mapkey} TOKEN(MAPKEY)
 
-"." {
-    return DOT;
-}
+{prep} TOKEN(PREP)
 
-"(" {
-    return BRA;
-}
+{measure} TOKEN(MEASURE)
 
-"[" {
-    return SBRA;
-}
+{measureall} TOKEN(MEASUREALL)
 
-")" {
-    return KET;
-}
+{measureparity} TOKEN(MEASUREPARITY)
 
-"]" {
-    return SKET;
-}
+{display} TOKEN(DISPLAY)
 
-{comma_sep} {
-    printf("Lex: ,\n");
-    return COMMA_SEPARATOR;
-}
+{wait} TOKEN(WAIT)
 
-{rotations} {
-    printf("Lex: r[x|y|z]\n");
-    return ROTATIONS;
-}
+{resetavg} TOKEN(RESET_AVERAGING)
 
-{integer} {
-    printf("Lex: Encountered integer\n");
-    return INTEGER;
-}
+":" TOKEN(COLON)
 
-{identifier} {
-    printf("Lex:name = \n");
-    return NAME;
-}
+"." TOKEN(DOT)
 
-{whitespace} {
-    printf("Lex: Encountered whitespace\n");
-    return WS;
-}
+"(" TOKEN(BRA)
+
+"[" TOKEN(SBRA)
+
+")" TOKEN(KET)
+
+"]" TOKEN(SKET)
+
+{comma_sep} TOKEN(COMMA_SEPARATOR)
+
+{parallel_sep} TOKEN(PARALLEL_SEPARATOR)
+
+{integer} TOKEN(INTEGER)
+
+{float} TOKEN(FLOAT)
+
+{identifier} TOKEN(NAME)
+
+{whitespace} TOKEN(WS)
 
 {newline} {
     ++yylineno;
-    printf("Lex: Encountered newline\n");
-    return NEWLINE;
+    TOKEN(NEWLINE)
 }
 
 %%
