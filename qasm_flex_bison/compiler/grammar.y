@@ -94,7 +94,7 @@ bit-selection : bit
 single-qubit-operation : single-qubit-gate WS qubit-selection 
                              | prep_measure-ops WS qubit-selection
     ;
-single-qubit-operation-args : parameterized-single-qubit-gate WS qubit-selection COMMA_SEPARATOR FLOAT
+single-qubit-operation-args : parameterized-single-qubit-gate WS qubit-selection COMMA_SEPARATOR FLOAT {printf("Found float = %lf\n",$5);}
     ;
 map-operation : MAPKEY WS qubit-selection COMMA_SEPARATOR NAME {printf("Mapped qubit to %s\n",$5);}| MAPKEY WS bit-selection COMMA_SEPARATOR NAME {printf("Mapped bit to %s\n",$5);}
     ;

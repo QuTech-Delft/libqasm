@@ -1400,20 +1400,26 @@ yyreduce:
 #line 1401 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
+  case 44:
+#line 97 "compiler/grammar.y" /* yacc.c:1646  */
+    {printf("Found float = %lf\n",(yyvsp[0].dval));}
+#line 1407 "grammar.tab.c" /* yacc.c:1646  */
+    break;
+
   case 45:
 #line 99 "compiler/grammar.y" /* yacc.c:1646  */
     {printf("Mapped qubit to %s\n",(yyvsp[0].sval));}
-#line 1407 "grammar.tab.c" /* yacc.c:1646  */
+#line 1413 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
 #line 99 "compiler/grammar.y" /* yacc.c:1646  */
     {printf("Mapped bit to %s\n",(yyvsp[0].sval));}
-#line 1413 "grammar.tab.c" /* yacc.c:1646  */
+#line 1419 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1417 "grammar.tab.c" /* yacc.c:1646  */
+#line 1423 "grammar.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
