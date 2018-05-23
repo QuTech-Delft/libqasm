@@ -2,6 +2,9 @@
 %{
     #include "grammar.tab.h"
     #define TOKEN(t) {printf("Lex: " #t "\n"); return(t);}
+    #define TOKENI(t) {printf("Lex: " #t "\n"); yylval.ival = atoi(yytext); return(t);}
+    #define TOKEND(t) {printf("Lex: " #t "\n"); yylval.dval = atof(yytext); return(t);}
+    #define TOKENSTR(t) {printf("Lex: " #t "\n"); yylval.sval = yytext; return(t);}
 %}
 
 letter             [a-zA-Z]
@@ -92,11 +95,11 @@ measureparity      {measurehead}(_(?i:parity))
 
 {parallel_sep} TOKEN(PARALLEL_SEPARATOR)
 
-{integer} TOKEN(INTEGER)
+{integer} TOKENI(INTEGER)
 
-{float} TOKEN(FLOAT)
+{float} TOKEND(FLOAT)
 
-{identifier} TOKEN(NAME)
+{identifier} TOKENSTR(NAME)
 
 {whitespace} TOKEN(WS)
 

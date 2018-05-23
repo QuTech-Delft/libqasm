@@ -7,10 +7,15 @@
 %}
 
 //%define api.value.type {double}
+%union {
+  int ival;
+  double dval;
+  char* sval;
+}
 
-%token NAME 
-%token INTEGER
-%token FLOAT
+%token <sval> NAME 
+%token <ival> INTEGER
+%token <dval> FLOAT
 %token COMMA_SEPARATOR PARALLEL_SEPARATOR BRA KET DOT SBRA SKET CBRA CKET LS_SEP NEWLINE WS COLON
 %token ROTATIONS AXIS
 %token QUBITS
@@ -63,7 +68,7 @@ numerical-identifiers : numerical-identifier-list
     ;
 numerical-identifier-list : INTEGER | numerical-identifier-list COMMA_SEPARATOR numerical-identifiers
     ;
-numerical-identifier-range : INTEGER COLON INTEGER | numerical-identifier-range COMMA_SEPARATOR numerical-identifiers
+numerical-identifier-range : INTEGER COLON INTEGER {printf("Num: {%d,%d}\n", $1, $3);}| numerical-identifier-range COMMA_SEPARATOR numerical-identifiers
     ;
 
 
@@ -91,7 +96,7 @@ single-qubit-operation : single-qubit-gate WS qubit-selection
     ;
 single-qubit-operation-args : parameterized-single-qubit-gate WS qubit-selection COMMA_SEPARATOR FLOAT
     ;
-map-operation : MAPKEY WS qubit-selection COMMA_SEPARATOR NAME | MAPKEY WS bit-selection COMMA_SEPARATOR NAME
+map-operation : MAPKEY WS qubit-selection COMMA_SEPARATOR NAME {printf("Mapped qubit to %s\n",$5);}| MAPKEY WS bit-selection COMMA_SEPARATOR NAME {printf("Mapped bit to %s\n",$5);}
     ;
 //## Define the single qubit operations/gates
 single-qubit-gate : AXIS | SINGLE_QUBIT_GATES

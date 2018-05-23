@@ -145,7 +145,19 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+
+union YYSTYPE
+{
+#line 10 "compiler/grammar.y" /* yacc.c:355  */
+
+  int ival;
+  double dval;
+  char* sval;
+
+#line 158 "grammar.tab.c" /* yacc.c:355  */
+};
+
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
@@ -159,7 +171,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 163 "grammar.tab.c" /* yacc.c:358  */
+#line 175 "grammar.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -460,16 +472,16 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    29,    29,    31,    32,    34,    35,    37,    38,    40,
-      40,    41,    42,    43,    44,    47,    48,    49,    50,    51,
-      52,    53,    57,    57,    59,    61,    62,    64,    64,    66,
-      66,    70,    73,    73,    75,    77,    77,    80,    80,    82,
-      84,    85,    89,    90,    92,    94,    94,    97,    97,    99,
-     102,   102,   104,   104,   106,   110,   112,   115,   117,   120,
-     122,   125,   126,   127,   128,   129,   139,   140,   141,   142,
-     143,   144,   146,   148,   150,   152,   154,   156,   160,   162,
-     162,   164,   164,   168,   168,   168,   170,   170,   172,   174,
-     174
+       0,    34,    34,    36,    37,    39,    40,    42,    43,    45,
+      45,    46,    47,    48,    49,    52,    53,    54,    55,    56,
+      57,    58,    62,    62,    64,    66,    67,    69,    69,    71,
+      71,    75,    78,    78,    80,    82,    82,    85,    85,    87,
+      89,    90,    94,    95,    97,    99,    99,   102,   102,   104,
+     107,   107,   109,   109,   111,   115,   117,   120,   122,   125,
+     127,   130,   131,   132,   133,   134,   144,   145,   146,   147,
+     148,   149,   151,   153,   155,   157,   159,   161,   165,   167,
+     167,   169,   169,   173,   173,   173,   175,   175,   177,   179,
+     179
 };
 #endif
 
@@ -1382,8 +1394,26 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-      
-#line 1387 "grammar.tab.c" /* yacc.c:1646  */
+        case 29:
+#line 71 "compiler/grammar.y" /* yacc.c:1646  */
+    {printf("Num: {%d,%d}\n", (yyvsp[-2].ival), (yyvsp[0].ival));}
+#line 1401 "grammar.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 45:
+#line 99 "compiler/grammar.y" /* yacc.c:1646  */
+    {printf("Mapped qubit to %s\n",(yyvsp[0].sval));}
+#line 1407 "grammar.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 46:
+#line 99 "compiler/grammar.y" /* yacc.c:1646  */
+    {printf("Mapped bit to %s\n",(yyvsp[0].sval));}
+#line 1413 "grammar.tab.c" /* yacc.c:1646  */
+    break;
+
+
+#line 1417 "grammar.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1611,7 +1641,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 177 "compiler/grammar.y" /* yacc.c:1906  */
+#line 182 "compiler/grammar.y" /* yacc.c:1906  */
 
 
 void yyerror(char const *x)
