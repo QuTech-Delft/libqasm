@@ -6,10 +6,11 @@
     void yyerror (char const *);
 %}
 
-%define api.value.type {double}
+//%define api.value.type {double}
 
 %token NAME 
-%token INTEGER FLOAT
+%token INTEGER
+%token FLOAT
 %token COMMA_SEPARATOR PARALLEL_SEPARATOR BRA KET DOT SBRA SKET CBRA CKET LS_SEP NEWLINE WS COLON
 %token ROTATIONS AXIS
 %token QUBITS
@@ -18,6 +19,7 @@
 %token MAPKEY PREP MEASURE MEASUREPARITY MEASUREALL
 %token WAIT DISPLAY RESET_AVERAGING
 %token QBITHEAD BITHEAD
+
 
 %start qasm-file
 
@@ -35,8 +37,9 @@ circuit : subcircuit statements
 subcircuit : DOT NAME
                 | DOT NAME BRA INTEGER KET
     ;
-statements : qasm-line
-             | subcircuit
+statements : qasm-line | subcircuit
+             |qasm-line line-separator
+             | subcircuit line-separator
              | statements line-separator qasm-line
              | statements line-separator subcircuit
     ;
