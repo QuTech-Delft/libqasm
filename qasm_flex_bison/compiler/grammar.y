@@ -39,8 +39,8 @@ circuits : circuit
 circuit : subcircuit statements 
               | statements
     ;
-subcircuit : DOT NAME
-                | DOT NAME BRA INTEGER KET
+subcircuit : DOT NAME {printf("Found subcircuit: %s\n", $2);}
+                | subcircuit BRA INTEGER KET {printf("With: %d iterations\n", $3);}
     ;
 statements : qasm-line | subcircuit
              |qasm-line line-separator
@@ -91,10 +91,10 @@ bit-selection : bit
     ;
 
 //# Define the single qubit operation line
-single-qubit-operation : single-qubit-gate WS qubit-selection 
-                             | prep_measure-ops WS qubit-selection
+single-qubit-operation : single-qubit-gate WS qubit 
+                             | prep_measure-ops WS qubit
     ;
-single-qubit-operation-args : parameterized-single-qubit-gate WS qubit-selection COMMA_SEPARATOR FLOAT {printf("Found float = %lf\n",$5);}
+single-qubit-operation-args : parameterized-single-qubit-gate WS qubit COMMA_SEPARATOR FLOAT {printf("Found float = %lf\n",$5);}
     ;
 map-operation : MAPKEY WS qubit-selection COMMA_SEPARATOR NAME {printf("Mapped qubit to %s\n",$5);}| MAPKEY WS bit-selection COMMA_SEPARATOR NAME {printf("Mapped bit to %s\n",$5);}
     ;

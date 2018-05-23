@@ -7,7 +7,7 @@ extern "C"
     int yylex();
 }
 
-int main (int argc, const char* argv)
+int main (int argc, const char** argv)
 {
     #if YYDEBUG == 1
     extern int yydebug;
