@@ -31,3 +31,9 @@ toffoli q[45:23], mappedqbit, q[67,23,89:23]
 c-toffoli b[45:89,234] ,q[45:23], mappedqbit, q[67,23,89:23]
 
 {c-toffoli b[45:89,234] ,q[45:23], mappedqbit, q[67,23,89:23] | rX q[99,56:4], 3.1416E4}
+
+.singleparallel
+{c-toffoli b[45:89,234] ,q[45:23], mappedqbit, q[67,23,89:23]}
+
+.bleh2circuit(50)
+measure_all

@@ -32,12 +32,15 @@ circuits : circuit
 circuit : subcircuit statements 
               | statements
     ;
-subcircuit : DOT NAME line-separator
-                | DOT NAME BRA INTEGER KET line-separator
+subcircuit : DOT NAME
+                | DOT NAME BRA INTEGER KET
     ;
 statements : qasm-line
-                 | statements line-separator qasm-line
+             | subcircuit
+             | statements line-separator qasm-line
+             | statements line-separator subcircuit
     ;
+
 qasm-line : map-operation
           | measureall-operation
           | measure-parity-operation
