@@ -1,7 +1,7 @@
 %option noyywrap
 %{
     #include "grammar.tab.h"
-    #define TOKEN(t) {printf("Lex: " #t "\n"); return(t);}
+    #define TOKEN(t) {printf("Lex: " #t ": %s\n",yytext); return(t);}
     #define TOKENI(t) {printf("Lex: " #t "\n"); yylval.ival = atoi(yytext); return(t);}
     #define TOKEND(t) {printf("Lex: " #t "\n"); yylval.dval = atof(yytext); return(t);}
     #define TOKENSTR(t) {printf("Lex: " #t "\n"); yylval.sval = yytext; return(t);}
@@ -10,7 +10,9 @@
 letter             [a-zA-Z]
 identifier         {letter}([0-9]*{letter}*)+
 whitespace         (\t|" "|\r)+
-newline            {whitespace}?\n
+newline            {whitespace}?(\n)
+singlenewline      \n
+comment            \#(.*){singlenewline}
 integer            [0-9]+
 float              ({integer}\.{integer})[eE]?{integer}?
 axis               ([xX]|[yY]|[zZ])
@@ -106,6 +108,11 @@ measureparity      {measurehead}(_(?i:parity))
 {newline} {
     ++yylineno;
     TOKEN(NEWLINE)
+}
+
+{comment} {
+    ++yylineno;
+    TOKEN(COMMENT)
 }
 
 %%

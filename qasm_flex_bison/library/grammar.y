@@ -16,7 +16,7 @@
 %token <sval> NAME 
 %token <ival> INTEGER
 %token <dval> FLOAT
-%token COMMA_SEPARATOR PARALLEL_SEPARATOR BRA KET DOT SBRA SKET CBRA CKET LS_SEP NEWLINE WS COLON
+%token COMMA_SEPARATOR PARALLEL_SEPARATOR BRA KET DOT SBRA SKET CBRA CKET LS_SEP NEWLINE WS COLON COMMENT
 %token ROTATIONS AXIS
 %token QUBITS
 %token SINGLE_QUBIT_GATES TWO_QUBIT_GATES CR TOFFOLI
@@ -32,9 +32,13 @@
 
 //# Describe the general structure of a qasm file
 qasm-file : qubit-register line-separator circuits
+          | comments line-separator qasm-file
     ;
 circuits : circuit 
-               | circuits circuit
+           | circuits circuit
+           | comments
+           | circuits comments
+
     ;
 circuit : subcircuit statements 
               | statements
@@ -48,7 +52,8 @@ statements : qasm-line | subcircuit
              | statements line-separator qasm-line
              | statements line-separator subcircuit
     ;
-
+comments : COMMENT
+    ;
 qasm-line : map-operation
           | measureall-operation
           | measure-parity-operation
@@ -72,7 +77,7 @@ numerical-identifier-range : INTEGER COLON INTEGER {printf("Num: {%d,%d}\n", $1,
     ;
 
 
-qubit-register : QUBITS WS INTEGER
+qubit-register : QUBITS WS INTEGER | line-separator QUBITS WS INTEGER
 
 //# We define the syntax for selecting the qubits/bits, either by a range or a list
 qubit : qubit-nomap | NAME

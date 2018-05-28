@@ -1,3 +1,5 @@
+#tedt
+
 qubiTs 1024
 
 display

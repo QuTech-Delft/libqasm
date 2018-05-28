@@ -61,25 +61,26 @@ extern int yydebug;
     NEWLINE = 271,
     WS = 272,
     COLON = 273,
-    ROTATIONS = 274,
-    AXIS = 275,
-    QUBITS = 276,
-    SINGLE_QUBIT_GATES = 277,
-    TWO_QUBIT_GATES = 278,
-    CR = 279,
-    TOFFOLI = 280,
-    CDASH = 281,
-    NOT_TOKEN = 282,
-    MAPKEY = 283,
-    PREP = 284,
-    MEASURE = 285,
-    MEASUREPARITY = 286,
-    MEASUREALL = 287,
-    WAIT = 288,
-    DISPLAY = 289,
-    RESET_AVERAGING = 290,
-    QBITHEAD = 291,
-    BITHEAD = 292
+    COMMENT = 274,
+    ROTATIONS = 275,
+    AXIS = 276,
+    QUBITS = 277,
+    SINGLE_QUBIT_GATES = 278,
+    TWO_QUBIT_GATES = 279,
+    CR = 280,
+    TOFFOLI = 281,
+    CDASH = 282,
+    NOT_TOKEN = 283,
+    MAPKEY = 284,
+    PREP = 285,
+    MEASURE = 286,
+    MEASUREPARITY = 287,
+    MEASUREALL = 288,
+    WAIT = 289,
+    DISPLAY = 290,
+    RESET_AVERAGING = 291,
+    QBITHEAD = 292,
+    BITHEAD = 293
   };
 #endif
 
@@ -88,13 +89,13 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 10 "compiler/grammar.y" /* yacc.c:1909  */
+#line 10 "library/grammar.y" /* yacc.c:1909  */
 
   int ival;
   double dval;
   char* sval;
 
-#line 98 "grammar.tab.h" /* yacc.c:1909  */
+#line 99 "grammar.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
