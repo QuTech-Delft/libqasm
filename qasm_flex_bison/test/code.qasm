@@ -1,4 +1,5 @@
-#tedt
+#This is a test file for 1024 qubits
+#bleh
 
 qubiTs 1024
 

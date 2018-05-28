@@ -52,7 +52,7 @@ statements : qasm-line | subcircuit
              | statements line-separator qasm-line
              | statements line-separator subcircuit
     ;
-comments : COMMENT
+comments : COMMENT | comments COMMENT
     ;
 qasm-line : map-operation
           | measureall-operation
