@@ -1,11 +1,9 @@
 #include <iostream>
+#include "pass_class.hpp"
 
-extern "C"
-{
-    int yyparse();
-    void yyerror(const char *);
-    int yylex();
-}
+extern int yyparse();
+extern void yyerror(const char *);
+extern int yylex();
 
 int main (int argc, const char** argv)
 {

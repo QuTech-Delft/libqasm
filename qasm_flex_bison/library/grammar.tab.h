@@ -89,7 +89,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 10 "library/grammar.y" /* yacc.c:1909  */
+#line 11 "library/grammar.y" /* yacc.c:1909  */
 
   int ival;
   double dval;

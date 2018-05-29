@@ -67,10 +67,11 @@
     #include <math.h>
     #include <stdio.h>
     #include <stdlib.h>
+    #include "pass_class.hpp"
     int yylex(void);
     void yyerror (char const *);
 
-#line 74 "grammar.tab.c" /* yacc.c:339  */
+#line 75 "grammar.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -149,13 +150,13 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 10 "library/grammar.y" /* yacc.c:355  */
+#line 11 "library/grammar.y" /* yacc.c:355  */
 
   int ival;
   double dval;
   char* sval;
 
-#line 159 "grammar.tab.c" /* yacc.c:355  */
+#line 160 "grammar.tab.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -172,7 +173,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 176 "grammar.tab.c" /* yacc.c:358  */
+#line 177 "grammar.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -473,17 +474,17 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    34,    34,    35,    37,    38,    39,    40,    42,    43,
-      44,    45,    47,    48,    50,    50,    51,    52,    53,    54,
-      56,    57,    58,    59,    61,    62,    63,    64,    65,    66,
-      67,    68,    69,    70,    71,    72,    73,    74,    78,    78,
-      80,    82,    83,    85,    85,    87,    87,    91,    91,    94,
-      94,    96,    98,    98,   101,   101,   103,   105,   106,   110,
-     111,   113,   115,   115,   118,   118,   120,   123,   123,   125,
-     125,   127,   131,   133,   136,   138,   141,   143,   146,   147,
-     148,   149,   150,   160,   161,   162,   163,   164,   165,   167,
-     169,   171,   173,   175,   177,   181,   183,   183,   185,   185,
-     189,   189,   189,   191,   191,   193,   195,   195
+       0,    35,    35,    36,    38,    39,    40,    41,    43,    44,
+      45,    46,    48,    49,    51,    51,    52,    53,    54,    55,
+      57,    58,    59,    60,    62,    63,    64,    65,    66,    67,
+      68,    69,    70,    71,    72,    73,    74,    75,    79,    79,
+      81,    83,    84,    86,    86,    88,    88,    92,    92,    95,
+      95,    97,    99,    99,   102,   102,   104,   106,   107,   111,
+     112,   114,   116,   116,   119,   119,   121,   124,   124,   126,
+     126,   128,   132,   134,   137,   139,   142,   144,   147,   148,
+     149,   150,   151,   161,   162,   163,   164,   165,   166,   168,
+     170,   172,   174,   176,   178,   182,   184,   184,   186,   186,
+     190,   190,   190,   192,   192,   194,   196,   196
 };
 #endif
 
@@ -1433,43 +1434,43 @@ yyreduce:
   switch (yyn)
     {
         case 12:
-#line 47 "library/grammar.y" /* yacc.c:1646  */
+#line 48 "library/grammar.y" /* yacc.c:1646  */
     {printf("Found subcircuit: %s\n", (yyvsp[0].sval));}
-#line 1439 "grammar.tab.c" /* yacc.c:1646  */
+#line 1440 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 48 "library/grammar.y" /* yacc.c:1646  */
+#line 49 "library/grammar.y" /* yacc.c:1646  */
     {printf("With: %d iterations\n", (yyvsp[-1].ival));}
-#line 1445 "grammar.tab.c" /* yacc.c:1646  */
+#line 1446 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 87 "library/grammar.y" /* yacc.c:1646  */
+#line 88 "library/grammar.y" /* yacc.c:1646  */
     {printf("Num: {%d,%d}\n", (yyvsp[-2].ival), (yyvsp[0].ival));}
-#line 1451 "grammar.tab.c" /* yacc.c:1646  */
+#line 1452 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 113 "library/grammar.y" /* yacc.c:1646  */
+#line 114 "library/grammar.y" /* yacc.c:1646  */
     {printf("Found float = %lf\n",(yyvsp[0].dval));}
-#line 1457 "grammar.tab.c" /* yacc.c:1646  */
+#line 1458 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 115 "library/grammar.y" /* yacc.c:1646  */
+#line 116 "library/grammar.y" /* yacc.c:1646  */
     {printf("Mapped qubit to %s\n",(yyvsp[0].sval));}
-#line 1463 "grammar.tab.c" /* yacc.c:1646  */
+#line 1464 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 115 "library/grammar.y" /* yacc.c:1646  */
+#line 116 "library/grammar.y" /* yacc.c:1646  */
     {printf("Mapped bit to %s\n",(yyvsp[0].sval));}
-#line 1469 "grammar.tab.c" /* yacc.c:1646  */
+#line 1470 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1473 "grammar.tab.c" /* yacc.c:1646  */
+#line 1474 "grammar.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1697,7 +1698,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 198 "library/grammar.y" /* yacc.c:1906  */
+#line 199 "library/grammar.y" /* yacc.c:1906  */
 
 
 void yyerror(char const *x)
