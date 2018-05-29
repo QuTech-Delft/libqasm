@@ -4,7 +4,7 @@ all:
 	gcc -c library/grammar.tab.c library/lex.yy.c
 	mv *.o library
 	ar rvs library/lexgram.a library/grammar.tab.o library/lex.yy.o
-	g++ -std=c++11 -Wall -Wextra -o testCompiler library/main.cpp library/lexgram.a -DYYDEBUG=0
+	g++ -std=c++11 -Wall -Wextra -o testCompiler library/main.cpp library/lexgram.a -DYYDEBUG=1
 	mv testCompiler bin
 
 grammar:

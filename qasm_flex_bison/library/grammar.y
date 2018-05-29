@@ -32,16 +32,17 @@
 
 //# Describe the general structure of a qasm file
 qasm-file : qubit-register line-separator circuits
-          | comments line-separator qasm-file
+          | comments qubit-register line-separator circuits
     ;
 circuits : circuit 
            | circuits circuit
            | comments
            | circuits comments
-
     ;
 circuit : subcircuit statements 
-              | statements
+        | statements
+        | WS subcircuit statements 
+        | WS statements
     ;
 subcircuit : DOT NAME {printf("Found subcircuit: %s\n", $2);}
                 | subcircuit BRA INTEGER KET {printf("With: %d iterations\n", $3);}
@@ -52,7 +53,10 @@ statements : qasm-line | subcircuit
              | statements line-separator qasm-line
              | statements line-separator subcircuit
     ;
-comments : COMMENT | comments COMMENT
+comments : COMMENT 
+         | comments COMMENT 
+         | comments line-separator COMMENT 
+         | comments COMMENT line-separator
     ;
 qasm-line : map-operation
           | measureall-operation
@@ -61,6 +65,13 @@ qasm-line : map-operation
           | binary-controlled-operations
           | parallel-operations
           | special-operations
+          | WS map-operation
+          | WS measureall-operation
+          | WS measure-parity-operation
+          | WS regular-operations
+          | WS binary-controlled-operations
+          | WS parallel-operations
+          | WS special-operations
     ;
 
 //# We define the convenience strings, texts, numbers here....

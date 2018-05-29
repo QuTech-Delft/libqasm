@@ -7,11 +7,11 @@
     #define TOKENSTR(t) {printf("Lex: " #t "\n"); yylval.sval = yytext; return(t);}
 %}
 
-letter             [a-zA-Z]
+letter             [a-zA-Z\_]
 identifier         {letter}([0-9]*{letter}*)+
 whitespace         (\t|" "|\r)+
-newline            {whitespace}?(\n)
-singlenewline      \n
+newline            {whitespace}?(\n|\r\n)
+singlenewline      (\n|\r\n)
 comment            \#(.*){singlenewline}
 integer            [0-9]+
 float              ({integer}\.{integer})[eE]?{integer}?
