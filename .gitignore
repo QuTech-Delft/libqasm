@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+doc/qtools/gcopy
+doc/qtools/gdeebnf
+doc/qtools/gdeempty
+doc/qtools/gsample
+doc/qtools/gsqueeze
+doc/qtools/gstartfollow
+doc/qtools/gstats
+*/bin
