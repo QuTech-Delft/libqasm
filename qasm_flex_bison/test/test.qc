@@ -25,7 +25,7 @@ qubits 8
    rx q4,0.453
    ry q5,0.244
    rz q6,0.555
-   c-x bitcontroller, q[12:289,56]
+   c-x bitcontroller, q[12:14,56]
 
 .result
 # measurement
