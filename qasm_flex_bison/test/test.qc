@@ -14,7 +14,7 @@ qubits 8
    map q[6] , q6
    map q[7] , q7
 
-.first_circuit
+.first_circuit(50)
    h q0
    cnot q0,q1
    x  q1

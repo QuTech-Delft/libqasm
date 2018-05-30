@@ -5,14 +5,13 @@
     #include <iostream>
     #include <vector>
     #include <string>
+    #include "pass_class.hpp"
     int yylex(void);
     void yyerror (char const *);
-    std::vector<int> identities;
-    std::vector<std::string> subcircuits;
+    compiler::NumericalIdentifiers test_indices;
+    compiler::SubCircuits test_subcircuits;
 %}
 
-
-//%define api.value.type {void *}
 
 %union {
     int ival;
@@ -51,8 +50,8 @@ circuit : subcircuit statements
         | WS subcircuit statements 
         | WS statements
     ;
-subcircuit : DOT NAME {subcircuits.push_back( std::string($2) );}
-           | subcircuit BRA INTEGER KET {}
+subcircuit : DOT NAME { test_subcircuits.addSubCircuit( compiler::SubCircuit ($2, test_subcircuits.numberOfSubCircuits() ) ); }
+           | subcircuit BRA INTEGER KET { test_subcircuits.lastSubCircuit().numberIterations($3); }
     ;
 statements : qasm-line 
            | subcircuit
@@ -91,15 +90,14 @@ indices : SBRA numerical-identifiers SKET
 numerical-identifiers : numerical-identifier-list 
                       | numerical-identifier-range
     ;
-numerical-identifier-list : INTEGER {identities.push_back($1);}
+numerical-identifier-list : INTEGER {test_indices.addToVector($1);}
                           | numerical-identifier-list COMMA_SEPARATOR numerical-identifiers
     ;
 numerical-identifier-range : INTEGER COLON INTEGER 
                              {
-                                for (int i = $1; i < $3; ++i)
-                                    identities.push_back(i);
+                                test_indices.addToVector($1,$3);
                              }
-                           | numerical-identifier-range COMMA_SEPARATOR numerical-identifiers {}
+                           | numerical-identifier-range COMMA_SEPARATOR numerical-identifiers
     ;
 
 
@@ -108,14 +106,14 @@ qubit-register : QUBITS WS INTEGER {}
 //# We define the syntax for selecting the qubits/bits, either by a range or a list
 qubit : qubit-nomap | NAME
     ;
-qubit-nomap : QBITHEAD indices {}
+qubit-nomap : QBITHEAD indices {test_indices.printMembers();}
     ;
 qubit-selection : qubit | qubit-selection COMMA_SEPARATOR qubit 
     ;
 //## Next we define a classical bit, which is required to perform control gate operations
 bit :  bit-nomap | NAME
     ;
-bit-nomap : BITHEAD indices
+bit-nomap : BITHEAD indices {test_indices.printMembers();} 
     ;
 bit-selection : bit
                 | bit-selection COMMA_SEPARATOR bit
@@ -212,7 +210,6 @@ reset-averaging-operation : RESET_AVERAGING | reset-averaging-operation WS qubit
     ;
 
 %%
-//std::vector<int> identities;
 
 void yyerror(char const *x)
 {

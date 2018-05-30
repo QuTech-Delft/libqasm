@@ -1,9 +1,11 @@
 %option noyywrap
 %{
     #include "grammar.tab.h"
+    #include <cstdlib>
+    #include <string>
     #define TOKEN(t) {printf("Lex: " #t ": %s\n",yytext); return(t);}
-    #define TOKENI(t) {printf("Lex: " #t "\n"); yylval.ival = atoi(yytext); return(t);}
-    #define TOKEND(t) {printf("Lex: " #t "\n"); yylval.dval = atof(yytext); return(t);}
+    #define TOKENI(t) {printf("Lex: " #t "\n"); yylval.ival = static_cast<int> ( std::strtol(yytext,NULL,10) ); return(t);}
+    #define TOKEND(t) {printf("Lex: " #t "\n"); yylval.dval = std::strtod(yytext,NULL); return(t);}
     #define TOKENSTR(t) {printf("Lex: " #t "\n"); yylval.sval = yytext; return(t);}
 %}
 

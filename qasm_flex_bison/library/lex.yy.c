@@ -686,11 +686,13 @@ char *yytext;
 #line 1 "library/lex.l"
 #line 3 "library/lex.l"
     #include "grammar.tab.h"
+    #include <cstdlib>
+    #include <string>
     #define TOKEN(t) {printf("Lex: " #t ": %s\n",yytext); return(t);}
-    #define TOKENI(t) {printf("Lex: " #t "\n"); yylval.ival = atoi(yytext); return(t);}
-    #define TOKEND(t) {printf("Lex: " #t "\n"); yylval.dval = atof(yytext); return(t);}
+    #define TOKENI(t) {printf("Lex: " #t "\n"); yylval.ival = static_cast<int> ( std::strtol(yytext,NULL,10) ); return(t);}
+    #define TOKEND(t) {printf("Lex: " #t "\n"); yylval.dval = std::strtod(yytext,NULL); return(t);}
     #define TOKENSTR(t) {printf("Lex: " #t "\n"); yylval.sval = yytext; return(t);}
-#line 694 "lex.yy.c"
+#line 696 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -908,9 +910,9 @@ YY_DECL
 		}
 
 	{
-#line 41 "library/lex.l"
+#line 43 "library/lex.l"
 
-#line 914 "lex.yy.c"
+#line 916 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -969,173 +971,173 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 42 "library/lex.l"
+#line 44 "library/lex.l"
 TOKEN(QUBITS)
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 44 "library/lex.l"
+#line 46 "library/lex.l"
 TOKEN(QBITHEAD)
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 46 "library/lex.l"
+#line 48 "library/lex.l"
 TOKEN(BITHEAD)
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 48 "library/lex.l"
+#line 50 "library/lex.l"
 TOKEN(AXIS)
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 50 "library/lex.l"
+#line 52 "library/lex.l"
 TOKEN(ROTATIONS)
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 52 "library/lex.l"
+#line 54 "library/lex.l"
 TOKEN(CR)
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 54 "library/lex.l"
+#line 56 "library/lex.l"
 TOKEN(CDASH)
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 56 "library/lex.l"
+#line 58 "library/lex.l"
 TOKEN(NOT_TOKEN)
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 58 "library/lex.l"
+#line 60 "library/lex.l"
 TOKEN(SINGLE_QUBIT_GATES)
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 60 "library/lex.l"
+#line 62 "library/lex.l"
 TOKEN(TWO_QUBIT_GATES)
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 62 "library/lex.l"
+#line 64 "library/lex.l"
 TOKEN(TOFFOLI)
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 64 "library/lex.l"
+#line 66 "library/lex.l"
 TOKEN(MAPKEY)
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 66 "library/lex.l"
+#line 68 "library/lex.l"
 TOKEN(PREP)
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 68 "library/lex.l"
+#line 70 "library/lex.l"
 TOKEN(MEASURE)
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 70 "library/lex.l"
+#line 72 "library/lex.l"
 TOKEN(MEASUREALL)
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 72 "library/lex.l"
+#line 74 "library/lex.l"
 TOKEN(MEASUREPARITY)
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 74 "library/lex.l"
+#line 76 "library/lex.l"
 TOKEN(DISPLAY)
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 76 "library/lex.l"
+#line 78 "library/lex.l"
 TOKEN(WAIT)
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 78 "library/lex.l"
+#line 80 "library/lex.l"
 TOKEN(RESET_AVERAGING)
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 80 "library/lex.l"
+#line 82 "library/lex.l"
 TOKEN(COLON)
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 82 "library/lex.l"
+#line 84 "library/lex.l"
 TOKEN(DOT)
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 84 "library/lex.l"
+#line 86 "library/lex.l"
 TOKEN(BRA)
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 86 "library/lex.l"
+#line 88 "library/lex.l"
 TOKEN(SBRA)
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 88 "library/lex.l"
+#line 90 "library/lex.l"
 TOKEN(CBRA)
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 90 "library/lex.l"
+#line 92 "library/lex.l"
 TOKEN(KET)
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 92 "library/lex.l"
+#line 94 "library/lex.l"
 TOKEN(SKET)
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 94 "library/lex.l"
+#line 96 "library/lex.l"
 TOKEN(CKET)
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 96 "library/lex.l"
+#line 98 "library/lex.l"
 TOKEN(COMMA_SEPARATOR)
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 98 "library/lex.l"
+#line 100 "library/lex.l"
 TOKEN(PARALLEL_SEPARATOR)
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 100 "library/lex.l"
+#line 102 "library/lex.l"
 TOKENI(INTEGER)
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 102 "library/lex.l"
+#line 104 "library/lex.l"
 TOKEND(FLOAT)
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 104 "library/lex.l"
+#line 106 "library/lex.l"
 TOKENSTR(NAME)
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 106 "library/lex.l"
+#line 108 "library/lex.l"
 TOKEN(WS)
 	YY_BREAK
 case 34:
 /* rule 34 can match eol */
 YY_RULE_SETUP
-#line 108 "library/lex.l"
+#line 110 "library/lex.l"
 {
     ++yylineno;
     TOKEN(NEWLINE)
@@ -1144,7 +1146,7 @@ YY_RULE_SETUP
 case 35:
 /* rule 35 can match eol */
 YY_RULE_SETUP
-#line 113 "library/lex.l"
+#line 115 "library/lex.l"
 {
     ++yylineno;
     TOKEN(COMMENT)
@@ -1152,10 +1154,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 118 "library/lex.l"
+#line 120 "library/lex.l"
 ECHO;
 	YY_BREAK
-#line 1159 "lex.yy.c"
+#line 1161 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2156,7 +2158,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 118 "library/lex.l"
+#line 120 "library/lex.l"
 
 
 #include <stdio.h>

@@ -70,12 +70,13 @@
     #include <iostream>
     #include <vector>
     #include <string>
+    #include "pass_class.hpp"
     int yylex(void);
     void yyerror (char const *);
-    std::vector<int> identities;
-    std::vector<std::string> subcircuits;
+    compiler::NumericalIdentifiers test_indices;
+    compiler::SubCircuits test_subcircuits;
 
-#line 79 "grammar.tab.c" /* yacc.c:339  */
+#line 80 "grammar.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -154,13 +155,13 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 17 "library/grammar.y" /* yacc.c:355  */
+#line 16 "library/grammar.y" /* yacc.c:355  */
 
     int ival;
     double dval;
     char* sval;
 
-#line 164 "grammar.tab.c" /* yacc.c:355  */
+#line 165 "grammar.tab.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -177,7 +178,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 181 "grammar.tab.c" /* yacc.c:358  */
+#line 182 "grammar.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -478,17 +479,17 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    41,    41,    42,    44,    45,    46,    47,    49,    50,
-      51,    52,    54,    55,    57,    58,    59,    60,    61,    62,
-      64,    65,    66,    67,    69,    70,    71,    72,    73,    74,
-      75,    76,    77,    78,    79,    80,    81,    82,    86,    87,
-      89,    91,    92,    94,    95,    97,   102,   106,   109,   109,
-     111,   113,   113,   116,   116,   118,   120,   121,   125,   126,
-     128,   130,   131,   134,   134,   136,   139,   139,   141,   141,
-     143,   147,   149,   152,   154,   157,   159,   162,   163,   164,
-     165,   166,   176,   177,   178,   179,   180,   181,   183,   185,
-     187,   189,   191,   193,   197,   199,   199,   201,   201,   205,
-     205,   205,   207,   207,   209,   211,   211
+       0,    40,    40,    41,    43,    44,    45,    46,    48,    49,
+      50,    51,    53,    54,    56,    57,    58,    59,    60,    61,
+      63,    64,    65,    66,    68,    69,    70,    71,    72,    73,
+      74,    75,    76,    77,    78,    79,    80,    81,    85,    86,
+      88,    90,    91,    93,    94,    96,   100,   104,   107,   107,
+     109,   111,   111,   114,   114,   116,   118,   119,   123,   124,
+     126,   128,   129,   132,   132,   134,   137,   137,   139,   139,
+     141,   145,   147,   150,   152,   155,   157,   160,   161,   162,
+     163,   164,   174,   175,   176,   177,   178,   179,   181,   183,
+     185,   187,   189,   191,   195,   197,   197,   199,   199,   203,
+     203,   203,   205,   205,   207,   209,   209
 };
 #endif
 
@@ -1431,76 +1432,75 @@ yyreduce:
   switch (yyn)
     {
         case 12:
-#line 54 "library/grammar.y" /* yacc.c:1646  */
-    {subcircuits.push_back( std::string((yyvsp[0].sval)) );}
-#line 1437 "grammar.tab.c" /* yacc.c:1646  */
+#line 53 "library/grammar.y" /* yacc.c:1646  */
+    { test_subcircuits.addSubCircuit( compiler::SubCircuit ((yyvsp[0].sval), test_subcircuits.numberOfSubCircuits() ) ); }
+#line 1438 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 55 "library/grammar.y" /* yacc.c:1646  */
-    {}
-#line 1443 "grammar.tab.c" /* yacc.c:1646  */
+#line 54 "library/grammar.y" /* yacc.c:1646  */
+    { test_subcircuits.lastSubCircuit().numberIterations((yyvsp[-1].ival)); }
+#line 1444 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 94 "library/grammar.y" /* yacc.c:1646  */
-    {identities.push_back((yyvsp[0].ival));}
-#line 1449 "grammar.tab.c" /* yacc.c:1646  */
+#line 93 "library/grammar.y" /* yacc.c:1646  */
+    {test_indices.addToVector((yyvsp[0].ival));}
+#line 1450 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 98 "library/grammar.y" /* yacc.c:1646  */
+#line 97 "library/grammar.y" /* yacc.c:1646  */
     {
-                                for (int i = (yyvsp[-2].ival); i < (yyvsp[0].ival); ++i)
-                                    identities.push_back(i);
+                                test_indices.addToVector((yyvsp[-2].ival),(yyvsp[0].ival));
                              }
 #line 1458 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
-  case 46:
-#line 102 "library/grammar.y" /* yacc.c:1646  */
+  case 47:
+#line 104 "library/grammar.y" /* yacc.c:1646  */
     {}
 #line 1464 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
-  case 47:
-#line 106 "library/grammar.y" /* yacc.c:1646  */
-    {}
+  case 50:
+#line 109 "library/grammar.y" /* yacc.c:1646  */
+    {test_indices.printMembers();}
 #line 1470 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
-  case 50:
-#line 111 "library/grammar.y" /* yacc.c:1646  */
-    {}
+  case 55:
+#line 116 "library/grammar.y" /* yacc.c:1646  */
+    {test_indices.printMembers();}
 #line 1476 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 125 "library/grammar.y" /* yacc.c:1646  */
+#line 123 "library/grammar.y" /* yacc.c:1646  */
     {}
 #line 1482 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 126 "library/grammar.y" /* yacc.c:1646  */
+#line 124 "library/grammar.y" /* yacc.c:1646  */
     {}
 #line 1488 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 128 "library/grammar.y" /* yacc.c:1646  */
+#line 126 "library/grammar.y" /* yacc.c:1646  */
     {}
 #line 1494 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 130 "library/grammar.y" /* yacc.c:1646  */
+#line 128 "library/grammar.y" /* yacc.c:1646  */
     {}
 #line 1500 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 131 "library/grammar.y" /* yacc.c:1646  */
+#line 129 "library/grammar.y" /* yacc.c:1646  */
     {}
 #line 1506 "grammar.tab.c" /* yacc.c:1646  */
     break;
@@ -1734,9 +1734,8 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 214 "library/grammar.y" /* yacc.c:1906  */
+#line 212 "library/grammar.y" /* yacc.c:1906  */
 
-//std::vector<int> identities;
 
 void yyerror(char const *x)
 {
