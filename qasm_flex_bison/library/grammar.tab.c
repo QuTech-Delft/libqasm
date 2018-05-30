@@ -73,11 +73,13 @@
     #include "pass_class.hpp"
     int yylex(void);
     void yyerror (char const *);
-    compiler::NumericalIdentifiers test_indices;
+    compiler::Qubits qubits_identified;
+    compiler::Bits bits_identified;
+    compiler::NumericalIdentifiers buffer_indices;
     compiler::SubCircuits subcircuits_object;
     compiler::QasmRepresentation qasm_representation;
 
-#line 81 "grammar.tab.c" /* yacc.c:339  */
+#line 83 "grammar.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -156,13 +158,13 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 17 "library/grammar.y" /* yacc.c:355  */
+#line 19 "library/grammar.y" /* yacc.c:355  */
 
     int ival;
     double dval;
     char* sval;
 
-#line 166 "grammar.tab.c" /* yacc.c:355  */
+#line 168 "grammar.tab.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -179,7 +181,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 183 "grammar.tab.c" /* yacc.c:358  */
+#line 185 "grammar.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -480,17 +482,17 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    41,    41,    42,    44,    45,    46,    47,    49,    50,
-      51,    52,    54,    55,    57,    58,    59,    60,    61,    62,
-      64,    65,    66,    67,    69,    70,    71,    72,    73,    74,
-      75,    76,    77,    78,    79,    80,    81,    82,    86,    87,
-      89,    91,    92,    94,    95,    97,   101,   105,   108,   108,
-     110,   112,   112,   115,   115,   117,   119,   120,   124,   125,
-     127,   129,   130,   133,   133,   135,   138,   138,   140,   140,
-     142,   146,   148,   151,   153,   156,   158,   161,   162,   163,
-     164,   165,   175,   176,   177,   178,   179,   180,   182,   184,
-     186,   188,   190,   192,   196,   198,   198,   200,   200,   204,
-     204,   204,   206,   206,   208,   210,   210
+       0,    43,    43,    44,    46,    47,    48,    49,    51,    52,
+      53,    54,    56,    57,    59,    60,    61,    62,    63,    64,
+      66,    67,    68,    69,    71,    72,    73,    74,    75,    76,
+      77,    78,    79,    80,    81,    82,    83,    84,    88,    89,
+      91,    93,    94,    96,    97,    99,   103,   107,   110,   110,
+     112,   120,   120,   123,   123,   125,   133,   134,   138,   139,
+     141,   143,   144,   147,   147,   149,   152,   152,   154,   154,
+     156,   160,   162,   165,   167,   170,   172,   175,   176,   177,
+     178,   179,   189,   190,   191,   192,   193,   194,   196,   198,
+     200,   202,   204,   206,   210,   212,   212,   214,   214,   218,
+     218,   218,   220,   220,   222,   224,   224
 };
 #endif
 
@@ -1433,93 +1435,103 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 41 "library/grammar.y" /* yacc.c:1646  */
+#line 43 "library/grammar.y" /* yacc.c:1646  */
     {qasm_representation.getSubCircuits() = subcircuits_object;}
-#line 1439 "grammar.tab.c" /* yacc.c:1646  */
+#line 1441 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 42 "library/grammar.y" /* yacc.c:1646  */
+#line 44 "library/grammar.y" /* yacc.c:1646  */
     {qasm_representation.getSubCircuits() = subcircuits_object;}
-#line 1445 "grammar.tab.c" /* yacc.c:1646  */
+#line 1447 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 54 "library/grammar.y" /* yacc.c:1646  */
+#line 56 "library/grammar.y" /* yacc.c:1646  */
     { subcircuits_object.addSubCircuit( compiler::SubCircuit ((yyvsp[0].sval),subcircuits_object.numberOfSubCircuits() + 1) ); }
-#line 1451 "grammar.tab.c" /* yacc.c:1646  */
+#line 1453 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 55 "library/grammar.y" /* yacc.c:1646  */
+#line 57 "library/grammar.y" /* yacc.c:1646  */
     { subcircuits_object.lastSubCircuit().numberIterations((yyvsp[-1].ival)); }
-#line 1457 "grammar.tab.c" /* yacc.c:1646  */
+#line 1459 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 94 "library/grammar.y" /* yacc.c:1646  */
-    {test_indices.addToVector((yyvsp[0].ival));}
-#line 1463 "grammar.tab.c" /* yacc.c:1646  */
+#line 96 "library/grammar.y" /* yacc.c:1646  */
+    {buffer_indices.addToVector((yyvsp[0].ival));}
+#line 1465 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 98 "library/grammar.y" /* yacc.c:1646  */
+#line 100 "library/grammar.y" /* yacc.c:1646  */
     {
-                                test_indices.addToVector((yyvsp[-2].ival),(yyvsp[0].ival));
+                                buffer_indices.addToVector((yyvsp[-2].ival),(yyvsp[0].ival));
                              }
-#line 1471 "grammar.tab.c" /* yacc.c:1646  */
+#line 1473 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 105 "library/grammar.y" /* yacc.c:1646  */
+#line 107 "library/grammar.y" /* yacc.c:1646  */
     {qasm_representation.qubitRegister((yyvsp[0].ival));}
-#line 1477 "grammar.tab.c" /* yacc.c:1646  */
+#line 1479 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 110 "library/grammar.y" /* yacc.c:1646  */
-    {test_indices.printMembers();}
-#line 1483 "grammar.tab.c" /* yacc.c:1646  */
+#line 113 "library/grammar.y" /* yacc.c:1646  */
+    {
+                 buffer_indices.removeDuplicates();
+                 qubits_identified.setSelectedQubits(buffer_indices);
+                 buffer_indices.clear();
+                 qubits_identified.getSelectedQubits().printMembers();
+              }
+#line 1490 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 117 "library/grammar.y" /* yacc.c:1646  */
-    {test_indices.printMembers();}
-#line 1489 "grammar.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 58:
-#line 124 "library/grammar.y" /* yacc.c:1646  */
-    {}
-#line 1495 "grammar.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 59:
-#line 125 "library/grammar.y" /* yacc.c:1646  */
-    {}
+#line 126 "library/grammar.y" /* yacc.c:1646  */
+    {
+                buffer_indices.removeDuplicates();
+                bits_identified.setSelectedBits(buffer_indices);
+                buffer_indices.clear();
+                bits_identified.getSelectedBits().printMembers();
+            }
 #line 1501 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
-  case 60:
-#line 127 "library/grammar.y" /* yacc.c:1646  */
+  case 58:
+#line 138 "library/grammar.y" /* yacc.c:1646  */
     {}
 #line 1507 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
-  case 61:
-#line 129 "library/grammar.y" /* yacc.c:1646  */
+  case 59:
+#line 139 "library/grammar.y" /* yacc.c:1646  */
     {}
 #line 1513 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
-  case 62:
-#line 130 "library/grammar.y" /* yacc.c:1646  */
+  case 60:
+#line 141 "library/grammar.y" /* yacc.c:1646  */
     {}
 #line 1519 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
+  case 61:
+#line 143 "library/grammar.y" /* yacc.c:1646  */
+    {}
+#line 1525 "grammar.tab.c" /* yacc.c:1646  */
+    break;
 
-#line 1523 "grammar.tab.c" /* yacc.c:1646  */
+  case 62:
+#line 144 "library/grammar.y" /* yacc.c:1646  */
+    {}
+#line 1531 "grammar.tab.c" /* yacc.c:1646  */
+    break;
+
+
+#line 1535 "grammar.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1747,7 +1759,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 213 "library/grammar.y" /* yacc.c:1906  */
+#line 227 "library/grammar.y" /* yacc.c:1906  */
 
 
 void yyerror(char const *x)

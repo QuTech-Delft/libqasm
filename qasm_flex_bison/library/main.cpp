@@ -19,6 +19,7 @@ int main (int argc, const char** argv)
     if (!result)
     {
         std::cout << "Input is valid." << std::endl;
+        std::cout << "QASM file asks for " << qasm_representation.numQubits() << " qubits" << std::endl;
         std::cout << "Number of subcircuits found = " << qasm_representation.getSubCircuits().numberOfSubCircuits() << std::endl;
         const std::vector<compiler::SubCircuit>& found_subcircuits = qasm_representation.getSubCircuits().getAllSubCircuits();
         for (compiler::SubCircuit elem : found_subcircuits)

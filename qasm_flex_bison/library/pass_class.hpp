@@ -33,6 +33,17 @@ namespace compiler
                 return indices_;
             }
 
+            void removeDuplicates()
+            {
+                std::sort( indices_.begin(), indices_.end() );
+                indices_.erase( std::unique( indices_.begin(), indices_.end() ), indices_.end() );
+            }
+
+            void clear()
+            {
+                indices_.clear();
+            }
+
             void printMembers() const
             {
                 std::cout << "Indices: ";
@@ -50,12 +61,61 @@ namespace compiler
     class Qubits
     // This class encapsulates the participating qubits in the specified operation
     {
+        public:
+            Qubits() = default;
 
+            void addQubits (const int index)
+            {
+                selected_qubits_.addToVector(index);
+            }
+
+            void addQubits (const int index_min, const int index_max)
+            {
+                selected_qubits_.addToVector(index_min,index_max);
+            }
+
+            void setSelectedQubits(NumericalIdentifiers indices)
+            {
+                selected_qubits_ = indices;
+            }
+
+            const NumericalIdentifiers& getSelectedQubits() const
+            {
+                return selected_qubits_;
+            }
+
+        protected:
+            NumericalIdentifiers selected_qubits_;
     };
 
     class Bits
+    // This class encapsulates the participating bit in the specified operation
     {
+        public:
+            Bits() = default;
 
+            void addBits (const int index)
+            {
+                selected_bits_.addToVector(index);
+            }
+
+            void addBits (const int index_min, const int index_max)
+            {
+                selected_bits_.addToVector(index_min,index_max);
+            }
+
+            void setSelectedBits(NumericalIdentifiers indices)
+            {
+                selected_bits_ = indices;
+            }
+
+            const NumericalIdentifiers& getSelectedBits() const
+            {
+                return selected_bits_;
+            }
+
+        protected:
+            NumericalIdentifiers selected_bits_;
     };
 
     template <class operationType>
@@ -88,7 +148,7 @@ namespace compiler
             void printMembers() const
             {
                 std::cout << "Subcircuit Name = " << name_ <<  " , Rank = " << subcircuit_number_ << std::endl;
-                std::cout << name_ << " has " << number_iterations_ << std::endl;
+                std::cout << name_ << " has " << number_iterations_ << " iterations." << std::endl;
             }
 
         protected:
@@ -136,6 +196,11 @@ namespace compiler
             void qubitRegister(int participating_number)
             {
                 qubit_register_ = participating_number;
+            }
+
+            int numQubits()
+            {
+                return qubit_register_;
             }
 
             SubCircuits& getSubCircuits()

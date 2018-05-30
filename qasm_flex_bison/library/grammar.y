@@ -8,7 +8,9 @@
     #include "pass_class.hpp"
     int yylex(void);
     void yyerror (char const *);
-    compiler::NumericalIdentifiers test_indices;
+    compiler::Qubits qubits_identified;
+    compiler::Bits bits_identified;
+    compiler::NumericalIdentifiers buffer_indices;
     compiler::SubCircuits subcircuits_object;
     compiler::QasmRepresentation qasm_representation;
 %}
@@ -91,12 +93,12 @@ indices : SBRA numerical-identifiers SKET
 numerical-identifiers : numerical-identifier-list 
                       | numerical-identifier-range
     ;
-numerical-identifier-list : INTEGER {test_indices.addToVector($1);}
+numerical-identifier-list : INTEGER {buffer_indices.addToVector($1);}
                           | numerical-identifier-list COMMA_SEPARATOR numerical-identifiers
     ;
 numerical-identifier-range : INTEGER COLON INTEGER 
                              {
-                                test_indices.addToVector($1,$3);
+                                buffer_indices.addToVector($1,$3);
                              }
                            | numerical-identifier-range COMMA_SEPARATOR numerical-identifiers
     ;
@@ -107,14 +109,26 @@ qubit-register : QUBITS WS INTEGER {qasm_representation.qubitRegister($3);}
 //# We define the syntax for selecting the qubits/bits, either by a range or a list
 qubit : qubit-nomap | NAME
     ;
-qubit-nomap : QBITHEAD indices {test_indices.printMembers();}
+qubit-nomap : QBITHEAD indices 
+              {
+                 buffer_indices.removeDuplicates();
+                 qubits_identified.setSelectedQubits(buffer_indices);
+                 buffer_indices.clear();
+                 qubits_identified.getSelectedQubits().printMembers();
+              }
     ;
 qubit-selection : qubit | qubit-selection COMMA_SEPARATOR qubit 
     ;
 //## Next we define a classical bit, which is required to perform control gate operations
 bit :  bit-nomap | NAME
     ;
-bit-nomap : BITHEAD indices {test_indices.printMembers();} 
+bit-nomap : BITHEAD indices
+            {
+                buffer_indices.removeDuplicates();
+                bits_identified.setSelectedBits(buffer_indices);
+                buffer_indices.clear();
+                bits_identified.getSelectedBits().printMembers();
+            } 
     ;
 bit-selection : bit
                 | bit-selection COMMA_SEPARATOR bit
