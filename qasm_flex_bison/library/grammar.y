@@ -9,7 +9,8 @@
     int yylex(void);
     void yyerror (char const *);
     compiler::NumericalIdentifiers test_indices;
-    compiler::SubCircuits test_subcircuits;
+    compiler::SubCircuits subcircuits_object;
+    compiler::QasmRepresentation qasm_representation;
 %}
 
 
@@ -23,12 +24,12 @@
 %token <ival> INTEGER
 %token <dval> FLOAT
 %token COMMA_SEPARATOR PARALLEL_SEPARATOR BRA KET DOT SBRA SKET CBRA CKET LS_SEP NEWLINE WS COLON COMMENT
-%token ROTATIONS AXIS
+%token <sval> ROTATIONS AXIS
 %token QUBITS
-%token SINGLE_QUBIT_GATES TWO_QUBIT_GATES CR TOFFOLI
+%token <sval> SINGLE_QUBIT_GATES TWO_QUBIT_GATES CR TOFFOLI
 %token CDASH NOT_TOKEN
-%token MAPKEY PREP MEASURE MEASUREPARITY MEASUREALL
-%token WAIT DISPLAY RESET_AVERAGING
+%token <sval> MAPKEY PREP MEASURE MEASUREPARITY MEASUREALL
+%token <sval> WAIT DISPLAY RESET_AVERAGING
 %token QBITHEAD BITHEAD
 
 
@@ -37,8 +38,8 @@
 %%
 
 //# Describe the general structure of a qasm file
-qasm-file : qubit-register line-separator circuits
-          | comments qubit-register line-separator circuits
+qasm-file : qubit-register line-separator circuits {qasm_representation.getSubCircuits() = subcircuits_object;}
+          | comments qubit-register line-separator circuits {qasm_representation.getSubCircuits() = subcircuits_object;}
     ;
 circuits : circuit 
            | circuits circuit
@@ -50,12 +51,12 @@ circuit : subcircuit statements
         | WS subcircuit statements 
         | WS statements
     ;
-subcircuit : DOT NAME { test_subcircuits.addSubCircuit( compiler::SubCircuit ($2, test_subcircuits.numberOfSubCircuits() ) ); }
-           | subcircuit BRA INTEGER KET { test_subcircuits.lastSubCircuit().numberIterations($3); }
+subcircuit : DOT NAME { subcircuits_object.addSubCircuit( compiler::SubCircuit ($2,subcircuits_object.numberOfSubCircuits() + 1) ); }
+           | subcircuit BRA INTEGER KET { subcircuits_object.lastSubCircuit().numberIterations($3); }
     ;
 statements : qasm-line 
            | subcircuit
-           |qasm-line line-separator
+           | qasm-line line-separator
            | subcircuit line-separator
            | statements line-separator qasm-line
            | statements line-separator subcircuit
@@ -101,7 +102,7 @@ numerical-identifier-range : INTEGER COLON INTEGER
     ;
 
 
-qubit-register : QUBITS WS INTEGER {}
+qubit-register : QUBITS WS INTEGER {qasm_representation.qubitRegister($3);}
 
 //# We define the syntax for selecting the qubits/bits, either by a range or a list
 qubit : qubit-nomap | NAME

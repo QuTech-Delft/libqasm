@@ -43,11 +43,26 @@ namespace compiler
                 std::cout << std::endl;
             }
 
-
-
         protected:
             std::vector<size_t> indices_;
     }; // class NumericalIdentifiers
+
+    class Qubits
+    // This class encapsulates the participating qubits in the specified operation
+    {
+
+    };
+
+    class Bits
+    {
+
+    };
+
+    template <class operationType>
+    class Operations
+    {
+
+    };
 
     class SubCircuit
     // This class encapsulates the subcircuit with the number of iterations and also the statements contained in it.
@@ -112,7 +127,26 @@ namespace compiler
             std::vector<SubCircuit> subcircuits_;
     }; //class SubCircuits
 
+    class QasmRepresentation
+    // This class is supposed to provide an encapsulation of all the objects within the qasm file
+    {
+        public:
+            QasmRepresentation() = default;
 
+            void qubitRegister(int participating_number)
+            {
+                qubit_register_ = participating_number;
+            }
+
+            SubCircuits& getSubCircuits()
+            {
+                return subcircuits_;
+            }
+
+        protected:
+            SubCircuits subcircuits_;
+            int qubit_register_;
+    }; // class QasmRepresentation
 } //namespace compiler
 
 
