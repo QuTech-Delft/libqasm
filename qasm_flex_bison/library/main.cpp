@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "pass_class.hpp"
+#include "qasm_ast.hpp"
 
 extern int yyparse();
 extern void yyerror(const char *);

@@ -10,7 +10,7 @@ display b[100:1, 7:56, 6,8,9] , bleh
 reset-AveraGing
 reset-Averaging Q[8,9, 0:100, 6, 8, 9]
 
-map q[0,0:8,5,6,9:1000], q[6], gm2, bleh2
+map q[0,0:8,5,6,9:12], bleh2
 
 measure_all
 measure_parity     q[90:45], x,     mapqubits, z

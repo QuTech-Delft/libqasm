@@ -1,10 +1,11 @@
-#ifndef QASM_REP
-#define QASM_REP
+#ifndef QASM_AST_REP
+#define QASM_AST_REP
 
 
 #include <iostream>
 #include <vector>
 #include <string>
+#include <map>
 #include <memory>
 #include <algorithm>
 
@@ -62,17 +63,6 @@ namespace compiler
     // This class encapsulates the participating qubits in the specified operation
     {
         public:
-            Qubits() = default;
-
-            void addQubits (const int index)
-            {
-                selected_qubits_.addToVector(index);
-            }
-
-            void addQubits (const int index_min, const int index_max)
-            {
-                selected_qubits_.addToVector(index_min,index_max);
-            }
 
             void setSelectedQubits(NumericalIdentifiers indices)
             {
@@ -84,6 +74,8 @@ namespace compiler
                 return selected_qubits_;
             }
 
+            // Check for map also
+
         protected:
             NumericalIdentifiers selected_qubits_;
     };
@@ -92,17 +84,6 @@ namespace compiler
     // This class encapsulates the participating bit in the specified operation
     {
         public:
-            Bits() = default;
-
-            void addBits (const int index)
-            {
-                selected_bits_.addToVector(index);
-            }
-
-            void addBits (const int index_min, const int index_max)
-            {
-                selected_bits_.addToVector(index_min,index_max);
-            }
 
             void setSelectedBits(NumericalIdentifiers indices)
             {
@@ -114,14 +95,21 @@ namespace compiler
                 return selected_bits_;
             }
 
+            // Check for map also
+
         protected:
             NumericalIdentifiers selected_bits_;
     };
 
-    template <class operationType>
     class Operations
     {
+    };
 
+    template<class QuBitType>
+    class MapOperation : Operations
+    {
+        public:
+            MapOperation() = default;
     };
 
     class SubCircuit
@@ -155,6 +143,7 @@ namespace compiler
             int number_iterations_; // This member is the number of iterations the subcircuit is supposed to run
             std::string name_; // This member is the name of the subcircuit
             size_t subcircuit_number_; // This member provides the order of the subcircuits when it is found in the qasm file
+            std::vector<Operations*> operations_;
     }; //class SubCircuit
 
     class SubCircuits
