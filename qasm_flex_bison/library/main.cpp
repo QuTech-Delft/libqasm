@@ -6,7 +6,6 @@
 extern int yyparse();
 extern void yyerror(const char *);
 extern int yylex();
-extern compiler::NumericalIdentifiers test_indices;
 extern compiler::QasmRepresentation qasm_representation;
 
 int main (int argc, const char** argv)
@@ -20,6 +19,8 @@ int main (int argc, const char** argv)
     {
         std::cout << "Input is valid." << std::endl;
         std::cout << "QASM file asks for " << qasm_representation.numQubits() << " qubits" << std::endl;
+        std::cout << "With the following mappings: " << std::endl;
+        qasm_representation.printMappings();
         std::cout << "Number of subcircuits found = " << qasm_representation.getSubCircuits().numberOfSubCircuits() << std::endl;
         const std::vector<compiler::SubCircuit>& found_subcircuits = qasm_representation.getSubCircuits().getAllSubCircuits();
         for (compiler::SubCircuit elem : found_subcircuits)

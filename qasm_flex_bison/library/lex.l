@@ -47,9 +47,9 @@ measureparity      {measurehead}(_(?i:parity))
 
 {bithead} TOKEN(BITHEAD)
 
-{axis}  TOKEN(AXIS)
+{axis}  TOKENSTR(AXIS)
 
-{rotations} TOKEN(ROTATIONS)
+{rotations} TOKENSTR(ROTATIONS)
 
 {cr} TOKEN(CR)
 
@@ -57,11 +57,11 @@ measureparity      {measurehead}(_(?i:parity))
 
 {not_token} TOKEN(NOT_TOKEN)
 
-{single_qubits} TOKEN(SINGLE_QUBIT_GATES)
+{single_qubits} TOKENSTR(SINGLE_QUBIT_GATES)
 
-{two_qubit_gates} TOKEN(TWO_QUBIT_GATES)
+{two_qubit_gates} TOKENSTR(TWO_QUBIT_GATES)
 
-{toffoli} TOKEN(TOFFOLI)
+{toffoli} TOKENSTR(TOFFOLI)
 
 {mapkey} TOKEN(MAPKEY)
 

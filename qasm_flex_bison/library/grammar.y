@@ -13,6 +13,7 @@
     compiler::NumericalIdentifiers buffer_indices;
     compiler::SubCircuits subcircuits_object;
     compiler::QasmRepresentation qasm_representation;
+    std::string buffer_gate;
 %}
 
 
@@ -34,6 +35,7 @@
 %token <sval> WAIT DISPLAY RESET_AVERAGING
 %token QBITHEAD BITHEAD
 
+%type <sval> single-qubit-gate;
 
 %start qasm-file
 
@@ -107,27 +109,35 @@ numerical-identifier-range : INTEGER COLON INTEGER
 qubit-register : QUBITS WS INTEGER {qasm_representation.qubitRegister($3);}
 
 //# We define the syntax for selecting the qubits/bits, either by a range or a list
-qubit : qubit-nomap | NAME
+qubit : qubit-nomap 
+      | NAME
+        {
+            buffer_indices = qasm_representation.getMappedIndices( std::string($1), true );
+            qubits_identified.setSelectedQubits(buffer_indices);
+        } 
     ;
 qubit-nomap : QBITHEAD indices 
               {
                  buffer_indices.removeDuplicates();
                  qubits_identified.setSelectedQubits(buffer_indices);
                  buffer_indices.clear();
-                 qubits_identified.getSelectedQubits().printMembers();
               }
     ;
 qubit-selection : qubit | qubit-selection COMMA_SEPARATOR qubit 
     ;
 //## Next we define a classical bit, which is required to perform control gate operations
-bit :  bit-nomap | NAME
+bit :  bit-nomap 
+    | NAME
+      {
+          buffer_indices = qasm_representation.getMappedIndices( std::string($1), false );
+          bits_identified.setSelectedBits(buffer_indices);
+      }
     ;
 bit-nomap : BITHEAD indices
             {
                 buffer_indices.removeDuplicates();
                 bits_identified.setSelectedBits(buffer_indices);
                 buffer_indices.clear();
-                bits_identified.getSelectedBits().printMembers();
             } 
     ;
 bit-selection : bit
@@ -135,16 +145,25 @@ bit-selection : bit
     ;
 
 //# Define the single qubit operation line
-single-qubit-operation : single-qubit-gate WS qubit {}
+single-qubit-operation : single-qubit-gate WS qubit 
+                         {
+                            subcircuits_object.lastSubCircuit().addOperation( new compiler::SingleGateOperation(buffer_gate,qubits_identified) );
+                         }
                        | prep_measure-ops WS qubit {}
     ;
 single-qubit-operation-args : parameterized-single-qubit-gate WS qubit COMMA_SEPARATOR FLOAT {}
     ;
-map-operation : MAPKEY WS qubit-nomap COMMA_SEPARATOR NAME {}
-              | MAPKEY WS bit-nomap COMMA_SEPARATOR NAME {}
+map-operation : MAPKEY WS qubit-nomap COMMA_SEPARATOR NAME 
+                {
+                    qasm_representation.addMappings(std::string($5), qubits_identified.getSelectedQubits(), true );
+                }
+              | MAPKEY WS bit-nomap COMMA_SEPARATOR NAME
+                {
+                    qasm_representation.addMappings(std::string($5), bits_identified.getSelectedBits(), false );
+                }
     ;
 //## Define the single qubit operations/gates
-single-qubit-gate : AXIS | SINGLE_QUBIT_GATES
+single-qubit-gate : AXIS {buffer_gate = std::string($1); $$=$1;} | SINGLE_QUBIT_GATES {buffer_gate = std::string($1); $$=$1;} 
     ;
 parameterized-single-qubit-gate : ROTATIONS
     ;

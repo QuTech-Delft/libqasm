@@ -15,11 +15,11 @@ qubits 8
    map q[7] , q7
 
 .first_circuit(50)
-   h q0
+   H q0
    cnot q0,q1
    x  q1
-   y  q2
-   z  q3
+   Y  q2
+   z  q6
 
 .second_circuit
    rx q4,0.453
