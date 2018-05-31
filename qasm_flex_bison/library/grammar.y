@@ -127,11 +127,11 @@ qubit-selection : qubit | qubit-selection COMMA_SEPARATOR qubit
     ;
 //## Next we define a classical bit, which is required to perform control gate operations
 bit :  bit-nomap 
-    | NAME
-      {
-          buffer_indices = qasm_representation.getMappedIndices( std::string($1), false );
-          bits_identified.setSelectedBits(buffer_indices);
-      }
+    |  NAME
+       {
+           buffer_indices = qasm_representation.getMappedIndices( std::string($1), false );
+           bits_identified.setSelectedBits(buffer_indices);
+       }
     ;
 bit-nomap : BITHEAD indices
             {
@@ -147,11 +147,14 @@ bit-selection : bit
 //# Define the single qubit operation line
 single-qubit-operation : single-qubit-gate WS qubit 
                          {
-                            subcircuits_object.lastSubCircuit().addOperation( new compiler::SingleGateOperation(buffer_gate,qubits_identified) );
+                            subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation(buffer_gate,qubits_identified) );
                          }
                        | prep_measure-ops WS qubit {}
     ;
-single-qubit-operation-args : parameterized-single-qubit-gate WS qubit COMMA_SEPARATOR FLOAT {}
+single-qubit-operation-args : parameterized-single-qubit-gate WS qubit COMMA_SEPARATOR FLOAT 
+                              {
+                                  subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation(buffer_gate,qubits_identified,$5) );
+                              }
     ;
 map-operation : MAPKEY WS qubit-nomap COMMA_SEPARATOR NAME 
                 {
@@ -163,9 +166,9 @@ map-operation : MAPKEY WS qubit-nomap COMMA_SEPARATOR NAME
                 }
     ;
 //## Define the single qubit operations/gates
-single-qubit-gate : AXIS {buffer_gate = std::string($1); $$=$1;} | SINGLE_QUBIT_GATES {buffer_gate = std::string($1); $$=$1;} 
+single-qubit-gate : AXIS {buffer_gate = std::string($1);} | SINGLE_QUBIT_GATES {buffer_gate = std::string($1);} 
     ;
-parameterized-single-qubit-gate : ROTATIONS
+parameterized-single-qubit-gate : ROTATIONS {buffer_gate = std::string($1);}
     ;
 //# This is to define the state preparation/measurement
 prep_measure-ops : PREP | MEASURE
@@ -212,17 +215,17 @@ binary-controlled-operations : bit-single-qubit-operation
                                    | bit-toffoli-operation 
                                    | negate-binary-operation
     ;
-bit-single-qubit-operation : CDASH single-qubit-gate WS bit-selection COMMA_SEPARATOR qubit-selection
+bit-single-qubit-operation : CDASH single-qubit-gate WS bit COMMA_SEPARATOR qubit
     ;
-bit-single-qubit-operation-args : CDASH parameterized-single-qubit-gate WS bit-selection COMMA_SEPARATOR qubit-selection COMMA_SEPARATOR FLOAT
+bit-single-qubit-operation-args : CDASH parameterized-single-qubit-gate WS bit COMMA_SEPARATOR qubit COMMA_SEPARATOR FLOAT
     ;
-bit-two-qubit-operation : CDASH two-qubit-gates WS bit-selection COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit
+bit-two-qubit-operation : CDASH two-qubit-gates WS bit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit
     ;
-bit-two-qubit-operation-args : CDASH two-qubit-gate-args WS bit-selection COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR INTEGER
+bit-two-qubit-operation-args : CDASH two-qubit-gate-args WS bit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR INTEGER
     ;
-bit-toffoli-operation : CDASH toffoli-gate WS bit-selection COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit
+bit-toffoli-operation : CDASH toffoli-gate WS bit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit
     ;
-negate-binary-operation : NOT_TOKEN WS bit-selection
+negate-binary-operation : NOT_TOKEN WS bit
     ;
 
 //# Parallel execution
@@ -236,11 +239,11 @@ parallelizable-ops : all-valid-operations | parallelizable-ops PARALLEL_SEPARATO
 //# Special operations
 special-operations : display-operation | wait-operation | reset-averaging-operation
     ;
-display-operation : DISPLAY | display-operation WS bit-selection
+display-operation : DISPLAY | display-operation WS bit
     ;
 wait-operation : WAIT WS INTEGER
     ;
-reset-averaging-operation : RESET_AVERAGING | reset-averaging-operation WS qubit-selection
+reset-averaging-operation : RESET_AVERAGING | reset-averaging-operation WS qubit
     ;
 
 %%

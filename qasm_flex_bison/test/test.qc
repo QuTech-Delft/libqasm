@@ -20,9 +20,10 @@ qubits 8
    x  q1
    Y  q2
    z  q6
+   {x q3 | h q7}
 
 .second_circuit
-   rx q4,0.453
+   rx q4,     -0.453e1
    ry q5,0.244
    rz q6,0.555
    c-x bitcontroller, q[12:14,56]

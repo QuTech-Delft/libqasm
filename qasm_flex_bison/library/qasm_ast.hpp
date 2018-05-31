@@ -102,19 +102,35 @@ namespace compiler
     };
 
     class Operation
-    {   
-        public:
-            virtual void printOperation(){}
-    }; // class Operation
-
-    class SingleGateOperation : public Operation
     {
         public:
-            SingleGateOperation(const std::string type, Qubits qubits_involved)
-            : type_ (type), qubits_ (qubits_involved)
+            Operation(const std::string type, Qubits qubits_involved)
+            : type_ (type), 
+              qubits_ (qubits_involved), 
+              rotation_angle_ (std::numeric_limits<double>::max()), bit_controlled_(false)
+            // This is the most common operation, the single qubit operation
             {
-                std::transform(type_.begin(), type_.end(), type_.begin(), ::tolower);
+                init();
             }
+
+            Operation(const std::string type, Qubits qubits_involved, const double rotation_angle)
+            : type_ (type), 
+              qubits_ (qubits_involved), 
+              rotation_angle_ (rotation_angle), bit_controlled_(false)
+            // Single qubit rotations
+            {
+                init();
+            }
+
+            Operation (   const std::string type, 
+                          Qubits qubits_involved,
+                          const double rotation_angle,
+                          const bool bit_controlled
+                      )
+            : type_ (type), 
+              qubits_ (qubits_involved), 
+              rotation_angle_ (rotation_angle), bit_controlled_(bit_controlled)
+            // bit controlled operations
 
             std::string getType() const
             {
@@ -126,16 +142,29 @@ namespace compiler
                 return qubits_;
             }
 
+            double getRotationAngle() const
+            {
+                return rotation_angle_;
+            }
+
             void printOperation() const
             {
-                std::cout << "Gate " << type_ << ": involving qubits ";
+                std::cout << "Gate " << type_ << ": " << "with rotations = " << rotation_angle_ << " involving qubits ";
                 qubits_.getSelectedQubits().printMembers();
             }
 
         protected:
+            void init()
+            {
+                std::transform(type_.begin(), type_.end(), type_.begin(), ::tolower);
+            }
+
             std::string type_;
             Qubits qubits_;
-    }; // class SingleGateOperation
+            Bits control_bits_;
+            bool bit_controlled_;
+            double rotation_angle_;
+    }; // class Operation
 
     class SubCircuit
     // This class encapsulates the subcircuit with the number of iterations and also the statements contained in it.
@@ -148,7 +177,7 @@ namespace compiler
             {
             }
 
-            const int numberIterations() const
+            int numberIterations() const
             {
                 return number_iterations_;
             }
@@ -158,7 +187,7 @@ namespace compiler
                 number_iterations_ = iterations;
             }
 
-            void addOperation(SingleGateOperation * opline)
+            void addOperation(Operation * opline)
             {
                 operations_.push_back(opline);
             }
@@ -173,10 +202,10 @@ namespace compiler
             }
 
         protected:
-            int number_iterations_; // This member is the number of iterations the subcircuit is supposed to run
             std::string name_; // This member is the name of the subcircuit
+            int number_iterations_; // This member is the number of iterations the subcircuit is supposed to run
             size_t subcircuit_number_; // This member provides the order of the subcircuits when it is found in the qasm file
-            std::vector< SingleGateOperation* > operations_;
+            std::vector< Operation* > operations_;
     }; //class SubCircuit
 
     class SubCircuits
@@ -197,7 +226,7 @@ namespace compiler
 
             SubCircuit& lastSubCircuit()
             {
-                subcircuits_.back();
+                return subcircuits_.back();
             }
 
             const std::vector<SubCircuit>& getAllSubCircuits() const
@@ -232,6 +261,8 @@ namespace compiler
 
             void addMappings(std::string name_key, NumericalIdentifiers indices, bool isQubit)
             {
+                // Make sure they are all lowercase
+                std::transform(name_key.begin(), name_key.end(), name_key.begin(), ::tolower);
                 // Make pair between the indices and whether or not it is a qubit
                 std::pair<NumericalIdentifiers, bool> map_value (indices, isQubit);
                 mappings_[name_key] = map_value;
@@ -239,6 +270,8 @@ namespace compiler
 
             const NumericalIdentifiers& getMappedIndices(std::string name_key, bool isQubit) const
             {
+                // Make sure they are all lowercase
+                std::transform(name_key.begin(), name_key.end(), name_key.begin(), ::tolower);
                 if( mappings_.find(name_key)->second.second == isQubit)
                     return mappings_.find(name_key)->second.first;
                 else
