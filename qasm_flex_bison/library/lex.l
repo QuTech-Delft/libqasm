@@ -51,11 +51,11 @@ measureparity      {measurehead}(_(?i:parity))
 
 {rotations} TOKENSTR(ROTATIONS)
 
-{cr} TOKEN(CR)
+{cr} TOKENSTR(CR)
 
 {cdash} TOKEN(CDASH)
 
-{not_token} TOKEN(NOT_TOKEN)
+{not_token} TOKENSTR(NOT_TOKEN)
 
 {single_qubits} TOKENSTR(SINGLE_QUBIT_GATES)
 
@@ -65,19 +65,19 @@ measureparity      {measurehead}(_(?i:parity))
 
 {mapkey} TOKEN(MAPKEY)
 
-{prep} TOKEN(PREP)
+{prep} TOKENSTR(PREP)
 
-{measure} TOKEN(MEASURE)
+{measure} TOKENSTR(MEASURE)
 
-{measureall} TOKEN(MEASUREALL)
+{measureall} TOKENSTR(MEASUREALL)
 
-{measureparity} TOKEN(MEASUREPARITY)
+{measureparity} TOKENSTR(MEASUREPARITY)
 
-{display} TOKEN(DISPLAY)
+{display} TOKENSTR(DISPLAY)
 
-{wait} TOKEN(WAIT)
+{wait} TOKENSTR(WAIT)
 
-{resetavg} TOKEN(RESET_AVERAGING)
+{resetavg} TOKENSTR(RESET_AVERAGING)
 
 ":" TOKEN(COLON)
 

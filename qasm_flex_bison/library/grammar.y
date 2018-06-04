@@ -55,7 +55,7 @@ circuit : subcircuit statements
         | WS subcircuit statements 
         | WS statements
     ;
-subcircuit : DOT NAME { subcircuits_object.addSubCircuit( compiler::SubCircuit ($2,subcircuits_object.numberOfSubCircuits() + 1) ); }
+subcircuit : DOT NAME { subcircuits_object.addSubCircuit( compiler::SubCircuit ($2,subcircuits_object.numberOfSubCircuits()) ); }
            | subcircuit BRA INTEGER KET { subcircuits_object.lastSubCircuit().numberIterations($3); }
     ;
 statements : qasm-line 
@@ -149,7 +149,10 @@ single-qubit-operation : single-qubit-gate WS qubit
                          {
                             subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation(buffer_gate,qubits_identified) );
                          }
-                       | prep_measure-ops WS qubit {}
+                       | prep_measure-ops WS qubit 
+                         {
+                            subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation(buffer_gate,qubits_identified) );
+                         }
     ;
 single-qubit-operation-args : parameterized-single-qubit-gate WS qubit COMMA_SEPARATOR FLOAT 
                               {
@@ -171,7 +174,7 @@ single-qubit-gate : AXIS {buffer_gate = std::string($1);} | SINGLE_QUBIT_GATES {
 parameterized-single-qubit-gate : ROTATIONS {buffer_gate = std::string($1);}
     ;
 //# This is to define the state preparation/measurement
-prep_measure-ops : PREP | MEASURE
+prep_measure-ops : PREP {buffer_gate = std::string($1);} | MEASURE {buffer_gate = std::string($1);}
     ;
 measure-parity-operation : MEASUREPARITY WS qubit COMMA_SEPARATOR AXIS | measure-parity-operation COMMA_SEPARATOR qubit COMMA_SEPARATOR AXIS
     ;

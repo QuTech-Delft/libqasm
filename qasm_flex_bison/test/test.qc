@@ -3,6 +3,24 @@
 # qubit definition
 qubits 8
 
+map q[0,0:7,5,6], bleh2
+map b[5], bleh
+
+
+prep_z q[5]
+reset-AveraGing
+reset-Averaging Q[1,4,6]
+
+
+measure_all
+measure_parity     q[2:5], x,     q[0], z
+measure_parity q[1:3,4,6,7], z
+
+x q[4:7]
+
+rX q[1,2:5], 3.1416E4
+
+
 .mapping
    map b[0:11], bitcontroller
    map q[0] , q0
@@ -32,3 +50,7 @@ qubits 8
 # measurement
    measure q1
 
+.display_results
+display
+display b[100,10,99]
+display bleh

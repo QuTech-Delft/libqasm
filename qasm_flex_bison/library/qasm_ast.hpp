@@ -8,6 +8,7 @@
 #include <map>
 #include <memory>
 #include <algorithm>
+#include <stdexcept>
 
 namespace compiler
 {
@@ -131,6 +132,9 @@ namespace compiler
               qubits_ (qubits_involved), 
               rotation_angle_ (rotation_angle), bit_controlled_(bit_controlled)
             // bit controlled operations
+            {
+                init();
+            }
 
             std::string getType() const
             {
@@ -212,7 +216,11 @@ namespace compiler
     // This class groups all the subcircuits found in the cqasm file
     {
         public:
-            SubCircuits() = default;
+            SubCircuits()
+            {
+                SubCircuit default_circuit("default", 0);
+                subcircuits_.push_back ( default_circuit );
+            }
 
             void addSubCircuit(SubCircuit subcircuit)
             {
@@ -275,7 +283,7 @@ namespace compiler
                 if( mappings_.find(name_key)->second.second == isQubit)
                     return mappings_.find(name_key)->second.first;
                 else
-                    throw;
+                    throw std::runtime_error(std::string("Could not get wanted mapping ") + name_key);
             }
 
             void printMappings() const
