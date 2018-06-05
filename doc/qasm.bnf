@@ -89,12 +89,12 @@
 <mapped-bit> ::= <identifier>
 
 # Define the single qubit operation line
-<single-qubit-operation> ::= <single-qubit-gate> " " <qubit-selection> 
-                             | <prep_measure-ops> " " <qubit-selection>
+<single-qubit-operation> ::= <single-qubit-gate> " " <qubit> 
+                             | <prep_measure-ops> " " <qubit>
 
-<single-qubit-operation-args> ::= <parameterized-single-qubit-gate> " " <qubit-selection> <ws-separator> <float>
+<single-qubit-operation-args> ::= <parameterized-single-qubit-gate> " " <qubit> <ws-separator> <float>
 
-<map-operation> ::= "map" " " <qubit-selection> <ws-separator> <mapped-qubit> | "map" " " <bit-selection> <ws-separator> <mapped-bit>
+<map-operation> ::= "map" " " <qubit> <ws-separator> <mapped-qubit> | "map" " " <bit-selection> <ws-separator> <mapped-bit>
 
 ## Define the single qubit operations/gates
 <single-qubit-gate> ::= "i" | "h" | "x" | "y" | "z" | "x90" | "y90" | 
@@ -107,7 +107,7 @@
 <prep_measure-ops> ::= <prep> | <measure>
 <prep> ::= "prep" | "prep_" <axis>
 <measure> ::= "measure" | "measure_" <axis>
-<measure-parity-operation> ::= <measureparity> " " <qubit> <ws-separator> <axis> | <measure-parity-operation> <ws-separator> <qubit> <ws-separator> <axis>
+<measure-parity-operation> ::= <measureparity> " " <qubit> <ws-separator> <axis> <ws-separator> <qubit> <ws-separator> <axis>
 <measureparity> ::= "measure_parity"
 <measureall-operation> ::= "measure_all"
 
@@ -148,8 +148,8 @@
                                    | <bit-toffoli-operation> 
                                    | <negate-binary-operation>
 
-<bit-single-qubit-operation> ::= "c-" <single-qubit-gate> " " <bit-selection> <ws-separator> <qubit-selection>
-<bit-single-qubit-operation-args> ::= "c-" <parameterized-single-qubit-gate> " " <bit-selection> <ws-separator> <qubit-selection> ", " <float>
+<bit-single-qubit-operation> ::= "c-" <single-qubit-gate> " " <bit-selection> <ws-separator> <qubit>
+<bit-single-qubit-operation-args> ::= "c-" <parameterized-single-qubit-gate> " " <bit-selection> <ws-separator> <qubit> ", " <float>
 
 <bit-two-qubit-operation> ::= "c-" <two-qubit-gates> " " <bit-selection> <ws-separator> <qubit-arguments> <ws-separator> <qubit-arguments>
 <bit-two-qubit-operation-args> ::= "c-" <two-qubit-gate-args> " " <bit-selection> <ws-separator> <qubit-arguments> <ws-separator> <qubit-arguments> <ws-separator> <number>
