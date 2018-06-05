@@ -1,4 +1,5 @@
 %option noyywrap
+%option c++
 %{
     #include "grammar.tab.h"
     #include <cstdlib>

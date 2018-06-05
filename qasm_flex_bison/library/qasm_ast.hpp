@@ -1,3 +1,4 @@
+#pragma once
 #ifndef QASM_AST_REP
 #define QASM_AST_REP
 
@@ -106,21 +107,29 @@ namespace compiler
     {
         public:
             Operation(const std::string type, Qubits qubits_involved)
-            : type_ (type), 
-              qubits_ (qubits_involved), 
+            : qubits_ (qubits_involved), 
               rotation_angle_ (std::numeric_limits<double>::max()), bit_controlled_(false)
             // This is the most common operation, the single qubit operation
             {
-                init();
+                type_ = toLowerCase(type);
             }
 
             Operation(const std::string type, Qubits qubits_involved, const double rotation_angle)
-            : type_ (type), 
-              qubits_ (qubits_involved), 
+            : qubits_ (qubits_involved), 
               rotation_angle_ (rotation_angle), bit_controlled_(false)
             // Single qubit rotations
             {
-                init();
+                type_ = toLowerCase(type);
+            }
+
+            Operation(const std::string type, Qubits qubits_involved, std::string axis)
+            : qubits_ (qubits_involved), 
+              rotation_angle_ (std::numeric_limits<double>::max()), bit_controlled_(false)
+            // Measure parity operation
+            {
+                type_ = toLowerCase(type);
+                measure_parity_qubits_.push_back(qubits_involved);
+                measure_parity_axis_.push_back( toLowerCase(axis) );
             }
 
             Operation (   const std::string type, 
@@ -128,12 +137,11 @@ namespace compiler
                           const double rotation_angle,
                           const bool bit_controlled
                       )
-            : type_ (type), 
-              qubits_ (qubits_involved), 
+            : qubits_ (qubits_involved), 
               rotation_angle_ (rotation_angle), bit_controlled_(bit_controlled)
             // bit controlled operations
             {
-                init();
+                type_ = toLowerCase(type);
             }
 
             std::string getType() const
@@ -151,6 +159,12 @@ namespace compiler
                 return rotation_angle_;
             }
 
+            std::vector<Qubits> addMeasureParityQubitsAndAxis(Qubits qubits, std::string axis)
+            {
+                measure_parity_qubits_.push_back(qubits);
+                measure_parity_axis_.push_back( toLowerCase(axis) );
+            }
+
             void printOperation() const
             {
                 std::cout << "Gate " << type_ << ": " << "with rotations = " << rotation_angle_ << " involving qubits ";
@@ -158,9 +172,12 @@ namespace compiler
             }
 
         protected:
-            void init()
+
+            std::string toLowerCase(const std::string& string_input)
             {
-                std::transform(type_.begin(), type_.end(), type_.begin(), ::tolower);
+                std::string lower_case_input = string_input;
+                std::transform(lower_case_input.begin(), lower_case_input.end(), lower_case_input.begin(), ::tolower);
+                return lower_case_input;
             }
 
             std::string type_;
@@ -168,6 +185,8 @@ namespace compiler
             Bits control_bits_;
             bool bit_controlled_;
             double rotation_angle_;
+            std::vector<Qubits> measure_parity_qubits_;
+            std::vector<std::string> measure_parity_axis_;
     }; // class Operation
 
     class SubCircuit
@@ -191,9 +210,14 @@ namespace compiler
                 number_iterations_ = iterations;
             }
 
-            void addOperation(Operation * opline)
+            void addOperation(Operation *opline)
             {
                 operations_.push_back(opline);
+            }
+
+            Operation* lastOperation()
+            {
+                return operations_.back();
             }
 
             void printMembers() const

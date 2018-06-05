@@ -1,3 +1,5 @@
+%code requires { #include "qasm_ast.hpp" }
+
 %{
     #include <math.h>
     #include <stdio.h>
@@ -8,7 +10,6 @@
     #include "qasm_ast.hpp"
     int yylex(void);
     void yyerror (char const *);
-    compiler::Qubits qubits_identified;
     compiler::Bits bits_identified;
     compiler::NumericalIdentifiers buffer_indices;
     compiler::SubCircuits subcircuits_object;
@@ -21,6 +22,8 @@
     int ival;
     double dval;
     char* sval;
+    compiler::Qubits* qval;
+    compiler::Bits* bval;
 }
 
 %token <sval> NAME 
@@ -109,18 +112,24 @@ numerical-identifier-range : INTEGER COLON INTEGER
 qubit-register : QUBITS WS INTEGER {qasm_representation.qubitRegister($3);}
 
 //# We define the syntax for selecting the qubits/bits, either by a range or a list
-qubit : qubit-nomap 
+%type <qval> qubit;
+qubit : qubit-nomap {}
       | NAME
         {
             buffer_indices = qasm_representation.getMappedIndices( std::string($1), true );
+            compiler::Qubits qubits_identified;
             qubits_identified.setSelectedQubits(buffer_indices);
+            $$ = &qubits_identified;
         } 
     ;
+%type <qval> qubit-nomap;
 qubit-nomap : QBITHEAD indices 
               {
+                 compiler::Qubits qubits_identified;
                  buffer_indices.removeDuplicates();
                  qubits_identified.setSelectedQubits(buffer_indices);
                  buffer_indices.clear();
+                 $$ = &qubits_identified;
               }
     ;
 qubit-selection : qubit | qubit-selection COMMA_SEPARATOR qubit 
@@ -147,21 +156,21 @@ bit-selection : bit
 //# Define the single qubit operation line
 single-qubit-operation : single-qubit-gate WS qubit 
                          {
-                            subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation(buffer_gate,qubits_identified) );
+                            subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation(buffer_gate, *($3) ) );
                          }
                        | prep_measure-ops WS qubit 
                          {
-                            subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation(buffer_gate,qubits_identified) );
+                            subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation(buffer_gate, *($3) ) );
                          }
     ;
 single-qubit-operation-args : parameterized-single-qubit-gate WS qubit COMMA_SEPARATOR FLOAT 
                               {
-                                  subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation(buffer_gate,qubits_identified,$5) );
+                                  subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation(buffer_gate, *($3) ,$5) );
                               }
     ;
 map-operation : MAPKEY WS qubit-nomap COMMA_SEPARATOR NAME 
                 {
-                    qasm_representation.addMappings(std::string($5), qubits_identified.getSelectedQubits(), true );
+                    qasm_representation.addMappings(std::string($5), $3->getSelectedQubits(), true );
                 }
               | MAPKEY WS bit-nomap COMMA_SEPARATOR NAME
                 {
@@ -176,7 +185,14 @@ parameterized-single-qubit-gate : ROTATIONS {buffer_gate = std::string($1);}
 //# This is to define the state preparation/measurement
 prep_measure-ops : PREP {buffer_gate = std::string($1);} | MEASURE {buffer_gate = std::string($1);}
     ;
-measure-parity-operation : MEASUREPARITY WS qubit COMMA_SEPARATOR AXIS | measure-parity-operation COMMA_SEPARATOR qubit COMMA_SEPARATOR AXIS
+measure-parity-operation : MEASUREPARITY WS qubit COMMA_SEPARATOR AXIS
+                           {
+                               subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation( std::string($1), *($3) , std::string($5) ) );
+                           }
+                         | measure-parity-operation COMMA_SEPARATOR qubit COMMA_SEPARATOR AXIS
+                           {
+                               subcircuits_object.lastSubCircuit().lastOperation()->addMeasureParityQubitsAndAxis( *($3) , std::string($5));
+                           }
     ;
 measureall-operation : MEASUREALL
     ;

@@ -39,6 +39,11 @@
 #if YYDEBUG
 extern int yydebug;
 #endif
+/* "%code requires" blocks.  */
+#line 1 "library/grammar.y" /* yacc.c:1909  */
+ #include "qasm_ast.hpp" 
+
+#line 47 "grammar.tab.h" /* yacc.c:1909  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -89,13 +94,15 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 20 "library/grammar.y" /* yacc.c:1909  */
+#line 21 "library/grammar.y" /* yacc.c:1909  */
 
     int ival;
     double dval;
     char* sval;
+    compiler::Qubits* qval;
+    compiler::Bits* bval;
 
-#line 99 "grammar.tab.h" /* yacc.c:1909  */
+#line 106 "grammar.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

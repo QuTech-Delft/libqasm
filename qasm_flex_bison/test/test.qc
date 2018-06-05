@@ -13,8 +13,8 @@ reset-Averaging Q[1,4,6]
 
 
 measure_all
-measure_parity     q[2:5], x,     q[0], z
-measure_parity q[1:3,4,6,7], z
+#measure_parity     q[2:5], x,     q[0], z
+#measure_parity q[1:3,4,6,7], z
 
 x q[4:7]
 
