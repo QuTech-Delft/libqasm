@@ -149,7 +149,7 @@ Lex: SBRA: [
 Lex: INTEGER
 Lex: COMMA_SEPARATOR: ,
 Lex: INTEGER
-Lex: COMMA_SEPARATOR: ,
+Lex: COLON: :
 Lex: INTEGER
 Lex: SKET: ]
 Lex: COMMA_SEPARATOR:  , 
@@ -381,7 +381,7 @@ bleh: Indices: 5
 0
 bleh2: Indices: 0 1 2 3 4 5 6 7 
 1
-q0: Indices: 0 1 2 
+q0: Indices: 0 1 2 3 4 
 1
 q1: Indices: 1 
 1
@@ -402,10 +402,13 @@ Subcircuit Name = default , Rank = 0
 default has 1 iterations.
 Contains these operations:
 Gate prep_z: with rotations = 1.79769e+308 involving qubits Indices: 5 
-Gate measure_parity: with rotations = 1.79769e+308 involving qubits Indices: 
+Gate measure_all: with rotations = 1.79769e+308 involving qubits Indices: 
+Gate measure_parity: with rotations = 1.79769e+308 involving qubits 
 Indices: 2 3 4 5 
-With axis xIndices: 0 
-With axis zGate x: with rotations = 1.79769e+308 involving qubits Indices: 4 5 6 7 
+With axis x
+Indices: 0 
+With axis z
+Gate x: with rotations = 1.79769e+308 involving qubits Indices: 4 5 6 7 
 Gate rx: with rotations = 31416 involving qubits Indices: 1 2 3 4 5 
 Subcircuit Name = mapping , Rank = 1
 mapping has 1 iterations.
@@ -413,7 +416,10 @@ Contains these operations:
 Subcircuit Name = first_circuit , Rank = 2
 first_circuit has 50 iterations.
 Contains these operations:
-Gate h: with rotations = 1.79769e+308 involving qubits Indices: 0 1 2 
+Gate h: with rotations = 1.79769e+308 involving qubits Indices: 0 1 2 3 4 
+Gate cnot: with rotations = 0 involving qubits 
+Qubit Pair 1: Indices: 0 1 2 3 4 
+Qubit Pair 2: Indices: 1 
 Gate x: with rotations = 1.79769e+308 involving qubits Indices: 1 
 Gate y: with rotations = 1.79769e+308 involving qubits Indices: 2 
 Gate z: with rotations = 1.79769e+308 involving qubits Indices: 6 

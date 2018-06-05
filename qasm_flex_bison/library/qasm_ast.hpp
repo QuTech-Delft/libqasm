@@ -90,6 +90,9 @@ namespace compiler
     {
         public:
 
+            Bits() = default;
+            Bits(NumericalIdentifiers indices) : selected_bits_ (indices) {}
+
             void setSelectedBits(NumericalIdentifiers indices)
             {
                 selected_bits_ = indices;
@@ -130,10 +133,22 @@ namespace compiler
             // Measure parity operation
             {
                 type_ = toLowerCase(type);
-                measure_parity_qubits_.push_back(qubit_pair1);
-                measure_parity_axis_.push_back( toLowerCase(axis1) );
-                measure_parity_qubits_.push_back(qubit_pair2);
-                measure_parity_axis_.push_back( toLowerCase(axis2) );
+                measure_parity_qubits_ = std::pair<Qubits,Qubits> (qubit_pair1,qubit_pair2);
+                measure_parity_axis_ = std::pair<std::string,std::string> (toLowerCase(axis1),toLowerCase(axis2));
+            }
+
+            Operation(const std::string type)
+            : rotation_angle_ (std::numeric_limits<double>::max()), bit_controlled_(false)
+            // Measure all operation
+            {
+                type_ = toLowerCase(type);
+            }
+
+            Operation(const std::string type, Qubits qubit_pair1, Qubits qubit_pair2)
+            // Two qubit gate operations
+            {
+                type_ = toLowerCase(type);
+                two_qubit_pairs_ = std::pair<Qubits,Qubits> (qubit_pair1,qubit_pair2);
             }
 
             Operation (   const std::string type, 
@@ -163,24 +178,33 @@ namespace compiler
                 return rotation_angle_;
             }
 
-            std::vector<Qubits> addMeasureParityQubitsAndAxis(Qubits qubits, std::string axis)
+            const std::pair< std::pair<Qubits,Qubits>, std::pair<std::string,std::string> > getMeasureParityQubitsAndAxis() const
             {
-                measure_parity_qubits_.push_back(qubits);
-                measure_parity_axis_.push_back( toLowerCase(axis) );
+                std::pair< std::pair<Qubits,Qubits>, std::pair<std::string,std::string> > pair_result (measure_parity_qubits_, measure_parity_axis_);
+                return pair_result;
             }
 
             void printOperation() const
             {
                 std::cout << "Gate " << type_ << ": " << "with rotations = " << rotation_angle_ << " involving qubits ";
-                qubits_.getSelectedQubits().printMembers();
                 if (type_ == "measure_parity")
                 {
-                    measure_parity_qubits_.at(0).getSelectedQubits().printMembers();
-                    std::cout << "With axis " << measure_parity_axis_.at(0);
-                    measure_parity_qubits_.at(1).getSelectedQubits().printMembers();
-                    std::cout << "With axis " << measure_parity_axis_.at(1);
+                    std::cout << std::endl;
+                    auto measureParityProperties = getMeasureParityQubitsAndAxis();
+                    measureParityProperties.first.first.getSelectedQubits().printMembers();
+                    std::cout << "With axis " << measureParityProperties.second.first << std::endl;
+                    measureParityProperties.first.second.getSelectedQubits().printMembers();
+                    std::cout << "With axis " << measureParityProperties.second.second << std::endl;
                 }
-
+                else if (type_ == "cnot" | type_ == "cz" | type_ == "swap")
+                {
+                    std::cout << std::endl;
+                    std::cout << "Qubit Pair 1: ";
+                    two_qubit_pairs_.first.getSelectedQubits().printMembers();
+                    std::cout << "Qubit Pair 2: "; 
+                    two_qubit_pairs_.second.getSelectedQubits().printMembers();
+                }
+                else qubits_.getSelectedQubits().printMembers();
             }
 
         protected:
@@ -197,8 +221,9 @@ namespace compiler
             Bits control_bits_;
             bool bit_controlled_;
             double rotation_angle_;
-            std::vector<Qubits> measure_parity_qubits_;
-            std::vector<std::string> measure_parity_axis_;
+            std::pair<Qubits,Qubits> measure_parity_qubits_;
+            std::pair<std::string,std::string> measure_parity_axis_;
+            std::pair<Qubits,Qubits> two_qubit_pairs_;
     }; // class Operation
 
     class SubCircuit

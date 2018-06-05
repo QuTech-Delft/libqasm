@@ -100,8 +100,9 @@ union YYSTYPE
     double dval;
     char* sval;
     compiler::Qubits* qval;
+    compiler::Bits* bval;
 
-#line 105 "grammar.tab.h" /* yacc.c:1909  */
+#line 106 "grammar.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

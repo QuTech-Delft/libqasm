@@ -23,6 +23,7 @@
     double dval;
     char* sval;
     compiler::Qubits* qval;
+    compiler::Bits* bval;
 }
 
 %token <sval> NAME 
@@ -131,18 +132,20 @@ qubit-nomap : QBITHEAD indices
 qubit-selection : qubit | qubit-selection COMMA_SEPARATOR qubit 
     ;
 //## Next we define a classical bit, which is required to perform control gate operations
+%type <bval> bit;
 bit :  bit-nomap 
     |  NAME
        {
            buffer_indices = qasm_representation.getMappedIndices( std::string($1), false );
-           bits_identified.setSelectedBits(buffer_indices);
+           $$ = new compiler::Bits (buffer_indices);
        }
     ;
+%type <bval> bit-nomap;
 bit-nomap : BITHEAD indices
             {
-                buffer_indices.removeDuplicates();
-                bits_identified.setSelectedBits(buffer_indices);
-                buffer_indices.clear();
+                 buffer_indices.removeDuplicates();
+                 $$ = new compiler::Bits (buffer_indices);
+                 buffer_indices.clear();
             } 
     ;
 bit-selection : bit
@@ -170,7 +173,7 @@ map-operation : MAPKEY WS qubit-nomap COMMA_SEPARATOR NAME
                 }
               | MAPKEY WS bit-nomap COMMA_SEPARATOR NAME
                 {
-                    qasm_representation.addMappings(std::string($5), bits_identified.getSelectedBits(), false );
+                    qasm_representation.addMappings(std::string($5), $3->getSelectedBits(), false );
                 }
     ;
 //## Define the single qubit operations/gates
@@ -187,11 +190,14 @@ measure-parity-operation : measure-parity-command WS qubit COMMA_SEPARATOR AXIS 
                            }
     ;
 measure-parity-command : MEASUREPARITY {buffer_gate = std::string($1);}
-measureall-operation : MEASUREALL {buffer_gate = std::string($1);}
+measureall-operation : MEASUREALL {subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation(std::string($1)) );}
     ;
 
 //# Qubit-controlled operations
 two-qubit-operation : two-qubit-gates WS qubit COMMA_SEPARATOR qubit
+                      {
+                          subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation( buffer_gate, *($3) , *($5) ) );
+                      }
     ;
 two-qubit-operation-args : two-qubit-gate-args WS qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR INTEGER
     ;

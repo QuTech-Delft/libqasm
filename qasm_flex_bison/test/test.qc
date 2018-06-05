@@ -22,7 +22,7 @@ rX q[1,2:5], 3.1416E4
 
 .mapping
    map b[0:11], bitcontroller
-   map q[0,1,2] , q0
+   map q[0,1:4] , q0
    map q[1] , q1
    map q[2] , q2
    map q[3] , q3
