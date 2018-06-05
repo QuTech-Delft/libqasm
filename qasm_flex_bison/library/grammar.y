@@ -23,7 +23,6 @@
     double dval;
     char* sval;
     compiler::Qubits* qval;
-    compiler::Bits* bval;
 }
 
 %token <sval> NAME 
@@ -90,20 +89,21 @@ qasm-line : map-operation
     ;
 
 //# We define the convenience strings, texts, numbers here....
+%type <nval> indices numerical-identifiers numerical-identifier-list numerical-identifier-range;
 line-separator : NEWLINE 
                | line-separator NEWLINE
     ;
-indices : SBRA numerical-identifiers SKET
+indices : SBRA numerical-identifiers SKET {} 
     ;
-numerical-identifiers : numerical-identifier-list 
-                      | numerical-identifier-range
+numerical-identifiers : numerical-identifier-list {} 
+                      | numerical-identifier-range {}
     ;
 numerical-identifier-list : INTEGER {buffer_indices.addToVector($1);}
                           | numerical-identifier-list COMMA_SEPARATOR numerical-identifiers
     ;
 numerical-identifier-range : INTEGER COLON INTEGER 
                              {
-                                buffer_indices.addToVector($1,$3);
+                                buffer_indices.addToVector($1,$3); 
                              }
                            | numerical-identifier-range COMMA_SEPARATOR numerical-identifiers
     ;
@@ -113,23 +113,19 @@ qubit-register : QUBITS WS INTEGER {qasm_representation.qubitRegister($3);}
 
 //# We define the syntax for selecting the qubits/bits, either by a range or a list
 %type <qval> qubit;
-qubit : qubit-nomap {}
+qubit : qubit-nomap {$$=$1;}
       | NAME
         {
             buffer_indices = qasm_representation.getMappedIndices( std::string($1), true );
-            compiler::Qubits qubits_identified;
-            qubits_identified.setSelectedQubits(buffer_indices);
-            $$ = &qubits_identified;
+            $$ = new compiler::Qubits (buffer_indices);
         } 
     ;
 %type <qval> qubit-nomap;
 qubit-nomap : QBITHEAD indices 
               {
-                 compiler::Qubits qubits_identified;
                  buffer_indices.removeDuplicates();
-                 qubits_identified.setSelectedQubits(buffer_indices);
+                 $$ = new compiler::Qubits (buffer_indices);
                  buffer_indices.clear();
-                 $$ = &qubits_identified;
               }
     ;
 qubit-selection : qubit | qubit-selection COMMA_SEPARATOR qubit 
@@ -185,16 +181,13 @@ parameterized-single-qubit-gate : ROTATIONS {buffer_gate = std::string($1);}
 //# This is to define the state preparation/measurement
 prep_measure-ops : PREP {buffer_gate = std::string($1);} | MEASURE {buffer_gate = std::string($1);}
     ;
-measure-parity-operation : MEASUREPARITY WS qubit COMMA_SEPARATOR AXIS
+measure-parity-operation : measure-parity-command WS qubit COMMA_SEPARATOR AXIS COMMA_SEPARATOR qubit COMMA_SEPARATOR AXIS
                            {
-                               subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation( std::string($1), *($3) , std::string($5) ) );
-                           }
-                         | measure-parity-operation COMMA_SEPARATOR qubit COMMA_SEPARATOR AXIS
-                           {
-                               subcircuits_object.lastSubCircuit().lastOperation()->addMeasureParityQubitsAndAxis( *($3) , std::string($5));
+                               subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation( buffer_gate, *($3) , std::string($5,1) , *($7) , std::string($9,1) ) );
                            }
     ;
-measureall-operation : MEASUREALL
+measure-parity-command : MEASUREPARITY {buffer_gate = std::string($1);}
+measureall-operation : MEASUREALL {buffer_gate = std::string($1);}
     ;
 
 //# Qubit-controlled operations
@@ -203,14 +196,14 @@ two-qubit-operation : two-qubit-gates WS qubit COMMA_SEPARATOR qubit
 two-qubit-operation-args : two-qubit-gate-args WS qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR INTEGER
     ;
 //## Define the two qubit gates
-two-qubit-gates : TWO_QUBIT_GATES
+two-qubit-gates : TWO_QUBIT_GATES {buffer_gate = std::string($1);}
     ;
-two-qubit-gate-args : CR
+two-qubit-gate-args : CR {buffer_gate = std::string($1);}
     ;
 //## Define the toffoli gate
 toffoli-operation : toffoli-gate WS qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit
     ;
-toffoli-gate : TOFFOLI
+toffoli-gate : TOFFOLI {buffer_gate = std::string($1);}
     ;
 //## Define a superset of all general "normal" operations
 regular-operations : single-qubit-operation 

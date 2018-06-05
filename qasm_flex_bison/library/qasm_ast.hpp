@@ -66,6 +66,9 @@ namespace compiler
     {
         public:
 
+            Qubits() = default;
+            Qubits(NumericalIdentifiers indices) : selected_qubits_ (indices) {}
+
             void setSelectedQubits(NumericalIdentifiers indices)
             {
                 selected_qubits_ = indices;
@@ -122,14 +125,15 @@ namespace compiler
                 type_ = toLowerCase(type);
             }
 
-            Operation(const std::string type, Qubits qubits_involved, std::string axis)
-            : qubits_ (qubits_involved), 
-              rotation_angle_ (std::numeric_limits<double>::max()), bit_controlled_(false)
+            Operation(const std::string type, Qubits qubit_pair1, std::string axis1, Qubits qubit_pair2, std::string axis2)
+            : rotation_angle_ (std::numeric_limits<double>::max()), bit_controlled_(false)
             // Measure parity operation
             {
                 type_ = toLowerCase(type);
-                measure_parity_qubits_.push_back(qubits_involved);
-                measure_parity_axis_.push_back( toLowerCase(axis) );
+                measure_parity_qubits_.push_back(qubit_pair1);
+                measure_parity_axis_.push_back( toLowerCase(axis1) );
+                measure_parity_qubits_.push_back(qubit_pair2);
+                measure_parity_axis_.push_back( toLowerCase(axis2) );
             }
 
             Operation (   const std::string type, 
@@ -169,6 +173,14 @@ namespace compiler
             {
                 std::cout << "Gate " << type_ << ": " << "with rotations = " << rotation_angle_ << " involving qubits ";
                 qubits_.getSelectedQubits().printMembers();
+                if (type_ == "measure_parity")
+                {
+                    measure_parity_qubits_.at(0).getSelectedQubits().printMembers();
+                    std::cout << "With axis " << measure_parity_axis_.at(0);
+                    measure_parity_qubits_.at(1).getSelectedQubits().printMembers();
+                    std::cout << "With axis " << measure_parity_axis_.at(1);
+                }
+
             }
 
         protected:
@@ -234,6 +246,7 @@ namespace compiler
             int number_iterations_; // This member is the number of iterations the subcircuit is supposed to run
             size_t subcircuit_number_; // This member provides the order of the subcircuits when it is found in the qasm file
             std::vector< Operation* > operations_;
+            std::vector< Operation* > parallel_operations_;
     }; //class SubCircuit
 
     class SubCircuits

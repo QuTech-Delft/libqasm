@@ -1,0 +1,434 @@
+Lex: COMMENT: # qcode test file
+
+Lex: NEWLINE: 
+
+Lex: COMMENT: # qubit definition
+
+Lex: QUBITS: qubits
+Lex: WS:  
+Lex: INTEGER
+Lex: NEWLINE: 
+
+Lex: NEWLINE: 
+
+Lex: MAPKEY: map
+Lex: WS:  
+Lex: QBITHEAD: q
+Lex: SBRA: [
+Lex: INTEGER
+Lex: COMMA_SEPARATOR: ,
+Lex: INTEGER
+Lex: COLON: :
+Lex: INTEGER
+Lex: COMMA_SEPARATOR: ,
+Lex: INTEGER
+Lex: COMMA_SEPARATOR: ,
+Lex: INTEGER
+Lex: SKET: ]
+Lex: COMMA_SEPARATOR: , 
+Lex: NAME
+Lex: NEWLINE: 
+
+Lex: MAPKEY: map
+Lex: WS:  
+Lex: BITHEAD: b
+Lex: SBRA: [
+Lex: INTEGER
+Lex: SKET: ]
+Lex: COMMA_SEPARATOR: , 
+Lex: NAME
+Lex: NEWLINE: 
+
+Lex: NEWLINE: 
+
+Lex: NEWLINE: 
+
+Lex: PREP
+Lex: WS:  
+Lex: QBITHEAD: q
+Lex: SBRA: [
+Lex: INTEGER
+Lex: SKET: ]
+Lex: NEWLINE: 
+
+Lex: RESET_AVERAGING
+Lex: NEWLINE: 
+
+Lex: RESET_AVERAGING
+Lex: WS:  
+Lex: QBITHEAD: Q
+Lex: SBRA: [
+Lex: INTEGER
+Lex: COMMA_SEPARATOR: ,
+Lex: INTEGER
+Lex: COMMA_SEPARATOR: ,
+Lex: INTEGER
+Lex: SKET: ]
+Lex: NEWLINE: 
+
+Lex: NEWLINE: 
+
+Lex: NEWLINE: 
+
+Lex: MEASUREALL
+Lex: NEWLINE: 
+
+Lex: MEASUREPARITY
+Lex: WS:      
+Lex: QBITHEAD: q
+Lex: SBRA: [
+Lex: INTEGER
+Lex: COLON: :
+Lex: INTEGER
+Lex: SKET: ]
+Lex: COMMA_SEPARATOR: , 
+Lex: AXIS
+Lex: COMMA_SEPARATOR: ,     
+Lex: QBITHEAD: q
+Lex: SBRA: [
+Lex: INTEGER
+Lex: SKET: ]
+Lex: COMMA_SEPARATOR: , 
+Lex: AXIS
+Lex: NEWLINE: 
+
+Lex: NEWLINE: 
+
+Lex: AXIS
+Lex: WS:  
+Lex: QBITHEAD: q
+Lex: SBRA: [
+Lex: INTEGER
+Lex: COLON: :
+Lex: INTEGER
+Lex: SKET: ]
+Lex: NEWLINE: 
+
+Lex: NEWLINE: 
+
+Lex: ROTATIONS
+Lex: WS:  
+Lex: QBITHEAD: q
+Lex: SBRA: [
+Lex: INTEGER
+Lex: COMMA_SEPARATOR: ,
+Lex: INTEGER
+Lex: COLON: :
+Lex: INTEGER
+Lex: SKET: ]
+Lex: COMMA_SEPARATOR: , 
+Lex: FLOAT
+Lex: NEWLINE: 
+
+Lex: NEWLINE: 
+
+Lex: NEWLINE: 
+
+Lex: DOT: .
+Lex: NAME
+Lex: NEWLINE: 
+
+Lex: WS:    
+Lex: MAPKEY: map
+Lex: WS:  
+Lex: BITHEAD: b
+Lex: SBRA: [
+Lex: INTEGER
+Lex: COLON: :
+Lex: INTEGER
+Lex: SKET: ]
+Lex: COMMA_SEPARATOR: , 
+Lex: NAME
+Lex: NEWLINE: 
+
+Lex: WS:    
+Lex: MAPKEY: map
+Lex: WS:  
+Lex: QBITHEAD: q
+Lex: SBRA: [
+Lex: INTEGER
+Lex: COMMA_SEPARATOR: ,
+Lex: INTEGER
+Lex: COMMA_SEPARATOR: ,
+Lex: INTEGER
+Lex: SKET: ]
+Lex: COMMA_SEPARATOR:  , 
+Lex: NAME
+Lex: NEWLINE: 
+
+Lex: WS:    
+Lex: MAPKEY: map
+Lex: WS:  
+Lex: QBITHEAD: q
+Lex: SBRA: [
+Lex: INTEGER
+Lex: SKET: ]
+Lex: COMMA_SEPARATOR:  , 
+Lex: NAME
+Lex: NEWLINE: 
+
+Lex: WS:    
+Lex: MAPKEY: map
+Lex: WS:  
+Lex: QBITHEAD: q
+Lex: SBRA: [
+Lex: INTEGER
+Lex: SKET: ]
+Lex: COMMA_SEPARATOR:  , 
+Lex: NAME
+Lex: NEWLINE: 
+
+Lex: WS:    
+Lex: MAPKEY: map
+Lex: WS:  
+Lex: QBITHEAD: q
+Lex: SBRA: [
+Lex: INTEGER
+Lex: SKET: ]
+Lex: COMMA_SEPARATOR:  , 
+Lex: NAME
+Lex: NEWLINE: 
+
+Lex: WS:    
+Lex: MAPKEY: map
+Lex: WS:  
+Lex: QBITHEAD: q
+Lex: SBRA: [
+Lex: INTEGER
+Lex: SKET: ]
+Lex: COMMA_SEPARATOR:  , 
+Lex: NAME
+Lex: NEWLINE: 
+
+Lex: WS:    
+Lex: MAPKEY: map
+Lex: WS:  
+Lex: QBITHEAD: q
+Lex: SBRA: [
+Lex: INTEGER
+Lex: SKET: ]
+Lex: COMMA_SEPARATOR:  , 
+Lex: NAME
+Lex: NEWLINE: 
+
+Lex: WS:    
+Lex: MAPKEY: map
+Lex: WS:  
+Lex: QBITHEAD: q
+Lex: SBRA: [
+Lex: INTEGER
+Lex: SKET: ]
+Lex: COMMA_SEPARATOR:  , 
+Lex: NAME
+Lex: NEWLINE: 
+
+Lex: WS:    
+Lex: MAPKEY: map
+Lex: WS:  
+Lex: QBITHEAD: q
+Lex: SBRA: [
+Lex: INTEGER
+Lex: SKET: ]
+Lex: COMMA_SEPARATOR:  , 
+Lex: NAME
+Lex: NEWLINE: 
+
+Lex: NEWLINE: 
+
+Lex: DOT: .
+Lex: NAME
+Lex: BRA: (
+Lex: INTEGER
+Lex: KET: )
+Lex: NEWLINE: 
+
+Lex: WS:    
+Lex: SINGLE_QUBIT_GATES
+Lex: WS:  
+Lex: NAME
+Lex: NEWLINE: 
+
+Lex: WS:    
+Lex: TWO_QUBIT_GATES
+Lex: WS:  
+Lex: NAME
+Lex: COMMA_SEPARATOR: ,
+Lex: NAME
+Lex: NEWLINE: 
+
+Lex: WS:    
+Lex: AXIS
+Lex: WS:   
+Lex: NAME
+Lex: NEWLINE: 
+
+Lex: WS:    
+Lex: AXIS
+Lex: WS:   
+Lex: NAME
+Lex: NEWLINE: 
+
+Lex: WS:    
+Lex: AXIS
+Lex: WS:   
+Lex: NAME
+Lex: NEWLINE: 
+
+Lex: WS:    
+Lex: CBRA: {
+Lex: AXIS
+Lex: WS:  
+Lex: NAME
+Lex: PARALLEL_SEPARATOR:  | 
+Lex: SINGLE_QUBIT_GATES
+Lex: WS:  
+Lex: NAME
+Lex: CKET: }
+Lex: NEWLINE: 
+
+Lex: NEWLINE: 
+
+Lex: DOT: .
+Lex: NAME
+Lex: NEWLINE: 
+
+Lex: WS:    
+Lex: ROTATIONS
+Lex: WS:  
+Lex: NAME
+Lex: COMMA_SEPARATOR: ,     
+Lex: FLOAT
+Lex: NEWLINE: 
+
+Lex: WS:    
+Lex: ROTATIONS
+Lex: WS:  
+Lex: NAME
+Lex: COMMA_SEPARATOR: ,
+Lex: FLOAT
+Lex: NEWLINE: 
+
+Lex: WS:    
+Lex: ROTATIONS
+Lex: WS:  
+Lex: NAME
+Lex: COMMA_SEPARATOR: ,
+Lex: FLOAT
+Lex: NEWLINE: 
+
+Lex: WS:    
+Lex: CDASH: c-
+Lex: AXIS
+Lex: WS:  
+Lex: NAME
+Lex: COMMA_SEPARATOR: , 
+Lex: QBITHEAD: q
+Lex: SBRA: [
+Lex: INTEGER
+Lex: COLON: :
+Lex: INTEGER
+Lex: COMMA_SEPARATOR: ,
+Lex: INTEGER
+Lex: SKET: ]
+Lex: NEWLINE: 
+
+Lex: NEWLINE: 
+
+Lex: DOT: .
+Lex: NAME
+Lex: NEWLINE: 
+
+Lex: COMMENT: # measurement
+
+Lex: WS:    
+Lex: MEASURE
+Lex: WS:  
+Lex: NAME
+Lex: NEWLINE: 
+
+Lex: NEWLINE: 
+
+Lex: DOT: .
+Lex: NAME
+Lex: NEWLINE: 
+
+Lex: DISPLAY
+Lex: NEWLINE: 
+
+Lex: DISPLAY
+Lex: WS:  
+Lex: BITHEAD: b
+Lex: SBRA: [
+Lex: INTEGER
+Lex: COMMA_SEPARATOR: ,
+Lex: INTEGER
+Lex: COMMA_SEPARATOR: ,
+Lex: INTEGER
+Lex: SKET: ]
+Lex: NEWLINE: 
+
+Lex: DISPLAY
+Lex: WS:  
+Lex: NAME
+Lex: NEWLINE: 
+
+Input is valid.
+QASM file asks for 8 qubits
+With the following mappings: 
+bitcontroller: Indices: 0 1 2 3 4 5 6 7 8 9 10 11 
+0
+bleh: Indices: 5 
+0
+bleh2: Indices: 0 1 2 3 4 5 6 7 
+1
+q0: Indices: 0 1 2 
+1
+q1: Indices: 1 
+1
+q2: Indices: 2 
+1
+q3: Indices: 3 
+1
+q4: Indices: 4 
+1
+q5: Indices: 5 
+1
+q6: Indices: 6 
+1
+q7: Indices: 7 
+1
+Number of subcircuits found = 6
+Subcircuit Name = default , Rank = 0
+default has 1 iterations.
+Contains these operations:
+Gate prep_z: with rotations = 1.79769e+308 involving qubits Indices: 5 
+Gate measure_parity: with rotations = 1.79769e+308 involving qubits Indices: 
+Indices: 2 3 4 5 
+With axis xIndices: 0 
+With axis zGate x: with rotations = 1.79769e+308 involving qubits Indices: 4 5 6 7 
+Gate rx: with rotations = 31416 involving qubits Indices: 1 2 3 4 5 
+Subcircuit Name = mapping , Rank = 1
+mapping has 1 iterations.
+Contains these operations:
+Subcircuit Name = first_circuit , Rank = 2
+first_circuit has 50 iterations.
+Contains these operations:
+Gate h: with rotations = 1.79769e+308 involving qubits Indices: 0 1 2 
+Gate x: with rotations = 1.79769e+308 involving qubits Indices: 1 
+Gate y: with rotations = 1.79769e+308 involving qubits Indices: 2 
+Gate z: with rotations = 1.79769e+308 involving qubits Indices: 6 
+Gate x: with rotations = 1.79769e+308 involving qubits Indices: 3 
+Gate h: with rotations = 1.79769e+308 involving qubits Indices: 7 
+Subcircuit Name = second_circuit , Rank = 3
+second_circuit has 1 iterations.
+Contains these operations:
+Gate rx: with rotations = -4.53 involving qubits Indices: 4 
+Gate ry: with rotations = 0.244 involving qubits Indices: 5 
+Gate rz: with rotations = 0.555 involving qubits Indices: 6 
+Subcircuit Name = result , Rank = 4
+result has 1 iterations.
+Contains these operations:
+Gate measure: with rotations = 1.79769e+308 involving qubits Indices: 1 
+Subcircuit Name = display_results , Rank = 5
+display_results has 1 iterations.
+Contains these operations:
