@@ -332,6 +332,18 @@ Lex: INTEGER
 Lex: SKET: ]
 Lex: NEWLINE: 
 
+Lex: WS:    
+Lex: CDASH: c-
+Lex: TWO_QUBIT_GATES
+Lex: WS:  
+Lex: BITHEAD: b
+Lex: SBRA: [
+Lex: INTEGER
+Lex: SKET: ]
+Lex: COMMA_SEPARATOR: , 
+Lex: NAME
+Lex: COMMA_SEPARATOR:  , 
+Lex: NAME
 Lex: NEWLINE: 
 
 Lex: DOT: .
@@ -433,6 +445,10 @@ Gate ry: with rotations = 0.244 involving qubits Indices: 5
 Gate rz: with rotations = 0.555 involving qubits Indices: 6 
 Bit controlled with bits: Indices: 0 1 2 3 4 5 6 7 8 9 10 11 
 Gate x: with rotations = 1.79769e+308 involving qubits Indices: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 56 
+Bit controlled with bits: Indices: 7 
+Gate swap: with rotations = 1.79769e+308 involving qubits 
+Qubit Pair 1: Indices: 1 
+Qubit Pair 2: Indices: 5 
 Subcircuit Name = result , Rank = 4
 result has 1 iterations.
 Contains these operations:

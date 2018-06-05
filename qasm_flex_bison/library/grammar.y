@@ -240,8 +240,16 @@ bit-single-qubit-operation : CDASH single-qubit-gate WS bit COMMA_SEPARATOR qubi
                              }
     ;
 bit-single-qubit-operation-args : CDASH parameterized-single-qubit-gate WS bit COMMA_SEPARATOR qubit COMMA_SEPARATOR FLOAT
+                                  {
+                                      subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation(buffer_gate, *($6) , $8) );
+                                      subcircuits_object.lastSubCircuit().lastOperation()->setControlBits( *($4) );
+                                  }
     ;
 bit-two-qubit-operation : CDASH two-qubit-gates WS bit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit
+                          {
+                              subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation( buffer_gate, *($6) , *($8) ) );
+                              subcircuits_object.lastSubCircuit().lastOperation()->setControlBits( *($4) );
+                          }
     ;
 bit-two-qubit-operation-args : CDASH two-qubit-gate-args WS bit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR INTEGER
     ;

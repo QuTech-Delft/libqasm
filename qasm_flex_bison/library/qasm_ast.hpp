@@ -79,8 +79,6 @@ namespace compiler
                 return selected_qubits_;
             }
 
-            // Check for map also
-
         protected:
             NumericalIdentifiers selected_qubits_;
     };
@@ -102,8 +100,6 @@ namespace compiler
             {
                 return selected_bits_;
             }
-
-            // Check for map also
 
         protected:
             NumericalIdentifiers selected_bits_;

@@ -44,7 +44,7 @@ rX q[1,2:5], 3.1416E4
    ry q5,0.244
    rz q6,0.555
    c-x bitcontroller, q[12:14,56]
-
+   c-swap b[7], q1 , q5
 .result
 # measurement
    measure q1
