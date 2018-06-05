@@ -145,13 +145,15 @@ namespace compiler
             }
 
             Operation(const std::string type, Qubits qubit_pair1, Qubits qubit_pair2)
+            : rotation_angle_ (std::numeric_limits<double>::max()), bit_controlled_(false)
             // Two qubit gate operations
             {
                 type_ = toLowerCase(type);
                 two_qubit_pairs_ = std::pair<Qubits,Qubits> (qubit_pair1,qubit_pair2);
             }
 
-            Operation (   const std::string type, 
+            Operation (   
+                          const std::string type, 
                           Qubits qubits_involved,
                           const double rotation_angle,
                           const bool bit_controlled
@@ -184,8 +186,33 @@ namespace compiler
                 return pair_result;
             }
 
+            const std::pair <Qubits,Qubits>& getTwoQubitPairs() const
+            {
+                return two_qubit_pairs_;
+            }
+
+            bool isBitControlled() const
+            {
+                return bit_controlled_;
+            }
+
+            void setControlBits(Bits control_bits)
+            {
+                control_bits_ = control_bits;
+                bit_controlled_ = true;
+            }
+
+            const Bits& getControlBits() const
+            {
+                return control_bits_;
+            }
+
             void printOperation() const
             {
+                if (isBitControlled()){
+                    std::cout << "Bit controlled with bits: ";
+                    getControlBits().getSelectedBits().printMembers();
+                }
                 std::cout << "Gate " << type_ << ": " << "with rotations = " << rotation_angle_ << " involving qubits ";
                 if (type_ == "measure_parity")
                 {
@@ -200,9 +227,9 @@ namespace compiler
                 {
                     std::cout << std::endl;
                     std::cout << "Qubit Pair 1: ";
-                    two_qubit_pairs_.first.getSelectedQubits().printMembers();
+                    getTwoQubitPairs().first.getSelectedQubits().printMembers();
                     std::cout << "Qubit Pair 2: "; 
-                    two_qubit_pairs_.second.getSelectedQubits().printMembers();
+                    getTwoQubitPairs().second.getSelectedQubits().printMembers();
                 }
                 else qubits_.getSelectedQubits().printMembers();
             }

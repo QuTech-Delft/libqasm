@@ -234,6 +234,10 @@ binary-controlled-operations : bit-single-qubit-operation
                                    | negate-binary-operation
     ;
 bit-single-qubit-operation : CDASH single-qubit-gate WS bit COMMA_SEPARATOR qubit
+                             {
+                                subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation(buffer_gate, *($6) ) );
+                                subcircuits_object.lastSubCircuit().lastOperation()->setControlBits( *($4) );
+                             }
     ;
 bit-single-qubit-operation-args : CDASH parameterized-single-qubit-gate WS bit COMMA_SEPARATOR qubit COMMA_SEPARATOR FLOAT
     ;

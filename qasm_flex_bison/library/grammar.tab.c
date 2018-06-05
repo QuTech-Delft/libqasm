@@ -497,9 +497,9 @@ static const yytype_uint16 yyrline[] =
      125,   136,   137,   144,   156,   160,   165,   170,   174,   180,
      180,   182,   185,   185,   187,   192,   193,   197,   202,   205,
      207,   210,   212,   215,   216,   217,   218,   219,   229,   230,
-     231,   232,   233,   234,   236,   238,   240,   242,   244,   246,
-     250,   252,   252,   254,   254,   258,   258,   258,   260,   260,
-     262,   264,   264
+     231,   232,   233,   234,   236,   242,   244,   246,   248,   250,
+     254,   256,   256,   258,   258,   262,   262,   262,   264,   264,
+     266,   268,   268
 };
 #endif
 
@@ -1659,8 +1659,17 @@ yyreduce:
 #line 1660 "grammar.tab.c" /* yacc.c:1646  */
     break;
 
+  case 84:
+#line 237 "library/grammar.y" /* yacc.c:1646  */
+    {
+                                subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation(buffer_gate, *((yyvsp[0].qval)) ) );
+                                subcircuits_object.lastSubCircuit().lastOperation()->setControlBits( *((yyvsp[-2].bval)) );
+                             }
+#line 1669 "grammar.tab.c" /* yacc.c:1646  */
+    break;
 
-#line 1664 "grammar.tab.c" /* yacc.c:1646  */
+
+#line 1673 "grammar.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1888,7 +1897,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 267 "library/grammar.y" /* yacc.c:1906  */
+#line 271 "library/grammar.y" /* yacc.c:1906  */
 
 
 void yyerror(char const *x)
