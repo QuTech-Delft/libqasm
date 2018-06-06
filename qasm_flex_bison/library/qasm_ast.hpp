@@ -245,6 +245,12 @@ namespace compiler
                 isParallel_ = false;
             }
 
+            OperationsCluster(Operation* valid_op)
+            {
+                operations_.push_back(valid_op);
+                isParallel_ = false;
+            }
+
             Operation* lastOperation()
             {
                 return operations_.back();
@@ -255,10 +261,10 @@ namespace compiler
                 operations_.push_back(valid_op);
             }
 
-            void addParallelOperation( Operation* valid_op, bool isParallel )
+            void addParallelOperation( Operation* valid_op )
             {
                 operations_.push_back(valid_op);
-                isParallel_ = isParallel;
+                isParallel_ = true;
             }
 
             void printOperations()

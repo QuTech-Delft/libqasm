@@ -78,6 +78,11 @@ qasm-line : map-operation
           | measureall-operation
           | measure-parity-operation
           | regular-operations
+            {
+                compiler::Operation* regular_ops = $1;
+                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( regular_ops );
+                subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
+            }
           | binary-controlled-operations
           | parallel-operations
           | special-operations
