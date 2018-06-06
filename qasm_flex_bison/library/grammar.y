@@ -70,6 +70,8 @@ statements : qasm-line
            | subcircuit line-separator
            | statements line-separator qasm-line
            | statements line-separator subcircuit
+           | statements line-separator
+           | comments
     ;
 comments : COMMENT 
          | comments COMMENT 
@@ -353,6 +355,9 @@ negate-binary-operation : NOT_TOKEN WS bit
 //# Parallel execution
 %type <ocval> parallel-operations parallelizable-ops;
 parallel-operations : CBRA parallelizable-ops CKET { $$ = $2; }
+                    | CBRA WS parallelizable-ops CKET { $$ = $3; }
+                    | CBRA parallelizable-ops WS CKET { $$ = $2; }
+                    | CBRA WS parallelizable-ops WS CKET { $$ = $3; }
     ;
 %type <oval> all-valid-operations;
 all-valid-operations : regular-operations

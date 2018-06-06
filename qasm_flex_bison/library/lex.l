@@ -14,7 +14,7 @@ identifier         {letter}([0-9]*{letter}*)+
 whitespace         (\t|" "|\r)+
 newline            {whitespace}?(\n|\r\n)
 singlenewline      (\n|\r\n)
-comment            \#(.*){singlenewline}
+comment            \#(.*)
 integer            [0-9]+
 float              (\-)?({integer}\.{integer})[eE]?{integer}?
 axis               ([xX]|[yY]|[zZ])
