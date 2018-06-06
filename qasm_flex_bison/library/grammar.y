@@ -105,6 +105,11 @@ qasm-line : map-operation
                 subcircuits_object.lastSubCircuit().addOperationsCluster( $1 );
             }
           | special-operations
+            {
+                compiler::Operation* serial_ops = $1;
+                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
+                subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
+            }
           | WS map-operation
           | WS measureall-operation
             {
@@ -131,7 +136,15 @@ qasm-line : map-operation
                 subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
             }
           | WS parallel-operations
+            {
+                subcircuits_object.lastSubCircuit().addOperationsCluster( $2 );
+            }
           | WS special-operations
+            {
+                compiler::Operation* serial_ops = $2;
+                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
+                subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
+            }
     ;
 
 //# We define the convenience strings, texts, numbers here....
@@ -255,7 +268,7 @@ two-qubit-operation : two-qubit-gates WS qubit COMMA_SEPARATOR qubit
 %type <oval> two-qubit-operation-args;
 two-qubit-operation-args : two-qubit-gate-args WS qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR INTEGER
                            {
-                              $$ = new compiler::Operation( buffer_gate );
+                              $$ = new compiler::Operation( buffer_gate, *($3) , *($5), ($7) );
                            }
     ;
 //## Define the two qubit gates
@@ -267,7 +280,7 @@ two-qubit-gate-args : CR {buffer_gate = std::string($1);}
 %type <oval> toffoli-operation;
 toffoli-operation : toffoli-gate WS qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit
                     {
-                       $$ = new compiler::Operation( buffer_gate );
+                       $$ = new compiler::Operation( buffer_gate, *($3) , *($5) , *($7) );
                     }
     ;
 toffoli-gate : TOFFOLI {buffer_gate = std::string($1);}
@@ -280,13 +293,6 @@ regular-operations : single-qubit-operation
                    | two-qubit-operation-args
                    | toffoli-operation 
     ;
-//# Binary-controlled operations
-//qubit-gates : single-qubit-gate 
-//                  | parameterized-single-qubit-gate
-//                  | two-qubit-gates 
-//                  | two-qubit-gate-args 
-//                  | toffoli-gate
-//    ;
 
 %type <oval> binary-controlled-operations;
 binary-controlled-operations : bit-single-qubit-operation 
@@ -323,7 +329,7 @@ bit-two-qubit-operation : CDASH two-qubit-gates WS bit COMMA_SEPARATOR qubit COM
 %type <oval> bit-two-qubit-operation-args;    
 bit-two-qubit-operation-args : CDASH two-qubit-gate-args WS bit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR INTEGER
                                {
-                                  compiler::Operation* bit_two_qubit_operation_args = new compiler::Operation( buffer_gate );
+                                  compiler::Operation* bit_two_qubit_operation_args = new compiler::Operation( buffer_gate, *($6) , *($8), ($10) );
                                   bit_two_qubit_operation_args -> setControlBits( *($4) );
                                   $$ = bit_two_qubit_operation_args;
                                }
@@ -331,7 +337,7 @@ bit-two-qubit-operation-args : CDASH two-qubit-gate-args WS bit COMMA_SEPARATOR 
 %type <oval> bit-toffoli-operation;    
 bit-toffoli-operation : CDASH toffoli-gate WS bit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit
                         {
-                            compiler::Operation* bit_toffoli_operation = new compiler::Operation( buffer_gate );
+                            compiler::Operation* bit_toffoli_operation = new compiler::Operation( buffer_gate, *($6), *($8), *($10) );
                             bit_toffoli_operation -> setControlBits( *($4) );
                             $$ = bit_toffoli_operation;
                         }
@@ -346,7 +352,7 @@ negate-binary-operation : NOT_TOKEN WS bit
     ;
 
 //# Parallel execution
-%type <ocval> parallel-operations, parallelizable-ops;
+%type <ocval> parallel-operations parallelizable-ops;
 parallel-operations : CBRA parallelizable-ops CKET { $$ = $2; }
     ;
 %type <oval> all-valid-operations;
@@ -356,25 +362,42 @@ all-valid-operations : regular-operations
 parallelizable-ops : all-valid-operations
                      {
                         compiler::OperationsCluster* parallel_ops = new compiler::OperationsCluster( $1 );
-                        std::cout << "In Parallel cluster" << std::endl;
                         $$ = parallel_ops;
                      }
                    | parallelizable-ops PARALLEL_SEPARATOR all-valid-operations
                      {
                         $1 -> addParallelOperation( $3 );
-                        std::cout << "In Parallel cluster 1" << std::endl;
                         $$ = $1;
                      }
     ;
 
 //# Special operations
+%type <oval> special-operations display-operation wait-operation reset-averaging-operation;
 special-operations : display-operation | wait-operation | reset-averaging-operation
     ;
-display-operation : DISPLAY | display-operation WS bit
+display-operation : DISPLAY 
+                    {
+                        $$ = new compiler::Operation( std::string($1) );
+                    }
+                  | DISPLAY WS bit
+                    {
+                        $$ = new compiler::Operation( std::string($1,7), *($3) );
+                    }
     ;
 wait-operation : WAIT WS INTEGER
+                 {
+                     $$ = new compiler::Operation( std::string($1,7), ($3) );
+                 }
     ;
-reset-averaging-operation : RESET_AVERAGING | reset-averaging-operation WS qubit
+reset-averaging-operation : RESET_AVERAGING 
+                          {
+                              $$ = new compiler::Operation( std::string($1) );
+                          }
+                          | RESET_AVERAGING WS qubit
+                            {
+                                $$ = new compiler::Operation( std::string($1,15), *($3) );
+                            }
+
     ;
 
 %%

@@ -111,7 +111,7 @@ namespace compiler
             Operation(const std::string type, Qubits qubits_involved)
             : qubits_ (qubits_involved), 
               rotation_angle_ (std::numeric_limits<double>::max()), bit_controlled_(false)
-            // This is the most common operation, the single qubit operation
+            // This is the most common operation, the single qubit operation, or reset_averaging
             {
                 type_ = toLowerCase(type);
             }
@@ -140,12 +140,47 @@ namespace compiler
                 type_ = toLowerCase(type);
             }
 
+            Operation(const std::string type, const int waitInt)
+            : rotation_angle_ (std::numeric_limits<double>::max()), bit_controlled_(false)
+            // Wait command
+            {
+                type_ = toLowerCase(type);
+                wait_time_ = waitInt;
+            }
+
+            Operation(const std::string type, const Bits display_bits)
+            : rotation_angle_ (std::numeric_limits<double>::max()), bit_controlled_(false)
+            // Display command
+            {
+                type_ = toLowerCase(type);
+                control_bits_ = display_bits;
+            }
+
             Operation(const std::string type, Qubits qubit_pair1, Qubits qubit_pair2)
             : rotation_angle_ (std::numeric_limits<double>::max()), bit_controlled_(false)
             // Two qubit gate operations
             {
                 type_ = toLowerCase(type);
                 two_qubit_pairs_ = std::pair<Qubits,Qubits> (qubit_pair1,qubit_pair2);
+            }
+
+            Operation(const std::string type, Qubits qubit_pair1, Qubits qubit_pair2, double rotations)
+            : rotation_angle_ (rotations), bit_controlled_(false)
+            // Two qubit gate operations
+            {
+                type_ = toLowerCase(type);
+                two_qubit_pairs_ = std::pair<Qubits,Qubits> (qubit_pair1,qubit_pair2);
+            }
+
+            Operation(const std::string type, Qubits qubit_pair1, Qubits qubit_pair2, Qubits qubit_pair3)
+            : rotation_angle_ (std::numeric_limits<double>::max()), bit_controlled_(false)
+            // Toffoli operations
+            {
+                type_ = toLowerCase(type);
+                toffoli_qubit_pairs_ = std::pair<Qubits, std::pair<Qubits,Qubits>> ( 
+                                                                                    qubit_pair1,
+                                                                                    std::pair<Qubits,Qubits> (qubit_pair2,qubit_pair2)
+                                                                                  );
             }
 
             std::string getType() const
@@ -174,6 +209,12 @@ namespace compiler
                 return two_qubit_pairs_;
             }
 
+            const std::pair< Qubits, std::pair<Qubits,Qubits> >& getToffoliQubitPairs() const
+            {
+                
+                return toffoli_qubit_pairs_;
+            }
+
             bool isBitControlled() const
             {
                 return bit_controlled_;
@@ -190,13 +231,23 @@ namespace compiler
                 return control_bits_;
             }
 
+            const Bits& getDisplayBits() const
+            {
+                return control_bits_;
+            }
+
+            const int getWaitTime() const
+            {
+                return wait_time_;
+            }
+
             void printOperation() const
             {
                 if (isBitControlled()){
                     std::cout << "Bit controlled with bits: ";
                     getControlBits().getSelectedBits().printMembers();
                 }
-                std::cout << "Gate " << type_ << ": " << "with rotations = " << rotation_angle_ << " involving qubits ";
+                std::cout << "Operation " << type_ << ": " << "with rotations = " << rotation_angle_ << " involving qubits ";
                 if (type_ == "measure_parity")
                 {
                     std::cout << std::endl;
@@ -213,6 +264,25 @@ namespace compiler
                     getTwoQubitPairs().first.getSelectedQubits().printMembers();
                     std::cout << "Qubit Pair 2: "; 
                     getTwoQubitPairs().second.getSelectedQubits().printMembers();
+                }
+                else if (type_ == "cr")
+                {
+                    std::cout << std::endl;
+                    std::cout << "Qubit Pair 1: ";
+                    getTwoQubitPairs().first.getSelectedQubits().printMembers();
+                    std::cout << "Qubit Pair 2: "; 
+                    getTwoQubitPairs().second.getSelectedQubits().printMembers();
+                    std::cout << "Rotation = " << getRotationAngle() << std::endl; 
+                }
+                else if (type_ == "toffoli")
+                {
+                    std::cout << std::endl;
+                    std::cout << "Qubit Pair 1: ";
+                    getToffoliQubitPairs().first.getSelectedQubits().printMembers();
+                    std::cout << "Qubit Pair 2: "; 
+                    getToffoliQubitPairs().second.first.getSelectedQubits().printMembers();
+                    std::cout << "Qubit Pair 3: "; 
+                    getToffoliQubitPairs().second.second.getSelectedQubits().printMembers();
                 }
                 else qubits_.getSelectedQubits().printMembers();
             }
@@ -231,9 +301,11 @@ namespace compiler
             Bits control_bits_;
             bool bit_controlled_;
             double rotation_angle_;
+            int wait_time_;
             std::pair<Qubits,Qubits> measure_parity_qubits_;
             std::pair<std::string,std::string> measure_parity_axis_;
             std::pair<Qubits,Qubits> two_qubit_pairs_;
+            std::pair<Qubits, std::pair<Qubits,Qubits> > toffoli_qubit_pairs_;
     }; // class Operation
 
     class OperationsCluster

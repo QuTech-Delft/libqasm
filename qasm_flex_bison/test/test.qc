@@ -45,6 +45,8 @@ rX q[1,2:5], 3.1416E4
    rz q6,0.555
    c-x bitcontroller, q[12:14,56]
    c-swap b[7], q1 , q[5,7]
+   toffoli q3, q4, q[0:5]
+
 .result
 # measurement
    measure q1
