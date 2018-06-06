@@ -42,3 +42,9 @@ doc/qtools/gstats
 bin
 */bin
 */bin/*
+
+# Add Flex and Bison generated sources
+*.tab.*
+*.yy.*
+log
+
