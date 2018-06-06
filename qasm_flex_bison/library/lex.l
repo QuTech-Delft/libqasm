@@ -6,7 +6,7 @@
     #define TOKEN(t) {printf("Lex: " #t ": %s\n",yytext); return(t);}
     #define TOKENI(t) {printf("Lex: " #t "\n"); yylval.ival = static_cast<int> ( std::strtol(yytext,NULL,10) ); return(t);}
     #define TOKEND(t) {printf("Lex: " #t "\n"); yylval.dval = std::strtod(yytext,NULL); return(t);}
-    #define TOKENSTR(t) {printf("Lex: " #t "\n"); yylval.sval = yytext; return(t);}
+    #define TOKENSTR(t) {printf("Lex: " #t ": %s\n",yytext); yylval.sval = yytext; return(t);}
 %}
 
 letter             [a-zA-Z\_]
@@ -114,7 +114,7 @@ measureparity      {measurehead}(_(?i:parity))
 
 {comment} {
     ++yylineno;
-    TOKEN(COMMENT)
+    TOKENSTR(COMMENT)
 }
 
 %%

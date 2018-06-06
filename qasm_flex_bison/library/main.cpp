@@ -38,7 +38,7 @@ int main (int argc, const char** argv)
 
     if (!result)
     {
-        std::cout << "Input is valid." << std::endl;
+        std::cout << "Input is valid.\n" << std::endl;
         std::cout << "QASM file asks for " << qasm_representation.numQubits() << " qubits" << std::endl;
         std::cout << "With the following mappings: " << std::endl;
         qasm_representation.printMappings();

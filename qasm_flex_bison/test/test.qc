@@ -1,10 +1,7 @@
-# qcode test file
-
-# qubit definition
 qubits 8
 
 map q[0,0:7,5,6], bleh2
-map b[5], bleh
+map b[5:7], bleh
 
 
 prep_z q[5]

@@ -191,7 +191,7 @@ namespace compiler
                 type_ = toLowerCase(type);
                 toffoli_qubit_pairs_ = std::pair<Qubits, std::pair<Qubits,Qubits>> ( 
                                                                                     qubit_pair1,
-                                                                                    std::pair<Qubits,Qubits> (qubit_pair2,qubit_pair2)
+                                                                                    std::pair<Qubits,Qubits> (qubit_pair2,qubit_pair3)
                                                                                   );
             }
 
@@ -248,7 +248,7 @@ namespace compiler
                 return bits_;
             }
 
-            const int getWaitTime() const
+            int getWaitTime() const
             {
                 return wait_time_;
             }
@@ -256,7 +256,7 @@ namespace compiler
             void printOperation() const
             {
                 std::cout << "Operation " << type_ << ": ";
-                if ( type_ == "rx" | type_ == "ry" |type_ == "rz" )
+                if ( type_ == "rx" || type_ == "ry" || type_ == "rz" )
                 {
                     getQubitsInvolved().printMembers();
                     std::cout << "Rotations = " << getRotationAngle() << std::endl;
@@ -270,7 +270,7 @@ namespace compiler
                     measureParityProperties.first.second.printMembers();
                     std::cout << "With axis " << measureParityProperties.second.second << std::endl;
                 }
-                else if (type_ == "cnot" | type_ == "cz" | type_ == "swap")
+                else if (type_ == "cnot" || type_ == "cz" || type_ == "swap")
                 {
                     std::cout << std::endl;
                     std::cout << "Qubit Pair 1: ";
@@ -327,8 +327,8 @@ namespace compiler
             std::string type_;
             Qubits qubits_;
             Bits bits_;
-            bool bit_controlled_;
             double rotation_angle_;
+            bool bit_controlled_;
             int wait_time_;
             std::pair<Qubits,Qubits> measure_parity_qubits_;
             std::pair<std::string,std::string> measure_parity_axis_;
