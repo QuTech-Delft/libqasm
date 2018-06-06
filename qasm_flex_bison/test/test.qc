@@ -31,13 +31,16 @@ rX q[1,2:5], 3.1416E4
    map q[6] , q6
    map q[7] , q7
 
+.waits
+   wait 2
+
 .first_circuit(50)
    H q0
    cnot q0,q1
    x  q1
    Y  q2
    z  q6
-   {x q3 | h q7| c-x bitcontroller, bleh2}
+   {x q3 | h q7| c-x bitcontroller, bleh2| c-toffoli b[4], q3, q4, q[0:5]}
 
 .second_circuit
    rx q4,     -0.453e1
@@ -53,5 +56,5 @@ rX q[1,2:5], 3.1416E4
 
 .display_results
 display
-display b[100,10,99]
+display b[1]
 display bleh

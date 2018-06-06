@@ -386,7 +386,7 @@ display-operation : DISPLAY
     ;
 wait-operation : WAIT WS INTEGER
                  {
-                     $$ = new compiler::Operation( std::string($1,7), ($3) );
+                     $$ = new compiler::Operation( std::string($1,4), ($3) );
                  }
     ;
 reset-averaging-operation : RESET_AVERAGING 

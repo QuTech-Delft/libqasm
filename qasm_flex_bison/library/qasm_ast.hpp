@@ -79,6 +79,12 @@ namespace compiler
                 return selected_qubits_;
             }
 
+            void printMembers() const
+            {
+                std::cout << "Selected Qubits - ";
+                getSelectedQubits().printMembers();
+            }
+
         protected:
             NumericalIdentifiers selected_qubits_;
     };
@@ -99,6 +105,12 @@ namespace compiler
             const NumericalIdentifiers& getSelectedBits() const
             {
                 return selected_bits_;
+            }
+
+            void printMembers() const
+            {
+                std::cout << "Selected Bits - ";
+                getSelectedBits().printMembers();
             }
 
         protected:
@@ -153,7 +165,7 @@ namespace compiler
             // Display command
             {
                 type_ = toLowerCase(type);
-                control_bits_ = display_bits;
+                bits_ = display_bits;
             }
 
             Operation(const std::string type, Qubits qubit_pair1, Qubits qubit_pair2)
@@ -222,18 +234,18 @@ namespace compiler
 
             void setControlBits(Bits control_bits)
             {
-                control_bits_ = control_bits;
+                bits_ = control_bits;
                 bit_controlled_ = true;
             }
 
             const Bits& getControlBits() const
             {
-                return control_bits_;
+                return bits_;
             }
 
             const Bits& getDisplayBits() const
             {
-                return control_bits_;
+                return bits_;
             }
 
             const int getWaitTime() const
@@ -243,48 +255,64 @@ namespace compiler
 
             void printOperation() const
             {
-                if (isBitControlled()){
-                    std::cout << "Bit controlled with bits: ";
-                    getControlBits().getSelectedBits().printMembers();
+                std::cout << "Operation " << type_ << ": ";
+                if ( type_ == "rx" | type_ == "ry" |type_ == "rz" )
+                {
+                    getQubitsInvolved().printMembers();
+                    std::cout << "Rotations = " << getRotationAngle() << std::endl;
                 }
-                std::cout << "Operation " << type_ << ": " << "with rotations = " << rotation_angle_ << " involving qubits ";
-                if (type_ == "measure_parity")
+                else if (type_ == "measure_parity")
                 {
                     std::cout << std::endl;
                     auto measureParityProperties = getMeasureParityQubitsAndAxis();
-                    measureParityProperties.first.first.getSelectedQubits().printMembers();
+                    measureParityProperties.first.first.printMembers();
                     std::cout << "With axis " << measureParityProperties.second.first << std::endl;
-                    measureParityProperties.first.second.getSelectedQubits().printMembers();
+                    measureParityProperties.first.second.printMembers();
                     std::cout << "With axis " << measureParityProperties.second.second << std::endl;
                 }
                 else if (type_ == "cnot" | type_ == "cz" | type_ == "swap")
                 {
                     std::cout << std::endl;
                     std::cout << "Qubit Pair 1: ";
-                    getTwoQubitPairs().first.getSelectedQubits().printMembers();
+                    getTwoQubitPairs().first.printMembers();
                     std::cout << "Qubit Pair 2: "; 
-                    getTwoQubitPairs().second.getSelectedQubits().printMembers();
+                    getTwoQubitPairs().second.printMembers();
                 }
                 else if (type_ == "cr")
                 {
                     std::cout << std::endl;
                     std::cout << "Qubit Pair 1: ";
-                    getTwoQubitPairs().first.getSelectedQubits().printMembers();
+                    getTwoQubitPairs().first.printMembers();
                     std::cout << "Qubit Pair 2: "; 
-                    getTwoQubitPairs().second.getSelectedQubits().printMembers();
+                    getTwoQubitPairs().second.printMembers();
                     std::cout << "Rotation = " << getRotationAngle() << std::endl; 
                 }
                 else if (type_ == "toffoli")
                 {
                     std::cout << std::endl;
                     std::cout << "Qubit Pair 1: ";
-                    getToffoliQubitPairs().first.getSelectedQubits().printMembers();
+                    getToffoliQubitPairs().first.printMembers();
                     std::cout << "Qubit Pair 2: "; 
-                    getToffoliQubitPairs().second.first.getSelectedQubits().printMembers();
+                    getToffoliQubitPairs().second.first.printMembers();
                     std::cout << "Qubit Pair 3: "; 
-                    getToffoliQubitPairs().second.second.getSelectedQubits().printMembers();
+                    getToffoliQubitPairs().second.second.printMembers();
                 }
-                else qubits_.getSelectedQubits().printMembers();
+                else if (type_ == "wait")
+                {
+                    std::cout << std::endl;
+                    std::cout << "Wait time (integer) = " << getWaitTime() << std::endl;
+                }
+                else if (type_ == "display")
+                {
+                    std::cout << "Display bits: ";
+                    getDisplayBits().printMembers();
+                }
+                else getQubitsInvolved().printMembers();
+
+                if (isBitControlled()){
+                    std::cout << "Bit controlled with bits: ";
+                    getControlBits().printMembers();
+                }
             }
 
         protected:
@@ -298,7 +326,7 @@ namespace compiler
 
             std::string type_;
             Qubits qubits_;
-            Bits control_bits_;
+            Bits bits_;
             bool bit_controlled_;
             double rotation_angle_;
             int wait_time_;
@@ -400,6 +428,7 @@ namespace compiler
                 std::cout << "Contains these operations clusters:" << std::endl;
                 for (auto elem : operations_cluster_)
                     elem->printOperations();
+                std::cout << "End of subcircuit " << name_ << std::endl << std::endl;
             }
 
         protected:
