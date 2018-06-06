@@ -24,6 +24,7 @@
     char* sval;
     compiler::Qubits* qval;
     compiler::Bits* bval;
+    compiler::Operation* oval;
 }
 
 %token <sval> NAME 
@@ -153,13 +154,16 @@ bit-selection : bit
     ;
 
 //# Define the single qubit operation line
+%type <oval> single-qubit-operation;
 single-qubit-operation : single-qubit-gate WS qubit 
                          {
                             subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation(buffer_gate, *($3) ) );
+                            $$ = new compiler::Operation(buffer_gate, *($3) );
                          }
                        | prep_measure-ops WS qubit 
                          {
                             subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation(buffer_gate, *($3) ) );
+                            $$ = new compiler::Operation(buffer_gate, *($3) );
                          }
     ;
 single-qubit-operation-args : parameterized-single-qubit-gate WS qubit COMMA_SEPARATOR FLOAT 

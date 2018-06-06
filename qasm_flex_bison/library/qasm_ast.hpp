@@ -148,19 +148,6 @@ namespace compiler
                 two_qubit_pairs_ = std::pair<Qubits,Qubits> (qubit_pair1,qubit_pair2);
             }
 
-            Operation (   
-                          const std::string type, 
-                          Qubits qubits_involved,
-                          const double rotation_angle,
-                          const bool bit_controlled
-                      )
-            : qubits_ (qubits_involved), 
-              rotation_angle_ (rotation_angle), bit_controlled_(bit_controlled)
-            // bit controlled operations
-            {
-                type_ = toLowerCase(type);
-            }
-
             std::string getType() const
             {
                 return type_;
@@ -247,7 +234,38 @@ namespace compiler
             std::pair<Qubits,Qubits> measure_parity_qubits_;
             std::pair<std::string,std::string> measure_parity_axis_;
             std::pair<Qubits,Qubits> two_qubit_pairs_;
+            std::vector< Operation* > parallel_operations_;
     }; // class Operation
+
+    class Operations
+    // This class enables parallel operation support
+    {
+        public:
+            Operations()
+            {
+                isParallel = false;
+            }
+
+            Operation* lastOperation()
+            {
+                return operations_.back();
+            }
+
+            void addOperation(Operation* valid_op )
+            {
+                operations_.push_back(valid_op);
+            }
+
+            void printOperations()
+            {
+                for (auto elem : operations_)
+                    elem -> printOperation();
+            }
+
+        protected:
+            std::vector< Operation* > operations_;
+            bool isParallel;
+    }
 
     class SubCircuit
     // This class encapsulates the subcircuit with the number of iterations and also the statements contained in it.
@@ -270,31 +288,30 @@ namespace compiler
                 number_iterations_ = iterations;
             }
 
-            void addOperation(Operation *opline)
+            void addOperationsCluster(OperationsCluster *opclus)
             {
-                operations_.push_back(opline);
+                operations_cluster_.push_back(opclus);
             }
 
-            Operation* lastOperation()
+            Operations* lastOperationsCluster()
             {
-                return operations_.back();
+                return operations_cluster_.back();
             }
 
             void printMembers() const
             {
                 std::cout << "Subcircuit Name = " << name_ <<  " , Rank = " << subcircuit_number_ << std::endl;
                 std::cout << name_ << " has " << number_iterations_ << " iterations." << std::endl;
-                std::cout << "Contains these operations:" << std::endl;
-                for (auto elem : operations_)
-                    elem->printOperation();
+                std::cout << "Contains these operations clusters:" << std::endl;
+                for (auto elem : operations_cluster_)
+                    elem->printOperations();
             }
 
         protected:
             std::string name_; // This member is the name of the subcircuit
             int number_iterations_; // This member is the number of iterations the subcircuit is supposed to run
             size_t subcircuit_number_; // This member provides the order of the subcircuits when it is found in the qasm file
-            std::vector< Operation* > operations_;
-            std::vector< Operation* > parallel_operations_;
+            std::vector< Operations* > operations_cluster_;
     }; //class SubCircuit
 
     class SubCircuits
