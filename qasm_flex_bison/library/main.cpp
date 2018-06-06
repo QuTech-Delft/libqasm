@@ -1,11 +1,12 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <stdio.h>
 #include "qasm_ast.hpp"
 
 extern int yyparse();
-extern void yyerror(const char *);
 extern int yylex();
+extern FILE* yyin;
 extern compiler::QasmRepresentation qasm_representation;
 
 int main (int argc, const char** argv)
@@ -14,7 +15,27 @@ int main (int argc, const char** argv)
     extern int yydebug;
     yydebug = 1;
     #endif
-    int result = yyparse();
+
+    if (argc > 1)
+        std::cout << "Path to QASM file = " << argv[1] << std::endl;
+
+    // open a file handle to a particular file:
+    FILE *myfile = fopen(argv[1], "r");
+    // make sure it's valid:
+    if (!myfile) {
+        std::cout << "I can't open a qc file!" << std::endl;
+        return -1;
+    }
+    // set lex to read from it instead of defaulting to STDIN:
+    yyin = myfile;
+
+    // parse through the input until there is no more:
+    int result = 0;
+    
+    do {
+        result += yyparse();
+    } while (!feof(yyin));
+
     if (!result)
     {
         std::cout << "Input is valid." << std::endl;
