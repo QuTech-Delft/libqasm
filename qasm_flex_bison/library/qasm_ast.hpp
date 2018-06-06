@@ -234,16 +234,15 @@ namespace compiler
             std::pair<Qubits,Qubits> measure_parity_qubits_;
             std::pair<std::string,std::string> measure_parity_axis_;
             std::pair<Qubits,Qubits> two_qubit_pairs_;
-            std::vector< Operation* > parallel_operations_;
     }; // class Operation
 
-    class Operations
+    class OperationsCluster
     // This class enables parallel operation support
     {
         public:
-            Operations()
+            OperationsCluster()
             {
-                isParallel = false;
+                isParallel_ = false;
             }
 
             Operation* lastOperation()
@@ -251,21 +250,39 @@ namespace compiler
                 return operations_.back();
             }
 
-            void addOperation(Operation* valid_op )
+            void addOperation( Operation* valid_op )
             {
                 operations_.push_back(valid_op);
             }
 
+            void addParallelOperation( Operation* valid_op, bool isParallel )
+            {
+                operations_.push_back(valid_op);
+                isParallel_ = isParallel;
+            }
+
             void printOperations()
             {
-                for (auto elem : operations_)
-                    elem -> printOperation();
+                if (isParallel_)
+                {
+                    std::cout << "Parallel operations cluster: " << std::endl;
+                    for (auto elem : operations_)
+                        elem -> printOperation();
+                    std::cout << "End Parallel operations" << std::endl;
+                }
+                else
+                {
+                    std::cout << "Serial operation: " << std::endl;
+                    for (auto elem : operations_)
+                        elem -> printOperation();
+                    std::cout << "End Serial operation" << std::endl;
+                }
             }
 
         protected:
             std::vector< Operation* > operations_;
-            bool isParallel;
-    }
+            bool isParallel_;
+    }; // class Operations
 
     class SubCircuit
     // This class encapsulates the subcircuit with the number of iterations and also the statements contained in it.
@@ -293,7 +310,7 @@ namespace compiler
                 operations_cluster_.push_back(opclus);
             }
 
-            Operations* lastOperationsCluster()
+            OperationsCluster* lastOperationsCluster()
             {
                 return operations_cluster_.back();
             }
@@ -311,7 +328,7 @@ namespace compiler
             std::string name_; // This member is the name of the subcircuit
             int number_iterations_; // This member is the number of iterations the subcircuit is supposed to run
             size_t subcircuit_number_; // This member provides the order of the subcircuits when it is found in the qasm file
-            std::vector< Operations* > operations_cluster_;
+            std::vector< OperationsCluster* > operations_cluster_;
     }; //class SubCircuit
 
     class SubCircuits

@@ -34,7 +34,7 @@
 %token <sval> ROTATIONS AXIS
 %token QUBITS
 %token <sval> SINGLE_QUBIT_GATES TWO_QUBIT_GATES CR TOFFOLI
-%token CDASH NOT_TOKEN
+%token <sval> CDASH NOT_TOKEN
 %token <sval> MAPKEY PREP MEASURE MEASUREPARITY MEASUREALL
 %token <sval> WAIT DISPLAY RESET_AVERAGING
 %token QBITHEAD BITHEAD
@@ -157,18 +157,17 @@ bit-selection : bit
 %type <oval> single-qubit-operation;
 single-qubit-operation : single-qubit-gate WS qubit 
                          {
-                            subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation(buffer_gate, *($3) ) );
                             $$ = new compiler::Operation(buffer_gate, *($3) );
                          }
                        | prep_measure-ops WS qubit 
                          {
-                            subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation(buffer_gate, *($3) ) );
                             $$ = new compiler::Operation(buffer_gate, *($3) );
                          }
     ;
+%type <oval> single-qubit-operation-args;
 single-qubit-operation-args : parameterized-single-qubit-gate WS qubit COMMA_SEPARATOR FLOAT 
                               {
-                                  subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation(buffer_gate, *($3) ,$5) );
+                                  $$ = new compiler::Operation(buffer_gate, *($3) ,$5);
                               }
     ;
 map-operation : MAPKEY WS qubit-nomap COMMA_SEPARATOR NAME 
@@ -188,22 +187,30 @@ parameterized-single-qubit-gate : ROTATIONS {buffer_gate = std::string($1);}
 //# This is to define the state preparation/measurement
 prep_measure-ops : PREP {buffer_gate = std::string($1);} | MEASURE {buffer_gate = std::string($1);}
     ;
+
+%type <oval> measure-parity-operation;
 measure-parity-operation : measure-parity-command WS qubit COMMA_SEPARATOR AXIS COMMA_SEPARATOR qubit COMMA_SEPARATOR AXIS
                            {
-                               subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation( buffer_gate, *($3) , std::string($5,1) , *($7) , std::string($9,1) ) );
+                               $$ = new compiler::Operation( buffer_gate, *($3) , std::string($5,1) , *($7) , std::string($9,1) ) ;
                            }
     ;
 measure-parity-command : MEASUREPARITY {buffer_gate = std::string($1);}
-measureall-operation : MEASUREALL {subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation(std::string($1)) );}
+%type <oval> measureall-operation;
+measureall-operation : MEASUREALL {$$ = new compiler::Operation(std::string($1));}
     ;
 
 //# Qubit-controlled operations
+%type <oval> two-qubit-operation;
 two-qubit-operation : two-qubit-gates WS qubit COMMA_SEPARATOR qubit
                       {
-                          subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation( buffer_gate, *($3) , *($5) ) );
+                          $$ = new compiler::Operation( buffer_gate, *($3) , *($5) );
                       }
     ;
+%type <oval> two-qubit-operation-args;
 two-qubit-operation-args : two-qubit-gate-args WS qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR INTEGER
+                           {
+                              $$ = new compiler::Operation( buffer_gate );
+                           }
     ;
 //## Define the two qubit gates
 two-qubit-gates : TWO_QUBIT_GATES {buffer_gate = std::string($1);}
@@ -211,11 +218,16 @@ two-qubit-gates : TWO_QUBIT_GATES {buffer_gate = std::string($1);}
 two-qubit-gate-args : CR {buffer_gate = std::string($1);}
     ;
 //## Define the toffoli gate
+%type <oval> toffoli-operation;
 toffoli-operation : toffoli-gate WS qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit
+                    {
+                       $$ = new compiler::Operation( buffer_gate );
+                    }
     ;
 toffoli-gate : TOFFOLI {buffer_gate = std::string($1);}
     ;
 //## Define a superset of all general "normal" operations
+%type <oval> regular-operations;
 regular-operations : single-qubit-operation 
                    | single-qubit-operation-args
                    | two-qubit-operation 
@@ -223,13 +235,14 @@ regular-operations : single-qubit-operation
                    | toffoli-operation 
     ;
 //# Binary-controlled operations
-qubit-gates : single-qubit-gate 
-                  | parameterized-single-qubit-gate
-                  | two-qubit-gates 
-                  | two-qubit-gate-args 
-                  | toffoli-gate
-    ;
+//qubit-gates : single-qubit-gate 
+//                  | parameterized-single-qubit-gate
+//                  | two-qubit-gates 
+//                  | two-qubit-gate-args 
+//                  | toffoli-gate
+//    ;
 
+%type <oval> binary-controlled-operations;
 binary-controlled-operations : bit-single-qubit-operation 
                                    | bit-single-qubit-operation-args 
                                    | bit-two-qubit-operation 
@@ -237,29 +250,53 @@ binary-controlled-operations : bit-single-qubit-operation
                                    | bit-toffoli-operation 
                                    | negate-binary-operation
     ;
+%type <oval> bit-single-qubit-operation;    
 bit-single-qubit-operation : CDASH single-qubit-gate WS bit COMMA_SEPARATOR qubit
                              {
-                                subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation(buffer_gate, *($6) ) );
-                                subcircuits_object.lastSubCircuit().lastOperation()->setControlBits( *($4) );
+                                compiler::Operation* bit_single_qubit_operation = new compiler::Operation(buffer_gate, *($6) );
+                                bit_single_qubit_operation -> setControlBits( *($4) );
+                                $$ = bit_single_qubit_operation;
                              }
     ;
+%type <oval> bit-single-qubit-operation-args;    
 bit-single-qubit-operation-args : CDASH parameterized-single-qubit-gate WS bit COMMA_SEPARATOR qubit COMMA_SEPARATOR FLOAT
                                   {
-                                      subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation(buffer_gate, *($6) , $8) );
-                                      subcircuits_object.lastSubCircuit().lastOperation()->setControlBits( *($4) );
+                                      compiler::Operation* bit_single_qubit_operation_args = new compiler::Operation(buffer_gate, *($6) , $8);
+                                      bit_single_qubit_operation_args -> setControlBits( *($4) );
+                                      $$ = bit_single_qubit_operation_args;
                                   }
     ;
+%type <oval> bit-two-qubit-operation;    
 bit-two-qubit-operation : CDASH two-qubit-gates WS bit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit
                           {
-                              subcircuits_object.lastSubCircuit().addOperation( new compiler::Operation( buffer_gate, *($6) , *($8) ) );
-                              subcircuits_object.lastSubCircuit().lastOperation()->setControlBits( *($4) );
+                              compiler::Operation* bit_two_qubit_operation = new compiler::Operation( buffer_gate, *($6) , *($8) );
+                              bit_two_qubit_operation -> setControlBits( *($4) );
+                              $$ = bit_two_qubit_operation;
                           }
     ;
+%type <oval> bit-two-qubit-operation-args;    
 bit-two-qubit-operation-args : CDASH two-qubit-gate-args WS bit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR INTEGER
+                               {
+                                  compiler::Operation* bit_two_qubit_operation_args = new compiler::Operation( buffer_gate );
+                                  bit_two_qubit_operation_args -> setControlBits( *($4) );
+                                  $$ = bit_two_qubit_operation_args;
+                               }
     ;
+%type <oval> bit-toffoli-operation;    
 bit-toffoli-operation : CDASH toffoli-gate WS bit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit
+                        {
+                            compiler::Operation* bit_toffoli_operation = new compiler::Operation( buffer_gate );
+                            bit_toffoli_operation -> setControlBits( *($4) );
+                            $$ = bit_toffoli_operation;
+                        }
     ;
+%type <oval> negate-binary-operation;    
 negate-binary-operation : NOT_TOKEN WS bit
+                          {
+                              compiler::Operation* negate_binary_operation = new compiler::Operation( std::string($1,3) );
+                              negate_binary_operation -> setControlBits( *($3) );
+                              $$ = negate_binary_operation;
+                          }
     ;
 
 //# Parallel execution
