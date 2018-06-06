@@ -25,6 +25,7 @@
     compiler::Qubits* qval;
     compiler::Bits* bval;
     compiler::Operation* oval;
+    compiler::OperationsCluster* ocval;
 }
 
 %token <sval> NAME 
@@ -76,21 +77,59 @@ comments : COMMENT
     ;
 qasm-line : map-operation
           | measureall-operation
+            {
+                compiler::Operation* serial_ops = $1;
+                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
+                subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
+            }
           | measure-parity-operation
+            {
+                compiler::Operation* serial_ops = $1;
+                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
+                subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
+            }
           | regular-operations
             {
-                compiler::Operation* regular_ops = $1;
-                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( regular_ops );
+                compiler::Operation* serial_ops = $1;
+                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
                 subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
             }
           | binary-controlled-operations
+            {
+                compiler::Operation* serial_ops = $1;
+                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
+                subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
+            }
           | parallel-operations
+            {
+                subcircuits_object.lastSubCircuit().addOperationsCluster( $1 );
+            }
           | special-operations
           | WS map-operation
           | WS measureall-operation
+            {
+                compiler::Operation* serial_ops = $2;
+                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
+                subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
+            }
           | WS measure-parity-operation
+            {
+                compiler::Operation* serial_ops = $2;
+                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
+                subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
+            }
           | WS regular-operations
+            {
+                compiler::Operation* serial_ops = $2;
+                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
+                subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
+            }
           | WS binary-controlled-operations
+            {
+                compiler::Operation* serial_ops = $2;
+                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
+                subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
+            }
           | WS parallel-operations
           | WS special-operations
     ;
@@ -125,6 +164,7 @@ qubit : qubit-nomap {$$=$1;}
         {
             buffer_indices = qasm_representation.getMappedIndices( std::string($1), true );
             $$ = new compiler::Qubits (buffer_indices);
+            buffer_indices.clear();
         } 
     ;
 %type <qval> qubit-nomap;
@@ -144,6 +184,7 @@ bit :  bit-nomap
        {
            buffer_indices = qasm_representation.getMappedIndices( std::string($1), false );
            $$ = new compiler::Bits (buffer_indices);
+           buffer_indices.clear();
        }
     ;
 %type <bval> bit-nomap;
@@ -305,11 +346,25 @@ negate-binary-operation : NOT_TOKEN WS bit
     ;
 
 //# Parallel execution
-parallel-operations : CBRA parallelizable-ops CKET
+%type <ocval> parallel-operations, parallelizable-ops;
+parallel-operations : CBRA parallelizable-ops CKET { $$ = $2; }
     ;
-all-valid-operations : regular-operations | binary-controlled-operations 
+%type <oval> all-valid-operations;
+all-valid-operations : regular-operations
+                     | binary-controlled-operations 
     ;
-parallelizable-ops : all-valid-operations | parallelizable-ops PARALLEL_SEPARATOR all-valid-operations
+parallelizable-ops : all-valid-operations
+                     {
+                        compiler::OperationsCluster* parallel_ops = new compiler::OperationsCluster( $1 );
+                        std::cout << "In Parallel cluster" << std::endl;
+                        $$ = parallel_ops;
+                     }
+                   | parallelizable-ops PARALLEL_SEPARATOR all-valid-operations
+                     {
+                        $1 -> addParallelOperation( $3 );
+                        std::cout << "In Parallel cluster 1" << std::endl;
+                        $$ = $1;
+                     }
     ;
 
 //# Special operations

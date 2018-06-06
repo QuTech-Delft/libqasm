@@ -274,14 +274,14 @@ namespace compiler
                     std::cout << "Parallel operations cluster: " << std::endl;
                     for (auto elem : operations_)
                         elem -> printOperation();
-                    std::cout << "End Parallel operations" << std::endl;
+                    std::cout << "End Parallel operations \n" << std::endl;
                 }
                 else
                 {
                     std::cout << "Serial operation: " << std::endl;
                     for (auto elem : operations_)
                         elem -> printOperation();
-                    std::cout << "End Serial operation" << std::endl;
+                    std::cout << "End Serial operation \n" << std::endl;
                 }
             }
 

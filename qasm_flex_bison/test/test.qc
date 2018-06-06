@@ -37,14 +37,14 @@ rX q[1,2:5], 3.1416E4
    x  q1
    Y  q2
    z  q6
-   {x q3 | h q7}
+   {x q3 | h q7| c-x bitcontroller, bleh2}
 
 .second_circuit
    rx q4,     -0.453e1
    ry q5,0.244
    rz q6,0.555
    c-x bitcontroller, q[12:14,56]
-   c-swap b[7], q1 , q5
+   c-swap b[7], q1 , q[5,7]
 .result
 # measurement
    measure q1
