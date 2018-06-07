@@ -12,7 +12,7 @@
 letter             [a-zA-Z\_]
 identifier         {letter}([0-9]*{letter}*)+
 whitespace         (\t|" "|\r)+
-newline            {whitespace}?(\n|\r\n)
+newline            {whitespace}?(\n|\r\n)+
 singlenewline      (\n|\r\n)
 comment            \#(.*)
 integer            [0-9]+

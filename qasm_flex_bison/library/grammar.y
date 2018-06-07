@@ -49,10 +49,10 @@
 %%
 
 //# Describe the general structure of a qasm file
-qasm-file : QASM_VERSION line-separator qubit-register line-separator circuits {qasm_representation.getSubCircuits() = subcircuits_object;}
-          | comments QASM_VERSION line-separator qubit-register line-separator circuits {qasm_representation.getSubCircuits() = subcircuits_object;}
-          | QASM_VERSION line-separator comments qubit-register line-separator circuits {qasm_representation.getSubCircuits() = subcircuits_object;}
-          | comments QASM_VERSION line-separator comments qubit-register line-separator circuits {qasm_representation.getSubCircuits() = subcircuits_object;}
+qasm-file : QASM_VERSION NEWLINE qubit-register NEWLINE circuits {qasm_representation.getSubCircuits() = subcircuits_object;}
+          | comments QASM_VERSION NEWLINE qubit-register NEWLINE circuits {qasm_representation.getSubCircuits() = subcircuits_object;}
+          | QASM_VERSION NEWLINE comments qubit-register NEWLINE circuits {qasm_representation.getSubCircuits() = subcircuits_object;}
+          | comments QASM_VERSION NEWLINE comments qubit-register NEWLINE circuits {qasm_representation.getSubCircuits() = subcircuits_object;}
     ;
 circuits : circuit 
            | circuits circuit
@@ -62,19 +62,18 @@ circuit : statements
     ;
 subcircuit : DOT NAME { subcircuits_object.addSubCircuit( compiler::SubCircuit ($2,subcircuits_object.numberOfSubCircuits()) ); }
            | subcircuit BRA INTEGER KET { subcircuits_object.lastSubCircuit().numberIterations($3); }
+           | subcircuit NEWLINE
     ;
 statements : qasm-line 
            | subcircuit
            | comments
-           | statements line-separator qasm-line
-           | statements line-separator subcircuit
-           | statements line-separator comments
-           | statements line-separator
+           | statements NEWLINE qasm-line
+           | statements NEWLINE subcircuit
+           | statements NEWLINE comments
     ;
 comments : COMMENT 
          | comments COMMENT 
-         | comments line-separator COMMENT 
-         | comments line-separator
+         | comments NEWLINE
     ;
 qasm-line : map-operation
           | measureall-operation
@@ -111,13 +110,11 @@ qasm-line : map-operation
                 compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
                 subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
             }
+          | qasm-line NEWLINE
     ;
 
 //# We define the convenience strings, texts, numbers here....
 %type <idval> indices numerical-identifiers numerical-identifier-list numerical-identifier-range;
-line-separator : NEWLINE 
-               | line-separator NEWLINE
-    ;
 indices : SBRA numerical-identifiers SKET {} 
     ;
 numerical-identifiers : numerical-identifier-list {} 
