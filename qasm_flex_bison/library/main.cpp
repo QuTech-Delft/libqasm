@@ -1,3 +1,5 @@
+/** This main file is an example of how to use the AST class for the qasm parser **/
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -8,6 +10,8 @@ extern int yyparse();
 extern int yylex();
 extern FILE* yyin;
 extern compiler::QasmRepresentation qasm_representation;
+
+void printOperation(compiler::Operation& op);
 
 int main (int argc, const char** argv)
 {
@@ -53,4 +57,67 @@ int main (int argc, const char** argv)
     }
 
     return result;
+}
+
+void printOperation(compiler::Operation& op)
+{
+    std::string type_ = op.getType();
+    std::cout << "Operation " << type_ << ": ";
+    if ( type_ == "rx" || type_ == "ry" || type_ == "rz" )
+    {
+        op.getQubitsInvolved().printMembers();
+        std::cout << "Rotations = " << op.getRotationAngle() << std::endl;
+    }
+    else if (type_ == "measure_parity")
+    {
+        std::cout << std::endl;
+        auto measureParityProperties = op.getMeasureParityQubitsAndAxis();
+        measureParityProperties.first.first.printMembers();
+        std::cout << "With axis " << measureParityProperties.second.first << std::endl;
+        measureParityProperties.first.second.printMembers();
+        std::cout << "With axis " << measureParityProperties.second.second << std::endl;
+    }
+    else if (type_ == "cnot" || type_ == "cz" || type_ == "swap")
+    {
+        std::cout << std::endl;
+        std::cout << "Qubit Pair 1: ";
+        op.getTwoQubitPairs().first.printMembers();
+        std::cout << "Qubit Pair 2: "; 
+        op.getTwoQubitPairs().second.printMembers();
+    }
+    else if (type_ == "cr")
+    {
+        std::cout << std::endl;
+        std::cout << "Qubit Pair 1: ";
+        op.getTwoQubitPairs().first.printMembers();
+        std::cout << "Qubit Pair 2: "; 
+        op.getTwoQubitPairs().second.printMembers();
+        std::cout << "Rotation = " << op.getRotationAngle() << std::endl; 
+    }
+    else if (type_ == "toffoli")
+    {
+        std::cout << std::endl;
+        std::cout << "Qubit Pair 1: ";
+        op.getToffoliQubitPairs().first.printMembers();
+        std::cout << "Qubit Pair 2: "; 
+        op.getToffoliQubitPairs().second.first.printMembers();
+        std::cout << "Qubit Pair 3: "; 
+        op.getToffoliQubitPairs().second.second.printMembers();
+    }
+    else if (type_ == "wait")
+    {
+        std::cout << std::endl;
+        std::cout << "Wait time (integer) = " << op.getWaitTime() << std::endl;
+    }
+    else if (type_ == "display")
+    {
+        std::cout << "Display bits: ";
+        op.getDisplayBits().printMembers();
+    }
+    else op.getQubitsInvolved().printMembers();
+
+    if (op.isBitControlled()){
+        std::cout << "Bit controlled with bits: ";
+        op.getControlBits().printMembers();
+    }
 }

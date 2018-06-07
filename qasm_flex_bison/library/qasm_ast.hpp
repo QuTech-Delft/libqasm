@@ -367,6 +367,16 @@ namespace compiler
                 isParallel_ = true;
             }
 
+            bool isParallel() const
+            {
+                return isParallel_;
+            }
+
+            const std::vector< Operation* >& getOperations() const
+            {
+                return operations_;
+            }
+
             void printOperations()
             {
                 if (isParallel_)
@@ -411,6 +421,16 @@ namespace compiler
                 number_iterations_ = iterations;
             }
 
+            size_t rankSubCircuit() const
+            {
+                return subcircuit_number_;
+            }
+
+            const std::string& nameSubCircuit() const
+            {
+                return name_;
+            }
+
             void addOperationsCluster(OperationsCluster *opclus)
             {
                 operations_cluster_.push_back(opclus);
@@ -419,6 +439,11 @@ namespace compiler
             OperationsCluster* lastOperationsCluster()
             {
                 return operations_cluster_.back();
+            }
+
+            const std::vector< OperationsCluster* >& getOperationsCluster() const
+            {
+                return operations_cluster_;
             }
 
             void printMembers() const
