@@ -63,15 +63,18 @@ circuit : subcircuit statements
     ;
 subcircuit : DOT NAME { subcircuits_object.addSubCircuit( compiler::SubCircuit ($2,subcircuits_object.numberOfSubCircuits()) ); }
            | subcircuit BRA INTEGER KET { subcircuits_object.lastSubCircuit().numberIterations($3); }
+           | DOT NAME WS comments { subcircuits_object.addSubCircuit( compiler::SubCircuit ($2,subcircuits_object.numberOfSubCircuits()) ); }
+           | subcircuit BRA INTEGER KET WS comments { subcircuits_object.lastSubCircuit().numberIterations($3); }
     ;
 statements : qasm-line 
            | subcircuit
+           | comments
            | qasm-line line-separator
            | subcircuit line-separator
            | statements line-separator qasm-line
            | statements line-separator subcircuit
            | statements line-separator
-           | comments
+           | statements comments
     ;
 comments : COMMENT 
          | comments COMMENT 
@@ -386,6 +389,10 @@ display-operation : DISPLAY
                   | DISPLAY WS bit
                     {
                         $$ = new compiler::Operation( std::string($1,7), *($3) );
+                    }
+                  | DISPLAY WS
+                    {
+                        $$ = new compiler::Operation( std::string($1) );
                     }
     ;
 wait-operation : WAIT WS INTEGER

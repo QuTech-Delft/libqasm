@@ -4,7 +4,7 @@ qubits 9
 map q[4],oracle
 
 # sub-circuit for state initialization
-.init
+.init #can I support comments in subcircuit init?
     x oracle
     { h q[0] | h q[1] | h q[2] | h q[3] | h oracle }
 
@@ -18,7 +18,8 @@ map q[4],oracle
 
     x q[2]
     toffoli q[0],q[1],q[5]
-    toffoli q[1],q[5],q[6]
+    toffoli q[1],q[5],q[6] #test of multiline comments
+    #blabla
     toffoli q[2],q[6],q[7]
     toffoli q[3],q[7],q[8]
     cnot q[8],oracle
@@ -48,4 +49,4 @@ map q[4],oracle
 .final_measurement
     h oracle
     measure oracle
-    display
+    display 

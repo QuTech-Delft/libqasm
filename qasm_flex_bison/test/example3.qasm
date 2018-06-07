@@ -18,4 +18,5 @@ not b[0]
 # multi-bits controlled X gate
 c-x b[0,1],q[4] 
 # restore the measurement register
-not b[0]
+not b[0] 
+display 
