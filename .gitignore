@@ -47,3 +47,6 @@ bin
 *.tab.*
 *.yy.*
 log
+*.dot
+*.output
+*.png

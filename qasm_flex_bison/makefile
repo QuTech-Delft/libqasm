@@ -8,7 +8,7 @@ all:
 	mv testCompiler bin
 
 grammar:
-	bison -Wall -d -t library/grammar.y -g --report=itemset
+	bison -Wall -d -t library/grammar.y -g -r all
 	mv grammar.tab.* library
 
 lex:
