@@ -16,7 +16,7 @@ lex:
 	mv lex.yy.* library
 
 testing:
-	./bin/testCompiler test/test.qc && ./bin/testCompiler test/bell.qasm && ./bin/testCompiler test/example2.qasm && ./bin/testCompiler test/example3.qasm && ./bin/testCompiler test/grover.qasm
+	./bin/testCompiler test/test.qc && ./bin/testCompiler test/bell.qasm && ./bin/testCompiler test/example2.qasm && ./bin/testCompiler test/example3.qasm && ./bin/testCompiler test/grover.qasm && ./bin/testCompiler test/example7.qasm
 
 runTest:
 	$(MAKE) all

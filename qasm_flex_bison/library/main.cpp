@@ -23,7 +23,7 @@ int main (int argc, const char** argv)
     FILE *myfile = fopen(argv[1], "r");
     // make sure it's valid:
     if (!myfile) {
-        std::cout << "I can't open a qc file!" << std::endl;
+        std::cout << "File " << argv[1] << " not found!" << std::endl;
         return -1;
     }
     // set lex to read from it instead of defaulting to STDIN:
