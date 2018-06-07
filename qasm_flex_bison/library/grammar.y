@@ -33,7 +33,7 @@
 %token <sval> NAME 
 %token <ival> INTEGER
 %token <dval> FLOAT
-%token COMMA_SEPARATOR PARALLEL_SEPARATOR BRA KET DOT SBRA SKET CBRA CKET LS_SEP NEWLINE WS COLON COMMENT
+%token COMMA_SEPARATOR PARALLEL_SEPARATOR BRA KET DOT SBRA SKET CBRA CKET NEWLINE WS COLON COMMENT
 %token <sval> ROTATIONS AXIS
 %token QUBITS
 %token <sval> SINGLE_QUBIT_GATES TWO_QUBIT_GATES CR TOFFOLI
@@ -56,12 +56,8 @@ qasm-file : QASM_VERSION line-separator qubit-register line-separator circuits {
     ;
 circuits : circuit 
            | circuits circuit
-           | comments
-           | circuits comments
     ;
-circuit : subcircuit statements 
-        | statements
-        | WS subcircuit statements 
+circuit : statements
         | WS statements
     ;
 subcircuit : DOT NAME { subcircuits_object.addSubCircuit( compiler::SubCircuit ($2,subcircuits_object.numberOfSubCircuits()) ); }
@@ -70,17 +66,14 @@ subcircuit : DOT NAME { subcircuits_object.addSubCircuit( compiler::SubCircuit (
 statements : qasm-line 
            | subcircuit
            | comments
-           | qasm-line line-separator
-           | subcircuit line-separator
            | statements line-separator qasm-line
            | statements line-separator subcircuit
+           | statements line-separator comments
            | statements line-separator
-           | statements comments
     ;
 comments : COMMENT 
          | comments COMMENT 
          | comments line-separator COMMENT 
-         | comments COMMENT line-separator
          | comments line-separator
     ;
 qasm-line : map-operation
@@ -115,41 +108,6 @@ qasm-line : map-operation
           | special-operations
             {
                 compiler::Operation* serial_ops = $1;
-                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
-                subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
-            }
-          | WS map-operation
-          | WS measureall-operation
-            {
-                compiler::Operation* serial_ops = $2;
-                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
-                subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
-            }
-          | WS measure-parity-operation
-            {
-                compiler::Operation* serial_ops = $2;
-                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
-                subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
-            }
-          | WS regular-operations
-            {
-                compiler::Operation* serial_ops = $2;
-                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
-                subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
-            }
-          | WS binary-controlled-operations
-            {
-                compiler::Operation* serial_ops = $2;
-                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
-                subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
-            }
-          | WS parallel-operations
-            {
-                subcircuits_object.lastSubCircuit().addOperationsCluster( $2 );
-            }
-          | WS special-operations
-            {
-                compiler::Operation* serial_ops = $2;
                 compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
                 subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
             }
@@ -402,9 +360,9 @@ wait-operation : WAIT WS INTEGER
                  }
     ;
 reset-averaging-operation : RESET_AVERAGING 
-                          {
-                              $$ = new compiler::Operation( std::string($1) );
-                          }
+                            {
+                                $$ = new compiler::Operation( std::string($1) );
+                            }
                           | RESET_AVERAGING WS qubit
                             {
                                 $$ = new compiler::Operation( std::string($1,15), *($3) );

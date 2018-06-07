@@ -1,3 +1,4 @@
+version 1.0
 #define a quantum register of 2 qubits
 qubits 2
 

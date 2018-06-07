@@ -51,6 +51,7 @@ rX q[1,2:5], 3.1416E4
 .result
 # measurement
    measure q1
+   {measure q0 | measure q2 | measure q3}
 
 .display_results
 display

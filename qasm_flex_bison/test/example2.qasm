@@ -1,3 +1,4 @@
+version 1.0
 #define a quantum register of 3 qubits
 qubits 3
 

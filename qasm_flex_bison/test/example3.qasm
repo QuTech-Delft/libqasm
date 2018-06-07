@@ -1,3 +1,4 @@
+version 1.0
 qubits 5
 h q[0]
 # measurement outcome in b0
