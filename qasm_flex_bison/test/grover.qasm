@@ -1,10 +1,11 @@
+version 1.0
 # define a quantum register of 9 qubits
 qubits 9
 
 map q[4],oracle
 
 # sub-circuit for state initialization
-.init #can I support comments in subcircuit init?
+.init
     x oracle
     { h q[0] | h q[1] | h q[2] | h q[3] | h oracle }
 

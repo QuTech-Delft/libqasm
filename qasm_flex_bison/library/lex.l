@@ -39,8 +39,11 @@ measurehead        (?i:measure)
 measure            {measurehead}(_{axis})?
 measureall         {measurehead}(_(?i:all))
 measureparity      {measurehead}(_(?i:parity))
+qasm_version       (?i:version){whitespace}{integer}(\.)?{integer}?
 
 %%
+{qasm_version} TOKENSTR(QASM_VERSION)
+
 {qubits} TOKEN(QUBITS)
 
 {qubithead} TOKEN(QBITHEAD)

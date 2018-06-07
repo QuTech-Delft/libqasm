@@ -1,3 +1,4 @@
+version 1.0
 qubits 8
 
 map q[0,0:7,5,6], bleh2

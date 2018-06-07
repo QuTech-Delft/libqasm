@@ -29,6 +29,7 @@
     compiler::OperationsCluster* ocval;
 }
 
+%token <sval> QASM_VERSION
 %token <sval> NAME 
 %token <ival> INTEGER
 %token <dval> FLOAT
@@ -48,8 +49,10 @@
 %%
 
 //# Describe the general structure of a qasm file
-qasm-file : qubit-register line-separator circuits {qasm_representation.getSubCircuits() = subcircuits_object;}
-          | comments qubit-register line-separator circuits {qasm_representation.getSubCircuits() = subcircuits_object;}
+qasm-file : QASM_VERSION line-separator qubit-register line-separator circuits {qasm_representation.getSubCircuits() = subcircuits_object;}
+          | comments QASM_VERSION line-separator qubit-register line-separator circuits {qasm_representation.getSubCircuits() = subcircuits_object;}
+          | QASM_VERSION line-separator comments qubit-register line-separator circuits {qasm_representation.getSubCircuits() = subcircuits_object;}
+          | comments QASM_VERSION line-separator comments qubit-register line-separator circuits {qasm_representation.getSubCircuits() = subcircuits_object;}
     ;
 circuits : circuit 
            | circuits circuit
@@ -63,8 +66,6 @@ circuit : subcircuit statements
     ;
 subcircuit : DOT NAME { subcircuits_object.addSubCircuit( compiler::SubCircuit ($2,subcircuits_object.numberOfSubCircuits()) ); }
            | subcircuit BRA INTEGER KET { subcircuits_object.lastSubCircuit().numberIterations($3); }
-           | DOT NAME WS comments { subcircuits_object.addSubCircuit( compiler::SubCircuit ($2,subcircuits_object.numberOfSubCircuits()) ); }
-           | subcircuit BRA INTEGER KET WS comments { subcircuits_object.lastSubCircuit().numberIterations($3); }
     ;
 statements : qasm-line 
            | subcircuit
