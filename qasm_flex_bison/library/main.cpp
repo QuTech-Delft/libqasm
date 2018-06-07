@@ -11,7 +11,10 @@ extern int yylex();
 extern FILE* yyin;
 extern compiler::QasmRepresentation qasm_representation;
 
-void printOperation(compiler::Operation& op);
+void printOperationProperties(compiler::Operation& op);
+void printIfValid(compiler::QasmRepresentation& qasm_representation);
+void printSubCircuitProperties(compiler::SubCircuit& subs);
+void printSerialParallelOperations(compiler::OperationsCluster& ops_cluster);
 
 int main (int argc, const char** argv)
 {
@@ -43,13 +46,7 @@ int main (int argc, const char** argv)
     if (!result)
     {
         std::cout << "Input is valid.\n" << std::endl;
-        std::cout << "QASM file asks for " << qasm_representation.numQubits() << " qubits" << std::endl;
-        std::cout << "With the following mappings: " << std::endl;
-        qasm_representation.printMappings();
-        std::cout << "Number of subcircuits found = " << qasm_representation.getSubCircuits().numberOfSubCircuits() << std::endl;
-        const std::vector<compiler::SubCircuit>& found_subcircuits = qasm_representation.getSubCircuits().getAllSubCircuits();
-        for (compiler::SubCircuit elem : found_subcircuits)
-            elem.printMembers();
+        printIfValid(qasm_representation);
     }
     else
     {
@@ -59,7 +56,48 @@ int main (int argc, const char** argv)
     return result;
 }
 
-void printOperation(compiler::Operation& op)
+void printIfValid(compiler::QasmRepresentation& qasm_representation)
+{
+    std::cout << "QASM file asks for " << qasm_representation.numQubits() << " qubits" << std::endl;
+    std::cout << "With the following mappings: " << std::endl;
+    qasm_representation.printMappings();
+    std::cout << "Number of subcircuits found = " << qasm_representation.getSubCircuits().numberOfSubCircuits() << std::endl;
+    const std::vector<compiler::SubCircuit>& found_subcircuits = qasm_representation.getSubCircuits().getAllSubCircuits();
+    for (compiler::SubCircuit subcircuit : found_subcircuits){
+        printSubCircuitProperties(subcircuit);
+    }
+}
+
+void printSubCircuitProperties(compiler::SubCircuit& subs)
+{
+    std::cout << "Subcircuit Name = " << subs.nameSubCircuit() <<  " , Rank = " << subs.rankSubCircuit() << std::endl;
+    std::cout << subs.nameSubCircuit() << " has " << subs.numberIterations() << " iterations." << std::endl;
+    std::cout << "Contains these operations clusters:" << std::endl;
+    for (auto elem : subs.getOperationsCluster())
+        printSerialParallelOperations(*elem);
+    std::cout << "End of subcircuit " << subs.nameSubCircuit() << std::endl << std::endl;
+}
+
+void printSerialParallelOperations(compiler::OperationsCluster& ops_cluster)
+{
+    if (ops_cluster.isParallel())
+    {
+        std::cout << "Parallel operations cluster: " << std::endl;
+        for (auto elem : ops_cluster.getOperations())
+            printOperationProperties(*elem);
+        std::cout << "End Parallel operations \n" << std::endl;
+    }
+    else
+    {
+        std::cout << "Serial operation: " << std::endl;
+        for (auto elem : ops_cluster.getOperations())
+            printOperationProperties(*elem);
+        std::cout << "End Serial operation \n" << std::endl;
+    }
+}
+
+void printOperationProperties(compiler::Operation& op)
+// Potentially a function example where one can create an interface with whatever simulator/eQASM generator class.
 {
     std::string type_ = op.getType();
     std::cout << "Operation " << type_ << ": ";

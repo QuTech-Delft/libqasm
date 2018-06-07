@@ -21,11 +21,13 @@ namespace compiler
             NumericalIdentifiers() = default;
 
             void addToVector (const int index)
+            // This is used when a single integer is encountered
             {
                 indices_.push_back( static_cast<size_t> (index) );
             }
 
             void addToVector (const int index_min, const int index_max)
+            // This is used for when a range of qubits is being defined
             {
                 for (int index = index_min; index <= index_max; ++index)
                     indices_.push_back( static_cast<size_t> (index) );
@@ -50,7 +52,7 @@ namespace compiler
             void printMembers() const
             {
                 std::cout << "Indices: ";
-                for (size_t elems : indices_)
+                for (size_t elems : getIndices())
                 {
                     std::cout << elems << " ";
                 }
@@ -379,17 +381,17 @@ namespace compiler
 
             void printOperations()
             {
-                if (isParallel_)
+                if (isParallel())
                 {
                     std::cout << "Parallel operations cluster: " << std::endl;
-                    for (auto elem : operations_)
+                    for (auto elem : getOperations())
                         elem -> printOperation();
                     std::cout << "End Parallel operations \n" << std::endl;
                 }
                 else
                 {
                     std::cout << "Serial operation: " << std::endl;
-                    for (auto elem : operations_)
+                    for (auto elem : getOperations())
                         elem -> printOperation();
                     std::cout << "End Serial operation \n" << std::endl;
                 }
@@ -448,12 +450,12 @@ namespace compiler
 
             void printMembers() const
             {
-                std::cout << "Subcircuit Name = " << name_ <<  " , Rank = " << subcircuit_number_ << std::endl;
-                std::cout << name_ << " has " << number_iterations_ << " iterations." << std::endl;
+                std::cout << "Subcircuit Name = " << nameSubCircuit() <<  " , Rank = " << rankSubCircuit() << std::endl;
+                std::cout << nameSubCircuit() << " has " << numberIterations() << " iterations." << std::endl;
                 std::cout << "Contains these operations clusters:" << std::endl;
-                for (auto elem : operations_cluster_)
+                for (auto elem : getOperationsCluster())
                     elem->printOperations();
-                std::cout << "End of subcircuit " << name_ << std::endl << std::endl;
+                std::cout << "End of subcircuit " << nameSubCircuit() << std::endl << std::endl;
             }
 
         protected:
