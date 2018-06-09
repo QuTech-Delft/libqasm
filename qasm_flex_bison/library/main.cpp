@@ -3,13 +3,9 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <stdio.h>
 #include "qasm_ast.hpp"
+#include "qasm_semantic.hpp"
 
-extern int yyparse();
-extern int yylex();
-extern FILE* yyin;
-extern compiler::QasmRepresentation qasm_representation;
 
 void printOperationProperties(compiler::Operation& op);
 void printIfValid(compiler::QasmRepresentation& qasm_representation);
@@ -18,6 +14,7 @@ void printSerialParallelOperations(compiler::OperationsCluster& ops_cluster);
 
 int main (int argc, const char** argv)
 {
+
     #if YYDEBUG == 1
     extern int yydebug;
     yydebug = 1;
@@ -33,15 +30,12 @@ int main (int argc, const char** argv)
         std::cout << "File " << argv[1] << " not found!" << std::endl;
         return -1;
     }
-    // set lex to read from it instead of defaulting to STDIN:
-    yyin = myfile;
-
-    // parse through the input until there is no more:
-    int result = 0;
     
-    do {
-        result += yyparse();
-    } while (!feof(yyin));
+    compiler::SemanticChecker sm(myfile);
+
+    compiler::QasmRepresentation qasm_representation = sm.getQasmRepresentation();
+    
+    int result = sm.parseResult();
 
     if (!result)
     {
