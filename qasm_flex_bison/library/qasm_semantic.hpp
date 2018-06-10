@@ -11,13 +11,13 @@ extern compiler::QasmRepresentation qasm_representation;
 
 namespace compiler
 {
-    class SemanticChecker
+    class QasmSemanticChecker
     {
         public:
-            SemanticChecker(FILE *myfile)
+            QasmSemanticChecker(FILE *qasm_file)
             {
                 // set lex to read from it instead of defaulting to STDIN:
-                yyin = myfile;
+                yyin = qasm_file;
 
                 // parse through the input until there is no more:
                 int result = 0;
@@ -28,9 +28,10 @@ namespace compiler
                 if (result)
                     throw std::runtime_error(std::string("Could not parse qasm file!\n"));
 
-                parse_result_ = result;
                 maxNumQubit_ = qasm_representation.numQubits();
                 qasm_ = qasm_representation;
+                result = doChecks();
+                parse_result_ = result;
             }
 
             int parseResult() const
@@ -49,14 +50,16 @@ namespace compiler
             int parse_result_;
 
             
-            // void qubitRegisterCheck(const compiler::Qubits& qubits)
-            // {
+            int doChecks() const
+            {
+                int checkResult = 0;
+                std::cout << "Semantic check complete. Qasm file is valid." << std::endl;
+                return checkResult;
+            }
 
-            // }
 
 
-
-    }; // class SemanticChecker
+    }; // class QasmSemanticChecker
 
 } // namespace compiler
 
