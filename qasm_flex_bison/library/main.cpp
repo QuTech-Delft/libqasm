@@ -3,7 +3,6 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "qasm_ast.hpp"
 #include "qasm_semantic.hpp"
 
 
@@ -33,7 +32,7 @@ int main (int argc, const char** argv)
     
     compiler::SemanticChecker sm(myfile);
 
-    compiler::QasmRepresentation qasm_representation = sm.getQasmRepresentation();
+    auto qasm_representation = sm.getQasmRepresentation();
     
     int result = sm.parseResult();
 
