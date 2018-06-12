@@ -1,18 +1,23 @@
 %option noyywrap
 %{
     #include "grammar.tab.h"
-    #define TOKEN(t) {printf("Lex: " #t "\n"); return(t);}
-    #define TOKENI(t) {printf("Lex: " #t "\n"); yylval.ival = atoi(yytext); return(t);}
-    #define TOKEND(t) {printf("Lex: " #t "\n"); yylval.dval = atof(yytext); return(t);}
-    #define TOKENSTR(t) {printf("Lex: " #t "\n"); yylval.sval = yytext; return(t);}
+    #include <cstdlib>
+    #include <string>
+    #define PRINTLEX(t) { printf("Lex: " #t ": %s\n",yytext); }
+    #define TOKEN(t) { return(t); }
+    #define TOKENI(t) {  yylval.ival = static_cast<int> ( std::strtol(yytext,NULL,10) ); return(t); }
+    #define TOKEND(t) {  yylval.dval = std::strtod(yytext,NULL); return(t); }
+    #define TOKENSTR(t) { yylval.sval = yytext; return(t); }
 %}
 
-letter             [a-zA-Z]
+letter             [a-zA-Z\_]
 identifier         {letter}([0-9]*{letter}*)+
 whitespace         (\t|" "|\r)+
-newline            {whitespace}?\n
+newline            {whitespace}?(\n|\r\n)+
+singlenewline      (\n|\r\n)
+comment            \#(.*)
 integer            [0-9]+
-float              ({integer}\.{integer})[eE]?{integer}?
+float              (\-)?({integer}\.{integer})[eE]?((\-)?{integer})?
 axis               ([xX]|[yY]|[zZ])
 single_qubits      ((?i:i)|(?i:h)|(?i:x90)|(?i:y90)|(?i:mx90)|(?i:my90)|(?i:s)|(?i:sdag)|(?i:t)|(?i:tdag))
 two_qubit_gates    ((?i:cnot)|(?i:cz)|(?i:swap))
@@ -35,45 +40,48 @@ measurehead        (?i:measure)
 measure            {measurehead}(_{axis})?
 measureall         {measurehead}(_(?i:all))
 measureparity      {measurehead}(_(?i:parity))
+qasm_version       (?i:version){whitespace}{integer}(\.)?{integer}?
 
 %%
+{qasm_version} TOKENSTR(QASM_VERSION)
+
 {qubits} TOKEN(QUBITS)
 
 {qubithead} TOKEN(QBITHEAD)
 
 {bithead} TOKEN(BITHEAD)
 
-{axis}  TOKEN(AXIS)
+{axis}  TOKENSTR(AXIS)
 
-{rotations} TOKEN(ROTATIONS)
+{rotations} TOKENSTR(ROTATIONS)
 
-{cr} TOKEN(CR)
+{cr} TOKENSTR(CR)
 
 {cdash} TOKEN(CDASH)
 
-{not_token} TOKEN(NOT_TOKEN)
+{not_token} TOKENSTR(NOT_TOKEN)
 
-{single_qubits} TOKEN(SINGLE_QUBIT_GATES)
+{single_qubits} TOKENSTR(SINGLE_QUBIT_GATES)
 
-{two_qubit_gates} TOKEN(TWO_QUBIT_GATES)
+{two_qubit_gates} TOKENSTR(TWO_QUBIT_GATES)
 
-{toffoli} TOKEN(TOFFOLI)
+{toffoli} TOKENSTR(TOFFOLI)
 
 {mapkey} TOKEN(MAPKEY)
 
-{prep} TOKEN(PREP)
+{prep} TOKENSTR(PREP)
 
-{measure} TOKEN(MEASURE)
+{measure} TOKENSTR(MEASURE)
 
-{measureall} TOKEN(MEASUREALL)
+{measureall} TOKENSTR(MEASUREALL)
 
-{measureparity} TOKEN(MEASUREPARITY)
+{measureparity} TOKENSTR(MEASUREPARITY)
 
-{display} TOKEN(DISPLAY)
+{display} TOKENSTR(DISPLAY)
 
-{wait} TOKEN(WAIT)
+{wait} TOKENSTR(WAIT)
 
-{resetavg} TOKEN(RESET_AVERAGING)
+{resetavg} TOKENSTR(RESET_AVERAGING)
 
 ":" TOKEN(COLON)
 
@@ -106,6 +114,11 @@ measureparity      {measurehead}(_(?i:parity))
 {newline} {
     ++yylineno;
     TOKEN(NEWLINE)
+}
+
+{comment} {
+    ++yylineno;
+    TOKENSTR(COMMENT)
 }
 
 %%
