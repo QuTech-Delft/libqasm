@@ -11,7 +11,7 @@ measure_z q[3]
 measure_z q[4]
 # multi-binary controlled gate
 # apply pauli-x to q4 if b2=1 and b3=1 and b4=1
-c-x b[2,3,4],q[5]
+c-x b[2,3,4],q[4]
 # binary controlled gate using an arbitrary mask :
 # we want to apply a Pauli-X to q[4] if b[0]=0 and b[1]=1
 # negate b0

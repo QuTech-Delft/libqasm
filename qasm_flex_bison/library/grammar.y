@@ -215,7 +215,7 @@ measure-parity-operation : measure-parity-command WS qubit COMMA_SEPARATOR AXIS 
     ;
 measure-parity-command : MEASUREPARITY {buffer_string = std::string($1);}
 %type <oval> measureall-operation;
-measureall-operation : MEASUREALL {$$ = new compiler::Operation(std::string($1));}
+measureall-operation : MEASUREALL {$$ = new compiler::Operation(std::string($1,11));}
     ;
 
 //# Qubit-controlled operations
@@ -340,7 +340,7 @@ special-operations : display-operation | wait-operation | reset-averaging-operat
     ;
 display-operation : DISPLAY 
                     {
-                        $$ = new compiler::Operation( std::string($1) );
+                        $$ = new compiler::Operation( std::string($1,7) );
                     }
                   | DISPLAY WS bit
                     {
@@ -348,7 +348,7 @@ display-operation : DISPLAY
                     }
                   | DISPLAY WS
                     {
-                        $$ = new compiler::Operation( std::string($1) );
+                        $$ = new compiler::Operation( std::string($1,7) );
                     }
     ;
 wait-operation : WAIT WS INTEGER
@@ -358,7 +358,7 @@ wait-operation : WAIT WS INTEGER
     ;
 reset-averaging-operation : RESET_AVERAGING 
                             {
-                                $$ = new compiler::Operation( std::string($1) );
+                                $$ = new compiler::Operation( std::string($1,15) );
                             }
                           | RESET_AVERAGING WS qubit
                             {
