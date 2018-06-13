@@ -11,7 +11,7 @@ reset-averaging
 .average(1000)
 
 # state preparation
-prep_z q[0:3]
+prep_z q[0:2]
 { rx q[0], 3.14 | ry q[1] ,0.23 | h q[2]}
 rx q[2], 3.14
 cnot q[2],q[1]

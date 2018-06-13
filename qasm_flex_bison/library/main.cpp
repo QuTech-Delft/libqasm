@@ -30,7 +30,7 @@ int main (int argc, const char** argv)
         return -1;
     }
     
-    compiler::SemanticChecker sm(myfile);
+    compiler::QasmSemanticChecker sm(myfile);
 
     auto qasm_representation = sm.getQasmRepresentation();
     

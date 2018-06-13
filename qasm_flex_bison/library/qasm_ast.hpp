@@ -152,6 +152,7 @@ namespace compiler
             // Measure all operation
             {
                 type_ = toLowerCase(type);
+                all_qubits_bits_ = true;
             }
 
             Operation(const std::string type, const int waitInt)
@@ -232,6 +233,11 @@ namespace compiler
             bool isBitControlled() const
             {
                 return bit_controlled_;
+            }
+
+            bool allQubitsBits() const
+            {
+                return all_qubits_bits_;
             }
 
             void setControlBits(Bits control_bits)
@@ -331,6 +337,7 @@ namespace compiler
             Bits bits_;
             double rotation_angle_;
             bool bit_controlled_;
+            bool all_qubits_bits_ = false;
             int wait_time_;
             std::pair<Qubits,Qubits> measure_parity_qubits_;
             std::pair<std::string,std::string> measure_parity_axis_;
