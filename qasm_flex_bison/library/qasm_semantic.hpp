@@ -113,10 +113,10 @@ namespace compiler
                     throw std::runtime_error(std::string("Qubit indices exceed the number in qubit register\n"));
             }
 
-            int checkQubitListLength(const compiler::Operation& op) const
+            int checkQubitListLength(const compiler::Operation& op __attribute__((unused))) const
             // This function ensures that the lengths of the qubit lists are the same for the different pairs involved in the operation
             {
-
+                return 0;
             }
 
             int checkSingleQubit(const compiler::Operation& op) const
@@ -124,12 +124,12 @@ namespace compiler
                 return checkQubitList(op.getQubitsInvolved());
             }
 
-            int checkWaitDisplayNot(const compiler::Operation& op) const
+            int checkWaitDisplayNot(const compiler::Operation& op __attribute__((unused))) const
             {
                 return 0;
             }
 
-            int checkResetAveraging(const compiler::Operation& op) const
+            int checkResetAveraging(const compiler::Operation& op __attribute__((unused))) const
             {
                 int result = 1;
                 if (op.allQubitsBits())
@@ -139,7 +139,7 @@ namespace compiler
                 return result;
             }
 
-            int checkMeasureAll(const compiler::Operation& op) const
+            int checkMeasureAll(const compiler::Operation& op __attribute__((unused))) const
             {
                 return 0;
             }

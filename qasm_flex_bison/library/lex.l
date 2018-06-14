@@ -1,21 +1,23 @@
 %option noyywrap
+%option yylineno
 %{
     #include "grammar.tab.h"
     #include <cstdlib>
     #include <string>
-    #define PRINTLEX(t) { printf("Lex: " #t ": %s\n",yytext); }
+    #define PRINTLEX(t) { printf("Lex: " #t ": %s\n",t); }
     #define TOKEN(t) { return(t); }
     #define TOKENI(t) {  yylval.ival = static_cast<int> ( std::strtol(yytext,NULL,10) ); return(t); }
     #define TOKEND(t) {  yylval.dval = std::strtod(yytext,NULL); return(t); }
-    #define TOKENSTR(t) { yylval.sval = yytext; return(t); }
+    #define TOKENSTR(t) { yylval.sval = strdup(yytext); return(t); }
 %}
 
+
 letter             [a-zA-Z\_]
-identifier         {letter}([0-9]*{letter}*)+
-whitespace         (\t|" "|\r)+
-newline            {whitespace}?(\n|\r\n)+
+identifier         {letter}([0-9]|{letter})*
+whitespace         (\t|" ")*
+newline            {whitespace}?(\n|\r\n)*
 singlenewline      (\n|\r\n)
-comment            \#(.*)
+comment            \#(.*){singlenewline}+
 integer            [0-9]+
 float              (\-)?({integer}\.{integer})[eE]?((\-)?{integer})?
 axis               ([xX]|[yY]|[zZ])
@@ -107,17 +109,15 @@ qasm_version       (?i:version){whitespace}{integer}(\.)?{integer}?
 
 {float} TOKEND(FLOAT)
 
-{identifier} TOKENSTR(NAME)
-
 {whitespace} TOKEN(WS)
 
 {newline} {
-    ++yylineno;
     TOKEN(NEWLINE)
 }
 
+{identifier} TOKENSTR(NAME)
+
 {comment} {
-    ++yylineno;
     TOKENSTR(COMMENT)
 }
 

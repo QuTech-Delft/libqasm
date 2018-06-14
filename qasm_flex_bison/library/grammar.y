@@ -17,6 +17,9 @@
     std::string buffer_string;
 %}
 
+%define parse.error verbose
+
+%locations
 
 %union {
     int ival;
@@ -60,20 +63,22 @@ circuits : circuit
 circuit : statements
         | WS statements
     ;
-subcircuit : DOT NAME { subcircuits_object.addSubCircuit( compiler::SubCircuit ($2,subcircuits_object.numberOfSubCircuits()) ); }
-           | subcircuit BRA INTEGER KET { subcircuits_object.lastSubCircuit().numberIterations($3); }
-           | subcircuit NEWLINE
+subcircuit : DOT NAME NEWLINE
+             { 
+                 subcircuits_object.addSubCircuit( compiler::SubCircuit ($2,subcircuits_object.numberOfSubCircuits()) ); 
+             }
+           | DOT NAME BRA INTEGER KET NEWLINE
+             {
+                 subcircuits_object.addSubCircuit( compiler::SubCircuit ($2,subcircuits_object.numberOfSubCircuits()) ); 
+                 subcircuits_object.lastSubCircuit().numberIterations($4); 
+             }
     ;
 statements : qasm-line 
            | subcircuit
            | comments
-           | statements NEWLINE qasm-line
-           | statements NEWLINE subcircuit
-           | statements NEWLINE comments
+           | statements NEWLINE
     ;
-comments : COMMENT 
-         | comments COMMENT 
-         | comments NEWLINE
+comments : COMMENT
     ;
 qasm-line : map-operation
           | measureall-operation
@@ -110,24 +115,23 @@ qasm-line : map-operation
                 compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
                 subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
             }
-          | qasm-line NEWLINE
     ;
 
 //# We define the convenience strings, texts, numbers here....
 %type <idval> indices numerical-identifiers numerical-identifier-list numerical-identifier-range;
 indices : SBRA numerical-identifiers SKET {} 
     ;
-numerical-identifiers : numerical-identifier-list {} 
-                      | numerical-identifier-range {}
+numerical-identifiers : numerical-identifier-list
+                      | numerical-identifier-range
+                      | numerical-identifiers COMMA_SEPARATOR numerical-identifier-list
+                      | numerical-identifiers COMMA_SEPARATOR numerical-identifier-range
     ;
 numerical-identifier-list : INTEGER {buffer_indices.addToVector($1);}
-                          | numerical-identifier-list COMMA_SEPARATOR numerical-identifiers
     ;
 numerical-identifier-range : INTEGER COLON INTEGER 
                              {
                                 buffer_indices.addToVector($1,$3); 
                              }
-                           | numerical-identifier-range COMMA_SEPARATOR numerical-identifiers
     ;
 
 
@@ -338,7 +342,11 @@ parallelizable-ops : all-valid-operations
 %type <oval> special-operations display-operation wait-operation reset-averaging-operation;
 special-operations : display-operation | wait-operation | reset-averaging-operation
     ;
-display-operation : DISPLAY 
+display-operation : DISPLAY NEWLINE
+                    {
+                        $$ = new compiler::Operation( std::string($1,7) );
+                    }
+                  | DISPLAY WS
                     {
                         $$ = new compiler::Operation( std::string($1,7) );
                     }
@@ -346,17 +354,17 @@ display-operation : DISPLAY
                     {
                         $$ = new compiler::Operation( std::string($1,7), *($3) );
                     }
-                  | DISPLAY WS
-                    {
-                        $$ = new compiler::Operation( std::string($1,7) );
-                    }
     ;
 wait-operation : WAIT WS INTEGER
                  {
                      $$ = new compiler::Operation( std::string($1,4), ($3) );
                  }
     ;
-reset-averaging-operation : RESET_AVERAGING 
+reset-averaging-operation : RESET_AVERAGING WS
+                            {
+                                $$ = new compiler::Operation( std::string($1,15) );
+                            }
+                          | RESET_AVERAGING NEWLINE
                             {
                                 $$ = new compiler::Operation( std::string($1,15) );
                             }
@@ -368,9 +376,9 @@ reset-averaging-operation : RESET_AVERAGING
     ;
 
 %%
-
+extern int yylineno, yychar;
 void yyerror(char const *x)
 {
-    printf("Error %s\n",x);
+    printf("Error %s | Token %d on Line: %d\n",x,yychar,yylineno);
     exit(1);
 }

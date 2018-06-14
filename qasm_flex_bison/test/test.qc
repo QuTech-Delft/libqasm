@@ -19,15 +19,15 @@ rX q[1,2:5], 3.1416E-01
 
 
 .mapping
-   map b[0:11], bitcontroller
-   map q[0] , q0
-   map q[1] , q1
-   map q[2] , q2
-   map q[3] , q3
-   map q[4] , q4
-   map q[5] , q5
-   map q[6] , q6
-   map q[7] , q7
+map b[0:11], bitcontroller
+map q[0] , q0
+map q[1] , q1
+map q[2] , q2
+map q[3] , q3
+map q[4] , q4
+map q[5] , q5
+map q[6] , q6
+map q[7] , q7
 
 .waits
    wait 2
@@ -45,7 +45,7 @@ rX q[1,2:5], 3.1416E-01
    ry q5,0.244
    rz q6,0.555
    c-x bitcontroller, q[2:5]
-   c-swap b[7], q1 , q[5,7]
+   c-swap b[7], q1 , q[5,7,0:2]
    toffoli q3, q4, q[0:5]
 
 .result

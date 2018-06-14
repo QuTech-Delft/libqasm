@@ -25,10 +25,13 @@ ADD_LIBRARY( lexgram STATIC
 
 set_property(TARGET lexgram PROPERTY CXX_STANDARD 11)
 
+add_compile_options(-std=c++11 -Wall -Wextra -Werror -DYYDEBUG=0)
 add_executable(
                   testCompiler main.cpp
               )
-
 add_dependencies(testCompiler lexgram)
 target_link_libraries(testCompiler lexgram)
-set_property(TARGET testCompiler PROPERTY CXX_STANDARD 11)
+set_property(
+                TARGET testCompiler 
+                PROPERTY CXX_STANDARD 11
+            )
