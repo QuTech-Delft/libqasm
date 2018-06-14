@@ -107,7 +107,6 @@ namespace compiler
             int checkQubitList(const compiler::Qubits& qubits) const
             {
                 auto indices = qubits.getSelectedQubits().getIndices();
-                std::cout << "Max index = " << indices.back() << std::endl;
                 if (indices.back() < maxNumQubit_)
                     return 0;
                 else
