@@ -72,50 +72,36 @@ namespace compiler
             void checkQubits(compiler::Operation& op, int & result)
             {
                 std::string type_ = op.getType();
-                if ( type_ == "rx" || type_ == "ry" || type_ == "rz" )
+                if (type_ == "measure_parity")
                 {
-                    result = checkQubitList(op.getQubitsInvolved());
-                }
-                else if (type_ == "measure_parity")
-                {
-                    auto measureParityProperties = op.getMeasureParityQubitsAndAxis();
-                    result = checkQubitList(measureParityProperties.first.first);
-                    result = checkQubitList(measureParityProperties.first.second); 
+                    result = checkMeasureParity(op);
                 }
                 else if (type_ == "cnot" || type_ == "cz" || type_ == "swap" || type_ == "cr")
                 {
-                    result = checkQubitList(op.getTwoQubitPairs().first);
-                    result = checkQubitList(op.getTwoQubitPairs().second); 
+                    result = checkTwoQubits(op);
                 }
                 else if (type_ == "toffoli")
                 {
-                    result = checkQubitList(op.getToffoliQubitPairs().first);
-                    result = checkQubitList(op.getToffoliQubitPairs().second.first);
-                    result = checkQubitList(op.getToffoliQubitPairs().second.second); 
+                    result = checkToffoli(op);
                 }
                 else if (type_ == "measure_all")
                 {
-                    result = 0;
+                    result = checkMeasureAll(op);
                 }
                 else if (type_ == "reset-averaging")
                 {
-                    if (op.allQubitsBits())
-                        result = 0;
-                    else
-                        result = checkQubitList(op.getQubitsInvolved());
+                    result = checkResetAveraging(op);
                 }
                 else if (type_ == "wait" || type_ == "display" || type_ == "not")
                 {
-                    result = 0;
+                    result = checkWaitDisplayNot(op);
                 }
                 else 
+                // No other special operations. Left with single qubits
                 {
-                    result = checkQubitList(op.getQubitsInvolved());
+                    result = checkSingleQubit(op);
                 }
 
-                if (op.isBitControlled()){
-                    op.getControlBits().printMembers();
-                }
             }            
 
             int checkQubitList(const compiler::Qubits& qubits) const
@@ -128,6 +114,65 @@ namespace compiler
                     throw std::runtime_error(std::string("Qubit indices exceed the number in qubit register\n"));
             }
 
+            int checkQubitListLength(const compiler::Operation& op) const
+            // This function ensures that the lengths of the qubit lists are the same for the different pairs involved in the operation
+            {
+
+            }
+
+            int checkSingleQubit(const compiler::Operation& op) const
+            {
+                return checkQubitList(op.getQubitsInvolved());
+            }
+
+            int checkWaitDisplayNot(const compiler::Operation& op) const
+            {
+                return 0;
+            }
+
+            int checkResetAveraging(const compiler::Operation& op) const
+            {
+                int result = 1;
+                if (op.allQubitsBits())
+                    result = 0;
+                else
+                    result = checkQubitList(op.getQubitsInvolved());
+                return result;
+            }
+
+            int checkMeasureAll(const compiler::Operation& op) const
+            {
+                return 0;
+            }
+
+            int checkToffoli(const compiler::Operation& op) const
+            {
+                int result = 1;
+                int resultlist = checkQubitList(op.getToffoliQubitPairs().first);
+                resultlist += checkQubitList(op.getToffoliQubitPairs().second.first);
+                resultlist += checkQubitList(op.getToffoliQubitPairs().second.second); 
+                result *= resultlist;
+                return result;
+            }
+
+            int checkTwoQubits(const compiler::Operation& op) const
+            {
+                int result = 1;
+                int resultlist = checkQubitList(op.getTwoQubitPairs().first);
+                resultlist += checkQubitList(op.getTwoQubitPairs().second); 
+                result *= resultlist;
+                return result;
+            }
+
+            int checkMeasureParity(const compiler::Operation& op) const
+            {
+                int result = 1;
+                auto measureParityProperties = op.getMeasureParityQubitsAndAxis();
+                int resultlist = checkQubitList(measureParityProperties.first.first);
+                resultlist += checkQubitList(measureParityProperties.first.second); 
+                result *= resultlist;
+                return result;
+            }
 
 
     }; // class QasmSemanticChecker
