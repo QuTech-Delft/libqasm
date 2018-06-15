@@ -30,3 +30,29 @@
 *.exe
 *.out
 *.app
+doc/qtools/gcopy
+doc/qtools/gdeebnf
+doc/qtools/gdeempty
+doc/qtools/gsample
+doc/qtools/gsqueeze
+doc/qtools/gstartfollow
+doc/qtools/gstats
+*.bak
+
+# Add bin directories
+bin
+*/bin
+*/bin/*
+
+# Add build directories
+build
+*build
+build*
+
+# Add Flex and Bison generated sources
+*.tab.*
+*.yy.*
+log
+*.dot
+*.output
+*.png

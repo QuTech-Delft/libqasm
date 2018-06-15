@@ -1,0 +1,174 @@
+# bnf.gr
+# This bnf for qasm assumes that the inputs have all been converted to lower case (This is to replicate case insensitivity)
+> <qasm-file>
+
+
+
+# Describe the general structure of a qasm file
+<qasm-file> ::= <qubit-register> <line-separator> <circuits>
+
+<circuits> ::= <circuit> 
+               | <circuit> <circuits>
+
+<circuit> ::= <subcircuit> <statements> 
+              | <statements>
+
+<subcircuit> ::= "." <identifier> <newline> 
+                | "." <identifier> "(" <number> ")" <newline>
+
+<statements> ::= <qasm-line> <newline> 
+                 | <qasm-line> <newline> <statements>
+
+<qasm-line> ::= <map-operation> 
+                | <measure-parity-operation> 
+                | <measureall-operation> 
+                | <regular-operations> 
+                | <binary-controlled-operations> 
+                | <parallel-operations> 
+                | <special-operations>
+
+
+
+# We define the convenience strings, texts, numbers here....
+<newline> ::= "\n"
+<line-separator> ::= <newline> | <newline> <line-separator>
+<ws-separator> ::= "," 
+                 | " ,"
+                 | ", " 
+                 | " , "
+<par-separator> ::= "|" 
+                 | " |" 
+                 | "| " 
+                 | " | "
+<number> ::= <non-zero-digit> | <non-zero-digit> <digits>
+<number-with-0> ::= <digit> | <digit> <digits>
+<real-number> ::= <number> | <number> "." <number> | "." <number> | <number-with-0> "." <number>
+<float> ::= <real-number> | <real-number> "e" <number-with-0>
+<digits> ::= <digit> | <digit> <digits>
+<digit> ::= "0" | <non-zero-digit>
+<non-zero-digit> ::= "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+
+<letter> ::= "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" |
+             "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
+
+<symbol> ::= <letter> | <digit>
+
+<identifier> ::= <letter> | <letter> <identifier-tail>
+<identifier-tail> ::= <symbol> | <symbol> <identifier-tail>
+
+<indices> ::= "[" <numerical-identifiers> "]"
+
+<numerical-identifiers> ::= <numerical-identifier-list> 
+                           | <numerical-identifier-range>
+                           | <numerical-identifier-list> <ws-separator> <numerical-identifiers>
+                           | <numerical-identifier-range> <ws-separator> <numerical-identifiers>
+<numerical-identifier-list> ::= <number> | <number> <ws-separator> <numerical-identifier-list>
+<numerical-identifier-range> ::= <number> ":" <number>
+
+<axis> ::= "x" | "y" | "z"
+
+
+
+# This defines the number of qubits taking part in this qasm file
+<qubit-register> ::= "qubits " <number>
+
+
+
+# We define the syntax for selecting the qubits/bits, either by a range or a list
+<qubit> ::= <qubit-nomap> | <mapped-qubit>
+<qubit-nomap> ::= "q[" <number> "]"
+<qubit-arguments> ::= "q" <indices> | <mapped-qubit>
+<qubit-selection> ::= <qubit-arguments> | <qubit-arguments> <ws-separator> <qubit-selection>
+<mapped-qubit> ::= <identifier>
+
+## Next we define a classical bit, which is required to perform control gate operations
+<bit> ::=  <bit-nomap> | <mapped-bit>
+<bit-nomap> ::= "b" <indices>
+<bit-selection> ::= <bit>
+                    | <bit> <ws-separator> <bit-selection>
+<mapped-bit> ::= <identifier>
+
+# Define the single qubit operation line
+<single-qubit-operation> ::= <single-qubit-gate> " " <qubit> 
+                             | <prep_measure-ops> " " <qubit>
+
+<single-qubit-operation-args> ::= <parameterized-single-qubit-gate> " " <qubit> <ws-separator> <float>
+
+<map-operation> ::= "map" " " <qubit> <ws-separator> <mapped-qubit> | "map" " " <bit-selection> <ws-separator> <mapped-bit>
+
+## Define the single qubit operations/gates
+<single-qubit-gate> ::= "i" | "h" | "x" | "y" | "z" | "x90" | "y90" | 
+                        "mx90" | "my90" | "s" | "sdag" | "t" | "tdag"
+<rotations> ::= "r" <axis>
+<parameterized-single-qubit-gate> ::= <rotations>
+
+
+# This is to define the state preparation/measurement
+<prep_measure-ops> ::= <prep> | <measure>
+<prep> ::= "prep" | "prep_" <axis>
+<measure> ::= "measure" | "measure_" <axis>
+<measure-parity-operation> ::= <measureparity> " " <qubit> <ws-separator> <axis> <ws-separator> <qubit> <ws-separator> <axis>
+<measureparity> ::= "measure_parity"
+<measureall-operation> ::= "measure_all"
+
+
+
+# Qubit-controlled operations
+<two-qubit-operation> ::= <two-qubit-gates> " " <qubit-arguments> <ws-separator> <qubit-arguments>
+<two-qubit-operation-args> ::= <two-qubit-gate-args> " " <qubit-arguments> <ws-separator> <qubit-arguments> <ws-separator> <number>
+
+## Define the two qubit gates
+<two-qubit-gates> ::= "cnot" | "cz" | "swap"
+<two-qubit-gate-args> ::= "cr"
+
+## Define the toffoli gate
+<toffoli-operation> ::= <toffoli-gate> " " <qubit-arguments> <ws-separator> <qubit-arguments> <ws-separator> <qubit-arguments>
+<toffoli-gate> ::= "toffoli"
+
+## Define a superset of all general "normal" operations
+<regular-operations> ::= <single-qubit-operation> 
+                         | <single-qubit-operation-args> 
+                         | <two-qubit-operation> 
+                         | <two-qubit-operation-args> 
+                         | <toffoli-operation>
+
+
+# Binary-controlled operations
+<qubit-gates> ::= <single-qubit-gate> 
+                  | <parameterized-single-qubit-gate> 
+                  | <rotations> 
+                  | <two-qubit-gates> 
+                  | <two-qubit-gate-args> 
+                  | <toffoli-gate>
+
+<binary-controlled-operations> ::= <bit-single-qubit-operation> 
+                                   | <bit-single-qubit-operation-args> 
+                                   | <bit-two-qubit-operation> 
+                                   | <bit-two-qubit-operation-args> 
+                                   | <bit-toffoli-operation> 
+                                   | <negate-binary-operation>
+
+<bit-single-qubit-operation> ::= "c-" <single-qubit-gate> " " <bit-selection> <ws-separator> <qubit>
+<bit-single-qubit-operation-args> ::= "c-" <parameterized-single-qubit-gate> " " <bit-selection> <ws-separator> <qubit> ", " <float>
+
+<bit-two-qubit-operation> ::= "c-" <two-qubit-gates> " " <bit-selection> <ws-separator> <qubit-arguments> <ws-separator> <qubit-arguments>
+<bit-two-qubit-operation-args> ::= "c-" <two-qubit-gate-args> " " <bit-selection> <ws-separator> <qubit-arguments> <ws-separator> <qubit-arguments> <ws-separator> <number>
+
+<bit-toffoli-operation> ::= "c-" <toffoli-gate> " " <bit-selection> <ws-separator> <qubit-arguments> <ws-separator> <qubit-arguments> <ws-separator> <qubit-arguments>
+
+<negate-binary-operation> ::= "not " <bit-selection>
+
+
+
+# Parallel execution
+<parallel-operations> ::= "{" <parallelizable-ops> "}"
+<all-valid-operations> ::= <regular-operations> | <binary-controlled-operations> 
+<parallelizable-ops> ::= <all-valid-operations> | <all-valid-operations> <par-separator> <parallelizable-ops>
+
+
+
+# Special operations
+<special-operations> ::= <display-operation> | <wait-operation> | <reset-averaging-operation>
+<display-operation> ::= "display" | "display" " " <bit>
+<wait-operation> ::= "wait" " " <number>
+<reset-averaging-operation> ::= "reset-averaging" | "reset-averaging" " " <qubit>
