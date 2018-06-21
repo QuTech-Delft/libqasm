@@ -101,6 +101,8 @@ namespace compiler
                 {
                     result = checkSingleQubit(op);
                 }
+                if (result > 0)
+                    throw std::runtime_error(std::string("Operation invalid\n"));
 
             }            
 
@@ -129,7 +131,7 @@ namespace compiler
                 return 0;
             }
 
-            int checkResetAveraging(const compiler::Operation& op __attribute__((unused))) const
+            int checkResetAveraging(const compiler::Operation& op) const
             {
                 int result = 1;
                 if (op.allQubitsBits())
