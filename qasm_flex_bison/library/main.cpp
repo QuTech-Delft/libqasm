@@ -112,7 +112,7 @@ void printOperationProperties(compiler::Operation& op)
     {
         std::cout << std::endl;
         std::cout << "Qubit Pair 1: ";
-        op.getQubitsInvolved(3).printMembers();
+        op.getQubitsInvolved(1).printMembers();
         std::cout << "Qubit Pair 2: "; 
         op.getTwoQubitPairs().second.printMembers();
     }
