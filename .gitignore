@@ -56,3 +56,7 @@ log
 *.dot
 *.output
 *.png
+
+# Add swig generated sources
+*_swig*
+
