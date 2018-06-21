@@ -33,7 +33,7 @@ map q[7] , q7
    wait 2
 
 .first_circuit(50)
-   H q0
+   H q0 
    cnot q0,q1
    x  q1
    Y  q2
@@ -51,7 +51,7 @@ map q[7] , q7
 .result
 # measurement
    measure q1
-   {measure q0 | measure q2 | measure q3}
+   {measure q0 |measure q2 | measure q3}
 
 .display_results
 display
