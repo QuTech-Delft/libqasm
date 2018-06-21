@@ -61,22 +61,22 @@ qasm-file : QASM_VERSION NEWLINE qubit-register NEWLINE body {qasm_representatio
           | QASM_VERSION NEWLINE COMMENT qubit-register NEWLINE {qasm_representation.getSubCircuits() = subcircuits_object;}
           | COMMENT QASM_VERSION NEWLINE COMMENT qubit-register NEWLINE {qasm_representation.getSubCircuits() = subcircuits_object;}
     ;
-body : circuit 
-           | body circuit
+body : bodyline 
+     | body bodyline
     ;
-circuit : statements
-        | WS statements
+bodyline : statement
+         | WS statement
+         | NEWLINE
     ;
-statements : qasm-line 
+statement  : qasm-line 
            | subcircuit-definition
            | COMMENT
-           | statements NEWLINE
     ;
-subcircuit-definition : DOT NAME NEWLINE
+subcircuit-definition : DOT NAME
                         { 
                             subcircuits_object.addSubCircuit( compiler::SubCircuit ($2,subcircuits_object.numberOfSubCircuits()) ); 
                         }
-                      | DOT NAME BRA INTEGER KET NEWLINE
+                      | DOT NAME BRA INTEGER KET
                         {
                             subcircuits_object.addSubCircuit( compiler::SubCircuit ($2,subcircuits_object.numberOfSubCircuits()) ); 
                             subcircuits_object.lastSubCircuit().numberIterations($4); 
