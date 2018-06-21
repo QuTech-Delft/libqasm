@@ -53,7 +53,7 @@ namespace compiler
             
             int doChecks()
             {
-                int checkResult = 1;
+                int checkResult = 0;
                 for (auto subcircuit : qasm_.getSubCircuits().getAllSubCircuits()) 
                 {
                     for (auto ops_cluster : subcircuit.getOperationsCluster()) 
@@ -65,7 +65,10 @@ namespace compiler
                     }
                 }
 
-                std::cout << "Semantic check complete. Qasm file is valid." << std::endl;
+                if (!checkResult)
+                    std::cout << "Semantic check complete. Qasm file is valid." << std::endl;
+                else
+                    throw std::runtime_error(std::string("Qasm file invalid\n"));
                 return checkResult;
             }
 

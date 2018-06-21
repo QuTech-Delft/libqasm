@@ -52,33 +52,35 @@
 %%
 
 //# Describe the general structure of a qasm file
-qasm-file : QASM_VERSION NEWLINE qubit-register NEWLINE circuits {qasm_representation.getSubCircuits() = subcircuits_object;}
-          | comments QASM_VERSION NEWLINE qubit-register NEWLINE circuits {qasm_representation.getSubCircuits() = subcircuits_object;}
-          | QASM_VERSION NEWLINE comments qubit-register NEWLINE circuits {qasm_representation.getSubCircuits() = subcircuits_object;}
-          | comments QASM_VERSION NEWLINE comments qubit-register NEWLINE circuits {qasm_representation.getSubCircuits() = subcircuits_object;}
+qasm-file : QASM_VERSION NEWLINE qubit-register NEWLINE body {qasm_representation.getSubCircuits() = subcircuits_object;}
+          | COMMENT QASM_VERSION NEWLINE qubit-register NEWLINE body {qasm_representation.getSubCircuits() = subcircuits_object;}
+          | QASM_VERSION NEWLINE COMMENT qubit-register NEWLINE body {qasm_representation.getSubCircuits() = subcircuits_object;}
+          | COMMENT QASM_VERSION NEWLINE COMMENT qubit-register NEWLINE body {qasm_representation.getSubCircuits() = subcircuits_object;}
+          | QASM_VERSION NEWLINE qubit-register NEWLINE {qasm_representation.getSubCircuits() = subcircuits_object;}
+          | COMMENT QASM_VERSION NEWLINE qubit-register NEWLINE {qasm_representation.getSubCircuits() = subcircuits_object;}
+          | QASM_VERSION NEWLINE COMMENT qubit-register NEWLINE {qasm_representation.getSubCircuits() = subcircuits_object;}
+          | COMMENT QASM_VERSION NEWLINE COMMENT qubit-register NEWLINE {qasm_representation.getSubCircuits() = subcircuits_object;}
     ;
-circuits : circuit 
-           | circuits circuit
+body : circuit 
+           | body circuit
     ;
 circuit : statements
         | WS statements
     ;
-subcircuit : DOT NAME NEWLINE
-             { 
-                 subcircuits_object.addSubCircuit( compiler::SubCircuit ($2,subcircuits_object.numberOfSubCircuits()) ); 
-             }
-           | DOT NAME BRA INTEGER KET NEWLINE
-             {
-                 subcircuits_object.addSubCircuit( compiler::SubCircuit ($2,subcircuits_object.numberOfSubCircuits()) ); 
-                 subcircuits_object.lastSubCircuit().numberIterations($4); 
-             }
-    ;
 statements : qasm-line 
-           | subcircuit
-           | comments
+           | subcircuit-definition
+           | COMMENT
            | statements NEWLINE
     ;
-comments : COMMENT
+subcircuit-definition : DOT NAME NEWLINE
+                        { 
+                            subcircuits_object.addSubCircuit( compiler::SubCircuit ($2,subcircuits_object.numberOfSubCircuits()) ); 
+                        }
+                      | DOT NAME BRA INTEGER KET NEWLINE
+                        {
+                            subcircuits_object.addSubCircuit( compiler::SubCircuit ($2,subcircuits_object.numberOfSubCircuits()) ); 
+                            subcircuits_object.lastSubCircuit().numberIterations($4); 
+                        }
     ;
 qasm-line : map-operation
           | measureall-operation
