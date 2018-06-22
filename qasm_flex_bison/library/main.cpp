@@ -116,7 +116,7 @@ void printOperationProperties(compiler::Operation& op)
         std::cout << "Qubit Pair 2: "; 
         op.getTwoQubitPairs().second.printMembers();
     }
-    else if (type_ == "cr")
+    else if (type_ == "cr" || type_ == "crk")
     {
         std::cout << std::endl;
         std::cout << "Qubit Pair 1: ";

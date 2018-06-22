@@ -221,7 +221,7 @@ namespace compiler
                                               + std::string(" on operation ") + type_ ); return qubits_;
                     }
                 }
-                else if (type_ == "cnot" || type_ == "cz" || type_ == "swap" || type_ == "cr")
+                else if (type_ == "cnot" || type_ == "cz" || type_ == "swap" || type_ == "cr" || type_ == "crk")
                 {
                     switch(qubit_pair_index){
                         case 1: return two_qubit_pairs_.first; break;
