@@ -48,6 +48,8 @@ bin
 build
 *build
 build*
+libQasm*
+*libQasm
 
 # Add Flex and Bison generated sources
 *.tab.*

@@ -79,7 +79,7 @@ namespace compiler
                 {
                     result = checkMeasureParity(op);
                 }
-                else if (type_ == "cnot" || type_ == "cz" || type_ == "swap" || type_ == "cr")
+                else if (type_ == "cnot" || type_ == "cz" || type_ == "swap" || type_ == "cr" || type_ == "crk")
                 {
                     result = checkTwoQubits(op);
                 }

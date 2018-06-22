@@ -47,6 +47,8 @@ map q[7] , q7
    c-x bitcontroller, q[2:5]
    c-swap b[7], q1 , q[5,7,0:2]
    toffoli q3, q4, q[0:5]
+   crk q1, q6, 4
+   cr q2, q5, 3.1416
 
 .result
 # measurement

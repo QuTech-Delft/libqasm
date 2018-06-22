@@ -39,7 +39,7 @@
 %token COMMA_SEPARATOR PARALLEL_SEPARATOR BRA KET DOT SBRA SKET CBRA CKET NEWLINE WS COLON COMMENT
 %token <sval> ROTATIONS AXIS
 %token QUBITS
-%token <sval> SINGLE_QUBIT_GATES TWO_QUBIT_GATES CR TOFFOLI
+%token <sval> SINGLE_QUBIT_GATES TWO_QUBIT_GATES CR CRK TOFFOLI
 %token <sval> CDASH NOT_TOKEN
 %token <sval> MAPKEY PREP MEASURE MEASUREPARITY MEASUREALL
 %token <sval> WAIT DISPLAY RESET_AVERAGING
@@ -232,7 +232,11 @@ two-qubit-operation : two-qubit-gates WS qubit COMMA_SEPARATOR qubit
                       }
     ;
 %type <oval> two-qubit-operation-args;
-two-qubit-operation-args : two-qubit-gate-args WS qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR INTEGER
+two-qubit-operation-args : two-qubit-gate-args WS qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR FLOAT
+                           {
+                              $$ = new compiler::Operation( buffer_string, *($3) , *($5), ($7) );
+                           }
+                         | two-qubit-gate-args WS qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR INTEGER
                            {
                               $$ = new compiler::Operation( buffer_string, *($3) , *($5), ($7) );
                            }
@@ -241,6 +245,7 @@ two-qubit-operation-args : two-qubit-gate-args WS qubit COMMA_SEPARATOR qubit CO
 two-qubit-gates : TWO_QUBIT_GATES {buffer_string = std::string($1);}
     ;
 two-qubit-gate-args : CR {buffer_string = std::string($1);}
+                    | CRK {buffer_string = std::string($1);}
     ;
 //## Define the toffoli gate
 %type <oval> toffoli-operation;

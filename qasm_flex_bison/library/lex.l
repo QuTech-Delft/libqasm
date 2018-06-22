@@ -26,6 +26,7 @@ two_qubit_gates    ((?i:cnot)|(?i:cz)|(?i:swap))
 toffoli            (?i:toffoli)
 rotations          ([rR]){axis}
 cr                 (?i:cr)
+crk                (?i:crk)
 cdash              (?i:c\-)
 not_token          (?i:not)
 comma_sep          {whitespace}?,{whitespace}?
@@ -58,6 +59,8 @@ qasm_version       (?i:version){whitespace}{integer}(\.)?{integer}?
 {rotations} TOKENSTR(ROTATIONS)
 
 {cr} TOKENSTR(CR)
+
+{crk} TOKENSTR(CRK)
 
 {cdash} TOKEN(CDASH)
 
