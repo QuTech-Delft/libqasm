@@ -5,19 +5,21 @@
 #include <vector>
 #include "qasm_semantic.hpp"
 
-class libQasmPy
+class libQasm
 {
     public:
-        libQasmPy(std::string qasm_file_path)
+        libQasm(char * qasm_file_path)
         {
+            FILE *myfile = fopen(qasm_file_path, "r");
             if (!myfile) {
-                std::cout << "File " << argv[1] << " not found!" << std::endl;
-                return -1;
+                std::string file_not_found =  std::string("File ") 
+                                              + qasm_file_path 
+                                              + std::string(" not found!\n");
+                throw std::runtime_error(file_not_found);
             }
-            FILE *myfile = fopen(qasm_file_path.c_str(), "r");
-            sm = new compiler::QasmSemanticChecker(myfile);
-            qasm_rep = sm -> getQasmRepresentation();
-            parse_result_ = sm -> parseResult();
+            sm_ = new compiler::QasmSemanticChecker(myfile);
+            qasm_rep_ = sm_ -> getQasmRepresentation();
+            parse_result_ = sm_ -> parseResult();
         }
 
         int getParseResult() const
@@ -33,4 +35,4 @@ class libQasmPy
         compiler::QasmSemanticChecker* sm_;
         compiler::QasmRepresentation qasm_rep_;
         int parse_result_;
-}
+};

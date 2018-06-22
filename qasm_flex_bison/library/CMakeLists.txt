@@ -21,7 +21,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/grammar.tab.c PROPERTIES LANGUAGE CXX )
 set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c PROPERTIES LANGUAGE CXX )
-ADD_LIBRARY( lexgram STATIC
+ADD_LIBRARY( lexgram SHARED
              ${CMAKE_CURRENT_BINARY_DIR}/grammar.tab.c ${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c)
 
 set_property(TARGET lexgram PROPERTY CXX_STANDARD 11)
@@ -45,5 +45,5 @@ INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
 
 SET_SOURCE_FILES_PROPERTIES(libqasm_swig.i PROPERTIES CPLUSPLUS ON)
 SET_PROPERTY(SOURCE libqasm_swig.i PROPERTY SWIG_FLAGS -castmode -modern -keyword)
-SWIG_ADD_MODULE(libqasm_py python libqasm_swig.i)
-SWIG_LINK_LIBRARIES(libqasm_py ${PYTHON_LIBRARIES} lexgram)
+SWIG_ADD_MODULE(libQasm python libqasm_swig.i)
+SWIG_LINK_LIBRARIES(libQasm ${PYTHON_LIBRARIES} lexgram)

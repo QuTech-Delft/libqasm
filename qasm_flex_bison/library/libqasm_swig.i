@@ -1,7 +1,7 @@
 /* libqasm_swig.i */
-%module libQasm_swig
+%module libQasm
 %{
-#include "libQasmPy.hpp"
+#include "libQasm.hpp"
 %}
 
-#include "libQasmPy.hpp"
+%include "libQasm.hpp"
