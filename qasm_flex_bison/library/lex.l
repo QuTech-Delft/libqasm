@@ -18,8 +18,9 @@ whitespace         (\t|" ")*
 newline            {whitespace}?(\n|\r\n)*
 singlenewline      (\n|\r\n)
 comment            \#(.*){singlenewline}+
-integer            [0-9]+
-float              (\-)?({integer}\.{integer})[eE]?((\-)?{integer})?
+nonneginteger      [0-9]+
+integer            (\-)?{nonneginteger}
+float              (\-)?({nonneginteger}\.{nonneginteger})[eE]?((\-)?{nonneginteger})?
 axis               ([xX]|[yY]|[zZ])
 single_qubits      ((?i:i)|(?i:h)|(?i:x90)|(?i:y90)|(?i:mx90)|(?i:my90)|(?i:s)|(?i:sdag)|(?i:t)|(?i:tdag))
 two_qubit_gates    ((?i:cnot)|(?i:cz)|(?i:swap))
@@ -43,7 +44,7 @@ measurehead        (?i:measure)
 measure            {measurehead}(_{axis})?
 measureall         {measurehead}(_(?i:all))
 measureparity      {measurehead}(_(?i:parity))
-qasm_version       (?i:version){whitespace}{integer}(\.)?{integer}?
+qasm_version       (?i:version){whitespace}{nonneginteger}(\.)?{nonneginteger}?
 
 %%
 {qasm_version} TOKENSTR(QASM_VERSION)
