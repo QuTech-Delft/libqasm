@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
+enable_testing()
+
 find_package(BISON 3.0)
 find_package(FLEX 2.6)
 find_package(PythonInterp 3 REQUIRED)
@@ -36,6 +38,35 @@ set_property(
                 TARGET testCompiler 
                 PROPERTY CXX_STANDARD 11
             )
+# Add all the valid tests			
+add_test(	
+			NAME Bare_Minimum_QASM
+			COMMAND testCompiler ${CMAKE_CURRENT_SOURCE_DIR}/../test/bare_minimum.qasm
+		)
+add_test(	
+			NAME Bell_example
+			COMMAND testCompiler ${CMAKE_CURRENT_SOURCE_DIR}/../test/bell.qasm
+		)
+add_test(	
+			NAME Paper_example_2
+			COMMAND testCompiler ${CMAKE_CURRENT_SOURCE_DIR}/../test/example2.qasm
+		)
+add_test(	
+			NAME Paper_example_3
+			COMMAND testCompiler ${CMAKE_CURRENT_SOURCE_DIR}/../test/example3.qasm
+		)
+add_test(	
+			NAME Paper_example_7
+			COMMAND testCompiler ${CMAKE_CURRENT_SOURCE_DIR}/../test/example7.qasm
+		)
+add_test(	
+			NAME Paper_example_grover
+			COMMAND testCompiler ${CMAKE_CURRENT_SOURCE_DIR}/../test/grover.qasm
+		)
+add_test(	
+			NAME Paper_misc_test
+			COMMAND testCompiler ${CMAKE_CURRENT_SOURCE_DIR}/../test/test.qc
+		)
 			
 FIND_PACKAGE(SWIG REQUIRED)
 INCLUDE(${SWIG_USE_FILE})
