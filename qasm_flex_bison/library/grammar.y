@@ -52,14 +52,43 @@
 %%
 
 //# Describe the general structure of a qasm file
-qasm-file : QASM_VERSION NEWLINE qubit-register NEWLINE body {qasm_representation.getSubCircuits() = subcircuits_object;}
-          | COMMENT QASM_VERSION NEWLINE qubit-register NEWLINE body {qasm_representation.getSubCircuits() = subcircuits_object;}
-          | QASM_VERSION NEWLINE COMMENT qubit-register NEWLINE body {qasm_representation.getSubCircuits() = subcircuits_object;}
-          | COMMENT QASM_VERSION NEWLINE COMMENT qubit-register NEWLINE body {qasm_representation.getSubCircuits() = subcircuits_object;}
-          | QASM_VERSION NEWLINE qubit-register NEWLINE {qasm_representation.getSubCircuits() = subcircuits_object;}
-          | COMMENT QASM_VERSION NEWLINE qubit-register NEWLINE {qasm_representation.getSubCircuits() = subcircuits_object;}
-          | QASM_VERSION NEWLINE COMMENT qubit-register NEWLINE {qasm_representation.getSubCircuits() = subcircuits_object;}
-          | COMMENT QASM_VERSION NEWLINE COMMENT qubit-register NEWLINE {qasm_representation.getSubCircuits() = subcircuits_object;}
+qasm-file : qasm_version NEWLINE qubit-register NEWLINE body 
+            {
+              qasm_representation.getSubCircuits() = subcircuits_object;
+            }
+          | COMMENT qasm_version NEWLINE qubit-register NEWLINE body 
+            {
+              qasm_representation.getSubCircuits() = subcircuits_object;
+            }
+          | qasm_version NEWLINE COMMENT qubit-register NEWLINE body 
+            {
+              qasm_representation.getSubCircuits() = subcircuits_object;
+            }
+          | COMMENT qasm_version NEWLINE COMMENT qubit-register NEWLINE body 
+            {
+              qasm_representation.getSubCircuits() = subcircuits_object;
+            }
+          | qasm_version NEWLINE qubit-register NEWLINE 
+            {
+              qasm_representation.getSubCircuits() = subcircuits_object;
+            }
+          | COMMENT qasm_version NEWLINE qubit-register NEWLINE 
+            {
+              qasm_representation.getSubCircuits() = subcircuits_object;
+            }
+          | qasm_version NEWLINE COMMENT qubit-register NEWLINE 
+            {
+              qasm_representation.getSubCircuits() = subcircuits_object;
+            }
+          | COMMENT qasm_version NEWLINE COMMENT qubit-register NEWLINE 
+            {
+              qasm_representation.getSubCircuits() = subcircuits_object;
+            }
+    ;
+qasm_version : QASM_VERSION WS FLOAT
+               {
+                  qasm_representation.versionNumber($3);
+               }
     ;
 body : bodyline 
      | body bodyline
