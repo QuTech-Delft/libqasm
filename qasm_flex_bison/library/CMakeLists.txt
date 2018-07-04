@@ -28,9 +28,11 @@ ADD_LIBRARY( lexgram SHARED
 
 set_property(TARGET lexgram PROPERTY CXX_STANDARD 11)
 
+
+# Compile the test executable. This will be used for valid input files
 add_compile_options(-std=c++11 -Wall -Wextra -Werror -DYYDEBUG=0)
 add_executable(
-                  testCompiler main.cpp
+                  testCompiler ${CMAKE_CURRENT_SOURCE_DIR}/../test/main.cpp
               )
 add_dependencies(testCompiler lexgram)
 target_link_libraries(testCompiler lexgram)
