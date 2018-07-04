@@ -29,47 +29,46 @@ ADD_LIBRARY( lexgram SHARED
 set_property(TARGET lexgram PROPERTY CXX_STANDARD 11)
 
 
-# Compile the test executable. This will be used for valid input files
+## Start of testing
+
+#Prep ourselves for compiling boost
+find_package(Boost COMPONENTS unit_test_framework REQUIRED)
+include_directories (${Boost_INCLUDE_DIRS})
 add_compile_options(-std=c++11 -Wall -Wextra -Werror -DYYDEBUG=0)
-add_executable(
-                  testCompiler ${CMAKE_CURRENT_SOURCE_DIR}/../test/testCompiler.cpp
-              )
-add_dependencies(testCompiler lexgram)
-target_link_libraries(testCompiler lexgram)
-set_property(
-                TARGET testCompiler 
+# Keep test files in a separate source directory called test
+file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ../test/*.cpp)
+
+#Run through each source
+foreach(testSrc ${TEST_SRCS})
+        #Extract the filename without an extension (NAME_WE)
+        get_filename_component(testName ${testSrc} NAME_WE)
+
+        #Add compile target
+        add_executable(${testName} ${testSrc})
+		
+		add_dependencies(${testName} lexgram)
+		
+		set_property(
+                TARGET ${testName} 
                 PROPERTY CXX_STANDARD 11
             )
-# Add all the valid tests			
-add_test(	
-			NAME Bare_Minimum_QASM
-			COMMAND testCompiler ${CMAKE_CURRENT_SOURCE_DIR}/../test/bare_minimum.qasm
-		)
-add_test(	
-			NAME Bell_example
-			COMMAND testCompiler ${CMAKE_CURRENT_SOURCE_DIR}/../test/bell.qasm
-		)
-add_test(	
-			NAME Paper_example_2
-			COMMAND testCompiler ${CMAKE_CURRENT_SOURCE_DIR}/../test/example2.qasm
-		)
-add_test(	
-			NAME Paper_example_3
-			COMMAND testCompiler ${CMAKE_CURRENT_SOURCE_DIR}/../test/example3.qasm
-		)
-add_test(	
-			NAME Paper_example_7
-			COMMAND testCompiler ${CMAKE_CURRENT_SOURCE_DIR}/../test/example7.qasm
-		)
-add_test(	
-			NAME Paper_example_grover
-			COMMAND testCompiler ${CMAKE_CURRENT_SOURCE_DIR}/../test/grover.qasm
-		)
-add_test(	
-			NAME Paper_misc_test
-			COMMAND testCompiler ${CMAKE_CURRENT_SOURCE_DIR}/../test/test.qc
-		)
-			
+
+        #link to Boost libraries AND targets and dependencies
+        target_link_libraries(${testName} ${Boost_LIBRARIES} lexgram)
+
+        #Move testing binaries into a testBin directory
+        set_target_properties(${testName} PROPERTIES 
+            RUNTIME_OUTPUT_DIRECTORY  ${CMAKE_CURRENT_BINARY_DIR}/testBin)
+
+        #Finally add it to test execution - 
+        #Notice the WORKING_DIRECTORY and COMMAND
+        add_test(NAME ${testName} 
+                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testBin 
+                 COMMAND ${CMAKE_CURRENT_BINARY_DIR}/testBin/${testName} ${CMAKE_CURRENT_SOURCE_DIR}/../test/${testName}.qasm)
+endforeach(testSrc)
+
+		
+## Start of SWIG module for the python interface
 FIND_PACKAGE(SWIG REQUIRED)
 INCLUDE(${SWIG_USE_FILE})
 
