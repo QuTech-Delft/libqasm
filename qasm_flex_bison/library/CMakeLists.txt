@@ -5,6 +5,7 @@ enable_testing()
 find_package(BISON 3.0)
 find_package(FLEX 2.6)
 find_package(PythonInterp 3 REQUIRED)
+find_package(Boost)
 
 if(COMPILER_SUPPORTS_CXX11)
     set(CMAKE_REQUIRED_FLAGS "-std=c++11")
