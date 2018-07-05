@@ -208,6 +208,38 @@ namespace compiler
                 return qubits_;
             }
 
+            const Qubits& getQubitsInvolved(const int qubit_pair_index) const
+            {
+                if (type_ == "toffoli")
+                {
+                    switch(qubit_pair_index){
+                        case 1: return toffoli_qubit_pairs_.first; break;
+                        case 2: return toffoli_qubit_pairs_.second.first; break;
+                        case 3: return toffoli_qubit_pairs_.second.second; break;
+                        default: throw std::runtime_error( std::string("Accessing qubit pair ") 
+                                              + std::to_string(qubit_pair_index) 
+                                              + std::string(" on operation ") + type_ ); return qubits_;
+                    }
+                }
+                else if (type_ == "cnot" || type_ == "cz" || type_ == "swap" || type_ == "cr" || type_ == "crk")
+                {
+                    switch(qubit_pair_index){
+                        case 1: return two_qubit_pairs_.first; break;
+                        case 2: return two_qubit_pairs_.second; break;
+                        default: throw std::runtime_error( std::string("Accessing qubit pair ") 
+                                              + std::to_string(qubit_pair_index) 
+                                              + std::string(" on operation ") + type_ ); return qubits_;
+                    }
+                }
+                else
+                {
+                    throw std::runtime_error( std::string("Accessing qubit pair ") 
+                                              + std::to_string(qubit_pair_index) 
+                                              + std::string(" on operation ") + type_ );
+                    return qubits_;
+                }
+            }
+
             double getRotationAngle() const
             {
                 return rotation_angle_;

@@ -1,11 +1,12 @@
 all:
-	$(MAKE) grammar
-	$(MAKE) lex
-	g++ -c -std=c++11 library/grammar.tab.c library/lex.yy.c
-	mv *.o library
-	ar rvs library/lexgram.a library/grammar.tab.o library/lex.yy.o
-	g++ -std=c++11 -Wall -Werror -Wextra -o testCompiler library/main.cpp library/lexgram.a -DYYDEBUG=0
-	mv testCompiler bin
+#	$(MAKE) grammar
+#	$(MAKE) lex
+#	g++ -c -std=c++11 library/grammar.tab.c library/lex.yy.c
+#	mv *.o library
+#	ar rvs library/lexgram.a library/grammar.tab.o library/lex.yy.o
+#	g++ -std=c++11 -Wall -Werror -Wextra -o testCompiler library/main.cpp library/lexgram.a -DYYDEBUG=0
+#	mv testCompiler bin
+	$(MAKE) testing
 
 grammar:
 	bison -Wall -d -t library/grammar.y -g -r all

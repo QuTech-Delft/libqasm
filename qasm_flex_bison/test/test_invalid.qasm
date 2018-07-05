@@ -1,7 +1,7 @@
 version 1.0
 qubits 8
 
-map q[0,0:7,5,6], bleh2
+map q[0,0:7,5,6], x
 map b[5:7], bleh
 
 
@@ -47,9 +47,6 @@ map q[7] , q7
    c-x bitcontroller, q[2:5]
    c-swap b[7], q1 , q[5,7,0:2]
    toffoli q3, q4, q[0:5]
-   crk q1, q6, 4
-   crk q2, q3, -10
-   cr q2, q5, 3.1416
 
 .result
 # measurement
