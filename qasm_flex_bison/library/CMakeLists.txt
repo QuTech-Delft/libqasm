@@ -62,9 +62,11 @@ foreach(testSrc ${TEST_SRCS})
 
         #Finally add it to test execution - 
         #Notice the WORKING_DIRECTORY and COMMAND
-        add_test(NAME ${testName} 
-                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testBin 
-                 COMMAND ${CMAKE_CURRENT_BINARY_DIR}/testBin/${testName} ${CMAKE_CURRENT_SOURCE_DIR}/../test/${testName}.qasm)
+		file(	COPY ${CMAKE_CURRENT_SOURCE_DIR}/../test/${testName}.qasm
+				DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/testBin		)
+        add_test( NAME ${testName} 
+                  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testBin 
+                  COMMAND ${CMAKE_CURRENT_BINARY_DIR}/testBin/${testName} )
 endforeach(testSrc)
 
 		

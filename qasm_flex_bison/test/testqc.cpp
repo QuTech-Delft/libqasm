@@ -1,11 +1,12 @@
-/** This main file is an example of how to use the AST class for the qasm parser **/
+/** This test is for an integrated file: It is not a particualr algorithm **/
 
 #include <iostream>
 #include <vector>
 #include <string>
+#include <boost/test/unit_test.hpp>
 #include "qasm_semantic.hpp"
 
-int main (int argc, const char** argv)
+int main ()
 {
 
     #if YYDEBUG == 1
@@ -13,14 +14,11 @@ int main (int argc, const char** argv)
     yydebug = 1;
     #endif
 
-    if (argc > 1)
-        std::cout << "Path to QASM file = " << argv[1] << std::endl;
-
     // open a file handle to a particular file:
-    FILE *myfile = fopen(argv[1], "r");
+    FILE *myfile = fopen("testqc.qasm", "r");
     // make sure it's valid:
     if (!myfile) {
-        std::cout << "File " << argv[1] << " not found!" << std::endl;
+        std::cout << "File 'testqc.qasm' not found!" << std::endl;
         return -1;
     }
     
