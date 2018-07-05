@@ -342,7 +342,7 @@ namespace compiler
                     std::cout << std::endl;
                     std::cout << "Wait time (integer) = " << getWaitTime() << std::endl;
                 }
-                else if (type_ == "display")
+                else if ( (type_ == "display") || (type_ == "display_binary") )
                 {
                     std::cout << "Display bits: ";
                     getDisplayBits().printMembers();
