@@ -95,7 +95,7 @@ namespace compiler
                 {
                     result = checkResetAveraging(op);
                 }
-                else if (type_ == "wait" || type_ == "display" || type_ == "not")
+                else if (type_ == "wait" || type_ == "display" || type_ == "display_binary" || type_ == "not")
                 {
                     result = checkWaitDisplayNot(op);
                 }

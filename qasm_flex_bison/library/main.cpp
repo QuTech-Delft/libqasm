@@ -140,7 +140,7 @@ void printOperationProperties(compiler::Operation& op)
         std::cout << std::endl;
         std::cout << "Wait time (integer) = " << op.getWaitTime() << std::endl;
     }
-    else if (type_ == "display")
+    else if ( (type_ == "display") || (type_ == "display_binary") )
     {
         std::cout << "Display bits: ";
         op.getDisplayBits().printMembers();

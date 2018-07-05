@@ -351,15 +351,15 @@ special-operations : display-operation | wait-operation | reset-averaging-operat
     ;
 display-operation : DISPLAY NEWLINE
                     {
-                        $$ = new compiler::Operation( std::string($1,7) );
+                        $$ = new compiler::Operation( std::string($1) );
                     }
                   | DISPLAY WS
                     {
-                        $$ = new compiler::Operation( std::string($1,7) );
+                        $$ = new compiler::Operation( std::string($1) );
                     }
                   | DISPLAY WS bit
                     {
-                        $$ = new compiler::Operation( std::string($1,7), *($3) );
+                        $$ = new compiler::Operation( std::string($1), *($3) );
                     }
     ;
 wait-operation : WAIT WS INTEGER

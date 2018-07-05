@@ -36,7 +36,7 @@ qubits             (?i:qubits)
 mapkey             (?i:map)
 wait               (?i:wait)
 resetavg           (?i:reset-averaging)
-display            (?i:display)
+display            ((?i:display)|(?i:display_binary))
 qubithead          [qQ]
 bithead            [bB]
 prep               (?i:prep)(_{axis})?
