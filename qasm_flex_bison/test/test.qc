@@ -59,4 +59,5 @@ map q[7] , q7
 .display_results
 display
 display b[1]
+display_binary b[6]
 display bleh
