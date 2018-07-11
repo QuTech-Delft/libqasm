@@ -1,0 +1,3 @@
+[submodule "qasm_flex_bison/library/doctest"]
+	path = qasm_flex_bison/test/doctest
+	url = git@github.com:onqtam/doctest.git
