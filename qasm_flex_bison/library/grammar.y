@@ -56,15 +56,15 @@ qasm-file : qasm_version NEWLINE qubit-register NEWLINE body
             {
               qasm_representation.getSubCircuits() = subcircuits_object;
             }
-          | COMMENT qasm_version NEWLINE qubit-register NEWLINE body 
+          | comment qasm_version NEWLINE qubit-register NEWLINE body 
             {
               qasm_representation.getSubCircuits() = subcircuits_object;
             }
-          | qasm_version NEWLINE COMMENT qubit-register NEWLINE body 
+          | qasm_version NEWLINE comment qubit-register NEWLINE body 
             {
               qasm_representation.getSubCircuits() = subcircuits_object;
             }
-          | COMMENT qasm_version NEWLINE COMMENT qubit-register NEWLINE body 
+          | comment qasm_version NEWLINE comment qubit-register NEWLINE body 
             {
               qasm_representation.getSubCircuits() = subcircuits_object;
             }
@@ -72,15 +72,15 @@ qasm-file : qasm_version NEWLINE qubit-register NEWLINE body
             {
               qasm_representation.getSubCircuits() = subcircuits_object;
             }
-          | COMMENT qasm_version NEWLINE qubit-register NEWLINE 
+          | comment qasm_version NEWLINE qubit-register NEWLINE 
             {
               qasm_representation.getSubCircuits() = subcircuits_object;
             }
-          | qasm_version NEWLINE COMMENT qubit-register NEWLINE 
+          | qasm_version NEWLINE comment qubit-register NEWLINE 
             {
               qasm_representation.getSubCircuits() = subcircuits_object;
             }
-          | COMMENT qasm_version NEWLINE COMMENT qubit-register NEWLINE 
+          | comment qasm_version NEWLINE comment qubit-register NEWLINE 
             {
               qasm_representation.getSubCircuits() = subcircuits_object;
             }
@@ -100,6 +100,9 @@ bodyline : statement
 statement  : qasm-line 
            | subcircuit-definition
            | COMMENT
+    ;
+comment : COMMENT
+        | comment COMMENT
     ;
 subcircuit-definition : DOT NAME
                         { 

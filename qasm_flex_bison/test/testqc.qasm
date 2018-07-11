@@ -60,4 +60,5 @@ map q[7] , q7
 display
 display b[1]
 display_binary b[6]
+display_binary
 display bleh
