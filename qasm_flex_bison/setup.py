@@ -21,7 +21,10 @@ if platform == "linux" or platform == "linux2":
     cmd = 'cmake ../library/'
     proc = subprocess.Popen(cmd, shell=True)
     proc.communicate()
-    cmd = 'make'
+    cmd = 'make all'
+    proc = subprocess.Popen(cmd, shell=True)
+    proc.communicate()
+    cmd = 'make test'
     proc = subprocess.Popen(cmd, shell=True)
     proc.communicate()
     clibname = "_libQasm.so"

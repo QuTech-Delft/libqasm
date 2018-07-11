@@ -554,6 +554,16 @@ namespace compiler
                 return qubit_register_;
             }
 
+            double versionNumber() const
+            {
+                return version_number_;
+            }
+
+            void versionNumber(double version)
+            {
+                version_number_ = version;
+            }
+
             SubCircuits& getSubCircuits()
             {
                 return subcircuits_;
@@ -593,6 +603,7 @@ namespace compiler
         protected:
             SubCircuits subcircuits_;
             int qubit_register_;
+            double version_number_;
             std::map<std::string , std::pair<NumericalIdentifiers,bool> > mappings_;
     }; // class QasmRepresentation
 } //namespace compiler
