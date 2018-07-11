@@ -1,5 +1,15 @@
+#foo
+#bar
+
+
 version 1.0
-qubits 8
+
+#foo
+#bar
+
+
+qubits 8 #foo
+
 
 map q[0,0:7,5,6], bleh2
 map b[5:7], bleh

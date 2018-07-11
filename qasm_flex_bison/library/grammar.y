@@ -52,35 +52,19 @@
 %%
 
 //# Describe the general structure of a qasm file
-qasm-file : qasm_version NEWLINE qubit-register NEWLINE body 
+qasm-file : qasm_version NEWLINE qubit-register body 
             {
               qasm_representation.getSubCircuits() = subcircuits_object;
             }
-          | comment qasm_version NEWLINE qubit-register NEWLINE body 
+          | qasm_version NEWLINE comment qubit-register body 
             {
               qasm_representation.getSubCircuits() = subcircuits_object;
             }
-          | qasm_version NEWLINE comment qubit-register NEWLINE body 
+          | qasm_version NEWLINE qubit-register 
             {
               qasm_representation.getSubCircuits() = subcircuits_object;
             }
-          | comment qasm_version NEWLINE comment qubit-register NEWLINE body 
-            {
-              qasm_representation.getSubCircuits() = subcircuits_object;
-            }
-          | qasm_version NEWLINE qubit-register NEWLINE 
-            {
-              qasm_representation.getSubCircuits() = subcircuits_object;
-            }
-          | comment qasm_version NEWLINE qubit-register NEWLINE 
-            {
-              qasm_representation.getSubCircuits() = subcircuits_object;
-            }
-          | qasm_version NEWLINE comment qubit-register NEWLINE 
-            {
-              qasm_representation.getSubCircuits() = subcircuits_object;
-            }
-          | comment qasm_version NEWLINE comment qubit-register NEWLINE 
+          | qasm_version NEWLINE comment qubit-register 
             {
               qasm_representation.getSubCircuits() = subcircuits_object;
             }
@@ -167,10 +151,11 @@ numerical-identifier-range : INTEGER COLON INTEGER
                                 buffer_indices.addToVector($1,$3); 
                              }
     ;
-
-
-qubit-register : QUBITS WS INTEGER {qasm_representation.qubitRegister($3);}
-
+qubit-register : QUBITS WS INTEGER 
+                 {
+                    qasm_representation.qubitRegister($3);
+                 } 
+    ;
 //# We define the syntax for selecting the qubits/bits, either by a range or a list
 %type <qval> qubit;
 qubit : qubit-nomap {$$=$1;}
