@@ -407,6 +407,7 @@ reset-averaging-operation : RESET_AVERAGING WS
 extern int yylineno, yychar;
 void yyerror(char const *x)
 {
-    printf("Error %s | Token %d on Line: %d\n",x,yychar,yylineno);
-    exit(1);
+    //char * error_msg;
+    //sprintf(error_msg,"%s | Token %d on Line: %d\n",x,yychar,yylineno);
+    throw std::runtime_error(std::string(x));
 }

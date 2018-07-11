@@ -31,10 +31,7 @@ set_property(TARGET lexgram PROPERTY CXX_STANDARD 11)
 
 
 ## Start of testing
-
-#Prep ourselves for compiling boost
-find_package(Boost COMPONENTS unit_test_framework REQUIRED)
-include_directories (${Boost_INCLUDE_DIRS})
+include_directories (${CMAKE_CURRENT_SOURCE_DIR}/../test/doctest)
 add_compile_options(-std=c++11 -Wall -Wextra -Werror -DYYDEBUG=0)
 # Keep test files in a separate source directory called test
 file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ../test/*.cpp)
@@ -55,7 +52,7 @@ foreach(testSrc ${TEST_SRCS})
             )
 
         #link to Boost libraries AND targets and dependencies
-        target_link_libraries(${testName} ${Boost_LIBRARIES} lexgram)
+        target_link_libraries(${testName} lexgram)
 
         #Move testing binaries into a testBin directory
         set_target_properties(${testName} PROPERTIES 

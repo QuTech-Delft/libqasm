@@ -1,33 +1,12 @@
-/** This test is for an integrated file: It is not a particualr algorithm **/
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE TESTQC
+/** This test is for an integrated file: It is not a particular algorithm **/
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <iostream>
 #include <vector>
 #include <string>
-#include <boost/test/unit_test.hpp>
 #include "qasm_semantic.hpp"
+#include "doctest/doctest.h"
 
-
-struct testqc
-{
-    testqc()
-    {
-    }
-    
-    void TestMapping(compiler::QasmRepresentation& qasm)
-    {
-        std::string first_key = "bleh2";
-        auto indices = qasm.getMappedIndices(first_key, true);
-        std::vector<size_t> qubit_indices = indices.getIndices();
-        std::vector<size_t> correct_result = {0,1,2,3,4,5,6,7};
-        BOOST_CHECK(qubit_indices == correct_result);
-    }
-
-};
-
-BOOST_FIXTURE_TEST_SUITE(Test_Valid, testqc);
-
-BOOST_AUTO_TEST_CASE(testMapping)
+TEST_CASE("Test for the testqc.qasm file")
 {
     #if YYDEBUG == 1
     extern int yydebug;
@@ -43,8 +22,5 @@ BOOST_AUTO_TEST_CASE(testMapping)
     
     int result = sm.parseResult();
 
-    BOOST_REQUIRE(result == 0);   // Stop here if it fails.
-    TestMapping(qasm_representation);
+    CHECK(result == 0);   // Stop here if it fails.
 }
-
-BOOST_AUTO_TEST_SUITE_END();
