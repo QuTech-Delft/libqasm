@@ -73,6 +73,10 @@ qasm_version : QASM_VERSION WS FLOAT
                {
                   qasm_representation.versionNumber($3);
                }
+             | comment QASM_VERSION WS FLOAT
+               {
+                  qasm_representation.versionNumber($4);
+               } 
     ;
 body : bodyline 
      | body bodyline
