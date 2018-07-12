@@ -43,6 +43,7 @@
 %token <sval> CDASH NOT_TOKEN
 %token <sval> MAPKEY PREP MEASURE MEASUREPARITY MEASUREALL
 %token <sval> WAIT DISPLAY RESET_AVERAGING
+%token <sval> ERROR_MODEL_KEY ERROR_MODEL
 %token QBITHEAD BITHEAD
 
 %type <sval> single-qubit-gate;
@@ -103,6 +104,7 @@ subcircuit-definition : DOT NAME
                         }
     ;
 qasm-line : map-operation
+          | error-model
           | measureall-operation
             {
                 compiler::Operation* serial_ops = $1;
@@ -159,6 +161,11 @@ qubit-register : QUBITS WS INTEGER
                  {
                     qasm_representation.qubitRegister($3);
                  } 
+    ;
+error-model : ERROR_MODEL_KEY WS ERROR_MODEL COMMA_SEPARATOR FLOAT
+              {
+                  qasm_representation.setErrorModel( std::string($3), $5 );
+              }  
     ;
 //# We define the syntax for selecting the qubits/bits, either by a range or a list
 %type <qval> qubit;

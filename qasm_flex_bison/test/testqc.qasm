@@ -1,7 +1,3 @@
-#foo
-#bar
-
-
 version 1.0
 
 #foo
@@ -28,7 +24,7 @@ x q[4:7]
 rX q[1,2:5], 3.1416E-01
 
 
-.mapping
+.mapping # mappin
 map b[0:11], bitcontroller
 map q[0] , q0
 map q[1] , q1
@@ -72,3 +68,4 @@ display b[1]
 display_binary b[6]
 display_binary
 display bleh
+error_model depolarizing_channel ,0.001
