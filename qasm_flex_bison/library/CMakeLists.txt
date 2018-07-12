@@ -45,5 +45,11 @@ INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
 
 SET_SOURCE_FILES_PROPERTIES(libqasm_swig.i PROPERTIES CPLUSPLUS ON)
 SET_PROPERTY(SOURCE libqasm_swig.i PROPERTY SWIG_FLAGS -castmode -modern -keyword)
-SWIG_ADD_MODULE(libQasm python libqasm_swig.i)
+
+if (${CMAKE_VERSION} VERSION_LESS "3.8.0")
+	SWIG_ADD_MODULE(libQasm python libqasm_swig.i)
+else()
+	SWIG_ADD_LIBRARY(libQasm python libqasm_swig.i)
+endif()
+
 SWIG_LINK_LIBRARIES(libQasm ${PYTHON_LIBRARIES} lexgram)
