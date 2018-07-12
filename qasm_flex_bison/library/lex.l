@@ -17,7 +17,7 @@ identifier         {letter}([0-9]|{letter})*
 whitespace         (\t|" ")*
 newline            {whitespace}?(\n|\r\n)*
 singlenewline      (\n|\r\n)
-comment            \#(.*){singlenewline}+
+comment            \#(.*){singlenewline}*
 nonneginteger      [0-9]+
 integer            (\-)?{nonneginteger}
 float              (\-)?({nonneginteger}\.{nonneginteger})[eE]?((\-)?{nonneginteger})?
@@ -30,6 +30,8 @@ cr                 (?i:cr)
 crk                (?i:crk)
 cdash              (?i:c\-)
 not_token          (?i:not)
+error_model_key    (?i:error\_model)
+error_model        (?i:depolarizing\_channel)
 comma_sep          {whitespace}?,{whitespace}?
 parallel_sep       {whitespace}?\|{whitespace}?
 qubits             (?i:qubits)
@@ -72,6 +74,10 @@ qasm_version       (?i:version)
 {two_qubit_gates} TOKENSTR(TWO_QUBIT_GATES)
 
 {toffoli} TOKENSTR(TOFFOLI)
+
+{error_model_key} TOKENSTR(ERROR_MODEL_KEY)
+
+{error_model} TOKENSTR(ERROR_MODEL)
 
 {mapkey} TOKEN(MAPKEY)
 
