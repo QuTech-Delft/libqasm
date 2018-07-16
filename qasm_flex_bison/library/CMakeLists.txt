@@ -80,7 +80,7 @@ SET_PROPERTY(SOURCE libqasm_swig.i PROPERTY SWIG_FLAGS -castmode -modern -keywor
 if (${CMAKE_VERSION} VERSION_LESS "3.8.0")
 	SWIG_ADD_MODULE(libQasm python libqasm_swig.i)
 else()
-	SWIG_ADD_LIBRARY(libQasm python libqasm_swig.i)
+	SWIG_ADD_LIBRARY(libQasm LANGUAGE python SOURCES libqasm_swig.i)
 endif()
 
 SWIG_LINK_LIBRARIES(libQasm ${PYTHON_LIBRARIES} lexgram)
