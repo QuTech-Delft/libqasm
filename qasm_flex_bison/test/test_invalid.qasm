@@ -1,3 +1,5 @@
+# This is an example of an invalid file
+
 version 1.0
 qubits 8
 
@@ -46,7 +48,7 @@ map q[7] , q7
    rz q6,0.555
    c-x bitcontroller, q[2:5]
    c-swap b[7], q1 , q[5,7,0:2]
-   toffoli q3, q4, q[0:5]
+   toffoli q3, q4, q[0:1024]
 
 .result
 # measurement

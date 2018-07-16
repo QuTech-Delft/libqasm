@@ -554,6 +554,16 @@ namespace compiler
                 return qubit_register_;
             }
 
+            double versionNumber() const
+            {
+                return version_number_;
+            }
+
+            void versionNumber(double version)
+            {
+                version_number_ = version;
+            }
+
             SubCircuits& getSubCircuits()
             {
                 return subcircuits_;
@@ -580,6 +590,22 @@ namespace compiler
                     throw std::runtime_error(std::string("Could not get wanted mapping ") + name_key);
             }
 
+            void setErrorModel(std::string error_model_type, double probability)
+            {
+                error_model_params_.first = error_model_type;
+                error_model_params_.second = probability;
+            }
+
+            const std::string getErrorModelType() const
+            {
+                return error_model_params_.first;
+            }
+
+            double getErrorModelProbability() const
+            {
+                return error_model_params_.second;
+            }
+
             void printMappings() const
             // This is just for debugging purposes
             {
@@ -588,12 +614,22 @@ namespace compiler
                     std::cout << elem.first << ": ";
                     elem.second.first.printMembers(); std::cout << elem.second.second << std::endl;
                 }
+                printErrorModel();
+            }
+
+            void printErrorModel() const
+            // This is just for debugging purposes
+            {
+                std::cout << "Current error model: " << error_model_params_.first
+                          << "\nError Probability = "  << error_model_params_.second << std::endl;
             }
 
         protected:
             SubCircuits subcircuits_;
             int qubit_register_;
-            std::map<std::string , std::pair<NumericalIdentifiers,bool> > mappings_;
+            double version_number_;
+            std::map< std::string , std::pair<NumericalIdentifiers,bool> > mappings_;
+            std::pair< std::string, double > error_model_params_ = std::make_pair("None",0.);
     }; // class QasmRepresentation
 } //namespace compiler
 

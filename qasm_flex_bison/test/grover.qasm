@@ -51,3 +51,5 @@ map q[4],oracle
     h oracle
     measure oracle
     display 
+
+#error_model depolarizing_channel ,0.001
