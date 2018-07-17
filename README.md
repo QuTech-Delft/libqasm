@@ -29,3 +29,7 @@ As the library uses doctest as part of the testing procedure. In order to instal
 ### As a python3 module
 1. git submodule update --init --recursive
 2. python3 setup.py --install --user
+
+### Cleaning up the **qasm\_flex\_bison** directory
+In order to clean up the entire source directory when a user installs using the setup.py python script:
+1. make clean
