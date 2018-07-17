@@ -1,4 +1,4 @@
-# libQasm: Library to parse cQASM v1.0 files
+# libQASM: Library to parse cQASM v1.0 files
 
 ## Dependencies
 * Flex (> 2.6)
