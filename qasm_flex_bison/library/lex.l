@@ -15,7 +15,7 @@
 letter             [a-zA-Z\_]
 identifier         {letter}([0-9]|{letter})*
 whitespace         (\t|" ")*
-newline            {whitespace}?(\n|\r\n)*
+newline            (\n|\r\n)*{whitespace}?(\n|\r\n)*
 singlenewline      (\n|\r\n)
 comment            \#(.*){singlenewline}*
 nonneginteger      [0-9]+
