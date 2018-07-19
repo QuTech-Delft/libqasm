@@ -13,8 +13,7 @@ pipeline {
         }
         stage('Test') {
             steps {
-               sh 'make test'
-
+               sh 'cd qasm_flex_bison && cd build && make test'
             }
         }
 
