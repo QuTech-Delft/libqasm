@@ -1,38 +1,44 @@
 %option noyywrap
+%option yylineno
 %{
     #include "grammar.tab.h"
     #include <cstdlib>
     #include <string>
-    #define PRINTLEX(t) { printf("Lex: " #t ": %s\n",yytext); }
+    #define PRINTLEX(t) { printf("Lex: " #t ": %s\n",t); }
     #define TOKEN(t) { return(t); }
     #define TOKENI(t) {  yylval.ival = static_cast<int> ( std::strtol(yytext,NULL,10) ); return(t); }
     #define TOKEND(t) {  yylval.dval = std::strtod(yytext,NULL); return(t); }
-    #define TOKENSTR(t) { yylval.sval = yytext; return(t); }
+    #define TOKENSTR(t) { yylval.sval = strdup(yytext); return(t); }
 %}
 
+
 letter             [a-zA-Z\_]
-identifier         {letter}([0-9]*{letter}*)+
-whitespace         (\t|" "|\r)+
-newline            {whitespace}?(\n|\r\n)+
+identifier         {letter}([0-9]|{letter})*
+whitespace         (\t|" ")*
+newline            {whitespace}?(\n|\r\n)*
 singlenewline      (\n|\r\n)
-comment            \#(.*)
-integer            [0-9]+
-float              (\-)?({integer}\.{integer})[eE]?((\-)?{integer})?
+comment            \#(.*){singlenewline}*
+nonneginteger      [0-9]+
+integer            (\-)?{nonneginteger}
+float              (\-)?({nonneginteger}\.{nonneginteger})[eE]?((\-)?{nonneginteger})?
 axis               ([xX]|[yY]|[zZ])
 single_qubits      ((?i:i)|(?i:h)|(?i:x90)|(?i:y90)|(?i:mx90)|(?i:my90)|(?i:s)|(?i:sdag)|(?i:t)|(?i:tdag))
 two_qubit_gates    ((?i:cnot)|(?i:cz)|(?i:swap))
 toffoli            (?i:toffoli)
 rotations          ([rR]){axis}
 cr                 (?i:cr)
+crk                (?i:crk)
 cdash              (?i:c\-)
 not_token          (?i:not)
+error_model_key    (?i:error\_model)
+error_model        (?i:depolarizing\_channel)
 comma_sep          {whitespace}?,{whitespace}?
 parallel_sep       {whitespace}?\|{whitespace}?
 qubits             (?i:qubits)
 mapkey             (?i:map)
 wait               (?i:wait)
 resetavg           (?i:reset-averaging)
-display            (?i:display)
+display            ((?i:display)|(?i:display_binary))
 qubithead          [qQ]
 bithead            [bB]
 prep               (?i:prep)(_{axis})?
@@ -40,7 +46,7 @@ measurehead        (?i:measure)
 measure            {measurehead}(_{axis})?
 measureall         {measurehead}(_(?i:all))
 measureparity      {measurehead}(_(?i:parity))
-qasm_version       (?i:version){whitespace}{integer}(\.)?{integer}?
+qasm_version       (?i:version)
 
 %%
 {qasm_version} TOKENSTR(QASM_VERSION)
@@ -57,6 +63,8 @@ qasm_version       (?i:version){whitespace}{integer}(\.)?{integer}?
 
 {cr} TOKENSTR(CR)
 
+{crk} TOKENSTR(CRK)
+
 {cdash} TOKEN(CDASH)
 
 {not_token} TOKENSTR(NOT_TOKEN)
@@ -66,6 +74,10 @@ qasm_version       (?i:version){whitespace}{integer}(\.)?{integer}?
 {two_qubit_gates} TOKENSTR(TWO_QUBIT_GATES)
 
 {toffoli} TOKENSTR(TOFFOLI)
+
+{error_model_key} TOKENSTR(ERROR_MODEL_KEY)
+
+{error_model} TOKENSTR(ERROR_MODEL)
 
 {mapkey} TOKEN(MAPKEY)
 
@@ -107,17 +119,15 @@ qasm_version       (?i:version){whitespace}{integer}(\.)?{integer}?
 
 {float} TOKEND(FLOAT)
 
-{identifier} TOKENSTR(NAME)
-
 {whitespace} TOKEN(WS)
 
 {newline} {
-    ++yylineno;
     TOKEN(NEWLINE)
 }
 
+{identifier} TOKENSTR(NAME)
+
 {comment} {
-    ++yylineno;
     TOKENSTR(COMMENT)
 }
 

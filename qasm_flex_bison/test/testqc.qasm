@@ -1,5 +1,11 @@
 version 1.0
-qubits 8
+
+#foo
+#bar
+
+
+qubits 8 #foo
+
 
 map q[0,0:7,5,6], bleh2
 map b[5:7], bleh
@@ -18,22 +24,22 @@ x q[4:7]
 rX q[1,2:5], 3.1416E-01
 
 
-.mapping
-   map b[0:11], bitcontroller
-   map q[0] , q0
-   map q[1] , q1
-   map q[2] , q2
-   map q[3] , q3
-   map q[4] , q4
-   map q[5] , q5
-   map q[6] , q6
-   map q[7] , q7
+.mapping # mappin
+map b[0:11], bitcontroller
+map q[0] , q0
+map q[1] , q1
+map q[2] , q2
+map q[3] , q3
+map q[4] , q4
+map q[5] , q5
+map q[6] , q6
+map q[7] , q7
 
 .waits
    wait 2
 
 .first_circuit(50)
-   H q0
+   H q0 
    cnot q0,q1
    x  q1
    Y  q2
@@ -45,15 +51,21 @@ rX q[1,2:5], 3.1416E-01
    ry q5,0.244
    rz q6,0.555
    c-x bitcontroller, q[2:5]
-   c-swap b[7], q1 , q[5,7]
+   c-swap b[7], q1 , q[5,7,0:2]
    toffoli q3, q4, q[0:5]
+   crk q1, q6, 4
+   crk q2, q3, -10
+   cr q2, q5, 3.1416
 
 .result
 # measurement
    measure q1
-   {measure q0 | measure q2 | measure q3}
+   {measure q0 |measure q2 | measure q3}
 
 .display_results
 display
 display b[1]
+display_binary b[6]
+display_binary
 display bleh
+error_model depolarizing_channel ,0.001

@@ -48,6 +48,8 @@ bin
 build
 *build
 build*
+libQasm*
+*libQasm
 
 # Add Flex and Bison generated sources
 *.tab.*
@@ -56,3 +58,7 @@ log
 *.dot
 *.output
 *.png
+
+# Add swig generated sources
+*_swig*
+

@@ -17,6 +17,9 @@
     std::string buffer_string;
 %}
 
+%define parse.error verbose
+
+%locations
 
 %union {
     int ival;
@@ -36,10 +39,11 @@
 %token COMMA_SEPARATOR PARALLEL_SEPARATOR BRA KET DOT SBRA SKET CBRA CKET NEWLINE WS COLON COMMENT
 %token <sval> ROTATIONS AXIS
 %token QUBITS
-%token <sval> SINGLE_QUBIT_GATES TWO_QUBIT_GATES CR TOFFOLI
+%token <sval> SINGLE_QUBIT_GATES TWO_QUBIT_GATES CR CRK TOFFOLI
 %token <sval> CDASH NOT_TOKEN
 %token <sval> MAPKEY PREP MEASURE MEASUREPARITY MEASUREALL
 %token <sval> WAIT DISPLAY RESET_AVERAGING
+%token <sval> ERROR_MODEL_KEY ERROR_MODEL
 %token QBITHEAD BITHEAD
 
 %type <sval> single-qubit-gate;
@@ -49,33 +53,58 @@
 %%
 
 //# Describe the general structure of a qasm file
-qasm-file : QASM_VERSION NEWLINE qubit-register NEWLINE circuits {qasm_representation.getSubCircuits() = subcircuits_object;}
-          | comments QASM_VERSION NEWLINE qubit-register NEWLINE circuits {qasm_representation.getSubCircuits() = subcircuits_object;}
-          | QASM_VERSION NEWLINE comments qubit-register NEWLINE circuits {qasm_representation.getSubCircuits() = subcircuits_object;}
-          | comments QASM_VERSION NEWLINE comments qubit-register NEWLINE circuits {qasm_representation.getSubCircuits() = subcircuits_object;}
+qasm-file : qasm_version NEWLINE qubit-register body 
+            {
+              qasm_representation.getSubCircuits() = subcircuits_object;
+            }
+          | qasm_version NEWLINE comment qubit-register body 
+            {
+              qasm_representation.getSubCircuits() = subcircuits_object;
+            }
+          | qasm_version NEWLINE qubit-register 
+            {
+              qasm_representation.getSubCircuits() = subcircuits_object;
+            }
+          | qasm_version NEWLINE comment qubit-register 
+            {
+              qasm_representation.getSubCircuits() = subcircuits_object;
+            }
     ;
-circuits : circuit 
-           | circuits circuit
+qasm_version : QASM_VERSION WS FLOAT
+               {
+                  qasm_representation.versionNumber($3);
+               }
+             | comment QASM_VERSION WS FLOAT
+               {
+                  qasm_representation.versionNumber($4);
+               } 
     ;
-circuit : statements
-        | WS statements
+body : bodyline 
+     | body bodyline
     ;
-subcircuit : DOT NAME { subcircuits_object.addSubCircuit( compiler::SubCircuit ($2,subcircuits_object.numberOfSubCircuits()) ); }
-           | subcircuit BRA INTEGER KET { subcircuits_object.lastSubCircuit().numberIterations($3); }
-           | subcircuit NEWLINE
+bodyline : statement
+         | WS statement
+         | NEWLINE
     ;
-statements : qasm-line 
-           | subcircuit
-           | comments
-           | statements NEWLINE qasm-line
-           | statements NEWLINE subcircuit
-           | statements NEWLINE comments
+statement  : qasm-line 
+           | subcircuit-definition
+           | COMMENT
     ;
-comments : COMMENT 
-         | comments COMMENT 
-         | comments NEWLINE
+comment : COMMENT
+        | comment COMMENT
+    ;
+subcircuit-definition : DOT NAME
+                        { 
+                            subcircuits_object.addSubCircuit( compiler::SubCircuit ($2,subcircuits_object.numberOfSubCircuits()) ); 
+                        }
+                      | DOT NAME BRA INTEGER KET
+                        {
+                            subcircuits_object.addSubCircuit( compiler::SubCircuit ($2,subcircuits_object.numberOfSubCircuits()) ); 
+                            subcircuits_object.lastSubCircuit().numberIterations($4); 
+                        }
     ;
 qasm-line : map-operation
+          | error-model
           | measureall-operation
             {
                 compiler::Operation* serial_ops = $1;
@@ -110,29 +139,34 @@ qasm-line : map-operation
                 compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
                 subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
             }
-          | qasm-line NEWLINE
     ;
 
 //# We define the convenience strings, texts, numbers here....
 %type <idval> indices numerical-identifiers numerical-identifier-list numerical-identifier-range;
 indices : SBRA numerical-identifiers SKET {} 
     ;
-numerical-identifiers : numerical-identifier-list {} 
-                      | numerical-identifier-range {}
+numerical-identifiers : numerical-identifier-list
+                      | numerical-identifier-range
+                      | numerical-identifiers COMMA_SEPARATOR numerical-identifier-list
+                      | numerical-identifiers COMMA_SEPARATOR numerical-identifier-range
     ;
 numerical-identifier-list : INTEGER {buffer_indices.addToVector($1);}
-                          | numerical-identifier-list COMMA_SEPARATOR numerical-identifiers
     ;
 numerical-identifier-range : INTEGER COLON INTEGER 
                              {
                                 buffer_indices.addToVector($1,$3); 
                              }
-                           | numerical-identifier-range COMMA_SEPARATOR numerical-identifiers
     ;
-
-
-qubit-register : QUBITS WS INTEGER {qasm_representation.qubitRegister($3);}
-
+qubit-register : QUBITS WS INTEGER 
+                 {
+                    qasm_representation.qubitRegister($3);
+                 } 
+    ;
+error-model : ERROR_MODEL_KEY WS ERROR_MODEL COMMA_SEPARATOR FLOAT
+              {
+                  qasm_representation.setErrorModel( std::string($3), $5 );
+              }  
+    ;
 //# We define the syntax for selecting the qubits/bits, either by a range or a list
 %type <qval> qubit;
 qubit : qubit-nomap {$$=$1;}
@@ -226,7 +260,11 @@ two-qubit-operation : two-qubit-gates WS qubit COMMA_SEPARATOR qubit
                       }
     ;
 %type <oval> two-qubit-operation-args;
-two-qubit-operation-args : two-qubit-gate-args WS qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR INTEGER
+two-qubit-operation-args : two-qubit-gate-args WS qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR FLOAT
+                           {
+                              $$ = new compiler::Operation( buffer_string, *($3) , *($5), ($7) );
+                           }
+                         | two-qubit-gate-args WS qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR INTEGER
                            {
                               $$ = new compiler::Operation( buffer_string, *($3) , *($5), ($7) );
                            }
@@ -235,6 +273,7 @@ two-qubit-operation-args : two-qubit-gate-args WS qubit COMMA_SEPARATOR qubit CO
 two-qubit-gates : TWO_QUBIT_GATES {buffer_string = std::string($1);}
     ;
 two-qubit-gate-args : CR {buffer_string = std::string($1);}
+                    | CRK {buffer_string = std::string($1);}
     ;
 //## Define the toffoli gate
 %type <oval> toffoli-operation;
@@ -338,17 +377,17 @@ parallelizable-ops : all-valid-operations
 %type <oval> special-operations display-operation wait-operation reset-averaging-operation;
 special-operations : display-operation | wait-operation | reset-averaging-operation
     ;
-display-operation : DISPLAY 
+display-operation : DISPLAY NEWLINE
                     {
-                        $$ = new compiler::Operation( std::string($1,7) );
-                    }
-                  | DISPLAY WS bit
-                    {
-                        $$ = new compiler::Operation( std::string($1,7), *($3) );
+                        $$ = new compiler::Operation( std::string($1) );
                     }
                   | DISPLAY WS
                     {
-                        $$ = new compiler::Operation( std::string($1,7) );
+                        $$ = new compiler::Operation( std::string($1) );
+                    }
+                  | DISPLAY WS bit
+                    {
+                        $$ = new compiler::Operation( std::string($1), *($3) );
                     }
     ;
 wait-operation : WAIT WS INTEGER
@@ -356,7 +395,11 @@ wait-operation : WAIT WS INTEGER
                      $$ = new compiler::Operation( std::string($1,4), ($3) );
                  }
     ;
-reset-averaging-operation : RESET_AVERAGING 
+reset-averaging-operation : RESET_AVERAGING WS
+                            {
+                                $$ = new compiler::Operation( std::string($1,15) );
+                            }
+                          | RESET_AVERAGING NEWLINE
                             {
                                 $$ = new compiler::Operation( std::string($1,15) );
                             }
@@ -368,9 +411,10 @@ reset-averaging-operation : RESET_AVERAGING
     ;
 
 %%
-
+extern int yylineno, yychar;
 void yyerror(char const *x)
 {
-    printf("Error %s\n",x);
-    exit(1);
+    //char * error_msg;
+    //sprintf(error_msg,"%s | Token %d on Line: %d\n",x,yychar,yylineno);
+    throw std::runtime_error(std::string(x));
 }
