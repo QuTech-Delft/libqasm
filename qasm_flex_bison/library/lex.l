@@ -1,4 +1,5 @@
 %option noyywrap
+%option nounput
 %option yylineno
 %{
     #include "grammar.tab.h"
