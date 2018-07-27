@@ -21,7 +21,7 @@ singlenewline      (\n|\r\n)
 comment            \#(.*){singlenewline}*
 nonneginteger      [0-9]+
 integer            (\-)?{nonneginteger}
-float              (\-)?({nonneginteger}\.{nonneginteger})[eE]?((\-)?{nonneginteger})?
+float              (\-)?({nonneginteger}\.{nonneginteger}*)[eE]?((\-)?{nonneginteger})?
 axis               ([xX]|[yY]|[zZ])
 single_qubits      ((?i:i)|(?i:h)|(?i:x90)|(?i:y90)|(?i:mx90)|(?i:my90)|(?i:s)|(?i:sdag)|(?i:t)|(?i:tdag))
 two_qubit_gates    ((?i:cnot)|(?i:cz)|(?i:swap))
