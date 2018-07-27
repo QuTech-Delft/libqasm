@@ -416,5 +416,7 @@ void yyerror(char const *x)
 {
     //char * error_msg;
     //sprintf(error_msg,"%s | Token %d on Line: %d\n",x,yychar,yylineno);
-    throw std::runtime_error(std::string(x));
+    std::string base_error_message(x);
+    std::string entire_error_message = base_error_message + " | Token " + std::to_string(yychar) + " on Line: " + std::to_string(yylineno);
+    throw std::runtime_error(entire_error_message);
 }
