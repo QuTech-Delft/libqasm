@@ -67,5 +67,9 @@ display
 display b[1]
 display_binary b[6]
 display_binary
+
+load_state "test.qc"
+
+
 display bleh
 error_model depolarizing_channel ,0.001
