@@ -42,7 +42,7 @@
 %token <sval> SINGLE_QUBIT_GATES TWO_QUBIT_GATES CR CRK TOFFOLI
 %token <sval> CDASH NOT_TOKEN
 %token <sval> MAPKEY PREP MEASURE MEASUREPARITY MEASUREALL
-%token <sval> WAIT DISPLAY RESET_AVERAGING LOAD_STATE LOAD_STATE_FILE
+%token <sval> WAIT DISPLAY RESET_AVERAGING LOAD_STATE QUOTED_STRING
 %token <sval> ERROR_MODEL_KEY ERROR_MODEL
 %token QBITHEAD BITHEAD
 
@@ -409,7 +409,7 @@ reset-averaging-operation : RESET_AVERAGING WS
                             }
 
     ;
-load-state-operation : LOAD_STATE LOAD_STATE_FILE
+load-state-operation : LOAD_STATE QUOTED_STRING
                             {
                                 $$ = new compiler::Operation( std::string($1), std::string($2) );
                             }

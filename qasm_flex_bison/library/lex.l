@@ -34,7 +34,7 @@ not_token          (?i:not)
 error_model_key    (?i:error\_model)
 error_model        (?i:depolarizing\_channel)
 load_state         (?i:load\_state)
-load_state_file    ({whitespace}?((?i:\")(.*)(?i:\")){whitespace}?)|({whitespace}?((?i:\')(.*)(?i:\')){whitespace}?)
+quoted_string      ({whitespace}?((?i:\")(.*)(?i:\")){whitespace}?)|({whitespace}?((?i:\')(.*)(?i:\')){whitespace}?)
 comma_sep          {whitespace}?,{whitespace}?
 parallel_sep       {whitespace}?\|{whitespace}?
 qubits             (?i:qubits)
@@ -84,7 +84,7 @@ qasm_version       (?i:version)
 
 {load_state} TOKENSTR(LOAD_STATE)
 
-{load_state_file} TOKENSTR(LOAD_STATE_FILE)
+{quoted_string} TOKENSTR(QUOTED_STRING)
 
 {mapkey} TOKEN(MAPKEY)
 

@@ -380,14 +380,8 @@ namespace compiler
             std::string removeQuotes(const std::string& string_input)
             {
                 std::string result = string_input;
-                result.erase(
-                            std::remove( result.begin(), result.end(), '\"' ),
-                            result.end()
-                       );
-                result.erase(
-                            std::remove( result.begin(), result.end(), '\'' ),
-                            result.end()
-                       );
+                result.erase(result.begin());
+                result.erase(result.end()-1);
                 return result;
             }
 
