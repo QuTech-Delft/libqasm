@@ -36,13 +36,13 @@
 %token <sval> NAME 
 %token <ival> INTEGER
 %token <dval> FLOAT
-%token COMMA_SEPARATOR PARALLEL_SEPARATOR BRA KET DOT SBRA SKET CBRA CKET NEWLINE WS COLON COMMENT
+%token COMMA_SEPARATOR PARALLEL_SEPARATOR BRA KET DOT SBRA SKET CBRA CKET NEWLINE WS COLON QUOTE COMMENT
 %token <sval> ROTATIONS AXIS
 %token QUBITS
 %token <sval> SINGLE_QUBIT_GATES TWO_QUBIT_GATES CR CRK TOFFOLI
 %token <sval> CDASH NOT_TOKEN
 %token <sval> MAPKEY PREP MEASURE MEASUREPARITY MEASUREALL
-%token <sval> WAIT DISPLAY RESET_AVERAGING
+%token <sval> WAIT DISPLAY RESET_AVERAGING LOAD_STATE QUOTED_STRING
 %token <sval> ERROR_MODEL_KEY ERROR_MODEL
 %token QBITHEAD BITHEAD
 
@@ -374,8 +374,8 @@ parallelizable-ops : all-valid-operations
     ;
 
 //# Special operations
-%type <oval> special-operations display-operation wait-operation reset-averaging-operation;
-special-operations : display-operation | wait-operation | reset-averaging-operation
+%type <oval> special-operations display-operation wait-operation reset-averaging-operation load-state-operation;
+special-operations : display-operation | wait-operation | reset-averaging-operation | load-state-operation
     ;
 display-operation : DISPLAY NEWLINE
                     {
@@ -408,6 +408,11 @@ reset-averaging-operation : RESET_AVERAGING WS
                                 $$ = new compiler::Operation( std::string($1,15), *($3) );
                             }
 
+    ;
+load-state-operation : LOAD_STATE QUOTED_STRING
+                            {
+                                $$ = new compiler::Operation( std::string($1), std::string($2) );
+                            }
     ;
 
 %%

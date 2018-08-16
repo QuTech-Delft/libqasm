@@ -198,9 +198,22 @@ namespace compiler
                                                                                   );
             }
 
+            Operation(const std::string type, const std::string state_filename)
+            : rotation_angle_ (std::numeric_limits<double>::max()), bit_controlled_(false)
+            // load_state command (This one is special because it should be case sensitive for the filename)
+            {
+                type_ = toLowerCase(type);
+                state_filename_ = removeQuotes(state_filename);
+            }
+
             std::string getType() const
             {
                 return type_;
+            }
+
+            std::string getStateFilename() const
+            {
+                return state_filename_;
             }
 
             const Qubits& getQubitsInvolved() const
@@ -364,7 +377,16 @@ namespace compiler
                 return lower_case_input;
             }
 
+            std::string removeQuotes(const std::string& string_input)
+            {
+                std::string result = string_input;
+                result.erase(result.begin());
+                result.erase(result.end()-1);
+                return result;
+            }
+
             std::string type_;
+            std::string state_filename_;
             Qubits qubits_;
             Bits bits_;
             double rotation_angle_;

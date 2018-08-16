@@ -33,6 +33,8 @@ cdash              (?i:c\-)
 not_token          (?i:not)
 error_model_key    (?i:error\_model)
 error_model        (?i:depolarizing\_channel)
+load_state         (?i:load\_state)
+quoted_string      ({whitespace}?((?i:\")(.*)(?i:\")){whitespace}?)|({whitespace}?((?i:\')(.*)(?i:\')){whitespace}?)
 comma_sep          {whitespace}?,{whitespace}?
 parallel_sep       {whitespace}?\|{whitespace}?
 qubits             (?i:qubits)
@@ -79,6 +81,10 @@ qasm_version       (?i:version)
 {error_model_key} TOKENSTR(ERROR_MODEL_KEY)
 
 {error_model} TOKENSTR(ERROR_MODEL)
+
+{load_state} TOKENSTR(LOAD_STATE)
+
+{quoted_string} TOKENSTR(QUOTED_STRING)
 
 {mapkey} TOKEN(MAPKEY)
 
