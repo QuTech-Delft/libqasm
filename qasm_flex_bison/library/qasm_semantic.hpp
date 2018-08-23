@@ -56,6 +56,15 @@ namespace compiler
                 int checkResult = 0;
                 for (auto subcircuit : qasm_.getSubCircuits().getAllSubCircuits()) 
                 {
+                    if (subcircuit.numberIterations() < 1)
+                    {
+                        std::string base_error_message("Iteration count invalid for subcircuit");
+                        std::string entire_error_message = base_error_message + 
+                                                           " " + subcircuit.nameSubCircuit() + 
+                                                           " on Line: " + 
+                                                           std::to_string(subcircuit.getLineNumber());
+                        throw std::runtime_error(entire_error_message);
+                    }
                     for (auto ops_cluster : subcircuit.getOperationsCluster()) 
                     {
                         for (auto ops : ops_cluster->getOperations()) 
