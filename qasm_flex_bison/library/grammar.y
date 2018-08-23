@@ -109,25 +109,25 @@ qasm-line : map-operation
           | measureall-operation
             {
                 compiler::Operation* serial_ops = $1;
-                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
+                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops, yylineno );
                 subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
             }
           | measure-parity-operation
             {
                 compiler::Operation* serial_ops = $1;
-                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
+                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops, yylineno );
                 subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
             }
           | regular-operations
             {
                 compiler::Operation* serial_ops = $1;
-                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
+                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops, yylineno );
                 subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
             }
           | binary-controlled-operations
             {
                 compiler::Operation* serial_ops = $1;
-                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
+                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops, yylineno );
                 subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
             }
           | parallel-operations
@@ -137,7 +137,7 @@ qasm-line : map-operation
           | special-operations
             {
                 compiler::Operation* serial_ops = $1;
-                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
+                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops, yylineno );
                 subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
             }
     ;
@@ -173,7 +173,7 @@ error-model : ERROR_MODEL_KEY WS ERROR_MODEL COMMA_SEPARATOR FLOAT
 qubit : qubit-nomap {$$=$1;}
       | NAME
         {
-            buffer_indices = qasm_representation.getMappedIndices( std::string($1), true );
+            buffer_indices = qasm_representation.getMappedIndices( std::string($1), true, yylineno );
             $$ = new compiler::Qubits (buffer_indices);
             buffer_indices.clear();
         } 
@@ -192,7 +192,7 @@ qubit-nomap : QBITHEAD indices
 bit :  bit-nomap 
     |  NAME
        {
-           buffer_indices = qasm_representation.getMappedIndices( std::string($1), false );
+           buffer_indices = qasm_representation.getMappedIndices( std::string($1), false, yylineno );
            $$ = new compiler::Bits (buffer_indices);
            buffer_indices.clear();
        }
@@ -364,7 +364,7 @@ all-valid-operations : regular-operations
     ;
 parallelizable-ops : all-valid-operations
                      {
-                        compiler::OperationsCluster* parallel_ops = new compiler::OperationsCluster( $1 );
+                        compiler::OperationsCluster* parallel_ops = new compiler::OperationsCluster( $1, yylineno );
                         $$ = parallel_ops;
                      }
                    | parallelizable-ops PARALLEL_SEPARATOR all-valid-operations
@@ -419,8 +419,6 @@ load-state-operation : LOAD_STATE QUOTED_STRING
 %%
 void yyerror(char const *x)
 {
-    //char * error_msg;
-    //sprintf(error_msg,"%s | Token %d on Line: %d\n",x,yychar,yylineno);
     std::string base_error_message(x);
     std::string entire_error_message = base_error_message + " | Token " + std::to_string(yychar) + " on Line: " + std::to_string(yylineno);
     throw std::runtime_error(entire_error_message);

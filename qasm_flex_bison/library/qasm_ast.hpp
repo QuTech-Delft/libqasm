@@ -306,16 +306,6 @@ namespace compiler
                 return wait_time_;
             }
 
-            void setLineNumber(int linenumber)
-            {
-                linenumber_ = linenumber;
-            }
-
-            int getLineNumber() const
-            {
-                return linenumber_;
-            }
-
             void printOperation() const
             {
                 std::cout << "Operation " << type_ << ": ";
@@ -403,7 +393,6 @@ namespace compiler
             bool bit_controlled_;
             bool all_qubits_bits_ = false;
             int wait_time_;
-            int linenumber_;
             std::pair<Qubits,Qubits> measure_parity_qubits_;
             std::pair<std::string,std::string> measure_parity_axis_;
             std::pair<Qubits,Qubits> two_qubit_pairs_;
@@ -419,10 +408,11 @@ namespace compiler
                 isParallel_ = false;
             }
 
-            OperationsCluster(Operation* valid_op)
+            OperationsCluster(Operation* valid_op, int linenumber)
             {
                 operations_.push_back(valid_op);
                 isParallel_ = false;
+                linenumber_ = linenumber;
             }
 
             Operation* lastOperation()
@@ -451,6 +441,16 @@ namespace compiler
                 return operations_;
             }
 
+            void setLineNumber(int linenumber)
+            {
+                linenumber_ = linenumber;
+            }
+
+            int getLineNumber() const
+            {
+                return linenumber_;
+            }
+
             void printOperations()
             {
                 if (isParallel())
@@ -472,6 +472,7 @@ namespace compiler
         protected:
             std::vector< Operation* > operations_;
             bool isParallel_;
+            int linenumber_;
     }; // class Operations
 
     class SubCircuit
@@ -618,7 +619,7 @@ namespace compiler
                 mappings_[name_key] = map_value;
             }
 
-            const NumericalIdentifiers& getMappedIndices(std::string name_key, bool isQubit) const
+            const NumericalIdentifiers& getMappedIndices(std::string name_key, bool isQubit, int linenumber) const
             {
                 // Make sure they are all lowercase
                 std::transform(name_key.begin(), name_key.end(), name_key.begin(), ::tolower);
@@ -627,7 +628,8 @@ namespace compiler
                     mappings_.find(name_key) != mappings_.end() )
                     return mappings_.find(name_key)->second.first;
                 else
-                    throw std::runtime_error(std::string("Could not get wanted mapping ") + name_key);
+                    throw std::runtime_error(std::string("Could not get wanted mapping ") +
+                                                           name_key + ": Line " + std::to_string(linenumber));
             }
 
             void setErrorModel(std::string error_model_type, double probability)
