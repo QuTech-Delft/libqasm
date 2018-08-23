@@ -10,6 +10,7 @@
     #include "qasm_ast.hpp"
     int yylex(void);
     void yyerror (char const *);
+    extern int yylineno, yychar;
     compiler::Bits bits_identified;
     compiler::NumericalIdentifiers buffer_indices;
     compiler::SubCircuits subcircuits_object;
@@ -95,11 +96,11 @@ comment : COMMENT
     ;
 subcircuit-definition : DOT NAME
                         { 
-                            subcircuits_object.addSubCircuit( compiler::SubCircuit ($2,subcircuits_object.numberOfSubCircuits()) ); 
+                            subcircuits_object.addSubCircuit( compiler::SubCircuit ($2, subcircuits_object.numberOfSubCircuits(), yylineno) ); 
                         }
                       | DOT NAME BRA INTEGER KET
                         {
-                            subcircuits_object.addSubCircuit( compiler::SubCircuit ($2,subcircuits_object.numberOfSubCircuits()) ); 
+                            subcircuits_object.addSubCircuit( compiler::SubCircuit ($2, subcircuits_object.numberOfSubCircuits(), yylineno) ); 
                             subcircuits_object.lastSubCircuit().numberIterations($4); 
                         }
     ;
@@ -416,7 +417,6 @@ load-state-operation : LOAD_STATE QUOTED_STRING
     ;
 
 %%
-extern int yylineno, yychar;
 void yyerror(char const *x)
 {
     //char * error_msg;
