@@ -4,6 +4,7 @@
 #include "qasm_ast.hpp"
 #include <stdio.h>
 #include <vector>
+#include <exception>
 
 extern int yyparse();
 extern int yylex();
@@ -67,9 +68,10 @@ namespace compiler
                     }
                     for (auto ops_cluster : subcircuit.getOperationsCluster()) 
                     {
+                        int linenumber = ops_cluster->getLineNumber();
                         for (auto ops : ops_cluster->getOperations()) 
                         {
-                            checkQubits(*ops, checkResult);
+                            checkQubits(*ops, checkResult, linenumber);
                         }
                     }
                 }
@@ -81,40 +83,47 @@ namespace compiler
                 return checkResult;
             }
 
-            void checkQubits(compiler::Operation& op, int & result)
+            void checkQubits(compiler::Operation& op, int & result, int linenumber)
             {
                 std::string type_ = op.getType();
                 if (type_ == "measure_parity")
                 {
-                    result = checkMeasureParity(op);
+                    result = checkMeasureParity(op, linenumber);
                 }
                 else if (type_ == "cnot" || type_ == "cz" || type_ == "swap" || type_ == "cr" || type_ == "crk")
                 {
-                    result = checkTwoQubits(op);
+                    result = checkTwoQubits(op, linenumber);
                 }
                 else if (type_ == "toffoli")
                 {
-                    result = checkToffoli(op);
+                    result = checkToffoli(op, linenumber);
                 }
                 else if (type_ == "measure_all")
                 {
-                    result = checkMeasureAll(op);
+                    result = checkMeasureAll(op, linenumber);
                 }
                 else if (type_ == "reset-averaging")
                 {
-                    result = checkResetAveraging(op);
+                    result = checkResetAveraging(op, linenumber);
                 }
                 else if (type_ == "wait" || type_ == "display" || type_ == "display_binary" || type_ == "not" || type_ == "load_state")
                 {
-                    result = checkWaitDisplayNot(op);
+                    result = checkWaitDisplayNot(op, linenumber);
                 }
                 else 
                 // No other special operations. Left with single qubits
                 {
-                    result = checkSingleQubit(op);
+                    try
+                    {
+                        result = checkSingleQubit(op, linenumber);
+                    }
+                    catch (...)
+                    {
+                        throw std::runtime_error(std::string("Operation invalid.") + std::string(" Line: ") + std::to_string(linenumber));
+                    }
                 }
                 if (result > 0)
-                    throw std::runtime_error(std::string("Operation invalid\n"));
+                    throw std::runtime_error(std::string("Operation invalid. ") + "Line " + std::to_string(linenumber));
 
             }            
 
@@ -127,23 +136,31 @@ namespace compiler
                     throw std::runtime_error(std::string("Qubit indices exceed the number in qubit register\n"));
             }
 
-            int checkQubitListLength(const compiler::Operation& op __attribute__((unused))) const
+            int checkQubitListLength(const compiler::Qubits& qubits1,
+                                     const compiler::Qubits& qubits2,
+                                     int linenumber __attribute__((unused))) const
             // This function ensures that the lengths of the qubit lists are the same for the different pairs involved in the operation
             {
-                return 0;
+                int retnum = 1;
+                if ( qubits1.getSelectedQubits().getIndices().size() == 
+                     qubits2.getSelectedQubits().getIndices().size())
+                {
+                    retnum = 0;
+                }
+                return retnum;
             }
 
-            int checkSingleQubit(const compiler::Operation& op) const
+            int checkSingleQubit(const compiler::Operation& op, int linenumber __attribute__((unused))) const
             {
                 return checkQubitList(op.getQubitsInvolved());
             }
 
-            int checkWaitDisplayNot(const compiler::Operation& op __attribute__((unused))) const
+            int checkWaitDisplayNot(const compiler::Operation& op __attribute__((unused)), int lineNumber __attribute__((unused))) const
             {
                 return 0;
             }
 
-            int checkResetAveraging(const compiler::Operation& op) const
+            int checkResetAveraging(const compiler::Operation& op, int linenumber __attribute__((unused))) const
             {
                 int result = 1;
                 if (op.allQubitsBits())
@@ -153,31 +170,48 @@ namespace compiler
                 return result;
             }
 
-            int checkMeasureAll(const compiler::Operation& op __attribute__((unused))) const
+            int checkMeasureAll(const compiler::Operation& op __attribute__((unused)), int linenumber __attribute__((unused))) const
             {
                 return 0;
             }
 
-            int checkToffoli(const compiler::Operation& op) const
+            int checkToffoli(const compiler::Operation& op, int linenumber) const
             {
                 int result = 1;
                 int resultlist = checkQubitList(op.getToffoliQubitPairs().first);
                 resultlist += checkQubitList(op.getToffoliQubitPairs().second.first);
-                resultlist += checkQubitList(op.getToffoliQubitPairs().second.second); 
+                resultlist += checkQubitList(op.getToffoliQubitPairs().second.second);
+                resultlist += checkQubitListLength(op.getQubitsInvolved(1), op.getQubitsInvolved(2), linenumber);
+                resultlist += checkQubitListLength(op.getQubitsInvolved(2), op.getQubitsInvolved(3), linenumber);
+                if (resultlist > 0)
+                {
+                    std::string base_error_message("Mismatch in the qubit pair sizes. Line: ");
+                    std::string entire_error_message = base_error_message + 
+                                                       std::to_string(linenumber);
+                    throw std::runtime_error(entire_error_message);
+                }
                 result *= resultlist;
                 return result;
             }
 
-            int checkTwoQubits(const compiler::Operation& op) const
+            int checkTwoQubits(const compiler::Operation& op, int linenumber __attribute__((unused))) const
             {
                 int result = 1;
                 int resultlist = checkQubitList(op.getTwoQubitPairs().first);
-                resultlist += checkQubitList(op.getTwoQubitPairs().second); 
+                resultlist += checkQubitList(op.getTwoQubitPairs().second);
+                resultlist += checkQubitListLength(op.getQubitsInvolved(1), op.getQubitsInvolved(2), linenumber);
+                if (resultlist > 0)
+                {
+                    std::string base_error_message("Mismatch in the qubit pair sizes. Line: ");
+                    std::string entire_error_message = base_error_message + 
+                                                       std::to_string(linenumber);
+                    throw std::runtime_error(entire_error_message);
+                }
                 result *= resultlist;
                 return result;
             }
 
-            int checkMeasureParity(const compiler::Operation& op) const
+            int checkMeasureParity(const compiler::Operation& op, int linenumber __attribute__((unused))) const
             {
                 int result = 1;
                 auto measureParityProperties = op.getMeasureParityQubitsAndAxis();
