@@ -51,8 +51,8 @@ map q[7] , q7
    ry q5,0.244
    rz q6,0.555
    c-x bitcontroller, q[2:5]
-   c-swap b[7], q1 , q[5,7,0:2]
-   toffoli q3, q4, q[0:5]
+   c-swap b[7], q1 , q[5]
+   toffoli q3, q4, q[0]
    crk q1, q6, 4
    crk q2, q3, -10
    cr q2, q5, 3.1416

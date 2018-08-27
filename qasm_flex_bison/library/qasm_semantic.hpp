@@ -4,6 +4,7 @@
 #include "qasm_ast.hpp"
 #include <stdio.h>
 #include <vector>
+#include <exception>
 
 extern int yyparse();
 extern int yylex();
@@ -112,7 +113,14 @@ namespace compiler
                 else 
                 // No other special operations. Left with single qubits
                 {
-                    result = checkSingleQubit(op, linenumber);
+                    try
+                    {
+                        result = checkSingleQubit(op, linenumber);
+                    }
+                    catch (...)
+                    {
+                        throw std::runtime_error(std::string("Operation invalid.") + std::string(" Line: ") + std::to_string(linenumber));
+                    }
                 }
                 if (result > 0)
                     throw std::runtime_error(std::string("Operation invalid. ") + "Line " + std::to_string(linenumber));
@@ -128,12 +136,18 @@ namespace compiler
                     throw std::runtime_error(std::string("Qubit indices exceed the number in qubit register\n"));
             }
 
-            int checkQubitListLength(const compiler::Qubits& qubits1 __attribute__((unused)),
-                                     const compiler::Qubits& qubits2 __attribute__((unused)),
+            int checkQubitListLength(const compiler::Qubits& qubits1,
+                                     const compiler::Qubits& qubits2,
                                      int linenumber __attribute__((unused))) const
             // This function ensures that the lengths of the qubit lists are the same for the different pairs involved in the operation
             {
-                return 0;
+                int retnum = 1;
+                if ( qubits1.getSelectedQubits().getIndices().size() == 
+                     qubits2.getSelectedQubits().getIndices().size())
+                {
+                    retnum = 0;
+                }
+                return retnum;
             }
 
             int checkSingleQubit(const compiler::Operation& op, int linenumber __attribute__((unused))) const
@@ -161,12 +175,21 @@ namespace compiler
                 return 0;
             }
 
-            int checkToffoli(const compiler::Operation& op, int linenumber __attribute__((unused))) const
+            int checkToffoli(const compiler::Operation& op, int linenumber) const
             {
                 int result = 1;
                 int resultlist = checkQubitList(op.getToffoliQubitPairs().first);
                 resultlist += checkQubitList(op.getToffoliQubitPairs().second.first);
-                resultlist += checkQubitList(op.getToffoliQubitPairs().second.second); 
+                resultlist += checkQubitList(op.getToffoliQubitPairs().second.second);
+                resultlist += checkQubitListLength(op.getQubitsInvolved(1), op.getQubitsInvolved(2), linenumber);
+                resultlist += checkQubitListLength(op.getQubitsInvolved(2), op.getQubitsInvolved(3), linenumber);
+                if (resultlist > 0)
+                {
+                    std::string base_error_message("Mismatch in the qubit pair sizes. Line: ");
+                    std::string entire_error_message = base_error_message + 
+                                                       std::to_string(linenumber);
+                    throw std::runtime_error(entire_error_message);
+                }
                 result *= resultlist;
                 return result;
             }
@@ -175,7 +198,15 @@ namespace compiler
             {
                 int result = 1;
                 int resultlist = checkQubitList(op.getTwoQubitPairs().first);
-                resultlist += checkQubitList(op.getTwoQubitPairs().second); 
+                resultlist += checkQubitList(op.getTwoQubitPairs().second);
+                resultlist += checkQubitListLength(op.getQubitsInvolved(1), op.getQubitsInvolved(2), linenumber);
+                if (resultlist > 0)
+                {
+                    std::string base_error_message("Mismatch in the qubit pair sizes. Line: ");
+                    std::string entire_error_message = base_error_message + 
+                                                       std::to_string(linenumber);
+                    throw std::runtime_error(entire_error_message);
+                }
                 result *= resultlist;
                 return result;
             }
