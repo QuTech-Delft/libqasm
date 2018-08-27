@@ -166,6 +166,11 @@ qubit-register : QUBITS WS INTEGER
 error-model : ERROR_MODEL_KEY WS ERROR_MODEL COMMA_SEPARATOR FLOAT
               {
                   qasm_representation.setErrorModel( std::string($3), $5 );
+              }
+              |
+              ERROR_MODEL_KEY WS ERROR_MODEL COMMA_SEPARATOR INTEGER
+              {
+                  qasm_representation.setErrorModel( std::string($3), $5 );
               }  
     ;
 //# We define the syntax for selecting the qubits/bits, either by a range or a list
