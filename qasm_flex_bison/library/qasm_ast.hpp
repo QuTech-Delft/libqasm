@@ -306,6 +306,16 @@ namespace compiler
                 return wait_time_;
             }
 
+            void setUMatrixElements(const std::vector<double> input)
+            {
+                unitary_matrix_elements_ = input;
+            }
+
+            const std::vector<double>& getUMatrixElements() const
+            {
+                return unitary_matrix_elements_;
+            }
+
             void printOperation() const
             {
                 std::cout << "Operation " << type_ << ": ";
@@ -397,6 +407,7 @@ namespace compiler
             std::pair<std::string,std::string> measure_parity_axis_;
             std::pair<Qubits,Qubits> two_qubit_pairs_;
             std::pair<Qubits, std::pair<Qubits,Qubits> > toffoli_qubit_pairs_;
+            std::vector<double> unitary_matrix_elements_;
     }; // class Operation
 
     class OperationsCluster

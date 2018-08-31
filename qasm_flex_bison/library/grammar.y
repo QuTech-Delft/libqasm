@@ -26,6 +26,7 @@
     int ival;
     double dval;
     char* sval;
+    std::vector<double>* vecdval;
     compiler::NumericalIdentifiers* idval;
     compiler::Qubits* qval;
     compiler::Bits* bval;
@@ -143,6 +144,9 @@ qasm-line : map-operation
     ;
 
 //# We define the convenience strings, texts, numbers here....
+%type <dval> int-or-float;
+int-or-float : FLOAT | INTEGER {$$ = static_cast<double> ($1);}
+;
 %type <idval> indices numerical-identifiers numerical-identifier-list numerical-identifier-range;
 indices : SBRA numerical-identifiers SKET {} 
     ;
@@ -222,6 +226,23 @@ single-qubit-operation : single-qubit-gate WS qubit
                          {
                             $$ = new compiler::Operation(buffer_string, *($3) );
                          }
+                       | single-qubit-gate WS qubit matrix-arguments
+                         {
+                            compiler::Operation U_op(buffer_string, *($3) );
+                            U_op.setUMatrixElements(*($4));
+                            $$ = new compiler::Operation(U_op);
+                         }
+    ;
+%type <vecdval> matrix-arguments
+;
+matrix-arguments : COMMA_SEPARATOR int-or-float COMMA_SEPARATOR int-or-float
+                   COMMA_SEPARATOR int-or-float COMMA_SEPARATOR int-or-float
+                   COMMA_SEPARATOR int-or-float COMMA_SEPARATOR int-or-float
+                   COMMA_SEPARATOR int-or-float COMMA_SEPARATOR int-or-float
+                   {
+                       std::vector<double> arguments = {$2, $4, $6, $8, $10, $12, $14, $16};
+                       $$ = new std::vector<double> (arguments);
+                   }
     ;
 %type <oval> single-qubit-operation-args;
 single-qubit-operation-args : parameterized-single-qubit-gate WS qubit COMMA_SEPARATOR FLOAT 

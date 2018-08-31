@@ -76,9 +76,7 @@ namespace compiler
                     }
                 }
 
-                if (!checkResult)
-                    std::cout << "Semantic check complete. Qasm file is valid." << std::endl;
-                else
+                if (checkResult)
                     throw std::runtime_error(std::string("Qasm file invalid\n"));
                 return checkResult;
             }
@@ -89,6 +87,10 @@ namespace compiler
                 if (type_ == "measure_parity")
                 {
                     result = checkMeasureParity(op, linenumber);
+                }
+                else if (type_ == "u")
+                {
+                    result = checkUnitaryGate(op, linenumber);
                 }
                 else if (type_ == "cnot" || type_ == "cz" || type_ == "swap" || type_ == "cr" || type_ == "crk")
                 {
@@ -127,13 +129,14 @@ namespace compiler
 
             }            
 
-            int checkQubitList(const compiler::Qubits& qubits) const
+            int checkQubitList(const compiler::Qubits& qubits, int linenumber) const
             {
                 auto indices = qubits.getSelectedQubits().getIndices();
                 if (indices.back() < maxNumQubit_)
                     return 0;
                 else
-                    throw std::runtime_error(std::string("Qubit indices exceed the number in qubit register\n"));
+                    throw std::runtime_error(std::string("Qubit indices exceed the number in qubit register. Line: ") 
+                                             + std::to_string(linenumber));
             }
 
             int checkQubitListLength(const compiler::Qubits& qubits1,
@@ -150,23 +153,38 @@ namespace compiler
                 return retnum;
             }
 
-            int checkSingleQubit(const compiler::Operation& op, int linenumber __attribute__((unused))) const
+            int checkUnitaryGate(const compiler::Operation& op, int linenumber) const
             {
-                return checkQubitList(op.getQubitsInvolved());
+                int result = 1;
+                int resultlist = checkQubitList(op.getQubitsInvolved(), linenumber);
+                if (resultlist > 0)
+                {
+                    std::string base_error_message("Matrix is not unitary. Line: ");
+                    std::string entire_error_message = base_error_message + 
+                                                       std::to_string(linenumber);
+                    throw std::runtime_error(entire_error_message);
+                }
+                result *= resultlist;
+                return result;
             }
 
-            int checkWaitDisplayNot(const compiler::Operation& op __attribute__((unused)), int lineNumber __attribute__((unused))) const
+            int checkSingleQubit(const compiler::Operation& op, int linenumber) const
+            {
+                return checkQubitList(op.getQubitsInvolved(), linenumber);
+            }
+
+            int checkWaitDisplayNot(const compiler::Operation& op __attribute__((unused)), int linenumber __attribute__((unused))) const
             {
                 return 0;
             }
 
-            int checkResetAveraging(const compiler::Operation& op, int linenumber __attribute__((unused))) const
+            int checkResetAveraging(const compiler::Operation& op, int linenumber) const
             {
                 int result = 1;
                 if (op.allQubitsBits())
                     result = 0;
                 else
-                    result = checkQubitList(op.getQubitsInvolved());
+                    result = checkQubitList(op.getQubitsInvolved(), linenumber);
                 return result;
             }
 
@@ -178,9 +196,9 @@ namespace compiler
             int checkToffoli(const compiler::Operation& op, int linenumber) const
             {
                 int result = 1;
-                int resultlist = checkQubitList(op.getToffoliQubitPairs().first);
-                resultlist += checkQubitList(op.getToffoliQubitPairs().second.first);
-                resultlist += checkQubitList(op.getToffoliQubitPairs().second.second);
+                int resultlist = checkQubitList(op.getToffoliQubitPairs().first, linenumber);
+                resultlist += checkQubitList(op.getToffoliQubitPairs().second.first, linenumber);
+                resultlist += checkQubitList(op.getToffoliQubitPairs().second.second, linenumber);
                 resultlist += checkQubitListLength(op.getQubitsInvolved(1), op.getQubitsInvolved(2), linenumber);
                 resultlist += checkQubitListLength(op.getQubitsInvolved(2), op.getQubitsInvolved(3), linenumber);
                 if (resultlist > 0)
@@ -194,11 +212,11 @@ namespace compiler
                 return result;
             }
 
-            int checkTwoQubits(const compiler::Operation& op, int linenumber __attribute__((unused))) const
+            int checkTwoQubits(const compiler::Operation& op, int linenumber) const
             {
                 int result = 1;
-                int resultlist = checkQubitList(op.getTwoQubitPairs().first);
-                resultlist += checkQubitList(op.getTwoQubitPairs().second);
+                int resultlist = checkQubitList(op.getTwoQubitPairs().first, linenumber);
+                resultlist += checkQubitList(op.getTwoQubitPairs().second, linenumber);
                 resultlist += checkQubitListLength(op.getQubitsInvolved(1), op.getQubitsInvolved(2), linenumber);
                 if (resultlist > 0)
                 {
@@ -211,12 +229,12 @@ namespace compiler
                 return result;
             }
 
-            int checkMeasureParity(const compiler::Operation& op, int linenumber __attribute__((unused))) const
+            int checkMeasureParity(const compiler::Operation& op, int linenumber) const
             {
                 int result = 1;
                 auto measureParityProperties = op.getMeasureParityQubitsAndAxis();
-                int resultlist = checkQubitList(measureParityProperties.first.first);
-                resultlist += checkQubitList(measureParityProperties.first.second); 
+                int resultlist = checkQubitList(measureParityProperties.first.first, linenumber);
+                resultlist += checkQubitList(measureParityProperties.first.second, linenumber); 
                 result *= resultlist;
                 return result;
             }
