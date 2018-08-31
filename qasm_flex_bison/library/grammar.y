@@ -143,6 +143,8 @@ qasm-line : map-operation
     ;
 
 //# We define the convenience strings, texts, numbers here....
+int-or-float : FLOAT | INTEGER
+;
 %type <idval> indices numerical-identifiers numerical-identifier-list numerical-identifier-range;
 indices : SBRA numerical-identifiers SKET {} 
     ;
@@ -222,6 +224,15 @@ single-qubit-operation : single-qubit-gate WS qubit
                          {
                             $$ = new compiler::Operation(buffer_string, *($3) );
                          }
+                       | single-qubit-gate WS qubit matrix-arguments
+                         {
+                            $$ = new compiler::Operation(buffer_string, *($3) );
+                         }
+    ;
+matrix-arguments : COMMA_SEPARATOR int-or-float COMMA_SEPARATOR int-or-float
+                   COMMA_SEPARATOR int-or-float COMMA_SEPARATOR int-or-float
+                   COMMA_SEPARATOR int-or-float COMMA_SEPARATOR int-or-float
+                   COMMA_SEPARATOR int-or-float COMMA_SEPARATOR int-or-float
     ;
 %type <oval> single-qubit-operation-args;
 single-qubit-operation-args : parameterized-single-qubit-gate WS qubit COMMA_SEPARATOR FLOAT 
