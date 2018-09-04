@@ -306,6 +306,16 @@ namespace compiler
                 return wait_time_;
             }
 
+            void setUMatrixElements(const std::vector<double> input)
+            {
+                unitary_matrix_elements_ = input;
+            }
+
+            const std::vector<double>& getUMatrixElements() const
+            {
+                return unitary_matrix_elements_;
+            }
+
             void printOperation() const
             {
                 std::cout << "Operation " << type_ << ": ";
@@ -397,6 +407,7 @@ namespace compiler
             std::pair<std::string,std::string> measure_parity_axis_;
             std::pair<Qubits,Qubits> two_qubit_pairs_;
             std::pair<Qubits, std::pair<Qubits,Qubits> > toffoli_qubit_pairs_;
+            std::vector<double> unitary_matrix_elements_;
     }; // class Operation
 
     class OperationsCluster
@@ -408,10 +419,11 @@ namespace compiler
                 isParallel_ = false;
             }
 
-            OperationsCluster(Operation* valid_op)
+            OperationsCluster(Operation* valid_op, int linenumber)
             {
                 operations_.push_back(valid_op);
                 isParallel_ = false;
+                linenumber_ = linenumber;
             }
 
             Operation* lastOperation()
@@ -440,6 +452,16 @@ namespace compiler
                 return operations_;
             }
 
+            void setLineNumber(int linenumber)
+            {
+                linenumber_ = linenumber;
+            }
+
+            int getLineNumber() const
+            {
+                return linenumber_;
+            }
+
             void printOperations()
             {
                 if (isParallel())
@@ -461,16 +483,18 @@ namespace compiler
         protected:
             std::vector< Operation* > operations_;
             bool isParallel_;
+            int linenumber_;
     }; // class Operations
 
     class SubCircuit
     // This class encapsulates the subcircuit with the number of iterations and also the statements contained in it.
     {
         public:
-            SubCircuit(const char *name, const int subcircuit_number):
+            SubCircuit(const char *name, const int subcircuit_number, const int linenumber):
             name_ ( std::string(name) ),
             number_iterations_ ( 1 ), // By default, we run the subcircuit at least once
-            subcircuit_number_ ( subcircuit_number )
+            subcircuit_number_ ( subcircuit_number ),
+            linenumber_ (linenumber)
             {
             }
 
@@ -482,6 +506,11 @@ namespace compiler
             void numberIterations(int iterations)
             {
                 number_iterations_ = iterations;
+            }
+
+            int getLineNumber() const
+            {
+                return linenumber_;
             }
 
             size_t rankSubCircuit() const
@@ -523,6 +552,7 @@ namespace compiler
             std::string name_; // This member is the name of the subcircuit
             int number_iterations_; // This member is the number of iterations the subcircuit is supposed to run
             size_t subcircuit_number_; // This member provides the order of the subcircuits when it is found in the qasm file
+            int linenumber_;
             std::vector< OperationsCluster* > operations_cluster_;
     }; //class SubCircuit
 
@@ -532,7 +562,7 @@ namespace compiler
         public:
             SubCircuits()
             {
-                SubCircuit default_circuit("default", 0);
+                SubCircuit default_circuit("default", 0, 1);
                 subcircuits_.push_back ( default_circuit );
             }
 
@@ -600,7 +630,7 @@ namespace compiler
                 mappings_[name_key] = map_value;
             }
 
-            const NumericalIdentifiers& getMappedIndices(std::string name_key, bool isQubit) const
+            const NumericalIdentifiers& getMappedIndices(std::string name_key, bool isQubit, int linenumber) const
             {
                 // Make sure they are all lowercase
                 std::transform(name_key.begin(), name_key.end(), name_key.begin(), ::tolower);
@@ -609,7 +639,8 @@ namespace compiler
                     mappings_.find(name_key) != mappings_.end() )
                     return mappings_.find(name_key)->second.first;
                 else
-                    throw std::runtime_error(std::string("Could not get wanted mapping ") + name_key);
+                    throw std::runtime_error(std::string("Could not get wanted mapping ") +
+                                                           name_key + ": Line " + std::to_string(linenumber));
             }
 
             void setErrorModel(std::string error_model_type, double probability)

@@ -10,6 +10,7 @@
     #include "qasm_ast.hpp"
     int yylex(void);
     void yyerror (char const *);
+    extern int yylineno, yychar;
     compiler::Bits bits_identified;
     compiler::NumericalIdentifiers buffer_indices;
     compiler::SubCircuits subcircuits_object;
@@ -25,6 +26,7 @@
     int ival;
     double dval;
     char* sval;
+    std::vector<double>* vecdval;
     compiler::NumericalIdentifiers* idval;
     compiler::Qubits* qval;
     compiler::Bits* bval;
@@ -95,11 +97,11 @@ comment : COMMENT
     ;
 subcircuit-definition : DOT NAME
                         { 
-                            subcircuits_object.addSubCircuit( compiler::SubCircuit ($2,subcircuits_object.numberOfSubCircuits()) ); 
+                            subcircuits_object.addSubCircuit( compiler::SubCircuit ($2, subcircuits_object.numberOfSubCircuits(), yylineno) ); 
                         }
                       | DOT NAME BRA INTEGER KET
                         {
-                            subcircuits_object.addSubCircuit( compiler::SubCircuit ($2,subcircuits_object.numberOfSubCircuits()) ); 
+                            subcircuits_object.addSubCircuit( compiler::SubCircuit ($2, subcircuits_object.numberOfSubCircuits(), yylineno) ); 
                             subcircuits_object.lastSubCircuit().numberIterations($4); 
                         }
     ;
@@ -108,25 +110,25 @@ qasm-line : map-operation
           | measureall-operation
             {
                 compiler::Operation* serial_ops = $1;
-                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
+                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops, yylineno );
                 subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
             }
           | measure-parity-operation
             {
                 compiler::Operation* serial_ops = $1;
-                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
+                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops, yylineno );
                 subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
             }
           | regular-operations
             {
                 compiler::Operation* serial_ops = $1;
-                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
+                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops, yylineno );
                 subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
             }
           | binary-controlled-operations
             {
                 compiler::Operation* serial_ops = $1;
-                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
+                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops, yylineno );
                 subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
             }
           | parallel-operations
@@ -136,12 +138,15 @@ qasm-line : map-operation
           | special-operations
             {
                 compiler::Operation* serial_ops = $1;
-                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops );
+                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops, yylineno );
                 subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
             }
     ;
 
 //# We define the convenience strings, texts, numbers here....
+%type <dval> int-or-float;
+int-or-float : FLOAT | INTEGER {$$ = static_cast<double> ($1);}
+;
 %type <idval> indices numerical-identifiers numerical-identifier-list numerical-identifier-range;
 indices : SBRA numerical-identifiers SKET {} 
     ;
@@ -165,6 +170,11 @@ qubit-register : QUBITS WS INTEGER
 error-model : ERROR_MODEL_KEY WS ERROR_MODEL COMMA_SEPARATOR FLOAT
               {
                   qasm_representation.setErrorModel( std::string($3), $5 );
+              }
+              |
+              ERROR_MODEL_KEY WS ERROR_MODEL COMMA_SEPARATOR INTEGER
+              {
+                  qasm_representation.setErrorModel( std::string($3), $5 );
               }  
     ;
 //# We define the syntax for selecting the qubits/bits, either by a range or a list
@@ -172,7 +182,7 @@ error-model : ERROR_MODEL_KEY WS ERROR_MODEL COMMA_SEPARATOR FLOAT
 qubit : qubit-nomap {$$=$1;}
       | NAME
         {
-            buffer_indices = qasm_representation.getMappedIndices( std::string($1), true );
+            buffer_indices = qasm_representation.getMappedIndices( std::string($1), true, yylineno );
             $$ = new compiler::Qubits (buffer_indices);
             buffer_indices.clear();
         } 
@@ -191,7 +201,7 @@ qubit-nomap : QBITHEAD indices
 bit :  bit-nomap 
     |  NAME
        {
-           buffer_indices = qasm_representation.getMappedIndices( std::string($1), false );
+           buffer_indices = qasm_representation.getMappedIndices( std::string($1), false, yylineno );
            $$ = new compiler::Bits (buffer_indices);
            buffer_indices.clear();
        }
@@ -216,6 +226,23 @@ single-qubit-operation : single-qubit-gate WS qubit
                          {
                             $$ = new compiler::Operation(buffer_string, *($3) );
                          }
+                       | single-qubit-gate WS qubit matrix-arguments
+                         {
+                            compiler::Operation U_op(buffer_string, *($3) );
+                            U_op.setUMatrixElements(*($4));
+                            $$ = new compiler::Operation(U_op);
+                         }
+    ;
+%type <vecdval> matrix-arguments
+;
+matrix-arguments : COMMA_SEPARATOR int-or-float COMMA_SEPARATOR int-or-float
+                   COMMA_SEPARATOR int-or-float COMMA_SEPARATOR int-or-float
+                   COMMA_SEPARATOR int-or-float COMMA_SEPARATOR int-or-float
+                   COMMA_SEPARATOR int-or-float COMMA_SEPARATOR int-or-float
+                   {
+                       std::vector<double> arguments = {$2, $4, $6, $8, $10, $12, $14, $16};
+                       $$ = new std::vector<double> (arguments);
+                   }
     ;
 %type <oval> single-qubit-operation-args;
 single-qubit-operation-args : parameterized-single-qubit-gate WS qubit COMMA_SEPARATOR FLOAT 
@@ -363,7 +390,7 @@ all-valid-operations : regular-operations
     ;
 parallelizable-ops : all-valid-operations
                      {
-                        compiler::OperationsCluster* parallel_ops = new compiler::OperationsCluster( $1 );
+                        compiler::OperationsCluster* parallel_ops = new compiler::OperationsCluster( $1, yylineno );
                         $$ = parallel_ops;
                      }
                    | parallelizable-ops PARALLEL_SEPARATOR all-valid-operations
@@ -416,11 +443,8 @@ load-state-operation : LOAD_STATE QUOTED_STRING
     ;
 
 %%
-extern int yylineno, yychar;
 void yyerror(char const *x)
 {
-    //char * error_msg;
-    //sprintf(error_msg,"%s | Token %d on Line: %d\n",x,yychar,yylineno);
     std::string base_error_message(x);
     std::string entire_error_message = base_error_message + " | Token " + std::to_string(yychar) + " on Line: " + std::to_string(yylineno);
     throw std::runtime_error(entire_error_message);
