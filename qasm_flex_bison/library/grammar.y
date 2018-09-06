@@ -167,14 +167,23 @@ qubit-register : QUBITS WS INTEGER
                     qasm_representation.qubitRegister($3);
                  } 
     ;
-error-model : ERROR_MODEL_KEY WS ERROR_MODEL COMMA_SEPARATOR FLOAT
+%type <vecdval> error-model-args;
+error-model-args : int-or-float
+                   {
+                     std::vector<double> arguments;
+                     arguments.push_back($1);
+                     $$ = new std::vector<double> (arguments);
+                   }
+                 | error-model-args COMMA_SEPARATOR int-or-float
+                   {
+                     auto argument_iterated = $1;
+                     argument_iterated->push_back($3);
+                     $$ = new std::vector<double> (*(argument_iterated));
+                   }
+    ;
+error-model : ERROR_MODEL_KEY WS ERROR_MODEL COMMA_SEPARATOR error-model-args
               {
-                  qasm_representation.setErrorModel( std::string($3), $5 );
-              }
-              |
-              ERROR_MODEL_KEY WS ERROR_MODEL COMMA_SEPARATOR INTEGER
-              {
-                  qasm_representation.setErrorModel( std::string($3), $5 );
+                  qasm_representation.setErrorModel( std::string($3), *($5) );
               }  
     ;
 //# We define the syntax for selecting the qubits/bits, either by a range or a list
@@ -226,19 +235,19 @@ single-qubit-operation : single-qubit-gate WS qubit
                          {
                             $$ = new compiler::Operation(buffer_string, *($3) );
                          }
-                       | single-qubit-gate WS qubit matrix-arguments
+                       | single-qubit-gate WS qubit COMMA_SEPARATOR matrix-arguments
                          {
                             compiler::Operation U_op(buffer_string, *($3) );
-                            U_op.setUMatrixElements(*($4));
+                            U_op.setUMatrixElements(*($5));
                             $$ = new compiler::Operation(U_op);
                          }
     ;
 %type <vecdval> matrix-arguments
 ;
-matrix-arguments : COMMA_SEPARATOR int-or-float COMMA_SEPARATOR int-or-float
+matrix-arguments : SBRA int-or-float COMMA_SEPARATOR int-or-float
                    COMMA_SEPARATOR int-or-float COMMA_SEPARATOR int-or-float
                    COMMA_SEPARATOR int-or-float COMMA_SEPARATOR int-or-float
-                   COMMA_SEPARATOR int-or-float COMMA_SEPARATOR int-or-float
+                   COMMA_SEPARATOR int-or-float COMMA_SEPARATOR int-or-float SKET
                    {
                        std::vector<double> arguments = {$2, $4, $6, $8, $10, $12, $14, $16};
                        $$ = new std::vector<double> (arguments);
