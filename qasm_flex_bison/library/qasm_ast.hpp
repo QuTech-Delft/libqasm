@@ -594,7 +594,11 @@ namespace compiler
     // This class is supposed to provide an encapsulation of all the objects within the qasm file
     {
         public:
-            QasmRepresentation() = default;
+            QasmRepresentation()
+            {
+                std::vector<double> default_param(1, 0.);
+                setErrorModel("None", default_param);
+            }
 
             void qubitRegister(int participating_number)
             {
@@ -643,20 +647,20 @@ namespace compiler
                                                            name_key + ": Line " + std::to_string(linenumber));
             }
 
-            void setErrorModel(std::string error_model_type, double probability)
+            void setErrorModel(std::string error_model_type, std::vector<double> error_model_num_params)
             {
-                error_model_params_.first = error_model_type;
-                error_model_params_.second = probability;
+                error_model_.first = error_model_type;
+                error_model_.second = error_model_num_params;
             }
 
             const std::string getErrorModelType() const
             {
-                return error_model_params_.first;
+                return error_model_.first;
             }
 
-            double getErrorModelProbability() const
+            std::vector<double> getErrorModelParameters() const
             {
-                return error_model_params_.second;
+                return error_model_.second;
             }
 
             void printMappings() const
@@ -673,8 +677,11 @@ namespace compiler
             void printErrorModel() const
             // This is just for debugging purposes
             {
-                std::cout << "Current error model: " << error_model_params_.first
-                          << "\nError Probability = "  << error_model_params_.second << std::endl;
+                std::cout << "Current error model: " << error_model_.first
+                          << "\nError Probability = " ;
+                for (auto i : getErrorModelParameters()){
+                    std::cout << i << std::endl;
+                }
             }
 
         protected:
@@ -682,7 +689,7 @@ namespace compiler
             int qubit_register_;
             double version_number_;
             std::map< std::string , std::pair<NumericalIdentifiers,bool> > mappings_;
-            std::pair< std::string, double > error_model_params_ = std::make_pair("None",0.);
+            std::pair< std::string, std::vector<double> > error_model_;
     }; // class QasmRepresentation
 } //namespace compiler
 
