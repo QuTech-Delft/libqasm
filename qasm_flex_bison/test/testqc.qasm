@@ -56,6 +56,7 @@ map q[7] , q7
    crk q1, q6, 4
    crk q2, q3, -10
    cr q2, q5, 3.1416
+   U q1, [1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0]
 
 .result
 # measurement
@@ -72,4 +73,4 @@ load_state "test.qc"
 
 
 display bleh
-error_model depolarizing_channel ,0.001
+error_model depolarizing_channel ,0.001, 0.1, 3.4

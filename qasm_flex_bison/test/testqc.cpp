@@ -19,6 +19,17 @@ TEST_CASE("Test for the testqc.qasm file")
     compiler::QasmSemanticChecker sm(myfile);
 
     auto qasm_representation = sm.getQasmRepresentation();
+
+    auto error_model_params = qasm_representation.getErrorModelParameters();
+
+    std::vector<double> true_results_ = {0.001, 0.1, 3.4};
+
+    CHECK(true_results_.size() == error_model_params.size());
+
+    for (size_t i = 0; i < error_model_params.size(); ++i)
+    {
+        CHECK(error_model_params.at(i) == true_results_.at(i));
+    }
     
     int result = sm.parseResult();
 
