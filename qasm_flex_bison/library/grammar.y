@@ -254,7 +254,7 @@ matrix-arguments : SBRA int-or-float COMMA_SEPARATOR int-or-float
                    }
     ;
 %type <oval> single-qubit-operation-args;
-single-qubit-operation-args : parameterized-single-qubit-gate WS qubit COMMA_SEPARATOR FLOAT 
+single-qubit-operation-args : parameterized-single-qubit-gate WS qubit COMMA_SEPARATOR int-or-float 
                               {
                                   $$ = new compiler::Operation(buffer_string, *($3) ,$5);
                               }
@@ -346,7 +346,7 @@ bit-single-qubit-operation : CDASH single-qubit-gate WS bit COMMA_SEPARATOR qubi
                              }
     ;
 %type <oval> bit-single-qubit-operation-args;    
-bit-single-qubit-operation-args : CDASH parameterized-single-qubit-gate WS bit COMMA_SEPARATOR qubit COMMA_SEPARATOR FLOAT
+bit-single-qubit-operation-args : CDASH parameterized-single-qubit-gate WS bit COMMA_SEPARATOR qubit COMMA_SEPARATOR int-or-float
                                   {
                                       compiler::Operation* bit_single_qubit_operation_args = new compiler::Operation(buffer_string, *($6) , $8);
                                       bit_single_qubit_operation_args -> setControlBits( *($4) );
