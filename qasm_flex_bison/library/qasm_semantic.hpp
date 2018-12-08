@@ -9,6 +9,7 @@
 extern int yyparse();
 extern int yylex();
 extern FILE* yyin;
+extern struct YY_BUFFER_STATE* yy_scan_string(const char*);
 extern compiler::QasmRepresentation qasm_representation;
 
 namespace compiler
@@ -16,6 +17,20 @@ namespace compiler
     class QasmSemanticChecker
     {
         public:
+            QasmSemanticChecker(const char* qasm_str)
+            {
+                // set lex to read from it instead of defaulting to STDIN:
+                yy_scan_string(qasm_str);
+
+                // parse the input
+                if (yyparse())
+                    throw std::runtime_error(std::string("Could not parse qasm file!\n"));
+ 
+                maxNumQubit_ = qasm_representation.numQubits();
+                qasm_ = qasm_representation;
+                parse_result_ = doChecks();
+            }
+
             QasmSemanticChecker(FILE *qasm_file)
             {
                 // set lex to read from it instead of defaulting to STDIN:
@@ -32,8 +47,7 @@ namespace compiler
 
                 maxNumQubit_ = qasm_representation.numQubits();
                 qasm_ = qasm_representation;
-                result = doChecks();
-                parse_result_ = result;
+                parse_result_ = doChecks();
             }
 
             int parseResult() const
