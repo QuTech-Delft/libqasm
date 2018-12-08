@@ -10,6 +10,7 @@ extern int yyparse();
 extern int yylex();
 extern FILE* yyin;
 extern struct YY_BUFFER_STATE* yy_scan_string(const char*);
+extern int yylex_destroy(void);
 extern compiler::QasmRepresentation qasm_representation;
 
 namespace compiler
@@ -19,6 +20,9 @@ namespace compiler
         public:
             QasmSemanticChecker(const char* qasm_str)
             {
+                // Clean state
+                yylex_destroy();
+
                 // set lex to read from it instead of defaulting to STDIN:
                 yy_scan_string(qasm_str);
 
@@ -33,6 +37,9 @@ namespace compiler
 
             QasmSemanticChecker(FILE *qasm_file)
             {
+                // Clean state
+                yylex_destroy();
+
                 // set lex to read from it instead of defaulting to STDIN:
                 yyin = qasm_file;
 
