@@ -21,6 +21,7 @@ pipeline {
       steps {
         container('libqasm') {
           sh '''
+            git submodule update --init --recursive &&
             cd qasm_flex_bison && mkdir build && cd build && cmake ../library && make
           '''
         }

@@ -1,6 +1,6 @@
 metadata:
   labels:
-    test: apirouter
+    test: libqasm
 spec:
   containers:
   - name: libqasm
