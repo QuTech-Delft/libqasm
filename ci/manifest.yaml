@@ -19,3 +19,5 @@ spec:
         memory: "256Mi"
       limits:
         memory: "256Mi"
+  imagePullSecrets:
+    - name: regcred
