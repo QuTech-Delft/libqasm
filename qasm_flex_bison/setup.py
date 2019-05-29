@@ -45,7 +45,7 @@ initFile_target = os.path.join(rootDir, "libQasm", "__init__.py")
 copyfile(initFile, initFile_target)
 
 '''
-Copy the generated libQasm python file to the libQasm directory 
+Copy the generated libQasm python file to the libQasm directory
 '''
 copyfile(os.path.join(clibDir, "libQasm.py"),
          os.path.join(rootDir, "libQasm", "libQasm.py"))

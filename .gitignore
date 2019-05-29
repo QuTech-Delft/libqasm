@@ -48,6 +48,7 @@ bin
 build
 *build
 build*
+dist
 libQasm*
 *libQasm
 

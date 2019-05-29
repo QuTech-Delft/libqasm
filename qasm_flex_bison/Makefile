@@ -22,7 +22,6 @@ testing:
 runTest:
 	$(MAKE) all
 	$(MAKE) testing
-#	./bin/testCompiler test/test.qc && ./bin/testCompiler test/bell.qasm && ./bin/testCompiler test/example2.qasm && ./bin/testCompiler test/example3.qasm && ./bin/testCompiler test/grover.qasm
 
 clean:
 	rm -rvf build cbuild dist libQasm libQasm.egg-info

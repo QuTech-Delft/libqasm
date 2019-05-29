@@ -17,19 +17,19 @@
 
 ## Installation
 
-### As a standalone library
+### As a standalone c++ library
 As the library uses doctest as part of the testing procedure. In order to install (assuming the present working directory is at **./qasm_flex_bison**):
-1. git submodule update --init --recursive
-2. mkdir **cbuild**
-3. cd **cbuild**
-4. cmake **../library**
-5. make or make -j \<Number of processors\>
-6. make test or make test -j \<Number of processors\>
+1. `git submodule update --init --recursive`
+2. `mkdir **cbuild**`
+3. `cd **cbuild**`
+4. `cmake **../library**`
+5. `make or make -j \<Number of processors\>`
+6. `make test or make test -j \<Number of processors\>`
 
 ### As a python3 module
-1. git submodule update --init --recursive
-2. python3 setup.py --install --user
+1. `git submodule update --init --recursive`
+2. `python3 setup.py install --user`
 
 ### Cleaning up the **qasm\_flex\_bison** directory
 In order to clean up the entire source directory when a user installs using the setup.py python script:
-1. make clean
+1. `make clean`

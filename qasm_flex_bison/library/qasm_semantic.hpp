@@ -1,10 +1,10 @@
 #pragma once
 #ifndef AST_SEMANTIC_HPP
 
-#include "qasm_ast.hpp"
 #include <stdio.h>
 #include <vector>
 #include <exception>
+#include "qasm_ast.hpp"
 
 extern int yyparse();
 extern int yylex();
@@ -16,17 +16,18 @@ namespace compiler
     class QasmSemanticChecker
     {
         public:
-            QasmSemanticChecker(FILE *qasm_file)
+            QasmSemanticChecker(FILE* qasm_file)
             {
-                // set lex to read from it instead of defaulting to STDIN:
+                // Set lex to read from it instead of defaulting to STDIN:
                 yyin = qasm_file;
 
-                // parse through the input until there is no more:
+                // Parse through the input until there is no more:
                 int result = 0;
-                
+
                 do {
                     result += yyparse();
                 } while (!feof(yyin));
+
                 if (result)
                     throw std::runtime_error(std::string("Could not parse qasm file!\n"));
 
@@ -44,32 +45,31 @@ namespace compiler
             const compiler::QasmRepresentation& getQasmRepresentation() const
             {
                 return qasm_;
-            } 
+            }
 
         protected:
             compiler::QasmRepresentation qasm_;
             size_t maxNumQubit_;
             int parse_result_;
 
-            
             int doChecks()
             {
                 int checkResult = 0;
-                for (auto subcircuit : qasm_.getSubCircuits().getAllSubCircuits()) 
+                for (auto subcircuit : qasm_.getSubCircuits().getAllSubCircuits())
                 {
                     if (subcircuit.numberIterations() < 1)
                     {
                         std::string base_error_message("Iteration count invalid for subcircuit");
-                        std::string entire_error_message = base_error_message + 
-                                                           " " + subcircuit.nameSubCircuit() + 
-                                                           " on Line: " + 
+                        std::string entire_error_message = base_error_message +
+                                                           " " + subcircuit.nameSubCircuit() +
+                                                           " on Line: " +
                                                            std::to_string(subcircuit.getLineNumber());
                         throw std::runtime_error(entire_error_message);
                     }
-                    for (auto ops_cluster : subcircuit.getOperationsCluster()) 
+                    for (auto ops_cluster : subcircuit.getOperationsCluster())
                     {
                         int linenumber = ops_cluster->getLineNumber();
-                        for (auto ops : ops_cluster->getOperations()) 
+                        for (auto ops : ops_cluster->getOperations())
                         {
                             checkQubits(*ops, checkResult, linenumber);
                         }
@@ -81,7 +81,7 @@ namespace compiler
                 return checkResult;
             }
 
-            void checkQubits(compiler::Operation& op, int & result, int linenumber)
+            void checkQubits(compiler::Operation& op, int& result, int linenumber)
             {
                 std::string type_ = op.getType();
                 if (type_ == "measure_parity")
@@ -112,7 +112,7 @@ namespace compiler
                 {
                     result = checkWaitDisplayNot(op, linenumber);
                 }
-                else 
+                else
                 // No other special operations. Left with single qubits
                 {
                     try
@@ -127,7 +127,7 @@ namespace compiler
                 if (result > 0)
                     throw std::runtime_error(std::string("Operation invalid. ") + "Line " + std::to_string(linenumber));
 
-            }            
+            }
 
             int checkQubitList(const compiler::Qubits& qubits, int linenumber) const
             {
@@ -145,7 +145,7 @@ namespace compiler
             // This function ensures that the lengths of the qubit lists are the same for the different pairs involved in the operation
             {
                 int retnum = 1;
-                if ( qubits1.getSelectedQubits().getIndices().size() == 
+                if (qubits1.getSelectedQubits().getIndices().size() ==
                      qubits2.getSelectedQubits().getIndices().size())
                 {
                     retnum = 0;
@@ -160,7 +160,7 @@ namespace compiler
                 if (resultlist > 0)
                 {
                     std::string base_error_message("Matrix is not unitary. Line: ");
-                    std::string entire_error_message = base_error_message + 
+                    std::string entire_error_message = base_error_message +
                                                        std::to_string(linenumber);
                     throw std::runtime_error(entire_error_message);
                 }
@@ -204,7 +204,7 @@ namespace compiler
                 if (resultlist > 0)
                 {
                     std::string base_error_message("Mismatch in the qubit pair sizes. Line: ");
-                    std::string entire_error_message = base_error_message + 
+                    std::string entire_error_message = base_error_message +
                                                        std::to_string(linenumber);
                     throw std::runtime_error(entire_error_message);
                 }
@@ -221,7 +221,7 @@ namespace compiler
                 if (resultlist > 0)
                 {
                     std::string base_error_message("Mismatch in the qubit pair sizes. Line: ");
-                    std::string entire_error_message = base_error_message + 
+                    std::string entire_error_message = base_error_message +
                                                        std::to_string(linenumber);
                     throw std::runtime_error(entire_error_message);
                 }
@@ -234,7 +234,7 @@ namespace compiler
                 int result = 1;
                 auto measureParityProperties = op.getMeasureParityQubitsAndAxis();
                 int resultlist = checkQubitList(measureParityProperties.first.first, linenumber);
-                resultlist += checkQubitList(measureParityProperties.first.second, linenumber); 
+                resultlist += checkQubitList(measureParityProperties.first.second, linenumber);
                 result *= resultlist;
                 return result;
             }

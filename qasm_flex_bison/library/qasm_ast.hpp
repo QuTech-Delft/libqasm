@@ -2,7 +2,6 @@
 #ifndef QASM_AST_REP
 #define QASM_AST_REP
 
-
 #include <iostream>
 #include <vector>
 #include <string>
@@ -33,7 +32,7 @@ namespace compiler
                     indices_.push_back( static_cast<size_t> (index) );
             }
 
-            const std::vector<size_t> & getIndices() const
+            const std::vector<size_t>& getIndices() const
             {
                 return indices_;
             }
@@ -123,7 +122,7 @@ namespace compiler
     {
         public:
             Operation(const std::string type, Qubits qubits_involved)
-            : qubits_ (qubits_involved), 
+            : qubits_ (qubits_involved),
               rotation_angle_ (std::numeric_limits<double>::max()), bit_controlled_(false)
             // This is the most common operation, the single qubit operation, or reset_averaging
             {
@@ -131,7 +130,7 @@ namespace compiler
             }
 
             Operation(const std::string type, Qubits qubits_involved, const double rotation_angle)
-            : qubits_ (qubits_involved), 
+            : qubits_ (qubits_involved),
               rotation_angle_ (rotation_angle), bit_controlled_(false)
             // Single qubit rotations
             {
@@ -192,10 +191,10 @@ namespace compiler
             // Toffoli operations
             {
                 type_ = toLowerCase(type);
-                toffoli_qubit_pairs_ = std::pair<Qubits, std::pair<Qubits,Qubits>> ( 
-                                                                                    qubit_pair1,
-                                                                                    std::pair<Qubits,Qubits> (qubit_pair2,qubit_pair3)
-                                                                                  );
+                toffoli_qubit_pairs_ = std::pair<Qubits, std::pair<Qubits,Qubits>> (
+                    qubit_pair1,
+                    std::pair<Qubits,Qubits> (qubit_pair2,qubit_pair3)
+                );
             }
 
             Operation(const std::string type, const std::string state_filename)
@@ -225,12 +224,12 @@ namespace compiler
             {
                 if (type_ == "toffoli")
                 {
-                    switch(qubit_pair_index){
+                    switch (qubit_pair_index) {
                         case 1: return toffoli_qubit_pairs_.first; break;
                         case 2: return toffoli_qubit_pairs_.second.first; break;
                         case 3: return toffoli_qubit_pairs_.second.second; break;
-                        default: throw std::runtime_error( std::string("Accessing qubit pair ") 
-                                              + std::to_string(qubit_pair_index) 
+                        default: throw std::runtime_error( std::string("Accessing qubit pair ")
+                                              + std::to_string(qubit_pair_index)
                                               + std::string(" on operation ") + type_ ); return qubits_;
                     }
                 }
@@ -271,7 +270,6 @@ namespace compiler
 
             const std::pair< Qubits, std::pair<Qubits,Qubits> >& getToffoliQubitPairs() const
             {
-                
                 return toffoli_qubit_pairs_;
             }
 
@@ -338,7 +336,7 @@ namespace compiler
                     std::cout << std::endl;
                     std::cout << "Qubit Pair 1: ";
                     getTwoQubitPairs().first.printMembers();
-                    std::cout << "Qubit Pair 2: "; 
+                    std::cout << "Qubit Pair 2: ";
                     getTwoQubitPairs().second.printMembers();
                 }
                 else if (type_ == "cr")
@@ -346,18 +344,18 @@ namespace compiler
                     std::cout << std::endl;
                     std::cout << "Qubit Pair 1: ";
                     getTwoQubitPairs().first.printMembers();
-                    std::cout << "Qubit Pair 2: "; 
+                    std::cout << "Qubit Pair 2: ";
                     getTwoQubitPairs().second.printMembers();
-                    std::cout << "Rotation = " << getRotationAngle() << std::endl; 
+                    std::cout << "Rotation = " << getRotationAngle() << std::endl;
                 }
                 else if (type_ == "toffoli")
                 {
                     std::cout << std::endl;
                     std::cout << "Qubit Pair 1: ";
                     getToffoliQubitPairs().first.printMembers();
-                    std::cout << "Qubit Pair 2: "; 
+                    std::cout << "Qubit Pair 2: ";
                     getToffoliQubitPairs().second.first.printMembers();
-                    std::cout << "Qubit Pair 3: "; 
+                    std::cout << "Qubit Pair 3: ";
                     getToffoliQubitPairs().second.second.printMembers();
                 }
                 else if (type_ == "wait")
@@ -431,12 +429,12 @@ namespace compiler
                 return operations_.back();
             }
 
-            void addOperation( Operation* valid_op )
+            void addOperation(Operation* valid_op)
             {
                 operations_.push_back(valid_op);
             }
 
-            void addParallelOperation( Operation* valid_op )
+            void addParallelOperation(Operation* valid_op)
             {
                 operations_.push_back(valid_op);
                 isParallel_ = true;
@@ -447,7 +445,7 @@ namespace compiler
                 return isParallel_;
             }
 
-            const std::vector< Operation* >& getOperations() const
+            const std::vector<Operation*>& getOperations() const
             {
                 return operations_;
             }
@@ -481,7 +479,7 @@ namespace compiler
             }
 
         protected:
-            std::vector< Operation* > operations_;
+            std::vector<Operation*> operations_;
             bool isParallel_;
             int linenumber_;
     }; // class Operations
@@ -490,7 +488,12 @@ namespace compiler
     // This class encapsulates the subcircuit with the number of iterations and also the statements contained in it.
     {
         public:
-            SubCircuit(const char *name, const int subcircuit_number, const int linenumber):
+
+            SubCircuit()
+            {
+            }
+
+            SubCircuit(const char* name, const int subcircuit_number, const int linenumber):
             name_ ( std::string(name) ),
             number_iterations_ ( 1 ), // By default, we run the subcircuit at least once
             subcircuit_number_ ( subcircuit_number ),
@@ -523,7 +526,7 @@ namespace compiler
                 return name_;
             }
 
-            void addOperationsCluster(OperationsCluster *opclus)
+            void addOperationsCluster(OperationsCluster* opclus)
             {
                 operations_cluster_.push_back(opclus);
             }
@@ -533,7 +536,7 @@ namespace compiler
                 return operations_cluster_.back();
             }
 
-            const std::vector< OperationsCluster* >& getOperationsCluster() const
+            const std::vector<OperationsCluster*>& getOperationsCluster() const
             {
                 return operations_cluster_;
             }
@@ -553,7 +556,7 @@ namespace compiler
             int number_iterations_; // This member is the number of iterations the subcircuit is supposed to run
             size_t subcircuit_number_; // This member provides the order of the subcircuits when it is found in the qasm file
             int linenumber_;
-            std::vector< OperationsCluster* > operations_cluster_;
+            std::vector<OperationsCluster*> operations_cluster_;
     }; //class SubCircuit
 
     class SubCircuits
@@ -639,7 +642,7 @@ namespace compiler
                 // Make sure they are all lowercase
                 std::transform(name_key.begin(), name_key.end(), name_key.begin(), ::tolower);
 
-                if( mappings_.find(name_key)->second.second == isQubit && 
+                if (mappings_.find(name_key)->second.second == isQubit &&
                     mappings_.find(name_key) != mappings_.end() )
                     return mappings_.find(name_key)->second.first;
                 else

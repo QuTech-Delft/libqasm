@@ -15,11 +15,11 @@ TEST_CASE("Test for the bell.qasm file")
 
     // open a file handle to a particular file:
     FILE *myfile = fopen("bell.qasm", "r");
-    
+
     compiler::QasmSemanticChecker sm(myfile);
 
     auto qasm_representation = sm.getQasmRepresentation();
-    
+
     int result = sm.parseResult();
 
     CHECK(result == 0);   // Stop here if it fails.
