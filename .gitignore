@@ -1,3 +1,8 @@
+__pycache__/
+*.py[cod]
+*$py.class
+env
+
 # Prerequisites
 *.d
 
@@ -48,6 +53,7 @@ bin
 build
 *build
 build*
+dist
 libQasm*
 *libQasm
 
@@ -61,4 +67,3 @@ log
 
 # Add swig generated sources
 *_swig*
-

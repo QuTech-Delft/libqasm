@@ -1,15 +1,23 @@
 %option noyywrap
 %option nounput
 %option yylineno
+%option reentrant
+%option bison-bridge
+
 %{
-    #include "grammar.tab.h"
     #include <cstdlib>
     #include <string>
-    #define PRINTLEX(t) { printf("Lex: " #t ": %s\n",t); }
+    #include "grammar.tab.h"
+
+    #define YY_DECL int yylex(YYSTYPE* yylval_param, YYLTYPE* yylloc, yyscan_t yyscanner)
+    #define YY_USER_ACTION {yylloc->first_line = yylineno; yylloc->first_column = yycolumn;\
+        yycolumn = yycolumn + yyleng; yylloc->last_column = yycolumn; yylloc->last_line = yylineno;}
+
+    #define PRINTLEX(t) { printf("Lex: " #t ": %s\n", t); }
     #define TOKEN(t) { return(t); }
-    #define TOKENI(t) {  yylval.ival = static_cast<int> ( std::strtol(yytext,NULL,10) ); return(t); }
-    #define TOKEND(t) {  yylval.dval = std::strtod(yytext,NULL); return(t); }
-    #define TOKENSTR(t) { yylval.sval = strdup(yytext); return(t); }
+    #define TOKENI(t) { yylval->ival = static_cast<int> ( std::strtol(yytext, NULL, 10) ); return(t); }
+    #define TOKEND(t) { yylval->dval = std::strtod(yytext, NULL); return(t); }
+    #define TOKENSTR(t) { yylval->sval = strdup(yytext); return(t); }
 %}
 
 
@@ -52,7 +60,7 @@ measureparity      {measurehead}(_(?i:parity))
 qasm_version       (?i:version)
 
 %%
-{qasm_version} TOKENSTR(QASM_VERSION)
+{qasm_version} TOKEN(QASM_VERSION)
 
 {qubits} TOKEN(QUBITS)
 
@@ -128,15 +136,8 @@ qasm_version       (?i:version)
 
 {whitespace} TOKEN(WS)
 
-{newline} {
-    TOKEN(NEWLINE)
-}
+{newline} TOKEN(NEWLINE)
 
 {identifier} TOKENSTR(NAME)
 
-{comment} {
-    TOKENSTR(COMMENT)
-}
-
-%%
-#include <stdio.h>
+{comment} TOKENSTR(COMMENT)

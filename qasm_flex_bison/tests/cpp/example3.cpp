@@ -1,4 +1,4 @@
-/** This test is for example 2 qasm file in the paper **/
+/** This test is for example 3 qasm file in the paper **/
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <iostream>
 #include <vector>
@@ -6,7 +6,7 @@
 #include "qasm_semantic.hpp"
 #include "doctest/doctest.h"
 
-TEST_CASE("Test for the example2.qasm file")
+TEST_CASE("Test for the example3.qasm file")
 {
     #if YYDEBUG == 1
     extern int yydebug;
@@ -14,12 +14,12 @@ TEST_CASE("Test for the example2.qasm file")
     #endif
 
     // open a file handle to a particular file:
-    FILE *myfile = fopen("example2.qasm", "r");
-    
+    FILE *myfile = fopen("example3.qasm", "r");
+
     compiler::QasmSemanticChecker sm(myfile);
 
     auto qasm_representation = sm.getQasmRepresentation();
-    
+
     int result = sm.parseResult();
 
     CHECK(result == 0);   // Stop here if it fails.

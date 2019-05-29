@@ -1,6 +1,5 @@
 # Author Imran Ashraf
 
-
 # The import syntax changes slightly between python 2 and 3, so we
 # need to detect which version is being used:
 from sys import version_info
