@@ -10,6 +10,7 @@ extern int yyparse();
 extern int yylex();
 extern FILE* yyin;
 extern compiler::QasmRepresentation qasm_representation;
+extern compiler::SubCircuits subcircuits_object;
 
 namespace compiler
 {
@@ -35,6 +36,8 @@ namespace compiler
                 result = doChecks();
                 parse_result_ = result;
             }
+
+            ~QasmSemanticChecker() { subcircuits_object.clearSubCircuits(); }
 
             int parseResult() const
             {
