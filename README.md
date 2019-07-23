@@ -8,7 +8,7 @@
 * doctest (As a git submodule)
 
 ### If python module is required
-* Python3 (Tested on Python v3.5)
+* Python3 (Tested on Python v3.6)
 * Swig
 
 ## Organization
