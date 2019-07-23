@@ -586,6 +586,8 @@ namespace compiler
                 return subcircuits_;
             }
 
+            void clearSubCircuits() { subcircuits_.clear(); }
+
         protected:
             std::vector<SubCircuit> subcircuits_;
     }; //class SubCircuits
