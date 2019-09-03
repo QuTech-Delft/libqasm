@@ -1,4 +1,17 @@
-%code requires { #include "qasm_ast.hpp" }
+%define parse.error verbose
+
+%define api.pure full
+%lex-param { yyscan_t scanner }
+%parse-param { yyscan_t scanner }
+%parse-param { qasm_data* data }
+
+%locations
+
+%code requires {
+    #include "qasm_ast.hpp"
+    #include "qasm_data.hpp"
+    typedef void* yyscan_t;
+}
 
 %{
     #include <math.h>
@@ -8,19 +21,9 @@
     #include <vector>
     #include <string>
     #include "qasm_ast.hpp"
-    int yylex(void);
-    void yyerror (char const *);
-    extern int yylineno, yychar;
-    compiler::Bits bits_identified;
-    compiler::NumericalIdentifiers buffer_indices;
-    compiler::SubCircuits subcircuits_object;
-    compiler::QasmRepresentation qasm_representation;
-    std::string buffer_string;
+    #include "qasm_data.hpp"
+    typedef void* yyscan_t;
 %}
-
-%define parse.error verbose
-
-%locations
 
 %union {
     int ival;
@@ -34,7 +37,12 @@
     compiler::OperationsCluster* ocval;
 }
 
-%token <sval> QASM_VERSION
+%{
+    int yylex(YYSTYPE* lvalp, YYLTYPE* yylloc, yyscan_t scanner);
+    void yyerror(YYLTYPE* yylloc, yyscan_t scanner, qasm_data* data, const char* x);
+%}
+
+%token QASM_VERSION
 %token <sval> NAME 
 %token <ival> INTEGER
 %token <dval> FLOAT
@@ -48,8 +56,6 @@
 %token <sval> ERROR_MODEL_KEY ERROR_MODEL
 %token QBITHEAD BITHEAD
 
-%type <sval> single-qubit-gate;
-
 %start qasm-file
 
 %%
@@ -57,28 +63,28 @@
 //# Describe the general structure of a qasm file
 qasm-file : qasm_version NEWLINE qubit-register body 
             {
-              qasm_representation.getSubCircuits() = subcircuits_object;
+              data->qasm_representation.getSubCircuits() = data->subcircuits_object;
             }
           | qasm_version NEWLINE comment qubit-register body 
             {
-              qasm_representation.getSubCircuits() = subcircuits_object;
+              data->qasm_representation.getSubCircuits() = data->subcircuits_object;
             }
           | qasm_version NEWLINE qubit-register 
             {
-              qasm_representation.getSubCircuits() = subcircuits_object;
+              data->qasm_representation.getSubCircuits() = data->subcircuits_object;
             }
           | qasm_version NEWLINE comment qubit-register 
             {
-              qasm_representation.getSubCircuits() = subcircuits_object;
+              data->qasm_representation.getSubCircuits() = data->subcircuits_object;
             }
     ;
 qasm_version : QASM_VERSION WS FLOAT
                {
-                  qasm_representation.versionNumber($3);
+                  data->qasm_representation.versionNumber($3);
                }
              | comment QASM_VERSION WS FLOAT
                {
-                  qasm_representation.versionNumber($4);
+                  data->qasm_representation.versionNumber($4);
                } 
     ;
 body : bodyline 
@@ -97,12 +103,12 @@ comment : COMMENT
     ;
 subcircuit-definition : DOT NAME
                         { 
-                            subcircuits_object.addSubCircuit( compiler::SubCircuit ($2, subcircuits_object.numberOfSubCircuits(), yylineno) ); 
+                            data->subcircuits_object.addSubCircuit( compiler::SubCircuit ($2, data->subcircuits_object.numberOfSubCircuits(), @$.first_line) ); 
                         }
                       | DOT NAME BRA INTEGER KET
                         {
-                            subcircuits_object.addSubCircuit( compiler::SubCircuit ($2, subcircuits_object.numberOfSubCircuits(), yylineno) ); 
-                            subcircuits_object.lastSubCircuit().numberIterations($4); 
+                            data->subcircuits_object.addSubCircuit( compiler::SubCircuit ($2, data->subcircuits_object.numberOfSubCircuits(), @$.first_line) ); 
+                            data->subcircuits_object.lastSubCircuit().numberIterations($4); 
                         }
     ;
 qasm-line : map-operation
@@ -110,36 +116,36 @@ qasm-line : map-operation
           | measureall-operation
             {
                 compiler::Operation* serial_ops = $1;
-                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops, yylineno );
-                subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
+                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops, @$.first_line );
+                data->subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
             }
           | measure-parity-operation
             {
                 compiler::Operation* serial_ops = $1;
-                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops, yylineno );
-                subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
+                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops, @$.first_line );
+                data->subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
             }
           | regular-operations
             {
                 compiler::Operation* serial_ops = $1;
-                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops, yylineno );
-                subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
+                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops, @$.first_line );
+                data->subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
             }
           | binary-controlled-operations
             {
                 compiler::Operation* serial_ops = $1;
-                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops, yylineno );
-                subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
+                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops, @$.first_line );
+                data->subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
             }
           | parallel-operations
             {
-                subcircuits_object.lastSubCircuit().addOperationsCluster( $1 );
+                data->subcircuits_object.lastSubCircuit().addOperationsCluster( $1 );
             }
           | special-operations
             {
                 compiler::Operation* serial_ops = $1;
-                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops, yylineno );
-                subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
+                compiler::OperationsCluster* single_op_cluster = new compiler::OperationsCluster( serial_ops, @$.first_line );
+                data->subcircuits_object.lastSubCircuit().addOperationsCluster( single_op_cluster );
             }
     ;
 
@@ -155,16 +161,16 @@ numerical-identifiers : numerical-identifier-list
                       | numerical-identifiers COMMA_SEPARATOR numerical-identifier-list
                       | numerical-identifiers COMMA_SEPARATOR numerical-identifier-range
     ;
-numerical-identifier-list : INTEGER {buffer_indices.addToVector($1);}
+numerical-identifier-list : INTEGER {data->buffer_indices.addToVector($1);}
     ;
 numerical-identifier-range : INTEGER COLON INTEGER 
                              {
-                                buffer_indices.addToVector($1,$3); 
+                                data->buffer_indices.addToVector($1,$3); 
                              }
     ;
 qubit-register : QUBITS WS INTEGER 
                  {
-                    qasm_representation.qubitRegister($3);
+                    data->qasm_representation.qubitRegister($3);
                  } 
     ;
 %type <vecdval> error-model-args;
@@ -183,25 +189,26 @@ error-model-args : int-or-float
     ;
 error-model : ERROR_MODEL_KEY WS ERROR_MODEL COMMA_SEPARATOR error-model-args
               {
-                  qasm_representation.setErrorModel( std::string($3), *($5) );
+                  data->qasm_representation.setErrorModel( std::string($3), *($5) );
               }  
     ;
+
 //# We define the syntax for selecting the qubits/bits, either by a range or a list
 %type <qval> qubit;
 qubit : qubit-nomap {$$=$1;}
       | NAME
         {
-            buffer_indices = qasm_representation.getMappedIndices( std::string($1), true, yylineno );
-            $$ = new compiler::Qubits (buffer_indices);
-            buffer_indices.clear();
+            data->buffer_indices = data->qasm_representation.getMappedIndices( std::string($1), true, @$.first_line );
+            $$ = new compiler::Qubits (data->buffer_indices);
+            data->buffer_indices.clear();
         } 
     ;
 %type <qval> qubit-nomap;
 qubit-nomap : QBITHEAD indices 
               {
-                 buffer_indices.removeDuplicates();
-                 $$ = new compiler::Qubits (buffer_indices);
-                 buffer_indices.clear();
+                 data->buffer_indices.removeDuplicates();
+                 $$ = new compiler::Qubits (data->buffer_indices);
+                 data->buffer_indices.clear();
               }
     ;
 
@@ -210,40 +217,38 @@ qubit-nomap : QBITHEAD indices
 bit :  bit-nomap 
     |  NAME
        {
-           buffer_indices = qasm_representation.getMappedIndices( std::string($1), false, yylineno );
-           $$ = new compiler::Bits (buffer_indices);
-           buffer_indices.clear();
+           data->buffer_indices = data->qasm_representation.getMappedIndices( std::string($1), false, @$.first_line );
+           $$ = new compiler::Bits (data->buffer_indices);
+           data->buffer_indices.clear();
        }
     ;
 %type <bval> bit-nomap;
 bit-nomap : BITHEAD indices
             {
-                 buffer_indices.removeDuplicates();
-                 $$ = new compiler::Bits (buffer_indices);
-                 buffer_indices.clear();
+                 data->buffer_indices.removeDuplicates();
+                 $$ = new compiler::Bits (data->buffer_indices);
+                 data->buffer_indices.clear();
             } 
     ;
-
 
 //# Define the single qubit operation line
 %type <oval> single-qubit-operation;
 single-qubit-operation : single-qubit-gate WS qubit 
                          {
-                            $$ = new compiler::Operation(buffer_string, *($3) );
+                            $$ = new compiler::Operation(data->buffer_string, *($3) );
                          }
                        | prep_measure-ops WS qubit 
                          {
-                            $$ = new compiler::Operation(buffer_string, *($3) );
+                            $$ = new compiler::Operation(data->buffer_string, *($3) );
                          }
                        | single-qubit-gate WS qubit COMMA_SEPARATOR matrix-arguments
                          {
-                            compiler::Operation U_op(buffer_string, *($3) );
+                            compiler::Operation U_op(data->buffer_string, *($3) );
                             U_op.setUMatrixElements(*($5));
                             $$ = new compiler::Operation(U_op);
                          }
     ;
-%type <vecdval> matrix-arguments
-;
+%type <vecdval> matrix-arguments;
 matrix-arguments : SBRA int-or-float COMMA_SEPARATOR int-or-float
                    COMMA_SEPARATOR int-or-float COMMA_SEPARATOR int-or-float
                    COMMA_SEPARATOR int-or-float COMMA_SEPARATOR int-or-float
@@ -256,34 +261,36 @@ matrix-arguments : SBRA int-or-float COMMA_SEPARATOR int-or-float
 %type <oval> single-qubit-operation-args;
 single-qubit-operation-args : parameterized-single-qubit-gate WS qubit COMMA_SEPARATOR int-or-float 
                               {
-                                  $$ = new compiler::Operation(buffer_string, *($3) ,$5);
+                                  $$ = new compiler::Operation(data->buffer_string, *($3) ,$5);
                               }
     ;
 map-operation : MAPKEY WS qubit-nomap COMMA_SEPARATOR NAME 
                 {
-                    qasm_representation.addMappings(std::string($5), $3->getSelectedQubits(), true );
+                    data->qasm_representation.addMappings(std::string($5), $3->getSelectedQubits(), true );
                 }
               | MAPKEY WS bit-nomap COMMA_SEPARATOR NAME
                 {
-                    qasm_representation.addMappings(std::string($5), $3->getSelectedBits(), false );
+                    data->qasm_representation.addMappings(std::string($5), $3->getSelectedBits(), false );
                 }
     ;
+
 //## Define the single qubit operations/gates
-single-qubit-gate : AXIS {buffer_string = std::string($1);} | SINGLE_QUBIT_GATES {buffer_string = std::string($1);} 
+%type <sval> single-qubit-gate;
+single-qubit-gate : AXIS {data->buffer_string = std::string($1);} | SINGLE_QUBIT_GATES {data->buffer_string = std::string($1);} 
     ;
-parameterized-single-qubit-gate : ROTATIONS {buffer_string = std::string($1);}
-    ;
-//# This is to define the state preparation/measurement
-prep_measure-ops : PREP {buffer_string = std::string($1);} | MEASURE {buffer_string = std::string($1);}
+parameterized-single-qubit-gate : ROTATIONS {data->buffer_string = std::string($1);}
     ;
 
+//# This is to define the state preparation/measurement
+prep_measure-ops : PREP {data->buffer_string = std::string($1);} | MEASURE {data->buffer_string = std::string($1);}
+    ;
 %type <oval> measure-parity-operation;
 measure-parity-operation : measure-parity-command WS qubit COMMA_SEPARATOR AXIS COMMA_SEPARATOR qubit COMMA_SEPARATOR AXIS
                            {
-                               $$ = new compiler::Operation( buffer_string, *($3) , std::string($5,1) , *($7) , std::string($9,1) ) ;
+                               $$ = new compiler::Operation( data->buffer_string, *($3) , std::string($5,1) , *($7) , std::string($9,1) ) ;
                            }
     ;
-measure-parity-command : MEASUREPARITY {buffer_string = std::string($1);}
+measure-parity-command : MEASUREPARITY {data->buffer_string = std::string($1);}
 %type <oval> measureall-operation;
 measureall-operation : MEASUREALL {$$ = new compiler::Operation(std::string($1,11));}
     ;
@@ -292,34 +299,37 @@ measureall-operation : MEASUREALL {$$ = new compiler::Operation(std::string($1,1
 %type <oval> two-qubit-operation;
 two-qubit-operation : two-qubit-gates WS qubit COMMA_SEPARATOR qubit
                       {
-                          $$ = new compiler::Operation( buffer_string, *($3) , *($5) );
+                          $$ = new compiler::Operation( data->buffer_string, *($3) , *($5) );
                       }
     ;
 %type <oval> two-qubit-operation-args;
 two-qubit-operation-args : two-qubit-gate-args WS qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR FLOAT
                            {
-                              $$ = new compiler::Operation( buffer_string, *($3) , *($5), ($7) );
+                              $$ = new compiler::Operation( data->buffer_string, *($3) , *($5), ($7) );
                            }
                          | two-qubit-gate-args WS qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR INTEGER
                            {
-                              $$ = new compiler::Operation( buffer_string, *($3) , *($5), ($7) );
+                              $$ = new compiler::Operation( data->buffer_string, *($3) , *($5), ($7) );
                            }
     ;
+
 //## Define the two qubit gates
-two-qubit-gates : TWO_QUBIT_GATES {buffer_string = std::string($1);}
+two-qubit-gates : TWO_QUBIT_GATES {data->buffer_string = std::string($1);}
     ;
-two-qubit-gate-args : CR {buffer_string = std::string($1);}
-                    | CRK {buffer_string = std::string($1);}
+two-qubit-gate-args : CR {data->buffer_string = std::string($1);}
+                    | CRK {data->buffer_string = std::string($1);}
     ;
+
 //## Define the toffoli gate
 %type <oval> toffoli-operation;
 toffoli-operation : toffoli-gate WS qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit
                     {
-                       $$ = new compiler::Operation( buffer_string, *($3) , *($5) , *($7) );
+                       $$ = new compiler::Operation( data->buffer_string, *($3) , *($5) , *($7) );
                     }
     ;
-toffoli-gate : TOFFOLI {buffer_string = std::string($1);}
+toffoli-gate : TOFFOLI {data->buffer_string = std::string($1);}
     ;
+
 //## Define a superset of all general "normal" operations
 %type <oval> regular-operations;
 regular-operations : single-qubit-operation 
@@ -328,7 +338,6 @@ regular-operations : single-qubit-operation
                    | two-qubit-operation-args
                    | toffoli-operation 
     ;
-
 %type <oval> binary-controlled-operations;
 binary-controlled-operations : bit-single-qubit-operation 
                                    | bit-single-qubit-operation-args 
@@ -340,7 +349,7 @@ binary-controlled-operations : bit-single-qubit-operation
 %type <oval> bit-single-qubit-operation;    
 bit-single-qubit-operation : CDASH single-qubit-gate WS bit COMMA_SEPARATOR qubit
                              {
-                                compiler::Operation* bit_single_qubit_operation = new compiler::Operation(buffer_string, *($6) );
+                                compiler::Operation* bit_single_qubit_operation = new compiler::Operation(data->buffer_string, *($6) );
                                 bit_single_qubit_operation -> setControlBits( *($4) );
                                 $$ = bit_single_qubit_operation;
                              }
@@ -348,7 +357,7 @@ bit-single-qubit-operation : CDASH single-qubit-gate WS bit COMMA_SEPARATOR qubi
 %type <oval> bit-single-qubit-operation-args;    
 bit-single-qubit-operation-args : CDASH parameterized-single-qubit-gate WS bit COMMA_SEPARATOR qubit COMMA_SEPARATOR int-or-float
                                   {
-                                      compiler::Operation* bit_single_qubit_operation_args = new compiler::Operation(buffer_string, *($6) , $8);
+                                      compiler::Operation* bit_single_qubit_operation_args = new compiler::Operation(data->buffer_string, *($6) , $8);
                                       bit_single_qubit_operation_args -> setControlBits( *($4) );
                                       $$ = bit_single_qubit_operation_args;
                                   }
@@ -356,7 +365,7 @@ bit-single-qubit-operation-args : CDASH parameterized-single-qubit-gate WS bit C
 %type <oval> bit-two-qubit-operation;    
 bit-two-qubit-operation : CDASH two-qubit-gates WS bit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit
                           {
-                              compiler::Operation* bit_two_qubit_operation = new compiler::Operation( buffer_string, *($6) , *($8) );
+                              compiler::Operation* bit_two_qubit_operation = new compiler::Operation( data->buffer_string, *($6) , *($8) );
                               bit_two_qubit_operation -> setControlBits( *($4) );
                               $$ = bit_two_qubit_operation;
                           }
@@ -364,7 +373,7 @@ bit-two-qubit-operation : CDASH two-qubit-gates WS bit COMMA_SEPARATOR qubit COM
 %type <oval> bit-two-qubit-operation-args;    
 bit-two-qubit-operation-args : CDASH two-qubit-gate-args WS bit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR INTEGER
                                {
-                                  compiler::Operation* bit_two_qubit_operation_args = new compiler::Operation( buffer_string, *($6) , *($8), ($10) );
+                                  compiler::Operation* bit_two_qubit_operation_args = new compiler::Operation( data->buffer_string, *($6) , *($8), ($10) );
                                   bit_two_qubit_operation_args -> setControlBits( *($4) );
                                   $$ = bit_two_qubit_operation_args;
                                }
@@ -372,7 +381,7 @@ bit-two-qubit-operation-args : CDASH two-qubit-gate-args WS bit COMMA_SEPARATOR 
 %type <oval> bit-toffoli-operation;    
 bit-toffoli-operation : CDASH toffoli-gate WS bit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit
                         {
-                            compiler::Operation* bit_toffoli_operation = new compiler::Operation( buffer_string, *($6), *($8), *($10) );
+                            compiler::Operation* bit_toffoli_operation = new compiler::Operation( data->buffer_string, *($6), *($8), *($10) );
                             bit_toffoli_operation -> setControlBits( *($4) );
                             $$ = bit_toffoli_operation;
                         }
@@ -399,7 +408,7 @@ all-valid-operations : regular-operations
     ;
 parallelizable-ops : all-valid-operations
                      {
-                        compiler::OperationsCluster* parallel_ops = new compiler::OperationsCluster( $1, yylineno );
+                        compiler::OperationsCluster* parallel_ops = new compiler::OperationsCluster( $1, @$.first_line );
                         $$ = parallel_ops;
                      }
                    | parallelizable-ops PARALLEL_SEPARATOR all-valid-operations
@@ -452,9 +461,9 @@ load-state-operation : LOAD_STATE QUOTED_STRING
     ;
 
 %%
-void yyerror(char const *x)
+void yyerror(YYLTYPE* yylloc, yyscan_t scanner, qasm_data* data, const char* x)
 {
     std::string base_error_message(x);
-    std::string entire_error_message = base_error_message + " | Token " + std::to_string(yychar) + " on Line: " + std::to_string(yylineno);
+    std::string entire_error_message = base_error_message + " | Line: " + std::to_string(yylloc->first_line);
     throw std::runtime_error(entire_error_message);
 }

@@ -4,15 +4,15 @@ metadata:
 spec:
   containers:
   - name: libqasm
-    image: qutech/libqasm:1.0.0-11-gf3eebd0
+    image: qutech/libqasm:1.0.1
     command:
     - cat
     tty: true
     resources:
       requests:
-        memory: "256Mi"
+        memory: "512Mi"
       limits:
-        memory: "256Mi"
+        memory: "512Mi"
   - name: jnlp
     resources:
       requests:

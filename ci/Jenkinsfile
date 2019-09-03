@@ -21,8 +21,9 @@ pipeline {
       steps {
         container('libqasm') {
           sh '''
+            apt-get install -y python3-venv
             git submodule update --init --recursive &&
-            cd qasm_flex_bison && mkdir build && cd build && cmake ../library && make
+            cd qasm_flex_bison && mkdir cbuild && cd cbuild && cmake ../library && make
           '''
         }
       }
@@ -31,7 +32,11 @@ pipeline {
       steps {
         container('libqasm') {
           sh '''
-            cd qasm_flex_bison && cd build && make test
+            cd qasm_flex_bison && cd cbuild && make test &&
+            cd .. && pwd && python3 -m venv env &&
+            . ./env/bin/activate &&
+            pip install . --upgrade &&
+            python -m unittest discover -s tests/python -v
           '''
         }
       }

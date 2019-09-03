@@ -14,8 +14,8 @@ TEST_CASE("Test for the testqc.qasm file")
     #endif
 
     // open a file handle to a particular file:
-    FILE *myfile = fopen("testqc.qasm", "r");
-    
+    FILE *myfile = fopen("qc.qasm", "r");
+
     compiler::QasmSemanticChecker sm(myfile);
 
     auto qasm_representation = sm.getQasmRepresentation();
@@ -30,7 +30,7 @@ TEST_CASE("Test for the testqc.qasm file")
     {
         CHECK(error_model_params.at(i) == true_results_.at(i));
     }
-    
+
     int result = sm.parseResult();
 
     CHECK(result == 0);   // Stop here if it fails.
