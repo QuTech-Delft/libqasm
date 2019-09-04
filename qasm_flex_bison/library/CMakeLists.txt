@@ -29,7 +29,7 @@ set_property(TARGET lexgram PROPERTY CXX_STANDARD 11)
 
 ## Start of testing
 include_directories (${CMAKE_CURRENT_SOURCE_DIR}/../tests/cpp/doctest)
-add_compile_options(-std=c++11 -Wall -Wextra -Werror -DYYDEBUG=0)
+add_compile_options(-std=c++11 -Wall -Wextra)
 # Keep test files in a separate source directory called test
 file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ../tests/cpp/*.cpp)
 
