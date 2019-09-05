@@ -9,11 +9,11 @@
 #include "qasm_data.hpp"
 
 typedef void* yyscan_t;
-//typedef struct yy_buffer_state* YY_BUFFER_STATE;
+typedef struct yy_buffer_state* YY_BUFFER_STATE;
 extern int yylex_init(yyscan_t*);
 extern void yyset_in(FILE*, yyscan_t);
-/*extern YY_BUFFER_STATE yy_scan_string(const char*, yyscan_t);
-extern void yy_delete_buffer(YY_BUFFER_STATE, yyscan_t);*/
+extern YY_BUFFER_STATE yy_scan_string(const char *yy_str, yyscan_t yyscanner);
+void yy_delete_buffer(YY_BUFFER_STATE b, yyscan_t yyscanner);
 extern int yyparse(yyscan_t, qasm_data*);
 extern int yylex_destroy(yyscan_t);
 
@@ -26,31 +26,24 @@ namespace compiler
             {
                 // Init scanner
                 yyscan_t scanner;
+                YY_BUFFER_STATE buf;
                 yylex_init(&scanner);
-
-                // Set lex to read from string
-                // Don't use `yy_scan_string` because it doesn't init `yylineno`
-                unsigned long len = strlen(qasm_str_input) * sizeof(char);
-                char* qasm_str = (char*)malloc(len);
-                strncpy(qasm_str, qasm_str_input, len);
-                FILE* qasm_file = tmpfile();
-                yyset_in(qasm_file, scanner);
-
+    
                 // Parse the input
-                qasm_data* data = new qasm_data();
+                buf = yy_scan_string(qasm_str_input, scanner);
+                auto* data = new qasm_data();
                 int result = yyparse(scanner, data);
-
+    
                 // Clean
+                yy_delete_buffer(buf, scanner);
                 yylex_destroy(scanner);
-
+    
                 if (result)
-                    throw std::runtime_error(std::string("Could not parse qasm file!\n"));
-
+                    throw std::runtime_error(std::string("Could not parse qasm!\n"));
+    
                 maxNumQubit_ = data->qasm_representation.numQubits();
                 qasm_ = data->qasm_representation;
                 parse_result_ = doChecks();
-
-                free(qasm_str);
             }
 
             QasmSemanticChecker(FILE* qasm_file)
