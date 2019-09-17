@@ -6,6 +6,7 @@
 * Bison (> 3.0)
 * cmake (> 2.8)
 * gcc and g++ capable of C++11 standard
+* MinGW (For Windows builds)
 * doctest (As a git submodule)
 
 ### If python module is required
@@ -30,7 +31,7 @@ make test or make test -j \<Number of processors\>
 ```
 
 ### As a standalone C++ library (Windows)
-Same as the above, except we'll use the MinGW toolchain.
+Same as the above, except we'll use the MinGW toolchain. You shoud first get [mingw-w64](https://sourceforge.net/projects/mingw-w64/) and install it.
 ```
 git submodule update --init --recursive
 mkdir cbuild
@@ -39,7 +40,7 @@ mingw32-make.exe
 mingw32-make.exe test
 ```
 
-This will output `_libQasm.pyd` and `liblexgram.dll` in `./qasm_flex_bison/library`
+This will output `_libQasm.pyd` and `liblexgram.dll`
 
 ### As a python3 module
 In order to install (assuming the present working directory is at **./qasm_flex_bison**):
