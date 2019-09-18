@@ -1,3 +1,4 @@
+
 # libQASM: Library to parse cQASM v1.0 files
 
 ## Dependencies
@@ -5,6 +6,7 @@
 * Bison (> 3.0)
 * cmake (> 2.8)
 * gcc and g++ capable of C++11 standard
+* MinGW (For Windows builds)
 * doctest (As a git submodule)
 
 ### If python module is required
@@ -17,7 +19,7 @@
 
 ## Installation
 
-### As a standalone c++ library
+### As a standalone C++ library
 As the library uses doctest as part of the testing procedure. In order to install (assuming the present working directory is at **./qasm_flex_bison**):
 ```
 git submodule update --init --recursive
@@ -27,6 +29,18 @@ cmake ../library
 make or make -j \<Number of processors\>
 make test or make test -j \<Number of processors\>
 ```
+
+### As a standalone C++ library (Windows)
+Same as the above, except we'll use the MinGW toolchain. You shoud first get [mingw-w64](https://sourceforge.net/projects/mingw-w64/) and install it.
+```
+git submodule update --init --recursive
+mkdir cbuild
+cmake -G "MinGW Makefiles" ..\library\
+mingw32-make.exe
+mingw32-make.exe test
+```
+
+This will output `_libQasm.pyd` and `liblexgram.dll`
 
 ### As a python3 module
 In order to install (assuming the present working directory is at **./qasm_flex_bison**):
