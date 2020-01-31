@@ -23,7 +23,13 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/grammar.tab.c PROPERTIES LANGUAGE CXX)
 set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c PROPERTIES LANGUAGE CXX)
-ADD_LIBRARY(lexgram SHARED ${CMAKE_CURRENT_BINARY_DIR}/grammar.tab.c ${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c)
+ADD_LIBRARY
+    (
+        lexgram
+        STATIC
+        ${CMAKE_CURRENT_BINARY_DIR}/grammar.tab.c
+        ${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c
+    )
 
 set_property(TARGET lexgram PROPERTY CXX_STANDARD 11)
 
@@ -77,4 +83,11 @@ else()
     SWIG_ADD_LIBRARY(libQasm LANGUAGE python SOURCES libQasm_swig.i)
 endif()
 
-SWIG_LINK_LIBRARIES(libQasm ${PYTHON_LIBRARIES} lexgram)
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    SWIG_LINK_LIBRARIES(libQasm lexgram)
+    set_target_properties(_libQasm PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
+else ()
+    SWIG_LINK_LIBRARIES(libQasm ${PYTHON_LIBRARIES} lexgram)
+endif()
+
+

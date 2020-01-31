@@ -26,8 +26,19 @@ if platform == "linux" or platform == "linux2":
     proc.communicate()
     cmd = 'make test'
     proc = subprocess.Popen(cmd, shell=True)
+    proc.communicate()    
+    clibname = "_libQasm.so"
+
+elif platform == "darwin":
+    print('Detected OSX, installing openql ... ')
+    cmd = 'cmake ../library/'
+    proc = subprocess.Popen(cmd, shell=True)
+    proc.communicate()
+    cmd = 'make'
+    proc = subprocess.Popen(cmd, shell=True)
     proc.communicate()
     clibname = "_libQasm.so"
+
 else:
     print('Detected Windows, installing libQasm...')
     cmd = 'cmake -G "MinGW Makefiles" ../library/'
