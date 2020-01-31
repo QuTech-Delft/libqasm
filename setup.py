@@ -16,6 +16,12 @@ platforms = {
         'make_command': 'make',
         'cmake_options': '',
         'clib_name': '_libQasm.so',
+        'liblexgram': 'liblexgram.so'
+    },
+    'darwin': {
+        'make_command': 'make',
+        'cmake_options': '',
+        'clib_name': '_libQasm.so',
         'liblexgram': 'liblexgram.a'
     },
     'win32': {
@@ -33,10 +39,10 @@ def determine_platform() -> Dict[str, str]:
     Based on the system libraries, determine whether the platform is of the UNIX family or the win32 family. Other
     platforms are currently not supported and will raise an exception.
     """
-    if platform == "linux" or platform == "linux2" or platform == "darwin":
+    if platform == "linux" or platform == "linux2":
         return platforms['unix']
-    elif platform == "win32":
-        return platforms['win32']
+    elif platform == "darwin" or platform == "win32":
+        return platforms[platform]
     else:
         raise OSError('Platform not recognised!')
 
