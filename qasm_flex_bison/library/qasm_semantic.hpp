@@ -11,6 +11,8 @@
 typedef void* yyscan_t;
 typedef struct yy_buffer_state* YY_BUFFER_STATE;
 extern int yylex_init(yyscan_t*);
+extern void yyset_lineno ( int _line_number , yyscan_t yyscanner );
+extern void yyset_column ( int _column_no , yyscan_t yyscanner );
 extern void yyset_in(FILE*, yyscan_t);
 extern YY_BUFFER_STATE yy_scan_string(const char *yy_str, yyscan_t yyscanner);
 void yy_delete_buffer(YY_BUFFER_STATE b, yyscan_t yyscanner);
@@ -31,6 +33,8 @@ namespace compiler
     
                 // Parse the input
                 buf = yy_scan_string(qasm_str_input, scanner);
+                yyset_lineno (1, scanner);
+                yyset_column (0, scanner);
                 auto* data = new qasm_data();
                 int result = yyparse(scanner, data);
     
