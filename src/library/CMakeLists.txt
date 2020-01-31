@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 2.8)
 
 enable_testing()
 
+project("libQasm")
+
 find_package(BISON 3.0)
 find_package(FLEX 2.6)
 find_package(PythonInterp 3 REQUIRED)
@@ -88,5 +90,3 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 else ()
     SWIG_LINK_LIBRARIES(libQasm ${PYTHON_LIBRARIES} lexgram)
 endif()
-
-

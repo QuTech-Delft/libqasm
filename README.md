@@ -43,13 +43,10 @@ mingw32-make.exe test
 This will output `_libQasm.pyd` and `liblexgram.dll`
 
 ### As a python3 module
-In order to install (assuming the present working directory is at **./qasm_flex_bison**):
+Install from the project root directory:
 ```
-git submodule update --init --recursive
-python3 -m venv env
-. ./env/bin/activate
-python setup.py install --user
-python -m unittest discover -s tests/python -v
+pip install .
+python -m unittest discover -s src/tests/python -v
 ```
 
 ### Cleaning up the **qasm\_flex\_bison** directory
