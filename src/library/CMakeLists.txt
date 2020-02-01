@@ -25,12 +25,12 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/grammar.tab.c PROPERTIES LANGUAGE CXX)
 set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c PROPERTIES LANGUAGE CXX)
-if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-ADD_LIBRARY(lexgram STATIC ${CMAKE_CURRENT_BINARY_DIR}/grammar.tab.c ${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c)
-else ()
-ADD_LIBRARY(lexgram SHARED ${CMAKE_CURRENT_BINARY_DIR}/grammar.tab.c ${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c)
-endif()
 
+ADD_LIBRARY(lexgramstatic STATIC ${CMAKE_CURRENT_BINARY_DIR}/grammar.tab.c ${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c)
+set_target_properties(lexgramstatic PROPERTIES POSITION_INDEPENDENT_CODE ON)
+ADD_LIBRARY(lexgram SHARED ${CMAKE_CURRENT_BINARY_DIR}/grammar.tab.c ${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c)
+
+set_property(TARGET lexgramstatic PROPERTY CXX_STANDARD 11)
 set_property(TARGET lexgram PROPERTY CXX_STANDARD 11)
 
 ## Start of testing
