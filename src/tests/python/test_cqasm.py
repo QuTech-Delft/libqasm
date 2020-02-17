@@ -1,4 +1,4 @@
-from test_init import LibQasmTest
+from .test_init import LibQasmTest
 
 
 class TestQasm(LibQasmTest):
@@ -13,11 +13,11 @@ class TestQasm(LibQasmTest):
         self.assertEqual(parse_res, 0)
 
     def test_invalid(self):
-        with self.assertRaisesRegex(RuntimeError, "syntax error, unexpected AXIS, expecting NAME \| Line: 6"):
+        with self.assertRaisesRegex(RuntimeError, r"syntax error, unexpected AXIS, expecting NAME | Line: 6"):
             lib_qasm = self._generic_test_steps('invalid')
 
     def test_invalid_as_string(self):
-        with self.assertRaisesRegex(RuntimeError, "syntax error, unexpected AXIS, expecting NAME \| Line: 6"):
+        with self.assertRaisesRegex(RuntimeError, r"syntax error, unexpected AXIS, expecting NAME | Line: 6"):
             lib_qasm = self._generic_test_steps_as_string('invalid')
 
     def test_reentrant_invalid(self):

@@ -1,71 +1,84 @@
-cmake_minimum_required(VERSION 2.8)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+IF (CMAKE_VERSION VERSION_GREATER 3.12)
+  CMAKE_POLICY(SET CMP0078 OLD)
+ENDIF()
+IF (CMAKE_VERSION VERSION_GREATER 3.13)
+  CMAKE_POLICY(SET CMP0086 OLD)
+ENDIF()
 
-enable_testing()
+ENABLE_TESTING()
 
-project("libQasm")
+PROJECT("libQasm")
 
-find_package(BISON 3.0)
-find_package(FLEX 2.6)
-find_package(PythonInterp 3 REQUIRED)
+FIND_PACKAGE(BISON 3.0)
+FIND_PACKAGE(FLEX 2.6)
+FIND_PACKAGE(PythonInterp 3 REQUIRED)
 
-if(COMPILER_SUPPORTS_CXX11)
-    set(CMAKE_REQUIRED_FLAGS "-std=c++11")
-endif()
+IF(COMPILER_SUPPORTS_CXX11)
+    SET(CMAKE_REQUIRED_FLAGS "-std=c++11")
+ENDIF()
 
 BISON_TARGET(
     MyParser
     grammar.y ${CMAKE_CURRENT_BINARY_DIR}/grammar.tab.c
     COMPILE_FLAGS "-Wall -d -t -g -r all"
 )
-FLEX_TARGET(MyScanner lex.l  ${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c)
+FLEX_TARGET(
+    MyScanner
+    lex.l  ${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c
+)
 ADD_FLEX_BISON_DEPENDENCY(MyScanner MyParser)
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
-set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/grammar.tab.c PROPERTIES LANGUAGE CXX)
-set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c PROPERTIES LANGUAGE CXX)
+SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_BINARY_DIR}/grammar.tab.c PROPERTIES LANGUAGE CXX)
+SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c PROPERTIES LANGUAGE CXX)
+
+ADD_LIBRARY(lexgram SHARED ${CMAKE_CURRENT_BINARY_DIR}/grammar.tab.c ${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c)
+SET_PROPERTY(TARGET lexgram PROPERTY CXX_STANDARD 11)
 
 ADD_LIBRARY(lexgramstatic STATIC ${CMAKE_CURRENT_BINARY_DIR}/grammar.tab.c ${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c)
-set_target_properties(lexgramstatic PROPERTIES POSITION_INDEPENDENT_CODE ON)
-ADD_LIBRARY(lexgram SHARED ${CMAKE_CURRENT_BINARY_DIR}/grammar.tab.c ${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c)
-
-set_property(TARGET lexgramstatic PROPERTY CXX_STANDARD 11)
-set_property(TARGET lexgram PROPERTY CXX_STANDARD 11)
+SET_TARGET_PROPERTIES(lexgramstatic PROPERTIES POSITION_INDEPENDENT_CODE ON)
+SET_PROPERTY(TARGET lexgramstatic PROPERTY CXX_STANDARD 11)
 
 ## Start of testing
-include_directories (${CMAKE_CURRENT_SOURCE_DIR}/../tests/cpp/doctest)
-add_compile_options(-std=c++11 -Wall -Wextra)
+INCLUDE_DIRECTORIES (${CMAKE_CURRENT_SOURCE_DIR}/../tests/cpp/doctest)
+ADD_COMPILE_OPTIONS(-std=c++11 -Wall -Wextra)
 # Keep test files in a separate source directory called test
-file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ../tests/cpp/*.cpp)
+FILE(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ../tests/cpp/*.cpp)
 
 # Run through each source
-foreach(testSrc ${TEST_SRCS})
+FOREACH(testSrc ${TEST_SRCS})
     # Extract the filename without an extension (NAME_WE)
-    get_filename_component(testName ${testSrc} NAME_WE)
+    GET_FILENAME_COMPONENT(testName ${testSrc} NAME_WE)
 
     # Add compile target
-    add_executable(${testName} ${testSrc})
+    ADD_EXECUTABLE(${testName} ${testSrc})
 
-    add_dependencies(${testName} lexgram)
+    ADD_DEPENDENCIES(${testName} lexgram)
 
-    set_property(TARGET ${testName} PROPERTY CXX_STANDARD 11)
+    SET_PROPERTY(TARGET ${testName} PROPERTY CXX_STANDARD 11)
 
     # Link to Boost libraries AND targets and dependencies
-    target_link_libraries(${testName} lexgram)
+    TARGET_LINK_LIBRARIES(${testName} lexgram)
 
     # Move testing binaries into a testBin directory
-    set_target_properties(${testName} PROPERTIES
+    SET_TARGET_PROPERTIES(${testName} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY  ${CMAKE_CURRENT_BINARY_DIR}/testBin)
 
+    # Copy shared lib to the testBin directory
+    ADD_CUSTOM_COMMAND(TARGET ${testName} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_FILE:lexgram> ${CMAKE_CURRENT_BINARY_DIR}/testBin
+    )
     # Finally add it to test execution
     # Notice the WORKING_DIRECTORY and COMMAND
-    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../tests/test_data/${testName}.qasm
+    FILE(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../tests/test_data/${testName}.qasm
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/testBin)
-    add_test(NAME ${testName}
+    ADD_TEST(NAME ${testName}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testBin
         COMMAND ${CMAKE_CURRENT_BINARY_DIR}/testBin/${testName})
-endforeach(testSrc)
+ENDFOREACH(testSrc)
 
 ## Start of SWIG module for the python interface
 FIND_PACKAGE(SWIG REQUIRED)
@@ -75,17 +88,17 @@ FIND_PACKAGE(PythonLibs REQUIRED)
 INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
 
 SET_SOURCE_FILES_PROPERTIES(libQasm_swig.i PROPERTIES CPLUSPLUS ON)
-SET_PROPERTY(SOURCE libQasm_swig.i PROPERTY SWIG_FLAGS -castmode -modern -keyword)
+SET_PROPERTY(SOURCE libQasm_swig.i PROPERTY SWIG_FLAGS -castmode -modern -keyword -w511)
 
-if (${CMAKE_VERSION} VERSION_LESS "3.8.0")
+IF (${CMAKE_VERSION} VERSION_LESS "3.8.0")
     SWIG_ADD_MODULE(libQasm python libQasm_swig.i)
-else()
+ELSE()
     SWIG_ADD_LIBRARY(libQasm LANGUAGE python SOURCES libQasm_swig.i)
-endif()
+ENDIF()
 
-if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+IF (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     SWIG_LINK_LIBRARIES(libQasm lexgram)
-    set_target_properties(_libQasm PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
-else ()
-    SWIG_LINK_LIBRARIES(libQasm ${PYTHON_LIBRARIES} lexgram)
-endif()
+    SET_TARGET_PROPERTIES(_libQasm PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
+ELSE ()
+    SWIG_LINK_LIBRARIES(libQasm ${PYTHON_LIBRARIES} lexgramstatic)
+ENDIF()

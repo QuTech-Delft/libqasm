@@ -1,7 +1,4 @@
-import io
-import sys
-
-from test_init import LibQasmTest
+from .test_init import LibQasmTest
 
 
 class TestInterface(LibQasmTest):
