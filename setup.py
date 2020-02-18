@@ -22,7 +22,7 @@ platforms = {
         'make_command': 'make',
         'cmake_options': '',
         'clib_name': '_libQasm.so',
-        'liblexgram': 'liblexgram.a'
+        'liblexgram': 'liblexgram.dylib'
     },
     'win32': {
         'make_command': 'mingw32-make',
