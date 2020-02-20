@@ -1,3 +1,5 @@
+#ifndef LIBQASM_HPP
+#define LIBQASM_HPP
 // This is a simple interface for the python checker
 
 #include <stdio.h>
@@ -23,7 +25,7 @@ class libQasm
         void parse_file(const char* qasm_file_path)
         {
             FILE* qasm_file = fopen(qasm_file_path, "r");
-            if (!qasm_file_path) {
+            if (!qasm_file) {
                 std::string file_not_found = std::string("File ")
                     + qasm_file_path
                     + std::string(" not found!\n");
@@ -49,3 +51,5 @@ class libQasm
         compiler::QasmRepresentation qasm_rep_;
         int parse_result_;
 };
+
+#endif  // LIBQASM_HPP
