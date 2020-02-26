@@ -9,6 +9,11 @@
     #include <string>
     #include "grammar.tab.h"
 
+    #ifdef _MSC_VER
+    #include <io.h>
+    #define YY_NO_UNISTD_H
+    #endif
+
     #define YY_DECL int yylex(YYSTYPE* yylval_param, YYLTYPE* yylloc, yyscan_t yyscanner)
     #define YY_USER_ACTION {yylloc->first_line = yylineno; yylloc->first_column = yycolumn;\
         yycolumn = yycolumn + yyleng; yylloc->last_column = yycolumn; yylloc->last_line = yylineno;}
