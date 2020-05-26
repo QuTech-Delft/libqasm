@@ -52,7 +52,7 @@
 %token <sval> SINGLE_QUBIT_GATES TWO_QUBIT_GATES CR CRK TOFFOLI
 %token <sval> CDASH NOT_TOKEN
 %token <sval> MAPKEY PREP MEASURE MEASUREPARITY MEASUREALL
-%token <sval> WAIT DISPLAY RESET_AVERAGING LOAD_STATE QUOTED_STRING
+%token <sval> SKIP WAIT DISPLAY RESET_AVERAGING LOAD_STATE QUOTED_STRING
 %token <sval> ERROR_MODEL_KEY ERROR_MODEL
 %token QBITHEAD BITHEAD
 
@@ -419,8 +419,8 @@ parallelizable-ops : all-valid-operations
     ;
 
 //# Special operations
-%type <oval> special-operations display-operation wait-operation reset-averaging-operation load-state-operation;
-special-operations : display-operation | wait-operation | reset-averaging-operation | load-state-operation
+%type <oval> special-operations display-operation skip-operation wait-operation reset-averaging-operation load-state-operation;
+special-operations : display-operation | skip-operation | wait-operation | reset-averaging-operation | load-state-operation
     ;
 display-operation : DISPLAY NEWLINE
                     {
@@ -434,6 +434,11 @@ display-operation : DISPLAY NEWLINE
                     {
                         $$ = new compiler::Operation( std::string($1), *($3) );
                     }
+    ;
+skip-operation : SKIP WS INTEGER
+                 {
+                     $$ = new compiler::Operation( std::string($1,4), ($3) );
+                 }
     ;
 wait-operation : WAIT WS INTEGER
                  {

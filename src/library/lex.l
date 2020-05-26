@@ -52,6 +52,7 @@ comma_sep          {whitespace}?,{whitespace}?
 parallel_sep       {whitespace}?\|{whitespace}?
 qubits             (?i:qubits)
 mapkey             (?i:map)
+skip               (?i:skip)
 wait               (?i:wait)
 resetavg           (?i:reset-averaging)
 display            ((?i:display)|(?i:display_binary))
@@ -110,6 +111,8 @@ qasm_version       (?i:version)
 {measureparity} TOKENSTR(MEASUREPARITY)
 
 {display} TOKENSTR(DISPLAY)
+
+{skip} TOKENSTR(SKIP)
 
 {wait} TOKENSTR(WAIT)
 

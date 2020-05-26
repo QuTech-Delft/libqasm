@@ -156,7 +156,7 @@ namespace compiler
 
             Operation(const std::string type, const int waitInt)
             : rotation_angle_ (std::numeric_limits<double>::max()), bit_controlled_(false)
-            // Wait command
+            // Wait and Skip commands
             {
                 type_ = toLowerCase(type);
                 wait_time_ = waitInt;
@@ -357,6 +357,11 @@ namespace compiler
                     getToffoliQubitPairs().second.first.printMembers();
                     std::cout << "Qubit Pair 3: ";
                     getToffoliQubitPairs().second.second.printMembers();
+                }
+                else if (type_ == "skip")
+                {
+                    std::cout << std::endl;
+                    std::cout << "Wait time (integer) = " << getWaitTime() << std::endl;
                 }
                 else if (type_ == "wait")
                 {
