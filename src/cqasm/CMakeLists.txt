@@ -35,12 +35,17 @@ set(BISON_VERSION_REQUIRED 3.0)
 include(cmake/flex-bison.cmake)
 
 # Generate the lexer.
+if(WIN32)
+    set(flex_win_compat --wincompat)
+else()
+    set(flex_win_compat)
+endif()
 flex_target(
     cqasm-lexer
     "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-lexer.l"
     "${CMAKE_CURRENT_BINARY_DIR}/cqasm-lexer.cpp"
     COMPILE_FLAGS
-        "--header-file=${CMAKE_CURRENT_BINARY_DIR}/cqasm-lexer.hpp"
+        "--header-file=${CMAKE_CURRENT_BINARY_DIR}/cqasm-lexer.hpp ${flex_win_compat}"
 )
 
 # Generate the parser.
@@ -144,7 +149,11 @@ target_include_directories(
 )
 
 # Enable all warnings and treat them as errors when compiling libcqasm.
-set_target_properties(cqasm_objlib PROPERTIES COMPILE_FLAGS "-Wall -Wextra")
+if(MSVC)
+    #set_target_properties(cqasm_objlib PROPERTIES COMPILE_FLAGS "/Wall")
+else()
+    set_target_properties(cqasm_objlib PROPERTIES COMPILE_FLAGS "-Wall -Wextra")
+endif()
 
 # Always compiled with -fPIC, otherwise some weirdness happens with pthreads or
 # something when linking statically.

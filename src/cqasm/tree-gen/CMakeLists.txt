@@ -1,12 +1,17 @@
 cmake_minimum_required(VERSION 2.8.11 FATAL_ERROR)
 
 # Generate the lexer.
+if(WIN32)
+    set(flex_win_compat --wincompat)
+else()
+    set(flex_win_compat)
+endif()
 flex_target(
     tree-gen-lexer
     "${CMAKE_CURRENT_SOURCE_DIR}/lexer.l"
     "${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp"
     COMPILE_FLAGS
-        "--header-file=${CMAKE_CURRENT_BINARY_DIR}/lexer.hpp"
+        "--header-file=${CMAKE_CURRENT_BINARY_DIR}/lexer.hpp ${flex_win_compat}"
 )
 
 # Generate the parser.
