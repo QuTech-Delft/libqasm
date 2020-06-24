@@ -14,19 +14,29 @@ libqasm_dir = os.path.join(src_dir, "libQasm")
 platforms = {
     'unix': {
         'make_command': 'make',
+        'test_command': 'make test',
         'cmake_options': '',
         'clib_name': '_libQasm.so',
         'liblexgram': 'liblexgram.so'
     },
     'darwin': {
         'make_command': 'make',
+        'test_command': 'make test',
         'cmake_options': '',
         'clib_name': '_libQasm.so',
         'liblexgram': 'liblexgram.dylib'
     },
-    'win32': {
+    'win32-mingw': {
         'make_command': 'mingw32-make',
+        'test_command': 'mingw32-make test',
         'cmake_options': '-G "MinGW Makefiles"',
+        'clib_name': '_libQasm.pyd',
+        'liblexgram': 'liblexgram.dll'
+    },
+    'win32-msvc': {
+        'make_command': 'cmake --build .',
+        'test_command': 'cmake --build . --target RUN_TESTS',
+        'cmake_options': '',
         'clib_name': '_libQasm.pyd',
         'liblexgram': 'liblexgram.dll'
     }
@@ -41,8 +51,14 @@ def determine_platform() -> Dict[str, str]:
     """
     if platform == "linux" or platform == "linux2":
         return platforms['unix']
-    elif platform == "darwin" or platform == "win32":
-        return platforms[platform]
+    elif platform == "darwin":
+        return platforms["darwin"]
+    elif platform == "win32":
+        try:
+            execute_process("cl")
+            return platforms["win32-msvc"]
+        except RuntimeError:
+            return platforms["win32-mingw"]
     else:
         raise OSError('Platform not recognised!')
 
@@ -57,18 +73,19 @@ def create_directory(directory: str) -> None:
         os.makedirs(directory)
 
 
-def build_libqasm_library(make_command: str, cmake_options: str) -> None:
+def build_libqasm_library(make_command: str, test_command: str, cmake_options: str) -> None:
     """Call cmake and make to build the c++ libraries.
 
     Args:
-        make_command: the make command to use, varies between windows and unix.
+        make_command: the command used to build.
+        test_command: the command used to run the tests.
         cmake_options: additional build options to pass to cmake.
     """
     os.chdir(build_dir)
     execute_process(f'git submodule update --init --recursive')
     execute_process(f'cmake {cmake_options} {os.path.join("..", "library")}')
     execute_process(f'{make_command}')
-    execute_process(f'{make_command} test')
+    execute_process(f'{test_command}')
     os.chdir(root_dir)
 
 
@@ -80,6 +97,8 @@ def execute_process(command: str) -> None:
     """
     proc = subprocess.Popen(command, shell=True)
     proc.communicate()
+    if proc.returncode:
+        raise RuntimeError('process failed')
 
 
 def create_init_file() -> None:
@@ -113,7 +132,7 @@ def build_libqasm():
     for directory in [libqasm_dir, build_dir]:
         create_directory(directory)
 
-    build_libqasm_library(sys_platform['make_command'], sys_platform['cmake_options'])
+    build_libqasm_library(sys_platform['make_command'], sys_platform['test_command'], sys_platform['cmake_options'])
     clibname = sys_platform['clib_name']
 
     create_init_file()

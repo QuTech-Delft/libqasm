@@ -142,9 +142,10 @@ namespace compiler
 
             int checkQubitListLength(const compiler::Qubits& qubits1,
                                      const compiler::Qubits& qubits2,
-                                     int linenumber __attribute__((unused))) const
+                                     int linenumber) const
             // This function ensures that the lengths of the qubit lists are the same for the different pairs involved in the operation
             {
+                (void)linenumber;
                 int retnum = 1;
                 if (qubits1.getSelectedQubits().getIndices().size() ==
                      qubits2.getSelectedQubits().getIndices().size())
@@ -174,8 +175,10 @@ namespace compiler
                 return checkQubitList(op.getQubitsInvolved(), linenumber);
             }
 
-            int checkWaitDisplayNot(const compiler::Operation& op __attribute__((unused)), int linenumber __attribute__((unused))) const
+            int checkWaitDisplayNot(const compiler::Operation& op, int linenumber) const
             {
+                (void)op;
+                (void)linenumber;
                 return 0;
             }
 
@@ -189,8 +192,10 @@ namespace compiler
                 return result;
             }
 
-            int checkMeasureAll(const compiler::Operation& op __attribute__((unused)), int linenumber __attribute__((unused))) const
+            int checkMeasureAll(const compiler::Operation& op, int linenumber) const
             {
+                (void)op;
+                (void)linenumber;
                 return 0;
             }
 

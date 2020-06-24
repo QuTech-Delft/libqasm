@@ -1,5 +1,11 @@
 /** This test is for a bare minimum qasm file **/
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+
+// [[noreturn]] completely breaks MSVC 2015, and is basically unnecessary
+#ifdef _MSC_VER
+#define DOCTEST_NORETURN
+#endif
+
 #include <iostream>
 #include <vector>
 #include <string>

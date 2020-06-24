@@ -18,6 +18,11 @@ option(
     OFF
 )
 
+# Windows weirdness: need a .lib file to link against a DLL at compile-time
+# (I think), but only the .dll is generated when there are no exported symbols.
+# This sort of fixes that (https://stackoverflow.com/questions/1941443)
+SET(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
 # Require C++11 compiler support.
 if(CMAKE_VERSION VERSION_LESS "3.1")
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")

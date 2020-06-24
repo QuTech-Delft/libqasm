@@ -32,6 +32,11 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 # Include the new library.
 ADD_SUBDIRECTORY(../cqasm cqasm)
 
+# Windows weirdness: need a .lib file to link against a DLL at compile-time
+# (I think), but only the .dll is generated when there are no exported symbols.
+# This sort of fixes that (https://stackoverflow.com/questions/1941443)
+SET(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
 # NOTE: for compatibility purposes, the cqasm library is essentially renamed to
 # lexgram/lexgramstatic here.
 ADD_LIBRARY(lexgram SHARED $<TARGET_OBJECTS:cqasm_objlib>)
@@ -47,7 +52,11 @@ SET_PROPERTY(TARGET lexgramstatic PROPERTY CXX_STANDARD 11)
 
 ## Start of testing
 INCLUDE_DIRECTORIES (${CMAKE_CURRENT_SOURCE_DIR}/../tests/cpp/doctest)
-ADD_COMPILE_OPTIONS(-std=c++11 -Wall -Wextra)
+IF(MSVC)
+    ADD_COMPILE_OPTIONS(/std=c++11)
+ELSE()
+    ADD_COMPILE_OPTIONS(-std=c++11 -Wall -Wextra)
+ENDIF()
 # Keep test files in a separate source directory called test
 FILE(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ../tests/cpp/*.cpp)
 
