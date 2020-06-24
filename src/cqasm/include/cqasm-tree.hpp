@@ -44,6 +44,11 @@
 #include <functional>
 #include "cqasm-annotatable.hpp"
 
+// ssize_t is not defined on Windows, so we replace it with a long long.
+#ifdef _WIN32
+#define ssize_t long long
+#endif
+
 namespace cqasm {
 namespace tree {
 

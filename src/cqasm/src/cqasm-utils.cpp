@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cctype>
 #include "cqasm-utils.hpp"
 
 namespace cqasm {

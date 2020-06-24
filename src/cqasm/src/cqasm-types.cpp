@@ -1,3 +1,4 @@
+#include <cctype>
 #include "cqasm-types.hpp"
 
 namespace cqasm {

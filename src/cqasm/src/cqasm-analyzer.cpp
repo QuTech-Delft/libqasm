@@ -1,4 +1,7 @@
+#define _USE_MATH_DEFINES
 #include <unordered_set>
+#include <cctype>
+#include <cmath>
 #include "cqasm-analyzer.hpp"
 #include "cqasm-parse-helper.hpp"
 #include "cqasm-utils.hpp"
