@@ -1,0 +1,75 @@
+# Files to output to.
+source "cqasm-types-gen.cpp"
+header "cqasm-types-gen.hpp"
+
+# Include tree base classes.
+include "cqasm-tree.hpp"
+tree_namespace cqasm::tree
+
+# Include primitive types.
+include "cqasm-primitives.hpp"
+
+# Namespace declarations for the type and value nodes.
+namespace cqasm
+namespace types
+
+type_base {
+
+    # Whether a value of this type can be assigned (true), or can only be read
+    # (false). For constraints, whether the value must be assignable (true), or
+    # only has to be read. In C++ terminology, true = lvalue, false = rvalue
+    # (more or less).
+    assignable: cqasm::primitives::Bool;
+
+    # Type of one or more qubit references.
+    qubit {}
+
+    # Type of a boolean/bit.
+    bool {}
+
+    # Type of an axis (x, y, or z).
+    axis {}
+
+    # Type of an integer (signed 64-bit).
+    int {}
+
+    # Type of a real number (IEEE double).
+    real {}
+
+    # Type of a complex number (2x IEEE double).
+    complex {}
+
+    # Type of a real matrix. Also used for one-dimensional arrays and vectors.
+    real_matrix {
+
+        # Number of rows. Negative indicates that the value is unconstrained.
+        # Must be one or more otherwise.
+        num_rows: cqasm::primitives::Int;
+
+        # Number of columns. Negative indicates that the value is
+        # unconstrained. Can be zero, unlike num_rows.
+        num_cols: cqasm::primitives::Int;
+
+    }
+
+    # Type of a complex matrix. Also used for one-dimensional arrays and
+    # vectors.
+    complex_matrix {
+
+        # Number of rows. Negative indicates that the value is unconstrained.
+        # Must be one or more otherwise.
+        num_rows: cqasm::primitives::Int;
+
+        # Number of columns. Negative indicates that the value is
+        # unconstrained. Can be zero, unlike num_rows.
+        num_cols: cqasm::primitives::Int;
+
+    }
+
+    # Type of an arbitrary string.
+    string {}
+
+    # Type of a JSON string.
+    json {}
+
+}

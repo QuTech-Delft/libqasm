@@ -1,0 +1,143 @@
+# Files to output to.
+source "cqasm-semantic-gen.cpp"
+header "cqasm-semantic-gen.hpp"
+
+# Include tree base classes.
+include "cqasm-tree.hpp"
+tree_namespace cqasm::tree
+
+# Include primitive types.
+include "cqasm-primitives.hpp"
+include "cqasm-values.hpp"
+include "cqasm-error-model.hpp"
+include "cqasm-instruction.hpp"
+
+# Include SourceLocation annotation object for the debug dump generator.
+src_include "cqasm-parse-helper.hpp"
+location cqasm::parser::SourceLocation
+
+# Namespace declarations for the type and value nodes.
+namespace cqasm
+namespace semantic
+
+# Represents an annotation.
+annotation_data {
+
+    # The interface this annotation is intended for. If a target doesn't
+    # support an interface, it should silently ignore the annotation.
+    interface: cqasm::primitives::Str;
+
+    # The operation within the interface that this annotation is intended for.
+    # If a supports the corresponding interface but not the operation, it
+    # should throw an error.
+    operation: cqasm::primitives::Str;
+
+    # Any operands attached to the annotation.
+    operands: external Any<cqasm::values::Node>;
+
+}
+
+# Represents a node that carries annotation data.
+annotated {
+
+    # Zero or more annotations attached to this object.
+    annotations: Any<annotation_data>;
+
+    # Error model information.
+    error_model {
+
+        # Error model type as registered through the API.
+        model: cqasm::error_model::ErrorModelRef;
+
+        # Name as it appears in the cQASM file.
+        name: cqasm::primitives::Str;
+
+        # Error model parameters.
+        parameters: external Any<cqasm::values::Node>;
+
+    }
+
+    # An instruction (a.k.a. gate).
+    instruction {
+
+        # Instruction type as registered through the API.
+        instruction: cqasm::instruction::InstructionRef;
+
+        # Name as it appears in the cQASM file.
+        name: cqasm::primitives::Str;
+
+        # Condition (c- notation). When there is no condition, this is a
+        # constant boolean set to true.
+        condition: external One<cqasm::values::Node>;
+
+        # Operands for the instruction.
+        operands: external Any<cqasm::values::Node>;
+
+    }
+
+    # A bundle of instructions, to be executed in parallel.
+    bundle {
+
+        # The list of parallel instructions.
+        items: Many<instruction>;
+
+    }
+
+    # A subcircuit. That is, a named collection of bundles, possibly repeated a
+    # number of times.
+    subcircuit {
+
+        # The name of the subcircuit. If the file doesn't start with a subcircuit
+        # definition, this is empty for the first subcircuit.
+        name: cqasm::primitives::Str;
+
+        # An optional integer expression representing the number of
+        # iterations for this subcircuit. This is 1 when the iteration count is
+        # not specified.
+        iterations: cqasm::primitives::Int;
+
+        # The instruction bundles contained by this subcircuit.
+        bundles: Any<bundle>;
+
+    }
+
+    # A mappings. That is, a user-defined identifier mapping to some value.
+    mapping {
+
+        # The name of the mapping.
+        name: cqasm::primitives::Str;
+
+        # The value it maps to.
+        value: external One<cqasm::values::Node>;
+
+    }
+
+}
+
+# The file version identifier.
+version {
+
+    # The list of version components, ordered major to minor.
+    items: cqasm::primitives::Version;
+
+}
+
+# A complete program.
+program {
+
+    # File version.
+    version: One<version>;
+
+    # The required qubit register size.
+    num_qubits: cqasm::primitives::Int;
+
+    # Error model information.
+    error_model: Maybe<error_model>;
+
+    # The list of subcircuit.
+    subcircuits: Any<subcircuit>;
+
+    # The list of all user-defined mappings after parsing.
+    mappings: Any<mapping>;
+
+}

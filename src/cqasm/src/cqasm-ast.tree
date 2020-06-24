@@ -1,0 +1,303 @@
+# Files to output to.
+source "cqasm-ast-gen.cpp"
+header "cqasm-ast-gen.hpp"
+
+# Include tree base classes.
+include "cqasm-tree.hpp"
+tree_namespace cqasm::tree
+
+# Include primitive types.
+include "cqasm-primitives.hpp"
+
+# Include SourceLocation annotation object for the debug dump generator.
+src_include "cqasm-parse-helper.hpp"
+location cqasm::parser::SourceLocation
+
+# Namespace declarations for the AST nodes.
+namespace cqasm
+namespace ast
+
+# Any kind of expression.
+expression {
+
+    # An integer literal.
+    integer_literal {
+
+        # The integer.
+        value: cqasm::primitives::Int;
+
+    }
+
+    # A floating point literal.
+    float_literal {
+
+        # The floating point number.
+        value: cqasm::primitives::Real;
+
+    }
+
+    # An identifier.
+    identifier {
+
+        # The identifier.
+        name: cqasm::primitives::Str;
+
+    }
+
+    # Represents a matrix literal. An empty matrix is defined to have one row
+    # with zero elements. Arrays are represented as a matrix with one row.
+    # Row vs column vectors are different by syntax, depending on whether
+    # comma separation vs newline/semicolon is respectively used. While the
+    # AST allows a different number of elements for each row, this is illegal;
+    # it is caught at parse-time.
+    matrix_literal {
+
+        # The list of rows in the matrix.
+        rows: Many<expression_list>;
+
+    }
+
+    # Represents a string literal.
+    string_literal {
+
+        # The string literal.
+        value: cqasm::primitives::Str;
+
+    }
+
+    # Represents a JSON literal.
+    json_literal {
+
+        # The JSON literal.
+        value: cqasm::primitives::Str;
+
+    }
+
+    # A function call.
+    function_call {
+
+        # The name of the function.
+        name: One<identifier>;
+
+        # The function arguments.
+        arguments: One<expression_list>;
+
+    }
+
+    # Indexation operator.
+    index {
+
+        # The expression being indexed.
+        expr: One<expression>;
+
+        # The list of indices.
+        indices: One<index_list>;
+
+    }
+
+    # Any unary operator.
+    unary_op {
+
+        # The expression being operated on.
+        expr: One<expression>;
+
+        # Negation operator.
+        negate {}
+
+    }
+
+    # Any binary operator.
+    binary_op {
+
+        # The left-hand side of the expression.
+        lhs: One<expression>;
+
+        # The right-hand side of the expression.
+        rhs: One<expression>;
+
+        # Exponentiation operator.
+        power {}
+
+        # Multiplication operator.
+        multiply {}
+
+        # Division operator.
+        divide {}
+
+        # Addition operator.
+        add {}
+
+        # Subtraction operator.
+        subtract {}
+
+    }
+
+    # Placeholder for an expression with a parse error.
+    erroneous_expression {
+        error;
+    }
+
+}
+
+# Represents a comma-separated list of expressions.
+expression_list {
+
+    # The list of expressions.
+    items: Any<expression>;
+
+}
+
+# An entry in an index list. Can be a single index or a range.
+index_entry {
+
+    # A single index in an index list.
+    index_item {
+
+        # An integer expression representing the index.
+        index: One<expression>;
+
+    }
+
+    # An inclusive range of indices in an index list.
+    index_range {
+
+        # An integer expression representing the first index.
+        first: One<expression>;
+
+        # An integer expression representing the last index.
+        last: One<expression>;
+
+    }
+
+}
+
+# A list of one or more indices.
+index_list {
+
+    # The list of indices.
+    items: Many<index_entry>;
+
+}
+
+# Represents an annotation.
+annotation_data {
+
+    # The interface this annotation is intended for. If a target doesn't
+    # support an interface, it should silently ignore the annotation.
+    interface: One<identifier>;
+
+    # The operation within the interface that this annotation is intended for.
+    # If a supports the corresponding interface but not the operation, it
+    # should throw an error.
+    operation: One<identifier>;
+
+    # Any operands attached to the annotation.
+    operands: One<expression_list>;
+
+}
+
+# Represents a node that carries annotation data.
+annotated {
+
+    # Zero or more annotations attached to this object.
+    annotations: Any<annotation_data>;
+
+    # Any kind of instruction. Note that this is NOT a statement; instructions
+    # are always considered part of a parallel bundle, even if they're on their
+    # own.
+    instruction {
+
+        # Name identifying the instruction.
+        name: One<identifier>;
+
+        # Optional conditional expression.
+        condition: Maybe<expression>;
+
+        # Operands for the instruction.
+        operands: One<expression_list>;
+
+    }
+
+    # Any kind of statement.
+    statement {
+
+        # A list of parallel instructions.
+        bundle {
+
+            # The list of parallel instructions.
+            items: Many<instruction>;
+
+        }
+
+        # A mapping (alias) for an expression. Originally just a way of naming
+        # a single qubit.
+        mapping {
+
+            # The identifier used to refer to the expression.
+            alias: One<identifier>;
+
+            # The aliased expression.
+            expr: One<expression>;
+
+        }
+
+        # A subcircuit header.
+        subcircuit {
+
+            # The name of the subcircuit.
+            name: One<identifier>;
+
+            # An optional integer expression representing the number of
+            # iterations for this subcircuit.
+            iterations: Maybe<expression>;
+
+        }
+
+        # Placeholder for a statement with a parse error.
+        erroneous_statement {
+            error;
+        }
+
+    }
+
+}
+
+# A list of statements.
+statement_list {
+
+    # The list of statements.
+    items: Any<statement>;
+
+}
+
+# The file version identifier.
+version {
+
+    # The list of version components, ordered major to minor.
+    items: cqasm::primitives::Version;
+
+}
+
+# Any root node for the AST.
+root {
+
+    # A complete program.
+    program {
+
+        # File version.
+        version: One<version>;
+
+        # Integer expression indicating the number of qubits.
+        num_qubits: One<expression>;
+
+        # The statement list.
+        statements: One<statement_list>;
+
+    }
+
+    # Placeholder for a program with a parse error.
+    erroneous_program {
+        error;
+    }
+
+}

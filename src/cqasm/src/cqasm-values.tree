@@ -1,0 +1,119 @@
+# Files to output to.
+source "cqasm-values-gen.cpp"
+header "cqasm-values-gen.hpp"
+
+# Include tree base classes.
+include "cqasm-tree.hpp"
+tree_namespace cqasm::tree
+
+# Include primitive types.
+include "cqasm-primitives.hpp"
+
+# Include SourceLocation annotation object for the debug dump generator.
+src_include "cqasm-parse-helper.hpp"
+location cqasm::parser::SourceLocation
+
+# Namespace declarations for the type and value nodes.
+namespace cqasm
+namespace values
+
+# Represents a constant value.
+constant {
+
+    # Represents a value of type bool.
+    const_bool {
+
+        # The contained value.
+        value: cqasm::primitives::Bool;
+
+    }
+
+    # Represents an axis value (x, y, or z).
+    const_axis {
+
+        # The contained value.
+        value: cqasm::primitives::Axis;
+
+    }
+
+    # Represents a value of type int.
+    const_int {
+
+        # The contained value.
+        value: cqasm::primitives::Int;
+
+    }
+
+    # Represents a value of type real.
+    const_real {
+
+        # The contained value.
+        value: cqasm::primitives::Real;
+
+    }
+
+    # Represents a value of type complex.
+    const_complex {
+
+        # The contained value.
+        value: cqasm::primitives::Complex;
+
+    }
+
+    # Represents a value of type real_matrix.
+    const_real_matrix {
+
+        # The contained value.
+        value: cqasm::primitives::RMatrix;
+
+    }
+
+    # Represents a value of type complex_matrix.
+    const_complex_matrix {
+
+        # The contained value.
+        value: cqasm::primitives::CMatrix;
+
+    }
+
+    # Represents a value of type string.
+    const_string {
+
+        # The contained value.
+        value: cqasm::primitives::Str;
+
+    }
+
+    # Represents a value of type json.
+    const_json {
+
+        # The contained value.
+        value: cqasm::primitives::Str;
+
+    }
+
+}
+
+# Represents a reference to a value only known at runtime.
+reference {
+
+    # Represents a qubit, or a set of qubits for single-gate-multiple-qubit
+    # notation. The indices must not repeat.
+    qubit_refs {
+
+        # Set of qubit indices referred to, starting at 0.
+        index: Many<const_int>;
+
+    }
+
+    # Represents a measurement bit, or a number of measurement bits for
+    # conditional gates with multiple conditions. When there are multiple,
+    # the conditions are all AND'ed together.
+    bit_refs {
+
+        # The qubit index that this is a measurement bit for, starting at 0.
+        index: Many<const_int>;
+
+    }
+
+}
