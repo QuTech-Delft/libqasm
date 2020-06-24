@@ -57,6 +57,7 @@ namespace tree {
  */
 class Completable {
 public:
+    virtual ~Completable() = default;
 
     /**
      * Returns whether this object is complete/fully defined.
