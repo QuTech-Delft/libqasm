@@ -8,8 +8,6 @@
 * gcc and g++ capable of C++11 standard
 * MinGW (For Windows builds)
 * doctest (As a git submodule)
-
-### If python module is required
 * Python3 (Tested on Python v3.6)
 * Swig
     * Linux: 3.0.12
