@@ -1,0 +1,11 @@
+version 1.0
+qubits 10
+
+display @test.test({|
+{
+    "a": [{"b": "c"}],
+    "d": "}",
+    "e": "\"\\",
+    "f": "\\\"",
+}
+})

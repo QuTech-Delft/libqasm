@@ -174,5 +174,5 @@ target_link_libraries(cqasm PUBLIC $<TARGET_PROPERTY:cqasm_objlib,LINK_LIBRARIES
 if(BUILD_TESTS)
     include(cmake/googletest.cmake)
     enable_testing()
-    add_subdirectory(test)
+    add_subdirectory(tests)
 endif()

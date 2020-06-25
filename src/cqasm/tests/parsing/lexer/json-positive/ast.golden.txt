@@ -1,0 +1,68 @@
+SUCCESS
+Program( # input.cq:1:1..12
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: <
+    IntegerLiteral( # input.cq:2:8..10
+      value: 10
+    )
+  >
+  statements: <
+    StatementList( # input.cq:4:1..11:4
+      items: [
+        Bundle( # input.cq:4:1..11:4
+          items: [
+            Instruction( # input.cq:4:1..11:8
+              name: <
+                Identifier( # input.cq:4:1..8
+                  name: display
+                )
+              >
+              condition: -
+              operands: <
+                ExpressionList(
+                  items: []
+                )
+              >
+              annotations: [
+                AnnotationData( # input.cq:4:10..11:19
+                  interface: <
+                    Identifier( # input.cq:4:10..14
+                      name: test
+                    )
+                  >
+                  operation: <
+                    Identifier( # input.cq:4:15..19
+                      name: test
+                    )
+                  >
+                  operands: <
+                    ExpressionList( # input.cq:4:20..11
+                      items: [
+                        JsonLiteral( # input.cq:4:20..11
+                          value: 
+{
+    "a": [{"b": "c"}],
+    "d": "|}",
+    "e": "\"\\|}",
+    "f": "\\\"|}",
+}
+
+                        )
+                      ]
+                    )
+                  >
+                )
+              ]
+            )
+          ]
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

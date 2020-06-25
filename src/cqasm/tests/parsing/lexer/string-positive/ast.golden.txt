@@ -1,0 +1,78 @@
+SUCCESS
+Program( # input.cq:1:1..6
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: <
+    IntegerLiteral( # input.cq:2:8..10
+      value: 10
+    )
+  >
+  statements: <
+    StatementList( # input.cq:4:1..5:11
+      items: [
+        Bundle( # input.cq:4:1..5:11
+          items: [
+            Instruction( # input.cq:4:1..5:11
+              name: <
+                Identifier( # input.cq:4:1..8
+                  name: display
+                )
+              >
+              condition: -
+              operands: <
+                ExpressionList(
+                  items: []
+                )
+              >
+              annotations: [
+                AnnotationData( # input.cq:4:10..5:19
+                  interface: <
+                    Identifier( # input.cq:4:10..14
+                      name: test
+                    )
+                  >
+                  operation: <
+                    Identifier( # input.cq:4:15..19
+                      name: test
+                    )
+                  >
+                  operands: <
+                    ExpressionList( # input.cq:4:20..5:46
+                      items: [
+                        StringLiteral( # input.cq:4:20..26
+                          value: test
+                        )
+                        StringLiteral( # input.cq:4:28..30
+                          value: 
+                        )
+                        StringLiteral( # input.cq:4:32..38
+                          value: "\
+                        )
+                        StringLiteral( # input.cq:4:40..46
+                          value: \"
+                        )
+                        StringLiteral( # input.cq:4:48..5
+                          value: 	
+'"\
+
+                        )
+                        StringLiteral( # input.cq:5:4..10
+                          value: test
+                        )
+                      ]
+                    )
+                  >
+                )
+              ]
+            )
+          ]
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+
