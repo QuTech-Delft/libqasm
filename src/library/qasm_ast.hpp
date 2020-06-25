@@ -649,8 +649,8 @@ namespace compiler
                 // Make sure they are all lowercase
                 std::transform(name_key.begin(), name_key.end(), name_key.begin(), ::tolower);
 
-                if (mappings_.find(name_key)->second.second == isQubit &&
-                    mappings_.find(name_key) != mappings_.end() )
+                if (mappings_.find(name_key) != mappings_.end() &&
+                    mappings_.find(name_key)->second.second == isQubit)
                     return mappings_.find(name_key)->second.first;
                 else
                     throw std::runtime_error(std::string("Could not get wanted mapping ") +
