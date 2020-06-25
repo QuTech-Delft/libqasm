@@ -34,6 +34,7 @@
 %x MODE_STRING
 %x MODE_JSON
 %x MODE_JSON_STRING
+%x MODE_UNEXPECTED_EOF
 
 %%
 
@@ -65,7 +66,7 @@
 "*/"                                                BEGIN(INITIAL); DELETE;
 (\n|\r\n?)                                          LOCATION_LINE; DELETE;
 .                                                   DELETE;
-<<EOF>>                                             WITHOUT_STR(UNEXPECTED_EOF);
+<<EOF>>                                             BEGIN(MODE_UNEXPECTED_EOF); WITHOUT_STR(END_OF_FILE);
 }
 <INITIAL>{
 
@@ -136,7 +137,7 @@
 [\\](\n|\r\n?)                                      LOCATION_LINE; DELETE;
 (\n|\r\n?)                                          LOCATION_LINE; WITH_STR(STRBUILD_APPEND);
 .                                                   WITH_STR(STRBUILD_APPEND);
-<<EOF>>                                             WITHOUT_STR(UNEXPECTED_EOF);
+<<EOF>>                                             BEGIN(MODE_UNEXPECTED_EOF); WITHOUT_STR(END_OF_FILE);
 }
 <INITIAL>{
 
@@ -152,14 +153,14 @@
 ["]                                                 BEGIN(MODE_JSON_STRING); WITH_STR(STRBUILD_APPEND);
 (\n|\r\n?)                                          LOCATION_LINE; WITH_STR(STRBUILD_APPEND);
 .                                                   WITH_STR(STRBUILD_APPEND);
-<<EOF>>                                             WITHOUT_STR(UNEXPECTED_EOF);
+<<EOF>>                                             BEGIN(MODE_UNEXPECTED_EOF); WITHOUT_STR(END_OF_FILE);
 }
 <MODE_JSON_STRING>{
 ["]                                                 BEGIN(MODE_JSON); WITH_STR(STRBUILD_APPEND);
 [\\].                                               WITH_STR(STRBUILD_APPEND);
 (\n|\r\n?)                                          LOCATION_LINE; WITH_STR(STRBUILD_APPEND);
 .                                                   WITH_STR(STRBUILD_APPEND);
-<<EOF>>                                             WITHOUT_STR(UNEXPECTED_EOF);
+<<EOF>>                                             BEGIN(MODE_UNEXPECTED_EOF); WITHOUT_STR(END_OF_FILE);
 }
 <INITIAL>{
 
@@ -187,4 +188,6 @@
 .                                                   WITHOUT_STR(BAD_CHARACTER);
 
 
+}
+<MODE_UNEXPECTED_EOF>{
 }

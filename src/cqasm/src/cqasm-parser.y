@@ -137,7 +137,7 @@
 %token POWER
 
 /* Error marker tokens */
-%token BAD_CHARACTER UNEXPECTED_EOF
+%token BAD_CHARACTER END_OF_FILE
 
 /* Associativity rules for static expressions. The lowest precedence level
 comes first. NOTE: expression precedence must match the values in
