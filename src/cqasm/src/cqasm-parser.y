@@ -263,7 +263,7 @@ IndexList       : IndexList ',' IndexEntry                                      
                 ;
 
 /* The information caried by an annotation or pragma statement. */
-AnnotationName  : Identifier '.' Identifier                                     { NEW($$, AnnotationData); $$->interface.set_raw($1); $$->operation.set_raw($1); }
+AnnotationName  : Identifier '.' Identifier                                     { NEW($$, AnnotationData); $$->interface.set_raw($1); $$->operation.set_raw($3); }
                 ;
 
 AnnotationData  : AnnotationName                                                { FROM($$, $1); $$->operands.set_raw(new ExpressionList()); }
