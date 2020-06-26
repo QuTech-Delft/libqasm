@@ -53,7 +53,7 @@ Invoke-BatchFile "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\
 
 ## Installation
 
-### As a standalone C++ library
+### As a standalone C++ library (Linux or MacOS)
 In order to install (assuming the present working directory is at **./src**):
 ```
 git submodule update --init --recursive
