@@ -138,7 +138,7 @@ static void generate_base_class(
     header << "    virtual NodeType type() const = 0;" << std::endl << std::endl;
 
     format_doc(header, "Returns a copy of this node.", "    ");
-    header << "    virtual std::shared_ptr<Node> clone() const = 0;" << std::endl << std::endl;
+    header << "    virtual One<Node> clone() const = 0;" << std::endl << std::endl;
 
     format_doc(header, "Equality operator. Ignores annotations!", "    ");
     header << "    virtual bool operator==(const Node& rhs) const = 0;" << std::endl << std::endl;
@@ -326,11 +326,11 @@ static void generate_node_class(
     if (node.derived.empty()) {
         auto doc = "Returns a copy of this node.";
         format_doc(header, doc, "    ");
-        header << "    std::shared_ptr<Node> clone() const override;" << std::endl << std::endl;
+        header << "    One<Node> clone() const override;" << std::endl << std::endl;
         format_doc(source, doc);
-        source << "std::shared_ptr<Node> " << node.title_case_name;
+        source << "One<Node> " << node.title_case_name;
         source << "::clone() const {" << std::endl;
-        source << "    return std::make_shared<" << node.title_case_name << ">(*this);" << std::endl;
+        source << "    return tree::make<" << node.title_case_name << ">(*this);" << std::endl;
         source << "}" << std::endl << std::endl;
     }
 
@@ -678,7 +678,7 @@ int main(
 
     // Figure out which types we need.
     bool uses_maybe = false;
-    bool uses_one = false;
+    bool uses_one = true; // clone() uses it now
     bool uses_any = false;
     bool uses_many = false;
     for (auto &node : nodes) {

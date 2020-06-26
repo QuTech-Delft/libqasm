@@ -84,6 +84,7 @@
 }
 <MODE_VERSION>{
 (\n|\r\n?)                                          LOCATION_LINE; BEGIN(INITIAL); WITHOUT_STR(NEWLINE);
+;                                                   BEGIN(INITIAL); WITHOUT_STR(NEWLINE);
 [ \t]+                                              DELETE;
 [0-9]+                                              WITH_STR(INT_LITERAL);
 \.                                                  OPERATOR;

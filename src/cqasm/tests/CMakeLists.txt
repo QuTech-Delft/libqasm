@@ -6,3 +6,11 @@ add_test(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMAND test-parsing
 )
+
+add_executable(tutorial tutorial.cpp)
+target_link_libraries(tutorial gtest_main cqasm)
+add_test(
+    NAME tutorial
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMAND tutorial
+)

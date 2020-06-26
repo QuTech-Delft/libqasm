@@ -11,6 +11,22 @@ namespace cqasm {
 namespace analyzer {
 
 /**
+ * "Unwraps" the result (as you would in Rust) to get the program node or
+ * an exception. The exception is always an AnalysisFailed, deriving from
+ * std::runtime_error. The actual error messages are in this case first
+ * written to the given output stream, defaulting to stderr.
+ */
+ast::One<semantic::Program> AnalysisResult::unwrap(std::ostream &out) const {
+    if (errors.empty()) {
+        return root;
+    }
+    for (const auto &error : errors) {
+        out << error << std::endl;
+    }
+    throw AnalysisFailed();
+}
+
+/**
  * Creates a new semantic analyzer.
  */
 Analyzer::Analyzer() : resolve_instructions(false), resolve_error_model(false) {
@@ -285,6 +301,43 @@ AnalysisResult Analyzer::analyze(const ast::Program &ast) const {
         throw std::runtime_error("internal error: no semantic errors returned, but semantic tree is incomplete. Tree was dumped.");
     }
     return result;
+}
+
+/**
+ * Analyzes the given parse result. If there are parse errors, they are copied
+ * into the AnalysisResult error list, and the root node will be empty.
+ */
+AnalysisResult Analyzer::analyze(const parser::ParseResult &parse_result) const {
+    if (!parse_result.errors.empty()) {
+        AnalysisResult result;
+        result.errors = parse_result.errors;
+        return result;
+    } else {
+        return analyze(*parse_result.root->as_program());
+    }
+}
+
+/**
+ * Parses and analyzes the given file.
+ */
+AnalysisResult Analyzer::analyze(const std::string &filename) const {
+    return analyze(parser::parse_file(filename));
+}
+
+/**
+ * Parses and analyzes the given file pointer. The optional filename
+ * argument will be used only for error messages.
+ */
+AnalysisResult Analyzer::analyze(FILE *file, const std::string &filename) const {
+    return analyze(parser::parse_file(file, filename));
+}
+
+/**
+ * Parses and analyzes the given string. The optional filename argument
+ * will be used only for error messages.
+ */
+AnalysisResult Analyzer::analyze_string(const std::string &data, const std::string &filename) const {
+    return analyze(parser::parse_string(data, filename));
 }
 
 /**

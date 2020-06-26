@@ -5,4 +5,36 @@
 
 namespace cqasm {
 
-}
+/**
+ * Parses and analyzes the given file with the default analyzer, dumping error
+ * messages to stderr and throwing an analyzer::AnalysisFailed on failure.
+ */
+tree::One<semantic::Program> analyze(const std::string &filename);
+
+/**
+ * Parses and analyzes the given file pointer with the default analyzer, dumping
+ * error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
+ * The optional filename is only used for error messages.
+ */
+tree::One<semantic::Program> analyze(
+    FILE *file,
+    const std::string &filename = "<unknown>"
+);
+
+/**
+ * Parses and analyzes the given string with the default analyzer, dumping
+ * error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
+ * The optional filename is only used for error messages.
+ */
+tree::One<semantic::Program> analyze_string(
+    const std::string &data,
+    const std::string &filename = "<unknown>"
+);
+
+/**
+ * Constructs an Analyzer object with the defaults for cQASM 1.0 already loaded
+ * into it.
+ */
+analyzer::Analyzer default_analyzer();
+
+} // namespace cqasm

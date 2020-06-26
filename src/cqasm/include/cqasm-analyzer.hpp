@@ -9,13 +9,26 @@ namespace cqasm {
 namespace analyzer {
 
 /**
+ * Exception thrown by AnalysisResult::unwrap() when the cQASM file fails to
+ * parse.
+ */
+class AnalysisFailed: public std::runtime_error {
+public:
+    AnalysisFailed() : std::runtime_error("cQASM analysis failed") {};
+};
+
+/**
  * Analysis result class.
  */
 class AnalysisResult {
 public:
 
     /**
-     * Root node of the semantic tree, if analysis was successful.
+     * Root node of the semantic tree, if analysis was successful. The node may
+     * be empty or incomplete if errors is nonempty; use unwrap() to ensure it's
+     * complete if you just want to use it and don't care about things like
+     * pretty-printing error messages for your users in a different way than
+     * what unwrap() does for you.
      */
     ast::One<semantic::Program> root;
 
@@ -24,6 +37,14 @@ public:
      * `errors.empty()`.
      */
     std::vector<std::string> errors;
+
+    /**
+     * "Unwraps" the result (as you would in Rust) to get the program node or
+     * an exception. The exception is always an AnalysisFailed, deriving from
+     * std::runtime_error. The actual error messages are in this case first
+     * written to the given output stream, defaulting to stderr.
+     */
+    ast::One<semantic::Program> unwrap(std::ostream &out = std::cerr) const;
 
 };
 
@@ -213,6 +234,29 @@ public:
      * Analyzes the given program AST node.
      */
     AnalysisResult analyze(const ast::Program &program) const;
+
+    /**
+     * Analyzes the given parse result. If there are parse errors, they are copied
+     * into the AnalysisResult error list, and the root node will be empty.
+     */
+    AnalysisResult analyze(const parser::ParseResult &parse_result) const;
+
+    /**
+     * Parses and analyzes the given file.
+     */
+    AnalysisResult analyze(const std::string &filename) const;
+
+    /**
+     * Parses and analyzes the given file pointer. The optional filename
+     * argument will be used only for error messages.
+     */
+    AnalysisResult analyze(FILE *file, const std::string &filename = "<unknown>") const;
+
+    /**
+     * Parses and analyzes the given string. The optional filename argument
+     * will be used only for error messages.
+     */
+    AnalysisResult analyze_string(const std::string &data, const std::string &filename = "<unknown>") const;
 
 };
 
