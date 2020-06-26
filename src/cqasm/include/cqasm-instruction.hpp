@@ -60,6 +60,13 @@ public:
     bool allow_reused_qubits;
 
     /**
+     * Whether different index sizes are allowed. This is normally false, as
+     * index lists are normally used to designate parallel instructions, and it
+     * makes no sense for the lists to mismatch in that case.
+     */
+    bool allow_different_index_sizes;
+
+    /**
      * Creates a new instruction. param_types is a shorthand type specification
      * string as parsed by cqasm::types::from_spec(). If you need more control,
      * you can also manipulate param_types directly.
@@ -68,14 +75,17 @@ public:
      * conditional with c- notation. allow_parallel specifies whether it may
      * appear bundled with other instructions. allow_reused_qubits specifies
      * whether it is legal for the instruction to use a qubit more than once in
-     * its parameter list.
+     * its parameter list. allow_different_index_sizes specifies whether it's
+     * legal to have different "index sizes" for different parameters, for
+     * instance q[1,2] in one parameter and q[1,2,3,4,5] in another.
      */
-    Instruction(
+    explicit Instruction(
         const std::string &name,
         const std::string &param_types = "",
         bool allow_conditional = true,
         bool allow_parallel = true,
-        bool allow_reused_qubits = false
+        bool allow_reused_qubits = false,
+        bool allow_different_index_sizes = false
     );
 
     /**

@@ -223,7 +223,7 @@ static void handle_parse_result(QasmRepresentation &qasm, cqasm::parser::ParseRe
     // grammar.
 #define REG(typ, ...) analyzer.register_instruction_with_annotation<ParameterType>(ParameterType::typ, __VA_ARGS__)
     REG(NoArg, "measure_all", "", false, false);
-    REG(MeasureParity, "measure_parity", "QaQa", false, false);
+    REG(MeasureParity, "measure_parity", "QaQa", false, false, false, true);
     REG(SingleQubit, "x", "Q");
     REG(SingleQubit, "y", "Q");
     REG(SingleQubit, "z", "Q");

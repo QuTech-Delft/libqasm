@@ -142,7 +142,8 @@ public:
         const std::string &param_types = "",
         bool allow_conditional = true,
         bool allow_parallel = true,
-        bool allow_reused_qubits = false
+        bool allow_reused_qubits = false,
+        bool allow_different_index_sizes = false
     );
 
     /**
@@ -157,14 +158,16 @@ public:
         const std::string &param_types = "",
         bool allow_conditional = true,
         bool allow_parallel = true,
-        bool allow_reused_qubits = false
+        bool allow_reused_qubits = false,
+        bool allow_different_index_sizes = false
     ) {
         instruction::Instruction insn {
             name,
             param_types,
             allow_conditional,
             allow_parallel,
-            allow_reused_qubits
+            allow_reused_qubits,
+            allow_different_index_sizes
         };
         insn.set_annotation<T>(std::forward<T>(annotation));
         register_instruction(insn);

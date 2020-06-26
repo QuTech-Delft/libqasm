@@ -84,10 +84,12 @@ void Analyzer::register_instruction(
     const std::string &param_types,
     bool allow_conditional,
     bool allow_parallel,
-    bool allow_reused_qubits
+    bool allow_reused_qubits,
+    bool allow_different_index_sizes
 ) {
     register_instruction(instruction::Instruction(
-        name, param_types, allow_conditional, allow_parallel, allow_reused_qubits));
+        name, param_types, allow_conditional, allow_parallel,
+        allow_reused_qubits, allow_different_index_sizes));
 }
 
 /**
@@ -575,34 +577,37 @@ tree::Maybe<semantic::Instruction> AnalyzerHelper::analyze_instruction(const ast
             }
         }
 
-        // Enforce that all qubit and bit references have the same length.
-        // Note that historically the condition is NOT split across the
-        // resulting parallel instructions but is instead copied and reduced
-        // using boolean and at runtime, so its length does NOT have to match.
-        size_t num_refs = 0;
-        const parser::SourceLocation *num_refs_loc = nullptr;
-        for (const auto &operand : operands) {
-            const tree::Many<values::ConstInt> *indices = nullptr;
-            if (auto x = operand->as_qubit_refs()) {
-                indices = &x->index;
-            } else if (auto x = operand->as_bit_refs()) {
-                indices = &x->index;
-            }
-            if (indices) {
-                if (!num_refs) {
-                    num_refs = indices->size();
-                } else if (num_refs != indices->size()) {
-                    std::ostringstream ss;
-                    ss << "the number of indices (" << indices->size() << ") ";
-                    ss << "doesn't match previously found number of indices ";
-                    ss << "(" << num_refs << ")";
-                    if (num_refs_loc) {
-                        ss << " at " << *num_refs_loc;
-                    }
-                    throw error::AnalysisError(ss.str(), &*operand);
+        // Enforce that all qubit and bit references have the same length if
+        // the instruction requires us to. Note that historically the condition
+        // is NOT split across the resulting parallel instructions but is
+        // instead copied and reduced using boolean and at runtime, so its
+        // length does NOT have to match.
+        if (!node->instruction.empty() && !node->instruction->allow_different_index_sizes) {
+            size_t num_refs = 0;
+            const parser::SourceLocation *num_refs_loc = nullptr;
+            for (const auto &operand : operands) {
+                const tree::Many<values::ConstInt> *indices = nullptr;
+                if (auto x = operand->as_qubit_refs()) {
+                    indices = &x->index;
+                } else if (auto x = operand->as_bit_refs()) {
+                    indices = &x->index;
                 }
-                if (!num_refs_loc) {
-                    num_refs_loc = operand->get_annotation_ptr<parser::SourceLocation>();
+                if (indices) {
+                    if (!num_refs) {
+                        num_refs = indices->size();
+                    } else if (num_refs != indices->size()) {
+                        std::ostringstream ss;
+                        ss << "the number of indices (" << indices->size() << ") ";
+                        ss << "doesn't match previously found number of indices ";
+                        ss << "(" << num_refs << ")";
+                        if (num_refs_loc) {
+                            ss << " at " << *num_refs_loc;
+                        }
+                        throw error::AnalysisError(ss.str(), &*operand);
+                    }
+                    if (!num_refs_loc) {
+                        num_refs_loc = operand->get_annotation_ptr<parser::SourceLocation>();
+                    }
                 }
             }
         }

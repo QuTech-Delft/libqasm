@@ -83,7 +83,7 @@ public:
             args << "r";
         }
         analyzer.register_instruction("measure_all", "", false, false);
-        analyzer.register_instruction("measure_parity", "QaQa", false, false);
+        analyzer.register_instruction("measure_parity", "QaQa", false, false, false, true);
         analyzer.register_instruction("x", "Q");
         analyzer.register_instruction("y", "Q");
         analyzer.register_instruction("z", "Q");
