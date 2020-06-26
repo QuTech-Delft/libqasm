@@ -196,6 +196,12 @@ int main(int argc, char** argv) {
             auto test_name = std::string(suite_dir_ent->d_name);
             auto test_path = suite_path + "/";
             test_path += test_name;
+            {
+                std::ifstream stream(test_path + "/input.cq");
+                if (!stream.is_open()) {
+                    continue;
+                }
+            }
             ::testing::RegisterTest(
                 suite_name.c_str(), test_name.c_str(),
                 nullptr, nullptr,
