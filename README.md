@@ -13,6 +13,40 @@
     * Linux: 3.0.12
     * Windows: 4.0.0
 
+### Windows environment using MSVC (Visual C++)
+libqasm should work with the environment described for [building OpenQL from sources on Windows](https://openql.readthedocs.io/en/latest/installation.html#notes-for-windows-users). In case that link breaks, here's a summary.
+
+Download and install the following tools. When prompted whether you want to add them to your PATH, do so.
+
+ - [git](https://gitforwindows.org/)
+ - MSVC 2015 with update 3 or above
+ - [Python 3.5+](https://www.python.org/downloads/) (make sure to get a 64-bit version!)
+ - [cmake 3.15.3](https://github.com/Kitware/CMake/releases/download/v3.15.3/cmake-3.15.3-win64-x64.msi)
+
+Download an extract the following tools, and then add the directories containing the executables to your PATH manually:
+
+ - [win_flex_bison 2.5.20](https://sourceforge.net/projects/winflexbison/files/win_flex_bison-2.5.20.zip/download)
+ - [swigwin 4.0.0](https://sourceforge.net/projects/swig/files/swigwin/swigwin-4.0.0/swigwin-4.0.0.zip/download)
+
+You should also find out where and how Python installed, and link its `include` directory and the `pythonXX.dll` file using the `PYTHON_INCLUDE` and `PYTHON_LIB` environment variables. For me, these are:
+
+ - `PYTHON_INCLUDE` -> `C:\Users\IEUser\AppData\Local\Programs\Python\Python38\include`
+ - `PYTHON_LIB` -> `C:\Users\IEUser\AppData\Local\Programs\Python\Python38\python38.dll`
+
+Next, in an *elevated* Powershell (that is, "run as administrator"), run:
+
+```
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
+Install-Module -AllowClobber -Name Pscx -RequiredVersion 3.2.2
+```
+
+Finally, whenever you open a Powershell to build, first run *ONE* of the following, depending on your MSVC version (you may need to modify version numbers as well...):
+
+```
+Invoke-BatchFile "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
+Invoke-BatchFile "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
+```
+
 ## Organization
 * The accompanying paper and BNF specification for the cQASM v1.0 are located in the **./doc** directory
 * The library itself is located in the **./src** directory
@@ -46,22 +80,9 @@ mingw32-make.exe test
 This will output `_libQasm.pyd`, `liblexgram.dll` and a static library `liblexgramstatic.a`
 
 ### As a standalone C++ library (Windows + MSVC)
-This should work with the environment described for [building OpenQL from sources on Windows](https://openql.readthedocs.io/en/latest/installation.html#notes-for-windows-users). Summarized, you need the following tools installed and registered into your user or system PATH environment variable:
-
- - [git](https://gitforwindows.org/)
- - MSVC 2015 with update 3 or above
- - [Python 3.5+](https://www.python.org/downloads/)
- - [win_flex_bison 2.5.20](https://sourceforge.net/projects/winflexbison/files/win_flex_bison-2.5.20.zip/download)
- - [cmake 3.15.3](https://github.com/Kitware/CMake/releases/download/v3.15.3/cmake-3.15.3-win64-x64.msi)
- - [swigwin 4.0.0](https://sourceforge.net/projects/swig/files/swigwin/swigwin-4.0.0/swigwin-4.0.0.zip/download)
-
-You can then run the following in powershell:
+Continuing from the Windows environment setup instructions:
 
 ```
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
-Install-Module -AllowClobber -Name Pscx -RequiredVersion 3.2.2
-Invoke-BatchFile "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
-# or equivalent of the above, depending on your version and install location of MSVC.
 git submodule update --init --recursive
 cd src
 mkdir cbuild
@@ -75,15 +96,15 @@ This was last tested using [one of these VMs](https://developer.microsoft.com/en
 
 ### As a python3 module
 Install from the project root directory:
+
 ```
+python cleanme.py
 python -m pip install .
 python -m unittest discover -s src/tests -v
 ```
 
-If you ran setup.py manually or built with CMake manually before, you may need to run cleanme.py due to CMake cache conflicts for some reason.
-
-### Cleaning up the src directory (not Windows)
-In order to clean up the entire source directory when a user installs using the setup.py python script:
+### Cleaning up the src directory
+To clean away intermediate files built by setup.py, run
 ```
-make clean
+python cleanme.py
 ```
