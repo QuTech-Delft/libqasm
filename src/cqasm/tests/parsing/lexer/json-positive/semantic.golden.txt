@@ -1,5 +1,5 @@
 SUCCESS
-Program( # input.cq:1:1..12
+Program( # input.cq:1:1..12:1
   version: <
     Version( # input.cq:1:9..12
       items: 1.0
@@ -28,7 +28,7 @@ Program( # input.cq:1:1..12
                   interface: test
                   operation: test
                   operands: [
-                    ConstJson( # input.cq:4:20..11
+                    ConstJson( # input.cq:4:20..11:3
                       value: 
 {
     "a": [{"b": "c"}],

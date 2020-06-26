@@ -1,5 +1,5 @@
 SUCCESS
-Program( # input.cq:1:1..12
+Program( # input.cq:1:1..12:1
   version: <
     Version( # input.cq:1:9..12
       items: 1.0
@@ -40,9 +40,9 @@ Program( # input.cq:1:1..12
                     )
                   >
                   operands: <
-                    ExpressionList( # input.cq:4:20..11
+                    ExpressionList( # input.cq:4:20..11:3
                       items: [
-                        JsonLiteral( # input.cq:4:20..11
+                        JsonLiteral( # input.cq:4:20..11:3
                           value: 
 {
     "a": [{"b": "c"}],

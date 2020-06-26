@@ -327,7 +327,7 @@ AnalyzerHelper::AnalyzerHelper(
         }
 
         // Save the list of final mappings.
-        for (auto it : scope.mappings.get_table()) {
+        for (const auto &it : scope.mappings.get_table()) {
             const auto &name = it.first;
             const auto &value = it.second.first;
             const auto &ast_node = it.second.second;
@@ -338,17 +338,35 @@ AnalyzerHelper::AnalyzerHelper(
             }
 
             // Analyze any annotations attached to the mapping.
-            auto annotations = analyze_annotations(it.second.second->annotations);
+            auto annotations = analyze_annotations(ast_node->annotations);
 
             // Construct the mapping object and copy the source location.
             auto mapping = tree::make<semantic::Mapping>(
                 name, value,
-                analyze_annotations(it.second.second->annotations)
+                analyze_annotations(ast_node->annotations)
             );
-            result.root->copy_annotation<parser::SourceLocation>(*ast_node);
+            mapping->copy_annotation<parser::SourceLocation>(*ast_node);
             result.root->mappings.add(mapping);
 
         }
+
+        // The iteration order over the mapping table is undefined, because it's
+        // backed by an unordered_map. To get a deterministic tree, sort by
+        // source location.
+        std::sort(
+            result.root->mappings.begin(), result.root->mappings.end(),
+            [](const tree::One<semantic::Mapping> &lhs, const tree::One<semantic::Mapping> &rhs) -> bool {
+                if (auto lhsa = lhs->get_annotation_ptr<parser::SourceLocation>()) {
+                    if (auto rhsa = rhs->get_annotation_ptr<parser::SourceLocation>()) {
+                        if (lhsa->filename < rhsa->filename) return true;
+                        if (rhsa->filename < lhsa->filename) return false;
+                        if (lhsa->first_line < rhsa->first_line) return true;
+                        if (rhsa->first_line < lhsa->first_line) return false;
+                        return lhsa->first_column < rhsa->first_column;
+                    }
+                }
+                return false;
+            });
 
     } catch (error::AnalysisError &e) {
         result.errors.push_back(e.get_message());
@@ -446,7 +464,10 @@ void AnalyzerHelper::analyze_bundle(const ast::Bundle &bundle) {
                             ss << insn->instruction->param_types;
                             ss << " is not parallelizable, but is bundled with ";
                             ss << (node->items.size() - 1);
-                            ss << " other instructions";
+                            ss << " other instruction";
+                            if (node->items.size() != 2) {
+                                ss << "s";
+                            }
                             throw error::AnalysisError(ss.str());
                         }
                     }
@@ -521,6 +542,10 @@ tree::Maybe<semantic::Instruction> AnalyzerHelper::analyze_instruction(const ast
             }
             auto condition_val = analyze_expression(*insn.condition);
             node->condition = values::promote(condition_val, tree::make<types::Bool>());
+            if (node->condition.empty()) {
+                throw error::AnalysisError(
+                    "condition must be a boolean");
+            }
 
             // If the condition is constant false, optimize the instruction
             // away.
@@ -546,6 +571,38 @@ tree::Maybe<semantic::Instruction> AnalyzerHelper::analyze_instruction(const ast
                                 + " is used more than once");
                         }
                     }
+                }
+            }
+        }
+
+        // Enforce that all qubit and bit references have the same length.
+        // Note that historically the condition is NOT split across the
+        // resulting parallel instructions but is instead copied and reduced
+        // using boolean and at runtime, so its length does NOT have to match.
+        size_t num_refs = 0;
+        const parser::SourceLocation *num_refs_loc = nullptr;
+        for (const auto &operand : operands) {
+            const tree::Many<values::ConstInt> *indices = nullptr;
+            if (auto x = operand->as_qubit_refs()) {
+                indices = &x->index;
+            } else if (auto x = operand->as_bit_refs()) {
+                indices = &x->index;
+            }
+            if (indices) {
+                if (!num_refs) {
+                    num_refs = indices->size();
+                } else if (num_refs != indices->size()) {
+                    std::ostringstream ss;
+                    ss << "the number of indices (" << indices->size() << ") ";
+                    ss << "doesn't match previously found number of indices ";
+                    ss << "(" << num_refs << ")";
+                    if (num_refs_loc) {
+                        ss << " at " << *num_refs_loc;
+                    }
+                    throw error::AnalysisError(ss.str(), &*operand);
+                }
+                if (!num_refs_loc) {
+                    num_refs_loc = operand->get_annotation_ptr<parser::SourceLocation>();
                 }
             }
         }
@@ -770,10 +827,13 @@ values::Value AnalyzerHelper::analyze_as(const ast::Expression &expression, Type
  */
 primitives::Int AnalyzerHelper::analyze_as_const_int(const ast::Expression &expression) {
     auto value = analyze_as<types::Int>(expression);
+    if (value.empty()) {
+        throw error::AnalysisError("expected an integer");
+    }
     if (auto int_value = value->as_const_int()) {
         return int_value->value;
     } else {
-        throw error::AnalysisError("constant integer expected");
+        throw error::AnalysisError("integer must be constant");
     }
 }
 

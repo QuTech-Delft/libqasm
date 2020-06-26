@@ -64,8 +64,8 @@ public:
         std::string ast_result = ss.str();
         write_file(path + "/ast.actual.txt", ast_result);
         std::string ast_golden;
-        ASSERT_TRUE(read_file(path + "/ast.golden.txt", ast_golden));
-        ASSERT_TRUE(ast_result == ast_golden);
+        EXPECT_TRUE(read_file(path + "/ast.golden.txt", ast_golden));
+        EXPECT_TRUE(ast_result == ast_golden);
 
         // Stop if parsing failed.
         if (!parse_result.errors.empty()) {
@@ -143,8 +143,8 @@ public:
         std::string semantic_result = ss.str();
         write_file(path + "/semantic.actual.txt", semantic_result);
         std::string semantic_golden;
-        ASSERT_TRUE(read_file(path + "/semantic.golden.txt", semantic_golden));
-        ASSERT_TRUE(semantic_result == semantic_golden);
+        EXPECT_TRUE(read_file(path + "/semantic.golden.txt", semantic_golden));
+        EXPECT_TRUE(semantic_result == semantic_golden);
 
     }
 

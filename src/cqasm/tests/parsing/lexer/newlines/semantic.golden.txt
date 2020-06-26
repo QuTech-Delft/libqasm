@@ -1,5 +1,5 @@
 SUCCESS
-Program( # input.cq:1:1..38
+Program( # input.cq:1:1..38:1
   version: <
     Version( # input.cq:1:9..12
       items: 1.0
@@ -253,7 +253,7 @@ I'm a multiline string.
                   interface: an_annotation
                   operation: with_json
                   operands: [
-                    ConstJson( # input.cq:35:34..37
+                    ConstJson( # input.cq:35:34..37:3
                       value: 
     "json": "object"
 

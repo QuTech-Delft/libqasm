@@ -1,0 +1,80 @@
+SUCCESS
+Program( # input.cq:1:1..6:1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: <
+    IntegerLiteral( # input.cq:2:8..10
+      value: 10
+    )
+  >
+  statements: <
+    StatementList( # input.cq:5:1..29
+      items: [
+        Bundle( # input.cq:5:1..29
+          items: [
+            Instruction( # input.cq:5:1..29
+              name: <
+                Identifier( # input.cq:5:1..2
+                  name: u
+                )
+              >
+              condition: -
+              operands: <
+                ExpressionList( # input.cq:5:3..29
+                  items: [
+                    Index( # input.cq:5:3..7
+                      expr: <
+                        Identifier( # input.cq:5:3..4
+                          name: q
+                        )
+                      >
+                      indices: <
+                        IndexList( # input.cq:5:5..6
+                          items: [
+                            IndexItem( # input.cq:5:5..6
+                              index: <
+                                IntegerLiteral( # input.cq:5:5..6
+                                  value: 0
+                                )
+                              >
+                            )
+                          ]
+                        )
+                      >
+                    )
+                    MatrixLiteral( # input.cq:5:9..29
+                      rows: [
+                        ExpressionList( # input.cq:5:10..28
+                          items: [
+                            FloatLiteral( # input.cq:5:10..13
+                              value: 1
+                            )
+                            FloatLiteral( # input.cq:5:15..18
+                              value: 2
+                            )
+                            FloatLiteral( # input.cq:5:20..23
+                              value: 3
+                            )
+                            FloatLiteral( # input.cq:5:25..28
+                              value: 4
+                            )
+                          ]
+                        )
+                      ]
+                    )
+                  ]
+                )
+              >
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

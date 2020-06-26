@@ -1,0 +1,13 @@
+SUCCESS
+Program( # input.cq:1:1..5:1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: 10
+  error_model: -
+  subcircuits: []
+  mappings: []
+)
+

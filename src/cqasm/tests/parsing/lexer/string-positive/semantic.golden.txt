@@ -1,5 +1,5 @@
 SUCCESS
-Program( # input.cq:1:1..6
+Program( # input.cq:1:1..6:1
   version: <
     Version( # input.cq:1:9..12
       items: 1.0
@@ -40,7 +40,7 @@ Program( # input.cq:1:1..6
                     ConstString( # input.cq:4:40..46
                       value: \"
                     )
-                    ConstString( # input.cq:4:48..5
+                    ConstString( # input.cq:4:48..5:2
                       value: 	
 '"\
 

@@ -1,5 +1,5 @@
 SUCCESS
-Program( # input.cq:5:1..16
+Program( # input.cq:1:1..56:1
   version: <
     Version( # input.cq:1:9..12
       items: 1.0
@@ -1249,7 +1249,7 @@ Program( # input.cq:5:1..16
     )
   ]
   mappings: [
-    Mapping(
+    Mapping( # input.cq:5:1..16
       name: oracle
       value: <
         QubitRefs( # input.cq:5:5..9

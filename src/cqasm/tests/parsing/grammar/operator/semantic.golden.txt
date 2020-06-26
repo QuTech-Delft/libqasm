@@ -1,0 +1,53 @@
+SUCCESS
+Program( # input.cq:1:1..5:1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: 10
+  error_model: -
+  subcircuits: [
+    Subcircuit( # input.cq:4:1..117
+      name: 
+      iterations: 1
+      bundles: [
+        Bundle( # input.cq:4:1..117
+          items: [
+            Instruction( # input.cq:4:1..117
+              instruction: display()
+              name: display
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: []
+              annotations: [
+                AnnotationData( # input.cq:4:10..117
+                  interface: test
+                  operation: test
+                  operands: [
+                    ConstInt( # input.cq:4:20..42
+                      value: 7
+                    )
+                    ConstReal( # input.cq:4:54..78
+                      value: -30.5
+                    )
+                    ConstInt( # input.cq:4:94..105
+                      value: 14
+                    )
+                  ]
+                )
+              ]
+            )
+          ]
+          annotations: []
+        )
+      ]
+      annotations: []
+    )
+  ]
+  mappings: []
+)
+

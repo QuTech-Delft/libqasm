@@ -227,10 +227,7 @@ std::ostream& operator<<(std::ostream& os, const cqasm::parser::SourceLocation& 
     } else if (object.last_line > object.first_line) {
 
         // Range is on multiple lines. Repeat both line and column number.
-        os << ".." << object.last_line;
-        if (object.last_column > object.first_column) {
-            os << ":" << object.last_column;
-        }
+        os << ".." << object.last_line << ":" << object.last_column;
 
     }
 

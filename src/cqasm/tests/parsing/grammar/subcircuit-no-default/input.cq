@@ -1,0 +1,10 @@
+version 1.0
+qubits 10
+
+.test @annot.first
+
+x q[1]
+
+.empty @annot.second
+
+.empty @annot.third

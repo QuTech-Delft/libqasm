@@ -1,0 +1,49 @@
+SUCCESS
+Program( # input.cq:1:1..5:1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: <
+    IntegerLiteral( # input.cq:2:8..10
+      value: 10
+    )
+  >
+  statements: <
+    StatementList( # input.cq:4:1..20
+      items: [
+        Bundle( # input.cq:4:1..20
+          items: [
+            Instruction( # input.cq:4:1..20
+              name: <
+                Identifier( # input.cq:4:1..12
+                  name: error_model
+                )
+              >
+              condition: -
+              operands: <
+                ExpressionList( # input.cq:4:13..20
+                  items: [
+                    IntegerLiteral( # input.cq:4:13..14
+                      value: 1
+                    )
+                    IntegerLiteral( # input.cq:4:16..17
+                      value: 2
+                    )
+                    IntegerLiteral( # input.cq:4:19..20
+                      value: 3
+                    )
+                  ]
+                )
+              >
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

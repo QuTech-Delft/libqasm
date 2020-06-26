@@ -1,0 +1,7 @@
+ERROR
+input.cq:4:21: syntax error, unexpected ','
+input.cq:4:31: syntax error, unexpected ','
+input.cq:4:37: syntax error, unexpected ')', expecting ']'
+input.cq:4:61: syntax error, unexpected ','
+input.cq:4:67: syntax error, unexpected ')', expecting ',' or ']'
+Failed to parse input.cq

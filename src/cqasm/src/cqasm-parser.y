@@ -17,6 +17,10 @@
 }
 
 %code top {
+
+    /**
+     * Attaches a source location annotation object to the given node pointer.
+     */
     #define ADD_SOURCE_LOCATION(v)                          \
         v->set_annotation(cqasm::parser::SourceLocation(    \
             helper.filename,                                \
@@ -25,11 +29,22 @@
             yyloc.last_line,                                \
             yyloc.last_column))
 
-
+    /**
+     * Constructs an empty, new node of type T and places it into v. v is almost
+     * always $$ (the result location), but it can't be made part of the
+     * definition because preprocessing happens after bison's substitution.
+     */
     #define NEW(v, T)           \
         v = new T();            \
         ADD_SOURCE_LOCATION(v)
 
+    /**
+     * Moves previously constructed node s into t, where s is almost always one
+     * of bison's input locations ($1, $2, etc) and t is almost always $$. The
+     * purpose of this over just assigning t = s is that it extends the source
+     * location annotation of the object to the extents of whatever rule is
+     * being matched.
+     */
     #define FROM(t, s)                                                          \
         t = s;                                                                  \
         {                                                                       \
@@ -106,6 +121,9 @@
 %type <vers> Version
 %type <prog> Program
 
+/* FIXME: no %destructor for the new-allocated nodes above, so the parser may
+    leak, especially when it recovers from an error. */
+
 /* Whitespace management */
 %token NEWLINE
 
@@ -126,9 +144,6 @@
 %token STRING_OPEN STRING_CLOSE
 %token JSON_OPEN JSON_CLOSE
 %token <str> STRBUILD_APPEND STRBUILD_ESCAPE
-
-/* Matrix literals */
-%token MAT_OPEN MAT_CLOSE
 
 /* Identifiers */
 %token <str> IDENTIFIER
@@ -209,10 +224,25 @@ Identifier      : IDENTIFIER                                                    
                 ;
 
 /* Function calls. */
-FunctionCall    : Identifier '(' ExpressionList ')' %prec '('                   { NEW($$, FunctionCall); $$->name.set_raw($1); $$->arguments.set_raw($3); }
+FunctionCall    : Identifier '(' ')' %prec '('                                  { NEW($$, FunctionCall); $$->name.set_raw($1); $$->arguments.set_raw(new ExpressionList()); }
+                | Identifier '(' ExpressionList ')' %prec '('                   { NEW($$, FunctionCall); $$->name.set_raw($1); $$->arguments.set_raw($3); }
                 ;
 
 /* Array/register indexation. */
+IndexItem       : Expression                                                    { NEW($$, IndexItem); $$->index.set_raw($1); }
+                ;
+
+IndexRange      : Expression ':' Expression                                     { NEW($$, IndexRange); $$->first.set_raw($1); $$->last.set_raw($3); }
+                ;
+
+IndexEntry      : IndexItem                                                     { FROM($$, $1); }
+                | IndexRange                                                    { FROM($$, $1); }
+                ;
+
+IndexList       : IndexList ',' IndexEntry                                      { FROM($$, $1); $$->items.add_raw($3); }
+                | IndexEntry                                                    { NEW($$, IndexList); $$->items.add_raw($1); }
+                ;
+
 Index           : Expression '[' IndexList ']'                                  { NEW($$, Index); $$->expr.set_raw($1); $$->indices.set_raw($3); }
                 ;
 
@@ -245,21 +275,6 @@ Expression      : IntegerLiteral                                                
 /* List of one or more expressions. */
 ExpressionList  : ExpressionList ',' Expression                                 { FROM($$, $1); $$->items.add_raw($3); }
                 | Expression %prec ','                                          { NEW($$, ExpressionList); $$->items.add_raw($1); }
-                ;
-
-/* Indexation modes. */
-IndexItem       : Expression                                                    { NEW($$, IndexItem); $$->index.set_raw($1); }
-                ;
-
-IndexRange      : Expression ':' Expression                                     { NEW($$, IndexRange); $$->first.set_raw($1); $$->last.set_raw($3); }
-                ;
-
-IndexEntry      : IndexItem                                                     { FROM($$, $1); }
-                | IndexRange                                                    { FROM($$, $1); }
-                ;
-
-IndexList       : IndexList ',' IndexEntry                                      { FROM($$, $1); $$->items.add_raw($3); }
-                | IndexEntry                                                    { NEW($$, IndexList); $$->items.add_raw($1); }
                 ;
 
 /* The information caried by an annotation or pragma statement. */
@@ -313,6 +328,9 @@ Statement       : Mapping                                                       
                 | '{' OptNewline CBParInstrList OptNewline '}'                  { FROM($$, $3); }
                 | error                                                         { NEW($$, ErroneousStatement); }
                 ;
+
+/* FIXME: statement recovery fails even on simple things like
+    "this is an invalid statement" */
 
 /* Statement with annotations attached to it. */
 AnnotStatement  : AnnotStatement '@' AnnotationData                             { FROM($$, $1); $$->annotations.add_raw($3); }
