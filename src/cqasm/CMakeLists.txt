@@ -170,6 +170,10 @@ add_library(cqasm $<TARGET_OBJECTS:cqasm_objlib>)
 target_include_directories(cqasm PUBLIC $<TARGET_PROPERTY:cqasm_objlib,INTERFACE_INCLUDE_DIRECTORIES>)
 target_link_libraries(cqasm PUBLIC $<TARGET_PROPERTY:cqasm_objlib,LINK_LIBRARIES>)
 
+# Install the cQASM library.
+install(TARGETS cqasm LIBRARY)
+install(FILES $<TARGET_PROPERTY:cqasm_objlib,INTERFACE_INCLUDE_DIRECTORIES> DESTINATION .)
+
 # Add the test directory.
 if(BUILD_TESTS)
     include(cmake/googletest.cmake)
