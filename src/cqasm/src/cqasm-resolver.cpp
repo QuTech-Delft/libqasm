@@ -189,7 +189,7 @@ public:
             try {
                 return entry->second.resolve(args);
             } catch (OverloadResolutionFailure &e) {
-                e.message = std::ostringstream();
+                e.message.str("");
                 e.message << "failed to resolve overload for " << name;
                 e.message << " with argument pack " << values::types_of(args);
                 throw;
