@@ -48,8 +48,8 @@ Invoke-BatchFile "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\
 ```
 
 ## Organization
-* The accompanying paper and BNF specification for the cQASM v1.0 are located in the **./doc** directory
-* The library itself is located in the **./src** directory
+* The original paper and BNF specification for the cQASM v1.0 are located in the **./doc** directory. Please note however that the language has changed to some degree since then, and the qasm.bnf has never fully corresponded with the flex/bison grammar. New, up-to-date documentation is a work in progress.
+* There are currently two C++ API versions contained in this repository, a new API still being worked on and the original soon-to-be deprecated API maintained for backward compatibility purposes. The new API is fully self-contained in the **./src/cqasm** directory. The older API is where it used to be, with its sources residing in **./src/library** and its tests in **./src/tests**.
 
 ## Installation
 
