@@ -1,0 +1,17 @@
+version 1.0
+# define a quantum register of 3 qubits
+qubits 4
+
+# apply a short sequence of gates
+h q[0]
+h q[1]
+h q[2]
+cnot q[2],q[3]
+
+# measure the Pauli string Z_0 Z_2
+measure_parity q[0],z,q[2],z
+# the outcome is stored in both b[0] and b[2]
+
+# measure the Pauli string X_1 Y_3
+measure_parity q[1],x,q[3],y
+# the outcome is stored in both b[1] and b[3]
