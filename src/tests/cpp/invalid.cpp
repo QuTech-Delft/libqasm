@@ -21,5 +21,5 @@ TEST_CASE("Test for the test_invalid.qasm file")
 
     // open a file handle to a particular file:
     FILE *myfile = fopen("invalid.qasm", "r");
-    CHECK_THROWS(compiler::QasmSemanticChecker(myfile));
+    CHECK_THROWS(compiler::QasmSemanticChecker{myfile});
 }
