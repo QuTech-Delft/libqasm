@@ -53,9 +53,9 @@ or more of the following command-line arguments:
  - `-DBUILD_SHARED_LIBS=yes`: builds a shared object library instead of a
    static library, if applicable.
 
- - `-DBUILD_TESTS=yes`: builds the tests in addition to the library itself. Use
-   `cmake --build . --target RUN_TESTS` to run the tests (in a cross-platform
-   way) after building.
+ - `-DLIBQASM_BUILD_TESTS=yes`: builds the tests in addition to the library
+   itself. Use `cmake --build . --target RUN_TESTS` to run the tests (in a
+   cross-platform way) after building.
 
  - `-DCMAKE_INSTALL_PREFIX=<directory>`: specifies the directory that the
    library will be installed into when you run
@@ -68,7 +68,7 @@ and install it on Linux.
 ```
 mkdir cbuild
 cd cbuild
-cmake .. -DBUILD_SHARED_LIBS=yes -DBUILD_TESTS=yes
+cmake .. -DBUILD_SHARED_LIBS=yes -DLIBQASM_BUILD_TESTS=yes
 cmake --build .
 make -j
 make test
@@ -88,7 +88,3 @@ sudo make install
    generating the operators and constant propagation functions exposed to
    cQASM.
  - `CMakeLists.txt`/`cmake`: build system entry point and support modules.
- - `Dockerfile`/`.dockerignore`: this docker configuration tests the build on
-   the oldest system Linux known to work, CentOS 6 + devtoolset 7. Just run
-   `docker build .` (assuming you have Docker installed and are in the `docker`
-   group).

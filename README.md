@@ -51,60 +51,91 @@ Invoke-BatchFile "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\
 * The original paper and BNF specification for the cQASM v1.0 are located in the **./doc** directory. Please note however that the language has changed to some degree since then, and the qasm.bnf has never fully corresponded with the flex/bison grammar. New, up-to-date documentation is a work in progress.
 * There are currently two C++ API versions contained in this repository, a new API still being worked on and the original soon-to-be deprecated API maintained for backward compatibility purposes. The new API is fully self-contained in the **./src/cqasm** directory. The older API is where it used to be, with its sources residing in **./src/library** and its tests in **./src/tests**.
 
-## Installation
+## Usage from Python
+Install from the project root directory as follows:
 
-### As a standalone C++ library (Linux or MacOS)
-In order to install (assuming the present working directory is at **./src**):
 ```
-git submodule update --init --recursive
-cd src
+python cleanme.py
+python -m pip install .
+```
+
+You can test if it works using
+
+```
+python -m unittest discover -s src/tests -v
+```
+
+Now you should be able to `import libQasm` to use the bindings for the original API. The new API doesn't have Python bindings yet.
+
+## Usage from C++ without installation using CMake
+The easiest way to use libqasm in a CMake project is to clone this repository into your repository as a submodule, and then use
+
+```
+add_subdirectory(libqasm) # or wherever your submodule is
+target_link_libraries(<your target> cqasm)
+```
+
+The `target_link_libraries()` directive should automatically add the public include directories for libqasm's new API to your target's include path. You need to do this for each target.
+
+The original API headers are *not* included by default. To enable those, add `option(LIBQASM_COMPAT "" ON)` before the `add_subdirectory()` directive.
+
+## Usage from C++ manually by installing (only tested on Linux)
+The `CMakeLists.txt` file in the root directory includes install targets:
+
+```
 mkdir cbuild
 cd cbuild
-cmake ../library
-make or make -j \<Number of processors\>
-make test or make test -j \<Number of processors\>
+cmake .. <directives, see below>
+make -j <Number of processors>
+make install
 ```
 
-### As a standalone C++ library (Windows + MinGW)
+You may want to add one or more directives to the `cmake` command:
+
+ - `-DLIBQASM_COMPAT=yes`: enables installation of the headers for the original API, on top of the ones for the new API.
+ - `-DBUILD_SHARED_LIBS=yes`: builds a shared object library instead of a static library, if applicable.
+ - `-DCMAKE_INSTALL_PREFIX=<directory>`: specifies the directory that the library will be installed into, in case you want to override whatever the default is for your OS.
+
+## Testing the library
+
+### Linux and MacOS
+```
+git submodule update --init --recursive
+mkdir cbuild
+cd cbuild
+cmake .. -DLIBQASM_BUILD_TESTS=yes -DLIBQASM_COMPAT=yes
+make -j <Number of processors>
+make test
+```
+
+### Windows + MinGW
 Same as the above, except we'll use the MinGW toolchain. You should first get [mingw-w64](https://sourceforge.net/projects/mingw-w64/) and install it.
 ```
 git submodule update --init --recursive
-cd src
 mkdir cbuild
 cd cbuild
-cmake -G "MinGW Makefiles" ..\library\
+cmake -G "MinGW Makefiles" .. -DLIBQASM_BUILD_TESTS=yes -DLIBQASM_COMPAT=yes
 mingw32-make.exe
 mingw32-make.exe test
 ```
 
 This will output `_libQasm.pyd`, `liblexgram.dll` and a static library `liblexgramstatic.a`
 
-### As a standalone C++ library (Windows + MSVC)
-Continuing from the Windows environment setup instructions:
+### Windows + MSVC
+Continuing from the Windows environment setup instructions (don't forget to run `vcvarsall.bat` first):
 
 ```
 git submodule update --init --recursive
-cd src
 mkdir cbuild
 cd cbuild
-cmake ..\library\
+cmake .. -DLIBQASM_BUILD_TESTS=yes -DLIBQASM_COMPAT=yes
 cmake --build .
 cmake --build . --target RUN_TESTS
 ```
 
-This was last tested using [one of these VMs](https://developer.microsoft.com/en-us/microsoft-edge/tools/vms/) on 2020-06-25.
-
-### As a python3 module
-Install from the project root directory:
+### Docker
+This tests the library in a container with the bare minimum requirements for libqasm.
 
 ```
-python cleanme.py
-python -m pip install .
-python -m unittest discover -s src/tests -v
-```
-
-### Cleaning up the src directory
-To clean away intermediate files built by setup.py, run
-```
-python cleanme.py
+docker build .
 ```

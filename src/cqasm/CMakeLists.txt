@@ -13,7 +13,7 @@ option(
 )
 
 option(
-    BUILD_TESTS
+    LIBQASM_BUILD_TESTS
     "whether the tests should be built and added to `make test`"
     OFF
 )
@@ -149,8 +149,8 @@ target_include_directories(
     cqasm_objlib
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src"
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}"
-    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include"
-    PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/include"
+    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/"
+    PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/include/"
 )
 
 # Enable all warnings and treat them as errors when compiling libcqasm.
@@ -170,21 +170,24 @@ add_library(cqasm $<TARGET_OBJECTS:cqasm_objlib>)
 target_include_directories(cqasm PUBLIC $<TARGET_PROPERTY:cqasm_objlib,INTERFACE_INCLUDE_DIRECTORIES>)
 target_link_libraries(cqasm PUBLIC $<TARGET_PROPERTY:cqasm_objlib,LINK_LIBRARIES>)
 
-# Install the cQASM library.
-install(
-    TARGETS cqasm
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-)
-install(
-    FILES $<TARGET_PROPERTY:cqasm_objlib,INTERFACE_INCLUDE_DIRECTORIES>
-    DESTINATION .
-)
-
 # Add the test directory.
-if(BUILD_TESTS)
+if(LIBQASM_BUILD_TESTS)
     include(cmake/googletest.cmake)
     enable_testing()
     add_subdirectory(tests)
 endif()
+
+# Install target.
+include(GNUInstallDirs)
+install(
+    TARGETS cqasm
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
+get_target_property(INCLUDE_DIRS cqasm_objlib INTERFACE_INCLUDE_DIRECTORIES)
+install(
+    DIRECTORY ${INCLUDE_DIRS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    FILES_MATCHING PATTERN "*.hpp"
+)
