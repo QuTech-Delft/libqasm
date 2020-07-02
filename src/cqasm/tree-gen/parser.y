@@ -106,14 +106,14 @@ Node            : Documentation IDENT '{'                                       
                 ;
 
 Root            :                                                               {}
-                | Root Documentation SOURCE String                              { TRY specification.set_source(*$4); delete $2; delete $4; CATCH }
-                | Root Documentation HEADER String                              { TRY specification.set_header(*$4); delete $2; delete $4; CATCH }
+                | Root Documentation SOURCE String                              { TRY specification.set_source(*$4, *$2); delete $2; delete $4; CATCH }
+                | Root Documentation HEADER String                              { TRY specification.set_header(*$4, *$2); delete $2; delete $4; CATCH }
                 | Root Documentation TREE_NS Identifier                         { TRY specification.set_tree_namespace(*$4); delete $2; delete $4; CATCH }
                 | Root Documentation INIT_FN Identifier                         { TRY specification.set_initialize_function(*$4); delete $2; delete $4; CATCH }
                 | Root Documentation SOURCE_LOC Identifier                      { TRY specification.set_source_location(*$4); delete $2; delete $4; CATCH }
                 | Root Documentation INCLUDE                                    { TRY specification.add_include(std::string($3)); delete $2; std::free($3); CATCH }
                 | Root Documentation SRC_INCLUDE                                { TRY specification.add_src_include(std::string($3 + 4)); delete $2; std::free($3); CATCH }
-                | Root Documentation NAMESPACE IDENT                            { TRY specification.add_namespace(std::string($4)); delete $2; std::free($4); CATCH }
+                | Root Documentation NAMESPACE IDENT                            { TRY specification.add_namespace(std::string($4), *$2); delete $2; std::free($4); CATCH }
                 | Root Node '}'                                                 {}
                 ;
 

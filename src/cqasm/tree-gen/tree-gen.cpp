@@ -13,9 +13,14 @@
 static void format_doc(
     std::ofstream &stream,
     const std::string &doc,
-    const std::string &indent = ""
+    const std::string &indent = "",
+    const std::string &annotation = ""
 ) {
-    stream << indent << "/**" << std::endl;
+    stream << indent << "/**";
+    if (!annotation.empty()) {
+        stream << " " << annotation;
+    }
+    stream << std::endl;
     auto word = std::ostringstream();
     auto line = std::ostringstream();
     line << indent << " *";
@@ -708,6 +713,10 @@ int main(
     );
 
     // Header for the header file.
+    if (!specification.header_doc.empty()) {
+        format_doc(header, specification.header_doc, "", "\\file");
+        header << std::endl;
+    }
     header << "#pragma once" << std::endl;
     header << std::endl;
     header << "#include <iostream>" << std::endl;
@@ -715,8 +724,12 @@ int main(
         header << "#" << include << std::endl;
     }
     header << std::endl;
-    for (auto &name : specification.namespaces) {
-        header << "namespace " << name << " {" << std::endl;
+    for (size_t i = 0; i < specification.namespaces.size(); i++) {
+        if (i == specification.namespaces.size() - 1 && !specification.namespace_doc.empty()) {
+            header << std::endl;
+            format_doc(header, specification.namespace_doc);
+        }
+        header << "namespace " << specification.namespaces[i] << " {" << std::endl;
     }
     header << std::endl;
     header << "// Base classes used to construct the tree." << std::endl;
@@ -732,6 +745,10 @@ int main(
     header << std::endl;
 
     // Header for the source file.
+    if (!specification.source_doc.empty()) {
+        format_doc(source, specification.source_doc, "", "\\file");
+        source << std::endl;
+    }
     for (auto &include : specification.src_includes) {
         source << "#" << include << std::endl;
     }

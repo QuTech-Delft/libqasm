@@ -1,5 +1,9 @@
-# Files to output to.
+# Implementation for the various classes representing the types of values
+# available in cQASM.
 source "cqasm-types-gen.cpp"
+
+# Header file for the various classes representing the types of values
+# available in cQASM.
 header "cqasm-types-gen.hpp"
 
 # Include tree base classes.
@@ -13,7 +17,8 @@ include "cqasm-primitives.hpp"
 # classes and primitives.
 initialize_function cqasm::primitives::initialize
 
-# Namespace declarations for the type and value nodes.
+# Namespace for the various classes representing the types of values available
+# in cQASM.
 namespace cqasm
 namespace types
 

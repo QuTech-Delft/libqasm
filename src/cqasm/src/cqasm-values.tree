@@ -1,5 +1,9 @@
-# Files to output to.
+# Implementation for the various classes representing constants, references,
+# and dynamic expressions in cQASM.
 source "cqasm-values-gen.cpp"
+
+# Header file for the various classes representing constants, references,
+# and dynamic expressions in cQASM.
 header "cqasm-values-gen.hpp"
 
 # Include tree base classes.
@@ -17,7 +21,8 @@ initialize_function cqasm::primitives::initialize
 src_include "cqasm-parse-helper.hpp"
 location cqasm::parser::SourceLocation
 
-# Namespace declarations for the type and value nodes.
+# Namespace for the various classes representing constants, references,
+# and dynamic expressions in cQASM.
 namespace cqasm
 namespace values
 

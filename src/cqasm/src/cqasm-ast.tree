@@ -1,5 +1,7 @@
-# Files to output to.
+# Implementation for the abstract syntax tree node classes.
 source "cqasm-ast-gen.cpp"
+
+# Header file for the abstract syntax tree node classes.
 header "cqasm-ast-gen.hpp"
 
 # Include tree base classes.
@@ -17,7 +19,7 @@ initialize_function cqasm::primitives::initialize
 src_include "cqasm-parse-helper.hpp"
 location cqasm::parser::SourceLocation
 
-# Namespace declarations for the AST nodes.
+# Namespace for the abstract syntax tree node classes.
 namespace cqasm
 namespace ast
 

@@ -260,6 +260,16 @@ public:
     std::string header_filename;
 
     /**
+     * Source file documentation.
+     */
+    std::string source_doc;
+
+    /**
+     * Header file documentation.
+     */
+    std::string header_doc;
+
+    /**
      * The include statements to stick at the top of the header file.
      */
     std::vector<std::string> includes;
@@ -268,6 +278,11 @@ public:
      * The include statements to stick at the top of the source file.
      */
     std::vector<std::string> src_includes;
+
+    /**
+     * Namespace documentation.
+     */
+    std::string namespace_doc;
 
     /**
      * The C++ namespaces to use.
@@ -299,21 +314,23 @@ public:
     /**
      * Sets the source filename.
      */
-    void set_source(const std::string &fname) {
+    void set_source(const std::string &fname, const std::string &doc) {
         if (!source_filename.empty()) {
             throw std::runtime_error("duplicate source filename");
         }
         source_filename = fname;
+        source_doc = doc;
     }
 
     /**
      * Sets the header filename.
      */
-    void set_header(const std::string &fname) {
+    void set_header(const std::string &fname, const std::string &doc) {
         if (!header_filename.empty()) {
             throw std::runtime_error("duplicate header filename");
         }
         header_filename = fname;
+        header_doc = doc;
     }
 
     /**
@@ -363,8 +380,11 @@ public:
     /**
      * Adds a namespace level.
      */
-    void add_namespace(const std::string &name_space) {
+    void add_namespace(const std::string &name_space, const std::string &doc = "") {
         namespaces.push_back(name_space);
+        if (!doc.empty()) {
+            namespace_doc = doc;
+        }
     }
 
     /**
