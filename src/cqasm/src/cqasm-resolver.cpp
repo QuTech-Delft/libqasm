@@ -1,3 +1,7 @@
+/** \file
+ * Implementation for \ref include/cqasm-resolver.hpp "cqasm-resolver.hpp".
+ */
+
 #include <unordered_set>
 #include "cqasm-resolver.hpp"
 #include "cqasm-error.hpp"

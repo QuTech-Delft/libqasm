@@ -1,14 +1,27 @@
+/** \file
+ * This file contains the \ref cqasm::error_model::ErrorModel "ErrorModel" class
+ * and support types, each instance representing an error model supported by the
+ * user.
+ */
+
 #pragma once
 
 #include "cqasm-types.hpp"
 #include "cqasm-values.hpp"
 
 namespace cqasm {
+
+/**
+ * Namespace for the \ref error_model::ErrorModel "ErrorModel" class and helper
+ * types.
+ */
 namespace error_model {
 
 /**
  * Representation of an error model. A number of these can be registered into
- * libqasm by the program or library using it, to inform libqasm about which
+ * libqasm by the program or library using it through
+ * \ref cqasm::analyzer::Analyzer::register_error_model(const error_model::ErrorModel&)
+ * "register_error_model()", to inform libqasm about which
  * error models are supported. libqasm needs to know its name and which
  * parameters it expects in order to be able to resolve the error model
  * information specified in the cQASM file. The resolved error model (if any
@@ -18,7 +31,8 @@ namespace error_model {
  * long as they can be distinguished through their parameter types (i.e. the
  * available error models can be overloaded).
  *
- * You can add any data you like to these through the Annotatable interface
+ * You can add any data you like to these through the
+ * \ref cqasm::annotatable::Annotatable "Annotatable" interface
  * for your own bookkeeping, so you don't have to maintain an additional map
  * from this error model structure to your own internal structure if you're
  * okay with using this one.

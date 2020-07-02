@@ -1,3 +1,7 @@
+/** \file
+ * Implementation for \ref include/cqasm-ast.hpp "cqasm-ast.hpp".
+ */
+
 #include "cqasm-ast.hpp"
 #include <stdexcept>
 

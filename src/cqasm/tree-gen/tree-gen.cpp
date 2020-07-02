@@ -10,6 +10,8 @@
 #include "parser.hpp"
 #include "lexer.hpp"
 
+namespace tree_gen {
+
 /**
  * Formats a docstring.
  */
@@ -619,6 +621,10 @@ static void generate_dumper_class(
 
     header << "};" << std::endl << std::endl;
 }
+
+} // namespace tree_gen
+
+using namespace tree_gen;
 
 /**
  * Main function for generating the the header and source file for a tree.

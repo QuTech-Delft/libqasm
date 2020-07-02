@@ -1,3 +1,7 @@
+/** \file
+ * Implementation for \ref include/cqasm-analyzer.hpp "cqasm-analyzer.hpp".
+ */
+
 #define _USE_MATH_DEFINES
 #include <unordered_set>
 #include <cctype>

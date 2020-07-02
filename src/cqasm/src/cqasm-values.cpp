@@ -1,3 +1,7 @@
+/** \file
+ * Implementation for \ref include/cqasm-values.hpp "cqasm-values.hpp".
+ */
+
 #include <cqasm-parse-helper.hpp>
 #include "cqasm-values.hpp"
 #include "cqasm-error.hpp"

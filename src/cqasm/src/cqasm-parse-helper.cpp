@@ -1,3 +1,7 @@
+/** \file
+ * Implementation for \ref include/cqasm-parse-helper.hpp "cqasm-parse-helper.hpp".
+ */
+
 #include "cqasm-parse-helper.hpp"
 #include "cqasm-parser.hpp"
 #include "cqasm-lexer.hpp"

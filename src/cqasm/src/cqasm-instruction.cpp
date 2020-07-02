@@ -1,3 +1,7 @@
+/** \file
+ * Implementation for \ref include/cqasm-instruction.hpp "cqasm-instruction.hpp".
+ */
+
 #include "cqasm-instruction.hpp"
 #include "cqasm-utils.hpp"
 

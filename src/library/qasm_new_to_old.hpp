@@ -1,3 +1,9 @@
+/** \file
+ * Contains the guts of the compatibility layer, parsing using
+ * \ref cqasm::analyzer::Analyzer "Analyzer" and converting the result to an
+ * \ref compiler::QasmRepresentation "old API AST".
+ */
+
 #pragma once
 #ifndef QASM_NEW_TO_OLD_HPP
 
@@ -5,6 +11,11 @@
 #include "qasm_ast.hpp"
 
 namespace compiler {
+
+/**
+ * Namespace containing the guts of the compatibility layer emulating the old
+ * API while using the guts of the new one.
+ */
 namespace new_to_old {
 
 /**

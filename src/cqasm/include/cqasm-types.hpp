@@ -1,8 +1,17 @@
+/** \file
+ * Defines the \ref cqasm::types "types" of \ref cqasm::values "values"
+ * available within cQASM's type system, as well as some utility functions.
+ */
+
 #pragma once
 
 #include "cqasm-types-gen.hpp"
 
 namespace cqasm {
+
+/**
+ * Namespace for the classes representing the types available within cQASM.
+ */
 namespace types {
 
 /**

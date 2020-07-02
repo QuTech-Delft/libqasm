@@ -259,6 +259,11 @@
 #include <cctype>
 
 /**
+ * Namespace for the \ref tree-gen program.
+ */
+namespace tree_gen {
+
+/**
  * Repetition modes for AST nodes.
  */
 enum ChildType {
@@ -676,5 +681,7 @@ public:
     }
 
 };
+
+} // namespace tree_gen
 
 #endif

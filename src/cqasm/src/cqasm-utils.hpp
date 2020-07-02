@@ -1,8 +1,16 @@
+/** \file
+ * Defines various utility functions.
+ */
+
 #pragma once
 
 #include <string>
 
 namespace cqasm {
+
+/**
+ * Namespace for various utility functions.
+ */
 namespace utils {
 
 /**

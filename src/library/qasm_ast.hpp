@@ -10,6 +10,11 @@
 #include <algorithm>
 #include <stdexcept>
 
+/**
+ * Namespace used for most of the original API.
+ *
+ * \deprecated Please use the \ref cqasm "new API" instead!
+ */
 namespace compiler
 {
 

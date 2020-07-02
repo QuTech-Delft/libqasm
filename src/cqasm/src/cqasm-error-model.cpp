@@ -1,3 +1,7 @@
+/** \file
+ * Implementation for \ref include/cqasm-error-model.hpp "cqasm-error-model.hpp".
+ */
+
 #include "cqasm-error-model.hpp"
 #include "cqasm-utils.hpp"
 

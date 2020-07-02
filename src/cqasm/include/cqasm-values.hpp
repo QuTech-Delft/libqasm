@@ -1,3 +1,9 @@
+/** \file
+ * Defines classes representing the \ref cqasm::values "values" (collective name
+ * for constants, references, and dynamically evaluated expressions) available
+ * within cQASM's type system, as well as some utility functions.
+ */
+
 #pragma once
 
 #include "cqasm-ast.hpp"
@@ -5,6 +11,11 @@
 #include "cqasm-types.hpp"
 
 namespace cqasm {
+
+/**
+ * Namespace for the classes representing the values (including dynamically
+ * evaluated expressions or references to registers) available within cQASM.
+ */
 namespace values {
 
 /**

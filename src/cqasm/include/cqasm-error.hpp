@@ -1,3 +1,7 @@
+/** \file
+ * Contains custom exception objects used by libqasm.
+ */
+
 #pragma once
 
 #include <string>
@@ -7,10 +11,18 @@
 #include "cqasm-parse-helper.hpp"
 
 namespace cqasm {
+
+/**
+ * Namespace for exceptions used by libqasm.
+ */
 namespace error {
 
 /**
  * Exception used for analysis errors.
+ *
+ * Contains a message in the form of an `std::ostringstream` that can be
+ * appended to or otherwise modified even after the initial throw to add
+ * information, as well as an optional source location object.
  */
 class AnalysisError : public std::runtime_error {
 private:

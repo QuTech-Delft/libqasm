@@ -23,6 +23,11 @@
 #include <functional>
 
 namespace cqasm {
+
+/**
+ * Namespace for the \ref cqasm::annotatable::Annotatable "Annotatable" base
+ * class and support classes.
+ */
 namespace annotatable {
 
 /**

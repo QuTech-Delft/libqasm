@@ -1,8 +1,19 @@
+/**
+ * \dir
+ * Contains the non-generated public header files for libqasm's new API.
+ *
+ * \file
+ * Main include file for libqasm; this is what you should be `#include`ing.
+ */
+
 #pragma once
 
 #include "cqasm-parse-helper.hpp"
 #include "cqasm-analyzer.hpp"
 
+/**
+ * Toplevel namespace with entry points for the new API.
+ */
 namespace cqasm {
 
 /**

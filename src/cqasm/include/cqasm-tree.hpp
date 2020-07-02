@@ -1,37 +1,6 @@
 /** \file
- * Defines base types for constructing structured trees, such as the AST.
- *
- * The different kinds of nodes in a structured tree are represented by
- * different class types in C++. Inheritance is used for
- * specialized/generalized types, for example for the relation between an
- * expression and a binary operator; a binary operator is a specialization of
- * an expression, so it derives from the expression node class. All node types
- * should ultimately inherit from `Base`.
- *
- * The children of the nodes are represented as class members. Instead of
- * containing the child node directly, which would cause problems with
- * recursive tree definitions, they should be encapsulated in one of:
- *
- *  - `Maybe<ChildNode>`: zero or one child node;
- *  - `One<ChildNode>`: exactly one child node;
- *  - `Any<ChildNode>`: zero or more child nodes; or
- *  - `Many<ChildNode>`: one or more child nodes.
- *
- * The `is_complete()` function can be used to recursively check whether the
- * above constraints are met: `One` and `Many` can in fact be empty. This makes
- * progressively constructing the tree easier.
- *
- * Besides the child nodes, nodes can also be given annotations. Annotations
- * can be any kind of object; in fact they are identified by their type, so
- * each node can have zero or one instance of every C++ type associated with
- * it. They allow users of the tree to attach their own data to the recursive
- * structure, without the designer of the tree having to know about it in
- * advance. This hopefully makes the tree structure maintainable, while still
- * being usable by the users of the library, without them having to convert to
- * their own representation first.
- *
- * To do the above for implementations (member functions) as well, the visitor
- * pattern is recommended. Refer to the `cqasm-ast.hpp` header for details.
+ * Defines the base types used by \ref tree-gen to construct the AST and
+ * semantic trees, among others.
  */
 
 #pragma once
@@ -50,6 +19,10 @@
 #endif
 
 namespace cqasm {
+
+/**
+ * Namespace for the base types that \ref tree-gen relies on.
+ */
 namespace tree {
 
 /**

@@ -1,3 +1,7 @@
+/** \file
+ * Implementation for \ref include/cqasm-types.hpp "cqasm-types.hpp".
+ */
+
 #include <cctype>
 #include "cqasm-types.hpp"
 

@@ -22,6 +22,8 @@ initialize_function cqasm::primitives::initialize
 namespace cqasm
 namespace types
 
+# Base for all types, with a member indicating whether values of this type are
+# assignable (references) or not (constants, expression results).
 type_base {
 
     # Whether a value of this type can be assigned (true), or can only be read

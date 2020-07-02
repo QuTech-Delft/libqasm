@@ -13,7 +13,7 @@
 
 %code {
     int yylex(YYSTYPE* yylvalp, YYLTYPE* yyllocp, yyscan_t scanner);
-    void yyerror(YYLTYPE* yyllocp, yyscan_t scanner, Specification &specification, const char* msg);
+    void yyerror(YYLTYPE* yyllocp, yyscan_t scanner, tree_gen::Specification &specification, const char* msg);
 }
 
 %code top {
@@ -49,13 +49,13 @@
 }
 
 %param { yyscan_t scanner }
-%parse-param { Specification &specification }
+%parse-param { tree_gen::Specification &specification }
 
 /* YYSTYPE union */
 %union {
-    char           	*str;
-    std::string     *xstr;
-    NodeBuilder     *nbld;
+    char           	        *str;
+    std::string             *xstr;
+    tree_gen::NodeBuilder   *nbld;
 };
 
 /* Typenames for nonterminals */
@@ -91,17 +91,17 @@ Identifier      : IDENT                                                         
 String          : STRING                                                        { TRY $1[std::strlen($1) - 1] = 0; $$ = new std::string($1 + 1); std::free($1); CATCH }
                 ;
 
-Node            : Documentation IDENT '{'                                       { TRY auto nb = std::make_shared<NodeBuilder>(std::string($2), *$1); specification.add_node(nb); $$ = nb.get(); delete $1; std::free($2); CATCH }
+Node            : Documentation IDENT '{'                                       { TRY auto nb = std::make_shared<tree_gen::NodeBuilder>(std::string($2), *$1); specification.add_node(nb); $$ = nb.get(); delete $1; std::free($2); CATCH }
                 | Node ERROR ';'                                                { TRY $$ = $1->mark_error(); CATCH }
-                | Node Documentation IDENT ':' MAYBE '<' Identifier '>' ';'     { TRY $$ = $1->with_child(Maybe, *$7, std::string($3), *$2); delete $2; std::free($3); delete $7; CATCH }
-                | Node Documentation IDENT ':' ONE '<' Identifier '>' ';'       { TRY $$ = $1->with_child(One, *$7, std::string($3), *$2); delete $2; std::free($3); delete $7; CATCH }
-                | Node Documentation IDENT ':' ANY '<' Identifier '>' ';'       { TRY $$ = $1->with_child(Any, *$7, std::string($3), *$2); delete $2; std::free($3); delete $7; CATCH }
-                | Node Documentation IDENT ':' MANY '<' Identifier '>' ';'      { TRY $$ = $1->with_child(Many, *$7, std::string($3), *$2); delete $2; std::free($3); delete $7; CATCH }
-                | Node Documentation IDENT ':' EXT MAYBE '<' Identifier '>' ';' { TRY $$ = $1->with_prim(*$8, std::string($3), *$2, Maybe); delete $2; std::free($3); delete $8; CATCH }
-                | Node Documentation IDENT ':' EXT ONE '<' Identifier '>' ';'   { TRY $$ = $1->with_prim(*$8, std::string($3), *$2, One); delete $2; std::free($3); delete $8; CATCH }
-                | Node Documentation IDENT ':' EXT ANY '<' Identifier '>' ';'   { TRY $$ = $1->with_prim(*$8, std::string($3), *$2, Any); delete $2; std::free($3); delete $8; CATCH }
-                | Node Documentation IDENT ':' EXT MANY '<' Identifier '>' ';'  { TRY $$ = $1->with_prim(*$8, std::string($3), *$2, Many); delete $2; std::free($3); delete $8; CATCH }
-                | Node Documentation IDENT ':' Identifier ';'                   { TRY $$ = $1->with_prim(*$5, std::string($3), *$2, Prim); delete $2; std::free($3); delete $5; CATCH }
+                | Node Documentation IDENT ':' MAYBE '<' Identifier '>' ';'     { TRY $$ = $1->with_child(tree_gen::Maybe, *$7, std::string($3), *$2); delete $2; std::free($3); delete $7; CATCH }
+                | Node Documentation IDENT ':' ONE '<' Identifier '>' ';'       { TRY $$ = $1->with_child(tree_gen::One, *$7, std::string($3), *$2); delete $2; std::free($3); delete $7; CATCH }
+                | Node Documentation IDENT ':' ANY '<' Identifier '>' ';'       { TRY $$ = $1->with_child(tree_gen::Any, *$7, std::string($3), *$2); delete $2; std::free($3); delete $7; CATCH }
+                | Node Documentation IDENT ':' MANY '<' Identifier '>' ';'      { TRY $$ = $1->with_child(tree_gen::Many, *$7, std::string($3), *$2); delete $2; std::free($3); delete $7; CATCH }
+                | Node Documentation IDENT ':' EXT MAYBE '<' Identifier '>' ';' { TRY $$ = $1->with_prim(*$8, std::string($3), *$2, tree_gen::Maybe); delete $2; std::free($3); delete $8; CATCH }
+                | Node Documentation IDENT ':' EXT ONE '<' Identifier '>' ';'   { TRY $$ = $1->with_prim(*$8, std::string($3), *$2, tree_gen::One); delete $2; std::free($3); delete $8; CATCH }
+                | Node Documentation IDENT ':' EXT ANY '<' Identifier '>' ';'   { TRY $$ = $1->with_prim(*$8, std::string($3), *$2, tree_gen::Any); delete $2; std::free($3); delete $8; CATCH }
+                | Node Documentation IDENT ':' EXT MANY '<' Identifier '>' ';'  { TRY $$ = $1->with_prim(*$8, std::string($3), *$2, tree_gen::Many); delete $2; std::free($3); delete $8; CATCH }
+                | Node Documentation IDENT ':' Identifier ';'                   { TRY $$ = $1->with_prim(*$5, std::string($3), *$2, tree_gen::Prim); delete $2; std::free($3); delete $5; CATCH }
                 | Node Node '}'                                                 { TRY $2->derive_from($1->node); CATCH }
                 ;
 
@@ -119,7 +119,7 @@ Root            :                                                               
 
 %%
 
-void yyerror(YYLTYPE* yyllocp, yyscan_t unused, Specification &specification, const char* msg) {
+void yyerror(YYLTYPE* yyllocp, yyscan_t unused, tree_gen::Specification &specification, const char* msg) {
     (void)unused;
     (void)specification;
     std::cerr << "Parse error at " << ":"

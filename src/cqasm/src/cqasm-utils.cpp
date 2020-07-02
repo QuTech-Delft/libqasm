@@ -1,3 +1,7 @@
+/** \file
+ * Implementation for \ref include/cqasm-utils.hpp "cqasm-utils.hpp".
+ */
+
 #include <algorithm>
 #include <cctype>
 #include "cqasm-utils.hpp"

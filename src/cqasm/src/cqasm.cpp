@@ -1,3 +1,11 @@
+/**
+ * \dir
+ * Contains the non-generated source files and private header files for libqasm.
+ *
+ * \file
+ * Implementation for \ref include/cqasm.hpp "cqasm.hpp".
+ */
+
 #include "cqasm.hpp"
 
 namespace cqasm {

@@ -1,3 +1,7 @@
+/** \file
+ * Implementation for \ref include/cqasm-error.hpp "cqasm-error.hpp".
+ */
+
 #include "cqasm-error.hpp"
 
 namespace cqasm {
@@ -48,6 +52,9 @@ const std::string &AnalysisError::get_message() const {
  * Returns the message exception-style.
  */
 const char *AnalysisError::what() const noexcept {
+    // NOTE: this does *not* return a dangling pointer, because get_message()
+    // returns a const reference to the private msg field, which is used to
+    // maintain ownership of the memory used for the string.
     return get_message().c_str();
 }
 

@@ -1,3 +1,7 @@
+/** \file
+ * Implementation for \ref include/cqasm-primitives.hpp "cqasm-primitives.hpp".
+ */
+
 #include "cqasm-primitives.hpp"
 
 namespace cqasm {

@@ -1,3 +1,12 @@
+/** \file
+ * This file contains the \ref cqasm::analyzer::Analyzer "Analyzer" class and
+ * support classes, used to manage semantic analysis.
+ *
+ * While the Analyzer class itself only manages the semantic analysis phase,
+ * it also has some convenience methods that drive lexical analysis and parsing
+ * in addition.
+ */
+
 #pragma once
 
 #include "cqasm-ast.hpp"
@@ -6,6 +15,11 @@
 #include <cstdio>
 
 namespace cqasm {
+
+/**
+ * Namespace for the \ref cqasm::analyzer::Analyzer "Analyzer" class and
+ * support classes.
+ */
 namespace analyzer {
 
 /**
@@ -19,6 +33,21 @@ public:
 
 /**
  * Analysis result class.
+ *
+ * An object of this type is returned by the various `analyze*()` methods of
+ * the Analyzer class. There are three possibilities.
+ *
+ *  - Analysis was successful. In this case, \ref errors is empty, and
+ *    \ref root contains a valid \ref semantic::Program "Program" tree.
+ *  - Analysis failed. In this case, there is at least one string in
+ *    \ref errors. \ref root may be an empty reference, a partial tree,
+ *    or even a complete but somehow invalid tree.
+ *  - Analysis failed spectacularly with an internal error, in which case an
+ *    exception is thrown instead of this object being returned.
+ *
+ * If you don't want to manage printing error messages yourself and would like
+ * an exception upon failure in all cases, you can call unwrap() on the
+ * returned object.
  */
 class AnalysisResult {
 public:
@@ -50,6 +79,21 @@ public:
 
 /**
  * Main class used for analyzing cQASM files.
+ *
+ * Construction of this class is the entry point for libqasm whenever you need
+ * to modify the default instruction set, have a different set of supported
+ * error models, or want to add additional initial mappings, operators, or
+ * functions. The process is simple:
+ *
+ *  - Construct an Analyzer object with the default constructor.
+ *  - Use zero or more of the various `register_*()` methods to configure the
+ *    Analyzer.
+ *  - Use one or more of the `analyze*()` methods to analyze cQASM files or
+ *    string representations thereof.
+ *
+ * Note that the only state maintained by the Analyzer object is its
+ * configuration, and the `analyze*()` functions never change this state
+ * (hence they are const).
  */
 class Analyzer {
 private:
