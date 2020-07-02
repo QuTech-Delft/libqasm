@@ -731,6 +731,82 @@ int main(
         if (i == specification.namespaces.size() - 1 && !specification.namespace_doc.empty()) {
             header << std::endl;
             format_doc(header, specification.namespace_doc);
+
+            // Generate dot graph for the tree for the doxygen documentation.
+            header << "/**" << std::endl;
+            header << " * \\dot" << std::endl;
+            header << " * digraph example {" << std::endl;
+            header << " *   node [shape=record, fontname=Helvetica, fontsize=10];" << std::endl;
+            std::ostringstream ns;
+            for (auto &name : specification.namespaces) {
+                ns << name << "::";
+            }
+            for (auto &node : nodes) {
+                header << " *   " << node->title_case_name;
+                header << " [ label=\"" << node->title_case_name;
+                header << "\" URL=\"\\ref " << ns.str() << node->title_case_name;
+                header << "\"";
+                if (!node->derived.empty()) {
+                    header << ", style=dotted";
+                }
+                header << "];" << std::endl;
+            }
+            for (auto &node : nodes) {
+                if (node->parent) {
+                    header << " *   " << node->parent->title_case_name;
+                    header << " -> " << node->title_case_name;
+                    header << " [ arrowhead=open, style=dotted ];" << std::endl;
+                }
+            }
+            int prim_id = 0;
+            for (auto &node : nodes) {
+                for (auto child : node->children) {
+                    ChildType typ;
+                    if (child.node_type) {
+                        header << " *   " << node->title_case_name;
+                        header << " -> " << child.node_type->title_case_name;
+                        typ = child.type;
+                    } else {
+                        std::string full_name = child.prim_type;
+                        auto pos = full_name.find("<");
+                        if (pos != std::string::npos) {
+                            full_name = full_name.substr(pos + 1);
+                        }
+                        pos = full_name.rfind(">");
+                        if (pos != std::string::npos) {
+                            full_name = full_name.substr(0, pos);
+                        }
+                        std::string brief_name = full_name;
+                        pos = brief_name.rfind("::");
+                        if (pos != std::string::npos) {
+                            pos = brief_name.rfind("::", pos - 1);
+                            if (pos != std::string::npos) {
+                                brief_name = brief_name.substr(pos + 2);
+                            }
+                        }
+                        header << " *   prim" << prim_id;
+                        header << " [ label=\"" << brief_name;
+                        header << "\" URL=\"\\ref " << full_name;
+                        header << "\"];" << std::endl;
+                        header << " *   " << node->title_case_name;
+                        header << " -> prim" << prim_id;
+                        typ = child.ext_type;
+                        prim_id++;
+                    }
+                    header << " [ label=\"" << child.name;
+                    switch (typ) {
+                        case Maybe: header << "?\", arrowhead=open, style=dashed, "; break;
+                        case Any: header << "*\", arrowhead=open, style=bold, "; break;
+                        case Many: header << "+\", arrowhead=normal, style=bold, "; break;
+                        default: header << "\", arrowhead=normal, style=solid, "; break;
+                    }
+                    header << "fontname=Helvetica, fontsize=10];" << std::endl;
+                }
+            }
+            header << " * }" << std::endl;
+            header << " * \\enddot" << std::endl;
+            header << " */" << std::endl;
+
         }
         header << "namespace " << specification.namespaces[i] << " {" << std::endl;
     }
