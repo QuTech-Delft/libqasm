@@ -173,6 +173,7 @@ static void generate_base_class(
 static void generate_node_class(
     std::ofstream &header,
     std::ofstream &source,
+    const std::string &initialize_function,
     NodeType &node
 ) {
     const auto all_children = node.all_children();
@@ -231,7 +232,7 @@ static void generate_node_class(
                 case One:   header << "One<"   << child.node_type->title_case_name << ">()"; break;
                 case Any:   header << "Any<"   << child.node_type->title_case_name << ">()"; break;
                 case Many:  header << "Many<"  << child.node_type->title_case_name << ">()"; break;
-                case Prim:  header << "cqasm::primitives::initialize<" << child.prim_type << ">()"; break;
+                case Prim:  header << initialize_function << "<" << child.prim_type << ">()"; break;
             }
         }
         header << ");" << std::endl << std::endl;
@@ -775,7 +776,7 @@ int main(
                 continue;
             }
             generated.insert(node->snake_case_name);
-            generate_node_class(header, source, *node);
+            generate_node_class(header, source, specification.initialize_function, *node);
         }
     }
 

@@ -50,6 +50,7 @@
 source                                              WITHOUT_STR(SOURCE);
 header                                              WITHOUT_STR(HEADER);
 tree_namespace                                      WITHOUT_STR(TREE_NS);
+initialize_function                                 WITHOUT_STR(INIT_FN);
 location                                            WITHOUT_STR(SOURCE_LOC);
 include.*                                           WITH_STR(INCLUDE);
 src_include.*                                       WITH_STR(SRC_INCLUDE);

@@ -280,6 +280,11 @@ public:
     std::string tree_namespace;
 
     /**
+     * The initialization function to use for default values of members.
+     */
+    std::string initialize_function;
+
+    /**
      * Annotation object used for source location info, or empty if source
      * locations are not used or are not to be generated (applies to the dumper
      * only).
@@ -319,6 +324,16 @@ public:
             throw std::runtime_error("duplicate tree namespace declaration");
         }
         tree_namespace = name_space;
+    }
+
+    /**
+     * Sets the initialization function.
+     */
+    void set_initialize_function(const std::string &init_fn) {
+        if (!initialize_function.empty()) {
+            throw std::runtime_error("duplicate initialization function declaration");
+        }
+        initialize_function = init_fn;
     }
 
     /**
@@ -372,6 +387,9 @@ public:
         }
         if (header_filename.empty()) {
             throw std::runtime_error("missing header filename");
+        }
+        if (initialize_function.empty()) {
+            throw std::runtime_error("initialization function not specified");
         }
         for (auto &it : builders) {
             for (auto &child : it.second->node->children) {

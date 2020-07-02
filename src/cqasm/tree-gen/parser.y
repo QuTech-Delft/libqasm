@@ -65,7 +65,7 @@
 /* Tokens */
 %token <str> DOCSTRING
 %token <str> INCLUDE SRC_INCLUDE
-%token SOURCE HEADER TREE_NS SOURCE_LOC
+%token SOURCE HEADER TREE_NS INIT_FN SOURCE_LOC
 %token NAMESPACE NAMESPACE_SEP
 %token ERROR
 %token MAYBE ONE ANY MANY EXT
@@ -109,6 +109,7 @@ Root            :                                                               
                 | Root Documentation SOURCE String                              { TRY specification.set_source(*$4); delete $2; delete $4; CATCH }
                 | Root Documentation HEADER String                              { TRY specification.set_header(*$4); delete $2; delete $4; CATCH }
                 | Root Documentation TREE_NS Identifier                         { TRY specification.set_tree_namespace(*$4); delete $2; delete $4; CATCH }
+                | Root Documentation INIT_FN Identifier                         { TRY specification.set_initialize_function(*$4); delete $2; delete $4; CATCH }
                 | Root Documentation SOURCE_LOC Identifier                      { TRY specification.set_source_location(*$4); delete $2; delete $4; CATCH }
                 | Root Documentation INCLUDE                                    { TRY specification.add_include(std::string($3)); delete $2; std::free($3); CATCH }
                 | Root Documentation SRC_INCLUDE                                { TRY specification.add_src_include(std::string($3 + 4)); delete $2; std::free($3); CATCH }
