@@ -12,7 +12,7 @@ namespace error {
 /**
  * Exception used for analysis errors.
  */
-class AnalysisError : public std::exception {
+class AnalysisError : public std::runtime_error {
 private:
 
     /**

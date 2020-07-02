@@ -7,7 +7,10 @@ namespace error {
  * Constructs a new error. If node is a non-null annotatable with a
  * location node, its location information is attached.
  */
-AnalysisError::AnalysisError(std::string &&message, const annotatable::Annotatable *node) {
+AnalysisError::AnalysisError(
+    std::string &&message,
+    const annotatable::Annotatable *node
+) : std::runtime_error("") {
     this->message << message;
     if (node) {
         context(*node);
