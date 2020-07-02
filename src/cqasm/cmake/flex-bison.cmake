@@ -59,9 +59,9 @@ if(NOT M4_FOUND AND (NOT BISON_FOUND OR NOT FLEX_FOUND))
         message(FATAL_ERROR "install step for m4 ${M4_VERSION_REQUIRED} failed: ${result}")
     endif()
 
-    set(ENV{PATH} $ENV{PATH}:${CMAKE_CURRENT_BINARY_DIR}/m4-install/bin)
-
-    set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/m4-install")
+    # Add the new m4 binary in front of the system path, so the configure
+    # script of flex/bison should find it.
+    set(ENV{PATH} ${CMAKE_CURRENT_BINARY_DIR}/m4-install/bin:$ENV{PATH})
 
 endif()
 
@@ -119,13 +119,26 @@ if(NOT BISON_FOUND)
         message(FATAL_ERROR "install step for bison ${BISON_VERSION_REQUIRED} failed: ${result}")
     endif()
 
-    set(ENV{PATH} $ENV{PATH}:${CMAKE_CURRENT_BINARY_DIR}/bison-install/bin)
+    # Add the binary directory to the system environment path. Not sure if this
+    # is necessary.
+    set(ENV{PATH} ${CMAKE_CURRENT_BINARY_DIR}/bison-install/bin:$ENV{PATH})
 
+    # Unset cached variables which may have been set by the previous invocation
+    # of FindBISON.cmake, preventing it from searching again.
+    unset(BISON_EXECUTABLE CACHE)
+
+    # Set the path for FIND_*() so FindBISON.cmake hopefully finds the new one,
+    # even if an older version of bison is already installed on the system.
     set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/bison-install")
+
+    # Find again.
     find_package(
         BISON ${BISON_VERSION_REQUIRED} EXACT
         REQUIRED
     )
+
+    # Clear the prefix path.
+    unset(CMAKE_PREFIX_PATH)
 
 endif()
 
@@ -183,12 +196,27 @@ if(NOT FLEX_FOUND)
         message(FATAL_ERROR "install step for flex ${FLEX_VERSION_REQUIRED} failed: ${result}")
     endif()
 
-    set(ENV{PATH} $ENV{PATH}:${CMAKE_CURRENT_BINARY_DIR}/flex-install/bin)
+    # Add the binary directory to the system environment path. Not sure if this
+    # is necessary.
+    set(ENV{PATH} ${CMAKE_CURRENT_BINARY_DIR}/flex-install/bin:$ENV{PATH})
 
+    # Unset cached variables which may have been set by the previous invocation
+    # of FindFLEX.cmake, preventing it from searching again.
+    unset(FLEX_EXECUTABLE CACHE)
+    unset(FL_LIBRARY CACHE)
+    unset(FLEX_INCLUDE_DIR CACHE)
+
+    # Set the path for FIND_*() so FindFLEX.cmake hopefully finds the new one,
+    # even if an older version of bison is already installed on the system.
     set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/flex-install")
+
+    # Find again.
     find_package(
         FLEX ${FLEX_VERSION_REQUIRED} EXACT
         REQUIRED
     )
+
+    # Clear the prefix path.
+    unset(CMAKE_PREFIX_PATH)
 
 endif()

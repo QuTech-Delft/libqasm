@@ -3,6 +3,11 @@ FROM centos:6
 RUN yum install -y centos-release-scl && \
     yum install -y devtoolset-7 cmake git
 
+# Add this line to test CMake logic for when an older version of flex/bison is
+# already installed (that is, to make sure it uses the version it built from
+# source rather than defaulting to the system version).
+#RUN yum install -y flex bison
+
 ADD . /src
 
 WORKDIR /build
