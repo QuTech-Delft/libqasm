@@ -3,7 +3,7 @@
  * This is the C++ API documentation for libqasm. Click [here](../index.html)
  * to go back to the general documentation.
  *
- * \section original-api New API
+ * \section new-api New API
  *
  * Skipping everything to do with installation (refer to the main readme file
  * in the root of the repository for more information about that); to use
