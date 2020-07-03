@@ -24,15 +24,15 @@ original_workdir = os.getcwd()
 try:
     root_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
     os.chdir(root_dir)
-    if not os.path.exists('cbuild'):
-        os.mkdir('cbuild')
-    os.chdir('cbuild')
-    subprocess.check_call(['cmake', '..'])
-    subprocess.check_call(['make', '-j', '8'])
-    os.chdir('../doc')
-    subprocess.check_call(['doxygen'])
-    subprocess.check_call(['rm', '-rf', 'doxygen/doxy'])
-    subprocess.check_call(['mv', '-f', 'doxygen/html', 'doxygen/doxy'])
+    if not os.path.exists('doc/doxygen/doxy'):
+        if not os.path.exists('cbuild'):
+            os.mkdir('cbuild')
+        os.chdir('cbuild')
+        subprocess.check_call(['cmake', '..'])
+        subprocess.check_call(['make', '-j', '8'])
+        os.chdir('../doc')
+        subprocess.check_call(['doxygen'])
+        subprocess.check_call(['mv', '-f', 'doxygen/html', 'doxygen/doxy'])
 finally:
     os.chdir(original_workdir)
 
