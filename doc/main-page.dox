@@ -1,0 +1,58 @@
+/*! \mainpage
+ *
+ * This is the C++ API documentation for libqasm. Click [here](../index.html)
+ * to go back to the general documentation.
+ *
+ * \section new-api New API
+ *
+ * Skipping everything to do with installation (refer to the main readme file
+ * in the root of the repository for more information about that); to use
+ * libqasm in your project, just
+ *
+ * ```
+ * #include <cqasm.hpp>
+ * ```
+ *
+ * and use the tools provided to you through the \ref cqasm namespace. *You
+ * never have to include any other file.* The most basic entry points into the
+ * library for parsing a file are:
+ *
+ *  - \ref cqasm::analyze(const std::string &filename): read the given file,
+ *    passed by filename, and parse it.
+ *  - \ref cqasm::analyze(FILE *file, const std::string &filename): parse from
+ *    the given file pointer.
+ *  - \ref cqasm::analyze_string(const std::string &data, const std::string &filename):
+ *    parse the given string directly.
+ *
+ * which just use the \ref cqasm::default_analyzer() "default analyzer" to
+ * analyze the input and \ref cqasm::analyzer::AnalysisResult::unwrap() "unwrap"
+ * the result into a valid \ref cqasm::semantic "semantic tree" or an
+ * \ref cqasm::analyzer::AnalysisFailed "exception". In case of failure, the
+ * error message or messages are first printed to stderr.
+ *
+ * For more control, you can construct your own \ref cqasm::Analyzer "Analyzer"
+ * object. This allows you to configure the available instructions, error
+ * models, functions, and initial mappings as you see fit. You also have more
+ * control over handling errors, as the various analysis functions on Analyzer
+ * return a raw \ref cqasm::analyzer::AnalysisResult "AnalysisResult" object,
+ * containing the error messages (if any) as a vector of strings.
+ *
+ * If you like, you can also access the \ref cqasm::ast "raw abstract syntax tree",
+ * built directly by the parser, to do your own semantic analysis. You
+ * can use the parse functions in \ref cqasm::parser for that. Analyzer also
+ * has a \ref cqasm::analyzer::Analyzer::analyze(const ast::Program &program)
+ * "method to run semantic analysis on an AST", so you can stick your own
+ * pass in between as well.
+ *
+ * \section original-api Original API
+ *
+ * The API briefly introduced above is a complete rewrite of the API that was
+ * originally provided by libqasm. If you have to, you can still use the old
+ * one through a \ref qasm_new_to_old.hpp "compatibility layer". You have to
+ * enable it with the `-DLIBQASM_COMPAT=YES` directive on the toplevel
+ * CMakeLists.txt though, or use the original CMakeLists.txt file in
+ * src/library directly. Note however, that the original API can't be used
+ * without leaking memory, has issues with global state, is very poorly
+ * documented (you'll have to read the sources), and may be removed from
+ * libqasm in the future.
+ */

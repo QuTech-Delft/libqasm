@@ -1,0 +1,1267 @@
+SUCCESS
+Program( # input.cq:1:1..56:1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: 9
+  error_model: -
+  subcircuits: [
+    Subcircuit( # input.cq:8:1..6
+      name: init
+      iterations: 1
+      bundles: [
+        Bundle( # input.cq:9:5..13
+          items: [
+            Instruction( # input.cq:9:5..13
+              instruction: x(qubit reference)
+              name: x
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:9:7..13
+                  index: [
+                    ConstInt( # input.cq:5:7..8
+                      value: 4
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:10:5..53
+          items: [
+            Instruction( # input.cq:10:7..13
+              instruction: h(qubit reference)
+              name: h
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:10:9..13
+                  index: [
+                    ConstInt( # input.cq:10:11..12
+                      value: 0
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+            Instruction( # input.cq:10:16..22
+              instruction: h(qubit reference)
+              name: h
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:10:18..22
+                  index: [
+                    ConstInt( # input.cq:10:20..21
+                      value: 1
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+            Instruction( # input.cq:10:25..31
+              instruction: h(qubit reference)
+              name: h
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:10:27..31
+                  index: [
+                    ConstInt( # input.cq:10:29..30
+                      value: 2
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+            Instruction( # input.cq:10:34..40
+              instruction: h(qubit reference)
+              name: h
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:10:36..40
+                  index: [
+                    ConstInt( # input.cq:10:38..39
+                      value: 3
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+            Instruction( # input.cq:10:43..51
+              instruction: h(qubit reference)
+              name: h
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:10:45..51
+                  index: [
+                    ConstInt( # input.cq:5:7..8
+                      value: 4
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+      ]
+      annotations: []
+    )
+    Subcircuit( # input.cq:14:1..11
+      name: grover
+      iterations: 3
+      bundles: [
+        Bundle( # input.cq:20:5..11
+          items: [
+            Instruction( # input.cq:20:5..11
+              instruction: x(qubit reference)
+              name: x
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:20:7..11
+                  index: [
+                    ConstInt( # input.cq:20:9..10
+                      value: 2
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:21:5..27
+          items: [
+            Instruction( # input.cq:21:5..27
+              instruction: toffoli(qubit reference, qubit reference, qubit reference)
+              name: toffoli
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:21:13..17
+                  index: [
+                    ConstInt( # input.cq:21:15..16
+                      value: 0
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:21:18..22
+                  index: [
+                    ConstInt( # input.cq:21:20..21
+                      value: 1
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:21:23..27
+                  index: [
+                    ConstInt( # input.cq:21:25..26
+                      value: 5
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:22:5..27
+          items: [
+            Instruction( # input.cq:22:5..27
+              instruction: toffoli(qubit reference, qubit reference, qubit reference)
+              name: toffoli
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:22:13..17
+                  index: [
+                    ConstInt( # input.cq:22:15..16
+                      value: 1
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:22:18..22
+                  index: [
+                    ConstInt( # input.cq:22:20..21
+                      value: 5
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:22:23..27
+                  index: [
+                    ConstInt( # input.cq:22:25..26
+                      value: 6
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:24:5..27
+          items: [
+            Instruction( # input.cq:24:5..27
+              instruction: toffoli(qubit reference, qubit reference, qubit reference)
+              name: toffoli
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:24:13..17
+                  index: [
+                    ConstInt( # input.cq:24:15..16
+                      value: 2
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:24:18..22
+                  index: [
+                    ConstInt( # input.cq:24:20..21
+                      value: 6
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:24:23..27
+                  index: [
+                    ConstInt( # input.cq:24:25..26
+                      value: 7
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:25:5..27
+          items: [
+            Instruction( # input.cq:25:5..27
+              instruction: toffoli(qubit reference, qubit reference, qubit reference)
+              name: toffoli
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:25:13..17
+                  index: [
+                    ConstInt( # input.cq:25:15..16
+                      value: 3
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:25:18..22
+                  index: [
+                    ConstInt( # input.cq:25:20..21
+                      value: 7
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:25:23..27
+                  index: [
+                    ConstInt( # input.cq:25:25..26
+                      value: 8
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:26:5..21
+          items: [
+            Instruction( # input.cq:26:5..21
+              instruction: cnot(qubit reference, qubit reference)
+              name: cnot
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:26:10..14
+                  index: [
+                    ConstInt( # input.cq:26:12..13
+                      value: 8
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:26:15..21
+                  index: [
+                    ConstInt( # input.cq:5:7..8
+                      value: 4
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:27:5..27
+          items: [
+            Instruction( # input.cq:27:5..27
+              instruction: toffoli(qubit reference, qubit reference, qubit reference)
+              name: toffoli
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:27:13..17
+                  index: [
+                    ConstInt( # input.cq:27:15..16
+                      value: 3
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:27:18..22
+                  index: [
+                    ConstInt( # input.cq:27:20..21
+                      value: 7
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:27:23..27
+                  index: [
+                    ConstInt( # input.cq:27:25..26
+                      value: 8
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:28:5..27
+          items: [
+            Instruction( # input.cq:28:5..27
+              instruction: toffoli(qubit reference, qubit reference, qubit reference)
+              name: toffoli
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:28:13..17
+                  index: [
+                    ConstInt( # input.cq:28:15..16
+                      value: 2
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:28:18..22
+                  index: [
+                    ConstInt( # input.cq:28:20..21
+                      value: 6
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:28:23..27
+                  index: [
+                    ConstInt( # input.cq:28:25..26
+                      value: 7
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:29:5..27
+          items: [
+            Instruction( # input.cq:29:5..27
+              instruction: toffoli(qubit reference, qubit reference, qubit reference)
+              name: toffoli
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:29:13..17
+                  index: [
+                    ConstInt( # input.cq:29:15..16
+                      value: 1
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:29:18..22
+                  index: [
+                    ConstInt( # input.cq:29:20..21
+                      value: 5
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:29:23..27
+                  index: [
+                    ConstInt( # input.cq:29:25..26
+                      value: 6
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:30:5..27
+          items: [
+            Instruction( # input.cq:30:5..27
+              instruction: toffoli(qubit reference, qubit reference, qubit reference)
+              name: toffoli
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:30:13..17
+                  index: [
+                    ConstInt( # input.cq:30:15..16
+                      value: 0
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:30:18..22
+                  index: [
+                    ConstInt( # input.cq:30:20..21
+                      value: 1
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:30:23..27
+                  index: [
+                    ConstInt( # input.cq:30:25..26
+                      value: 5
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:31:5..11
+          items: [
+            Instruction( # input.cq:31:5..11
+              instruction: x(qubit reference)
+              name: x
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:31:7..11
+                  index: [
+                    ConstInt( # input.cq:31:9..10
+                      value: 2
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:34:5..42
+          items: [
+            Instruction( # input.cq:34:7..13
+              instruction: h(qubit reference)
+              name: h
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:34:9..13
+                  index: [
+                    ConstInt( # input.cq:34:11..12
+                      value: 0
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+            Instruction( # input.cq:34:16..22
+              instruction: h(qubit reference)
+              name: h
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:34:18..22
+                  index: [
+                    ConstInt( # input.cq:34:20..21
+                      value: 1
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+            Instruction( # input.cq:34:25..31
+              instruction: h(qubit reference)
+              name: h
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:34:27..31
+                  index: [
+                    ConstInt( # input.cq:34:29..30
+                      value: 2
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+            Instruction( # input.cq:34:34..40
+              instruction: h(qubit reference)
+              name: h
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:34:36..40
+                  index: [
+                    ConstInt( # input.cq:34:38..39
+                      value: 3
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:35:5..42
+          items: [
+            Instruction( # input.cq:35:7..13
+              instruction: x(qubit reference)
+              name: x
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:35:9..13
+                  index: [
+                    ConstInt( # input.cq:35:11..12
+                      value: 0
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+            Instruction( # input.cq:35:16..22
+              instruction: x(qubit reference)
+              name: x
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:35:18..22
+                  index: [
+                    ConstInt( # input.cq:35:20..21
+                      value: 1
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+            Instruction( # input.cq:35:25..31
+              instruction: x(qubit reference)
+              name: x
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:35:27..31
+                  index: [
+                    ConstInt( # input.cq:35:29..30
+                      value: 2
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+            Instruction( # input.cq:35:34..40
+              instruction: x(qubit reference)
+              name: x
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:35:36..40
+                  index: [
+                    ConstInt( # input.cq:35:38..39
+                      value: 3
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:36:5..11
+          items: [
+            Instruction( # input.cq:36:5..11
+              instruction: h(qubit reference)
+              name: h
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:36:7..11
+                  index: [
+                    ConstInt( # input.cq:36:9..10
+                      value: 3
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:37:5..27
+          items: [
+            Instruction( # input.cq:37:5..27
+              instruction: toffoli(qubit reference, qubit reference, qubit reference)
+              name: toffoli
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:37:13..17
+                  index: [
+                    ConstInt( # input.cq:37:15..16
+                      value: 0
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:37:18..22
+                  index: [
+                    ConstInt( # input.cq:37:20..21
+                      value: 1
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:37:23..27
+                  index: [
+                    ConstInt( # input.cq:37:25..26
+                      value: 5
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:38:5..27
+          items: [
+            Instruction( # input.cq:38:5..27
+              instruction: toffoli(qubit reference, qubit reference, qubit reference)
+              name: toffoli
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:38:13..17
+                  index: [
+                    ConstInt( # input.cq:38:15..16
+                      value: 1
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:38:18..22
+                  index: [
+                    ConstInt( # input.cq:38:20..21
+                      value: 5
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:38:23..27
+                  index: [
+                    ConstInt( # input.cq:38:25..26
+                      value: 6
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:39:5..27
+          items: [
+            Instruction( # input.cq:39:5..27
+              instruction: toffoli(qubit reference, qubit reference, qubit reference)
+              name: toffoli
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:39:13..17
+                  index: [
+                    ConstInt( # input.cq:39:15..16
+                      value: 2
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:39:18..22
+                  index: [
+                    ConstInt( # input.cq:39:20..21
+                      value: 6
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:39:23..27
+                  index: [
+                    ConstInt( # input.cq:39:25..26
+                      value: 7
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:40:5..19
+          items: [
+            Instruction( # input.cq:40:5..19
+              instruction: cnot(qubit reference, qubit reference)
+              name: cnot
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:40:10..14
+                  index: [
+                    ConstInt( # input.cq:40:12..13
+                      value: 7
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:40:15..19
+                  index: [
+                    ConstInt( # input.cq:40:17..18
+                      value: 3
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:41:5..27
+          items: [
+            Instruction( # input.cq:41:5..27
+              instruction: toffoli(qubit reference, qubit reference, qubit reference)
+              name: toffoli
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:41:13..17
+                  index: [
+                    ConstInt( # input.cq:41:15..16
+                      value: 2
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:41:18..22
+                  index: [
+                    ConstInt( # input.cq:41:20..21
+                      value: 6
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:41:23..27
+                  index: [
+                    ConstInt( # input.cq:41:25..26
+                      value: 7
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:42:5..27
+          items: [
+            Instruction( # input.cq:42:5..27
+              instruction: toffoli(qubit reference, qubit reference, qubit reference)
+              name: toffoli
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:42:13..17
+                  index: [
+                    ConstInt( # input.cq:42:15..16
+                      value: 1
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:42:18..22
+                  index: [
+                    ConstInt( # input.cq:42:20..21
+                      value: 5
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:42:23..27
+                  index: [
+                    ConstInt( # input.cq:42:25..26
+                      value: 6
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:43:5..27
+          items: [
+            Instruction( # input.cq:43:5..27
+              instruction: toffoli(qubit reference, qubit reference, qubit reference)
+              name: toffoli
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:43:13..17
+                  index: [
+                    ConstInt( # input.cq:43:15..16
+                      value: 0
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:43:18..22
+                  index: [
+                    ConstInt( # input.cq:43:20..21
+                      value: 1
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:43:23..27
+                  index: [
+                    ConstInt( # input.cq:43:25..26
+                      value: 5
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:44:5..11
+          items: [
+            Instruction( # input.cq:44:5..11
+              instruction: h(qubit reference)
+              name: h
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:44:7..11
+                  index: [
+                    ConstInt( # input.cq:44:9..10
+                      value: 3
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:45:5..42
+          items: [
+            Instruction( # input.cq:45:7..13
+              instruction: x(qubit reference)
+              name: x
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:45:9..13
+                  index: [
+                    ConstInt( # input.cq:45:11..12
+                      value: 0
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+            Instruction( # input.cq:45:16..22
+              instruction: x(qubit reference)
+              name: x
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:45:18..22
+                  index: [
+                    ConstInt( # input.cq:45:20..21
+                      value: 1
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+            Instruction( # input.cq:45:25..31
+              instruction: x(qubit reference)
+              name: x
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:45:27..31
+                  index: [
+                    ConstInt( # input.cq:45:29..30
+                      value: 2
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+            Instruction( # input.cq:45:34..40
+              instruction: x(qubit reference)
+              name: x
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:45:36..40
+                  index: [
+                    ConstInt( # input.cq:45:38..39
+                      value: 3
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:46:5..42
+          items: [
+            Instruction( # input.cq:46:7..13
+              instruction: h(qubit reference)
+              name: h
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:46:9..13
+                  index: [
+                    ConstInt( # input.cq:46:11..12
+                      value: 0
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+            Instruction( # input.cq:46:16..22
+              instruction: h(qubit reference)
+              name: h
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:46:18..22
+                  index: [
+                    ConstInt( # input.cq:46:20..21
+                      value: 1
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+            Instruction( # input.cq:46:25..31
+              instruction: h(qubit reference)
+              name: h
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:46:27..31
+                  index: [
+                    ConstInt( # input.cq:46:29..30
+                      value: 2
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+            Instruction( # input.cq:46:34..40
+              instruction: h(qubit reference)
+              name: h
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:46:36..40
+                  index: [
+                    ConstInt( # input.cq:46:38..39
+                      value: 3
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:47:5..12
+          items: [
+            Instruction( # input.cq:47:5..12
+              instruction: display()
+              name: display
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: []
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+      ]
+      annotations: []
+    )
+    Subcircuit( # input.cq:50:1..19
+      name: final_measurement
+      iterations: 1
+      bundles: [
+        Bundle( # input.cq:51:5..13
+          items: [
+            Instruction( # input.cq:51:5..13
+              instruction: h(qubit reference)
+              name: h
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:51:7..13
+                  index: [
+                    ConstInt( # input.cq:5:7..8
+                      value: 4
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:52:5..19
+          items: [
+            Instruction( # input.cq:52:5..19
+              instruction: measure(qubit reference)
+              name: measure
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:52:13..19
+                  index: [
+                    ConstInt( # input.cq:5:7..8
+                      value: 4
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:53:5..12
+          items: [
+            Instruction( # input.cq:53:5..12
+              instruction: display()
+              name: display
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: []
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+      ]
+      annotations: []
+    )
+  ]
+  mappings: [
+    Mapping( # input.cq:5:1..16
+      name: oracle
+      value: <
+        QubitRefs( # input.cq:5:5..9
+          index: [
+            ConstInt( # input.cq:5:7..8
+              value: 4
+            )
+          ]
+        )
+      >
+      annotations: []
+    )
+  ]
+)
+

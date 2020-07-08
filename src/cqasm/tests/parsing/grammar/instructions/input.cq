@@ -1,0 +1,17 @@
+version 1.0
+qubits 10
+
+# Regular, serial instruction.
+x q[0] @annot.first
+
+# Single-line parallel instruction without braces.
+x q[1] @annot.second | x q[2] @annot.third
+
+# Single-line parallel instruction with braces.
+{ x q[3] @annot.fourth | x q[4] @annot.fifth } @annot.sixth
+
+# Multi-line parallel instruction.
+{
+    x q[5] @annot.seventh
+    x q[6] @annot.eigth
+} @annot.ninth

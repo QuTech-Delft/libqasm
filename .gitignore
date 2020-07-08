@@ -88,3 +88,4 @@ log
 library/**/*_swig*
 
 .idea/
+cmake-build-*/

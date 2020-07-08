@@ -1,0 +1,68 @@
+SUCCESS
+Program( # input.cq:1:1..5:1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: 4
+  error_model: -
+  subcircuits: [
+    Subcircuit( # input.cq:4:1..53
+      name: 
+      iterations: 1
+      bundles: [
+        Bundle( # input.cq:4:1..53
+          items: [
+            Instruction( # input.cq:4:1..53
+              instruction: display()
+              name: display
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: []
+              annotations: [
+                AnnotationData( # input.cq:4:10..53
+                  interface: test
+                  operation: test
+                  operands: [
+                    ConstAxis( # input.cq:4:20..21
+                      value: X
+                    )
+                    ConstAxis( # input.cq:4:23..24
+                      value: Y
+                    )
+                    ConstAxis( # input.cq:4:26..27
+                      value: Z
+                    )
+                    ConstComplex( # input.cq:4:29..31
+                      value: (0,1)
+                    )
+                    ConstReal( # input.cq:4:33..35
+                      value: 2.71828
+                    )
+                    ConstReal( # input.cq:4:37..39
+                      value: 3.14159
+                    )
+                    ConstBool( # input.cq:4:41..45
+                      value: 1
+                    )
+                    ConstBool( # input.cq:4:47..52
+                      value: 0
+                    )
+                  ]
+                )
+              ]
+            )
+          ]
+          annotations: []
+        )
+      ]
+      annotations: []
+    )
+  ]
+  mappings: []
+)
+

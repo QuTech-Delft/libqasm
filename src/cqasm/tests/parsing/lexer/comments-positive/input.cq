@@ -1,0 +1,10 @@
+version 1.0
+qubits 10
+
+# Line comments
+u q[0], [ # can go
+1, 0 #  almost
+2, 3] # everywhere
+
+x /* And /* block comments too! */ q[0]
+

@@ -1,0 +1,37 @@
+version 1.0
+qubits 10
+
+# Instructions are normally separated by newlines.
+x q[0]
+
+# You can also use semicolons.
+x q[1]; x q[2];
+
+# Since newlines have a syntactical meaning, they can't go everywhere. However,
+# you can escape newlines:
+x \
+q[3]
+
+# Newlines are legal/used in a few other places, notably matrices. The
+# following are equivalent:
+u q[4], [
+    0, 1
+    1, 0
+]
+
+u q[5], [0, 1
+         1, 0]
+
+u q[6], [0, 1; 1, 0]
+
+# This is also equivalent to the following old matrix notation:
+u q[7], [0, 0, 1, 0, 1, 0, 0, 0]
+
+# Strings can contain embedded newlines, because why not:
+load_state "Hello,
+I'm a multiline string."
+
+# And so can JSON, of course:
+display @an_annotation.with_json({|
+    "json": "object"
+|})

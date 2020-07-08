@@ -1,0 +1,178 @@
+SUCCESS
+Program( # input.cq:1:1..5:1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: <
+    IntegerLiteral( # input.cq:2:8..10
+      value: 10
+    )
+  >
+  statements: <
+    StatementList( # input.cq:4:1..117
+      items: [
+        Bundle( # input.cq:4:1..117
+          items: [
+            Instruction( # input.cq:4:1..117
+              name: <
+                Identifier( # input.cq:4:1..8
+                  name: display
+                )
+              >
+              condition: -
+              operands: <
+                ExpressionList(
+                  items: []
+                )
+              >
+              annotations: [
+                AnnotationData( # input.cq:4:10..117
+                  interface: <
+                    Identifier( # input.cq:4:10..14
+                      name: test
+                    )
+                  >
+                  operation: <
+                    Identifier( # input.cq:4:15..19
+                      name: test
+                    )
+                  >
+                  operands: <
+                    ExpressionList( # input.cq:4:20..105
+                      items: [
+                        Subtract( # input.cq:4:20..42
+                          lhs: <
+                            Add( # input.cq:4:20..35
+                              lhs: <
+                                Subtract( # input.cq:4:20..29
+                                  lhs: <
+                                    Add( # input.cq:4:20..25
+                                      lhs: <
+                                        IntegerLiteral( # input.cq:4:20..21
+                                          value: 1
+                                        )
+                                      >
+                                      rhs: <
+                                        IntegerLiteral( # input.cq:4:24..25
+                                          value: 2
+                                        )
+                                      >
+                                    )
+                                  >
+                                  rhs: <
+                                    IntegerLiteral( # input.cq:4:28..29
+                                      value: 4
+                                    )
+                                  >
+                                )
+                              >
+                              rhs: <
+                                Negate( # input.cq:4:32..35
+                                  expr: <
+                                    IntegerLiteral( # input.cq:4:34..35
+                                      value: 8
+                                    )
+                                  >
+                                )
+                              >
+                            )
+                          >
+                          rhs: <
+                            Negate( # input.cq:4:38..42
+                              expr: <
+                                IntegerLiteral( # input.cq:4:40..42
+                                  value: 16
+                                )
+                              >
+                            )
+                          >
+                        )
+                        Subtract( # input.cq:4:54..78
+                          lhs: <
+                            Multiply( # input.cq:4:54..70
+                              lhs: <
+                                Divide( # input.cq:4:54..64
+                                  lhs: <
+                                    IntegerLiteral( # input.cq:4:54..55
+                                      value: 1
+                                    )
+                                  >
+                                  rhs: <
+                                    Power( # input.cq:4:58..64
+                                      lhs: <
+                                        IntegerLiteral( # input.cq:4:58..59
+                                          value: 2
+                                        )
+                                      >
+                                      rhs: <
+                                        IntegerLiteral( # input.cq:4:63..64
+                                          value: 3
+                                        )
+                                      >
+                                    )
+                                  >
+                                )
+                              >
+                              rhs: <
+                                Negate( # input.cq:4:67..70
+                                  expr: <
+                                    IntegerLiteral( # input.cq:4:69..70
+                                      value: 4
+                                    )
+                                  >
+                                )
+                              >
+                            )
+                          >
+                          rhs: <
+                            Multiply( # input.cq:4:73..78
+                              lhs: <
+                                IntegerLiteral( # input.cq:4:73..74
+                                  value: 5
+                                )
+                              >
+                              rhs: <
+                                IntegerLiteral( # input.cq:4:77..78
+                                  value: 6
+                                )
+                              >
+                            )
+                          >
+                        )
+                        Multiply( # input.cq:4:94..105
+                          lhs: <
+                            IntegerLiteral( # input.cq:4:94..95
+                              value: 2
+                            )
+                          >
+                          rhs: <
+                            Add( # input.cq:4:98..105
+                              lhs: <
+                                IntegerLiteral( # input.cq:4:99..100
+                                  value: 3
+                                )
+                              >
+                              rhs: <
+                                IntegerLiteral( # input.cq:4:103..104
+                                  value: 4
+                                )
+                              >
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
+                )
+              ]
+            )
+          ]
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

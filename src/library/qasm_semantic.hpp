@@ -7,17 +7,9 @@
 #include <exception>
 #include "qasm_ast.hpp"
 #include "qasm_data.hpp"
-
-typedef void* yyscan_t;
-typedef struct yy_buffer_state* YY_BUFFER_STATE;
-extern int yylex_init(yyscan_t*);
-extern void yyset_lineno ( int _line_number , yyscan_t yyscanner );
-extern void yyset_column ( int _column_no , yyscan_t yyscanner );
-extern void yyset_in(FILE*, yyscan_t);
-extern YY_BUFFER_STATE yy_scan_string(const char *yy_str, yyscan_t yyscanner);
-void yy_delete_buffer(YY_BUFFER_STATE b, yyscan_t yyscanner);
-extern int yyparse(yyscan_t, qasm_data*);
-extern int yylex_destroy(yyscan_t);
+#ifndef SWIG
+#include "qasm_new_to_old.hpp"
+#endif
 
 namespace compiler
 {
@@ -26,51 +18,23 @@ namespace compiler
         public:
             QasmSemanticChecker(const char* qasm_str_input)
             {
-                // Init scanner
-                yyscan_t scanner;
-                YY_BUFFER_STATE buf;
-                yylex_init(&scanner);
-    
-                // Parse the input
-                buf = yy_scan_string(qasm_str_input, scanner);
-                yyset_lineno (1, scanner);
-                yyset_column (0, scanner);
-                auto* data = new qasm_data();
-                int result = yyparse(scanner, data);
-    
-                // Clean
-                yy_delete_buffer(buf, scanner);
-                yylex_destroy(scanner);
-    
-                if (result)
-                    throw std::runtime_error(std::string("Could not parse qasm!\n"));
-    
-                maxNumQubit_ = data->qasm_representation.numQubits();
-                qasm_ = data->qasm_representation;
+                if (!qasm_str_input) {
+                    throw std::invalid_argument("received null string");
+                }
+                new_to_old::handle_parse_result(
+                    qasm_, cqasm::parser::parse_string(qasm_str_input));
+                maxNumQubit_ = qasm_.numQubits();
                 parse_result_ = doChecks();
             }
 
             QasmSemanticChecker(FILE* qasm_file)
             {
-                // Init scanner
-                yyscan_t scanner;
-                yylex_init(&scanner);
-
-                // Set lex to read from it instead of defaulting to STDIN:
-                yyset_in(qasm_file, scanner);
-
-                // Parse the input
-                qasm_data* data = new qasm_data();
-                int result = yyparse(scanner, data);
-
-                // Clean
-                yylex_destroy(scanner);
-
-                if (result)
-                    throw std::runtime_error(std::string("Could not parse qasm file!\n"));
-
-                maxNumQubit_ = data->qasm_representation.numQubits();
-                qasm_ = data->qasm_representation;
+                if (!qasm_file) {
+                    throw std::invalid_argument("received null file pointer");
+                }
+                new_to_old::handle_parse_result(
+                    qasm_, cqasm::parser::parse_file(qasm_file));
+                maxNumQubit_ = qasm_.numQubits();
                 parse_result_ = doChecks();
             }
 
@@ -178,9 +142,10 @@ namespace compiler
 
             int checkQubitListLength(const compiler::Qubits& qubits1,
                                      const compiler::Qubits& qubits2,
-                                     int linenumber __attribute__((unused))) const
+                                     int linenumber) const
             // This function ensures that the lengths of the qubit lists are the same for the different pairs involved in the operation
             {
+                (void)linenumber;
                 int retnum = 1;
                 if (qubits1.getSelectedQubits().getIndices().size() ==
                      qubits2.getSelectedQubits().getIndices().size())
@@ -210,8 +175,10 @@ namespace compiler
                 return checkQubitList(op.getQubitsInvolved(), linenumber);
             }
 
-            int checkWaitDisplayNot(const compiler::Operation& op __attribute__((unused)), int linenumber __attribute__((unused))) const
+            int checkWaitDisplayNot(const compiler::Operation& op, int linenumber) const
             {
+                (void)op;
+                (void)linenumber;
                 return 0;
             }
 
@@ -225,8 +192,10 @@ namespace compiler
                 return result;
             }
 
-            int checkMeasureAll(const compiler::Operation& op __attribute__((unused)), int linenumber __attribute__((unused))) const
+            int checkMeasureAll(const compiler::Operation& op, int linenumber) const
             {
+                (void)op;
+                (void)linenumber;
                 return 0;
             }
 

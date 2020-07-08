@@ -24,4 +24,4 @@ measure q[1]
 {measure q0 | measure q1}
 
 .display_bits
-    display b[0:2,4:6]
+    display b[0:1]

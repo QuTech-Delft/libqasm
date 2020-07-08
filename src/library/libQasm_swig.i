@@ -1,6 +1,12 @@
 /* libQasm_swig.i */
 %module libQasm
 
+%begin %{
+#ifdef _MSC_VER
+#define SWIG_PYTHON_INTERPRETER_NO_DEBUG
+#endif
+%}
+
 %{
 #include "qasm_ast.hpp"
 #include "libQasm.hpp"

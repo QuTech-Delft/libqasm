@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:5:1..42: error model can only be specified once, previous specification was at input.cq:4:1..42

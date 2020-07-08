@@ -14,21 +14,35 @@ libqasm_dir = os.path.join(src_dir, "libQasm")
 platforms = {
     'unix': {
         'make_command': 'make',
+        'test_command': 'make test',
         'cmake_options': '',
         'clib_name': '_libQasm.so',
-        'liblexgram': 'liblexgram.so'
+        'liblexgram': 'liblexgram.so',
+        'output_dir': '',
     },
     'darwin': {
         'make_command': 'make',
+        'test_command': 'make test',
         'cmake_options': '',
         'clib_name': '_libQasm.so',
-        'liblexgram': 'liblexgram.dylib'
+        'liblexgram': 'liblexgram.dylib',
+        'output_dir': '',
     },
-    'win32': {
+    'win32-mingw': {
         'make_command': 'mingw32-make',
+        'test_command': 'mingw32-make test',
         'cmake_options': '-G "MinGW Makefiles"',
         'clib_name': '_libQasm.pyd',
-        'liblexgram': 'liblexgram.dll'
+        'liblexgram': 'liblexgram.dll',
+        'output_dir': '',
+    },
+    'win32-msvc': {
+        'make_command': 'cmake --build .',
+        'test_command': 'cmake --build . --target RUN_TESTS',
+        'cmake_options': '',
+        'clib_name': '_libQasm.pyd',
+        'liblexgram': 'lexgram.dll',
+        'output_dir': 'Debug',
     }
 }
 
@@ -41,8 +55,21 @@ def determine_platform() -> Dict[str, str]:
     """
     if platform == "linux" or platform == "linux2":
         return platforms['unix']
-    elif platform == "darwin" or platform == "win32":
-        return platforms[platform]
+    elif platform == "darwin":
+        return platforms["darwin"]
+    elif platform == "win32":
+        if 'USE_MINGW' not in os.environ:
+            try:
+                execute_process("cl")
+                print("MSVC (cl) was found, using it to compile.")
+                print("Define the USE_MINGW env variable to force compilation with MinGW.")
+                print("Be sure to run cleanme.py first when switching between compilers, or CMake will complain.")
+                return platforms["win32-msvc"]
+            except RuntimeError:
+                pass
+        else:
+            print("Compiling with MinGW due to USE_MINGW env variable.")
+        return platforms["win32-mingw"]
     else:
         raise OSError('Platform not recognised!')
 
@@ -57,18 +84,19 @@ def create_directory(directory: str) -> None:
         os.makedirs(directory)
 
 
-def build_libqasm_library(make_command: str, cmake_options: str) -> None:
+def build_libqasm_library(make_command: str, test_command: str, cmake_options: str) -> None:
     """Call cmake and make to build the c++ libraries.
 
     Args:
-        make_command: the make command to use, varies between windows and unix.
+        make_command: the command used to build.
+        test_command: the command used to run the tests.
         cmake_options: additional build options to pass to cmake.
     """
     os.chdir(build_dir)
     execute_process(f'git submodule update --init --recursive')
     execute_process(f'cmake {cmake_options} {os.path.join("..", "library")}')
     execute_process(f'{make_command}')
-    execute_process(f'{make_command} test')
+    execute_process(f'{test_command}')
     os.chdir(root_dir)
 
 
@@ -80,6 +108,8 @@ def execute_process(command: str) -> None:
     """
     proc = subprocess.Popen(command, shell=True)
     proc.communicate()
+    if proc.returncode:
+        raise RuntimeError('process failed')
 
 
 def create_init_file() -> None:
@@ -113,13 +143,17 @@ def build_libqasm():
     for directory in [libqasm_dir, build_dir]:
         create_directory(directory)
 
-    build_libqasm_library(sys_platform['make_command'], sys_platform['cmake_options'])
+    build_libqasm_library(sys_platform['make_command'], sys_platform['test_command'], sys_platform['cmake_options'])
     clibname = sys_platform['clib_name']
 
     create_init_file()
-    copy_file(build_dir, libqasm_dir, clibname)
+    if sys_platform['output_dir']:
+        build_output_dir = os.path.join(build_dir, sys_platform['output_dir'])
+    else:
+        build_output_dir = build_dir
+    copy_file(build_output_dir, libqasm_dir, clibname)
     copy_file(build_dir, libqasm_dir, "libQasm.py")
-    copy_file(build_dir, libqasm_dir, sys_platform['liblexgram'])
+    copy_file(build_output_dir, libqasm_dir, sys_platform['liblexgram'])
 
     return os.path.join(libqasm_dir, clibname), os.path.join(libqasm_dir, sys_platform['liblexgram'])
 

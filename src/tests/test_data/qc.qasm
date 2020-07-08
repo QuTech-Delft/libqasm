@@ -7,7 +7,7 @@ version 1.0
 qubits 8 #foo
 
 
-map q[0,0:7,5,6], bleh2
+map q[0,2:4,6], bleh2
 map b[5:7], bleh
 
 
@@ -25,7 +25,7 @@ rX q[1,2:5], 3.1416E-01
 
 
 .mapping # mappin
-map b[0:11], bitcontroller
+map b[0:7], bitcontroller
 map q[0] , q0
 map q[1] , q1
 map q[2] , q2

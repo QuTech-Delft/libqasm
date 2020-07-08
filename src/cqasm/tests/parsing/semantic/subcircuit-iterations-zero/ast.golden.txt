@@ -1,0 +1,33 @@
+SUCCESS
+Program( # input.cq:1:1..5:1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: <
+    IntegerLiteral( # input.cq:2:8..10
+      value: 10
+    )
+  >
+  statements: <
+    StatementList( # input.cq:4:1..12
+      items: [
+        Subcircuit( # input.cq:4:1..12
+          name: <
+            Identifier( # input.cq:4:2..9
+              name: circuit
+            )
+          >
+          iterations: <
+            IntegerLiteral( # input.cq:4:10..11
+              value: 0
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

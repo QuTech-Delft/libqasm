@@ -1,0 +1,6 @@
+ERROR
+Error at input.cq:5:1..9: qubit with index 1 is used more than once
+Error at input.cq:8:1..11: qubit with index 1 is used more than once
+Error at input.cq:9:1..11: qubit with index 1 is used more than once
+Error at input.cq:20:1..16: qubit with index 0 is used more than once
+Error at input.cq:21:1..20: qubit with index 1 is used more than once

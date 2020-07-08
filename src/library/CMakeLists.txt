@@ -10,10 +10,7 @@ ENABLE_TESTING()
 
 PROJECT("libQasm")
 
-FIND_PACKAGE(BISON 3.0)
-FIND_PACKAGE(FLEX 2.6)
-
-if(${CMAKE_VERSION} VERSION_LESS "3.12.0") 
+if(${CMAKE_VERSION} VERSION_LESS "3.12.0")
     FIND_PACKAGE(PythonInterp)
     if (${PYTHONINTERP_FOUND})
         FIND_PACKAGE(PythonLibs "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
@@ -29,33 +26,37 @@ IF(COMPILER_SUPPORTS_CXX11)
     SET(CMAKE_REQUIRED_FLAGS "-std=c++11")
 ENDIF()
 
-BISON_TARGET(
-    MyParser
-    grammar.y ${CMAKE_CURRENT_BINARY_DIR}/grammar.tab.c
-    COMPILE_FLAGS "-Wall -d -t -g -r all"
-)
-FLEX_TARGET(
-    MyScanner
-    lex.l  ${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c
-)
-ADD_FLEX_BISON_DEPENDENCY(MyScanner MyParser)
-
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
-SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_BINARY_DIR}/grammar.tab.c PROPERTIES LANGUAGE CXX)
-SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c PROPERTIES LANGUAGE CXX)
+# Include the new library.
+ADD_SUBDIRECTORY(../cqasm cqasm)
 
-ADD_LIBRARY(lexgram SHARED ${CMAKE_CURRENT_BINARY_DIR}/grammar.tab.c ${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c)
+# Windows weirdness: need a .lib file to link against a DLL at compile-time
+# (I think), but only the .dll is generated when there are no exported symbols.
+# This sort of fixes that (https://stackoverflow.com/questions/1941443)
+SET(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
+# NOTE: for compatibility purposes, the cqasm library is essentially renamed to
+# lexgram/lexgramstatic here.
+ADD_LIBRARY(lexgram SHARED $<TARGET_OBJECTS:cqasm_objlib>)
+TARGET_INCLUDE_DIRECTORIES(lexgram PUBLIC $<TARGET_PROPERTY:cqasm_objlib,INTERFACE_INCLUDE_DIRECTORIES>)
+TARGET_LINK_LIBRARIES(lexgram PUBLIC $<TARGET_PROPERTY:cqasm_objlib,LINK_LIBRARIES>)
 SET_PROPERTY(TARGET lexgram PROPERTY CXX_STANDARD 11)
 
-ADD_LIBRARY(lexgramstatic STATIC ${CMAKE_CURRENT_BINARY_DIR}/grammar.tab.c ${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c)
+ADD_LIBRARY(lexgramstatic STATIC $<TARGET_OBJECTS:cqasm_objlib>)
+TARGET_INCLUDE_DIRECTORIES(lexgramstatic PUBLIC $<TARGET_PROPERTY:cqasm_objlib,INTERFACE_INCLUDE_DIRECTORIES>)
+TARGET_LINK_LIBRARIES(lexgramstatic PUBLIC $<TARGET_PROPERTY:cqasm_objlib,LINK_LIBRARIES>)
 SET_TARGET_PROPERTIES(lexgramstatic PROPERTIES POSITION_INDEPENDENT_CODE ON)
 SET_PROPERTY(TARGET lexgramstatic PROPERTY CXX_STANDARD 11)
 
 ## Start of testing
 INCLUDE_DIRECTORIES (${CMAKE_CURRENT_SOURCE_DIR}/../tests/cpp/doctest)
-ADD_COMPILE_OPTIONS(-std=c++11 -Wall -Wextra)
+IF(MSVC)
+    ADD_COMPILE_OPTIONS(/std=c++11)
+ELSE()
+    ADD_COMPILE_OPTIONS(-std=c++11 -Wall -Wextra)
+ENDIF()
 # Keep test files in a separate source directory called test
 FILE(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ../tests/cpp/*.cpp)
 

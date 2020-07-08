@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:4:20..35: matrix is not rectangular
