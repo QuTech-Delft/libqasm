@@ -93,14 +93,14 @@ def build_libqasm_library(make_command: str, test_command: str, cmake_options: s
         cmake_options: additional build options to pass to cmake.
     """
     os.chdir(build_dir)
-    execute_process(f'git submodule update --init --recursive')
+    execute_process(f'git submodule update --init --recursive', allow_failure=True)
     execute_process(f'cmake {cmake_options} {os.path.join("..", "library")}')
     execute_process(f'{make_command}')
     execute_process(f'{test_command}')
     os.chdir(root_dir)
 
 
-def execute_process(command: str) -> None:
+def execute_process(command: str, allow_failure: bool=False) -> None:
     """Execute shell commands.
 
     Args:
@@ -108,7 +108,7 @@ def execute_process(command: str) -> None:
     """
     proc = subprocess.Popen(command, shell=True)
     proc.communicate()
-    if proc.returncode:
+    if proc.returncode and not allow_failure:
         raise RuntimeError('process failed')
 
 
