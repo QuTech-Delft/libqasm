@@ -31,7 +31,7 @@ if(CMAKE_VERSION VERSION_LESS "3.1")
 else()
     set(CMAKE_CXX_STANDARD 11)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
-    set(CMAKE_CXX_EXTENSIONS ON)
+    set(CMAKE_CXX_EXTENSIONS OFF)
 endif()
 
 # Require flex/bison; if not installed, this will try to build from source.
