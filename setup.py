@@ -1,179 +1,225 @@
-import os
-import subprocess
-from shutil import copyfile
-from sys import platform
-from typing import Dict
+#!/usr/bin/env python3
 
-from setuptools import setup
+import os, platform, shutil, sys, re
+from setuptools import setup, Extension
 
-root_dir = os.path.dirname(os.path.realpath(__file__))
-src_dir = os.path.join(root_dir, 'src')
-build_dir = os.path.join(src_dir, "cbuild")
-libqasm_dir = os.path.join(src_dir, "libQasm")
+from distutils.command.clean        import clean        as _clean
+from setuptools.command.build_ext   import build_ext    as _build_ext
+from distutils.command.build        import build        as _build
+from setuptools.command.install     import install      as _install
+from distutils.command.bdist        import bdist        as _bdist
+from wheel.bdist_wheel              import bdist_wheel  as _bdist_wheel
+from distutils.command.sdist        import sdist        as _sdist
+from setuptools.command.egg_info    import egg_info     as _egg_info
 
-platforms = {
-    'unix': {
-        'make_command': 'make',
-        'test_command': 'make test',
-        'cmake_options': '',
-        'clib_name': '_libQasm.so',
-        'liblexgram': 'liblexgram.so',
-        'output_dir': '',
-    },
-    'darwin': {
-        'make_command': 'make',
-        'test_command': 'make test',
-        'cmake_options': '',
-        'clib_name': '_libQasm.so',
-        'liblexgram': 'liblexgram.dylib',
-        'output_dir': '',
-    },
-    'win32-mingw': {
-        'make_command': 'mingw32-make',
-        'test_command': 'mingw32-make test',
-        'cmake_options': '-G "MinGW Makefiles"',
-        'clib_name': '_libQasm.pyd',
-        'liblexgram': 'liblexgram.dll',
-        'output_dir': '',
-    },
-    'win32-msvc': {
-        'make_command': 'cmake --build .',
-        'test_command': 'cmake --build . --target RUN_TESTS',
-        'cmake_options': '',
-        'clib_name': '_libQasm.pyd',
-        'liblexgram': 'lexgram.dll',
-        'output_dir': 'Debug',
-    }
-}
+root_dir   = os.getcwd()                        # root of the repository
+src_dir    = root_dir   + os.sep + 'src'        # C++ source directory
+target_dir = root_dir   + os.sep + 'pybuild'    # python-specific build directory
+build_dir  = target_dir + os.sep + 'build'      # directory for setuptools to dump various files into
+dist_dir   = target_dir + os.sep + 'dist'       # wheel output directory
+cbuild_dir = target_dir + os.sep + 'cbuild'     # cmake build directory
+prefix_dir = target_dir + os.sep + 'prefix'     # cmake install prefix
+module_dir = target_dir + os.sep + 'module'     # libQasm Python module directory, including generated file(s)
 
+def get_version(verbose=0):
+    return '0.0.1'
 
-def determine_platform() -> Dict[str, str]:
-    """Determine the family of the current platform.
+def read(fname):
+    with open(os.path.join(os.path.dirname(__file__), fname)) as f:
+        return f.read()
 
-    Based on the system libraries, determine whether the platform is of the UNIX family or the win32 family. Other
-    platforms are currently not supported and will raise an exception.
-    """
-    if platform == "linux" or platform == "linux2":
-        return platforms['unix']
-    elif platform == "darwin":
-        return platforms["darwin"]
-    elif platform == "win32":
-        if 'USE_MINGW' not in os.environ:
-            try:
-                execute_process("cl")
-                print("MSVC (cl) was found, using it to compile.")
-                print("Define the USE_MINGW env variable to force compilation with MinGW.")
-                print("Be sure to run cleanme.py first when switching between compilers, or CMake will complain.")
-                return platforms["win32-msvc"]
-            except RuntimeError:
-                pass
+class clean(_clean):
+    def run(self):
+        _clean.run(self)
+        if os.path.exists(target_dir):
+            shutil.rmtree(target_dir)
+
+class build_ext(_build_ext):
+    def run(self):
+        from plumbum import local, FG, ProcessExecutionError
+
+        # If we were previously built in a different directory, nuke the cbuild
+        # dir to prevent inane CMake errors. This happens when the user does
+        # pip install . after building locally.
+        if os.path.exists(cbuild_dir + os.sep + 'CMakeCache.txt'):
+            with open(cbuild_dir + os.sep + 'CMakeCache.txt', 'r') as f:
+                for line in f.read().split('\n'):
+                    line = line.split('#')[0].strip()
+                    if not line:
+                        continue
+                    if line.startswith('cqasm_BINARY_DIR:STATIC'):
+                        config_dir = line.split('=', maxsplit=1)[1]
+                        if os.path.realpath(config_dir) != os.path.realpath(cbuild_dir):
+                            print('removing pybuild/cbuild to avoid CMakeCache error')
+                            shutil.rmtree(cbuild_dir)
+                        break
+
+        # Figure out how many parallel processes to build with.
+        if self.parallel:
+            nprocs = str(self.parallel)
         else:
-            print("Compiling with MinGW due to USE_MINGW env variable.")
-        return platforms["win32-mingw"]
-    else:
-        raise OSError('Platform not recognised!')
+            nprocs = os.environ.get('NPROCS', '1')
 
+        # Figure out how setuptools wants to name the extension file and where
+        # it wants to place it.
+        target = os.path.abspath(self.get_ext_fullpath('libQasm._libQasm'))
 
-def create_directory(directory: str) -> None:
-    """Wrapper function for checking whether a directory already exists, and otherwise create it.
+        # Build the Python module and install it into module_dir.
+        if not os.path.exists(cbuild_dir):
+            os.makedirs(cbuild_dir)
+        with local.cwd(cbuild_dir):
+            build_type = os.environ.get('LIBQASM_BUILD_TYPE', 'Release')
 
-    Args:
-        directory: the path for the directory that needs to be created.
-    """
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+            cmd = (local['cmake'][root_dir]
+                ['-DCMAKE_INSTALL_PREFIX=' + prefix_dir]
+                ['-DLIBQASM_BUILD_PYTHON=YES']
+                ['-DLIBQASM_PYTHON_DIR=' + os.path.dirname(target)]
+                ['-DLIBQASM_PYTHON_EXT=' + os.path.basename(target)]
 
+                # The Python library needs the compatibility headers.
+                ['-DLIBQASM_COMPAT=YES']
 
-def build_libqasm_library(make_command: str, test_command: str, cmake_options: str) -> None:
-    """Call cmake and make to build the c++ libraries.
+                # Make sure CMake uses the Python installation corresponding
+                # with the the Python version we're building with now.
+                ['-DPYTHON_EXECUTABLE=' + sys.executable]
 
-    Args:
-        make_command: the command used to build.
-        test_command: the command used to run the tests.
-        cmake_options: additional build options to pass to cmake.
-    """
-    os.chdir(build_dir)
-    execute_process(f'git submodule update --init --recursive', allow_failure=True)
-    execute_process(f'cmake {cmake_options} {os.path.join("..", "library")}')
-    execute_process(f'{make_command}')
-    execute_process(f'{test_command}')
-    os.chdir(root_dir)
+                # (ab)use static libs for the intermediate libraries to avoid
+                # dealing with R(UN)PATH nonsense on Linux/OSX as much as
+                # possible.
+                ['-DBUILD_SHARED_LIBS=NO']
 
+                # Build type can be set using an environment variable.
+                ['-DCMAKE_BUILD_TYPE=' + build_type]
+            )
 
-def execute_process(command: str, allow_failure: bool=False) -> None:
-    """Execute shell commands.
+            # Run cmake configuration.
+            cmd & FG
 
-    Args:
-        command: the shell command to execute.
-    """
-    proc = subprocess.Popen(command, shell=True)
-    proc.communicate()
-    if proc.returncode and not allow_failure:
-        raise RuntimeError('process failed')
+            # Do the build with the given number of parallel threads.
+            build_cmd = local['cmake']['--build']['.']['--config'][build_type]
+            cmd = build_cmd
+            if nprocs != '1':
+                try:
+                    parallel_supported = tuple(local['cmake']('--version').split('\n')[0].split()[-1].split('.')) >= (3, 12)
+                except:
+                    parallel_supported = False
+                if parallel_supported:
+                    cmd = cmd['--parallel'][nprocs]
+                elif not sys.platform.startswith('win'):
+                    cmd = cmd['--']['-j'][nprocs]
+            cmd & FG
 
+            # Do the install.
+            try:
+                # install target for makefiles
+                build_cmd['--target']['install'] & FG
+            except ProcessExecutionError:
+                # install target for MSVC
+                build_cmd['--target']['INSTALL'] & FG
 
-def create_init_file() -> None:
-    """Create init file for the libQasm directory
+class build(_build):
+    def initialize_options(self):
+        _build.initialize_options(self)
+        self.build_base = os.path.relpath(build_dir)
 
-    Create a __init__.py file to make the libQasm directory a python package. This __init__ file will be prepopulated
-    with a relative import of libQasm.
-    """
-    init_file_path = os.path.join(libqasm_dir, '__init__.py')
-    with open(init_file_path, 'w') as init_fp:
-        init_fp.write('from .libQasm import libQasm')
+    def run(self):
+        # Make sure the extension is built before the Python module is "built",
+        # otherwise SWIG's generated module isn't included.
+        # See https://stackoverflow.com/questions/12491328
+        self.run_command('build_ext')
+        _build.run(self)
 
+class install(_install):
+    def run(self):
+        # See https://stackoverflow.com/questions/12491328
+        self.run_command('build_ext')
+        _install.run(self)
 
-def copy_file(src_dir: str, dest_dir: str, file_name: str) -> None:
-    """Copy a specified file from the source directory to the destination directory.
+class bdist(_bdist):
+    def finalize_options(self):
+        _bdist.finalize_options(self)
+        self.dist_dir = os.path.relpath(dist_dir)
 
-    Args:
-        src_dir: source folder from which to copy the specified file.
-        dest_dir: destination folder to which to copy the specified file.
-        file_name: the file name of the file to copy.
-    """
-    copyfile(
-        os.path.join(src_dir, file_name),
-        os.path.join(dest_dir, file_name)
-    )
+class bdist_wheel(_bdist_wheel):
+    def run(self):
+        if platform.system() == "Darwin":
+            os.environ['MACOSX_DEPLOYMENT_TARGET'] = '10.10'
+        _bdist_wheel.run(self)
+        impl_tag, abi_tag, plat_tag = self.get_tag()
+        archive_basename = "{}-{}-{}-{}".format(self.wheel_dist_name, impl_tag, abi_tag, plat_tag)
+        wheel_path = os.path.join(self.dist_dir, archive_basename + '.whl')
+        if platform.system() == "Darwin":
+            from delocate.delocating import delocate_wheel
+            delocate_wheel(wheel_path)
 
+class sdist(_sdist):
+    def finalize_options(self):
+        _sdist.finalize_options(self)
+        self.dist_dir = os.path.relpath(dist_dir)
 
-def build_libqasm():
-    """Wrapper that calls the differnt components to build libQasm and place the necessary binaries"""
-    sys_platform = determine_platform()
-    for directory in [libqasm_dir, build_dir]:
-        create_directory(directory)
+class egg_info(_egg_info):
+    def initialize_options(self):
+        _egg_info.initialize_options(self)
+        self.egg_base = os.path.relpath(target_dir)
 
-    build_libqasm_library(sys_platform['make_command'], sys_platform['test_command'], sys_platform['cmake_options'])
-    clibname = sys_platform['clib_name']
+setup(
+    name='libQasm',
+    version=get_version(),
+    description='libQasm Python Package',
+    long_description=read('README.md'),
+    long_description_content_type = 'text/markdown',
+    author='QuTech, TU Delft',
+    url='https://github.com/QE-Lab/libqasm',
+    license=read('LICENSE.md'),
 
-    create_init_file()
-    if sys_platform['output_dir']:
-        build_output_dir = os.path.join(build_dir, sys_platform['output_dir'])
-    else:
-        build_output_dir = build_dir
-    copy_file(build_output_dir, libqasm_dir, clibname)
-    copy_file(build_dir, libqasm_dir, "libQasm.py")
-    copy_file(build_output_dir, libqasm_dir, sys_platform['liblexgram'])
+    classifiers = [
+        'License :: OSI Approved :: Apache Software License',
 
-    return os.path.join(libqasm_dir, clibname), os.path.join(libqasm_dir, sys_platform['liblexgram'])
+        'Operating System :: POSIX :: Linux',
+        'Operating System :: MacOS',
+        'Operating System :: Microsoft :: Windows',
 
+        'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
 
-clib, liblexgram = build_libqasm()
+        'Topic :: Scientific/Engineering'
+    ],
 
-setup(name='libQasm',
-      description='libQasm Python Package',
-      author='Kelvin Loh',
-      author_email='kel85uk@gmail.com',
-      url="https://www.github.com/QE-Lab/libqasm/",
-      version='0.0.1',
-      python_requires='>=3.6',
-      packages=['libQasm'],
-      package_dir={'': 'src'},
-      package_data={'libQasm': [clib, liblexgram]},
-      classifiers=[
-          'Development Status :: 3 - Alpha',
-          'Programming Language :: Python :: 3',
-          'Programming Language :: Python :: 3.6',
-          'Programming Language :: Python :: 3.7'],
-      license='Other/Proprietary License',
-      zip_safe=False)
+    packages = ['libQasm'],
+    package_dir = {'': 'python'},
+
+    # NOTE: the library build process is completely overridden to let CMake
+    # handle it; setuptools' implementation is horribly broken. This is here
+    # just to have the rest of setuptools understand that this is a Python
+    # module with an extension in it.
+    ext_modules = [
+        Extension('libQasm._libQasm', [])
+    ],
+
+    cmdclass = {
+        'bdist': bdist,
+        'bdist_wheel': bdist_wheel,
+        'build_ext': build_ext,
+        'build': build,
+        'install': install,
+        'clean': clean,
+        'egg_info': egg_info,
+        'sdist': sdist,
+    },
+
+    setup_requires = [
+        'plumbum',
+        'delocate; platform_system == "Darwin"',
+    ],
+    install_requires = [
+        'msvc-runtime; platform_system == "Windows"',
+    ],
+    tests_require = [
+        'pytest'
+    ],
+
+    zip_safe=False
+)

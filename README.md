@@ -57,7 +57,6 @@ Invoke-BatchFile "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\
 Install from the project root directory as follows:
 
 ```
-python cleanme.py
 python -m pip install .
 ```
 
