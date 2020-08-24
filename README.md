@@ -2,7 +2,8 @@
 # libQASM: Library to parse cQASM v1.0 files
 
 [![CI](https://github.com/QE-Lab/libqasm/workflows/Test/badge.svg)](https://github.com/qe-lab/libqasm/actions)
-[![PyPI](https://badgen.net/pypi/v/libQasm)](https://pypi.org/project/libQasm/)
+[![PyPI](https://badgen.net/pypi/v/libqasm)](https://pypi.org/project/libqasm/)
+[![Anaconda](https://anaconda.org/qe-lab/libqasm/badges/version.svg)](https://anaconda.org/qe-lab/libqasm/)
 [![API docs](https://readthedocs.org/projects/libqasm/badge/?version=latest)](https://libqasm.readthedocs.io/en/latest/)
 
 ## Dependencies
