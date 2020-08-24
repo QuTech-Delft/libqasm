@@ -1,6 +1,10 @@
 
 # libQASM: Library to parse cQASM v1.0 files
 
+[![CI](https://github.com/QE-Lab/libqasm/workflows/Test/badge.svg)](https://github.com/qe-lab/libqasm/actions)
+[![PyPI](https://badgen.net/pypi/v/libQasm)](https://pypi.org/project/libQasm/)
+[![API docs](https://readthedocs.org/projects/libqasm/badge/?version=latest)](https://libqasm.readthedocs.io/en/latest/)
+
 ## Dependencies
 * Flex (> 2.6)
 * Bison (> 3.0)
