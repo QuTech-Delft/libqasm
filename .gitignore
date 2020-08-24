@@ -50,12 +50,9 @@ bin
 */bin/*
 
 # Add build directories
-build
-*build
-build*
-dist
-libQasm/*
-*libQasm
+pybuild/
+build/
+cbuild/
 
 # Distribution / packaging
 .Python

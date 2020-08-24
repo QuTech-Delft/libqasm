@@ -57,14 +57,26 @@ Invoke-BatchFile "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\
 Install from the project root directory as follows:
 
 ```
-python cleanme.py
 python -m pip install .
+```
+
+or if you'd rather use conda:
+
+```
+conda build python/conda
+conda install libqasm --use-local
 ```
 
 You can test if it works using
 
 ```
 python -m unittest discover -s src/tests -v
+```
+
+or, with `pytest` if you prefer,
+
+```
+python -m pytest
 ```
 
 Now you should be able to `import libQasm` to use the bindings for the original API. The new API doesn't have Python bindings yet.

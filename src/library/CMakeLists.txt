@@ -91,26 +91,3 @@ FOREACH(testSrc ${TEST_SRCS})
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testBin
         COMMAND ${CMAKE_CURRENT_BINARY_DIR}/testBin/${testName})
 ENDFOREACH(testSrc)
-
-## Start of SWIG module for the python interface
-FIND_PACKAGE(SWIG REQUIRED)
-INCLUDE(${SWIG_USE_FILE})
-
-FIND_PACKAGE(PythonLibs REQUIRED)
-INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
-
-SET_SOURCE_FILES_PROPERTIES(libQasm_swig.i PROPERTIES CPLUSPLUS ON)
-SET_PROPERTY(SOURCE libQasm_swig.i PROPERTY SWIG_FLAGS -castmode -modern -keyword -w511)
-
-IF (${CMAKE_VERSION} VERSION_LESS "3.8.0")
-    SWIG_ADD_MODULE(libQasm python libQasm_swig.i)
-ELSE()
-    SWIG_ADD_LIBRARY(libQasm LANGUAGE python SOURCES libQasm_swig.i)
-ENDIF()
-
-IF (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    SWIG_LINK_LIBRARIES(libQasm lexgramstatic)
-    SET_TARGET_PROPERTIES(_libQasm PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
-ELSE ()
-    SWIG_LINK_LIBRARIES(libQasm ${PYTHON_LIBRARIES} lexgramstatic)
-ENDIF()

@@ -32,6 +32,35 @@ option(
     OFF
 )
 
+# Whether the Python module should be built. This should only be enabled for
+# setup.py's builds.
+option(
+    LIBQASM_BUILD_PYTHON
+    "Whether the Python module should be built"
+    OFF
+)
+mark_as_advanced(LIBQASM_BUILD_PYTHON)
+
+# Where the Python module should be built.
+set(
+    LIBQASM_PYTHON_DIR "${CMAKE_INSTALL_FULL_LIBDIR}/python/libQasm"
+    CACHE STRING "Where to install the Python library"
+)
+mark_as_advanced(LIBQASM_PYTHON_DIR)
+
+# Used to override the (base)name of the Python extension.
+set(
+    LIBQASM_PYTHON_EXT ""
+    CACHE STRING "Basename for the Python extension, or \"\" to let CMake's SWIG implementation handle it"
+)
+mark_as_advanced(LIBQASM_PYTHON_EXT)
+
+# The Python library requires the compatibility headers, so make sure those are
+# enabled.
+if (LIBQASM_BUILD_PYTHON AND NOT LIBQASM_COMPAT)
+    message(SEND_ERROR "The Python library requires the compatibility headers! Please add -DLIBQASM_COMPAT=ON")
+endif()
+
 # Jump to where the new API and the core of libqasm lives.
 add_subdirectory(src/cqasm)
 
@@ -66,4 +95,9 @@ if (LIBQASM_COMPAT)
         endforeach()
     endif()
 
+endif()
+
+# Include the tests directory if requested.
+if(LIBQASM_BUILD_PYTHON)
+    add_subdirectory(python)
 endif()
