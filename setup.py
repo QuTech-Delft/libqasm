@@ -22,7 +22,7 @@ prefix_dir = target_dir + os.sep + 'prefix'     # cmake install prefix
 module_dir = target_dir + os.sep + 'module'     # libQasm Python module directory, including generated file(s)
 
 def get_version(verbose=0):
-    return '0.0.1'
+    return '0.1.0'
 
 def read(fname):
     with open(os.path.join(os.path.dirname(__file__), fname)) as f:
