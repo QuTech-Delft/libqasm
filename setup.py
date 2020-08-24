@@ -163,7 +163,7 @@ class egg_info(_egg_info):
         self.egg_base = os.path.relpath(target_dir)
 
 setup(
-    name='libQasm',
+    name='libqasm',
     version=get_version(),
     description='libQasm Python Package',
     long_description=read('README.md'),
