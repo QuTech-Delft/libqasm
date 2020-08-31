@@ -170,7 +170,6 @@ setup(
     long_description_content_type = 'text/markdown',
     author='QuTech, TU Delft',
     url='https://github.com/QE-Lab/libqasm',
-    license=read('LICENSE.md'),
 
     classifiers = [
         'License :: OSI Approved :: Apache Software License',
