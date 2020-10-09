@@ -1,20 +1,20 @@
 # Implementation for the various classes representing the types of values
 # available in cQASM.
-source "cqasm-types-gen.cpp"
+source
 
 # Header file for the various classes representing the types of values
 # available in cQASM.
-header "cqasm-types-gen.hpp"
+header
 
-# Include tree base classes.
+// Include tree base classes.
 include "cqasm-tree.hpp"
 tree_namespace cqasm::tree
 
-# Include primitive types.
+// Include primitive types.
 include "cqasm-primitives.hpp"
 
-# Initialization function to use to construct default values for the tree base
-# classes and primitives.
+// Initialization function to use to construct default values for the tree base
+// classes and primitives.
 initialize_function cqasm::primitives::initialize
 
 # Namespace for the various classes representing the types of values available

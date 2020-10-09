@@ -1,21 +1,21 @@
 # Implementation for the abstract syntax tree node classes.
-source "cqasm-ast-gen.cpp"
+source
 
 # Header file for the abstract syntax tree node classes.
-header "cqasm-ast-gen.hpp"
+header
 
-# Include tree base classes.
+// Include tree base classes.
 include "cqasm-tree.hpp"
 tree_namespace cqasm::tree
 
-# Include primitive types.
+// Include primitive types.
 include "cqasm-primitives.hpp"
 
-# Initialization function to use to construct default values for the tree base
-# classes and primitives.
+// Initialization function to use to construct default values for the tree base
+// classes and primitives.
 initialize_function cqasm::primitives::initialize
 
-# Include SourceLocation annotation object for the debug dump generator.
+// Include SourceLocation annotation object for the debug dump generator.
 src_include "cqasm-parse-helper.hpp"
 location cqasm::parser::SourceLocation
 

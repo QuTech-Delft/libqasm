@@ -7,7 +7,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#include "cqasm-annotatable.hpp"
+#include "cqasm-tree.hpp"
 #include "cqasm-parse-helper.hpp"
 
 namespace cqasm {
@@ -49,14 +49,14 @@ public:
      * Constructs a new error. If node is a non-null annotatable with a
      * location node, its location information is attached.
      */
-    explicit AnalysisError(std::string &&message = "", const annotatable::Annotatable *node = nullptr);
+    explicit AnalysisError(std::string &&message = "", const tree::Annotatable *node = nullptr);
 
     /**
      * Sets the context of this error to the SourceLocation annotation of the
      * given node, if the error doesn't already have such a context. If it
      * does, this is no-op.
      */
-    void context(const annotatable::Annotatable &node);
+    void context(const tree::Annotatable &node);
 
     /**
      * Constructs the message string.
@@ -78,7 +78,7 @@ public:
     public:                                                         \
         explicit Name(                                              \
             std::string &&message = "",                             \
-            const annotatable::Annotatable *node = nullptr          \
+            const tree::Annotatable *node = nullptr                 \
         ) :                                                         \
             ::cqasm::error::AnalysisError(std::move(message), node) \
         {}                                                          \

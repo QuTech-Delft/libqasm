@@ -153,6 +153,9 @@ target_include_directories(
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/include/"
 )
 
+# Link tree-gen's utility library.
+target_link_libraries(cqasm_objlib tree-lib)
+
 # Enable all warnings and treat them as errors when compiling libcqasm.
 if(MSVC)
     #set_target_properties(cqasm_objlib PROPERTIES COMPILE_FLAGS "/Wall")

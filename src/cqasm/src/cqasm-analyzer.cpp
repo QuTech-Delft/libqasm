@@ -300,7 +300,7 @@ public:
  */
 AnalysisResult Analyzer::analyze(const ast::Program &ast) const {
     auto result = AnalyzerHelper(*this, ast).result;
-    if (result.errors.empty() && !result.root.is_complete()) {
+    if (result.errors.empty() && !result.root.is_well_formed()) {
         std::cerr << *result.root;
         throw std::runtime_error("internal error: no semantic errors returned, but semantic tree is incomplete. Tree was dumped.");
     }

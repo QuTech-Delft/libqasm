@@ -117,7 +117,7 @@ void ParseHelper::parse() {
         push_error(sb.str());
         return;
     }
-    if (result.errors.empty() && !result.root.is_complete()) {
+    if (result.errors.empty() && !result.root.is_well_formed()) {
         std::cerr << *result.root;
         throw std::runtime_error("internal error: no parse errors returned, but AST is incomplete. AST was dumped.");
     }

@@ -13,7 +13,7 @@ namespace error {
  */
 AnalysisError::AnalysisError(
     std::string &&message,
-    const annotatable::Annotatable *node
+    const tree::Annotatable *node
 ) : std::runtime_error("") {
     this->message << message;
     if (node) {
@@ -26,7 +26,7 @@ AnalysisError::AnalysisError(
  * given node, if the error doesn't already have such a context. If it
  * does, this is no-op.
  */
-void AnalysisError::context(const annotatable::Annotatable &node) {
+void AnalysisError::context(const tree::Annotatable &node) {
     if (!location) {
         if (auto loc = node.get_annotation_ptr<parser::SourceLocation>()) {
             location = std::unique_ptr<parser::SourceLocation>(new parser::SourceLocation(*loc));
