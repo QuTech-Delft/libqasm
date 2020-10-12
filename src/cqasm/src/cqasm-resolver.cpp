@@ -96,8 +96,8 @@ public:
  * function, gate, or error model. T is some tag type identifying the overload.
  * In case of a function, T would contain at least the return type, but maybe
  * also a lambda to represent the actual function. Note that ambiguous
- * overloads are silently resolved by using the first applicable overload, so
- * more specific overloads should always be added first.
+ * overloads are silently resolved by using the last applicable overload, so
+ * more specific overloads should always be added last.
  */
 template <class T>
 class OverloadResolver {
@@ -108,8 +108,8 @@ public:
 
     /**
      * Adds a possible overload to the resolver. Note that ambiguous
-     * overloads are silently resolved by using the first applicable overload,
-     * so more specific overloads should always be added first.
+     * overloads are silently resolved by using the last applicable overload,
+     * so more specific overloads should always be added last.
      */
     void add_overload(const T &tag, const Types &param_types) {
         overloads.emplace_back(tag, param_types);
@@ -122,14 +122,14 @@ public:
      * the appropriately promoted vector of value pointers are returned.
      */
     std::pair<T, Values> resolve(const Values &args) {
-        for (const auto &overload : overloads) {
-            if (overload.num_params() != args.size()) {
+        for (auto overload = overloads.rbegin(); overload != overloads.rend(); ++overload) {
+            if (overload->num_params() != args.size()) {
                 continue;
             }
             Values promoted_args;
             bool ok = true;
             for (size_t i = 0; i < args.size(); i++) {
-                auto promoted_arg = promote(args.at(i), overload.param_type_at(i));
+                auto promoted_arg = promote(args.at(i), overload->param_type_at(i));
                 if (promoted_arg.empty()) {
                     ok = false;
                     break;
@@ -137,7 +137,7 @@ public:
                 promoted_args.add(promoted_arg);
             }
             if (ok) {
-                return std::pair<T, Values>(overload.get_tag(), promoted_args);
+                return std::pair<T, Values>(overload->get_tag(), promoted_args);
             }
         }
         throw OverloadResolutionFailure("failed to resolve overload");
@@ -161,8 +161,8 @@ public:
      * expects. The C++ implementation of the function can assume that the
      * value list it gets is of the right size and the values are of the right
      * types. Note that ambiguous overloads are silently resolved by using the
-     * first applicable overload, so more specific overloads should always be
-     * added first.
+     * last applicable overload, so more specific overloads should always be
+     * added last.
      */
     void add_overload(const std::string &name, const T &tag, const Types &param_types) {
         std::string name_lower = utils::lowercase(name);
@@ -225,6 +225,11 @@ FunctionTable& FunctionTable::operator=(FunctionTable&& t) {
  * expects. The C++ implementation of the function can assume that the
  * value list it gets is of the right size and the values are of the right
  * types.
+ *
+ * This method does not contain any intelligence to override previously
+ * added overloads. However, the overload resolution engine will always use
+ * the last applicable overload it finds, so adding does have the effect of
+ * overriding.
  */
 void FunctionTable::add(const std::string &name, const Types &param_types, const FunctionImpl &impl) {
     resolver->add_overload(name, impl, param_types);

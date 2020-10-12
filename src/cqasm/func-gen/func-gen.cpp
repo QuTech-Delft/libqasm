@@ -324,28 +324,28 @@ int main(int argc, char *argv[]) {
     func_gen::Generator generator{argv[1], argv[2]};
 
     // Basic scalar operators.
-    generator.generate_const_scalar_op("operator+", 'i', "ii", "a + b");
-    generator.generate_const_scalar_op("operator+", 'r', "rr", "a + b");
     generator.generate_const_scalar_op("operator+", 'c', "cc", "a + b");
+    generator.generate_const_scalar_op("operator+", 'r', "rr", "a + b");
+    generator.generate_const_scalar_op("operator+", 'i', "ii", "a + b");
     generator.generate_const_scalar_op("operator+", 's', "ss", "a + b");
-    generator.generate_const_scalar_op("operator-", 'i', "ii", "a - b");
-    generator.generate_const_scalar_op("operator-", 'r', "rr", "a - b");
     generator.generate_const_scalar_op("operator-", 'c', "cc", "a - b");
-    generator.generate_const_scalar_op("operator-", 'i', "i", "-a");
-    generator.generate_const_scalar_op("operator-", 'r', "r", "-a");
+    generator.generate_const_scalar_op("operator-", 'r', "rr", "a - b");
+    generator.generate_const_scalar_op("operator-", 'i', "ii", "a - b");
     generator.generate_const_scalar_op("operator-", 'c', "c", "-a");
-    generator.generate_const_scalar_op("operator*", 'i', "ii", "a * b");
-    generator.generate_const_scalar_op("operator*", 'r', "rr", "a * b");
+    generator.generate_const_scalar_op("operator-", 'r', "r", "-a");
+    generator.generate_const_scalar_op("operator-", 'i', "i", "-a");
     generator.generate_const_scalar_op("operator*", 'c', "cc", "a * b");
-    generator.generate_const_scalar_op("operator/", 'r', "ii", "(double)a / (double)b");
-    generator.generate_const_scalar_op("operator/", 'r', "rr", "a / b");
+    generator.generate_const_scalar_op("operator*", 'r', "rr", "a * b");
+    generator.generate_const_scalar_op("operator*", 'i', "ii", "a * b");
     generator.generate_const_scalar_op("operator/", 'c', "cc", "a / b");
-    generator.generate_const_scalar_op("operator**", 'r', "rr", "std::pow(a, b)");
+    generator.generate_const_scalar_op("operator/", 'r', "rr", "a / b");
+    generator.generate_const_scalar_op("operator/", 'r', "ii", "(double)a / (double)b");
     generator.generate_const_scalar_op("operator**", 'c', "cc", "std::pow(a, b)");
+    generator.generate_const_scalar_op("operator**", 'r', "rr", "std::pow(a, b)");
 
     // Scalar root, exponent, and trigonometric functions for reals and complex
     // numbers.
-    for (const char *type : {"r", "c"}) {
+    for (const char *type : {"c", "r"}) {
         generator.generate_const_scalar_op("sqrt", type[0], type, "std::sqrt(a)");
         generator.generate_const_scalar_op("exp", type[0], type, "std::exp(a)");
         generator.generate_const_scalar_op("log", type[0], type, "std::log(a)");
@@ -362,8 +362,8 @@ int main(int argc, char *argv[]) {
     }
 
     // Absolute value function.
-    generator.generate_const_scalar_op("abs", 'i', "i", "std::abs(a)");
     generator.generate_const_scalar_op("abs", 'r', "r", "std::abs(a)");
+    generator.generate_const_scalar_op("abs", 'i', "i", "std::abs(a)");
 
     // Complex number manipulation functions.
     generator.generate_const_scalar_op("complex", 'c', "rr", "primitives::Complex(a, b)");

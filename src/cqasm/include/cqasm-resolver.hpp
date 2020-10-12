@@ -95,6 +95,11 @@ public:
      * expects. The C++ implementation of the function can assume that the
      * value list it gets is of the right size and the values are of the right
      * types.
+     *
+     * This method does not contain any intelligence to override previously
+     * added overloads. However, the overload resolution engine will always use
+     * the last applicable overload it finds, so adding does have the effect of
+     * overriding.
      */
     void add(const std::string &name, const types::Types &param_types, const FunctionImpl &impl);
 
