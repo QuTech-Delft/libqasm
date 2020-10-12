@@ -138,6 +138,7 @@
 %token QUBITS
 %token MAP
 %token CDASH
+%token COND
 
 /* Numeric literals */
 %token <str> INT_LITERAL
@@ -296,6 +297,7 @@ Instruction     : Identifier                                                    
                 | Identifier ExpressionList                                     { NEW($$, Instruction); $$->name.set_raw($1); $$->operands.set_raw($2); }
                 | CDASH Identifier Expression                                   { NEW($$, Instruction); $$->name.set_raw($2); $$->condition.set_raw($3); $$->operands.set_raw(new ExpressionList()); }
                 | CDASH Identifier Expression ',' ExpressionList                { NEW($$, Instruction); $$->name.set_raw($2); $$->condition.set_raw($3); $$->operands.set_raw($5); }
+                | COND '(' Expression ')' Identifier ExpressionList             { NEW($$, Instruction); $$->name.set_raw($5); $$->condition.set_raw($3); $$->operands.set_raw($6); }
                 ;
 
 /* Instructions are not statements (because there can be multiple bundled
