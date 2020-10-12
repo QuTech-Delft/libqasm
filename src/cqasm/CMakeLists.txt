@@ -153,6 +153,9 @@ target_include_directories(
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/include/"
 )
 
+# Link tree-gen's utility library.
+target_link_libraries(cqasm_objlib tree-lib-obj)
+
 # Enable all warnings and treat them as errors when compiling libcqasm.
 if(MSVC)
     #set_target_properties(cqasm_objlib PROPERTIES COMPILE_FLAGS "/Wall")
@@ -163,6 +166,7 @@ endif()
 # Always compiled with -fPIC, otherwise some weirdness happens with pthreads or
 # something when linking statically.
 set_target_properties(cqasm_objlib PROPERTIES POSITION_INDEPENDENT_CODE ON)
+set_target_properties(tree-lib-obj PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 # Main cQASM library in shared or static form as managed by cmake's
 # internal BUILD_SHARED_LIBS variable.
