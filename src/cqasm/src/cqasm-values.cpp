@@ -86,8 +86,8 @@ Value promote(const Value &value, const types::Type &type) {
             if (auto const_real_matrix = value->as_const_real_matrix()) {
                 if (!type->assignable) {
                     // Match matrix size. Negative sizes in the type mean unconstrained.
-                    if ((ssize_t) const_real_matrix->value.size_rows() == mat_type->num_rows || mat_type->num_rows < 0) {
-                        if ((ssize_t) const_real_matrix->value.size_cols() == mat_type->num_cols || mat_type->num_cols < 0) {
+                    if ((tree::signed_size_t) const_real_matrix->value.size_rows() == mat_type->num_rows || mat_type->num_rows < 0) {
+                        if ((tree::signed_size_t) const_real_matrix->value.size_cols() == mat_type->num_cols || mat_type->num_cols < 0) {
                             retval = tree::make<values::ConstRealMatrix>(const_real_matrix->value);
                         }
                     }
@@ -101,8 +101,8 @@ Value promote(const Value &value, const types::Type &type) {
             if (auto const_complex_matrix = value->as_const_complex_matrix()) {
                 if (!type->assignable) {
                     // Match matrix size. Negative sizes in the type mean unconstrained.
-                    if ((ssize_t) const_complex_matrix->value.size_rows() == mat_type->num_rows || mat_type->num_rows < 0) {
-                        if ((ssize_t) const_complex_matrix->value.size_cols() == mat_type->num_cols || mat_type->num_cols < 0) {
+                    if ((tree::signed_size_t) const_complex_matrix->value.size_rows() == mat_type->num_rows || mat_type->num_rows < 0) {
+                        if ((tree::signed_size_t) const_complex_matrix->value.size_cols() == mat_type->num_cols || mat_type->num_cols < 0) {
                             retval = tree::make<values::ConstComplexMatrix>(const_complex_matrix->value);
                         }
                     }
@@ -110,8 +110,8 @@ Value promote(const Value &value, const types::Type &type) {
             } else if (auto const_real_matrix = value->as_const_real_matrix()) {
                 if (!type->assignable) {
                     // Match matrix size. Negative sizes in the type mean unconstrained.
-                    if ((ssize_t) const_real_matrix->value.size_rows() == mat_type->num_rows || mat_type->num_rows < 0) {
-                        if ((ssize_t) const_real_matrix->value.size_cols() == mat_type->num_cols || mat_type->num_cols < 0) {
+                    if ((tree::signed_size_t) const_real_matrix->value.size_rows() == mat_type->num_rows || mat_type->num_rows < 0) {
+                        if ((tree::signed_size_t) const_real_matrix->value.size_cols() == mat_type->num_cols || mat_type->num_cols < 0) {
                             // Convert double to complex.
                             const size_t rows = const_real_matrix->value.size_rows();
                             const size_t cols = const_real_matrix->value.size_cols();

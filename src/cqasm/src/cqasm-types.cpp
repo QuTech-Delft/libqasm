@@ -92,7 +92,7 @@ Types from_spec(const std::string &spec) {
 } // namespace types
 } // namespace cqasm
 
-static void mat_size(std::ostream& os, ssize_t nrows, ssize_t ncols) {
+static void mat_size(std::ostream& os, tree::signed_size_t nrows, tree::signed_size_t ncols) {
     if (ncols == 0) {
         os << "empty matrix";
     } else if (nrows == 1) {

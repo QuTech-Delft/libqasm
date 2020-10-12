@@ -14,6 +14,8 @@ namespace cqasm {
  */
 namespace tree {
 
+using signed_size_t = ::tree::signed_size_t;
+
 using Annotatable = ::tree::annotatable::Annotatable;
 using Base = ::tree::base::Base;
 
