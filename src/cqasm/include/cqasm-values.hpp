@@ -31,8 +31,10 @@ using Values = tree::Any<Node>;
 
 /**
  * Type-checks and (if necessary) promotes the given value to the given type.
- * Returns null if the check/promotion fails, otherwise returns the constructed
- * value by way of a smart pointer.
+ * Also checks assignability of the value if the type says the value must be
+ * assignable. Returns null if the check/promotion fails, otherwise returns the
+ * constructed value by way of a smart pointer. If the type was an exact match,
+ * this may return the given value without modification or a clone thereof.
  */
 Value promote(const Value &value, const types::Type &type);
 

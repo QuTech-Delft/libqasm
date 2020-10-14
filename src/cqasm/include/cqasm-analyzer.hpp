@@ -165,6 +165,14 @@ public:
 
     /**
      * Registers a function, usable within expressions.
+     *
+     * values::check_const() can be used in the function implementation to
+     * assert that the values must be constant when the function can only be
+     * used during constant propagation. When the function also (or only)
+     * supports dynamic evaluation, the implementation will have to check
+     * whether the inputs are const manually (for instance using
+     * `as_constant()`) to determine when to return a dynamic values::Function
+     * node instead.
      */
     void register_function(
         const std::string &name,
