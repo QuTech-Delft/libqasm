@@ -126,6 +126,28 @@ public:
         analyzer.register_instruction("reset-averaging", "Q", false, false);
         analyzer.register_instruction("load_state", "s", false, false);
 
+        // Add a dynamic function in order to test the behavior of dynamic
+        // function nodes.
+        analyzer.register_function("or", "bb", [](const cqasm::values::Values &v) -> cqasm::values::Value {
+            auto lhs = v[0];
+            auto rhs = v[1];
+            if (auto lhs_const = lhs->as_const_bool()) {
+                if (lhs_const->value) {
+                    return cqasm::tree::make<cqasm::values::ConstBool>(true);
+                } else {
+                    return rhs;
+                }
+            }
+            if (auto rhs_const = lhs->as_const_bool()) {
+                if (rhs_const->value) {
+                    return cqasm::tree::make<cqasm::values::ConstBool>(true);
+                } else {
+                    return lhs;
+                }
+            }
+            return cqasm::tree::make<cqasm::values::Function>("operator||", v, cqasm::tree::make<cqasm::types::Bool>());
+        });
+
         // Run the actual semantic analysis.
         auto analysis_result = analyzer.analyze(*parse_result.root->as_program());
 

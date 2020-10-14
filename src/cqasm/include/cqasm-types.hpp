@@ -49,6 +49,12 @@ using Types = tree::Any<TypeBase>;
  */
 Types from_spec(const std::string &spec);
 
+/**
+ * Returns whether the `actual` type matches the constraints of the `expected`
+ * type.
+ */
+bool type_check(const Type &expected, const Type &actual);
+
 } // namespace types
 } // namespace cqasm
 

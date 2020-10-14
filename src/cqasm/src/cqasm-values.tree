@@ -12,6 +12,7 @@ tree_namespace cqasm::tree
 
 // Include primitive types.
 include "cqasm-primitives.hpp"
+include "cqasm-types.hpp"
 
 // Initialization function to use to construct default values for the tree base
 // classes and primitives.
@@ -103,7 +104,7 @@ constant {
 
 }
 
-# Represents a reference to a value only known at runtime.
+# Represents a reference to some storage location.
 reference {
 
     # Represents a qubit, or a set of qubits for single-gate-multiple-qubit
@@ -124,5 +125,21 @@ reference {
         index: Many<const_int>;
 
     }
+
+}
+
+# This can be returned by user-defined functions as a placeholder value for
+# something that needs to be evaluated at runtime rather than during constant
+# propagation. Annotations should be used to attach semantic information.
+function {
+
+    # Name of the function as it appears or should appear in the cQASM file.
+    name: cqasm::primitives::Str;
+
+    # Operands for the function.
+    operands: external Any<cqasm::values::Node>;
+
+    # Operands for the function.
+    return_type: external One<cqasm::types::Node>;
 
 }

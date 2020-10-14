@@ -89,6 +89,53 @@ Types from_spec(const std::string &spec) {
     return types;
 }
 
+/**
+ * Returns whether the `actual` type matches the constraints of the `expected`
+ * type.
+ */
+bool type_check(const Type &expected, const Type &actual) {
+
+    // Check assignability constraint.
+    if (expected->assignable && !actual->assignable) {
+        return false;
+    }
+
+    // Check the type itself.
+    if (actual->type() != expected->type()) {
+        return false;
+    }
+
+    // Check matrix constraints if applicable.
+    if (auto expected_real_mat = expected->as_real_matrix()) {
+        auto actual_mat = actual->as_real_matrix();
+        if (expected_real_mat->num_cols >= 0) {
+            if (actual_mat->num_cols != expected_real_mat->num_cols) {
+                return false;
+            }
+        }
+        if (expected_real_mat->num_rows >= 0) {
+            if (actual_mat->num_rows != expected_real_mat->num_rows) {
+                return false;
+            }
+        }
+    } else if (auto expected_complex_mat = expected->as_complex_matrix()) {
+        auto actual_mat = actual->as_complex_matrix();
+        if (expected_complex_mat->num_cols >= 0) {
+            if (actual_mat->num_cols != expected_complex_mat->num_cols) {
+                return false;
+            }
+        }
+        if (expected_complex_mat->num_rows >= 0) {
+            if (actual_mat->num_rows != expected_complex_mat->num_rows) {
+                return false;
+            }
+        }
+    }
+
+    // All constraints seem to match.
+    return true;
+}
+
 } // namespace types
 } // namespace cqasm
 
