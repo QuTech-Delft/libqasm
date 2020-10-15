@@ -3,7 +3,7 @@
 version 1.0
 qubits 8
 
-map q[0,0:7,5,6], x
+map q[0,0:7,5,6], xx
 map b[5:7], bleh
 
 

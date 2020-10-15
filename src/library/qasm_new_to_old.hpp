@@ -289,8 +289,14 @@ static void handle_parse_result(QasmRepresentation &qasm, cqasm::parser::ParseRe
     //   memory leaks. This is legacy behavior intentionally kept
     //   for backward compatibility.
 
-    // Copy number of qubits.
+    // Handle storage locations.
+    if (analysis_result.root->num_qubits == 0) {
+        throw std::runtime_error("qubits statement is missing");
+    }
     qasm.qubitRegister(analysis_result.root->num_qubits);
+    if (!analysis_result.root->variables.empty()) {
+        throw std::runtime_error("variables are not supported");
+    }
 
     // Copy version number (poorly).
     double version = analysis_result.root->version->items[0];

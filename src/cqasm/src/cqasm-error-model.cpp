@@ -4,6 +4,7 @@
 
 #include "cqasm-error-model.hpp"
 #include "cqasm-utils.hpp"
+#include "cqasm-semantic.hpp"
 
 namespace cqasm {
 namespace error_model {

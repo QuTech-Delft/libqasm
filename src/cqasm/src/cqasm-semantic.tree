@@ -107,7 +107,7 @@ annotated {
 
     }
 
-    # A mappings. That is, a user-defined identifier mapping to some value.
+    # A mapping. That is, a user-defined identifier mapping to some value.
     mapping {
 
         # The name of the mapping.
@@ -115,6 +115,17 @@ annotated {
 
         # The value it maps to.
         value: external One<cqasm::values::Node>;
+
+    }
+
+    # A variable.
+    variable {
+
+        # The name of the variable.
+        name: cqasm::primitives::Str;
+
+        # The type of the variable.
+        typ: external One<cqasm::types::Node>;
 
     }
 
@@ -145,5 +156,8 @@ program {
 
     # The list of all user-defined mappings after parsing.
     mappings: Any<mapping>;
+
+    # This list of all user-defined variables at any point in the code.
+    variables: Any<variable>;
 
 }

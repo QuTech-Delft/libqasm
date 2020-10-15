@@ -11,7 +11,7 @@ Program( # input.cq:1:1..6:1
     )
   >
   statements: <
-    StatementList( # input.cq:4:1..5:50
+    StatementList( # input.cq:2:1..6:50
       items: [
         Mapping( # input.cq:4:1..26
           alias: <

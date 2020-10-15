@@ -13,6 +13,7 @@ tree_namespace cqasm::tree
 // Include primitive types.
 include "cqasm-primitives.hpp"
 include "cqasm-types.hpp"
+src_include "cqasm-semantic.hpp"
 
 // Initialization function to use to construct default values for the tree base
 // classes and primitives.
@@ -123,6 +124,14 @@ reference {
 
         # The qubit index that this is a measurement bit for, starting at 0.
         index: Many<const_int>;
+
+    }
+
+    # Represents a variable reference.
+    variable_ref {
+
+        # The referenced variable.
+        variable: external Link<cqasm::semantic::Variable>;
 
     }
 

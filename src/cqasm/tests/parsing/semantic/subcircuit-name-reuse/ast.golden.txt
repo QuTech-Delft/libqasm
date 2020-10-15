@@ -11,7 +11,7 @@ Program( # input.cq:1:1..7:1
     )
   >
   statements: <
-    StatementList( # input.cq:5:1..6:9
+    StatementList( # input.cq:2:1..7:9
       items: [
         Subcircuit( # input.cq:5:1..9
           name: <

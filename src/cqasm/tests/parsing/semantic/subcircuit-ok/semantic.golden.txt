@@ -127,5 +127,6 @@ Program( # input.cq:1:1..13:1
     )
   ]
   mappings: []
+  variables: []
 )
 

@@ -358,5 +358,6 @@ Program( # input.cq:1:1..35:1
     )
   ]
   mappings: []
+  variables: []
 )
 

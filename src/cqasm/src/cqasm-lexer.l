@@ -107,6 +107,9 @@
     /* Qubit register naming */
 (?i:map)                                            WITHOUT_STR(MAP);
 
+    /* Variable declaration */
+(?i:var)                                            WITHOUT_STR(VAR);
+
     /* C-dash prefix for binary-controlled gates */
 [cC]-/[a-zA-Z_]                                     WITHOUT_STR(CDASH);
 

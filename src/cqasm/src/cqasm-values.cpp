@@ -6,6 +6,7 @@
 #include "cqasm-values.hpp"
 #include "cqasm-types.hpp"
 #include "cqasm-error.hpp"
+#include "cqasm-semantic.hpp"
 
 namespace cqasm {
 namespace values {
@@ -134,6 +135,8 @@ types::Type type_of(const Value &value) {
         return tree::make<types::Bool>(true);
     } else if (auto fn = value->as_function()) {
         return fn->return_type;
+    } else if (auto var = value->as_variable_ref()) {
+        return var->variable->typ;
     } else {
         throw std::runtime_error("unknown type!");
     }
