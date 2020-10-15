@@ -1,0 +1,8 @@
+version 1.0
+
+var a: qubit
+var a: bit
+var a: bool
+var a: int
+var a: real
+var a: complex

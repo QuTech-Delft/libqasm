@@ -11,16 +11,8 @@ if len(sys.argv) != 2:
 
 from plumbum import local, FG
 
-cmd = sys.argv[1]
-
-if cmd == 'run':
-    with local.cwd(os.path.dirname(__file__)):
-        local['make']['--no-print-directory']['-C']['../cmake-build-debug']['test-parsing'] & FG
-        output = local['../cmake-build-debug/tests/test-parsing'](retcode=None)
-        print(output.split('[==========]')[2])
-    cmd = 'diff'
-
-if cmd == 'diff':
+def diff():
+    is_test_dir = False
     for t in ('ast', 'semantic'):
         if os.path.isfile(t + '.actual.txt') and os.path.isfile(t + '.golden.txt'):
             with open(t + '.actual.txt', 'r') as a:
@@ -32,6 +24,26 @@ if cmd == 'diff':
             else:
                 print(t, 'is NOT as expected, opening meld')
                 local['meld'](t + '.actual.txt', t + '.golden.txt')
+            is_test_dir = True
+    if not is_test_dir:
+        for sub in os.listdir():
+            if os.path.isdir(sub):
+                print('Entering %s...' % sub)
+                with local.cwd(sub):
+                    diff()
+                print('Leaving %s...' % sub)
+
+cmd = sys.argv[1]
+
+if cmd == 'run':
+    with local.cwd(os.path.dirname(__file__)):
+        local['make']['--no-print-directory']['-C']['../cmake-build-debug']['test-parsing'] & FG
+        output = local['../cmake-build-debug/tests/test-parsing'](retcode=None)
+        print(output.split('[==========]')[2])
+    cmd = 'diff'
+
+if cmd == 'diff':
+    diff()
 
 elif cmd == 'gild':
     if os.path.isfile('ast.actual.txt'):

@@ -50,5 +50,6 @@ Program( # input.cq:1:1..12:1
     )
   ]
   mappings: []
+  variables: []
 )
 

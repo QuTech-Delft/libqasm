@@ -247,6 +247,17 @@ annotated {
 
         }
 
+        # One or more variable declaration for some type.
+        variables {
+
+            # Name of the variables. Multiple can be declared on one line.
+            names: Many<identifier>;
+
+            # Name of the type.
+            typ: One<identifier>;
+
+        }
+
         # A subcircuit header.
         subcircuit {
 
@@ -294,7 +305,7 @@ root {
         version: One<version>;
 
         # Integer expression indicating the number of qubits.
-        num_qubits: One<expression>;
+        num_qubits: Maybe<expression>;
 
         # The statement list.
         statements: One<statement_list>;

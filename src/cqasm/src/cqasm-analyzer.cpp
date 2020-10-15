@@ -210,6 +210,13 @@ public:
     void analyze_mapping(const ast::Mapping &mapping);
 
     /**
+     * Analyzes the given declaration of one or more variables and, if valid,
+     * adds them to the current scope. If an error occurs, the message is added
+     * to the result error vector, and nothing is added to the scope.
+     */
+    void analyze_variables(const ast::Variables &variables);
+
+    /**
      * Analyzes the given subcircuit header and, if valid, adds it to the
      * subcircuit list. If an error occurs, the message is added to the result
      * error vector, and nothing is added to the result.
@@ -364,8 +371,14 @@ AnalyzerHelper::AnalyzerHelper(
         // Check and set the version.
         analyze_version(*ast.version);
 
-        // Handle the qubits statement.
-        analyze_qubits(*ast.num_qubits);
+        // Handle the qubits statement. Qubit variables can be used instead of
+        // the qubits keyword, in which case num_qubits is set to 0 to indicate
+        // that it's not being used.
+        if (ast.num_qubits.empty()) {
+            result.root->num_qubits = 0;
+        } else {
+            analyze_qubits(*ast.num_qubits);
+        }
 
         // Read the statements.
         for (auto stmt : ast.statements->items) {
@@ -374,6 +387,8 @@ AnalyzerHelper::AnalyzerHelper(
                     analyze_bundle(*bundle);
                 } else if (auto mapping = stmt->as_mapping()) {
                     analyze_mapping(*mapping);
+                } else if (auto variables = stmt->as_variables()) {
+                    analyze_variables(*variables);
                 } else if (auto subcircuit = stmt->as_subcircuit()) {
                     analyze_subcircuit(*subcircuit);
                 } else {
@@ -457,13 +472,14 @@ void AnalyzerHelper::analyze_version(const ast::Version &ast) {
  */
 void AnalyzerHelper::analyze_qubits(const ast::Expression &count) {
     try {
-        // Default to 0 qubits in case we get an exception.
+        // Default to 0 qubits in case we get an exception or no qubit count is
+        // defined.
         result.root->num_qubits = 0;
 
         // Try to load the number of qubits from the expression.
         result.root->num_qubits = analyze_as_const_int(count);
         if (result.root->num_qubits < 1) {
-            // Number of qubits must be positive.
+            // Number of qubits must be positive if specified.
             throw error::AnalysisError("invalid number of qubits");
         }
 
@@ -759,6 +775,55 @@ void AnalyzerHelper::analyze_mapping(const ast::Mapping &mapping) {
         );
     } catch (error::AnalysisError &e) {
         e.context(mapping);
+        result.errors.push_back(e.get_message());
+    }
+}
+
+/**
+ * Analyzes the given declaration of one or more variables and, if valid,
+ * adds them to the current scope. If an error occurs, the message is added
+ * to the result error vector, and nothing is added to the scope.
+ */
+void AnalyzerHelper::analyze_variables(const ast::Variables &variables) {
+    try {
+
+        // Figure out what type the variables should have.
+        auto type_name = utils::lowercase(variables.typ->name);
+        types::Type type{};
+        if (type_name == "qubit") {
+            type = tree::make<types::Qubit>();
+        } else if (type_name == "bool" || type_name == "bit") {
+            type = tree::make<types::Bool>();
+        } else if (type_name == "int") {
+            type = tree::make<types::Int>();
+        } else if (type_name == "real") {
+            type = tree::make<types::Real>();
+        } else if (type_name == "complex") {
+            type = tree::make<types::Complex>();
+        } else {
+            throw error::AnalysisError("unknown type \"" + type_name + "\"");
+        }
+        type->assignable = true;
+
+        // Construct the variables and add mappings for them.
+        for (const auto &identifier : variables.names) {
+
+            // Construct variable. Use the location tag of the identifier to
+            // record where the variable was defined.
+            auto var = tree::make<semantic::Variable>(identifier->name, type.clone());
+            var->copy_annotation<parser::SourceLocation>(*identifier);
+            result.root->variables.add(var);
+
+            // Add a mapping for the variable.
+            scope.mappings.add(
+                identifier->name,
+                tree::make<values::VariableRef>(var),
+                tree::Maybe<ast::Mapping>()
+            );
+        }
+
+    } catch (error::AnalysisError &e) {
+        e.context(variables);
         result.errors.push_back(e.get_message());
     }
 }

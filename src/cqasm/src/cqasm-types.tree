@@ -12,6 +12,8 @@ tree_namespace cqasm::tree
 
 // Include primitive types.
 include "cqasm-primitives.hpp"
+include "cqasm-semantic-helper.hpp"
+src_include "cqasm-semantic.hpp"
 
 // Initialization function to use to construct default values for the tree base
 // classes and primitives.

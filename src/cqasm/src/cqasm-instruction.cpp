@@ -4,6 +4,7 @@
 
 #include "cqasm-instruction.hpp"
 #include "cqasm-utils.hpp"
+#include "cqasm-semantic.hpp"
 
 namespace cqasm {
 namespace instruction {

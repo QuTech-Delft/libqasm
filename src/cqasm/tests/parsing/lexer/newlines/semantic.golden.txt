@@ -270,5 +270,6 @@ I'm a multiline string.
     )
   ]
   mappings: []
+  variables: []
 )
 

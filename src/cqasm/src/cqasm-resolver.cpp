@@ -24,9 +24,16 @@ void MappingTable::add(
     const values::Value &value,
     const tree::Maybe<ast::Mapping> &node
 ) {
+    auto lname = utils::lowercase(name);
+    auto it = table.find(lname);
+    if (it != table.end()) {
+        table.erase(it);
+    }
     table.insert(
-        std::make_pair(utils::lowercase(name),
-        std::pair<const values::Value, tree::Maybe<ast::Mapping>>(value, node))
+        std::make_pair(
+            lname,
+            std::pair<const values::Value, tree::Maybe<ast::Mapping>>(value, node)
+        )
     );
 }
 

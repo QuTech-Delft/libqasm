@@ -1,0 +1,5 @@
+version 1.0
+
+var data, ancilla: qubit
+
+cnot data, ancilla

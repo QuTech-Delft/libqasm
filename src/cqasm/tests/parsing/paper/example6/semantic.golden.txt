@@ -1263,5 +1263,6 @@ Program( # input.cq:1:1..53:1
       annotations: []
     )
   ]
+  variables: []
 )
 

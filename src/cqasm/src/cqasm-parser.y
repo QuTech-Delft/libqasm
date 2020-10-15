@@ -90,6 +90,7 @@
     Instruction     *inst;
     Bundle          *bun;
     Mapping         *map;
+    Variables       *vars;
     Subcircuit      *sub;
     Statement       *stmt;
     StatementList   *stms;
@@ -119,9 +120,10 @@
 %type <inst> Instruction AnnotInstr
 %type <bun>  SLParInstrList CBParInstrList
 %type <map>  Mapping
+%type <vars> Variable VariableBody
 %type <sub>  Subcircuit
 %type <stmt> Statement AnnotStatement
-%type <stms> StatementList
+%type <stms> StatementList Statements
 %type <vers> Version
 %type <prog> Program
 
@@ -137,6 +139,7 @@
 /* Keywords */
 %token QUBITS
 %token MAP
+%token VAR
 %token CDASH
 %token COND
 
@@ -322,6 +325,14 @@ Mapping         : MAP Expression ',' Identifier                                 
                 | MAP Identifier '=' Expression                                 { NEW($$, Mapping); $$->alias.set_raw($2); $$->expr.set_raw($4); }
                 ;
 
+/* Variable declaration. */
+VariableBody    : Identifier ':' Identifier                                     { NEW($$, Variables); $$->names.add_raw($1); $$->typ.set_raw($3); }
+                | Identifier ',' VariableBody                                   { FROM($$, $3); $$->names.add_raw($1); }
+                ;
+
+Variable        : VAR VariableBody                                              { FROM($$, $2); }
+                ;
+
 /* Subcircuit header statement. */
 Subcircuit      : '.' Identifier                                                { NEW($$, Subcircuit); $$->name.set_raw($2); }
                 | '.' Identifier '(' Expression ')'                             { NEW($$, Subcircuit); $$->name.set_raw($2); $$->iterations.set_raw($4); }
@@ -329,6 +340,7 @@ Subcircuit      : '.' Identifier                                                
 
 /* Any of the supported statements. */
 Statement       : Mapping                                                       { FROM($$, $1); }
+                | Variable                                                      { FROM($$, $1); }
                 | Subcircuit                                                    { FROM($$, $1); }
                 | SLParInstrList                                                { FROM($$, $1); }
                 | '{' OptNewline CBParInstrList OptNewline '}'                  { FROM($$, $3); }
@@ -348,6 +360,11 @@ StatementList   : StatementList Newline AnnotStatement                          
                 | AnnotStatement                                                { NEW($$, StatementList); $$->items.add_raw($1); }
                 ;
 
+/* List of zero or more statements preceded by a newline. */
+Statements      : Newline StatementList OptNewline                              { FROM($$, $2); }
+                | OptNewline                                                    { NEW($$, StatementList); }
+                ;
+
 /* Version. */
 Version         : Version '.' IntegerLiteral                                    { FROM($$, $1); $$->items.push_back($3->value); delete $3; }
                 | IntegerLiteral                                                { NEW($$, Version); $$->items.push_back($1->value); delete $1; }
@@ -355,10 +372,10 @@ Version         : Version '.' IntegerLiteral                                    
 
 /* Program. */
 Program         : OptNewline VERSION Version Newline
-                    QUBITS Expression Newline
-                    StatementList OptNewline                                    { NEW($$, Program); $$->version.set_raw($3); $$->num_qubits.set_raw($6); $$->statements.set_raw($8); }
-                | OptNewline VERSION Version Newline
-                    QUBITS Expression OptNewline                                { NEW($$, Program); $$->version.set_raw($3); $$->num_qubits.set_raw($6); $$->statements.set_raw(new StatementList()); }
+                    QUBITS Expression
+                    Statements                                                  { NEW($$, Program); $$->version.set_raw($3); $$->num_qubits.set_raw($6); $$->statements.set_raw($7); }
+                | OptNewline VERSION Version
+                    Statements                                                  { NEW($$, Program); $$->version.set_raw($3); $$->statements.set_raw($4); }
                 ;
 
 /* Toplevel. */

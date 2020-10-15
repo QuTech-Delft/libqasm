@@ -71,5 +71,6 @@ Program( # input.cq:1:1..11:1
     )
   ]
   mappings: []
+  variables: []
 )
 
