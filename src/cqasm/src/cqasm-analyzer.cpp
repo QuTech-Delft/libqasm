@@ -297,7 +297,8 @@ public:
     values::Value analyze_operator(
         const std::string &name,
         const tree::One<ast::Expression> &a,
-        const tree::One<ast::Expression> &b = tree::One<ast::Expression>()
+        const tree::One<ast::Expression> &b = tree::One<ast::Expression>(),
+        const tree::One<ast::Expression> &c = tree::One<ast::Expression>()
     );
 
 };
@@ -392,7 +393,7 @@ AnalyzerHelper::AnalyzerHelper(
                 } else if (auto subcircuit = stmt->as_subcircuit()) {
                     analyze_subcircuit(*subcircuit);
                 } else {
-                    throw std::runtime_error("unexpected expression node");
+                    throw std::runtime_error("unexpected statement node");
                 }
             } catch (error::AnalysisError &e) {
                 e.context(*stmt);
@@ -914,16 +915,56 @@ values::Value AnalyzerHelper::analyze_expression(const ast::Expression &expressi
             retval.set(analyze_function(func->name->name, *func->arguments));
         } else if (auto negate = expression.as_negate()) {
             retval.set(analyze_operator("-", negate->expr));
+        } else if (auto bit_not = expression.as_bitwise_not()) {
+            retval.set(analyze_operator("~", bit_not->expr));
+        } else if (auto log_not = expression.as_logical_not()) {
+            retval.set(analyze_operator("!", log_not->expr));
         } else if (auto power = expression.as_power()) {
             retval.set(analyze_operator("**", power->lhs, power->rhs));
         } else if (auto mult = expression.as_multiply()) {
             retval.set(analyze_operator("*", mult->lhs, mult->rhs));
         } else if (auto div = expression.as_divide()) {
             retval.set(analyze_operator("/", div->lhs, div->rhs));
+        } else if (auto idiv = expression.as_int_divide()) {
+            retval.set(analyze_operator("//", idiv->lhs, idiv->rhs));
+        } else if (auto mod = expression.as_modulo()) {
+            retval.set(analyze_operator("%", mod->lhs, mod->rhs));
         } else if (auto add = expression.as_add()) {
             retval.set(analyze_operator("+", add->lhs, add->rhs));
         } else if (auto sub = expression.as_subtract()) {
             retval.set(analyze_operator("-", sub->lhs, sub->rhs));
+        } else if (auto shl = expression.as_shift_left()) {
+            retval.set(analyze_operator("<<", shl->lhs, shl->rhs));
+        } else if (auto sra = expression.as_shift_right_arith()) {
+            retval.set(analyze_operator(">>", sra->lhs, sra->rhs));
+        } else if (auto srl = expression.as_shift_right_logic()) {
+            retval.set(analyze_operator(">>>", srl->lhs, srl->rhs));
+        } else if (auto cmpeq = expression.as_cmp_eq()) {
+            retval.set(analyze_operator("==", cmpeq->lhs, cmpeq->rhs));
+        } else if (auto cmpne = expression.as_cmp_ne()) {
+            retval.set(analyze_operator("!=", cmpne->lhs, cmpne->rhs));
+        } else if (auto cmpgt = expression.as_cmp_gt()) {
+            retval.set(analyze_operator(">", cmpgt->lhs, cmpgt->rhs));
+        } else if (auto cmpge = expression.as_cmp_ge()) {
+            retval.set(analyze_operator(">=", cmpge->lhs, cmpge->rhs));
+        } else if (auto cmplt = expression.as_cmp_lt()) {
+            retval.set(analyze_operator("<", cmplt->lhs, cmplt->rhs));
+        } else if (auto cmple = expression.as_cmp_le()) {
+            retval.set(analyze_operator("<=", cmple->lhs, cmple->rhs));
+        } else if (auto band = expression.as_bitwise_and()) {
+            retval.set(analyze_operator("&", band->lhs, band->rhs));
+        } else if (auto bxor = expression.as_bitwise_xor()) {
+            retval.set(analyze_operator("^", bxor->lhs, bxor->rhs));
+        } else if (auto bor = expression.as_bitwise_or()) {
+            retval.set(analyze_operator("|", bor->lhs, bor->rhs));
+        } else if (auto land = expression.as_logical_and()) {
+            retval.set(analyze_operator("&&", land->lhs, land->rhs));
+        } else if (auto lxor = expression.as_logical_xor()) {
+            retval.set(analyze_operator("^^", lxor->lhs, lxor->rhs));
+        } else if (auto lor = expression.as_logical_or()) {
+            retval.set(analyze_operator("||", lor->lhs, lor->rhs));
+        } else if (auto tcond = expression.as_ternary_cond()) {
+            retval.set(analyze_operator("?:", tcond->cond, tcond->if_true, tcond->if_false));
         } else {
             throw std::runtime_error("unexpected expression node");
         }
@@ -1150,12 +1191,14 @@ values::Value AnalyzerHelper::analyze_function(const ast::Identifier &name, cons
 values::Value AnalyzerHelper::analyze_operator(
     const std::string &name,
     const tree::One<ast::Expression> &a,
-    const tree::One<ast::Expression> &b
+    const tree::One<ast::Expression> &b,
+    const tree::One<ast::Expression> &c
 ) {
     auto identifier = ast::Identifier("operator" + name);
     auto args = ast::ExpressionList();
     args.items.add(a);
     args.items.add(b);
+    args.items.add(c);
     return analyze_function(identifier, args);
 }
 

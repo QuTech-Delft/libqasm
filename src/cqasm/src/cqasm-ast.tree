@@ -107,8 +107,14 @@ expression {
         # The expression being operated on.
         expr: One<expression>;
 
-        # Negation operator.
+        # Negation operator (two's complement).
         negate {}
+
+        # Bitwise NOT (one's complement).
+        bitwise_not {}
+
+        # Logical/boolean NOT.
+        logical_not {}
 
     }
 
@@ -121,20 +127,110 @@ expression {
         # The right-hand side of the expression.
         rhs: One<expression>;
 
-        # Exponentiation operator.
-        power {}
+        # Arithmetic operators.
+        arith_op {
 
-        # Multiplication operator.
-        multiply {}
+            # Exponentiation operator.
+            power {}
 
-        # Division operator.
-        divide {}
+            # Multiplication operator.
+            multiply {}
 
-        # Addition operator.
-        add {}
+            # True division operator.
+            divide {}
 
-        # Subtraction operator.
-        subtract {}
+            # Integer division operator.
+            int_divide {}
+
+            # Modulo operator.
+            modulo {}
+
+            # Addition operator.
+            add {}
+
+            # Subtraction operator.
+            subtract {}
+
+        }
+
+        # Shift operators.
+        shift_op {
+
+            # Shift-left operator.
+            shift_left {}
+
+            # Arithmetic/signed shift-right operator (shifts in sign).
+            shift_right_arith {}
+
+            # Logical/unsigned shift-right operator (shifts in zero).
+            shift_right_logic {}
+
+        }
+
+        # Comparison operators.
+        cmp_op {
+
+            # Equality operator.
+            cmp_eq {}
+
+            # Inequality operator.
+            cmp_ne {}
+
+            # Greater-than operator.
+            cmp_gt {}
+
+            # Greater-than-or-equal operator.
+            cmp_ge {}
+
+            # Less-than operator.
+            cmp_lt {}
+
+            # Less-than-or-equal operator.
+            cmp_le {}
+
+        }
+
+        # Bitwise operators.
+        bitwise_op {
+
+            # Bitwise AND operator.
+            bitwise_and {}
+
+            # Bitwise XOR operator.
+            bitwise_xor {}
+
+            # Bitwise OR operator.
+            bitwise_or {}
+
+        }
+
+        # Logical operators.
+        logical_op {
+
+            # Logical AND operator.
+            logical_and {}
+
+            # Logical XOR operator.
+            logical_xor {}
+
+            # Logical OR operator.
+            logical_or {}
+
+        }
+
+    }
+
+    # Ternary conditional operator.
+    ternary_cond {
+
+        # The boolean condition for selection.
+        cond: One<expression>;
+
+        # The result if cond is true.
+        if_true: One<expression>;
+
+        # The result if cond is false.
+        if_false: One<expression>;
 
     }
 

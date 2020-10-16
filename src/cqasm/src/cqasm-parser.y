@@ -80,6 +80,7 @@
     Index           *indx;
     UnaryOp         *unop;
     BinaryOp        *biop;
+    TernaryCond     *tcnd;
     Expression      *expr;
     ExpressionList  *expl;
     IndexItem       *idxi;
@@ -108,10 +109,17 @@
 %type <idnt> Identifier
 %type <func> FunctionCall
 %type <indx> Index
+%type <indx> IndexNP
 %type <unop> UnaryOp
+%type <unop> UnaryOpNP
 %type <biop> BinaryOp
+%type <biop> BinaryOpNP
+%type <tcnd> TernaryOp
+%type <tcnd> TernaryOpNP
 %type <expr> Expression
+%type <expr> ExpressionNP
 %type <expl> ExpressionList
+%type <expl> ExpressionListNP
 %type <idxi> IndexItem
 %type <idxr> IndexRange
 %type <idxe> IndexEntry
@@ -158,6 +166,17 @@
 
 /* Multi-character operators */
 %token POWER
+%token INT_DIV
+%token LOGIC_OR
+%token LOGIC_AND
+%token LOGIC_XOR
+%token CMP_GE
+%token CMP_LE
+%token CMP_EQ
+%token CMP_NE
+%token SHL
+%token ARITH_SHR
+%token LOGIC_SHR
 
 /* Error marker tokens */
 %token BAD_CHARACTER END_OF_FILE
@@ -166,18 +185,26 @@
 comes first. NOTE: expression precedence must match the values in
 operators.[ch]pp for correct pretty-printing! */
 %left ',' ':'                                /* SIMD/SGMQ indexation */
+%right '?'                                   /* Ternary conditional */
+%left LOGIC_OR                               /* Logical OR */
+%left LOGIC_XOR                              /* Logical XOR */
+%left LOGIC_AND                              /* Logical AND */
+%left '|'                                    /* Bitwise OR */
+%left '^'                                    /* Bitwise XOR */
+%left '&'                                    /* Bitwise AND */
+%left CMP_EQ CMP_NE                          /* Equalities */
+%left '>' '<' CMP_GE CMP_LE                  /* Inequalities */
+%left SHL ARITH_SHR LOGIC_SHR                /* Bit shifts */
 %left '+' '-'                                /* Addition/subtraction */
-%left '*' '/'                                /* Multiplication/division */
-%left POWER                                  /* Power */
-%right UMINUS                                /* Negation */
+%left '*' '/' INT_DIV '%'                    /* Multiplication/division */
+%right POWER                                 /* Power */
+%right UMINUS UCOMP UNOT                     /* Negation */
 %left '(' '['                                /* Function call, indexation */
 
 /* In a single-line parallel statement, possibly containing only a single gate,
 annotations apply to the gate, not the bundle. Therefore '@' has greater
 priority than '|' */
-%left '|'
 %left '@'
-%nonassoc BUNDLE
 
 /* Misc. Yacc directives */
 %error-verbose
@@ -254,15 +281,73 @@ IndexList       : IndexList ',' IndexEntry                                      
 Index           : Expression '[' IndexList ']'                                  { NEW($$, Index); $$->expr.set_raw($1); $$->indices.set_raw($3); }
                 ;
 
-/* Math operations, evaluated by the parser. */
-UnaryOp         : '-' Expression %prec UMINUS                                   { NEW($$, Negate); $$->expr.set_raw($2); }
+IndexNP         : ExpressionNP '[' IndexList ']'                                { NEW($$, Index); $$->expr.set_raw($1); $$->indices.set_raw($3); }
                 ;
 
-BinaryOp        : Expression POWER Expression                                   { NEW($$, Power);    $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
-                | Expression '*' Expression                                     { NEW($$, Multiply); $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
-                | Expression '/' Expression                                     { NEW($$, Divide);   $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
-                | Expression '+' Expression                                     { NEW($$, Add);      $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
-                | Expression '-' Expression                                     { NEW($$, Subtract); $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+/* Operators. */
+UnaryOp         : '-' Expression %prec UMINUS                                   { NEW($$, Negate); $$->expr.set_raw($2); }
+                | '~' Expression %prec UCOMP                                    { NEW($$, BitwiseNot); $$->expr.set_raw($2); }
+                | '!' Expression %prec UNOT                                     { NEW($$, LogicalNot); $$->expr.set_raw($2); }
+                ;
+
+BinaryOp        : Expression POWER     Expression                               { NEW($$, Power);           $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | Expression '*'       Expression                               { NEW($$, Multiply);        $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | Expression '/'       Expression                               { NEW($$, Divide);          $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | Expression INT_DIV   Expression                               { NEW($$, IntDivide);       $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | Expression '%'       Expression                               { NEW($$, Modulo);          $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | Expression '+'       Expression                               { NEW($$, Add);             $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | Expression '-'       Expression                               { NEW($$, Subtract);        $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | Expression SHL       Expression                               { NEW($$, ShiftLeft);       $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | Expression ARITH_SHR Expression                               { NEW($$, ShiftRightArith); $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | Expression LOGIC_SHR Expression                               { NEW($$, ShiftRightLogic); $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | Expression CMP_EQ    Expression                               { NEW($$, CmpEq);           $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | Expression CMP_NE    Expression                               { NEW($$, CmpNe);           $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | Expression '>'       Expression                               { NEW($$, CmpGt);           $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | Expression CMP_GE    Expression                               { NEW($$, CmpGe);           $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | Expression '<'       Expression                               { NEW($$, CmpLt);           $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | Expression CMP_LE    Expression                               { NEW($$, CmpLe);           $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | Expression '&'       Expression                               { NEW($$, BitwiseAnd);      $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | Expression '^'       Expression                               { NEW($$, BitwiseXor);      $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | Expression '|'       Expression                               { NEW($$, BitwiseOr);       $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | Expression LOGIC_AND Expression                               { NEW($$, LogicalAnd);      $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | Expression LOGIC_XOR Expression                               { NEW($$, LogicalXor);      $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | Expression LOGIC_OR  Expression                               { NEW($$, LogicalOr);       $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                ;
+
+TernaryOp       : Expression '?' Expression ':' Expression                      { NEW($$, TernaryCond);     $$->cond.set_raw($1); $$->if_true.set_raw($3); $$->if_false.set_raw($5); }
+                ;
+
+/* Operators with "no pipe". This is used to disambiguate between the | */
+/* operator and bundle notation. */
+UnaryOpNP       : '-' ExpressionNP %prec UMINUS                                 { NEW($$, Negate); $$->expr.set_raw($2); }
+                | '~' ExpressionNP %prec UCOMP                                  { NEW($$, BitwiseNot); $$->expr.set_raw($2); }
+                | '!' ExpressionNP %prec UNOT                                   { NEW($$, LogicalNot); $$->expr.set_raw($2); }
+                ;
+
+BinaryOpNP      : ExpressionNP POWER     ExpressionNP                           { NEW($$, Power);           $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | ExpressionNP '*'       ExpressionNP                           { NEW($$, Multiply);        $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | ExpressionNP '/'       ExpressionNP                           { NEW($$, Divide);          $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | ExpressionNP INT_DIV   ExpressionNP                           { NEW($$, IntDivide);       $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | ExpressionNP '%'       ExpressionNP                           { NEW($$, Modulo);          $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | ExpressionNP '+'       ExpressionNP                           { NEW($$, Add);             $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | ExpressionNP '-'       ExpressionNP                           { NEW($$, Subtract);        $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | ExpressionNP SHL       ExpressionNP                           { NEW($$, ShiftLeft);       $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | ExpressionNP ARITH_SHR ExpressionNP                           { NEW($$, ShiftRightArith); $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | ExpressionNP LOGIC_SHR ExpressionNP                           { NEW($$, ShiftRightLogic); $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | ExpressionNP CMP_EQ    ExpressionNP                           { NEW($$, CmpEq);           $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | ExpressionNP CMP_NE    ExpressionNP                           { NEW($$, CmpNe);           $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | ExpressionNP '>'       ExpressionNP                           { NEW($$, CmpGt);           $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | ExpressionNP CMP_GE    ExpressionNP                           { NEW($$, CmpGe);           $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | ExpressionNP '<'       ExpressionNP                           { NEW($$, CmpLt);           $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | ExpressionNP CMP_LE    ExpressionNP                           { NEW($$, CmpLe);           $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | ExpressionNP '&'       ExpressionNP                           { NEW($$, BitwiseAnd);      $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | ExpressionNP '^'       ExpressionNP                           { NEW($$, BitwiseXor);      $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | ExpressionNP LOGIC_AND ExpressionNP                           { NEW($$, LogicalAnd);      $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | ExpressionNP LOGIC_XOR ExpressionNP                           { NEW($$, LogicalXor);      $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                | ExpressionNP LOGIC_OR  ExpressionNP                           { NEW($$, LogicalOr);       $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                ;
+
+TernaryOpNP     : ExpressionNP '?' ExpressionNP ':' ExpressionNP                { NEW($$, TernaryCond);     $$->cond.set_raw($1); $$->if_true.set_raw($3); $$->if_false.set_raw($5); }
                 ;
 
 /* Supported types of expressions. */
@@ -276,6 +361,22 @@ Expression      : IntegerLiteral                                                
                 | Index                                                         { FROM($$, $1); }
                 | UnaryOp                                                       { FROM($$, $1); }
                 | BinaryOp                                                      { FROM($$, $1); }
+                | TernaryOp                                                     { FROM($$, $1); }
+                | '(' Expression ')'                                            { FROM($$, $2); }
+                | error                                                         { NEW($$, ErroneousExpression); }
+                ;
+
+ExpressionNP    : IntegerLiteral                                                { FROM($$, $1); }
+                | FloatLiteral                                                  { FROM($$, $1); }
+                | MatrixLiteral                                                 { FROM($$, $1); }
+                | StringLiteral                                                 { FROM($$, $1); }
+                | JsonLiteral                                                   { FROM($$, $1); }
+                | Identifier                                                    { FROM($$, $1); }
+                | FunctionCall                                                  { FROM($$, $1); }
+                | IndexNP                                                       { FROM($$, $1); }
+                | UnaryOpNP                                                     { FROM($$, $1); }
+                | BinaryOpNP                                                    { FROM($$, $1); }
+                | TernaryOpNP                                                   { FROM($$, $1); }
                 | '(' Expression ')'                                            { FROM($$, $2); }
                 | error                                                         { NEW($$, ErroneousExpression); }
                 ;
@@ -283,6 +384,10 @@ Expression      : IntegerLiteral                                                
 /* List of one or more expressions. */
 ExpressionList  : ExpressionList ',' Expression                                 { FROM($$, $1); $$->items.add_raw($3); }
                 | Expression %prec ','                                          { NEW($$, ExpressionList); $$->items.add_raw($1); }
+                ;
+
+ExpressionListNP: ExpressionListNP ',' ExpressionNP                             { FROM($$, $1); $$->items.add_raw($3); }
+                | ExpressionNP %prec ','                                        { NEW($$, ExpressionList); $$->items.add_raw($1); }
                 ;
 
 /* The information caried by an annotation or pragma statement. */
@@ -297,10 +402,10 @@ AnnotationData  : AnnotationName                                                
 /* Instructions. Note that this is NOT directly a statement grammatically;
 they are always part of a bundle. */
 Instruction     : Identifier                                                    { NEW($$, Instruction); $$->name.set_raw($1); $$->operands.set_raw(new ExpressionList()); }
-                | Identifier ExpressionList                                     { NEW($$, Instruction); $$->name.set_raw($1); $$->operands.set_raw($2); }
-                | CDASH Identifier Expression                                   { NEW($$, Instruction); $$->name.set_raw($2); $$->condition.set_raw($3); $$->operands.set_raw(new ExpressionList()); }
-                | CDASH Identifier Expression ',' ExpressionList                { NEW($$, Instruction); $$->name.set_raw($2); $$->condition.set_raw($3); $$->operands.set_raw($5); }
-                | COND '(' Expression ')' Identifier ExpressionList             { NEW($$, Instruction); $$->name.set_raw($5); $$->condition.set_raw($3); $$->operands.set_raw($6); }
+                | Identifier ExpressionListNP                                   { NEW($$, Instruction); $$->name.set_raw($1); $$->operands.set_raw($2); }
+                | CDASH Identifier ExpressionNP                                 { NEW($$, Instruction); $$->name.set_raw($2); $$->condition.set_raw($3); $$->operands.set_raw(new ExpressionList()); }
+                | CDASH Identifier ExpressionNP ',' ExpressionListNP            { NEW($$, Instruction); $$->name.set_raw($2); $$->condition.set_raw($3); $$->operands.set_raw($5); }
+                | COND '(' Expression ')' Identifier ExpressionListNP           { NEW($$, Instruction); $$->name.set_raw($5); $$->condition.set_raw($3); $$->operands.set_raw($6); }
                 ;
 
 /* Instructions are not statements (because there can be multiple bundled
