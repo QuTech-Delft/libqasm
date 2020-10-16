@@ -1,7 +1,10 @@
 FROM centos:6
 
 RUN yum install -y centos-release-scl && \
-    yum install -y devtoolset-7 cmake git
+    yum install -y devtoolset-7 git wget
+
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.12.0/cmake-3.12.0-Linux-x86_64.sh
+RUN chmod +x cmake-3.12.0-Linux-x86_64.sh && ./cmake-3.12.0-Linux-x86_64.sh --skip-license
 
 # Add this line to test CMake logic for when an older version of flex/bison is
 # already installed (that is, to make sure it uses the version it built from
