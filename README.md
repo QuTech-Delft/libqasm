@@ -7,9 +7,9 @@
 [![API docs](https://readthedocs.org/projects/libqasm/badge/?version=latest)](https://libqasm.readthedocs.io/en/latest/)
 
 ## Dependencies
-* Flex (> 2.6)
-* Bison (> 3.0)
-* cmake (> 2.8)
+* Flex (>= 2.6.1)
+* Bison (>= 3.0)
+* cmake (>= 3.12)
 * gcc and g++ capable of C++11 standard
 * MinGW (For Windows builds)
 * doctest (As a git submodule)
