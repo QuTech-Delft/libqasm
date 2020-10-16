@@ -187,8 +187,19 @@
     /* OPERATORS                                                             */
     /*=======================================================================*/
 
-[()[\]{}|+\-*/=:,.@]                                OPERATOR;
+[()[\]{}|+\-*/=:,.@!~<>&|^?%]                       OPERATOR;
 "**"                                                WITHOUT_STR(POWER);
+"//"                                                WITHOUT_STR(INT_DIV);
+"||"                                                WITHOUT_STR(LOGIC_OR);
+"&&"                                                WITHOUT_STR(LOGIC_AND);
+"^^"                                                WITHOUT_STR(LOGIC_XOR);
+">="                                                WITHOUT_STR(CMP_GE);
+"<="                                                WITHOUT_STR(CMP_LE);
+"=="                                                WITHOUT_STR(CMP_EQ);
+"!="                                                WITHOUT_STR(CMP_NE);
+"<<"                                                WITHOUT_STR(SHL);
+">>"                                                WITHOUT_STR(ARITH_SHR);
+">>>"                                               WITHOUT_STR(LOGIC_SHR);
 
 
     /*=======================================================================*/
