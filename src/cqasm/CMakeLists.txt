@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
 
 project(libcqasm CXX)
 
@@ -115,10 +115,15 @@ generate_funcs(
 )
 
 # Main cQASM library as an object library.
+# NOTE: tree-gen's support library is included here directly. It'd be great to
+# just be able to use target_link_libraries(cqasm_objlib tree-lib-obj), but
+# that only works from CMake 3.12 onwards. So for compatibility, we're forced
+# to do it the old-fashioned way.
 add_library(
     cqasm_objlib OBJECT
     ${BISON_cqasm-parser_OUTPUTS}
     ${FLEX_cqasm-lexer_OUTPUTS}
+    ${TREE_LIB_SRCS}
     "${CMAKE_CURRENT_BINARY_DIR}/cqasm-ast-gen.cpp"
     "${CMAKE_CURRENT_BINARY_DIR}/cqasm-types-gen.cpp"
     "${CMAKE_CURRENT_BINARY_DIR}/cqasm-values-gen.cpp"
@@ -138,20 +143,21 @@ add_library(
     "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-utils.cpp"
 )
 
+target_compile_definitions(cqasm_objlib PRIVATE ${TREE_LIB_PRIVATE_DEFS})
+
 # The src directory and binary directory (for generated header files) are
 # private. The include directory is public. That is, the files in include
 # must not try to include generated files and files from the src directory,
 # but the other direction is fine.
 target_include_directories(
     cqasm_objlib
+    PRIVATE ${TREE_LIB_PRIVATE_INCLUDE}
+    PUBLIC ${TREE_LIB_PUBLIC_INCLUDE}
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src"
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}"
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/"
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/include/"
 )
-
-# Link tree-gen's utility library.
-target_link_libraries(cqasm_objlib tree-lib-obj)
 
 # Enable all warnings and treat them as errors when compiling libcqasm.
 if(MSVC)
