@@ -142,3 +142,30 @@ jobs:
       # environment, so this is a bit redundant anyway.
       if: matrix.os != 'windows-2016'
       run: conda install libqasm --use-local
+
+  docker:
+    name: Docker
+    runs-on: ubuntu-latest
+    container: centos:6
+    defaults:
+      run:
+        shell: bash -l {0}
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        submodules: true
+    - name: Install dependencies
+      shell: bash
+      run: |
+        yum install -y centos-release-scl
+        yum install -y devtoolset-7 git wget
+        yum install -y cmake
+        echo "source scl_source enable devtoolset-7" >> ~/.bash_profile
+    - name: CMake
+      run: cmake $GITHUB_WORKSPACE -DLIBQASM_BUILD_TESTS=ON -DLIBQASM_COMPAT=ON
+    - name: Build
+      run: make -j
+    - name: Test
+      run: make test
+    - name: Install
+      run: make install
