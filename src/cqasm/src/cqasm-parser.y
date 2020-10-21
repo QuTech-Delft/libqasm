@@ -472,7 +472,7 @@ Statements      : Newline StatementList OptNewline                              
 
 /* Version. */
 Version         : Version '.' IntegerLiteral                                    { FROM($$, $1); $$->items.push_back($3->value); delete $3; }
-                | IntegerLiteral                                                { NEW($$, Version); $$->items.push_back($1->value); delete $1; }
+                | IntegerLiteral                                                { NEW($$, Version); $$->items.clear(); $$->items.push_back($1->value); delete $1; }
                 ;
 
 /* Program. */

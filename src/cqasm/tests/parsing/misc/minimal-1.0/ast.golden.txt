@@ -1,0 +1,19 @@
+SUCCESS
+Program( # input.cq:1:1..3:1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: <
+    IntegerLiteral( # input.cq:2:8..9
+      value: 1
+    )
+  >
+  statements: <
+    StatementList( # input.cq:2:9..3:1
+      items: []
+    )
+  >
+)
+

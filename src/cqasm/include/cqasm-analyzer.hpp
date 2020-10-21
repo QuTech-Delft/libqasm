@@ -100,6 +100,11 @@ private:
     friend class AnalyzerHelper;
 
     /**
+     * The maximum cQASM version that this analyzer supports.
+     */
+    primitives::Version max_version;
+
+    /**
      * The set of "mappings" that the parser starts out with (map statements in
      * the cQASM code mutate a local copy of this).
      */
@@ -156,7 +161,12 @@ public:
     /**
      * Creates a new semantic analyzer.
      */
-    Analyzer();
+    Analyzer(const std::string &max_version = "1.0");
+
+    /**
+     * Creates a new semantic analyzer.
+     */
+    Analyzer(const primitives::Version &max_version);
 
     /**
      * Registers an initial mapping from the given name to the given value.

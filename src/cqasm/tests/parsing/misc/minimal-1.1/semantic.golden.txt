@@ -1,8 +1,8 @@
 SUCCESS
 Program( # input.cq:1:1..2:1
   version: <
-    Version( # input.cq:1:9..10
-      items: 0
+    Version( # input.cq:1:9..12
+      items: 1.1
     )
   >
   num_qubits: 0

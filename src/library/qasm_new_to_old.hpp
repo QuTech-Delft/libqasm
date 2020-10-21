@@ -217,7 +217,7 @@ static void handle_parse_result(QasmRepresentation &qasm, cqasm::parser::ParseRe
     }
 
     // Create the semantic analyzer.
-    auto analyzer = cqasm::analyzer::Analyzer{};
+    auto analyzer = cqasm::analyzer::Analyzer{"1.0"};
     analyzer.register_default_functions_and_mappings();
 
     // The old library accepted the depolarizing_channel error model

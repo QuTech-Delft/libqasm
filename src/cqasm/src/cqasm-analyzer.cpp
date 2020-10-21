@@ -33,8 +33,25 @@ ast::One<semantic::Program> AnalysisResult::unwrap(std::ostream &out) const {
 /**
  * Creates a new semantic analyzer.
  */
-Analyzer::Analyzer() : resolve_instructions(false), resolve_error_model(false) {
+Analyzer::Analyzer(const std::string &max_version)
+    : max_version(max_version), resolve_instructions(false), resolve_error_model(false)
+{
+    if (max_version.compare("1.1") > 0) {
+        throw std::invalid_argument("this analyzer only supports up to cQASM 1.1");
+    }
 }
+
+/**
+ * Creates a new semantic analyzer.
+ */
+Analyzer::Analyzer(const primitives::Version &max_version)
+    : max_version(max_version), resolve_instructions(false), resolve_error_model(false)
+{
+    if (max_version.compare("1.1") > 0) {
+        throw std::invalid_argument("this analyzer only supports up to cQASM 1.1");
+    }
+}
+
 
 /**
  * Registers an initial mapping from the given name to the given value.
@@ -375,10 +392,12 @@ AnalyzerHelper::AnalyzerHelper(
         // Handle the qubits statement. Qubit variables can be used instead of
         // the qubits keyword, in which case num_qubits is set to 0 to indicate
         // that it's not being used.
-        if (ast.num_qubits.empty()) {
-            result.root->num_qubits = 0;
-        } else {
+        if (!ast.num_qubits.empty()) {
             analyze_qubits(*ast.num_qubits);
+        } else if (ast.version->items.compare("1.1") < 0) {
+            throw error::AnalysisError("missing qubits statement (required until version 1.1)");
+        } else {
+            result.root->num_qubits = 0;
         }
 
         // Read the statements.
@@ -460,6 +479,12 @@ void AnalyzerHelper::analyze_version(const ast::Version &ast) {
             }
         }
         result.root->version->items = ast.items;
+        if (ast.items.compare(analyzer.max_version) > 0) {
+            std::ostringstream ss{};
+            ss << "the maximum cQASM version supported is " << analyzer.max_version;
+            ss << ", but the cQASM file is version " << ast.items;
+            throw error::AnalysisError(ss.str());
+        }
     } catch (error::AnalysisError &e) {
         e.context(ast);
         result.errors.push_back(e.get_message());
@@ -788,6 +813,11 @@ void AnalyzerHelper::analyze_mapping(const ast::Mapping &mapping) {
 void AnalyzerHelper::analyze_variables(const ast::Variables &variables) {
     try {
 
+        // Check version compatibility.
+        if (result.root->version->items.compare("1.1") < 0) {
+            throw error::AnalysisError("variables are only supported from cQASM 1.1 onwards");
+        }
+
         // Figure out what type the variables should have.
         auto type_name = utils::lowercase(variables.typ->name);
         types::Type type{};
@@ -967,6 +997,11 @@ values::Value AnalyzerHelper::analyze_expression(const ast::Expression &expressi
             retval.set(analyze_operator("?:", tcond->cond, tcond->if_true, tcond->if_false));
         } else {
             throw std::runtime_error("unexpected expression node");
+        }
+        if (!retval.empty() && (retval->as_function() || retval->as_variable_ref())) {
+            if (analyzer.max_version.compare("1.1") < 0) {
+                throw std::runtime_error("dynamic expressions are only supported from cQASM 1.1 onwards");
+            }
         }
     } catch (error::AnalysisError &e) {
         e.context(expression);
