@@ -998,6 +998,11 @@ values::Value AnalyzerHelper::analyze_expression(const ast::Expression &expressi
         } else {
             throw std::runtime_error("unexpected expression node");
         }
+        if (!retval.empty() && (retval->as_function() || retval->as_variable_ref())) {
+            if (analyzer.max_version.compare("1.1") < 0) {
+                throw std::runtime_error("dynamic expressions are only supported from cQASM 1.1 onwards");
+            }
+        }
     } catch (error::AnalysisError &e) {
         e.context(expression);
         throw;
