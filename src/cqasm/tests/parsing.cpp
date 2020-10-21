@@ -75,7 +75,7 @@ public:
         // If there were no errors, try semantic analysis. We analyze using the
         // functions, error models, and instruction set available in the
         // compatibility layer, though this is copy-pasted in here.
-        auto analyzer = cqasm::analyzer::Analyzer{};
+        auto analyzer = cqasm::analyzer::Analyzer{"1.1"};
         analyzer.register_default_functions_and_mappings();
         std::ostringstream args;
         for (int i = 0; i <= 50; i++) {

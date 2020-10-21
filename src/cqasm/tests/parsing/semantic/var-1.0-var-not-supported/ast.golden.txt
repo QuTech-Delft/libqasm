@@ -1,0 +1,33 @@
+SUCCESS
+Program( # input.cq:1:1..5:1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: <
+    IntegerLiteral( # input.cq:2:8..9
+      value: 1
+    )
+  >
+  statements: <
+    StatementList( # input.cq:2:1..5:13
+      items: [
+        Variables( # input.cq:4:1..13
+          names: [
+            Identifier( # input.cq:4:5..6
+              name: a
+            )
+          ]
+          typ: <
+            Identifier( # input.cq:4:8..13
+              name: qubit
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+
