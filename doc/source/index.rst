@@ -10,9 +10,20 @@ libqasm is a library for handling cQASM files using C++ or Python.
 
 .. toctree::
    :maxdepth: 2
-   :caption: The cQASM language
+   :caption: Context and history
 
-   todo
+   context
+
+.. toctree::
+   :maxdepth: 2
+   :caption: The cQASM 1.x language
+
+   cq1-structure
+   cq1-statements
+   cq1-instructions
+   cq1-expressions
+   cq1-type-system
+   cq1-annotations
 
 .. toctree::
    :maxdepth: 2
