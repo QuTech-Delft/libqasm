@@ -30,6 +30,52 @@ bool ErrorModel::operator==(const ErrorModel& rhs) const {
 }
 
 } // namespace error_model
+
+namespace primitives {
+
+template <>
+void serialize<error_model::ErrorModelRef>(
+    const error_model::ErrorModelRef &obj,
+    ::tree::cbor::MapWriter &map
+) {
+    // Use an empty map to signal an empty instruction reference.
+    if (obj.empty()) {
+        return;
+    }
+
+    // Serialize the fields that are basically primitives.
+    map.append_string("n", obj->name);
+
+    // Serialize the parameter types, which behave like a subtree.
+    ::tree::base::PointerMap types_id_map{};
+    obj->param_types.find_reachable(types_id_map);
+    auto types = map.append_map("t");
+    obj->param_types.serialize(types, types_id_map);
+
+}
+
+template <>
+error_model::ErrorModelRef deserialize<error_model::ErrorModelRef>(
+    const ::tree::cbor::MapReader &map
+) {
+    // Empty map signals empty reference.
+    if (map.empty()) {
+        return error_model::ErrorModelRef{};
+    }
+
+    // Restore the fields that are basically primitives.
+    auto obj = tree::make<error_model::ErrorModel>(map.at("n").as_string());
+
+    // Restore the types subtree.
+    ::tree::base::IdentifierMap types_id_map{};
+    obj->param_types = tree::Any<types::TypeBase>(map.at("t").as_map(), types_id_map);
+    types_id_map.restore_links();
+    obj->param_types.check_well_formed();
+
+    return std::move(obj);
+}
+
+} // namespace primitives
 } // namespace cqasm
 
 /**

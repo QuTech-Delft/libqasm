@@ -188,6 +188,28 @@ void SourceLocation::expand_to_include(uint32_t line, uint32_t column) {
     }
 }
 
+/**
+ * Serializes this source location to the given CBOR map.
+ */
+void SourceLocation::serialize(::tree::cbor::MapWriter &map) const {
+    map.append_string("f", filename);
+    map.append_int("fl", first_line);
+    map.append_int("fc", first_column);
+    map.append_int("ll", last_line);
+    map.append_int("lc", last_column);
+}
+
+/**
+ * Constructs a source location object by deserializing from CBOR.
+ */
+SourceLocation::SourceLocation(const ::tree::cbor::MapReader &map) {
+    filename = map.at("f").as_string();
+    first_line = map.at("fl").as_int();
+    first_column = map.at("fc").as_int();
+    last_line = map.at("ll").as_int();
+    last_column = map.at("lc").as_int();
+}
+
 } // namespace parser
 } // namespace cqasm
 

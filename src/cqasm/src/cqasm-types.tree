@@ -19,6 +19,9 @@ src_include "cqasm-semantic.hpp"
 // classes and primitives.
 initialize_function cqasm::primitives::initialize
 
+// Serialization and deserialization for the primitives.
+serdes_functions cqasm::primitives::serialize cqasm::primitives::deserialize
+
 # Namespace for the various classes representing the types of values available
 # in cQASM.
 namespace cqasm

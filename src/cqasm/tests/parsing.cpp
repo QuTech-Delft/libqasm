@@ -164,10 +164,23 @@ public:
         }
         std::string semantic_result = ss.str();
         write_file(path + "/semantic.actual.txt", semantic_result);
+
         std::string semantic_golden;
         EXPECT_TRUE(read_file(path + "/semantic.golden.txt", semantic_golden));
         EXPECT_TRUE(semantic_result == semantic_golden);
 
+        // If analysis was successful, serialize and deserialize to check if
+        // result is the same.
+        if (analysis_result.errors.empty()) {
+            auto serdes_root = tree::base::deserialize<cqasm::semantic::Program>(
+                tree::base::serialize(analysis_result.root));
+            ss.str("");
+            ss << "SUCCESS" << std::endl;
+            ss << *serdes_root << std::endl;
+            std::string serdes_result = ss.str();
+            write_file(path + "/serdes.actual.txt", serdes_result);
+            EXPECT_TRUE(serdes_result == semantic_golden);
+        }
     }
 
 };
@@ -233,6 +246,9 @@ int main(int argc, char** argv) {
         closedir(suite_dir);
     }
     closedir(parsing_dir);
+
+    // FIXME: this should be in an initialization function or something.
+    tree::annotatable::serdes_registry.add<cqasm::parser::SourceLocation>("location");
 
     return RUN_ALL_TESTS();
 }

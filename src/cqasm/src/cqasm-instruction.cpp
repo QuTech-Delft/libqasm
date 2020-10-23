@@ -50,6 +50,60 @@ bool Instruction::operator==(const Instruction& rhs) const {
 }
 
 } // namespace instruction
+
+namespace primitives {
+
+template <>
+void serialize<instruction::InstructionRef>(
+    const instruction::InstructionRef &obj,
+    ::tree::cbor::MapWriter &map
+) {
+    // Use an empty map to signal an empty instruction reference.
+    if (obj.empty()) {
+        return;
+    }
+
+    // Serialize the fields that are basically primitives.
+    map.append_string("n", obj->name);
+    map.append_bool("ac", obj->allow_conditional);
+    map.append_bool("ap", obj->allow_parallel);
+    map.append_bool("ar", obj->allow_reused_qubits);
+    map.append_bool("ad", obj->allow_different_index_sizes);
+
+    // Serialize the parameter types, which behave like a subtree.
+    ::tree::base::PointerMap types_id_map{};
+    obj->param_types.find_reachable(types_id_map);
+    auto types = map.append_map("t");
+    obj->param_types.serialize(types, types_id_map);
+
+}
+
+template <>
+instruction::InstructionRef deserialize<instruction::InstructionRef>(
+    const ::tree::cbor::MapReader &map
+) {
+    // Empty map signals empty reference.
+    if (map.empty()) {
+        return instruction::InstructionRef{};
+    }
+
+    // Restore the fields that are basically primitives.
+    auto obj = tree::make<instruction::Instruction>(map.at("n").as_string());
+    obj->allow_conditional = map.at("ac").as_bool();
+    obj->allow_parallel = map.at("ap").as_bool();
+    obj->allow_reused_qubits = map.at("ar").as_bool();
+    obj->allow_different_index_sizes = map.at("ad").as_bool();
+
+    // Restore the types subtree.
+    ::tree::base::IdentifierMap types_id_map{};
+    obj->param_types = tree::Any<types::TypeBase>(map.at("t").as_map(), types_id_map);
+    types_id_map.restore_links();
+    obj->param_types.check_well_formed();
+
+    return std::move(obj);
+}
+
+} // namespace primitives
 } // namespace cqasm
 
 /**

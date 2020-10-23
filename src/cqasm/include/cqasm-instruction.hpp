@@ -123,6 +123,25 @@ public:
 using InstructionRef = tree::Maybe<Instruction>;
 
 } // namespace instruction
+
+namespace primitives {
+
+// Instruction references behave like primitives in the tree. Really, they
+// should have been tree nodes, had tree-gen been in the state it is now when
+// the libqasm rewrite happened, but changing that retroactively would be a
+// breaking change. Anything that behaves like a primitive needs serdes
+// functions, so here we are.
+template <>
+void serialize<instruction::InstructionRef>(
+    const instruction::InstructionRef &obj,
+    ::tree::cbor::MapWriter &map
+);
+template <>
+instruction::InstructionRef deserialize<instruction::InstructionRef>(
+    const ::tree::cbor::MapReader &map
+);
+
+} // namespace primitives
 } // namespace cqasm
 
 /**

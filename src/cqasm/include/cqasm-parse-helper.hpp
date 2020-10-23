@@ -175,6 +175,16 @@ public:
      */
     void expand_to_include(uint32_t line, uint32_t column = 1);
 
+    /**
+     * Serializes this source location to the given CBOR map.
+     */
+    void serialize(::tree::cbor::MapWriter &map) const;
+
+    /**
+     * Constructs a source location object by deserializing from CBOR.
+     */
+    explicit SourceLocation(const ::tree::cbor::MapReader &map);
+
 };
 
 } // namespace parser

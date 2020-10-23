@@ -13,17 +13,18 @@ from plumbum import local, FG
 
 def diff():
     is_test_dir = False
-    for t in ('ast', 'semantic'):
-        if os.path.isfile(t + '.actual.txt') and os.path.isfile(t + '.golden.txt'):
+    for t in ('ast', 'semantic', 'serdes'):
+        tr = 'semantic' if t == 'serdes' else t
+        if os.path.isfile(t + '.actual.txt') and os.path.isfile(tr + '.golden.txt'):
             with open(t + '.actual.txt', 'r') as a:
                 a = a.read()
-            with open(t + '.golden.txt', 'r') as g:
+            with open(tr + '.golden.txt', 'r') as g:
                 g = g.read()
             if a == g:
                 print(t, 'is as expected')
             else:
                 print(t, 'is NOT as expected, opening meld')
-                local['meld'](t + '.actual.txt', t + '.golden.txt')
+                local['meld'](t + '.actual.txt', tr + '.golden.txt')
             is_test_dir = True
     if not is_test_dir:
         for sub in os.listdir():
