@@ -49,13 +49,10 @@ bool Instruction::operator==(const Instruction& rhs) const {
             && allow_reused_qubits == rhs.allow_reused_qubits;
 }
 
-} // namespace instruction
-} // namespace cqasm
-
 /**
  * Stream << overload for instructions.
  */
-std::ostream& operator<<(std::ostream& os, const ::cqasm::instruction::Instruction& insn) {
+std::ostream &operator<<(std::ostream &os, const Instruction &insn) {
     os << insn.name << insn.param_types;
     return os;
 }
@@ -63,7 +60,7 @@ std::ostream& operator<<(std::ostream& os, const ::cqasm::instruction::Instructi
 /**
  * Stream << overload for instruction references.
  */
-std::ostream& operator<<(std::ostream& os, const ::cqasm::instruction::InstructionRef& insn) {
+std::ostream &operator<<(std::ostream &os, const InstructionRef &insn) {
     if (insn.empty()) {
         os << "unresolved";
     } else {
@@ -71,3 +68,6 @@ std::ostream& operator<<(std::ostream& os, const ::cqasm::instruction::Instructi
     }
     return os;
 }
+
+} // namespace instruction
+} // namespace cqasm

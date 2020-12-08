@@ -25,17 +25,14 @@ ErrorModel::ErrorModel(
 /**
  * Equality operator.
  */
-bool ErrorModel::operator==(const ErrorModel& rhs) const {
+bool ErrorModel::operator==(const ErrorModel &rhs) const {
     return utils::case_insensitive_equals(name, rhs.name) && param_types == rhs.param_types;
 }
-
-} // namespace error_model
-} // namespace cqasm
 
 /**
  * Stream << overload for error models.
  */
-std::ostream& operator<<(std::ostream& os, const ::cqasm::error_model::ErrorModel& model) {
+std::ostream &operator<<(std::ostream &os, const ErrorModel &model) {
     os << model.name << model.param_types;
     return os;
 }
@@ -43,7 +40,7 @@ std::ostream& operator<<(std::ostream& os, const ::cqasm::error_model::ErrorMode
 /**
  * Stream << overload for error model references.
  */
-std::ostream& operator<<(std::ostream& os, const ::cqasm::error_model::ErrorModelRef& model) {
+std::ostream &operator<<(std::ostream &os, const ErrorModelRef &model) {
     if (model.empty()) {
         os << "unresolved";
     } else {
@@ -51,3 +48,6 @@ std::ostream& operator<<(std::ostream& os, const ::cqasm::error_model::ErrorMode
     }
     return os;
 }
+
+} // namespace error_model
+} // namespace cqasm

@@ -55,15 +55,15 @@ Types from_spec(const std::string &spec);
  */
 bool type_check(const Type &expected, const Type &actual);
 
-} // namespace types
-} // namespace cqasm
-
 /**
  * Stream << overload for a single type.
  */
-std::ostream& operator<<(std::ostream& os, const ::cqasm::types::Type& type);
+std::ostream &operator<<(std::ostream &os, const Type &type);
 
 /**
  * Stream << overload for zero or more types.
  */
-std::ostream& operator<<(std::ostream& os, const ::cqasm::types::Types& types);
+std::ostream &operator<<(std::ostream &os, const Types &types);
+
+} // namespace types
+} // namespace cqasm
