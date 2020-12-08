@@ -76,15 +76,15 @@ public:
  */
 using ErrorModelRef = tree::Maybe<ErrorModel>;
 
-} // namespace error_model
-} // namespace cqasm
-
 /**
  * Stream << overload for error models.
  */
-std::ostream& operator<<(std::ostream& os, const ::cqasm::error_model::ErrorModel& model);
+std::ostream &operator<<(std::ostream &os, const ErrorModel &model);
 
 /**
  * Stream << overload for error model references.
  */
-std::ostream& operator<<(std::ostream& os, const ::cqasm::error_model::ErrorModelRef& model);
+std::ostream &operator<<(std::ostream &os, const ErrorModelRef &model);
+
+} // namespace error_model
+} // namespace cqasm

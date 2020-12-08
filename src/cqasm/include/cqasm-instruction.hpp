@@ -122,15 +122,15 @@ public:
  */
 using InstructionRef = tree::Maybe<Instruction>;
 
-} // namespace instruction
-} // namespace cqasm
-
 /**
  * Stream << overload for instructions.
  */
-std::ostream& operator<<(std::ostream& os, const ::cqasm::instruction::Instruction& insn);
+std::ostream &operator<<(std::ostream &os, const Instruction &insn);
 
 /**
  * Stream << overload for instruction references.
  */
-std::ostream& operator<<(std::ostream& os, const ::cqasm::instruction::InstructionRef& insn);
+std::ostream &operator<<(std::ostream &os, const InstructionRef &insn);
+
+} // namespace instruction
+} // namespace cqasm

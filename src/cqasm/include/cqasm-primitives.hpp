@@ -210,19 +210,16 @@ public:
 
 };
 
-} // namespace primitives
-} // namespace cqasm
-
 /**
  * Stream << overload for axis nodes.
  */
-std::ostream& operator<<(std::ostream& os, const ::cqasm::primitives::Axis& axis);
+std::ostream &operator<<(std::ostream &os, const Axis &axis);
 
 /**
  * Stream << overload for matrix nodes.
  */
 template <typename T>
-std::ostream& operator<<(std::ostream& os, const ::cqasm::primitives::Matrix<T>& mat) {
+std::ostream &operator<<(std::ostream &os, const Matrix<T> &mat) {
     os << "[";
     for (size_t row = 1; row <= mat.size_rows(); row++) {
         if (row > 1) {
@@ -242,4 +239,7 @@ std::ostream& operator<<(std::ostream& os, const ::cqasm::primitives::Matrix<T>&
 /**
  * Stream << overload for version nodes.
  */
-std::ostream& operator<<(std::ostream& os, const ::cqasm::primitives::Version& object);
+std::ostream &operator<<(std::ostream &os, const Version &object);
+
+} // namespace primitives
+} // namespace cqasm

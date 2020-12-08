@@ -136,10 +136,7 @@ bool type_check(const Type &expected, const Type &actual) {
     return true;
 }
 
-} // namespace types
-} // namespace cqasm
-
-static void mat_size(std::ostream& os, tree::signed_size_t nrows, tree::signed_size_t ncols) {
+static void mat_size(std::ostream &os, tree::signed_size_t nrows, tree::signed_size_t ncols) {
     if (ncols == 0) {
         os << "empty matrix";
     } else if (nrows == 1) {
@@ -163,7 +160,7 @@ static void mat_size(std::ostream& os, tree::signed_size_t nrows, tree::signed_s
 /**
  * Stream << overload for a single type.
  */
-std::ostream& operator<<(std::ostream& os, const ::cqasm::types::Type& type) {
+std::ostream &operator<<(std::ostream &os, const Type &type) {
     if (type.empty()) {
         os << "!EMPTY";
     } else if (type->as_bool()) {
@@ -202,7 +199,7 @@ std::ostream& operator<<(std::ostream& os, const ::cqasm::types::Type& type) {
 /**
  * Stream << overload for zero or more types.
  */
-std::ostream& operator<<(std::ostream& os, const ::cqasm::types::Types& types) {
+std::ostream &operator<<(std::ostream &os, const Types &types) {
     os << "(";
     bool first = true;
     for (const auto &type : types) {
@@ -216,3 +213,6 @@ std::ostream& operator<<(std::ostream& os, const ::cqasm::types::Types& types) {
     os << ")";
     return os;
 }
+
+} // namespace types
+} // namespace cqasm

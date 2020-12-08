@@ -67,13 +67,10 @@ int Version::compare(const std::string &other) const {
     return compare(Version(other));
 }
 
-} // namespace primitives
-} // namespace cqasm
-
 /**
  * Stream << overload for axis nodes.
  */
-std::ostream& operator<<(std::ostream& os, const ::cqasm::primitives::Axis& axis) {
+std::ostream &operator<<(std::ostream &os, const Axis &axis) {
     switch (axis) {
         case ::cqasm::primitives::Axis::X:
             os << "X";
@@ -91,7 +88,7 @@ std::ostream& operator<<(std::ostream& os, const ::cqasm::primitives::Axis& axis
 /**
  * Stream << overload for version nodes.
  */
-std::ostream& operator<<(std::ostream& os, const ::cqasm::primitives::Version& object) {
+std::ostream &operator<<(std::ostream &os, const Version &object) {
     bool first = true;
     for (auto item : object) {
         if (first) {
@@ -103,3 +100,6 @@ std::ostream& operator<<(std::ostream& os, const ::cqasm::primitives::Version& o
     }
     return os;
 }
+
+} // namespace primitives
+} // namespace cqasm

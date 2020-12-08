@@ -173,14 +173,10 @@ void check_const(const Values &values) {
     }
 }
 
-
-} // namespace values
-} // namespace cqasm
-
 /**
  * Stream << overload for a single value.
  */
-std::ostream& operator<<(std::ostream& os, const ::cqasm::values::Value& value) {
+std::ostream &operator<<(std::ostream &os, const Value &value) {
     if (value.empty()) {
         os << "NULL";
     } else {
@@ -192,7 +188,7 @@ std::ostream& operator<<(std::ostream& os, const ::cqasm::values::Value& value) 
 /**
  * Stream << overload for zero or more values.
  */
-std::ostream& operator<<(std::ostream& os, const ::cqasm::values::Values& values) {
+std::ostream &operator<<(std::ostream &os, const Values &values) {
     os << "[";
     bool first = true;
     for (const auto &value : values) {
@@ -210,3 +206,6 @@ std::ostream& operator<<(std::ostream& os, const ::cqasm::values::Values& values
     os << "]";
     return os;
 }
+
+} // namespace values
+} // namespace cqasm

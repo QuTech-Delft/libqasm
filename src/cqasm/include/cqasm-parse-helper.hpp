@@ -177,10 +177,10 @@ public:
 
 };
 
-} // namespace parser
-} // namespace cqasm
-
 /**
  * Stream << overload for source location objects.
  */
-std::ostream& operator<<(std::ostream& os, const cqasm::parser::SourceLocation& object);
+std::ostream &operator<<(std::ostream &os, const SourceLocation &object);
+
+} // namespace parser
+} // namespace cqasm

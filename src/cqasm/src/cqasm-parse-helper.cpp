@@ -188,13 +188,10 @@ void SourceLocation::expand_to_include(uint32_t line, uint32_t column) {
     }
 }
 
-} // namespace parser
-} // namespace cqasm
-
 /**
  * Stream << overload for source location objects.
  */
-std::ostream& operator<<(std::ostream& os, const cqasm::parser::SourceLocation& object) {
+std::ostream &operator<<(std::ostream &os, const SourceLocation &object) {
 
     // Print filename.
     os << object.filename;
@@ -237,3 +234,6 @@ std::ostream& operator<<(std::ostream& os, const cqasm::parser::SourceLocation& 
 
     return os;
 }
+
+} // namespace parser
+} // namespace cqasm
