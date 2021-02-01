@@ -28,11 +28,10 @@ various attempts had been made before at this time, and there was also already
 <https://www.overleaf.com/project/59690199d094287443563643>`_ (unfortunately not
 publicly accessible for whatever reason) to express and discuss requirements
 that no one at QCA could tell me about. `The specification I wrote independently
-<https://github.com/QE-Lab/cQASM-spec>`_ (also private for whatever reason the
-Overleaf document is private for) was ultimately shot down for being far too
-extensive and ambitious, so in the end, all I could do was add to the Overleaf
-document. Unfortunately no one has felt responsible to pursue cQASM 2.0 since
-then, that I know of.
+<https://github.com/QE-Lab/cQASM-spec/tree/7967e00dd3ec965b37edcbff30a666b0baada9dd>`_
+was ultimately shot down for being far too extensive and ambitious, so in the end,
+all I could do was add to the Overleaf document. Unfortunately no one has felt
+responsible to pursue cQASM 2.0 since then, that I know of.
 
 Fast forward to summer 2020, when I was tasked to look into making libqasm's
 instruction set configurable, in the same way that OpenQL's instruction set is
