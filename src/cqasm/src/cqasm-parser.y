@@ -1,4 +1,5 @@
 %define api.pure full
+%define api.prefix {cqasm}
 %locations
 
 %code requires {
@@ -13,6 +14,10 @@
     #include "cqasm-parse-helper.hpp"
     using namespace cqasm::ast;
     typedef void* yyscan_t;
+
+    #define YYSTYPE CQASMSTYPE
+    #define YYLTYPE CQASMLTYPE
+
 }
 
 %code {
