@@ -1,17 +1,18 @@
 /** \file
- * Implementation for \ref include/cqasm-analyzer.hpp "cqasm-analyzer.hpp".
+ * Implementation for \ref include/cqasm-v1-analyzer.hpp "cqasm-v1-analyzer.hpp".
  */
 
 #define _USE_MATH_DEFINES
 #include <unordered_set>
 #include <cctype>
 #include <cmath>
-#include "cqasm-analyzer.hpp"
-#include "cqasm-parse-helper.hpp"
 #include "cqasm-utils.hpp"
-#include "cqasm-functions-gen.hpp"
+#include "cqasm-v1-analyzer.hpp"
+#include "cqasm-v1-parse-helper.hpp"
+#include "cqasm-v1-functions-gen.hpp"
 
 namespace cqasm {
+namespace v1 {
 namespace analyzer {
 
 /**
@@ -1238,4 +1239,5 @@ values::Value AnalyzerHelper::analyze_operator(
 }
 
 } // namespace analyzer
+} // namespace v1
 } // namespace cqasm

@@ -9,18 +9,19 @@ include "cqasm-tree.hpp"
 tree_namespace cqasm::tree
 
 // Include primitive types.
-include "cqasm-primitives.hpp"
+include "cqasm-v1-primitives.hpp"
 
 // Initialization function to use to construct default values for the tree base
 // classes and primitives.
-initialize_function cqasm::primitives::initialize
+initialize_function cqasm::v1::primitives::initialize
 
 // Include SourceLocation annotation object for the debug dump generator.
-src_include "cqasm-parse-helper.hpp"
-location cqasm::parser::SourceLocation
+src_include "cqasm-annotations.hpp"
+location cqasm::annotations::SourceLocation
 
 # Namespace for the abstract syntax tree node classes.
 namespace cqasm
+namespace v1
 namespace ast
 
 # Any kind of expression.
@@ -30,7 +31,7 @@ expression {
     integer_literal {
 
         # The integer.
-        value: cqasm::primitives::Int;
+        value: cqasm::v1::primitives::Int;
 
     }
 
@@ -38,7 +39,7 @@ expression {
     float_literal {
 
         # The floating point number.
-        value: cqasm::primitives::Real;
+        value: cqasm::v1::primitives::Real;
 
     }
 
@@ -46,7 +47,7 @@ expression {
     identifier {
 
         # The identifier.
-        name: cqasm::primitives::Str;
+        name: cqasm::v1::primitives::Str;
 
     }
 
@@ -67,7 +68,7 @@ expression {
     string_literal {
 
         # The string literal.
-        value: cqasm::primitives::Str;
+        value: cqasm::v1::primitives::Str;
 
     }
 
@@ -75,7 +76,7 @@ expression {
     json_literal {
 
         # The JSON literal.
-        value: cqasm::primitives::Str;
+        value: cqasm::v1::primitives::Str;
 
     }
 
@@ -387,7 +388,7 @@ statement_list {
 version {
 
     # The list of version components, ordered major to minor.
-    items: cqasm::primitives::Version;
+    items: cqasm::v1::primitives::Version;
 
 }
 

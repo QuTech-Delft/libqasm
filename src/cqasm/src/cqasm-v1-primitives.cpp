@@ -1,10 +1,11 @@
 /** \file
- * Implementation for \ref include/cqasm-primitives.hpp "cqasm-primitives.hpp".
+ * Implementation for \ref include/cqasm-v1-primitives.hpp "cqasm-v1-primitives.hpp".
  */
 
-#include "cqasm-primitives.hpp"
+#include "cqasm-v1-primitives.hpp"
 
 namespace cqasm {
+namespace v1 {
 namespace primitives {
 
 template <>
@@ -72,13 +73,13 @@ int Version::compare(const std::string &other) const {
  */
 std::ostream &operator<<(std::ostream &os, const Axis &axis) {
     switch (axis) {
-        case ::cqasm::primitives::Axis::X:
+        case Axis::X:
             os << "X";
             break;
-        case ::cqasm::primitives::Axis::Y:
+        case Axis::Y:
             os << "Y";
             break;
-        case ::cqasm::primitives::Axis::Z:
+        case Axis::Z:
             os << "Z";
             break;
     }
@@ -102,4 +103,5 @@ std::ostream &operator<<(std::ostream &os, const Version &object) {
 }
 
 } // namespace primitives
+} // namespace v1
 } // namespace cqasm

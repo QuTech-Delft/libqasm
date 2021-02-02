@@ -5,9 +5,10 @@
 
 #pragma once
 
-#include "cqasm-types-gen.hpp"
+#include "cqasm-v1-types-gen.hpp"
 
 namespace cqasm {
+namespace v1 {
 
 /**
  * Namespace for the classes representing the types available within cQASM.
@@ -66,4 +67,5 @@ std::ostream &operator<<(std::ostream &os, const Type &type);
 std::ostream &operator<<(std::ostream &os, const Types &types);
 
 } // namespace types
+} // namespace v1
 } // namespace cqasm

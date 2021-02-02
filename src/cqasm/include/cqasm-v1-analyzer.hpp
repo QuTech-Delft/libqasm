@@ -9,12 +9,14 @@
 
 #pragma once
 
-#include "cqasm-ast.hpp"
-#include "cqasm-semantic.hpp"
-#include "cqasm-resolver.hpp"
 #include <cstdio>
+#include "cqasm-v1-ast.hpp"
+#include "cqasm-v1-semantic.hpp"
+#include "cqasm-v1-resolver.hpp"
+#include "cqasm-v1-parse-helper.hpp"
 
 namespace cqasm {
+namespace v1 {
 
 /**
  * Namespace for the \ref cqasm::analyzer::Analyzer "Analyzer" class and
@@ -323,4 +325,5 @@ public:
 };
 
 } // namespace analyzer
+} // namespace v1
 } // namespace cqasm

@@ -11,21 +11,22 @@ include "cqasm-tree.hpp"
 tree_namespace cqasm::tree
 
 // Include primitive types.
-include "cqasm-primitives.hpp"
-include "cqasm-types.hpp"
-src_include "cqasm-semantic.hpp"
+include "cqasm-v1-primitives.hpp"
+include "cqasm-v1-types.hpp"
+src_include "cqasm-v1-semantic.hpp"
 
 // Initialization function to use to construct default values for the tree base
 // classes and primitives.
-initialize_function cqasm::primitives::initialize
+initialize_function cqasm::v1::primitives::initialize
 
 // Include SourceLocation annotation object for the debug dump generator.
-src_include "cqasm-parse-helper.hpp"
-location cqasm::parser::SourceLocation
+src_include "cqasm-annotations.hpp"
+location cqasm::annotations::SourceLocation
 
 # Namespace for the various classes representing constants, references,
 # and dynamic expressions in cQASM.
 namespace cqasm
+namespace v1
 namespace values
 
 # Represents a constant value.
@@ -35,7 +36,7 @@ constant {
     const_bool {
 
         # The contained value.
-        value: cqasm::primitives::Bool;
+        value: cqasm::v1::primitives::Bool;
 
     }
 
@@ -43,7 +44,7 @@ constant {
     const_axis {
 
         # The contained value.
-        value: cqasm::primitives::Axis;
+        value: cqasm::v1::primitives::Axis;
 
     }
 
@@ -51,7 +52,7 @@ constant {
     const_int {
 
         # The contained value.
-        value: cqasm::primitives::Int;
+        value: cqasm::v1::primitives::Int;
 
     }
 
@@ -59,7 +60,7 @@ constant {
     const_real {
 
         # The contained value.
-        value: cqasm::primitives::Real;
+        value: cqasm::v1::primitives::Real;
 
     }
 
@@ -67,7 +68,7 @@ constant {
     const_complex {
 
         # The contained value.
-        value: cqasm::primitives::Complex;
+        value: cqasm::v1::primitives::Complex;
 
     }
 
@@ -75,7 +76,7 @@ constant {
     const_real_matrix {
 
         # The contained value.
-        value: cqasm::primitives::RMatrix;
+        value: cqasm::v1::primitives::RMatrix;
 
     }
 
@@ -83,7 +84,7 @@ constant {
     const_complex_matrix {
 
         # The contained value.
-        value: cqasm::primitives::CMatrix;
+        value: cqasm::v1::primitives::CMatrix;
 
     }
 
@@ -91,7 +92,7 @@ constant {
     const_string {
 
         # The contained value.
-        value: cqasm::primitives::Str;
+        value: cqasm::v1::primitives::Str;
 
     }
 
@@ -99,7 +100,7 @@ constant {
     const_json {
 
         # The contained value.
-        value: cqasm::primitives::Str;
+        value: cqasm::v1::primitives::Str;
 
     }
 
@@ -131,7 +132,7 @@ reference {
     variable_ref {
 
         # The referenced variable.
-        variable: external Link<cqasm::semantic::Variable>;
+        variable: external Link<cqasm::v1::semantic::Variable>;
 
     }
 
@@ -143,12 +144,12 @@ reference {
 function {
 
     # Name of the function as it appears or should appear in the cQASM file.
-    name: cqasm::primitives::Str;
+    name: cqasm::v1::primitives::Str;
 
     # Operands for the function.
-    operands: external Any<cqasm::values::Node>;
+    operands: external Any<cqasm::v1::values::Node>;
 
     # Operands for the function.
-    return_type: external One<cqasm::types::Node>;
+    return_type: external One<cqasm::v1::types::Node>;
 
 }

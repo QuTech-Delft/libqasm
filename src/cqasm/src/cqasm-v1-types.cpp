@@ -1,11 +1,12 @@
 /** \file
- * Implementation for \ref include/cqasm-types.hpp "cqasm-types.hpp".
+ * Implementation for \ref include/cqasm-v1-types.hpp "cqasm-v1-types.hpp".
  */
 
 #include <cctype>
-#include "cqasm-types.hpp"
+#include "cqasm-v1-types.hpp"
 
 namespace cqasm {
+namespace v1 {
 namespace types {
 
 /**
@@ -215,4 +216,5 @@ std::ostream &operator<<(std::ostream &os, const Types &types) {
 }
 
 } // namespace types
+} // namespace v1
 } // namespace cqasm

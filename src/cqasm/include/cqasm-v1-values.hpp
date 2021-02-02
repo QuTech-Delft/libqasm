@@ -6,11 +6,12 @@
 
 #pragma once
 
-#include "cqasm-ast.hpp"
-#include "cqasm-values-gen.hpp"
-#include "cqasm-types.hpp"
+#include "cqasm-v1-ast.hpp"
+#include "cqasm-v1-values-gen.hpp"
+#include "cqasm-v1-types.hpp"
 
 namespace cqasm {
+namespace v1 {
 
 /**
  * Namespace for the classes representing the values (including dynamically
@@ -71,4 +72,5 @@ std::ostream &operator<<(std::ostream &os, const Value &value);
 std::ostream &operator<<(std::ostream &os, const Values &values);
 
 } // namespace values
+} // namespace v1
 } // namespace cqasm

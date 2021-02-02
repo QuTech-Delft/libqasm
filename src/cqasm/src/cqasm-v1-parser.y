@@ -1,5 +1,5 @@
 %define api.pure full
-%define api.prefix {cqasm}
+%define api.prefix {cqasm_v1}
 %locations
 
 %code requires {
@@ -10,19 +10,20 @@
     #include <memory>
     #include <cstdio>
     #include <cstdint>
-    #include "cqasm-ast.hpp"
-    #include "cqasm-parse-helper.hpp"
-    using namespace cqasm::ast;
+    #include "cqasm-annotations.hpp"
+    #include "cqasm-v1-ast.hpp"
+    #include "cqasm-v1-parse-helper.hpp"
+    using namespace cqasm::v1::ast;
     typedef void* yyscan_t;
 
-    #define YYSTYPE CQASMSTYPE
-    #define YYLTYPE CQASMLTYPE
+    #define YYSTYPE CQASM_V1STYPE
+    #define YYLTYPE CQASM_V1LTYPE
 
 }
 
 %code {
     int yylex(YYSTYPE* yylvalp, YYLTYPE* yyllocp, yyscan_t scanner);
-    void yyerror(YYLTYPE* yyllocp, yyscan_t scanner, cqasm::parser::ParseHelper &helper, const char* msg);
+    void yyerror(YYLTYPE* yyllocp, yyscan_t scanner, cqasm::v1::parser::ParseHelper &helper, const char* msg);
 }
 
 %code top {
@@ -30,12 +31,12 @@
     /**
      * Attaches a source location annotation object to the given node pointer.
      */
-    #define ADD_SOURCE_LOCATION(v)                          \
-        v->set_annotation(cqasm::parser::SourceLocation(    \
-            helper.filename,                                \
-            yyloc.first_line,                               \
-            yyloc.first_column,                             \
-            yyloc.last_line,                                \
+    #define ADD_SOURCE_LOCATION(v)                              \
+        v->set_annotation(cqasm::annotations::SourceLocation(   \
+            helper.filename,                                    \
+            yyloc.first_line,                                   \
+            yyloc.first_column,                                 \
+            yyloc.last_line,                                    \
             yyloc.last_column))
 
     /**
@@ -54,22 +55,22 @@
      * location annotation of the object to the extents of whatever rule is
      * being matched.
      */
-    #define FROM(t, s)                                                          \
-        t = s;                                                                  \
-        {                                                                       \
-            auto *loc = t->get_annotation_ptr<cqasm::parser::SourceLocation>(); \
-            if (!loc) {                                                         \
-                ADD_SOURCE_LOCATION(t);                                         \
-            } else {                                                            \
-                loc->expand_to_include(yyloc.first_line, yyloc.first_column);   \
-                loc->expand_to_include(yyloc.last_line, yyloc.last_column);     \
-            }                                                                   \
+    #define FROM(t, s)                                                                  \
+        t = s;                                                                          \
+        {                                                                               \
+            auto *loc = t->get_annotation_ptr<cqasm::annotations::SourceLocation>();    \
+            if (!loc) {                                                                 \
+                ADD_SOURCE_LOCATION(t);                                                 \
+            } else {                                                                    \
+                loc->expand_to_include(yyloc.first_line, yyloc.first_column);           \
+                loc->expand_to_include(yyloc.last_line, yyloc.last_column);             \
+            }                                                                           \
         }
 
 }
 
 %param { yyscan_t scanner }
-%parse-param { cqasm::parser::ParseHelper &helper }
+%parse-param { cqasm::v1::parser::ParseHelper &helper }
 
 /* YYSTYPE union */
 %union {
@@ -495,7 +496,7 @@ Root            : Program                                                       
 
 %%
 
-void yyerror(YYLTYPE* yyllocp, yyscan_t unused, cqasm::parser::ParseHelper &helper, const char* msg) {
+void yyerror(YYLTYPE* yyllocp, yyscan_t unused, cqasm::v1::parser::ParseHelper &helper, const char* msg) {
     (void)unused;
     std::ostringstream sb;
     sb << helper.filename

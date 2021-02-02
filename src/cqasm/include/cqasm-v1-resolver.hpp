@@ -9,12 +9,13 @@
 
 #include <functional>
 #include <algorithm>
-#include "cqasm-error-model.hpp"
-#include "cqasm-instruction.hpp"
-#include "cqasm-semantic.hpp"
+#include "cqasm-v1-error-model.hpp"
+#include "cqasm-v1-instruction.hpp"
+#include "cqasm-v1-semantic.hpp"
 #include "cqasm-error.hpp"
 
 namespace cqasm {
+namespace v1 {
 
 /**
  * Namespace for everything to do with name and overload resolution in cQASM.
@@ -186,4 +187,5 @@ public:
 };
 
 } // namespace resolver
+} // namespace v1
 } // namespace cqasm

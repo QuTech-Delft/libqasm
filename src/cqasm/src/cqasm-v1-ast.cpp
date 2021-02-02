@@ -1,11 +1,12 @@
 /** \file
- * Implementation for \ref include/cqasm-ast.hpp "cqasm-ast.hpp".
+ * Implementation for \ref include/cqasm-v1-ast.hpp "cqasm-v1-ast.hpp".
  */
 
-#include "cqasm-ast.hpp"
+#include "cqasm-v1-ast.hpp"
 #include <stdexcept>
 
 namespace cqasm {
+namespace v1 {
 namespace ast {
 
 /**
@@ -37,4 +38,5 @@ void StringBuilder::push_escape(const std::string &escape) {
 }
 
 } // namespace ast
+} // namespace v1
 } // namespace cqasm

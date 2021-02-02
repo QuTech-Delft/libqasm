@@ -8,13 +8,19 @@
 
 #pragma once
 
-#include "cqasm-parse-helper.hpp"
-#include "cqasm-analyzer.hpp"
+#include "cqasm-v1-parse-helper.hpp"
+#include "cqasm-v1-analyzer.hpp"
 
 /**
  * Toplevel namespace with entry points for the new API.
  */
 namespace cqasm {
+
+// This is the toplevel public header for the new API for v1.x. At the time it
+// was written, v2 didn't exist yet, and such the v1 namespace didn't exist
+// yet. Thus, to maintain API compatibility, we need to pull the v1 namespace
+// into this one when this file is used.
+using namespace v1;
 
 /**
  * Parses and analyzes the given file with the default analyzer, dumping error

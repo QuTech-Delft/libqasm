@@ -1,13 +1,14 @@
 /** \file
- * Implementation for \ref include/cqasm-resolver.hpp "cqasm-resolver.hpp".
+ * Implementation for \ref include/cqasm-v1-resolver.hpp "cqasm-v1-resolver.hpp".
  */
 
 #include <unordered_set>
-#include "cqasm-resolver.hpp"
-#include "cqasm-error.hpp"
 #include "cqasm-utils.hpp"
+#include "cqasm-error.hpp"
+#include "cqasm-v1-resolver.hpp"
 
 namespace cqasm {
+namespace v1 {
 namespace resolver {
 
 using Type = types::Type;
@@ -338,4 +339,5 @@ tree::One<semantic::Instruction> InstructionTable::resolve(
 }
 
 } // namespace resolver
+} // namespace v1
 } // namespace cqasm

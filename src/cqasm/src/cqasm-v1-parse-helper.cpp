@@ -1,12 +1,13 @@
 /** \file
- * Implementation for \ref include/cqasm-parse-helper.hpp "cqasm-parse-helper.hpp".
+ * Implementation for \ref include/cqasm-v1-parse-helper.hpp "cqasm-v1-parse-helper.hpp".
  */
 
-#include "cqasm-parse-helper.hpp"
-#include "cqasm-parser.hpp"
-#include "cqasm-lexer.hpp"
+#include "cqasm-v1-parse-helper.hpp"
+#include "cqasm-v1-parser.hpp"
+#include "cqasm-v1-lexer.hpp"
 
 namespace cqasm {
+namespace v1 {
 namespace parser {
 
 /**
@@ -56,9 +57,9 @@ ParseHelper::ParseHelper(
             push_error(sb.str());
             return;
         }
-        cqasmset_in(fptr, (yyscan_t)scanner);
+        cqasm_v1set_in(fptr, (yyscan_t)scanner);
     } else {
-        buf = cqasm_scan_string(data.c_str(), (yyscan_t)scanner);
+        buf = cqasm_v1_scan_string(data.c_str(), (yyscan_t)scanner);
     }
 
     // Do the actual parsing.
@@ -79,7 +80,7 @@ ParseHelper::ParseHelper(
     if (!construct()) return;
 
     // Open the file or pass the data buffer to flex.
-    cqasmset_in(fptr, (yyscan_t)scanner);
+    cqasm_v1set_in(fptr, (yyscan_t)scanner);
 
     // Do the actual parsing.
     parse();
@@ -90,7 +91,7 @@ ParseHelper::ParseHelper(
  * Initializes the scanner. Returns whether this was successful.
  */
 bool ParseHelper::construct() {
-    int retcode = cqasmlex_init((yyscan_t*)&scanner);
+    int retcode = cqasm_v1lex_init((yyscan_t*)&scanner);
     if (retcode) {
         std::ostringstream sb;
         sb << "Failed to construct scanner: " << strerror(retcode);
@@ -105,7 +106,7 @@ bool ParseHelper::construct() {
  * Does the actual parsing.
  */
 void ParseHelper::parse() {
-    int retcode = cqasmparse((yyscan_t) scanner, *this);
+    int retcode = cqasm_v1parse((yyscan_t) scanner, *this);
     if (retcode == 2) {
         std::ostringstream sb;
         sb << "Out of memory while parsing " << filename;
@@ -131,10 +132,10 @@ ParseHelper::~ParseHelper() {
         fclose(fptr);
     }
     if (buf) {
-        cqasm_delete_buffer((YY_BUFFER_STATE)buf, (yyscan_t)scanner);
+        cqasm_v1_delete_buffer((YY_BUFFER_STATE)buf, (yyscan_t)scanner);
     }
     if (scanner) {
-        cqasmlex_destroy((yyscan_t)scanner);
+        cqasm_v1lex_destroy((yyscan_t)scanner);
     }
 }
 
@@ -145,95 +146,6 @@ void ParseHelper::push_error(const std::string &error) {
     result.errors.push_back(error);
 }
 
-/**
- * Constructs a source location object.
- */
-SourceLocation::SourceLocation(
-    const std::string &filename,
-    uint32_t first_line,
-    uint32_t first_column,
-    uint32_t last_line,
-    uint32_t last_column
-) :
-    filename(filename),
-    first_line(first_line),
-    first_column(first_column),
-    last_line(last_line),
-    last_column(last_column)
-{
-    if (last_line < first_line) {
-        last_line = first_line;
-    }
-    if (last_line == first_line && last_column < first_column) {
-        last_column = first_column;
-    }
-}
-
-/**
- * Expands the location range to contain the given location in the source
- * file.
- */
-void SourceLocation::expand_to_include(uint32_t line, uint32_t column) {
-    if (line < first_line) {
-        first_line = line;
-    }
-    if (line == first_line && column < first_column) {
-        first_column = column;
-    }
-    if (line > last_line) {
-        last_line = line;
-    }
-    if (line == last_line && column > last_column) {
-        last_column = column;
-    }
-}
-
-/**
- * Stream << overload for source location objects.
- */
-std::ostream &operator<<(std::ostream &os, const SourceLocation &object) {
-
-    // Print filename.
-    os << object.filename;
-
-    // Special case for when only the source filename is known.
-    if (!object.first_line) {
-        return os;
-    }
-
-    // Print line number.
-    os << ":" << object.first_line;
-
-    // Special case for when only line numbers are known.
-    if (!object.first_column) {
-
-        // Print last line too, if greater.
-        if (object.last_line > object.first_line) {
-            os << ".." << object.last_line;
-        }
-
-        return os;
-    }
-
-    // Print column.
-    os << ":" << object.first_column;
-
-    if (object.last_line == object.first_line) {
-
-        // Range is on a single line. Only repeat the column number.
-        if (object.last_column > object.first_column) {
-            os << ".." << object.last_column;
-        }
-
-    } else if (object.last_line > object.first_line) {
-
-        // Range is on multiple lines. Repeat both line and column number.
-        os << ".." << object.last_line << ":" << object.last_column;
-
-    }
-
-    return os;
-}
-
 } // namespace parser
+} // namespace v1
 } // namespace cqasm

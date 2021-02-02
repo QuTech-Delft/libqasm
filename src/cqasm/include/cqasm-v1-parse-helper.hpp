@@ -6,15 +6,21 @@
 
 #pragma once
 
-#include "cqasm-ast.hpp"
+#include "cqasm-annotations.hpp"
+#include "cqasm-v1-ast.hpp"
 #include <cstdio>
 
 namespace cqasm {
+namespace v1 {
 
 /**
  * Namespace for the parser functions and classes.
  */
 namespace parser {
+
+// SourceLocation used to live in this namespace, before the v1/v2 namespaces
+// were a thing. Make sure it exists here for compatibility.
+using SourceLocation = annotations::SourceLocation;
 
 /**
  * Parse result information.
@@ -127,60 +133,6 @@ public:
 
 };
 
-/**
- * Source location annotation object, containing source file line numbers etc.
- */
-class SourceLocation {
-public:
-
-    /**
-     * The name of the source file.
-     */
-    std::string filename;
-
-    /**
-     * The first line of the range, or 0 if unknown.
-     */
-    uint32_t first_line;
-
-    /**
-     * The first column of the range, or 0 if unknown.
-     */
-    uint32_t first_column;
-
-    /**
-     * The last line of the range, or 0 if unknown.
-     */
-    uint32_t last_line;
-
-    /**
-     * The last column of the range, or 0 if unknown.
-     */
-    uint32_t last_column;
-
-    /**
-     * Constructs a source location object.
-     */
-    SourceLocation(
-        const std::string &filename,
-        uint32_t first_line = 0,
-        uint32_t first_column = 0,
-        uint32_t last_line = 0,
-        uint32_t last_column = 0
-    );
-
-    /**
-     * Expands the location range to contain the given location in the source
-     * file.
-     */
-    void expand_to_include(uint32_t line, uint32_t column = 1);
-
-};
-
-/**
- * Stream << overload for source location objects.
- */
-std::ostream &operator<<(std::ostream &os, const SourceLocation &object);
-
 } // namespace parser
+} // namespace v1
 } // namespace cqasm

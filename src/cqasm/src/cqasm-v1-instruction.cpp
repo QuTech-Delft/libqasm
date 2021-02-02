@@ -1,12 +1,13 @@
 /** \file
- * Implementation for \ref include/cqasm-instruction.hpp "cqasm-instruction.hpp".
+ * Implementation for \ref include/cqasm-v1-instruction.hpp "cqasm-v1-instruction.hpp".
  */
 
-#include "cqasm-instruction.hpp"
 #include "cqasm-utils.hpp"
-#include "cqasm-semantic.hpp"
+#include "cqasm-v1-instruction.hpp"
+#include "cqasm-v1-semantic.hpp"
 
 namespace cqasm {
+namespace v1 {
 namespace instruction {
 
 /**
@@ -70,4 +71,5 @@ std::ostream &operator<<(std::ostream &os, const InstructionRef &insn) {
 }
 
 } // namespace instruction
+} // namespace v1
 } // namespace cqasm

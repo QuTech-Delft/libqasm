@@ -6,10 +6,11 @@
 
 #pragma once
 
-#include "cqasm-types.hpp"
-#include "cqasm-values.hpp"
+#include "cqasm-v1-types.hpp"
+#include "cqasm-v1-values.hpp"
 
 namespace cqasm {
+namespace v1 {
 
 /**
  * Namespace for the \ref error_model::ErrorModel "ErrorModel" class and helper
@@ -87,4 +88,5 @@ std::ostream &operator<<(std::ostream &os, const ErrorModel &model);
 std::ostream &operator<<(std::ostream &os, const ErrorModelRef &model);
 
 } // namespace error_model
+} // namespace v1
 } // namespace cqasm

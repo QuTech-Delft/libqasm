@@ -1,14 +1,15 @@
 /** \file
- * Implementation for \ref include/cqasm-values.hpp "cqasm-values.hpp".
+ * Implementation for \ref include/cqasm-v1-values.hpp "cqasm-v1-values.hpp".
  */
 
-#include <cqasm-parse-helper.hpp>
-#include "cqasm-values.hpp"
-#include "cqasm-types.hpp"
 #include "cqasm-error.hpp"
-#include "cqasm-semantic.hpp"
+#include "cqasm-v1-parse-helper.hpp"
+#include "cqasm-v1-values.hpp"
+#include "cqasm-v1-types.hpp"
+#include "cqasm-v1-semantic.hpp"
 
 namespace cqasm {
+namespace v1 {
 namespace values {
 
 using TypeEnum = types::NodeType;
@@ -57,7 +58,7 @@ Value promote(const Value &value, const types::Type &type) {
                     // Convert double to complex.
                     const size_t rows = const_real_matrix->value.size_rows();
                     const size_t cols = const_real_matrix->value.size_cols();
-                    cqasm::primitives::CMatrix complex_mat_value(rows, cols);
+                    primitives::CMatrix complex_mat_value(rows, cols);
                     for (size_t row = 1; row <= rows; row++) {
                         for (size_t col = 1; col <= cols; col++) {
                             complex_mat_value.at(row, col) = const_real_matrix->value.at(row, col);
@@ -77,7 +78,7 @@ Value promote(const Value &value, const types::Type &type) {
                 const size_t size = mat_type->num_rows;
                 const size_t num_elements = 2 * size * size;
                 if (const_real_matrix->value.size_rows() == 1 && const_real_matrix->value.size_cols() == num_elements) {
-                    cqasm::primitives::CMatrix complex_mat_value(size, size);
+                    primitives::CMatrix complex_mat_value(size, size);
                     size_t index = 1;
                     for (size_t row = 1; row <= size; row++) {
                         for (size_t col = 1; col <= size; col++) {
@@ -208,4 +209,5 @@ std::ostream &operator<<(std::ostream &os, const Values &values) {
 }
 
 } // namespace values
+} // namespace v1
 } // namespace cqasm

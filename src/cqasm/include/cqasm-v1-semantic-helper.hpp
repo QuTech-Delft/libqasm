@@ -6,6 +6,7 @@
 #pragma once
 
 namespace cqasm {
+namespace v1 {
 namespace semantic {
 
 // NOTE JvS: This forward declaration is needed in order to allow the value tree
@@ -17,5 +18,6 @@ namespace semantic {
 // to this one based on the version header if need be.
 class Variable;
 
-}
-}
+} // namespace semantic
+} // namespace v1
+} // namespace cqasm

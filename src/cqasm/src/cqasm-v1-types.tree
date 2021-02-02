@@ -11,17 +11,18 @@ include "cqasm-tree.hpp"
 tree_namespace cqasm::tree
 
 // Include primitive types.
-include "cqasm-primitives.hpp"
-include "cqasm-semantic-helper.hpp"
-src_include "cqasm-semantic.hpp"
+include "cqasm-v1-primitives.hpp"
+include "cqasm-v1-semantic-helper.hpp"
+src_include "cqasm-v1-semantic.hpp"
 
 // Initialization function to use to construct default values for the tree base
 // classes and primitives.
-initialize_function cqasm::primitives::initialize
+initialize_function cqasm::v1::primitives::initialize
 
 # Namespace for the various classes representing the types of values available
 # in cQASM.
 namespace cqasm
+namespace v1
 namespace types
 
 # Base for all types, with a member indicating whether values of this type are
@@ -32,7 +33,7 @@ type_base {
     # (false). For constraints, whether the value must be assignable (true), or
     # only has to be read. In C++ terminology, true = lvalue, false = rvalue
     # (more or less).
-    assignable: cqasm::primitives::Bool;
+    assignable: cqasm::v1::primitives::Bool;
 
     # Type of one or more qubit references.
     qubit {}
@@ -57,11 +58,11 @@ type_base {
 
         # Number of rows. Negative indicates that the value is unconstrained.
         # Must be one or more otherwise.
-        num_rows: cqasm::primitives::Int;
+        num_rows: cqasm::v1::primitives::Int;
 
         # Number of columns. Negative indicates that the value is
         # unconstrained. Can be zero, unlike num_rows.
-        num_cols: cqasm::primitives::Int;
+        num_cols: cqasm::v1::primitives::Int;
 
     }
 
@@ -71,11 +72,11 @@ type_base {
 
         # Number of rows. Negative indicates that the value is unconstrained.
         # Must be one or more otherwise.
-        num_rows: cqasm::primitives::Int;
+        num_rows: cqasm::v1::primitives::Int;
 
         # Number of columns. Negative indicates that the value is
         # unconstrained. Can be zero, unlike num_rows.
-        num_cols: cqasm::primitives::Int;
+        num_cols: cqasm::v1::primitives::Int;
 
     }
 

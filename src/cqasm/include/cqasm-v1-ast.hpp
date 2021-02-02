@@ -9,11 +9,12 @@
 
 #pragma once
 
-#include "cqasm-ast-gen.hpp"
+#include "cqasm-v1-ast-gen.hpp"
 #include <iostream>
 #include <sstream>
 
 namespace cqasm {
+namespace v1 {
 namespace ast {
 
 /**
@@ -38,4 +39,5 @@ public:
 };
 
 } // namespace ast
+} // namespace v1
 } // namespace cqasm

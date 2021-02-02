@@ -1,12 +1,13 @@
 /** \file
- * Implementation for \ref include/cqasm-error-model.hpp "cqasm-error-model.hpp".
+ * Implementation for \ref include/cqasm-v1-error-model.hpp "cqasm-v1-error-model.hpp".
  */
 
-#include "cqasm-error-model.hpp"
 #include "cqasm-utils.hpp"
-#include "cqasm-semantic.hpp"
+#include "cqasm-v1-error-model.hpp"
+#include "cqasm-v1-semantic.hpp"
 
 namespace cqasm {
+namespace v1 {
 namespace error_model {
 
 /**
@@ -50,4 +51,5 @@ std::ostream &operator<<(std::ostream &os, const ErrorModelRef &model) {
 }
 
 } // namespace error_model
+} // namespace v1
 } // namespace cqasm

@@ -6,10 +6,11 @@
 
 #pragma once
 
-#include "cqasm-types.hpp"
-#include "cqasm-values.hpp"
+#include "cqasm-v1-types.hpp"
+#include "cqasm-v1-values.hpp"
 
 namespace cqasm {
+namespace v1 {
 
 /**
  * Namespace for the \ref instruction::Instruction "Instruction" class and
@@ -133,4 +134,5 @@ std::ostream &operator<<(std::ostream &os, const Instruction &insn);
 std::ostream &operator<<(std::ostream &os, const InstructionRef &insn);
 
 } // namespace instruction
+} // namespace v1
 } // namespace cqasm

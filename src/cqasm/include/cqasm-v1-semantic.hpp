@@ -8,5 +8,5 @@
 
 #pragma once
 
-#include "cqasm-semantic-helper.hpp"
-#include "cqasm-semantic-gen.hpp"
+#include "cqasm-v1-semantic-helper.hpp"
+#include "cqasm-v1-semantic-gen.hpp"
