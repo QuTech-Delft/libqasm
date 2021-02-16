@@ -1,5 +1,5 @@
 /** \file
- * Defines the types for the cQASM \ref cqasm::v1::ast "abstract syntax tree",
+ * Defines the types for the cQASM \ref cqasm::v2::ast "abstract syntax tree",
  * based on the classes from cqasm::tree.
  *
  * This file only contains utility stuff on top of the abstract syntax tree
@@ -9,12 +9,12 @@
 
 #pragma once
 
-#include "cqasm-v1-ast-gen.hpp"
+#include "cqasm-v2-ast-gen.hpp"
 #include <iostream>
 #include <sstream>
 
 namespace cqasm {
-namespace v1 {
+namespace v2 {
 namespace ast {
 
 /**
@@ -39,5 +39,5 @@ public:
 };
 
 } // namespace ast
-} // namespace v1
+} // namespace v2
 } // namespace cqasm
