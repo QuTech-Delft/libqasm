@@ -192,19 +192,28 @@
 
 /* Associativity rules for static expressions. The lowest precedence level
 comes first. */
+%nonassoc OPT_UNIT
 %left ';'                                    /* Semicolon operator */
-%left KW_VAR KW_CONST KW_ALIAS               /* Definitions with initializing/default expressions */
+%nonassoc KW_VAR KW_CONST KW_ALIAS KW_TYPE   /* Definitions */
+          KW_FUNCTION
 %left ','                                    /* Comma operator */
+%right KW_COND KW_IF KW_ELIF KW_ELSE         /* Flow-control constructs */
+       KW_MATCH KW_WHEN KW_FOR KW_FOREACH
+       KW_WHILE KW_REPEAT KW_UNTIL KW_SEND
+       KW_RECEIVE KW_RETURN KW_BREAK
+       KW_CONTINUE KW_PRINT KW_ABORT
+       KW_PRAGMA
+%nonassoc ARROW RETURN_TYPE                  /* Handles the SR conflicts for optional return types */
+%nonassoc ':'                                /* Declaration operator */
 %left ANNOT '@'                              /* Annotation operator without arguments */
 %left ANNOT_ARGS                             /* Annotation operator with arguments */
-%nonassoc ':'                                /* Declaration operator */
-%left '=' POWER_BY MULTIPLY_BY DIVIDE_BY     /* Assignments */
-      INT_DIV_BY MODULO_BY INCREMENT_BY
-      DECREMENT_BY SHL_BY ARITH_SHR_BY
-      LOGIC_SHR_BY BITWISE_AND_BY
-      BITWISE_OR_BY BITWISE_XOR_BY
+%right '=' POWER_BY MULTIPLY_BY DIVIDE_BY    /* Assignments */
+       INT_DIV_BY MODULO_BY INCREMENT_BY
+       DECREMENT_BY SHL_BY ARITH_SHR_BY
+       LOGIC_SHR_BY BITWISE_AND_BY
+       BITWISE_OR_BY BITWISE_XOR_BY
 %left RANGE                                  /* Range operator */
-%right KW_IF                                 /* Ternary conditional */
+%right TERNARY                               /* Ternary conditional */
 %left LOGIC_OR                               /* Logical OR */
 %left LOGIC_XOR                              /* Logical XOR */
 %left LOGIC_AND                              /* Logical AND */
@@ -219,9 +228,6 @@ comes first. */
 %right POWER                                 /* Power */
 %right INCREMENT DECREMENT PREFIX            /* Prefix unary operators */
 %left '(' '[' '{' POSTFIX                    /* Function call, indexation, postfix unary operators */
-
-%precedence FUNC
-%precedence FUNC_RET
 
 /* Misc. Yacc directives */
 %error-verbose
@@ -306,9 +312,37 @@ Identifier      : SimpleIdent                                                   
                 | KW_OPERATOR LOGIC_XOR                                         {}
                 ;
 
+AnnotationData  : SimpleIdent '.' SimpleIdent %prec ANNOT                       {}
+                | SimpleIdent '.' SimpleIdent '(' OptUnit ')' %prec ANNOT_ARGS  {}
+                ;
+
+Annotations     : Annotations '@' AnnotationData                                {}
+                |                                                               {}
+                ;
+
+ReturnType      : ARROW '(' OptUnit ')'                   %prec RETURN_TYPE     {}
+                |                                         %prec RETURN_TYPE     {}
+                ;
+
+IfElif          : Modifiers KW_IF Annotations '(' Unit ')' ReturnType Unit              %prec KW_IF {}
+                | IfElif KW_ELIF '(' Unit ')' Unit                                      %prec KW_ELIF {}
+                ;
+
+MatchCases      : MatchCases KW_WHEN Unit ARROW Unit                            {}
+                |                                                               {}
+                ;
+
+MatchBody       : MatchCases                                                    {}
+                | MatchCases KW_ELSE Unit                                       {}
+                ;
+
+LoopLabel       : '.' SimpleIdent                                               {}
+                |                                                               {}
+                ;
+
 /* Units. */
-OptUnit         : Unit                                                          {} /* Explicit unit */
-                |                                                               {} /* Implicit void unit */
+OptUnit         : Unit                                      %prec OPT_UNIT      {} /* Explicit unit */
+                |                                           %prec OPT_UNIT      {} /* Implicit void unit */
                 ;
 
                 /* Void unit */
@@ -383,7 +417,7 @@ Unit            : '(' ')'                                                       
                 /* Short-circuiting operators */
                 | Unit LOGIC_AND Unit                                           {}
                 | Unit LOGIC_OR Unit                                            {}
-                | Unit KW_IF Unit KW_ELSE Unit                %prec KW_IF       {}
+                | Unit KW_WHEN Unit KW_ELSE Unit                %prec TERNARY   {}
 
                 /* Range unit */
                 | Unit RANGE Unit                                               {}
@@ -404,26 +438,35 @@ Unit            : '(' ')'                                                       
                 | Unit BITWISE_OR_BY Unit                                       {}
                 | Unit BITWISE_XOR_BY Unit                                      {}
 
-                /* Annotatiopn units */
-                | Unit '@' SimpleIdent '.' SimpleIdent %prec ANNOT              {}
-                | Unit '@' SimpleIdent '.' SimpleIdent '(' OptUnit ')' %prec ANNOT_ARGS
-                                                                                {}
+                /* Annotation units */
+                | Unit '@' AnnotationData                                       {}
 
                 /* Declaration unit */
                 | Unit ':' Unit                                                 {}
 
-                /* Function declaration & definition units */
-                | KW_FUTURE KW_FUNCTION Identifier '(' OptUnit ')' %prec FUNC   {}
-                | KW_FUTURE KW_FUNCTION Identifier '(' OptUnit ')' ARROW '(' OptUnit ')' %prec FUNC_RET
-                                                                                {}
-                | Modifiers KW_FUNCTION Identifier '(' OptUnit ')' Unit %prec FUNC
-                                                                                {}
-                | Modifiers KW_FUNCTION Identifier '(' OptUnit ')' ARROW '(' OptUnit ')' Unit %prec FUNC_RET
-                                                                                {}
+                /* Conditional units */
+                | IfElif                                        %prec KW_IF     {}
+                | IfElif KW_ELSE Unit                           %prec KW_ELSE   {}
+                | KW_COND Annotations '(' Unit ')' Unit         %prec KW_COND   {}
+                | Modifiers KW_MATCH Annotations '(' Unit ')' ReturnType '{' MatchBody '}' %prec KW_MATCH  {}
 
-                /* Type definition units */
-                | Modifiers KW_TYPE Identifier '=' Unit '{' OptUnit '}'         {}
-                | Modifiers KW_TYPE Identifier ':' Unit                         {}
+                /* Looping units */
+                | Modifiers KW_FOR LoopLabel Annotations '(' Unit ')' Unit %prec KW_FOR {}
+                | Modifiers KW_FOREACH LoopLabel Annotations '(' Unit ')' Unit %prec KW_FOREACH {}
+                | Modifiers KW_WHILE LoopLabel Annotations '(' Unit ')' Unit %prec KW_WHILE {}
+                | Modifiers KW_REPEAT LoopLabel Annotations Unit KW_UNTIL '(' Unit ')' %prec KW_REPEAT {}
+
+                /* Flow control units */
+                | KW_RETURN OptUnit                         %prec KW_RETURN     {}
+                | KW_BREAK                                  %prec KW_BREAK      {}
+                | KW_BREAK SimpleIdent                      %prec KW_BREAK      {}
+                | KW_CONTINUE                               %prec KW_CONTINUE   {}
+                | KW_CONTINUE SimpleIdent                   %prec KW_CONTINUE   {}
+                | KW_SEND '(' Unit ')'                      %prec KW_SEND       {}
+                | KW_RECEIVE '(' Unit ')'                   %prec KW_RECEIVE    {}
+                | KW_PRINT '(' Unit ')'                     %prec KW_PRINT      {}
+                | KW_ABORT '(' Unit ')'                     %prec KW_ABORT      {}
+                | KW_PRAGMA AnnotationData                  %prec KW_PRAGMA     {}
 
                 /* Comma unit */
                 | Unit ',' Unit                                                 {}
@@ -437,6 +480,16 @@ Unit            : '(' ')'                                                       
 
                 /* Alias declaration unit */
                 | Modifiers KW_ALIAS Unit                                       {}
+
+                /* Function declaration & definition units */
+                | KW_FUTURE KW_FUNCTION Identifier '(' OptUnit ')' ReturnType %prec KW_FUNCTION
+                                                                                {}
+                | Modifiers KW_FUNCTION Identifier '(' OptUnit ')' ReturnType Unit %prec KW_FUNCTION
+                                                                                {}
+
+                /* Type definition units */
+                | Modifiers KW_TYPE Identifier '=' Unit '{' OptUnit '}'         {}
+                | Modifiers KW_TYPE Identifier ':' Unit                         {}
 
                 /* Semicolon unit */
                 | Unit ';' Unit                                                 {}
