@@ -203,8 +203,7 @@ comes first. */
        KW_RECEIVE KW_RETURN KW_BREAK
        KW_CONTINUE KW_PRINT KW_ABORT
        KW_PRAGMA
-%nonassoc ARROW RETURN_TYPE                  /* Handles the SR conflicts for optional return types */
-%nonassoc ':'                                /* Declaration operator */
+%nonassoc ARROW RETURN_TYPE                  /* Handles the SR conflicts for optional return types of functions and control-flow */
 %left ANNOT '@'                              /* Annotation operator without arguments */
 %left ANNOT_ARGS                             /* Annotation operator with arguments */
 %right '=' POWER_BY MULTIPLY_BY DIVIDE_BY    /* Assignments */
@@ -212,6 +211,7 @@ comes first. */
        DECREMENT_BY SHL_BY ARITH_SHR_BY
        LOGIC_SHR_BY BITWISE_AND_BY
        BITWISE_OR_BY BITWISE_XOR_BY
+%nonassoc ':'                                /* Declaration operator */
 %left RANGE                                  /* Range operator */
 %right TERNARY                               /* Ternary conditional */
 %left LOGIC_OR                               /* Logical OR */
@@ -228,6 +228,7 @@ comes first. */
 %right POWER                                 /* Power */
 %right INCREMENT DECREMENT PREFIX            /* Prefix unary operators */
 %left '(' '[' '{' POSTFIX                    /* Function call, indexation, postfix unary operators */
+%nonassoc KW_OPERATOR                        /* Operator prefix */
 
 /* Misc. Yacc directives */
 %error-verbose
@@ -288,28 +289,29 @@ SimpleIdent     : IDENTIFIER                                                    
                 ;
 
 Identifier      : SimpleIdent                                                   {}
-                | KW_OPERATOR '~'                                               {}
-                | KW_OPERATOR '!'                                               {}
-                | KW_OPERATOR '*'                                               {}
-                | KW_OPERATOR POWER                                             {}
-                | KW_OPERATOR '/'                                               {}
-                | KW_OPERATOR INT_DIV                                           {}
-                | KW_OPERATOR '%'                                               {}
-                | KW_OPERATOR '+'                                               {}
-                | KW_OPERATOR '-'                                               {}
-                | KW_OPERATOR SHL                                               {}
-                | KW_OPERATOR ARITH_SHR                                         {}
-                | KW_OPERATOR LOGIC_SHR                                         {}
-                | KW_OPERATOR '<'                                               {}
-                | KW_OPERATOR CMP_LE                                            {}
-                | KW_OPERATOR '>'                                               {}
-                | KW_OPERATOR CMP_GE                                            {}
-                | KW_OPERATOR CMP_EQ                                            {}
-                | KW_OPERATOR CMP_NE                                            {}
-                | KW_OPERATOR '&'                                               {}
-                | KW_OPERATOR '^'                                               {}
-                | KW_OPERATOR '|'                                               {}
-                | KW_OPERATOR LOGIC_XOR                                         {}
+                | KW_OPERATOR Unit                       %prec KW_OPERATOR      {}
+                | KW_OPERATOR '~'                        %prec KW_OPERATOR      {}
+                | KW_OPERATOR '!'                        %prec KW_OPERATOR      {}
+                | KW_OPERATOR '*'                        %prec KW_OPERATOR      {}
+                | KW_OPERATOR POWER                      %prec KW_OPERATOR      {}
+                | KW_OPERATOR '/'                        %prec KW_OPERATOR      {}
+                | KW_OPERATOR INT_DIV                    %prec KW_OPERATOR      {}
+                | KW_OPERATOR '%'                        %prec KW_OPERATOR      {}
+                | KW_OPERATOR '+'                        %prec KW_OPERATOR      {}
+                | KW_OPERATOR '-'                        %prec KW_OPERATOR      {}
+                | KW_OPERATOR SHL                        %prec KW_OPERATOR      {}
+                | KW_OPERATOR ARITH_SHR                  %prec KW_OPERATOR      {}
+                | KW_OPERATOR LOGIC_SHR                  %prec KW_OPERATOR      {}
+                | KW_OPERATOR '<'                        %prec KW_OPERATOR      {}
+                | KW_OPERATOR CMP_LE                     %prec KW_OPERATOR      {}
+                | KW_OPERATOR '>'                        %prec KW_OPERATOR      {}
+                | KW_OPERATOR CMP_GE                     %prec KW_OPERATOR      {}
+                | KW_OPERATOR CMP_EQ                     %prec KW_OPERATOR      {}
+                | KW_OPERATOR CMP_NE                     %prec KW_OPERATOR      {}
+                | KW_OPERATOR '&'                        %prec KW_OPERATOR      {}
+                | KW_OPERATOR '^'                        %prec KW_OPERATOR      {}
+                | KW_OPERATOR '|'                        %prec KW_OPERATOR      {}
+                | KW_OPERATOR LOGIC_XOR                  %prec KW_OPERATOR      {}
                 ;
 
 AnnotationData  : SimpleIdent '.' SimpleIdent %prec ANNOT                       {}
@@ -464,8 +466,8 @@ Unit            : '(' ')'                                                       
                 | KW_CONTINUE SimpleIdent                   %prec KW_CONTINUE   {}
                 | KW_SEND '(' Unit ')'                      %prec KW_SEND       {}
                 | KW_RECEIVE '(' Unit ')'                   %prec KW_RECEIVE    {}
-                | KW_PRINT '(' Unit ')'                     %prec KW_PRINT      {}
-                | KW_ABORT '(' Unit ')'                     %prec KW_ABORT      {}
+                | Modifiers KW_PRINT '(' Unit ')'           %prec KW_PRINT      {}
+                | Modifiers KW_ABORT '(' OptUnit ')'        %prec KW_ABORT      {}
                 | KW_PRAGMA AnnotationData                  %prec KW_PRAGMA     {}
 
                 /* Comma unit */
