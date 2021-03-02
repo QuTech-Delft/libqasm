@@ -137,13 +137,14 @@
 (until)                                             WITHOUT_STR(KW_UNTIL);
 
     /* Keywords for special instructions */
-(send)                                              WITHOUT_STR(KW_SEND);
-(receive)                                           WITHOUT_STR(KW_RECEIVE);
+(goto)                                              WITHOUT_STR(KW_GOTO);
 (return)                                            WITHOUT_STR(KW_RETURN);
 (break)                                             WITHOUT_STR(KW_BREAK);
 (continue)                                          WITHOUT_STR(KW_CONTINUE);
 (print)                                             WITHOUT_STR(KW_PRINT);
 (abort)                                             WITHOUT_STR(KW_ABORT);
+(send)                                              WITHOUT_STR(KW_SEND);
+(receive)                                           WITHOUT_STR(KW_RECEIVE);
 (pragma)                                            WITHOUT_STR(KW_PRAGMA);
 
     /* For transposed index notation */

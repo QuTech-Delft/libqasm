@@ -74,12 +74,38 @@
 
 /* YYSTYPE union */
 %union {
-    char           	*str;
-    StringBuilder   *strb;
+    char           	        *str;
+    StringBuilder           *strb;
+    DecimalIntegerLiteral   *dlit;
+    IntegerLiteral          *ilit;
+    RealLiteral             *rlit;
+    StringLiteral           *slit;
+    JsonLiteral             *jlit;
+    Identifier              *idnt;
+    ScopeModifier           *smod;
+    LifetimeModifier        *lmod;
+    ImplementationModifier  *imod;
+    Modifiers               *mods;
+    AnnotationData          *adat;
+    Annotations             *anns;
+    Unit                    *unit;
 };
 
 /* Typenames for nonterminals */
 %type <strb> StringBuilder
+%type <dlit> DecIntLiteral
+%type <ilit> IntegerLiteral
+%type <rlit> RealLiteral
+%type <slit> StringLiteral
+%type <jlit> JsonLiteral
+%type <idnt> SimpleIdent Identifier LoopLabel
+%type <smod> ScopeMod
+%type <lmod> LifetimeMod
+%type <imod> ImplMod
+%type <mods> Modifiers
+%type <adat> AnnotationData
+%type <anns> Annotations
+%type <unit> ReturnType OptUnit Unit
 
 /* FIXME: no %destructor for the new-allocated nodes above, so the parser may
     leak, especially when it recovers from an error. */
@@ -129,13 +155,14 @@
 %token KW_UNTIL
 
 /* Keywords for special instructions */
-%token KW_SEND
-%token KW_RECEIVE
+%token KW_GOTO
 %token KW_RETURN
 %token KW_BREAK
 %token KW_CONTINUE
 %token KW_PRINT
 %token KW_ABORT
+%token KW_SEND
+%token KW_RECEIVE
 %token KW_PRAGMA
 
 /* Transposed index notation keyword */
@@ -236,266 +263,487 @@ comes first. */
 
 %%
 
-/* Integer literals. */
-IntegerLiteral  : INT_LITERAL_DEC                                               { std::free($1); }
-                | INT_LITERAL_HEX                                               { std::free($1); }
-                | INT_LITERAL_BIN                                               { std::free($1); }
-                ;
-
-/* Real-number literals. */
-RealLiteral     : REAL_LITERAL                                                  { std::free($1); }
-                ;
-
 /* String builder. This accumulates JSON/String data, mostly
 character-by-character. */
-StringBuilder   : StringBuilder STRBUILD_APPEND                                 { FROM($$, $1); $$->push_string(std::string($2)); std::free($2); }
-                | StringBuilder STRBUILD_ESCAPE                                 { FROM($$, $1); $$->push_escape(std::string($2)); std::free($2); }
+StringBuilder   : StringBuilder STRBUILD_APPEND                                 { FROM($$, $1);
+                                                                                    $$->push_string(std::string($2));
+                                                                                    std::free($2);
+                                                                                }
+                | StringBuilder STRBUILD_ESCAPE                                 { FROM($$, $1);
+                                                                                    $$->push_escape(std::string($2));
+                                                                                    std::free($2);
+                                                                                }
                 |                                                               { NEW($$, StringBuilder); }
                 ;
 
+/* Integer literals. */
+DecIntLiteral   : INT_LITERAL_DEC                                               { NEW($$, DecimalIntegerLiteral);
+                                                                                    $$->value = std::string($1);
+                                                                                    std::free($1);
+                                                                                }
+                ;
+
+IntegerLiteral  : DecIntLiteral                                                 { FROM($$, $1); }
+                | INT_LITERAL_HEX                                               { NEW($$, HexadecimalIntegerLiteral);
+                                                                                    $$->value = std::string($1);
+                                                                                    std::free($1);
+                                                                                }
+                | INT_LITERAL_BIN                                               { NEW($$, BinaryIntegerLiteral);
+                                                                                    $$->value = std::string($1);
+                                                                                    std::free($1);
+                                                                                }
+                ;
+
+/* Real-number literals. */
+RealLiteral     : REAL_LITERAL                                                  { NEW($$, RealLiteral);
+                                                                                    $$->value = std::string($1);
+                                                                                    std::free($1);
+                                                                                }
+                ;
+
 /* String literal. */
-StringLiteral   : STRING_OPEN StringBuilder STRING_CLOSE                        { delete $2; }
+StringLiteral   : STRING_OPEN StringBuilder STRING_CLOSE                        { NEW($$, StringLiteral);
+                                                                                    $$->value = $2->stream.str();
+                                                                                    delete $2;
+                                                                                }
                 ;
 
 /* JSON literal. */
-JsonLiteral     : JSON_OPEN StringBuilder JSON_CLOSE                            { delete $2; }
+JsonLiteral     : JSON_OPEN StringBuilder JSON_CLOSE                            { NEW($$, JsonLiteral);
+                                                                                    $$->value = "{" + $2->stream.str() + "}";
+                                                                                    delete $2;
+                                                                                }
+                ;
+
+/* Identifiers. */
+SimpleIdent     : IDENTIFIER                                                    { NEW($$, Identifier);
+                                                                                    $$->name = std::string($1);
+                                                                                    std::free($1);
+                                                                                }
+                ;
+
+Identifier      : SimpleIdent                                                   { FROM($$, $1); }
+                | KW_OPERATOR IDENTIFIER                %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator " + std::string($2); std::free($2); }
+                | KW_OPERATOR '~'                       %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator~"; }
+                | KW_OPERATOR '!'                       %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator!"; }
+                | KW_OPERATOR '*'                       %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator*"; }
+                | KW_OPERATOR POWER                     %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator**"; }
+                | KW_OPERATOR '/'                       %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator/"; }
+                | KW_OPERATOR INT_DIV                   %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator//"; }
+                | KW_OPERATOR '%'                       %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator%"; }
+                | KW_OPERATOR '+'                       %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator+"; }
+                | KW_OPERATOR '-'                       %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator-"; }
+                | KW_OPERATOR SHL                       %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator<<"; }
+                | KW_OPERATOR ARITH_SHR                 %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator>>"; }
+                | KW_OPERATOR LOGIC_SHR                 %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator>>>"; }
+                | KW_OPERATOR '<'                       %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator<"; }
+                | KW_OPERATOR CMP_LE                    %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator<="; }
+                | KW_OPERATOR '>'                       %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator>"; }
+                | KW_OPERATOR CMP_GE                    %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator>="; }
+                | KW_OPERATOR CMP_EQ                    %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator=="; }
+                | KW_OPERATOR CMP_NE                    %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator!="; }
+                | KW_OPERATOR '&'                       %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator&"; }
+                | KW_OPERATOR '^'                       %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator^"; }
+                | KW_OPERATOR '|'                       %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator|"; }
+                | KW_OPERATOR LOGIC_XOR                 %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator^^"; }
                 ;
 
 /* Optional scope modifier keyword. */
-ScopeMod        : KW_EXPORT                                                     {}
-                | KW_GLOBAL                                                     {}
-                |                                                               {}
+ScopeMod        :                                                               { NEW($$, ScopeLocal); }
+                | KW_EXPORT                                                     { NEW($$, ScopeParent); }
+                | KW_GLOBAL                                                     { NEW($$, ScopeGlobal); }
                 ;
 
 /* Optional lifetime modifier keyword. */
-LifetimeMod     : KW_STATIC                                                     {}
-                |                                                               {}
+LifetimeMod     :                                                               { NEW($$, LifetimeAutomatic); }
+                | KW_STATIC                                                     { NEW($$, LifetimeStatic); }
                 ;
 
 /* Optional implementation style keyword. */
-ImplMod         : KW_INLINE                                                     {}
-                | KW_RUNTIME                                                    {}
-                | KW_PRIMITIVE                                                  {}
-                |                                                               {}
+ImplMod         :                                                               { NEW($$, ImplementationAutomatic); }
+                | KW_INLINE                                                     { NEW($$, ImplementationInline); }
+                | KW_RUNTIME                                                    { NEW($$, ImplementationRuntime); }
+                | KW_PRIMITIVE                                                  { NEW($$, ImplementationPrimitive); }
                 ;
 
 /* Modifier set. Note that while not everything accepts everything, the grammar
 doesn't care. This is handled during semantic analysis. */
-Modifiers       : ScopeMod LifetimeMod ImplMod                                  {}
+Modifiers       : ScopeMod LifetimeMod ImplMod                                  { NEW($$, Modifiers);
+                                                                                    $$->scope.set_raw($1);
+                                                                                    $$->lifetime.set_raw($2);
+                                                                                    $$->implementation.set_raw($3);
+                                                                                }
                 ;
 
-/* Identifiers. */
-SimpleIdent     : IDENTIFIER                                                    { std::free($1); }
+/* Annotation helper rules. */
+AnnotationData  : SimpleIdent '.' SimpleIdent           %prec ANNOT             { NEW($$, AnnotationData);
+                                                                                    $$->iface.set_raw($1);
+                                                                                    $$->oper.set_raw($3);
+                                                                                    $$->data.set_raw(new Void());
+                                                                                }
+                | SimpleIdent '.' SimpleIdent '(' OptUnit ')'
+                                                        %prec ANNOT_ARGS        { NEW($$, AnnotationData);
+                                                                                    $$->iface.set_raw($1);
+                                                                                    $$->oper.set_raw($3);
+                                                                                    $$->data.set_raw($5);
+                                                                                }
                 ;
 
-Identifier      : SimpleIdent                                                   {}
-                | KW_OPERATOR Unit                       %prec KW_OPERATOR      {}
-                | KW_OPERATOR '~'                        %prec KW_OPERATOR      {}
-                | KW_OPERATOR '!'                        %prec KW_OPERATOR      {}
-                | KW_OPERATOR '*'                        %prec KW_OPERATOR      {}
-                | KW_OPERATOR POWER                      %prec KW_OPERATOR      {}
-                | KW_OPERATOR '/'                        %prec KW_OPERATOR      {}
-                | KW_OPERATOR INT_DIV                    %prec KW_OPERATOR      {}
-                | KW_OPERATOR '%'                        %prec KW_OPERATOR      {}
-                | KW_OPERATOR '+'                        %prec KW_OPERATOR      {}
-                | KW_OPERATOR '-'                        %prec KW_OPERATOR      {}
-                | KW_OPERATOR SHL                        %prec KW_OPERATOR      {}
-                | KW_OPERATOR ARITH_SHR                  %prec KW_OPERATOR      {}
-                | KW_OPERATOR LOGIC_SHR                  %prec KW_OPERATOR      {}
-                | KW_OPERATOR '<'                        %prec KW_OPERATOR      {}
-                | KW_OPERATOR CMP_LE                     %prec KW_OPERATOR      {}
-                | KW_OPERATOR '>'                        %prec KW_OPERATOR      {}
-                | KW_OPERATOR CMP_GE                     %prec KW_OPERATOR      {}
-                | KW_OPERATOR CMP_EQ                     %prec KW_OPERATOR      {}
-                | KW_OPERATOR CMP_NE                     %prec KW_OPERATOR      {}
-                | KW_OPERATOR '&'                        %prec KW_OPERATOR      {}
-                | KW_OPERATOR '^'                        %prec KW_OPERATOR      {}
-                | KW_OPERATOR '|'                        %prec KW_OPERATOR      {}
-                | KW_OPERATOR LOGIC_XOR                  %prec KW_OPERATOR      {}
+Annotations     :                                                               { NEW($$, Annotations); }
+                | Annotations '@' AnnotationData                                { FROM($$, $1);
+                                                                                    $$->data.add_raw($3);
+                                                                                }
                 ;
 
-AnnotationData  : SimpleIdent '.' SimpleIdent %prec ANNOT                       {}
-                | SimpleIdent '.' SimpleIdent '(' OptUnit ')' %prec ANNOT_ARGS  {}
+/* Optional return type helper rule. */
+ReturnType      :                                       %prec RETURN_TYPE       { NEW($$, Void); }
+                | ARROW '(' OptUnit ')'                 %prec RETURN_TYPE       { FROM($$, $3); }
                 ;
 
-Annotations     : Annotations '@' AnnotationData                                {}
-                |                                                               {}
+/* Control-flow block helper rules. */
+IfElif          : Modifiers KW_IF Annotations '(' Unit ')' ReturnType Unit
+                                                        %prec KW_IF             {}
+                | IfElif KW_ELIF '(' Unit ')' Unit
+                                                        %prec KW_ELIF           {}
                 ;
 
-ReturnType      : ARROW '(' OptUnit ')'                   %prec RETURN_TYPE     {}
-                |                                         %prec RETURN_TYPE     {}
-                ;
-
-IfElif          : Modifiers KW_IF Annotations '(' Unit ')' ReturnType Unit              %prec KW_IF {}
-                | IfElif KW_ELIF '(' Unit ')' Unit                                      %prec KW_ELIF {}
-                ;
-
-MatchCases      : MatchCases KW_WHEN Unit ARROW Unit                            {}
-                |                                                               {}
+MatchCases      :                                                               {}
+                | MatchCases KW_WHEN Unit ARROW Unit                            {}
                 ;
 
 MatchBody       : MatchCases                                                    {}
                 | MatchCases KW_ELSE Unit                                       {}
                 ;
 
-LoopLabel       : '.' SimpleIdent                                               {}
-                |                                                               {}
+LoopLabel       :                                                               { NEW($$, Identifier); }
+                | '.' SimpleIdent                                               { FROM($$, $2); }
                 ;
 
 /* Units. */
-OptUnit         : Unit                                      %prec OPT_UNIT      {} /* Explicit unit */
-                |                                           %prec OPT_UNIT      {} /* Implicit void unit */
+OptUnit         : Unit                                  %prec OPT_UNIT          { FROM($$, $1); }
+                |                                       %prec OPT_UNIT          { NEW($$, Void); }
                 ;
 
-                /* Void unit */
-Unit            : '(' ')'                                                       {}
-                | '{' '}'                                                       {}
-
-                /* Packing unit & grouping parentheses unit */
-                | '(' Unit ')'                                                  {}
-
-                /* Block unit */
-                | '{' Unit '}'                                                  {}
-
-                /* Function call, constructor etc. unit */
-                | Unit '(' OptUnit ')'                                          {}
-
-                /* Undefined-length tuple type unit */
-                | Unit '[' ']'                                                  {}
-
-                /* Indexing unit */
-                | Unit '[' Unit ']'                                             {}
-                | Unit '[' KW_TRANSPOSE Unit ']'                                {}
-
                 /* Literal units */
-                | IntegerLiteral                                                {}
-                | RealLiteral                                                   {}
-                | StringLiteral                                                 {}
-                | JsonLiteral                                                   {}
+Unit            : IntegerLiteral                                                { FROM($$, $1); }
+                | RealLiteral                                                   { FROM($$, $1); }
+                | StringLiteral                                                 { FROM($$, $1); }
+                | JsonLiteral                                                   { FROM($$, $1); }
 
-                /* Reference unit */
-                | Identifier                                                    {}
+                /* Reference and definition units */
+                | Identifier                                                    { FROM($$, $1); }
 
-                /* Post-inc/dec units */
-                | Unit INCREMENT                            %prec POSTFIX       {}
-                | Unit DECREMENT                            %prec POSTFIX       {}
-
-                /* Pre-inc/dec units */
-                | INCREMENT Unit                            %prec PREFIX        {}
-                | DECREMENT Unit                            %prec PREFIX        {}
+                /* Packing/grouping parentheses unit*/
+                | '(' OptUnit ')'                                               { NEW($$, Parentheses);
+                                                                                    $$->as_parentheses()->data.set_raw($2);
+                                                                                }
 
                 /* 1- and 2-dimensional unpacking units */
-                | '*' Unit                                  %prec PREFIX        {}
-                | POWER Unit                                %prec PREFIX        {}
+                | '*' Unit                              %prec PREFIX            { NEW($$, Unpack1d);
+                                                                                    $$->as_unpack()->data.set_raw($2);
+                                                                                }
+                | POWER Unit                            %prec PREFIX            { NEW($$, Unpack2d);
+                                                                                    $$->as_unpack()->data.set_raw($2);
+                                                                                }
 
-                /* Unary operator units */
-                | '+' Unit                                  %prec PREFIX        {}
-                | '-' Unit                                  %prec PREFIX        {}
-                | '~' Unit                                  %prec PREFIX        {}
-                | '!' Unit                                  %prec PREFIX        {}
-
-                /* Binary operator units */
-                | Unit POWER Unit                                               {}
-                | Unit '*' Unit                                                 {}
-                | Unit '/' Unit                                                 {}
-                | Unit INT_DIV Unit                                             {}
-                | Unit '%' Unit                                                 {}
-                | Unit '+' Unit                                                 {}
-                | Unit '-' Unit                                                 {}
-                | Unit SHL Unit                                                 {}
-                | Unit ARITH_SHR Unit                                           {}
-                | Unit LOGIC_SHR Unit                                           {}
-                | Unit '<' Unit                                                 {}
-                | Unit CMP_LE Unit                                              {}
-                | Unit '>' Unit                                                 {}
-                | Unit CMP_GE Unit                                              {}
-                | Unit CMP_EQ Unit                                              {}
-                | Unit CMP_NE Unit                                              {}
-                | Unit '&' Unit                                                 {}
-                | Unit '^' Unit                                                 {}
-                | Unit '|' Unit                                                 {}
-                | Unit LOGIC_XOR Unit                                           {}
-
-                /* Short-circuiting operators */
-                | Unit LOGIC_AND Unit                                           {}
-                | Unit LOGIC_OR Unit                                            {}
-                | Unit KW_WHEN Unit KW_ELSE Unit                %prec TERNARY   {}
+                /* Indexing unit */
+                | Unit '[' OptUnit ']'                                          { NEW($$, PlainIndex);
+                                                                                    $$->as_index()->data.set_raw($1);
+                                                                                    $$->as_index()->index.set_raw($3);
+                                                                                }
+                | Unit '[' KW_TRANSPOSE Unit ']'                                { NEW($$, TransposedIndex);
+                                                                                    $$->as_index()->data.set_raw($1);
+                                                                                    $$->as_index()->index.set_raw($4);
+                                                                                }
 
                 /* Range unit */
-                | Unit RANGE Unit                                               {}
+                | Unit RANGE Unit                                               { NEW($$, RangeOperator);
+                                                                                    $$->as_range_operator()->begin.set_raw($1);
+                                                                                    $$->as_range_operator()->end.set_raw($3);
+                                                                                }
 
-                /* Assignment units */
-                | Unit '=' Unit                                                 {}
-                | Unit POWER_BY Unit                                            {}
-                | Unit MULTIPLY_BY Unit                                         {}
-                | Unit DIVIDE_BY Unit                                           {}
-                | Unit INT_DIV_BY Unit                                          {}
-                | Unit MODULO_BY Unit                                           {}
-                | Unit INCREMENT_BY Unit                                        {}
-                | Unit DECREMENT_BY Unit                                        {}
-                | Unit SHL_BY Unit                                              {}
-                | Unit ARITH_SHR_BY Unit                                        {}
-                | Unit LOGIC_SHR_BY Unit                                        {}
-                | Unit BITWISE_AND_BY Unit                                      {}
-                | Unit BITWISE_OR_BY Unit                                       {}
-                | Unit BITWISE_XOR_BY Unit                                      {}
+                /* Overloadable unary operator units */
+                | '+' Unit                              %prec PREFIX            { NEW($$, PositiveOperator);
+                                                                                    $$->as_unary_operator()->operand.set_raw($2);
+                                                                                }
+                | '-' Unit                              %prec PREFIX            { NEW($$, NegativeOperator);
+                                                                                    $$->as_unary_operator()->operand.set_raw($2);
+                                                                                }
+                | '~' Unit                              %prec PREFIX            { NEW($$, LogicalNotOperator);
+                                                                                    $$->as_unary_operator()->operand.set_raw($2);
+                                                                                }
+                | '!' Unit                              %prec PREFIX            { NEW($$, BitwiseNotOperator);
+                                                                                    $$->as_unary_operator()->operand.set_raw($2);
+                                                                                }
 
-                /* Annotation units */
-                | Unit '@' AnnotationData                                       {}
+                /* Overloadable binary operator units */
+                | Unit POWER Unit                                               { NEW($$, PowerOperator);
+                                                                                    $$->as_binary_operator()->lhs.set_raw($1);
+                                                                                    $$->as_binary_operator()->rhs.set_raw($3);
+                                                                                }
+                | Unit '*' Unit                                                 { NEW($$, MultiplyOperator);
+                                                                                    $$->as_binary_operator()->lhs.set_raw($1);
+                                                                                    $$->as_binary_operator()->rhs.set_raw($3);
+                                                                                }
+                | Unit '/' Unit                                                 { NEW($$, TrueDivisionOperator);
+                                                                                    $$->as_binary_operator()->lhs.set_raw($1);
+                                                                                    $$->as_binary_operator()->rhs.set_raw($3);
+                                                                                }
+                | Unit INT_DIV Unit                                             { NEW($$, EuclidianDivisionOperator);
+                                                                                    $$->as_binary_operator()->lhs.set_raw($1);
+                                                                                    $$->as_binary_operator()->rhs.set_raw($3);
+                                                                                }
+                | Unit '%' Unit                                                 { NEW($$, ModuloOperator);
+                                                                                    $$->as_binary_operator()->lhs.set_raw($1);
+                                                                                    $$->as_binary_operator()->rhs.set_raw($3);
+                                                                                }
+                | Unit '+' Unit                                                 { NEW($$, AdditionOperator);
+                                                                                    $$->as_binary_operator()->lhs.set_raw($1);
+                                                                                    $$->as_binary_operator()->rhs.set_raw($3);
+                                                                                }
+                | Unit '-' Unit                                                 { NEW($$, SubtractionOperator);
+                                                                                    $$->as_binary_operator()->lhs.set_raw($1);
+                                                                                    $$->as_binary_operator()->rhs.set_raw($3);
+                                                                                }
+                | Unit SHL Unit                                                 { NEW($$, ShiftLeftOperator);
+                                                                                    $$->as_binary_operator()->lhs.set_raw($1);
+                                                                                    $$->as_binary_operator()->rhs.set_raw($3);
+                                                                                }
+                | Unit ARITH_SHR Unit                                           { NEW($$, ArithmeticShiftRightOperator);
+                                                                                    $$->as_binary_operator()->lhs.set_raw($1);
+                                                                                    $$->as_binary_operator()->rhs.set_raw($3);
+                                                                                }
+                | Unit LOGIC_SHR Unit                                           { NEW($$, LogicalShiftRightOperator);
+                                                                                    $$->as_binary_operator()->lhs.set_raw($1);
+                                                                                    $$->as_binary_operator()->rhs.set_raw($3);
+                                                                                }
+                | Unit '<' Unit                                                 { NEW($$, LessThanOperator);
+                                                                                    $$->as_binary_operator()->lhs.set_raw($1);
+                                                                                    $$->as_binary_operator()->rhs.set_raw($3);
+                                                                                }
+                | Unit CMP_LE Unit                                              { NEW($$, LessOrEqualOperator);
+                                                                                    $$->as_binary_operator()->lhs.set_raw($1);
+                                                                                    $$->as_binary_operator()->rhs.set_raw($3);
+                                                                                }
+                | Unit '>' Unit                                                 { NEW($$, GreaterThanOperator);
+                                                                                    $$->as_binary_operator()->lhs.set_raw($1);
+                                                                                    $$->as_binary_operator()->rhs.set_raw($3);
+                                                                                }
+                | Unit CMP_GE Unit                                              { NEW($$, GreaterOrEqualOperator);
+                                                                                    $$->as_binary_operator()->lhs.set_raw($1);
+                                                                                    $$->as_binary_operator()->rhs.set_raw($3);
+                                                                                }
+                | Unit CMP_EQ Unit                                              { NEW($$, EqualityOperator);
+                                                                                    $$->as_binary_operator()->lhs.set_raw($1);
+                                                                                    $$->as_binary_operator()->rhs.set_raw($3);
+                                                                                }
+                | Unit CMP_NE Unit                                              { NEW($$, InequalityOperator);
+                                                                                    $$->as_binary_operator()->lhs.set_raw($1);
+                                                                                    $$->as_binary_operator()->rhs.set_raw($3);
+                                                                                }
+                | Unit '&' Unit                                                 { NEW($$, BitwiseAndOperator);
+                                                                                    $$->as_binary_operator()->lhs.set_raw($1);
+                                                                                    $$->as_binary_operator()->rhs.set_raw($3);
+                                                                                }
+                | Unit '^' Unit                                                 { NEW($$, BitwiseXorOperator);
+                                                                                    $$->as_binary_operator()->lhs.set_raw($1);
+                                                                                    $$->as_binary_operator()->rhs.set_raw($3);
+                                                                                }
+                | Unit '|' Unit                                                 { NEW($$, BitwiseOrOperator);
+                                                                                    $$->as_binary_operator()->lhs.set_raw($1);
+                                                                                    $$->as_binary_operator()->rhs.set_raw($3);
+                                                                                }
+                | Unit LOGIC_XOR Unit                                           { NEW($$, LogicalXorOperator);
+                                                                                    $$->as_binary_operator()->lhs.set_raw($1);
+                                                                                    $$->as_binary_operator()->rhs.set_raw($3);
+                                                                                }
 
-                /* Declaration unit */
-                | Unit ':' Unit                                                 {}
+                /* Short-circuiting operators */
+                | Unit LOGIC_AND Unit                                           { NEW($$, LogicalAndOperator);
+                                                                                    $$->as_logical_and_operator()->lhs.set_raw($1);
+                                                                                    $$->as_logical_and_operator()->rhs.set_raw($3);
+                                                                                }
+                | Unit LOGIC_OR Unit                                            { NEW($$, LogicalOrOperator);
+                                                                                    $$->as_logical_or_operator()->lhs.set_raw($1);
+                                                                                    $$->as_logical_or_operator()->rhs.set_raw($3);
+                                                                                }
+                | Unit KW_WHEN Unit KW_ELSE Unit        %prec TERNARY           { NEW($$, SelectionOperator);
+                                                                                    $$->as_selection_operator()->when_true.set_raw($1);
+                                                                                    $$->as_selection_operator()->condition.set_raw($3);
+                                                                                    $$->as_selection_operator()->when_false.set_raw($5);
+                                                                                }
 
-                /* Conditional units */
-                | IfElif                                        %prec KW_IF     {}
-                | IfElif KW_ELSE Unit                           %prec KW_ELSE   {}
-                | KW_COND Annotations '(' Unit ')' Unit         %prec KW_COND   {}
-                | Modifiers KW_MATCH Annotations '(' Unit ')' ReturnType '{' MatchBody '}' %prec KW_MATCH  {}
+                /* Simple assignment unit */
+                | Unit '=' Unit                                                 { NEW($$, AssignmentOperator);
+                                                                                    $$->as_assignment_operator()->target.set_raw($1);
+                                                                                    $$->as_assignment_operator()->value.set_raw($3);
+                                                                                }
 
-                /* Looping units */
-                | Modifiers KW_FOR LoopLabel Annotations '(' Unit ')' Unit %prec KW_FOR {}
-                | Modifiers KW_FOREACH LoopLabel Annotations '(' Unit ')' Unit %prec KW_FOREACH {}
-                | Modifiers KW_WHILE LoopLabel Annotations '(' Unit ')' Unit %prec KW_WHILE {}
-                | Modifiers KW_REPEAT LoopLabel Annotations Unit KW_UNTIL '(' Unit ')' %prec KW_REPEAT {}
+                /* Increment/decrement units */
+                | Unit INCREMENT                        %prec POSTFIX           { NEW($$, PostIncrementOperator);
+                                                                                    $$->as_unary_mutating_operator()->target.set_raw($1);
+                                                                                }
+                | Unit DECREMENT                        %prec POSTFIX           { NEW($$, PostDecrementOperator);
+                                                                                    $$->as_unary_mutating_operator()->target.set_raw($1);
+                                                                                }
+                | INCREMENT Unit                        %prec PREFIX            { NEW($$, PreIncrementOperator);
+                                                                                    $$->as_unary_mutating_operator()->target.set_raw($2);
+                                                                                }
+                | DECREMENT Unit                        %prec PREFIX            { NEW($$, PreDecrementOperator);
+                                                                                    $$->as_unary_mutating_operator()->target.set_raw($2);
+                                                                                }
 
-                /* Flow control units */
-                | KW_RETURN OptUnit                         %prec KW_RETURN     {}
-                | KW_BREAK                                  %prec KW_BREAK      {}
-                | KW_BREAK SimpleIdent                      %prec KW_BREAK      {}
-                | KW_CONTINUE                               %prec KW_CONTINUE   {}
-                | KW_CONTINUE SimpleIdent                   %prec KW_CONTINUE   {}
-                | KW_SEND '(' Unit ')'                      %prec KW_SEND       {}
-                | KW_RECEIVE '(' Unit ')'                   %prec KW_RECEIVE    {}
-                | Modifiers KW_PRINT '(' Unit ')'           %prec KW_PRINT      {}
-                | Modifiers KW_ABORT '(' OptUnit ')'        %prec KW_ABORT      {}
-                | KW_PRAGMA AnnotationData                  %prec KW_PRAGMA     {}
+                /* Mutating assignment units */
+                | Unit POWER_BY Unit                                            { NEW($$, PowerByOperator);
+                                                                                    $$->as_binary_mutating_operator()->target.set_raw($1);
+                                                                                    $$->as_binary_mutating_operator()->value.set_raw($3);
+                                                                                }
+                | Unit MULTIPLY_BY Unit                                         { NEW($$, MultiplyByOperator);
+                                                                                    $$->as_binary_mutating_operator()->target.set_raw($1);
+                                                                                    $$->as_binary_mutating_operator()->value.set_raw($3);
+                                                                                }
+                | Unit DIVIDE_BY Unit                                           { NEW($$, TrueDivideByOperator);
+                                                                                    $$->as_binary_mutating_operator()->target.set_raw($1);
+                                                                                    $$->as_binary_mutating_operator()->value.set_raw($3);
+                                                                                }
+                | Unit INT_DIV_BY Unit                                          { NEW($$, EuclidianDivideByOperator);
+                                                                                    $$->as_binary_mutating_operator()->target.set_raw($1);
+                                                                                    $$->as_binary_mutating_operator()->value.set_raw($3);
+                                                                                }
+                | Unit MODULO_BY Unit                                           { NEW($$, ModuloByOperator);
+                                                                                    $$->as_binary_mutating_operator()->target.set_raw($1);
+                                                                                    $$->as_binary_mutating_operator()->value.set_raw($3);
+                                                                                }
+                | Unit INCREMENT_BY Unit                                        { NEW($$, IncrementByOperator);
+                                                                                    $$->as_binary_mutating_operator()->target.set_raw($1);
+                                                                                    $$->as_binary_mutating_operator()->value.set_raw($3);
+                                                                                }
+                | Unit DECREMENT_BY Unit                                        { NEW($$, DecrementByOperator);
+                                                                                    $$->as_binary_mutating_operator()->target.set_raw($1);
+                                                                                    $$->as_binary_mutating_operator()->value.set_raw($3);
+                                                                                }
+                | Unit SHL_BY Unit                                              { NEW($$, ShiftLeftByOperator);
+                                                                                    $$->as_binary_mutating_operator()->target.set_raw($1);
+                                                                                    $$->as_binary_mutating_operator()->value.set_raw($3);
+                                                                                }
+                | Unit ARITH_SHR_BY Unit                                        { NEW($$, ArithmicallyShiftRightByOperator);
+                                                                                    $$->as_binary_mutating_operator()->target.set_raw($1);
+                                                                                    $$->as_binary_mutating_operator()->value.set_raw($3);
+                                                                                }
+                | Unit LOGIC_SHR_BY Unit                                        { NEW($$, LogicallyShiftRightByOperator);
+                                                                                    $$->as_binary_mutating_operator()->target.set_raw($1);
+                                                                                    $$->as_binary_mutating_operator()->value.set_raw($3);
+                                                                                }
+                | Unit BITWISE_AND_BY Unit                                      { NEW($$, BitwiseAndByOperator);
+                                                                                    $$->as_binary_mutating_operator()->target.set_raw($1);
+                                                                                    $$->as_binary_mutating_operator()->value.set_raw($3);
+                                                                                }
+                | Unit BITWISE_OR_BY Unit                                       { NEW($$, BitwiseOrByOperator);
+                                                                                    $$->as_binary_mutating_operator()->target.set_raw($1);
+                                                                                    $$->as_binary_mutating_operator()->value.set_raw($3);
+                                                                                }
+                | Unit BITWISE_XOR_BY Unit                                      { NEW($$, BitwiseXorByOperator);
+                                                                                    $$->as_binary_mutating_operator()->target.set_raw($1);
+                                                                                    $$->as_binary_mutating_operator()->value.set_raw($3);
+                                                                                }
 
-                /* Comma unit */
-                | Unit ',' Unit                                                 {}
-                | Unit ','                                                      {}
+                /* Block unit */
+                | '{' OptUnit '}'                                               { NEW($$, Block);
+                                                                                    $$->as_block()->data.set_raw($2);
+                                                                                }
 
-                /* Variable declaration unit */
-                | Modifiers KW_VAR Unit                                         {}
+                /* Functions */
+                | Unit '(' OptUnit ')'                                          { NEW($$, FunctionCall);
+                                                                                    $$->as_function_call()->function.set_raw($1);
+                                                                                    $$->as_function_call()->arguments.set_raw($3);
+                                                                                }
 
-                /* Constant declaration unit */
-                | Modifiers KW_CONST Unit                                       {}
+                | KW_FUTURE KW_FUNCTION Identifier '(' OptUnit ')' ReturnType
+                                                        %prec KW_FUNCTION       { NEW($$, FunctionDeclaration);
+                                                                                    $$->as_function_declaration()->name.set_raw($3);
+                                                                                    $$->as_function_declaration()->parameters.set_raw($5);
+                                                                                    $$->as_function_declaration()->return_type.set_raw($7);
+                                                                                }
+                | Modifiers KW_FUNCTION Identifier Annotations '(' OptUnit ')' ReturnType Unit
+                                                        %prec KW_FUNCTION       { NEW($$, FunctionDefinition);
+                                                                                    $$->as_function_definition()->modifiers.set_raw($1);
+                                                                                    $$->as_function_definition()->name.set_raw($3);
+                                                                                    $$->as_function_definition()->annotations.set_raw($4);
+                                                                                    $$->as_function_definition()->parameters.set_raw($6);
+                                                                                    $$->as_function_definition()->return_type.set_raw($8);
+                                                                                    $$->as_function_definition()->body.set_raw($9);
+                                                                                }
 
-                /* Alias declaration unit */
-                | Modifiers KW_ALIAS Unit                                       {}
-
-                /* Function declaration & definition units */
-                | KW_FUTURE KW_FUNCTION Identifier '(' OptUnit ')' ReturnType %prec KW_FUNCTION
-                                                                                {}
-                | Modifiers KW_FUNCTION Identifier '(' OptUnit ')' ReturnType Unit %prec KW_FUNCTION
-                                                                                {}
+                /* Object definitions */
+                | Modifiers KW_VAR Unit                                         { NEW($$, VariableDefinition);
+                                                                                    $$->as_variable_definition()->modifiers.set_raw($1);
+                                                                                    $$->as_variable_definition()->data.set_raw($3);
+                                                                                }
+                | Modifiers KW_CONST Unit                                       { NEW($$, ConstantDefinition);
+                                                                                    $$->as_constant_definition()->modifiers.set_raw($1);
+                                                                                    $$->as_constant_definition()->data.set_raw($3);
+                                                                                }
+                | Modifiers KW_ALIAS Unit                                       { NEW($$, AliasDefinition);
+                                                                                    $$->as_alias_definition()->modifiers.set_raw($1);
+                                                                                    $$->as_alias_definition()->data.set_raw($3);
+                                                                                }
 
                 /* Type definition units */
                 | Modifiers KW_TYPE Identifier '=' Unit '{' OptUnit '}'         {}
                 | Modifiers KW_TYPE Identifier ':' Unit                         {}
 
-                /* Semicolon unit */
-                | Unit ';' Unit                                                 {}
-                | Unit ';'                                                      {}
+                /* Conditional units */
+                | IfElif                                %prec KW_IF             {}
+                | IfElif KW_ELSE Unit                   %prec KW_ELSE           {}
+                | KW_COND Annotations '(' Unit ')' Unit %prec KW_COND           {}
+                | Modifiers KW_MATCH Annotations '(' Unit ')' ReturnType '{' MatchBody '}'
+                                                        %prec KW_MATCH          {}
+
+                /* Looping units */
+                | Modifiers KW_FOR LoopLabel Annotations '(' Unit ')' Unit
+                                                        %prec KW_FOR            {}
+                | Modifiers KW_FOREACH LoopLabel Annotations '(' Unit ')' Unit
+                                                        %prec KW_FOREACH        {}
+                | Modifiers KW_WHILE LoopLabel Annotations '(' Unit ')' Unit
+                                                        %prec KW_WHILE          {}
+                | Modifiers KW_REPEAT LoopLabel Annotations Unit KW_UNTIL '(' Unit ')'
+                                                        %prec KW_REPEAT         {}
+
+                /* Special statements */
+                | KW_GOTO SimpleIdent                   %prec KW_GOTO           {}
+                | KW_RETURN OptUnit                     %prec KW_RETURN         {}
+                | KW_BREAK                              %prec KW_BREAK          {}
+                | KW_BREAK SimpleIdent                  %prec KW_BREAK          {}
+                | KW_CONTINUE                           %prec KW_CONTINUE       {}
+                | KW_CONTINUE SimpleIdent               %prec KW_CONTINUE       {}
+                | KW_SEND '(' Unit ')'                  %prec KW_SEND           {}
+                | KW_RECEIVE '(' Unit ')'               %prec KW_RECEIVE        {}
+                | Modifiers KW_PRINT '(' Unit ')'       %prec KW_PRINT          {}
+                | Modifiers KW_ABORT '(' OptUnit ')'    %prec KW_ABORT          {}
+
+                /* Annotation units */
+                | Unit '@' AnnotationData                                       {}
+                | KW_PRAGMA AnnotationData              %prec KW_PRAGMA         {}
+
+                /* Grammatical units (semantics are not context-free) */
+                | Unit ':' Unit                                                 { NEW($$, Colon);
+                                                                                    $$->as_colon()->lhs.set_raw($1);
+                                                                                    $$->as_colon()->rhs.set_raw($3);
+                                                                                }
+                | Unit ',' Unit                                                 { NEW($$, Comma);
+                                                                                    $$->as_comma()->lhs.set_raw($1);
+                                                                                    $$->as_comma()->rhs.set_raw($3);
+                                                                                }
+                | Unit ','                                                      { NEW($$, TrailingComma);
+                                                                                    $$->as_trailing_semicolon()->data.set_raw($1);
+                                                                                }
+                | Unit ';' Unit                                                 { NEW($$, Semicolon);
+                                                                                    $$->as_semicolon()->lhs.set_raw($1);
+                                                                                    $$->as_semicolon()->rhs.set_raw($3);
+                                                                                }
+                | Unit ';'                                                      { NEW($$, TrailingSemicolon);
+                                                                                    $$->as_trailing_semicolon()->data.set_raw($1);
+                                                                                }
 
                 ;
 
