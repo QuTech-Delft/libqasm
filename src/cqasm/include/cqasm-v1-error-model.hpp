@@ -1,5 +1,5 @@
 /** \file
- * This file contains the \ref cqasm::error_model::ErrorModel "ErrorModel" class
+ * This file contains the \ref cqasm::v1::error_model::ErrorModel "ErrorModel" class
  * and support types, each instance representing an error model supported by the
  * user.
  */

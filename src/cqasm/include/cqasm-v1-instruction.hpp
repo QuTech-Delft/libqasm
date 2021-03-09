@@ -1,5 +1,5 @@
 /** \file
- * This file contains the \ref cqasm::instruction::Instruction "Instruction"
+ * This file contains the \ref cqasm::v1::instruction::Instruction "Instruction"
  * class and support types, each instance representing an instruction
  * (also known as gate) supported by the user.
  */

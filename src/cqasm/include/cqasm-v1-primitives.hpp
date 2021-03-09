@@ -9,6 +9,8 @@
 #include <complex>
 #include <vector>
 
+#include "cqasm-version.hpp"
+
 namespace cqasm {
 namespace v1 {
 
@@ -183,33 +185,7 @@ using CMatrix = Matrix<Complex>;
 /**
  * Version number primitive used within the AST and semantic trees.
  */
-class Version : public std::vector<Int> {
-public:
-
-    /**
-     * Constructs a version object from a string, defaulting to 1.0.
-     */
-    explicit Version(const std::string &version = "1.0");
-
-    /**
-     * Compares this version against the other version. Returns 1 if this version
-     * is newer than the other, returns -1 if this version is older than the other,
-     * or returns 0 if both versions are the same. When there is a mismatch in the
-     * number of components between the versions, missing components are interpreted
-     * as 0.
-     */
-    int compare(const Version &other) const;
-
-    /**
-     * Compares this version against the other version. Returns 1 if this version
-     * is newer than the other, returns -1 if this version is older than the other,
-     * or returns 0 if both versions are the same. When there is a mismatch in the
-     * number of components between the versions, missing components are interpreted
-     * as 0.
-     */
-    int compare(const std::string &other) const;
-
-};
+using Version = version::Version;
 
 /**
  * Stream << overload for axis nodes.
@@ -236,11 +212,6 @@ std::ostream &operator<<(std::ostream &os, const Matrix<T> &mat) {
     os << "]";
     return os;
 }
-
-/**
- * Stream << overload for version nodes.
- */
-std::ostream &operator<<(std::ostream &os, const Version &object);
 
 } // namespace primitives
 } // namespace v1

@@ -1,5 +1,5 @@
 /** \file
- * Defines classes representing the \ref cqasm::values "values" (collective name
+ * Defines classes representing the \ref cqasm::v1::values "values" (collective name
  * for constants, references, and dynamically evaluated expressions) available
  * within cQASM's type system, as well as some utility functions.
  */

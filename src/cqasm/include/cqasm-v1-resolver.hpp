@@ -1,7 +1,7 @@
 /** \file
- * Contains \ref cqasm::resolver::MappingTable "MappingTable",
- * \ref cqasm::resolver::FunctionTable "FunctionTable", and
- * \ref cqasm::resolver::ErrorModelTable "ErrorModelTable", representing the
+ * Contains \ref cqasm::v1::resolver::MappingTable "MappingTable",
+ * \ref cqasm::v1::resolver::FunctionTable "FunctionTable", and
+ * \ref cqasm::v1::resolver::ErrorModelTable "ErrorModelTable", representing the
  * various cQASM namespaces and their members in scope at some instant.
  */
 

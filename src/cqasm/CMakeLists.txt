@@ -63,11 +63,50 @@ add_subdirectory(tree-gen)
 add_subdirectory(func-gen)
 
 #-------------------------------------------------------------------------------
+# cQASM common code generation and inclusion
+#-------------------------------------------------------------------------------
+
+# List of non-generated sources.
+set(CQASM_COMMON_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-utils.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-annotations.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-error.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-version.cpp"
+)
+
+# Generate the lexer.
+flex_target(
+    cqasm-version-lexer
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-version-lexer.l"
+    "${CMAKE_CURRENT_BINARY_DIR}/cqasm-version-lexer.cpp"
+    COMPILE_FLAGS
+        "--header-file=${CMAKE_CURRENT_BINARY_DIR}/cqasm-version-lexer.hpp ${flex_win_compat}"
+)
+list(APPEND CQASM_COMMON_SOURCES ${FLEX_cqasm-version-lexer_OUTPUTS})
+
+# Generate the parser.
+bison_target(
+    cqasm-version-parser
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-version-parser.y"
+    "${CMAKE_CURRENT_BINARY_DIR}/cqasm-version-parser.cpp"
+    COMPILE_FLAGS
+        "-rall --report-file=${CMAKE_CURRENT_BINARY_DIR}/cqasm-version-parser.txt -Werror=conflicts-sr -Werror=conflicts-rr"
+)
+list(APPEND CQASM_COMMON_SOURCES ${BISON_cqasm-version-parser_OUTPUTS})
+
+# Dependency between lexer and parser.
+add_flex_bison_dependency(
+    cqasm-version-lexer
+    cqasm-version-parser
+)
+
+#-------------------------------------------------------------------------------
 # cQASM v1.x code generation and inclusion
 #-------------------------------------------------------------------------------
 
 # List of non-generated sources.
 set(CQASM_V1_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v1.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v1-primitives.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v1-ast.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v1-types.cpp"
@@ -191,6 +230,14 @@ generate_tree(
 )
 list(APPEND CQASM_V2_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v2-ast-gen.cpp")
 
+# Generate the semantic tree classes.
+generate_tree(
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v2-semantic.tree"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/cqasm-v2-semantic-gen.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v2-semantic-gen.cpp"
+)
+list(APPEND CQASM_V2_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v2-semantic-gen.cpp")
+
 #-------------------------------------------------------------------------------
 # Compilation instructions
 #-------------------------------------------------------------------------------
@@ -203,10 +250,7 @@ list(APPEND CQASM_V2_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v2-ast-gen.cpp")
 add_library(
     cqasm_objlib OBJECT
     ${TREE_LIB_SRCS}
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-utils.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-annotations.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-error.cpp"
+    ${CQASM_COMMON_SOURCES}
     ${CQASM_V1_SOURCES}
     ${CQASM_V2_SOURCES}
 )

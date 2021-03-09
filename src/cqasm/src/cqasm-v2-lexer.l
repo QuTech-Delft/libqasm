@@ -78,7 +78,7 @@
     /*=======================================================================*/
 
     /* This is treated separately to avoid conflicts with float literals */
-(?i:version)                                        BEGIN(MODE_VERSION); WITHOUT_STR(KW_VERSION);
+(cQASM)                                             BEGIN(MODE_VERSION); WITHOUT_STR(KW_VERSION);
 }
 <MODE_VERSION>{
 (\n|\r\n?)                                          LOCATION_LINE; BEGIN(INITIAL); DELETE;

@@ -1,5 +1,5 @@
 /** \file
- * Defines the \ref cqasm::types "types" of \ref cqasm::values "values"
+ * Defines the \ref cqasm::v1::types "types" of \ref cqasm::v1::values "values"
  * available within cQASM's type system, as well as some utility functions.
  */
 

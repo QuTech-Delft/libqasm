@@ -1,9 +1,10 @@
 /** \file
- * Defines the types for the cQASM \ref cqasm::semantic "semantic tree", based
+ * Defines the types for the cQASM \ref cqasm::v1::semantic "semantic tree", based
  * on the classes from cqasm::tree.
  *
- * This file is currently just a link to the \ref cqasm-semantic-gen.hpp
- * "generated file", because no additional utility stuff is needed.
+ * This file is currently just a link to the \ref cqasm-v1-semantic-gen.hpp
+ * "generated file", aside from one forward declaration in
+ * \ref cqasm-v1-semantic-helper.hpp.
  */
 
 #pragma once

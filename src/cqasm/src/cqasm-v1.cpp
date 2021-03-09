@@ -3,12 +3,13 @@
  * Contains the non-generated source files and private header files for libqasm.
  *
  * \file
- * Implementation for \ref include/cqasm.hpp "cqasm.hpp".
+ * Implementation for \ref include/cqasm-v1.hpp "cqasm-v1.hpp".
  */
 
-#include "cqasm.hpp"
+#include "cqasm-v1.hpp"
 
 namespace cqasm {
+namespace v1 {
 
 /**
  * Parses and analyzes the given file with the default analyzer, dumping error
@@ -52,7 +53,7 @@ tree::One<semantic::Program> analyze_string(
  * into it.
  */
 analyzer::Analyzer default_analyzer(const std::string &max_version) {
-    cqasm::analyzer::Analyzer analyzer{max_version};
+    analyzer::Analyzer analyzer{max_version};
 
     // Register the default mappings (true, false, pi, x, y, z, etc.) and
     // functions (operators, things like trigonometric functions, etc.).
@@ -115,4 +116,5 @@ analyzer::Analyzer default_analyzer(const std::string &max_version) {
     return analyzer;
 }
 
+} // namespace v1
 } // namespace cqasm

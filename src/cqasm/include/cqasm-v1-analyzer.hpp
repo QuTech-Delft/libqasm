@@ -1,5 +1,5 @@
 /** \file
- * This file contains the \ref cqasm::analyzer::Analyzer "Analyzer" class and
+ * This file contains the \ref cqasm::v1::analyzer::Analyzer "Analyzer" class and
  * support classes, used to manage semantic analysis.
  *
  * While the Analyzer class itself only manages the semantic analysis phase,

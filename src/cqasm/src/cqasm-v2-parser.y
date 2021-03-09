@@ -92,7 +92,7 @@
     MatchBlock              *matb;
     Unit                    *unit;
     Version                 *vers;
-    Root                    *root;
+    Program                 *prog;
 };
 
 /* Typenames for nonterminals */
@@ -113,7 +113,7 @@
 %type <matb> MatchArms MatchBody
 %type <unit> ReturnType OptUnit Unit
 %type <vers> VersionBuilder Version
-%type <root> Root
+%type <prog> Program
 
 /* FIXME: no %destructor for the new-allocated nodes above, so the parser may
     leak, especially when it recovers from an error. */
@@ -860,20 +860,10 @@ Unit            : IntegerLiteral                                                
                                                                                     $$->as_colon()->lhs.set_raw($1);
                                                                                     $$->as_colon()->rhs.set_raw($3);
                                                                                 }
-                | Unit ',' Unit                                                 { NEW($$, Comma);
-                                                                                    $$->as_comma()->lhs.set_raw($1);
-                                                                                    $$->as_comma()->rhs.set_raw($3);
-                                                                                }
-                | Unit ','                                                      { NEW($$, TrailingComma);
-                                                                                    $$->as_trailing_semicolon()->data.set_raw($1);
-                                                                                }
-                | Unit ';' Unit                                                 { NEW($$, Semicolon);
-                                                                                    $$->as_semicolon()->lhs.set_raw($1);
-                                                                                    $$->as_semicolon()->rhs.set_raw($3);
-                                                                                }
-                | Unit ';'                                                      { NEW($$, TrailingSemicolon);
-                                                                                    $$->as_trailing_semicolon()->data.set_raw($1);
-                                                                                }
+                | Unit ',' Unit                                                 { FROM($$, flatten<CommaSeparated>($1, $3)); }
+                | Unit ','                                                      { FROM($$, flatten<CommaSeparated>($1)); }
+                | Unit ';' Unit                                                 { FROM($$, flatten<SemicolonSeparated>($1, $3)); }
+                | Unit ';'                                                      { FROM($$, flatten<SemicolonSeparated>($1)); }
 
                 /* Error recovery marker */
                 | BAD_NUMBER                                                    { NEW($$, ErroneousUnit); }
@@ -895,12 +885,14 @@ Version         : VersionBuilder                                                
                 ;
 
 /* Toplevel */
-Root            : Version Unit END_OF_FILE                                      { NEW($$, Program);
+Program         : Version Unit                                                  { NEW($$, Program);
                                                                                     $$->as_program()->version.set_raw($1);
                                                                                     $$->as_program()->data.set_raw($2);
                                                                                 }
-                | error                                                         { NEW($$, ErroneousProgram); }
                 ;
+
+Root            : Program                                                       { helper.result.root.set_raw($1); }
+                | error                                                         { helper.result.root.set_raw(new ErroneousProgram()); }
 
 %%
 

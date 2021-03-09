@@ -868,41 +868,19 @@ unit {
 
         }
 
-        # Two units separated by a comma.
-        comma {
+        # A list of comma-separated units.
+        comma_separated {
 
-            # The unit to the left of the separating comma.
-            lhs: One<unit>;
-
-            # The unit to the right of the separating comma.
-            rhs: One<unit>;
+            # The comma-separated elements.
+            elements: Many<unit>;
 
         }
 
-        # A unit with a comma suffix.
-        trailing_comma {
+        # A list of semicolon-separated units.
+        semicolon_separated {
 
-            # The suffixed unit.
-            data: One<unit>;
-
-        }
-
-        # Two units separated by a semicolon.
-        semicolon {
-
-            # The unit to the left of the separating semicolon.
-            lhs: One<unit>;
-
-            # The unit to the right of the separating semicolon.
-            rhs: One<unit>;
-
-        }
-
-        # A unit with a semicolon suffix.
-        trailing_semicolon {
-
-            # The suffixed unit.
-            data: One<unit>;
+            # The semicolon-separated elements.
+            elements: Many<unit>;
 
         }
 

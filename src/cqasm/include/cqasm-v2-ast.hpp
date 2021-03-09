@@ -38,6 +38,53 @@ public:
 
 };
 
+/**
+ * Flattens a comma-separated or semicolon-separated unit to make the AST a bit
+ * more readable. lhs and rhs represent the left-hand side and right-hand side
+ * of the comma or semicolon, of which the latter may be nullptr to represent
+ * trailing commas/semicolons. A unit of the specified type will be returned,
+ * containing the one-level flattened list of all comma/semicolon-separated
+ * elements appearing on the LHS and RHS. That is, when LHS and/or RHS are not
+ * already comma/semicolon-separated units, they are added to the result
+ * directly; otherwise, the result is extended with their elements.
+ *
+ * This function assumes ownership of the given new-allocated unit pointers and
+ * returns ownership to a new-allocated unit pointer. The returned pointer may
+ * be lhs, rhs, or a new unit.
+ */
+template <class T>
+Unit *flatten(Unit *lhs, Unit *rhs = nullptr) {
+    if (auto lhs_cast = dynamic_cast<T*>(lhs)) {
+        if (!rhs) {
+            return lhs;
+        } else if (auto rhs_cast = dynamic_cast<T*>(rhs)) {
+            lhs_cast->elements.extend(rhs_cast->elements);
+            delete rhs;
+            return lhs;
+        } else {
+            lhs_cast->elements.add_raw(rhs);
+            return lhs;
+        }
+    } else {
+        if (!rhs) {
+            auto retval = new T();
+            retval->elements.add_raw(lhs);
+            return retval;
+        } else if (auto rhs_cast = dynamic_cast<T*>(rhs)) {
+            auto retval = new T();
+            retval->elements.add_raw(lhs);
+            retval->elements.extend(rhs_cast->elements);
+            delete rhs;
+            return retval;
+        } else {
+            auto retval = new T();
+            retval->elements.add_raw(lhs);
+            retval->elements.add_raw(rhs);
+            return retval;
+        }
+    }
+}
+
 } // namespace ast
 } // namespace v2
 } // namespace cqasm
