@@ -99,8 +99,9 @@
 (include)                                           WITHOUT_STR(KW_INCLUDE);
 
     /* Keywords for various kinds of definitions */
-(generic)                                           WITHOUT_STR(KW_GENERIC);
+(template)                                          WITHOUT_STR(KW_TEMPLATE);
 (parameter)                                         WITHOUT_STR(KW_PARAMETER);
+(qubit)                                             WITHOUT_STR(KW_QUBIT);
 (var)                                               WITHOUT_STR(KW_VAR);
 (const)                                             WITHOUT_STR(KW_CONST);
 (alias)                                             WITHOUT_STR(KW_ALIAS);

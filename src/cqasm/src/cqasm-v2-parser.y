@@ -88,7 +88,11 @@
     Modifiers               *mods;
     AnnotationData          *adat;
     Annotations             *anns;
+    IfElifElseBlock         *ieeb;
+    MatchBlock              *matb;
     Unit                    *unit;
+    Version                 *vers;
+    Root                    *root;
 };
 
 /* Typenames for nonterminals */
@@ -105,7 +109,11 @@
 %type <mods> Modifiers
 %type <adat> AnnotationData
 %type <anns> Annotations
+%type <ieeb> IfElif
+%type <matb> MatchArms MatchBody
 %type <unit> ReturnType OptUnit Unit
+%type <vers> VersionBuilder Version
+%type <root> Root
 
 /* FIXME: no %destructor for the new-allocated nodes above, so the parser may
     leak, especially when it recovers from an error. */
@@ -117,8 +125,9 @@
 %token KW_INCLUDE
 
 /* Definition and declaration keywords */
-%token KW_GENERIC
+%token KW_TEMPLATE
 %token KW_PARAMETER
+%token KW_QUBIT
 %token KW_VAR
 %token KW_CONST
 %token KW_ALIAS
@@ -221,9 +230,11 @@
 comes first. */
 %nonassoc OPT_UNIT
 %left ';'                                    /* Semicolon operator */
-%nonassoc KW_VAR KW_CONST KW_ALIAS KW_TYPE   /* Definitions */
-          KW_FUNCTION
+%nonassoc KW_QUBIT KW_VAR KW_CONST KW_ALIAS  /* Definitions */
+          KW_TYPE KW_FUNCTION KW_PARAMETER
+          KW_INCLUDE
 %left ','                                    /* Comma operator */
+%nonassoc KW_TEMPLATE                        /* Template modifier for function parameters */
 %right KW_COND KW_IF KW_ELIF KW_ELSE         /* Flow-control constructs */
        KW_MATCH KW_WHEN KW_FOR KW_FOREACH
        KW_WHILE KW_REPEAT KW_UNTIL KW_SEND
@@ -402,20 +413,40 @@ ReturnType      :                                       %prec RETURN_TYPE       
 
 /* Control-flow block helper rules. */
 IfElif          : Modifiers KW_IF Annotations '(' Unit ')' ReturnType Unit
-                                                        %prec KW_IF             {}
-                | IfElif KW_ELIF '(' Unit ')' Unit
-                                                        %prec KW_ELIF           {}
+                                                        %prec KW_IF             { NEW($$, IfElifElseBlock);
+                                                                                    $$->modifiers.set_raw($1);
+                                                                                    $$->annotations.set_raw($3);
+                                                                                    $$->return_type.set_raw($7);
+                                                                                    $$->arms.add_raw(new MatchArm());
+                                                                                    $$->arms[0]->condition.set_raw($5);
+                                                                                    $$->arms[0]->body.set_raw($8);
+                                                                                }
+                | IfElif KW_ELIF '(' Unit ')' Unit      %prec KW_ELIF           { FROM($$, $1);
+                                                                                    auto arm = new MatchArm();
+                                                                                    arm->condition.set_raw($4);
+                                                                                    arm->body.set_raw($6);
+                                                                                    $$->arms.add_raw(arm);
+                                                                                }
                 ;
 
-MatchCases      :                                                               {}
-                | MatchCases KW_WHEN Unit ARROW Unit                            {}
+MatchArms       :                                                               { NEW($$, MatchBlock); }
+                | MatchArms KW_WHEN Unit ARROW Unit                             { FROM($$, $1);
+                                                                                    auto arm = new MatchArm();
+                                                                                    arm->condition.set_raw($3);
+                                                                                    arm->body.set_raw($5);
+                                                                                    $$->arms.add_raw(arm);
+                                                                                }
                 ;
 
-MatchBody       : MatchCases                                                    {}
-                | MatchCases KW_ELSE Unit                                       {}
+MatchBody       : MatchArms                                                     { FROM($$, $1);
+                                                                                    $$->otherwise.set_raw(new Void());
+                                                                                }
+                | MatchArms KW_ELSE Unit                                        { FROM($$, $1);
+                                                                                    $$->otherwise.set_raw($3);
+                                                                                }
                 ;
 
-LoopLabel       :                                                               { NEW($$, Identifier); }
+LoopLabel       :                                                               { $$ = nullptr; }
                 | '.' SimpleIdent                                               { FROM($$, $2); }
                 ;
 
@@ -647,17 +678,120 @@ Unit            : IntegerLiteral                                                
                                                                                     $$->as_binary_mutating_operator()->value.set_raw($3);
                                                                                 }
 
-                /* Block unit */
-                | '{' OptUnit '}'                                               { NEW($$, Block);
-                                                                                    $$->as_block()->data.set_raw($2);
-                                                                                }
-
-                /* Functions */
+                /* Functions calls */
                 | Unit '(' OptUnit ')'                                          { NEW($$, FunctionCall);
                                                                                     $$->as_function_call()->function.set_raw($1);
                                                                                     $$->as_function_call()->arguments.set_raw($3);
                                                                                 }
 
+                /* Block unit */
+                | '{' OptUnit '}'                                               { NEW($$, Block);
+                                                                                    $$->as_block()->data.set_raw($2);
+                                                                                }
+
+                /* Conditional units */
+                | IfElif                                %prec KW_IF             { FROM($$, $1);
+                                                                                    $$->as_if_elif_else_block()->otherwise.set_raw(new Void());
+                                                                                }
+                | IfElif KW_ELSE Unit                   %prec KW_ELSE           { FROM($$, $1);
+                                                                                    $$->as_if_elif_else_block()->otherwise.set_raw($3);
+                                                                                }
+                | KW_COND Annotations '(' Unit ')' Unit %prec KW_COND           { NEW($$, IfElifElseBlock);
+                                                                                    auto ieeb = static_cast<IfElifElseBlock*>($$);
+                                                                                    ieeb->modifiers.set_raw(new Modifiers());
+                                                                                    ieeb->modifiers->scope.set_raw(new ScopeLocal());
+                                                                                    ieeb->modifiers->lifetime.set_raw(new LifetimeAutomatic());
+                                                                                    ieeb->modifiers->implementation.set_raw(new ImplementationPrimitive());
+                                                                                    ieeb->annotations.set_raw($2);
+                                                                                    ieeb->return_type.set_raw(new Void());
+                                                                                    ieeb->arms.add_raw(new MatchArm());
+                                                                                    ieeb->arms[0]->condition.set_raw($4);
+                                                                                    ieeb->arms[0]->body.set_raw($6);
+                                                                                    ieeb->otherwise.set_raw(new Void());
+                                                                                }
+                | Modifiers KW_MATCH Annotations '(' Unit ')' ReturnType '{' MatchBody '}'
+                                                        %prec KW_MATCH          { FROM($$, $9);
+                                                                                    auto matb = static_cast<MatchBlock*>($$);
+                                                                                    matb->modifiers.set_raw($1);
+                                                                                    matb->annotations.set_raw($3);
+                                                                                    matb->value.set_raw($5);
+                                                                                    matb->return_type.set_raw($7);
+                                                                                }
+
+                /* Looping units */
+                | Modifiers KW_FOR LoopLabel Annotations '(' Unit ')' Unit
+                                                        %prec KW_FOR            { NEW($$, ForLoop);
+                                                                                    $$->as_for_loop()->modifiers.set_raw($1);
+                                                                                    if ($3) $$->as_for_loop()->label.set_raw($3);
+                                                                                    $$->as_for_loop()->annotations.set_raw($4);
+                                                                                    $$->as_for_loop()->control.set_raw($6);
+                                                                                    $$->as_for_loop()->body.set_raw($8);
+                                                                                }
+                | Modifiers KW_FOREACH LoopLabel Annotations '(' Unit ')' Unit
+                                                        %prec KW_FOREACH        { NEW($$, ForeachLoop);
+                                                                                    $$->as_foreach_loop()->modifiers.set_raw($1);
+                                                                                    if ($3) $$->as_foreach_loop()->label.set_raw($3);
+                                                                                    $$->as_foreach_loop()->annotations.set_raw($4);
+                                                                                    $$->as_foreach_loop()->control.set_raw($6);
+                                                                                    $$->as_foreach_loop()->body.set_raw($8);
+                                                                                }
+                | Modifiers KW_WHILE LoopLabel Annotations '(' Unit ')' Unit
+                                                        %prec KW_WHILE          { NEW($$, WhileLoop);
+                                                                                    $$->as_while_loop()->modifiers.set_raw($1);
+                                                                                    if ($3) $$->as_while_loop()->label.set_raw($3);
+                                                                                    $$->as_while_loop()->annotations.set_raw($4);
+                                                                                    $$->as_while_loop()->control.set_raw($6);
+                                                                                    $$->as_while_loop()->body.set_raw($8);
+                                                                                }
+                | Modifiers KW_REPEAT LoopLabel Annotations Unit KW_UNTIL '(' Unit ')'
+                                                        %prec KW_REPEAT         { NEW($$, RepeatUntilLoop);
+                                                                                    $$->as_repeat_until_loop()->modifiers.set_raw($1);
+                                                                                    if ($3) $$->as_repeat_until_loop()->label.set_raw($3);
+                                                                                    $$->as_repeat_until_loop()->annotations.set_raw($4);
+                                                                                    $$->as_repeat_until_loop()->control.set_raw($8);
+                                                                                    $$->as_repeat_until_loop()->body.set_raw($5);
+                                                                                }
+
+                /* Special control-flow statements */
+                | KW_GOTO SimpleIdent                   %prec KW_GOTO           { NEW($$, GotoStatement);
+                                                                                    $$->as_goto_statement()->target.set_raw($2);
+                                                                                }
+                | KW_RETURN OptUnit                     %prec KW_RETURN         { NEW($$, ReturnStatement);
+                                                                                    $$->as_return_statement()->value.set_raw($2);
+                                                                                }
+                | KW_BREAK                              %prec KW_BREAK          { NEW($$, BreakStatement); }
+                | KW_BREAK SimpleIdent                  %prec KW_BREAK          { NEW($$, BreakStatement);
+                                                                                    if ($2) $$->as_break_statement()->label.set_raw($2);
+                                                                                }
+                | KW_CONTINUE                           %prec KW_CONTINUE       { NEW($$, ContinueStatement); }
+                | KW_CONTINUE SimpleIdent               %prec KW_CONTINUE       { NEW($$, ContinueStatement);
+                                                                                    if ($2) $$->as_continue_statement()->label.set_raw($2);
+                                                                                }
+                | KW_SEND '(' Unit ')'                  %prec KW_SEND           { NEW($$, SendStatement);
+                                                                                    $$->as_send_statement()->data.set_raw($3);
+                                                                                }
+                | KW_RECEIVE '(' Unit ')'               %prec KW_RECEIVE        { NEW($$, ReceiveStatement);
+                                                                                    $$->as_receive_statement()->expected_type.set_raw($3);
+                                                                                }
+                | Modifiers KW_PRINT '(' OptUnit ')'    %prec KW_PRINT          { NEW($$, PrintStatement);
+                                                                                    $$->as_print_statement()->modifiers.set_raw($1);
+                                                                                    $$->as_print_statement()->data.set_raw($4);
+                                                                                }
+                | Modifiers KW_ABORT '(' OptUnit ')'    %prec KW_ABORT          { NEW($$, AbortStatement);
+                                                                                    $$->as_abort_statement()->modifiers.set_raw($1);
+                                                                                    $$->as_abort_statement()->data.set_raw($4);
+                                                                                }
+
+                /* Annotation units */
+                | Unit '@' AnnotationData                                       { NEW($$, Annotation);
+                                                                                    $$->as_annotation()->target.set_raw($1);
+                                                                                    $$->as_annotation()->data.set_raw($3);
+                                                                                }
+                | KW_PRAGMA AnnotationData              %prec KW_PRAGMA         { NEW($$, Pragma);
+                                                                                    $$->as_pragma()->data.set_raw($2);
+                                                                                }
+
+                /* Function definitions */
                 | KW_FUTURE KW_FUNCTION Identifier '(' OptUnit ')' ReturnType
                                                         %prec KW_FUNCTION       { NEW($$, FunctionDeclaration);
                                                                                     $$->as_function_declaration()->name.set_raw($3);
@@ -675,6 +809,10 @@ Unit            : IntegerLiteral                                                
                                                                                 }
 
                 /* Object definitions */
+                | Modifiers KW_QUBIT Unit                                       { NEW($$, QubitDefinition);
+                                                                                    $$->as_qubit_definition()->modifiers.set_raw($1);
+                                                                                    $$->as_qubit_definition()->data.set_raw($3);
+                                                                                }
                 | Modifiers KW_VAR Unit                                         { NEW($$, VariableDefinition);
                                                                                     $$->as_variable_definition()->modifiers.set_raw($1);
                                                                                     $$->as_variable_definition()->data.set_raw($3);
@@ -688,44 +826,36 @@ Unit            : IntegerLiteral                                                
                                                                                     $$->as_alias_definition()->data.set_raw($3);
                                                                                 }
 
-                /* Type definition units */
-                | Modifiers KW_TYPE Identifier '=' Unit '{' OptUnit '}'         {}
-                | Modifiers KW_TYPE Identifier ':' Unit                         {}
+                /* Type definitions */
+                | Modifiers KW_TYPE Identifier ':' Unit                         { NEW($$, SumTypeDefinition);
+                                                                                    $$->as_sum_type_definition()->modifiers.set_raw($1);
+                                                                                    $$->as_sum_type_definition()->name.set_raw($3);
+                                                                                    $$->as_sum_type_definition()->values.set_raw($5);
+                                                                                }
+                | Modifiers KW_TYPE Identifier '=' Unit '{' OptUnit '}'         { NEW($$, DerivedTypeDefinition);
+                                                                                    $$->as_derived_type_definition()->modifiers.set_raw($1);
+                                                                                    $$->as_derived_type_definition()->name.set_raw($3);
+                                                                                    $$->as_derived_type_definition()->base.set_raw($5);
+                                                                                    $$->as_derived_type_definition()->definitions.set_raw($7);
+                                                                                }
 
-                /* Conditional units */
-                | IfElif                                %prec KW_IF             {}
-                | IfElif KW_ELSE Unit                   %prec KW_ELSE           {}
-                | KW_COND Annotations '(' Unit ')' Unit %prec KW_COND           {}
-                | Modifiers KW_MATCH Annotations '(' Unit ')' ReturnType '{' MatchBody '}'
-                                                        %prec KW_MATCH          {}
-
-                /* Looping units */
-                | Modifiers KW_FOR LoopLabel Annotations '(' Unit ')' Unit
-                                                        %prec KW_FOR            {}
-                | Modifiers KW_FOREACH LoopLabel Annotations '(' Unit ')' Unit
-                                                        %prec KW_FOREACH        {}
-                | Modifiers KW_WHILE LoopLabel Annotations '(' Unit ')' Unit
-                                                        %prec KW_WHILE          {}
-                | Modifiers KW_REPEAT LoopLabel Annotations Unit KW_UNTIL '(' Unit ')'
-                                                        %prec KW_REPEAT         {}
-
-                /* Special statements */
-                | KW_GOTO SimpleIdent                   %prec KW_GOTO           {}
-                | KW_RETURN OptUnit                     %prec KW_RETURN         {}
-                | KW_BREAK                              %prec KW_BREAK          {}
-                | KW_BREAK SimpleIdent                  %prec KW_BREAK          {}
-                | KW_CONTINUE                           %prec KW_CONTINUE       {}
-                | KW_CONTINUE SimpleIdent               %prec KW_CONTINUE       {}
-                | KW_SEND '(' Unit ')'                  %prec KW_SEND           {}
-                | KW_RECEIVE '(' Unit ')'               %prec KW_RECEIVE        {}
-                | Modifiers KW_PRINT '(' Unit ')'       %prec KW_PRINT          {}
-                | Modifiers KW_ABORT '(' OptUnit ')'    %prec KW_ABORT          {}
-
-                /* Annotation units */
-                | Unit '@' AnnotationData                                       {}
-                | KW_PRAGMA AnnotationData              %prec KW_PRAGMA         {}
+                /* File header definitions */
+                | KW_PARAMETER Unit                                             { NEW($$, ParameterDefinition);
+                                                                                    $$->as_parameter_definition()->data.set_raw($2);
+                                                                                }
+                | KW_INCLUDE StringLiteral                                      { NEW($$, IncludeDirective);
+                                                                                    $$->as_include_directive()->path.set_raw($2);
+                                                                                    $$->as_include_directive()->associations.set_raw(new Void());
+                                                                                }
+                | KW_INCLUDE StringLiteral '(' Unit ')'                         { NEW($$, IncludeDirective);
+                                                                                    $$->as_include_directive()->path.set_raw($2);
+                                                                                    $$->as_include_directive()->associations.set_raw($4);
+                                                                                }
 
                 /* Grammatical units (semantics are not context-free) */
+                | KW_TEMPLATE Unit                                              { NEW($$, TemplateMarker);
+                                                                                    $$->as_template_marker()->data.set_raw($2);
+                                                                                }
                 | Unit ':' Unit                                                 { NEW($$, Colon);
                                                                                     $$->as_colon()->lhs.set_raw($1);
                                                                                     $$->as_colon()->rhs.set_raw($3);
@@ -745,11 +875,31 @@ Unit            : IntegerLiteral                                                
                                                                                     $$->as_trailing_semicolon()->data.set_raw($1);
                                                                                 }
 
+                /* Error recovery marker */
+                | BAD_NUMBER                                                    { NEW($$, ErroneousUnit); }
+                | BAD_CHARACTER                                                 { NEW($$, ErroneousUnit); }
+                | error                                                         { NEW($$, ErroneousUnit); }
                 ;
 
-/* Toplevel. */
-Root            : Unit                                                          {}
-                | error                                                         {}
+/* Version header */
+VersionBuilder  : KW_VERSION DecIntLiteral                                      { NEW($$, Version);
+                                                                                    $$->items.add_raw($2);
+                                                                                }
+                | Version '.' DecIntLiteral                                     { FROM($$, $1);
+                                                                                    $$->items.add_raw($3);
+                                                                                }
+                ;
+
+Version         : VersionBuilder                                                { FROM($$, $1); }
+                | VersionBuilder ';'                                            { FROM($$, $1); }
+                ;
+
+/* Toplevel */
+Root            : Version Unit END_OF_FILE                                      { NEW($$, Program);
+                                                                                    $$->as_program()->version.set_raw($1);
+                                                                                    $$->as_program()->data.set_raw($2);
+                                                                                }
+                | error                                                         { NEW($$, ErroneousProgram); }
                 ;
 
 %%
