@@ -9,6 +9,7 @@
 #pragma once
 
 #include "cqasm-v1.hpp"
+#include "cqasm-v2.hpp"
 
 /**
  * Toplevel namespace with entry points for the new API.

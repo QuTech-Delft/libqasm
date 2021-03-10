@@ -12,6 +12,11 @@
  * Toplevel namespace with entry points for the new API.
  */
 namespace cqasm {
+
+/**
+ * Namespace for the "new" cQASM 1.x API. Its contents are pulled into the main
+ * cQASM namespace when you include "cqasm.hpp" for compatibility.
+ */
 namespace v1 {
 
 /**

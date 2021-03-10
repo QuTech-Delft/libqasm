@@ -37,8 +37,7 @@
 
 %x MODE_MULTILINE_COMMENT
 %x MODE_VERSION
-%x MODE_BODY
-%x MODE_UNEXPECTED_EOF
+%x MODE_IGNORE_THE_REST
 
 %%
 
@@ -47,64 +46,32 @@
 %}
 
 <INITIAL>{
-
-
-    /*=======================================================================*/
-    /* WHITESPACE MANAGEMENT                                                 */
-    /*=======================================================================*/
-
-    /* Newline and single-line comment */
 (\n|\r\n?)                                          LOCATION_LINE; DELETE;
-
-    /* Semicolons function exactly the same way as newlines */
-;                                                   DELETE;
-
-    /* And then there's the opposite, the escaped newline */
-\\(\n|\r\n?)                                        LOCATION_LINE; DELETE;
-
-    /* Gobble up comments */
 #.*                                                 DELETE;
 "/*"                                                BEGIN(MODE_MULTILINE_COMMENT); DELETE;
-}
-<MODE_MULTILINE_COMMENT>{
-"*/"                                                BEGIN(INITIAL); DELETE;
-(\n|\r\n?)                                          LOCATION_LINE; DELETE;
-.                                                   DELETE;
-<<EOF>>                                             BEGIN(MODE_UNEXPECTED_EOF); WITHOUT_STR(END_OF_FILE);
-}
-<INITIAL>{
-
-
-    /* Gobble up whitespace */
 [ \t]+                                              DELETE;
-
-
-    /*=======================================================================*/
-    /* VERSION STATEMENT                                                     */
-    /*=======================================================================*/
-
-    /* This is treated separately to avoid conflicts with float literals */
 (?i:version)                                        BEGIN(MODE_VERSION); WITHOUT_STR(VERSION);
 (cQASM)                                             BEGIN(MODE_VERSION); WITHOUT_STR(VERSION);
+.                                                   WITHOUT_STR(UNKNOWN);
 }
+
+<MODE_MULTILINE_COMMENT>{
+(\n|\r\n?)                                          LOCATION_LINE; DELETE;
+"*/"                                                BEGIN(INITIAL); DELETE;
+.                                                   DELETE;
+<<EOF>>                                             BEGIN(MODE_IGNORE_THE_REST); WITHOUT_STR(END_OF_FILE);
+}
+
 <MODE_VERSION>{
-(\n|\r\n?)                                          LOCATION_LINE; BEGIN(MODE_BODY); DELETE;
-;                                                   BEGIN(MODE_BODY); DELETE;
+(\n|\r\n?)                                          LOCATION_LINE; BEGIN(MODE_IGNORE_THE_REST); DELETE;
+;                                                   BEGIN(MODE_IGNORE_THE_REST); DELETE;
 [ \t]+                                              DELETE;
 [0-9]+                                              WITH_STR(INT_LITERAL);
 \.                                                  OPERATOR;
 .                                                   WITHOUT_STR(UNKNOWN);
 }
-<MODE_BODY>{
-.*                                                  DELETE;
-}
-<INITIAL>{
 
-    /*=======================================================================*/
-    /* DEFAULT                                                               */
-    /*=======================================================================*/
-
-    /* Catch any other character as a single-character lexeme */
-.                                                   WITHOUT_STR(UNKNOWN);
-
+<MODE_IGNORE_THE_REST>{
+(\n|\r\n?)                                          LOCATION_LINE; DELETE;
+.                                                   DELETE;
 }

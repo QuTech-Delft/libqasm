@@ -348,10 +348,37 @@ AnalysisResult Analyzer::analyze(const parser::ParseResult &parse_result) const 
 }
 
 /**
+ * Parses and analyzes using the given version and file parser closures.
+ */
+AnalysisResult Analyzer::analyze(
+    const std::function<version::Version()> &version_parser,
+    const std::function<parser::ParseResult()> &file_parser
+) const {
+    AnalysisResult result;
+    try {
+        auto file_version = version_parser();
+        if (file_version > max_version) {
+            std::ostringstream ss;
+            ss << "cQASM file version is " << file_version << ", but at most ";
+            ss << max_version << " is supported here";
+            result.errors.push_back(ss.str());
+            return result;
+        }
+    } catch (error::AnalysisError &e) {
+        result.errors.push_back(e.get_message());
+        return result;
+    }
+    return analyze(file_parser());
+}
+
+/**
  * Parses and analyzes the given file.
  */
 AnalysisResult Analyzer::analyze(const std::string &filename) const {
-    return analyze(parser::parse_file(filename));
+    return analyze(
+        [=](){ return version::parse_file(filename); },
+        [=](){ return parser::parse_file(filename); }
+    );
 }
 
 /**
@@ -359,7 +386,10 @@ AnalysisResult Analyzer::analyze(const std::string &filename) const {
  * argument will be used only for error messages.
  */
 AnalysisResult Analyzer::analyze(FILE *file, const std::string &filename) const {
-    return analyze(parser::parse_file(file, filename));
+    return analyze(
+        [=](){ return version::parse_file(file, filename); },
+        [=](){ return parser::parse_file(file, filename); }
+    );
 }
 
 /**
@@ -367,7 +397,10 @@ AnalysisResult Analyzer::analyze(FILE *file, const std::string &filename) const 
  * will be used only for error messages.
  */
 AnalysisResult Analyzer::analyze_string(const std::string &data, const std::string &filename) const {
-    return analyze(parser::parse_string(data, filename));
+    return analyze(
+        [=](){ return version::parse_string(data, filename); },
+        [=](){ return parser::parse_string(data, filename); }
+    );
 }
 
 /**

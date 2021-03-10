@@ -260,4 +260,6 @@
 
 }
 <MODE_UNEXPECTED_EOF>{
+(\n|\r\n?)                                          LOCATION_LINE; DELETE;
+.                                                   DELETE;
 }

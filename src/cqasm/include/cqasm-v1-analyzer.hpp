@@ -10,6 +10,7 @@
 #pragma once
 
 #include <cstdio>
+#include <functional>
 #include "cqasm-v1-ast.hpp"
 #include "cqasm-v1-semantic.hpp"
 #include "cqasm-v1-resolver.hpp"
@@ -300,10 +301,19 @@ public:
     AnalysisResult analyze(const ast::Program &program) const;
 
     /**
-     * Analyzes the given parse result. If there are parse errors, they are copied
-     * into the AnalysisResult error list, and the root node will be empty.
+     * Analyzes the given parse result. If there are parse errors, they are
+     * copied into the AnalysisResult error list, and the root node will be
+     * empty.
      */
     AnalysisResult analyze(const parser::ParseResult &parse_result) const;
+
+    /**
+     * Parses and analyzes using the given version and file parser closures.
+     */
+    AnalysisResult analyze(
+        const std::function<version::Version()> &version_parser,
+        const std::function<parser::ParseResult()> &file_parser
+    ) const;
 
     /**
      * Parses and analyzes the given file.

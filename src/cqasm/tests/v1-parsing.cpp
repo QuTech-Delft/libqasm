@@ -48,7 +48,15 @@ public:
         // Parse the test input file.
         std::string input;
         ASSERT_TRUE(read_file(path + "/input.cq", input));
-        auto parse_result = cqasm::parser::parse_string(input, "input.cq");
+        cqasm::parser::ParseResult parse_result;
+        auto version = cqasm::version::parse_string(input, "input.cq");
+        if (version > cqasm::version::Version("1.1")) {
+            std::ostringstream ss;
+            ss << "detected version " << version;
+            parse_result.errors.push_back(ss.str());
+        } else {
+            parse_result = cqasm::parser::parse_string(input, "input.cq");
+        }
 
         // Check the parse result.
         std::ostringstream ss;
@@ -182,7 +190,7 @@ int main(int argc, char** argv) {
     // following structure:
     //
     // <CWD>
-    //  '- parsing
+    //  '- v1-parsing
     //      |- <suite-name>                   test suite directory
     //      |   |- <test-name>                test case directory
     //      |   |   |- input.cq               the input file
@@ -197,7 +205,7 @@ int main(int argc, char** argv) {
     //      |   :
     //      |- ...                            other test suite directories
     //      :
-    DIR *parsing_dir = opendir("parsing");
+    DIR *parsing_dir = opendir("v1-parsing");
     if (!parsing_dir) {
         throw std::runtime_error("failed to open dir for parsing tests");
     }
@@ -206,7 +214,7 @@ int main(int argc, char** argv) {
             continue;
         }
         auto suite_name = std::string(parsing_dir_ent->d_name);
-        auto suite_path = "parsing/" + suite_name;
+        auto suite_path = "v1-parsing/" + suite_name;
         DIR *suite_dir = opendir(suite_path.c_str());
         if (!suite_dir) {
             continue;

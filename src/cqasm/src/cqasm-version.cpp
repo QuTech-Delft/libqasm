@@ -14,6 +14,9 @@ namespace version {
  * Constructs a version object from a string, defaulting to 1.0.
  */
 Version::Version(const std::string &version) {
+    if (version.empty()) {
+        return;
+    }
     size_t next, last = 0;
     while ((next = version.find('.', last)) != std::string::npos) {
         push_back(std::stoi(version.substr(last, next - last)));
@@ -111,8 +114,7 @@ ParseHelper::ParseHelper(
     const std::string &filename,
     const std::string &data,
     bool use_file
-) : filename(filename) {
-    version.clear();
+) : filename(filename), version("") {
 
     // Create the scanner.
     if (!construct()) return;
@@ -144,8 +146,7 @@ ParseHelper::ParseHelper(
 ParseHelper::ParseHelper(
     const std::string &filename,
     FILE *fptr
-) : filename(filename) {
-    version.clear();
+) : filename(filename), version("") {
 
     // Create the scanner.
     if (!construct()) return;
