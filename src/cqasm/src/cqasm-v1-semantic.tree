@@ -13,6 +13,11 @@ include "cqasm-v1-primitives.hpp"
 include "cqasm-v1-values.hpp"
 include "cqasm-v1-error-model.hpp"
 include "cqasm-v1-instruction.hpp"
+import cqasm.v1.primitives
+import cqasm.v1.values
+import cqasm.v1.types
+import cqasm.v1.error_model
+import cqasm.v1.instruction
 
 // Initialization function to use to construct default values for the tree base
 // classes and primitives.

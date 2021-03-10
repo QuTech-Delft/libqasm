@@ -56,6 +56,9 @@ namespace primitives {
 
 template <>
 void serialize(const error_model::ErrorModelRef &obj, ::tree::cbor::MapWriter &map) {
+    if (obj.empty()) {
+        return;
+    }
     map.append_string("n", obj->name);
     auto aw = map.append_array("t");
     for (const auto &t : obj->param_types) {
@@ -66,6 +69,9 @@ void serialize(const error_model::ErrorModelRef &obj, ::tree::cbor::MapWriter &m
 
 template <>
 error_model::ErrorModelRef deserialize(const ::tree::cbor::MapReader &map) {
+    if (!map.count("n")) {
+        return {};
+    }
     auto model = tree::make<error_model::ErrorModel>(map.at("n").as_string(), "");
     auto ar = map.at("t").as_array();
     for (size_t i = 0; i < ar.size(); i++) {

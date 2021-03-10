@@ -63,6 +63,7 @@ class build_ext(_build_ext):
         # Figure out how setuptools wants to name the extension file and where
         # it wants to place it.
         target = os.path.abspath(self.get_ext_fullpath('libQasm._libQasm'))
+        cqasm_target = os.path.abspath(self.get_ext_fullpath('cqasm._cqasm'))
 
         # Build the Python module and install it into module_dir.
         if not os.path.exists(cbuild_dir):
@@ -74,6 +75,7 @@ class build_ext(_build_ext):
                 ['-DCMAKE_INSTALL_PREFIX=' + prefix_dir]
                 ['-DLIBQASM_BUILD_PYTHON=YES']
                 ['-DLIBQASM_PYTHON_DIR=' + os.path.dirname(target)]
+                ['-DLIBQASM_CQASM_PYTHON_DIR=' + os.path.dirname(cqasm_target)]
                 ['-DLIBQASM_PYTHON_EXT=' + os.path.basename(target)]
 
                 # The Python library needs the compatibility headers.
@@ -187,7 +189,7 @@ setup(
         'Topic :: Scientific/Engineering'
     ],
 
-    packages = ['libQasm'],
+    packages = ['libQasm', 'cqasm', 'cqasm.v1', 'cqasm.v2'],
     package_dir = {'': 'python'},
 
     # NOTE: the library build process is completely overridden to let CMake

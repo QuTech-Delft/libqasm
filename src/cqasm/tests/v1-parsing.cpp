@@ -176,6 +176,10 @@ public:
         EXPECT_TRUE(read_file(path + "/semantic.golden.txt", semantic_golden));
         EXPECT_TRUE(semantic_result == semantic_golden);
 
+        if (analysis_result.errors.empty()) {
+            ::tree::base::serialize(analysis_result.root);
+        }
+
     }
 
 };

@@ -20,13 +20,13 @@ using namespace cqasm;
 V1Analyzer::V1Analyzer(const std::string &max_version, bool without_defaults) {
     if (without_defaults) {
         a = std::unique_ptr<v1::analyzer::Analyzer>(
-            new v1::analyzer::Analyzer(v1::default_analyzer(max_version))
-        );
-    } else {
-        a = std::unique_ptr<v1::analyzer::Analyzer>(
             new v1::analyzer::Analyzer(max_version)
         );
         a->register_default_functions_and_mappings();
+    } else {
+        a = std::unique_ptr<v1::analyzer::Analyzer>(
+            new v1::analyzer::Analyzer(v1::default_analyzer(max_version))
+        );
     }
 }
 

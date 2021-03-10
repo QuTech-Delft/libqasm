@@ -173,8 +173,38 @@ else()
     )
 endif()
 
-# Install the generated wrapper module.
+# Install the generated files.
 install(
     FILES "${CMAKE_SWIG_OUTDIR}/libQasm.py"
     DESTINATION "${LIBQASM_PYTHON_DIR}"
+)
+install(
+    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/cqasm-v1-ast-gen.py"
+    DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v1"
+    RENAME "ast.py"
+)
+install(
+    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/cqasm-v1-semantic-gen.py"
+    DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v1"
+    RENAME "semantic.py"
+)
+install(
+    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/cqasm-v1-types-gen.py"
+    DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v1"
+    RENAME "types.py"
+)
+install(
+    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/cqasm-v1-values-gen.py"
+    DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v1"
+    RENAME "values.py"
+)
+install(
+    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/cqasm-v2-ast-gen.py"
+    DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v2"
+    RENAME "ast.py"
+)
+install(
+    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/cqasm-v2-semantic-gen.py"
+    DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v2"
+    RENAME "semantic.py"
 )

@@ -76,6 +76,9 @@ namespace primitives {
 
 template <>
 void serialize(const instruction::InstructionRef &obj, ::tree::cbor::MapWriter &map) {
+    if (obj.empty()) {
+        return;
+    }
     map.append_string("n", obj->name);
     map.append_bool("c", obj->allow_conditional);
     map.append_bool("p", obj->allow_parallel);
@@ -90,6 +93,9 @@ void serialize(const instruction::InstructionRef &obj, ::tree::cbor::MapWriter &
 
 template <>
 instruction::InstructionRef deserialize(const ::tree::cbor::MapReader &map) {
+    if (!map.count("n")) {
+        return {};
+    }
     auto insn = tree::make<instruction::Instruction>(
         map.at("n").as_string(),
         "",

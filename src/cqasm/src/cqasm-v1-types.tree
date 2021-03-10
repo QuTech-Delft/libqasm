@@ -14,6 +14,8 @@ tree_namespace cqasm::tree
 include "cqasm-v1-primitives.hpp"
 include "cqasm-v1-semantic-helper.hpp"
 src_include "cqasm-v1-semantic.hpp"
+import cqasm.v1.primitives
+import cqasm.v1.semantic
 
 // Initialization function to use to construct default values for the tree base
 // classes and primitives.
