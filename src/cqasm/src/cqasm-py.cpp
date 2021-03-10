@@ -6,7 +6,8 @@
 #include "cqasm-v1.hpp"
 #include "cqasm-v2.hpp"
 
-using namespace cqasm;
+namespace v1 = cqasm::v1;
+namespace v2 = cqasm::v2;
 
 /**
  * Creates a new 1.x semantic analyzer. When without_defaults is specified,
