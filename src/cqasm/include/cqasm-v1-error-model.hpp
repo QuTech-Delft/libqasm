@@ -88,5 +88,14 @@ std::ostream &operator<<(std::ostream &os, const ErrorModel &model);
 std::ostream &operator<<(std::ostream &os, const ErrorModelRef &model);
 
 } // namespace error_model
+
+namespace primitives {
+
+template <>
+void serialize(const error_model::ErrorModelRef &obj, ::tree::cbor::MapWriter &map);
+template <>
+error_model::ErrorModelRef deserialize(const ::tree::cbor::MapReader &map);
+
+} // namespace primitives
 } // namespace v1
 } // namespace cqasm

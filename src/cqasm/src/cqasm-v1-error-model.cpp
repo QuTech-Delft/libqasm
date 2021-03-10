@@ -51,5 +51,29 @@ std::ostream &operator<<(std::ostream &os, const ErrorModelRef &model) {
 }
 
 } // namespace error_model
+
+namespace primitives {
+
+template <>
+void serialize(const error_model::ErrorModelRef &obj, ::tree::cbor::MapWriter &map) {
+    map.append_string("n", obj->name);
+    auto aw = map.append_array("t");
+    for (const auto &t : obj->param_types) {
+        aw.append_binary(::tree::base::serialize(t));
+    }
+    aw.close();
+}
+
+template <>
+error_model::ErrorModelRef deserialize(const ::tree::cbor::MapReader &map) {
+    auto model = tree::make<error_model::ErrorModel>(map.at("n").as_string(), "");
+    auto ar = map.at("t").as_array();
+    for (size_t i = 0; i < ar.size(); i++) {
+        model->param_types.add(::tree::base::deserialize<types::Node>(ar.at(i).as_binary()));
+    }
+    return std::move(model);
+}
+
+} // namespace primitives
 } // namespace v1
 } // namespace cqasm

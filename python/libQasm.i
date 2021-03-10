@@ -10,6 +10,7 @@
 %{
 #include "qasm_ast.hpp"
 #include "libQasm.hpp"
+#include "cqasm-py.hpp"
 %}
 
 %include "std_vector.i"
@@ -24,6 +25,7 @@ namespace std {
     %template(vectorui) vector<size_t>;
     %template(vectorf) vector<float>;
     %template(vectord) vector<double>;
+    %template(vectors) vector<string>;
 }
 
 %exception {
@@ -41,6 +43,7 @@ namespace std {
 
 %include "qasm_ast.hpp"
 %include "libQasm.hpp"
+%include "cqasm-py.hpp"
 
 namespace std {
     %template(subcircuit_vector) vector<compiler::SubCircuit>;

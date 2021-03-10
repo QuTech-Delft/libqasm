@@ -72,6 +72,7 @@ set(CQASM_COMMON_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-annotations.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-error.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-version.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-py.cpp"
 )
 
 # Generate the lexer.
@@ -145,36 +146,40 @@ add_flex_bison_dependency(
 )
 
 # Generate the abstract syntax tree classes.
-generate_tree(
+generate_tree_py(
     "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v1-ast.tree"
     "${CMAKE_CURRENT_BINARY_DIR}/include/cqasm-v1-ast-gen.hpp"
     "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-ast-gen.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-ast-gen.py"
 )
 list(APPEND CQASM_V1_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-ast-gen.cpp")
 
 # Generate the type tree classes.
-generate_tree(
+generate_tree_py(
     "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v1-types.tree"
     "${CMAKE_CURRENT_BINARY_DIR}/include/cqasm-v1-types-gen.hpp"
     "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-types-gen.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-types-gen.py"
 )
 list(APPEND CQASM_V1_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-types-gen.cpp")
 
 # Generate the semantic value classes. Values can be either known at
 # compile-time or only at runtime, but their type is resolved to one of the
 # type tree nodes at compile-time.
-generate_tree(
+generate_tree_py(
     "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v1-values.tree"
     "${CMAKE_CURRENT_BINARY_DIR}/include/cqasm-v1-values-gen.hpp"
     "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-values-gen.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-values-gen.py"
 )
 list(APPEND CQASM_V1_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-values-gen.cpp")
 
 # Generate the semantic tree classes.
-generate_tree(
+generate_tree_py(
     "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v1-semantic.tree"
     "${CMAKE_CURRENT_BINARY_DIR}/include/cqasm-v1-semantic-gen.hpp"
     "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-semantic-gen.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-semantic-gen.py"
 )
 list(APPEND CQASM_V1_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-semantic-gen.cpp")
 
@@ -223,18 +228,20 @@ add_flex_bison_dependency(
 )
 
 # Generate the abstract syntax tree classes.
-generate_tree(
+generate_tree_py(
     "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v2-ast.tree"
     "${CMAKE_CURRENT_BINARY_DIR}/include/cqasm-v2-ast-gen.hpp"
     "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v2-ast-gen.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v2-ast-gen.py"
 )
 list(APPEND CQASM_V2_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v2-ast-gen.cpp")
 
 # Generate the semantic tree classes.
-generate_tree(
+generate_tree_py(
     "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v2-semantic.tree"
     "${CMAKE_CURRENT_BINARY_DIR}/include/cqasm-v2-semantic-gen.hpp"
     "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v2-semantic-gen.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v2-semantic-gen.py"
 )
 list(APPEND CQASM_V2_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v2-semantic-gen.cpp")
 

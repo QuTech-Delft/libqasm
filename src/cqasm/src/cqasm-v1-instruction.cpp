@@ -71,5 +71,40 @@ std::ostream &operator<<(std::ostream &os, const InstructionRef &insn) {
 }
 
 } // namespace instruction
+
+namespace primitives {
+
+template <>
+void serialize(const instruction::InstructionRef &obj, ::tree::cbor::MapWriter &map) {
+    map.append_string("n", obj->name);
+    map.append_bool("c", obj->allow_conditional);
+    map.append_bool("p", obj->allow_parallel);
+    map.append_bool("r", obj->allow_reused_qubits);
+    map.append_bool("d", obj->allow_different_index_sizes);
+    auto aw = map.append_array("t");
+    for (const auto &t : obj->param_types) {
+        aw.append_binary(::tree::base::serialize(t));
+    }
+    aw.close();
+}
+
+template <>
+instruction::InstructionRef deserialize(const ::tree::cbor::MapReader &map) {
+    auto insn = tree::make<instruction::Instruction>(
+        map.at("n").as_string(),
+        "",
+        map.at("c").as_bool(),
+        map.at("p").as_bool(),
+        map.at("r").as_bool(),
+        map.at("d").as_bool()
+    );
+    auto ar = map.at("t").as_array();
+    for (size_t i = 0; i < ar.size(); i++) {
+        insn->param_types.add(::tree::base::deserialize<types::Node>(ar.at(i).as_binary()));
+    }
+    return std::move(insn);
+}
+
+} // namespace primitives
 } // namespace v1
 } // namespace cqasm

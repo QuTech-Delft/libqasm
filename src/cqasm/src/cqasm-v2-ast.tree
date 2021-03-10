@@ -14,6 +14,7 @@ include "cqasm-v2-primitives.hpp"
 // Initialization function to use to construct default values for the tree base
 // classes and primitives.
 initialize_function cqasm::v2::primitives::initialize
+serdes_functions cqasm::v2::primitives::serialize cqasm::v2::primitives::deserialize
 
 // Include SourceLocation annotation object for the debug dump generator.
 src_include "cqasm-annotations.hpp"

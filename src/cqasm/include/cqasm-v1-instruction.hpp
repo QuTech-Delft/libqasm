@@ -134,5 +134,14 @@ std::ostream &operator<<(std::ostream &os, const Instruction &insn);
 std::ostream &operator<<(std::ostream &os, const InstructionRef &insn);
 
 } // namespace instruction
+
+namespace primitives {
+
+template <>
+void serialize(const instruction::InstructionRef &obj, ::tree::cbor::MapWriter &map);
+template <>
+instruction::InstructionRef deserialize(const ::tree::cbor::MapReader &map);
+
+} // namespace primitives
 } // namespace v1
 } // namespace cqasm

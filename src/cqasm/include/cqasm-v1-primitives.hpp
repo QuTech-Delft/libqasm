@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "cqasm-version.hpp"
+#include "tree-cbor.hpp"
 
 namespace cqasm {
 namespace v1 {
@@ -30,11 +31,27 @@ template <class T>
 T initialize() { return T(); };
 
 /**
+ * Serializes the given primitive object to CBOR.
+ */
+template <typename T>
+void serialize(const T &obj, ::tree::cbor::MapWriter &map);
+
+/**
+ * Deserializes the given primitive object from CBOR.
+ */
+template <typename T>
+T deserialize(const ::tree::cbor::MapReader &map);
+
+/**
  * String primitive used within the AST and semantic trees.
  */
 using Str = std::string;
 template <>
 Str initialize<Str>();
+template <>
+void serialize(const Str &obj, ::tree::cbor::MapWriter &map);
+template <>
+Str deserialize(const ::tree::cbor::MapReader &map);
 
 /**
  * Boolean primitive used within the semantic trees. Defaults to false.
@@ -42,6 +59,10 @@ Str initialize<Str>();
 using Bool = bool;
 template <>
 Bool initialize<Bool>();
+template <>
+void serialize(const Bool &obj, ::tree::cbor::MapWriter &map);
+template <>
+Bool deserialize(const ::tree::cbor::MapReader &map);
 
 /**
  * Axis primitive used within the semantic trees. Defaults to X.
@@ -49,6 +70,10 @@ Bool initialize<Bool>();
 enum class Axis { X, Y, Z };
 template <>
 Axis initialize<Axis>();
+template <>
+void serialize(const Axis &obj, ::tree::cbor::MapWriter &map);
+template <>
+Axis deserialize(const ::tree::cbor::MapReader &map);
 
 /**
  * Integer primitive used within the AST and semantic trees.
@@ -56,6 +81,10 @@ Axis initialize<Axis>();
 using Int = std::int64_t;
 template <>
 Int initialize<Int>();
+template <>
+void serialize(const Int &obj, ::tree::cbor::MapWriter &map);
+template <>
+Int deserialize(const ::tree::cbor::MapReader &map);
 
 /**
  * Real number primitive used within the AST and semantic trees.
@@ -63,11 +92,19 @@ Int initialize<Int>();
 using Real = double;
 template <>
 Real initialize<Real>();
+template <>
+void serialize(const Real &obj, ::tree::cbor::MapWriter &map);
+template <>
+Real deserialize(const ::tree::cbor::MapReader &map);
 
 /**
  * Complex number primitive used within the semantic trees.
  */
 using Complex = std::complex<double>;
+template <>
+void serialize(const Complex &obj, ::tree::cbor::MapWriter &map);
+template <>
+Complex deserialize(const ::tree::cbor::MapReader &map);
 
 /**
  * Two-dimensional matrix of some kind of type.
@@ -135,6 +172,13 @@ public:
     }
 
     /**
+     * Returns access to the raw data vector.
+     */
+    const std::vector<T> &get_data() const {
+        return data;
+    }
+
+    /**
      * Returns the value at the given position. row and col start at 1. Throws
      * a std::range_error when either or both indices are out of range.
      */
@@ -176,16 +220,28 @@ public:
  * Matrix of real numbers.
  */
 using RMatrix = Matrix<Real>;
+template <>
+void serialize(const RMatrix &obj, ::tree::cbor::MapWriter &map);
+template <>
+RMatrix deserialize(const ::tree::cbor::MapReader &map);
 
 /**
  * Matrix of complex numbers.
  */
 using CMatrix = Matrix<Complex>;
+template <>
+void serialize(const CMatrix &obj, ::tree::cbor::MapWriter &map);
+template <>
+CMatrix deserialize(const ::tree::cbor::MapReader &map);
 
 /**
  * Version number primitive used within the AST and semantic trees.
  */
 using Version = version::Version;
+template <>
+void serialize(const Version &obj, ::tree::cbor::MapWriter &map);
+template <>
+Version deserialize(const ::tree::cbor::MapReader &map);
 
 /**
  * Stream << overload for axis nodes.

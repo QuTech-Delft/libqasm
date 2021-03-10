@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "cqasm-version.hpp"
+#include "tree-cbor.hpp"
 
 namespace cqasm {
 namespace v2 {
@@ -30,11 +31,27 @@ template <class T>
 T initialize() { return T(); };
 
 /**
+ * Serializes the given primitive object to CBOR.
+ */
+template <typename T>
+void serialize(const T &obj, ::tree::cbor::MapWriter &map);
+
+/**
+ * Deserializes the given primitive object from CBOR.
+ */
+template <typename T>
+T deserialize(const ::tree::cbor::MapReader &map);
+
+/**
  * String primitive used within the AST and semantic trees.
  */
 using Str = std::string;
 template <>
 Str initialize<Str>();
+template <>
+void serialize(const Str &obj, ::tree::cbor::MapWriter &map);
+template <>
+Str deserialize(const ::tree::cbor::MapReader &map);
 
 /**
  * Boolean primitive used within the semantic trees. Defaults to false.
@@ -42,6 +59,10 @@ Str initialize<Str>();
 using Bool = bool;
 template <>
 Bool initialize<Bool>();
+template <>
+void serialize(const Bool &obj, ::tree::cbor::MapWriter &map);
+template <>
+Bool deserialize(const ::tree::cbor::MapReader &map);
 
 /**
  * Integer primitive used within the AST and semantic trees.
@@ -49,6 +70,10 @@ Bool initialize<Bool>();
 using Int = std::int64_t;
 template <>
 Int initialize<Int>();
+template <>
+void serialize(const Int &obj, ::tree::cbor::MapWriter &map);
+template <>
+Int deserialize(const ::tree::cbor::MapReader &map);
 
 /**
  * Real number primitive used within the AST and semantic trees.
@@ -56,6 +81,10 @@ Int initialize<Int>();
 using Real = double;
 template <>
 Real initialize<Real>();
+template <>
+void serialize(const Real &obj, ::tree::cbor::MapWriter &map);
+template <>
+Real deserialize(const ::tree::cbor::MapReader &map);
 
 /**
  * Complex number primitive used within the semantic trees.
@@ -63,11 +92,19 @@ Real initialize<Real>();
 using Complex = std::complex<double>;
 template <>
 Complex initialize<Complex>();
+template <>
+void serialize(const Complex &obj, ::tree::cbor::MapWriter &map);
+template <>
+Complex deserialize(const ::tree::cbor::MapReader &map);
 
 /**
  * Version number primitive used within the AST and semantic trees.
  */
 using Version = version::Version;
+template <>
+void serialize(const Version &obj, ::tree::cbor::MapWriter &map);
+template <>
+Version deserialize(const ::tree::cbor::MapReader &map);
 
 } // namespace primitives
 } // namespace v2
