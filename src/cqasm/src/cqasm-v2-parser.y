@@ -228,19 +228,18 @@
 
 /* Associativity rules for static expressions. The lowest precedence level
 comes first. */
-%nonassoc OPT_UNIT
 %left ';'                                    /* Semicolon operator */
 %nonassoc KW_QUBIT KW_VAR KW_CONST KW_ALIAS  /* Definitions */
           KW_TYPE KW_FUNCTION KW_PARAMETER
           KW_INCLUDE
+%nonassoc OPT_UNIT KW_RETURN                 /* Return statement (OptUnit's precedence only comes into play there) */
 %left ','                                    /* Comma operator */
 %nonassoc KW_TEMPLATE                        /* Template modifier for function parameters */
 %right KW_COND KW_IF KW_ELIF KW_ELSE         /* Flow-control constructs */
        KW_MATCH KW_WHEN KW_FOR KW_FOREACH
        KW_WHILE KW_REPEAT KW_UNTIL KW_SEND
-       KW_RECEIVE KW_RETURN KW_BREAK
-       KW_CONTINUE KW_PRINT KW_ABORT
-       KW_PRAGMA
+       KW_RECEIVE KW_BREAK KW_CONTINUE
+       KW_PRINT KW_ABORT KW_PRAGMA
 %nonassoc ARROW RETURN_TYPE                  /* Handles the SR conflicts for optional return types of functions and control-flow */
 %left ANNOT '@'                              /* Annotation operator without arguments */
 %left ANNOT_ARGS                             /* Annotation operator with arguments */
