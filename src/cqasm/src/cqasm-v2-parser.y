@@ -111,7 +111,7 @@
 %type <anns> Annotations
 %type <ieeb> IfElif
 %type <matb> MatchArms MatchBody
-%type <unit> ReturnType OptUnit Unit
+%type <unit> ReturnType OptUnit OptUnitReturn Unit
 %type <vers> VersionBuilder Version
 %type <prog> Program
 
@@ -229,10 +229,11 @@
 /* Associativity rules for static expressions. The lowest precedence level
 comes first. */
 %left ';'                                    /* Semicolon operator */
+%nonassoc OPT_UNIT                           /* Return statement */
 %nonassoc KW_QUBIT KW_VAR KW_CONST KW_ALIAS  /* Definitions */
           KW_TYPE KW_FUNCTION KW_PARAMETER
           KW_INCLUDE
-%nonassoc OPT_UNIT KW_RETURN                 /* Return statement (OptUnit's precedence only comes into play there) */
+%nonassoc OPT_UNIT_RETURN KW_RETURN          /* Return statement */
 %left ','                                    /* Comma operator */
 %nonassoc KW_TEMPLATE                        /* Template modifier for function parameters */
 %right KW_COND KW_IF KW_ELIF KW_ELSE         /* Flow-control constructs */
@@ -452,6 +453,10 @@ LoopLabel       :                                                               
 /* Units. */
 OptUnit         : Unit                                  %prec OPT_UNIT          { FROM($$, $1); }
                 |                                       %prec OPT_UNIT          { NEW($$, Void); }
+                ;
+
+OptUnitReturn   : Unit                                  %prec OPT_UNIT_RETURN   { FROM($$, $1); }
+                |                                       %prec OPT_UNIT_RETURN   { NEW($$, Void); }
                 ;
 
                 /* Literal units */
@@ -755,7 +760,7 @@ Unit            : IntegerLiteral                                                
                 | KW_GOTO SimpleIdent                   %prec KW_GOTO           { NEW($$, GotoStatement);
                                                                                     $$->as_goto_statement()->target.set_raw($2);
                                                                                 }
-                | KW_RETURN OptUnit                     %prec KW_RETURN         { NEW($$, ReturnStatement);
+                | KW_RETURN OptUnitReturn               %prec KW_RETURN         { NEW($$, ReturnStatement);
                                                                                     $$->as_return_statement()->value.set_raw($2);
                                                                                 }
                 | KW_BREAK                              %prec KW_BREAK          { NEW($$, BreakStatement); }
