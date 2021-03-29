@@ -112,7 +112,7 @@ jobs:
         os:
         - ubuntu-latest
         - macos-latest
-        - windows-2016
+        #- windows-2016 # broken due to remote update
     steps:
     - uses: actions/checkout@v2
       with:
