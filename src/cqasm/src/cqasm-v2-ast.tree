@@ -233,17 +233,22 @@ unit {
             index: One<unit>;
 
             # A plain index operator, where the index is a potentially
+            # comma-separated list of indices or tuples thereof, to be flattened
+            # into a zero or one-dimensional list of indices, applied piecewise.
+            plain_index {}
+
+            # A plain index operator, where the index is a potentially
             # comma-separated list of indices mapping to the dimensions of the
             # tuple/pack, where the shape (scalar or N-dimensional tuple) of the
             # indices corresponds to the shape of the returned value.
-            plain_index {}
+            matrix_index {}
 
             # A transposed index operator, where the index is a potentially
             # comma- and/or semicolon-separated list corresponding to the shape
             # of the returned value, of which each element is a scalar or
             # 1-dimensional tuple of integers that map to the dimensions of the
             # indexed value.
-            transposed_index {}
+            transposed_matrix_index {}
 
         }
 

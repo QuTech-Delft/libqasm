@@ -203,7 +203,6 @@
 %token CMP_EQ
 %token CMP_NE
 %token LOGIC_AND
-%token LOGIC_XOR
 %token LOGIC_OR
 %token RANGE
 %token ARROW
@@ -253,7 +252,6 @@ comes first. */
 %left RANGE                                  /* Range operator */
 %right TERNARY                               /* Ternary conditional */
 %left LOGIC_OR                               /* Logical OR */
-%left LOGIC_XOR                              /* Logical XOR */
 %left LOGIC_AND                              /* Logical AND */
 %left '|'                                    /* Bitwise OR */
 %left '^'                                    /* Bitwise XOR */
@@ -356,7 +354,6 @@ Identifier      : SimpleIdent                                                   
                 | KW_OPERATOR '&'                       %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator&"; }
                 | KW_OPERATOR '^'                       %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator^"; }
                 | KW_OPERATOR '|'                       %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator|"; }
-                | KW_OPERATOR LOGIC_XOR                 %prec KW_OPERATOR       { NEW($$, Identifier); $$->name = "operator^^"; }
                 ;
 
 /* Optional scope modifier keyword. */
@@ -450,6 +447,15 @@ LoopLabel       :                                                               
                 | '.' SimpleIdent                                               { FROM($$, $2); }
                 ;
 
+/* Function template symbol list helper rules */
+TemplateSymList : SimpleIdent                                                   {}
+                | TemplateSymList ',' SimpleIdent                               {}
+                ;
+
+TemplateSymbols :                                                               {}
+                | '<' TemplateSymList '>'                                       {}
+                ;
+
 /* Units. */
 OptUnit         : Unit                                  %prec OPT_UNIT          { FROM($$, $1); }
                 |                                       %prec OPT_UNIT          { NEW($$, Void); }
@@ -465,10 +471,10 @@ Unit            : IntegerLiteral                                                
                 | StringLiteral                                                 { FROM($$, $1); }
                 | JsonLiteral                                                   { FROM($$, $1); }
 
-                /* Reference and definition units */
+                /* Identifier unit */
                 | Identifier                                                    { FROM($$, $1); }
 
-                /* Packing/grouping parentheses unit*/
+                /* Packing/grouping parentheses unit */
                 | '(' OptUnit ')'                                               { NEW($$, Parentheses);
                                                                                     $$->as_parentheses()->data.set_raw($2);
                                                                                 }
@@ -486,9 +492,13 @@ Unit            : IntegerLiteral                                                
                                                                                     $$->as_index()->data.set_raw($1);
                                                                                     $$->as_index()->index.set_raw($3);
                                                                                 }
-                | Unit '[' KW_TRANSPOSE Unit ']'                                { NEW($$, TransposedIndex);
+                | Unit '[' '[' Unit ']' ']'                                     { NEW($$, MatrixIndex);
                                                                                     $$->as_index()->data.set_raw($1);
                                                                                     $$->as_index()->index.set_raw($4);
+                                                                                }
+                | Unit '[' '[' KW_TRANSPOSE Unit ']' ']'                        { NEW($$, TransposedMatrixIndex);
+                                                                                    $$->as_index()->data.set_raw($1);
+                                                                                    $$->as_index()->index.set_raw($5);
                                                                                 }
 
                 /* Range unit */
@@ -588,10 +598,6 @@ Unit            : IntegerLiteral                                                
                                                                                     $$->as_binary_operator()->lhs.set_raw($1);
                                                                                     $$->as_binary_operator()->rhs.set_raw($3);
                                                                                 }
-                | Unit LOGIC_XOR Unit                                           { NEW($$, LogicalXorOperator);
-                                                                                    $$->as_binary_operator()->lhs.set_raw($1);
-                                                                                    $$->as_binary_operator()->rhs.set_raw($3);
-                                                                                }
 
                 /* Short-circuiting operators */
                 | Unit LOGIC_AND Unit                                           { NEW($$, LogicalAndOperator);
@@ -673,11 +679,11 @@ Unit            : IntegerLiteral                                                
                                                                                     $$->as_binary_mutating_operator()->target.set_raw($1);
                                                                                     $$->as_binary_mutating_operator()->value.set_raw($3);
                                                                                 }
-                | Unit BITWISE_OR_BY Unit                                       { NEW($$, BitwiseOrByOperator);
+                | Unit BITWISE_XOR_BY Unit                                      { NEW($$, BitwiseXorByOperator);
                                                                                     $$->as_binary_mutating_operator()->target.set_raw($1);
                                                                                     $$->as_binary_mutating_operator()->value.set_raw($3);
                                                                                 }
-                | Unit BITWISE_XOR_BY Unit                                      { NEW($$, BitwiseXorByOperator);
+                | Unit BITWISE_OR_BY Unit                                       { NEW($$, BitwiseOrByOperator);
                                                                                     $$->as_binary_mutating_operator()->target.set_raw($1);
                                                                                     $$->as_binary_mutating_operator()->value.set_raw($3);
                                                                                 }
@@ -795,23 +801,6 @@ Unit            : IntegerLiteral                                                
                                                                                     $$->as_pragma()->data.set_raw($2);
                                                                                 }
 
-                /* Function definitions */
-                | KW_FUTURE KW_FUNCTION Identifier '(' OptUnit ')' ReturnType
-                                                        %prec KW_FUNCTION       { NEW($$, FunctionDeclaration);
-                                                                                    $$->as_function_declaration()->name.set_raw($3);
-                                                                                    $$->as_function_declaration()->parameters.set_raw($5);
-                                                                                    $$->as_function_declaration()->return_type.set_raw($7);
-                                                                                }
-                | Modifiers KW_FUNCTION Identifier Annotations '(' OptUnit ')' ReturnType Unit
-                                                        %prec KW_FUNCTION       { NEW($$, FunctionDefinition);
-                                                                                    $$->as_function_definition()->modifiers.set_raw($1);
-                                                                                    $$->as_function_definition()->name.set_raw($3);
-                                                                                    $$->as_function_definition()->annotations.set_raw($4);
-                                                                                    $$->as_function_definition()->parameters.set_raw($6);
-                                                                                    $$->as_function_definition()->return_type.set_raw($8);
-                                                                                    $$->as_function_definition()->body.set_raw($9);
-                                                                                }
-
                 /* Object definitions */
                 | Modifiers KW_QUBIT Unit                                       { NEW($$, QubitDefinition);
                                                                                     $$->as_qubit_definition()->modifiers.set_raw($1);
@@ -825,9 +814,28 @@ Unit            : IntegerLiteral                                                
                                                                                     $$->as_constant_definition()->modifiers.set_raw($1);
                                                                                     $$->as_constant_definition()->data.set_raw($3);
                                                                                 }
+
+                /* Alias definitions */
                 | Modifiers KW_ALIAS Unit                                       { NEW($$, AliasDefinition);
                                                                                     $$->as_alias_definition()->modifiers.set_raw($1);
                                                                                     $$->as_alias_definition()->data.set_raw($3);
+                                                                                }
+
+                /* Function definitions */
+                | KW_FUTURE KW_FUNCTION Identifier TemplateSymbols '(' OptUnit ')' ReturnType
+                                                        %prec KW_FUNCTION       { NEW($$, FunctionDeclaration);
+                                                                                    $$->as_function_declaration()->name.set_raw($3);
+                                                                                    $$->as_function_declaration()->parameters.set_raw($6);
+                                                                                    $$->as_function_declaration()->return_type.set_raw($8);
+                                                                                }
+                | Modifiers KW_FUNCTION Identifier Annotations TemplateSymbols '(' OptUnit ')' ReturnType Unit
+                                                        %prec KW_FUNCTION       { NEW($$, FunctionDefinition);
+                                                                                    $$->as_function_definition()->modifiers.set_raw($1);
+                                                                                    $$->as_function_definition()->name.set_raw($3);
+                                                                                    $$->as_function_definition()->annotations.set_raw($4);
+                                                                                    $$->as_function_definition()->parameters.set_raw($7);
+                                                                                    $$->as_function_definition()->return_type.set_raw($9);
+                                                                                    $$->as_function_definition()->body.set_raw($10);
                                                                                 }
 
                 /* Type definitions */

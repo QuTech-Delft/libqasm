@@ -243,7 +243,6 @@
 "&="                                                WITHOUT_STR(BITWISE_AND_BY);
 "&&"                                                WITHOUT_STR(LOGIC_AND);
 "^="                                                WITHOUT_STR(BITWISE_XOR_BY);
-"^^"                                                WITHOUT_STR(LOGIC_XOR);
 "|="                                                WITHOUT_STR(BITWISE_OR_BY);
 "||"                                                WITHOUT_STR(LOGIC_OR);
 ".."                                                WITHOUT_STR(RANGE);

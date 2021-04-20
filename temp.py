@@ -4,7 +4,7 @@ import cqasm.v2
 cq = """
 cQASM 2.0
 
-print("Hello, world!");
+1..2
 """
 
 result = cqasm.v2.Analyzer().parse_string(cq)
