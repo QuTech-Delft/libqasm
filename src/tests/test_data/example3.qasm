@@ -17,7 +17,9 @@ c-x b[2,3,4],q[4]
 # negate b0
 not b[0] 
 # multi-bits controlled X gate
-c-x b[0,1],q[4] 
+c-x b[0,1],q[4]
+# multi-bits controlled cr gate
+c-cr b[0:1], q[0,1], q[2,3], 1.5
 # restore the measurement register
 not b[0] 
 display 
