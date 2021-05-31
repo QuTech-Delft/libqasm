@@ -303,11 +303,7 @@ two-qubit-operation : two-qubit-gates WS qubit COMMA_SEPARATOR qubit
                       }
     ;
 %type <oval> two-qubit-operation-args;
-two-qubit-operation-args : two-qubit-gate-args WS qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR FLOAT
-                           {
-                              $$ = new compiler::Operation( data->buffer_string, *($3) , *($5), ($7) );
-                           }
-                         | two-qubit-gate-args WS qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR INTEGER
+two-qubit-operation-args : two-qubit-gate-args WS qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR int-or-float
                            {
                               $$ = new compiler::Operation( data->buffer_string, *($3) , *($5), ($7) );
                            }
@@ -332,21 +328,21 @@ toffoli-gate : TOFFOLI {data->buffer_string = std::string($1);}
 
 //## Define a superset of all general "normal" operations
 %type <oval> regular-operations;
-regular-operations : single-qubit-operation 
+regular-operations : single-qubit-operation
                    | single-qubit-operation-args
-                   | two-qubit-operation 
+                   | two-qubit-operation
                    | two-qubit-operation-args
-                   | toffoli-operation 
+                   | toffoli-operation
     ;
 %type <oval> binary-controlled-operations;
-binary-controlled-operations : bit-single-qubit-operation 
-                                   | bit-single-qubit-operation-args 
-                                   | bit-two-qubit-operation 
-                                   | bit-two-qubit-operation-args 
-                                   | bit-toffoli-operation 
+binary-controlled-operations : bit-single-qubit-operation
+                                   | bit-single-qubit-operation-args
+                                   | bit-two-qubit-operation
+                                   | bit-two-qubit-operation-args
+                                   | bit-toffoli-operation
                                    | negate-binary-operation
     ;
-%type <oval> bit-single-qubit-operation;    
+%type <oval> bit-single-qubit-operation;
 bit-single-qubit-operation : CDASH single-qubit-gate WS bit COMMA_SEPARATOR qubit
                              {
                                 compiler::Operation* bit_single_qubit_operation = new compiler::Operation(data->buffer_string, *($6) );
@@ -354,7 +350,7 @@ bit-single-qubit-operation : CDASH single-qubit-gate WS bit COMMA_SEPARATOR qubi
                                 $$ = bit_single_qubit_operation;
                              }
     ;
-%type <oval> bit-single-qubit-operation-args;    
+%type <oval> bit-single-qubit-operation-args;
 bit-single-qubit-operation-args : CDASH parameterized-single-qubit-gate WS bit COMMA_SEPARATOR qubit COMMA_SEPARATOR int-or-float
                                   {
                                       compiler::Operation* bit_single_qubit_operation_args = new compiler::Operation(data->buffer_string, *($6) , $8);
@@ -362,7 +358,7 @@ bit-single-qubit-operation-args : CDASH parameterized-single-qubit-gate WS bit C
                                       $$ = bit_single_qubit_operation_args;
                                   }
     ;
-%type <oval> bit-two-qubit-operation;    
+%type <oval> bit-two-qubit-operation;
 bit-two-qubit-operation : CDASH two-qubit-gates WS bit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit
                           {
                               compiler::Operation* bit_two_qubit_operation = new compiler::Operation( data->buffer_string, *($6) , *($8) );
@@ -370,15 +366,15 @@ bit-two-qubit-operation : CDASH two-qubit-gates WS bit COMMA_SEPARATOR qubit COM
                               $$ = bit_two_qubit_operation;
                           }
     ;
-%type <oval> bit-two-qubit-operation-args;    
-bit-two-qubit-operation-args : CDASH two-qubit-gate-args WS bit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR INTEGER
+%type <oval> bit-two-qubit-operation-args;
+bit-two-qubit-operation-args : CDASH two-qubit-gate-args WS bit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR int-or-float
                                {
                                   compiler::Operation* bit_two_qubit_operation_args = new compiler::Operation( data->buffer_string, *($6) , *($8), ($10) );
                                   bit_two_qubit_operation_args -> setControlBits( *($4) );
                                   $$ = bit_two_qubit_operation_args;
                                }
     ;
-%type <oval> bit-toffoli-operation;    
+%type <oval> bit-toffoli-operation;
 bit-toffoli-operation : CDASH toffoli-gate WS bit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit COMMA_SEPARATOR qubit
                         {
                             compiler::Operation* bit_toffoli_operation = new compiler::Operation( data->buffer_string, *($6), *($8), *($10) );
@@ -386,7 +382,7 @@ bit-toffoli-operation : CDASH toffoli-gate WS bit COMMA_SEPARATOR qubit COMMA_SE
                             $$ = bit_toffoli_operation;
                         }
     ;
-%type <oval> negate-binary-operation;    
+%type <oval> negate-binary-operation;
 negate-binary-operation : NOT_TOKEN WS bit
                           {
                               compiler::Operation* negate_binary_operation = new compiler::Operation( std::string($1,3) );
@@ -404,7 +400,7 @@ parallel-operations : CBRA parallelizable-ops CKET { $$ = $2; }
     ;
 %type <oval> all-valid-operations;
 all-valid-operations : regular-operations
-                     | binary-controlled-operations 
+                     | binary-controlled-operations
     ;
 parallelizable-ops : all-valid-operations
                      {
