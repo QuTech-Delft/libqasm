@@ -52,6 +52,13 @@ In cQASM 1.2+, unstructured control-flow can be represented using
 
 .. note::
 
+    Unlike ``set``, ``goto`` is a special instruction that bypasses the type
+    system in order to correctly resolve the subcircuit name. It is always
+    defined, regardless of whether a ``goto`` instruction is added to the
+    instruction set.
+
+.. note::
+
     Conditional branches can be represented using the notation for conditional
     execution as defined in the next section.
 
