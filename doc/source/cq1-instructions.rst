@@ -33,9 +33,11 @@ This intends to make variable assignments more readable.
 
 .. note::
 
-    ``set`` behaves like a normal instruction with two operands. That means it
-    must be defined as part of the instruction set via the API prior to parsing
-    if the target supports it.
+    In cQASM 1.0 and 1.1, ``set`` behaves like a normal instruction with two
+    operands. That means it must be defined as part of the instruction set via
+    the API prior to parsing if the target supports it. In cQASM 1.2+, ``set``
+    is a special instruction that requires no definition; cQASM 1.2+ readers
+    are expected to support set instructions in all cases.
 
 Goto instruction (1.2+)
 -----------------------
@@ -52,10 +54,9 @@ In cQASM 1.2+, unstructured control-flow can be represented using
 
 .. note::
 
-    Unlike ``set``, ``goto`` is a special instruction that bypasses the type
-    system in order to correctly resolve the subcircuit name. It is always
-    defined, regardless of whether a ``goto`` instruction is added to the
-    instruction set.
+    ``goto`` is a special instruction that bypasses the type system in order to
+    correctly resolve the subcircuit name. It is always defined, regardless of
+    whether a ``goto`` instruction is added to the instruction set via the API.
 
 .. note::
 
