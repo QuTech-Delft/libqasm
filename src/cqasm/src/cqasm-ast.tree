@@ -298,6 +298,17 @@ annotation_data {
 
 }
 
+# An assignment statement within a loop definition.
+assignment {
+
+    # Name of the variable being assigned.
+    lhs: One<expression>;
+
+    # Value being assigned to the variable.
+    rhs: One<expression>;
+
+}
+
 # Represents a node that carries annotation data.
 annotated {
 
@@ -363,17 +374,6 @@ annotated {
             # An optional integer expression representing the number of
             # iterations for this subcircuit.
             iterations: Maybe<expression>;
-
-        }
-
-        # An assignment statement.
-        assignment {
-
-            # Name of the variable being assigned.
-            lhs: One<expression>;
-
-            # Value being assigned to the variable.
-            rhs: One<expression>;
 
         }
 

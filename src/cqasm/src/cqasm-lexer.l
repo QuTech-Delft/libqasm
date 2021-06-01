@@ -74,7 +74,6 @@
 }
 <INITIAL>{
 
-
     /* Gobble up whitespace */
 [ \t]+                                              DELETE;
 
@@ -126,6 +125,8 @@
 (?i:until)                                          WITHOUT_STR(UNTIL);
 (?i:continue)                                       WITHOUT_STR(CONTINUE);
 (?i:break)                                          WITHOUT_STR(BREAK);
+
+    /* cQASM 1.2 special instructions */
 (?i:set)                                            WITHOUT_STR(SET);
 
     /* Absolute nonsense for compatibility purposes: the reset-averaging */

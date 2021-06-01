@@ -138,7 +138,7 @@
 %type <map>  Mapping
 %type <vars> Variable VariableBody
 %type <sub>  Subcircuit
-%type <asgn> Assignment AssignmentStmt OptAssignment
+%type <asgn> Assignment OptAssignment
 %type <ifel> IfElse
 %type <forl> ForLoop
 %type <fore> ForeachLoop
@@ -430,11 +430,42 @@ AnnotationData  : AnnotationName                                                
 
 /* Instructions. Note that this is NOT directly a statement grammatically;
 they are always part of a bundle. */
-Instruction     : Identifier                                                    { NEW($$, Instruction); $$->name.set_raw($1); $$->operands.set_raw(new ExpressionList()); }
-                | Identifier ExpressionListNP                                   { NEW($$, Instruction); $$->name.set_raw($1); $$->operands.set_raw($2); }
-                | CDASH Identifier ExpressionNP                                 { NEW($$, Instruction); $$->name.set_raw($2); $$->condition.set_raw($3); $$->operands.set_raw(new ExpressionList()); }
-                | CDASH Identifier ExpressionNP ',' ExpressionListNP            { NEW($$, Instruction); $$->name.set_raw($2); $$->condition.set_raw($3); $$->operands.set_raw($5); }
-                | COND '(' Expression ')' Identifier ExpressionListNP           { NEW($$, Instruction); $$->name.set_raw($5); $$->condition.set_raw($3); $$->operands.set_raw($6); }
+Instruction     : Identifier                                                    {
+                                                                                    NEW($$, Instruction);
+                                                                                    $$->name.set_raw($1);
+                                                                                    $$->operands.set_raw(new ExpressionList());
+                                                                                }
+                | Identifier ExpressionListNP                                   {
+                                                                                    NEW($$, Instruction);
+                                                                                    $$->name.set_raw($1);
+                                                                                    $$->operands.set_raw($2);
+                                                                                }
+                | SET ExpressionNP '=' ExpressionNP                             {
+                                                                                    NEW($$, Instruction);
+                                                                                    $$->name.set_raw(new Identifier());
+                                                                                    $$->name->name = "set";
+                                                                                    $$->operands.set_raw(new ExpressionList());
+                                                                                    $$->operands->items.add_raw($2);
+                                                                                    $$->operands->items.add_raw($4);
+                                                                                }
+                | CDASH Identifier ExpressionNP                                 {
+                                                                                    NEW($$, Instruction);
+                                                                                    $$->name.set_raw($2);
+                                                                                    $$->condition.set_raw($3);
+                                                                                    $$->operands.set_raw(new ExpressionList());
+                                                                                }
+                | CDASH Identifier ExpressionNP ',' ExpressionListNP            {
+                                                                                    NEW($$, Instruction);
+                                                                                    $$->name.set_raw($2);
+                                                                                    $$->condition.set_raw($3);
+                                                                                    $$->operands.set_raw($5);
+                                                                                }
+                | COND '(' Expression ')' Identifier ExpressionListNP           {
+                                                                                    NEW($$, Instruction);
+                                                                                    $$->name.set_raw($5);
+                                                                                    $$->condition.set_raw($3);
+                                                                                    $$->operands.set_raw($6);
+                                                                                }
                 ;
 
 /* Instructions are not statements (because there can be multiple bundled
@@ -483,9 +514,6 @@ OptAssignment   : Assignment                                                    
                 |                                                               { $$ = nullptr; }
                 ;
 
-AssignmentStmt  : SET ExpressionNP '=' ExpressionNP                             { NEW($$, Assignment); $$->lhs.set_raw($2); $$->rhs.set_raw($4); }
-                ;
-
 IfElse          : IF '(' Expression ')' SubStatements                           { NEW($$, IfElse); $$->conditions.add_raw($3); $$->blocks.add_raw($5); }
                 | IF '(' Expression ')' SubStatements ELSE IfElse               { FROM($$, $7); $$->conditions.add_raw($3, 0); $$->blocks.add_raw($5, 0); }
                 | IF '(' Expression ')' SubStatements ELSE SubStatements        { NEW($$, IfElse); $$->conditions.add_raw($3); $$->blocks.add_raw($5); $$->blocks.add_raw($7); }
@@ -529,7 +557,6 @@ Statement       : Mapping                                                       
                 | Subcircuit                                                    { FROM($$, $1); }
                 | SLParInstrList                                                { FROM($$, $1); }
                 | '{' OptNewline CBParInstrList OptNewline '}'                  { FROM($$, $3); }
-                | AssignmentStmt                                                { FROM($$, $1); }
                 | IfElse                                                        { FROM($$, $1); }
                 | ForLoop                                                       { FROM($$, $1); }
                 | ForeachLoop                                                   { FROM($$, $1); }
