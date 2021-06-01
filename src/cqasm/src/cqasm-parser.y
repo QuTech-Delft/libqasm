@@ -93,6 +93,14 @@
     Mapping         *map;
     Variables       *vars;
     Subcircuit      *sub;
+    Assignment      *asgn;
+    IfElse          *ifel;
+    ForLoop         *forl;
+    ForeachLoop     *fore;
+    WhileLoop       *whil;
+    RepeatUntilLoop *repu;
+    BreakStatement  *brk;
+    ContinueStatement *cont;
     Statement       *stmt;
     StatementList   *stms;
     Version         *vers;
@@ -130,8 +138,16 @@
 %type <map>  Mapping
 %type <vars> Variable VariableBody
 %type <sub>  Subcircuit
+%type <asgn> Assignment AssignmentStmt OptAssignment
+%type <ifel> IfElse
+%type <forl> ForLoop
+%type <fore> ForeachLoop
+%type <whil> WhileLoop
+%type <repu> RepeatUntilLoop
+%type <brk>  Break
+%type <cont> Continue
 %type <stmt> Statement AnnotStatement
-%type <stms> StatementList Statements
+%type <stms> StatementList Statements SubStatements
 %type <vers> Version
 %type <prog> Program
 
@@ -150,6 +166,18 @@
 %token VAR
 %token CDASH
 %token COND
+
+/* cQASM 1.2 keywords */
+%token IF
+%token ELSE
+%token FOR
+%token FOREACH
+%token WHILE
+%token REPEAT
+%token UNTIL
+%token CONTINUE
+%token BREAK
+%token SET
 
 /* Numeric literals */
 %token <str> INT_LITERAL
@@ -177,14 +205,15 @@
 %token SHL
 %token ARITH_SHR
 %token LOGIC_SHR
+%token ELLIPSIS
 
 /* Error marker tokens */
 %token BAD_CHARACTER END_OF_FILE
 
 /* Associativity rules for static expressions. The lowest precedence level
-comes first. NOTE: expression precedence must match the values in
-operators.[ch]pp for correct pretty-printing! */
+comes first. */
 %left ',' ':'                                /* SIMD/SGMQ indexation */
+%left ELLIPSIS                               /* Foreach range */
 %right '?'                                   /* Ternary conditional */
 %left LOGIC_OR                               /* Logical OR */
 %left LOGIC_XOR                              /* Logical XOR */
@@ -443,12 +472,71 @@ Subcircuit      : '.' Identifier                                                
                 | '.' Identifier '(' Expression ')'                             { NEW($$, Subcircuit); $$->name.set_raw($2); $$->iterations.set_raw($4); }
                 ;
 
+/* cQASM 1.2 statements. */
+SubStatements   : '{' OptNewline StatementList OptNewline '}'                   { FROM($$, $3); }
+                ;
+
+Assignment      : Expression '=' Expression                                     { NEW($$, Assignment); $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
+                ;
+
+OptAssignment   : Assignment                                                    { FROM($$, $1); }
+                |                                                               { $$ = nullptr; }
+                ;
+
+AssignmentStmt  : SET ExpressionNP '=' ExpressionNP                             { NEW($$, Assignment); $$->lhs.set_raw($2); $$->rhs.set_raw($4); }
+                ;
+
+IfElse          : IF '(' Expression ')' SubStatements                           { NEW($$, IfElse); $$->conditions.add_raw($3); $$->blocks.add_raw($5); }
+                | IF '(' Expression ')' SubStatements ELSE IfElse               { FROM($$, $7); $$->conditions.add_raw($3, 0); $$->blocks.add_raw($5, 0); }
+                | IF '(' Expression ')' SubStatements ELSE SubStatements        { NEW($$, IfElse); $$->conditions.add_raw($3); $$->blocks.add_raw($5); $$->blocks.add_raw($7); }
+                ;
+
+ForLoop         : FOR '(' OptAssignment NEWLINE Expression NEWLINE
+                    OptAssignment ')' SubStatements                             {
+                                                                                    NEW($$, ForLoop);
+                                                                                    if ($3) $$->initialize.set_raw($3);
+                                                                                    $$->condition.set_raw($5);
+                                                                                    if ($7) $$->update.set_raw($7);
+                                                                                    $$->body.set_raw($9);
+                                                                                }
+                ;
+
+ForeachLoop     : FOREACH '(' Expression '=' Expression ELLIPSIS Expression
+                    ')' SubStatements                                           {
+                                                                                    NEW($$, ForeachLoop);
+                                                                                    $$->lhs.set_raw($3);
+                                                                                    $$->from.set_raw($5);
+                                                                                    $$->to.set_raw($7);
+                                                                                    $$->body.set_raw($9);
+                                                                                }
+                ;
+
+WhileLoop       : WHILE '(' Expression ')' SubStatements                        { NEW($$, WhileLoop); $$->condition.set_raw($3); $$->body.set_raw($5); }
+                ;
+
+RepeatUntilLoop : REPEAT SubStatements UNTIL '(' Expression ')'                 { NEW($$, RepeatUntilLoop); $$->body.set_raw($2); $$->condition.set_raw($5); }
+                ;
+
+Continue        : CONTINUE                                                      { NEW($$, ContinueStatement); }
+                ;
+
+Break           : BREAK                                                         { NEW($$, BreakStatement); }
+                ;
+
 /* Any of the supported statements. */
 Statement       : Mapping                                                       { FROM($$, $1); }
                 | Variable                                                      { FROM($$, $1); }
                 | Subcircuit                                                    { FROM($$, $1); }
                 | SLParInstrList                                                { FROM($$, $1); }
                 | '{' OptNewline CBParInstrList OptNewline '}'                  { FROM($$, $3); }
+                | AssignmentStmt                                                { FROM($$, $1); }
+                | IfElse                                                        { FROM($$, $1); }
+                | ForLoop                                                       { FROM($$, $1); }
+                | ForeachLoop                                                   { FROM($$, $1); }
+                | WhileLoop                                                     { FROM($$, $1); }
+                | RepeatUntilLoop                                               { FROM($$, $1); }
+                | Continue                                                      { FROM($$, $1); }
+                | Break                                                         { FROM($$, $1); }
                 | error                                                         { NEW($$, ErroneousStatement); }
                 ;
 

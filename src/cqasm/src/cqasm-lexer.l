@@ -116,6 +116,18 @@
     /* New-style binary-controlled gate syntax */
 (?i:cond)                                           WITHOUT_STR(COND);
 
+    /* cQASM 1.2 statements */
+(?i:if)                                             WITHOUT_STR(IF);
+(?i:else)                                           WITHOUT_STR(ELSE);
+(?i:for)                                            WITHOUT_STR(FOR);
+(?i:foreach)                                        WITHOUT_STR(FOREACH);
+(?i:while)                                          WITHOUT_STR(WHILE);
+(?i:repeat)                                         WITHOUT_STR(REPEAT);
+(?i:until)                                          WITHOUT_STR(UNTIL);
+(?i:continue)                                       WITHOUT_STR(CONTINUE);
+(?i:break)                                          WITHOUT_STR(BREAK);
+(?i:set)                                            WITHOUT_STR(SET);
+
     /* Absolute nonsense for compatibility purposes: the reset-averaging */
     /* operation has a - in it, which is not legal in an identifier for */
     /* obvious reasons when expressions come along. */
@@ -200,6 +212,7 @@
 "<<"                                                WITHOUT_STR(SHL);
 ">>"                                                WITHOUT_STR(ARITH_SHR);
 ">>>"                                               WITHOUT_STR(LOGIC_SHR);
+".."                                                WITHOUT_STR(ELLIPSIS);
 
 
     /*=======================================================================*/

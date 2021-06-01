@@ -366,6 +366,96 @@ annotated {
 
         }
 
+        # An assignment statement.
+        assignment {
+
+            # Name of the variable being assigned.
+            lhs: One<expression>;
+
+            # Value being assigned to the variable.
+            rhs: One<expression>;
+
+        }
+
+        # An if-else chain.
+        if_else {
+
+            # The conditions. Condition 0 conditions block 0; if false,
+            # condition 1 conditions block 2, etc.
+            conditions: Many<expression>;
+
+            # The blocks. The amount must be equal to the number of conditions
+            # or one greater than that; in the latter case, the last block
+            # represents the "else" block.
+            blocks: Many<statement_list>;
+
+        }
+
+        # A C-style for loop.
+        for_loop {
+
+            # The optional initializing assignment, run before the loop starts.
+            initialize: Maybe<assignment>;
+
+            # The condition for starting another iteration.
+            condition: One<expression>;
+
+            # The updating assignment, done at the end of the loop body and upon
+            # continue.
+            update: Maybe<assignment>;
+
+            # The loop body.
+            body: One<statement_list>;
+
+        }
+
+        # A foreach loop. Note that this is rather dumbed-down in cQASM 1.2
+        # compared to the cQASM 2.0 syntax it was inspired from, and is only
+        # usable as a range-based loop.
+        foreach_loop {
+
+            # Reference to the variable used for looping.
+            lhs: One<expression>;
+
+            # The first value.
+            from: One<expression>;
+
+            # The last value.
+            to: One<expression>;
+
+            # The loop body.
+            body: One<statement_list>;
+
+        }
+
+        # A while loop.
+        while_loop {
+
+            # The condition for starting another iteration.
+            condition: One<expression>;
+
+            # The loop body.
+            body: One<statement_list>;
+
+        }
+
+        # A repeat-until loop.
+        repeat_until_loop {
+
+            # The loop body.
+            body: One<statement_list>;
+
+            # The condition for stopping iteration.
+            condition: One<expression>;
+
+        }
+
+        # A break statement.
+        break_statement {}
+
+        # A continue statement.
+        continue_statement {}
+
         # Placeholder for a statement with a parse error.
         erroneous_statement {
             error;
