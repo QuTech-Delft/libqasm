@@ -28,6 +28,13 @@ these features, you have to select at least version 1.1:
 
     version 1.1
 
+cQASM 1.2 adds support for assignment statements and structured control-flow.
+In order to use these features, you have to select at least version 1.2:
+
+.. code:: text
+
+    version 1.2
+
 Qubits statement
 ----------------
 
@@ -71,8 +78,8 @@ arguments do.
 
 Error model definitions may be annotated.
 
-Variable statement
-------------------
+Variable statement (1.1+)
+-------------------------
 
 This statement declares one or more variables. It is only supported for targets
 that actually support variables. It has the following form:
@@ -89,6 +96,28 @@ usable from its declaration onwards. It is legal, if perhaps ill-advised, to
 make multiple variables of the same name; they will be interpreted as distinct
 variables, where references to that variable name simply refer to the latest
 declaration.
+
+.. note::
+
+    Because variables can be declared anywhere, they can also be declared
+    within structured control-flow statements in cQASM 1.2+. However, cQASM
+    does *not* support scoping of any kind aside from name resolution. All
+    variables are assumed to be mapped to distinct registers. This means that,
+    style and readability aside, the following is perfectly fine:
+
+    .. code:: text
+
+        if (...) {
+            var y: int;
+        }
+        set y = 1;
+
+    It is equivalent to the following:
+
+        if (...) {
+        }
+        var y: int;
+        set y = 1;
 
 Variable statements can be annotated.
 
@@ -196,3 +225,158 @@ The instruction format is documented in the next section.
 Both the individual instructions in a bundle and the bundle as a whole can be
 annotated. The former takes precedence; therefore, annotating a bundle can only
 be done using the curly-bracket notation.
+
+If-else chain (1.2+)
+--------------------
+
+In cQASM 1.2+, branch-based conditional blocks can be constructed using
+if-else chains. They have the following syntax.
+
+.. code:: text
+
+    # Simple if statement.
+    if (<condition>) {
+        <statements>
+    }
+
+    # If-else statement.
+    if (<condition>) {
+        <statements>
+    } else {
+        <statements>
+    }
+
+    # If-elif-else statement. You can repeat as many "else if" blocks as you
+    # like.
+    if (<condition>) {
+        <statements>
+    } else if (<condition>) {
+        <statements>
+    } else {
+        <statements>
+    }
+
+The shown newlines are optional. The ``{``\ s and ``}``\ s are mandatory.
+
+.. note::
+
+    The ``{}`` tokens do *not* imply parallel execution in this context.
+
+The conditions must evaluate to a boolean.
+
+C-style for loop (1.2+)
+-----------------------
+
+In cQASM 1.2+, C-style for loops can be written as follows.
+
+.. code:: text
+
+    for (<initialize>; <condition>; <update>) {
+        <statements>
+    }
+
+The ``<initialize>`` subblock is optional. If specified, it must be of the form
+``<name> = <expression>``, representing an initializing assignment statement.
+It is executed at the start of the loop.
+
+.. note::
+
+    Unlike C, it is not possible to declare a new variable as part of the
+    ``<initialize>`` subblock.
+
+The ``<condition>`` subblock must be an expression that evaluates to a boolean.
+It is evaluated at the start of each loop iteration. If it yields true,
+iteration continues; if it yields false, execution continues after the for
+loop.
+
+The ``<update>`` subblock is optional. If specified, it must be of the form
+``<name> = <expression>``, representing an assignment statement. It is executed
+at the end of each loop iteration. It is intended to be used to update the loop
+variable.
+
+The loop body may include ``continue`` and ``break`` statements.
+
+Foreach loop (1.2+)
+-------------------
+
+In cQASM 1.2+, a loop that iterates over a range of integer values can be
+written as follows.
+
+.. code:: text
+
+    foreach (<name> = <from> .. <to>) {
+        <statements>
+    }
+
+``<name>`` must be an integer variable, and ``<from>`` and ``<to>`` must
+constant-propagate to integer literals; that is, both integers must be
+known at compile-time. The loop body will be executed for all values in
+the specified inclusive range. If ``<from>`` is less than ``<to>``, ``<name>``
+will be incremented by one after each iteration. If ``<from>`` is greater than
+``<to>``, ``<name>`` will be decremented by one after each iteration.
+
+Behavior is undefined if ``<name>`` is reassigned from within the loop body.
+
+While loop (1.2+)
+-----------------
+
+In cQASM 1.2+, a loop that iterates while a condition is true can be written
+as follows.
+
+.. code:: text
+
+    while (<condition>) {
+        <statements>
+    }
+
+``<condition>`` must be an expression that evaluates to a boolean. It is
+evaluated at the before a new iteration. If it evaluates to true, iteration
+will continue. Otherwise, execution will continue after the while loop.
+
+Repeat-until loop (1.2+)
+------------------------
+
+In cQASM 1.2+, a loop that iterates until a condition is true can be written
+as follows.
+
+.. code:: text
+
+    repeat {
+        <statements>
+    } until (<condition>)
+
+``<condition>`` must be an expression that evaluates to a boolean. It is
+evaluated at the end of each iteration. If it evaluates to false, iteration
+will continue. Otherwise, execution will continue after the repeat-until
+loop.
+
+Break statement (1.2+)
+----------------------
+
+In cQASM 1.2+, the innermost loop can be terminated at any time by means of a
+``break`` statement. The syntax is simply:
+
+.. code:: text
+
+    break
+
+It is illegal to use a ``break`` statement outside of the context of a
+structured loop (``for``, ``foreach``, ``while``, or ``repeat``-``until``).
+A subcircuit with a repetition count does *not* qualify as a loop in this
+context.
+
+Continue statement (1.2+)
+-------------------------
+
+In cQASM 1.2+, the current loop iteration can be stopped at any time by means
+of a ``continue`` statement. Execution will continue as if the end of the loop
+body had been reached. The syntax is simply:
+
+.. code:: text
+
+    continue
+
+It is illegal to use a ``continue`` statement outside of the context of a
+structured loop (``for``, ``foreach``, ``while``, or ``repeat``-``until``).
+A subcircuit with a repetition count does *not* qualify as a loop in this
+context.
