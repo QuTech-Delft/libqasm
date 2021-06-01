@@ -38,6 +38,7 @@ Program( # input.cq:1:1..15:1
         )
       ]
       annotations: []
+      body: -
     )
     Subcircuit( # input.cq:6:1..19
       name: test
@@ -75,6 +76,7 @@ Program( # input.cq:1:1..15:1
           operands: []
         )
       ]
+      body: -
     )
     Subcircuit( # input.cq:10:1..38
       name: test2
@@ -165,6 +167,7 @@ Program( # input.cq:1:1..15:1
           operands: []
         )
       ]
+      body: -
     )
   ]
   mappings: []

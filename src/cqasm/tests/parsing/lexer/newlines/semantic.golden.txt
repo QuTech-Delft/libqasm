@@ -267,6 +267,7 @@ I'm a multiline string.
         )
       ]
       annotations: []
+      body: -
     )
   ]
   mappings: []

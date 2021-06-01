@@ -44,6 +44,7 @@ Program( # input.cq:1:1..11:1
           operands: []
         )
       ]
+      body: -
     )
     Subcircuit( # input.cq:8:1..21
       name: empty
@@ -56,6 +57,7 @@ Program( # input.cq:1:1..11:1
           operands: []
         )
       ]
+      body: -
     )
     Subcircuit( # input.cq:10:1..20
       name: empty
@@ -68,6 +70,7 @@ Program( # input.cq:1:1..11:1
           operands: []
         )
       ]
+      body: -
     )
   ]
   mappings: []

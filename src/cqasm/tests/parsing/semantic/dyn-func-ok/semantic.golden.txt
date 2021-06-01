@@ -173,6 +173,7 @@ Program( # input.cq:1:1..8:1
         )
       ]
       annotations: []
+      body: -
     )
   ]
   mappings: []

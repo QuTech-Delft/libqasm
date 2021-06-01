@@ -30,6 +30,7 @@ Program( # input.cq:1:1..35:1
         )
       ]
       annotations: []
+      body: -
     )
     Subcircuit( # input.cq:10:1..15
       name: average
@@ -300,6 +301,7 @@ Program( # input.cq:1:1..35:1
         )
       ]
       annotations: []
+      body: -
     )
     Subcircuit( # input.cq:27:1..8
       name: result
@@ -355,6 +357,7 @@ Program( # input.cq:1:1..35:1
         )
       ]
       annotations: []
+      body: -
     )
   ]
   mappings: []

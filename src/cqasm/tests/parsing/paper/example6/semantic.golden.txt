@@ -138,6 +138,7 @@ Program( # input.cq:1:1..53:1
         )
       ]
       annotations: []
+      body: -
     )
     Subcircuit( # input.cq:15:2..12
       name: grover
@@ -1175,6 +1176,7 @@ Program( # input.cq:1:1..53:1
         )
       ]
       annotations: []
+      body: -
     )
     Subcircuit( # input.cq:49:1..9
       name: measure
@@ -1246,6 +1248,7 @@ Program( # input.cq:1:1..53:1
         )
       ]
       annotations: []
+      body: -
     )
   ]
   mappings: [

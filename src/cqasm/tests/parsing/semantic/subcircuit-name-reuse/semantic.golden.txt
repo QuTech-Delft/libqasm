@@ -13,12 +13,14 @@ Program( # input.cq:1:1..7:1
       iterations: 1
       bundles: []
       annotations: []
+      body: -
     )
     Subcircuit( # input.cq:6:1..9
       name: circuit
       iterations: 1
       bundles: []
       annotations: []
+      body: -
     )
   ]
   mappings: []

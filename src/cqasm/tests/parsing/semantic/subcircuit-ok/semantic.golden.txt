@@ -38,6 +38,7 @@ Program( # input.cq:1:1..13:1
         )
       ]
       annotations: []
+      body: -
     )
     Subcircuit( # input.cq:7:1..15
       name: circuit_2
@@ -93,6 +94,7 @@ Program( # input.cq:1:1..13:1
         )
       ]
       annotations: []
+      body: -
     )
     Subcircuit( # input.cq:11:1..14
       name: circuit_3
@@ -124,6 +126,7 @@ Program( # input.cq:1:1..13:1
         )
       ]
       annotations: []
+      body: -
     )
   ]
   mappings: []

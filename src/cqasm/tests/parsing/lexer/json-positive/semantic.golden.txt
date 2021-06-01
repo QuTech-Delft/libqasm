@@ -47,6 +47,7 @@ Program( # input.cq:1:1..12:1
         )
       ]
       annotations: []
+      body: -
     )
   ]
   mappings: []
