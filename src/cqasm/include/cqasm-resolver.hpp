@@ -58,6 +58,7 @@ public:
      * Grants read access to the underlying map.
      */
     const std::unordered_map<std::string, std::pair<const values::Value, tree::Maybe<ast::Mapping>>> &get_table() const;
+
 };
 
 // Forward declaration for the name resolver template class. This class is

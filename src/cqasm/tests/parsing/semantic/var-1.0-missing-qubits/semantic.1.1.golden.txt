@@ -1,0 +1,2 @@
+ERROR
+Error: missing qubits statement (required until version 1.1)

@@ -43,6 +43,25 @@ annotation_data {
 
 }
 
+# A block of statements. Only used for API level 1.2+.
+block {
+
+    # The statements contained by the block.
+    statements: Any<statement>;
+
+}
+
+# A single condition + block for use in an if-else chain.
+if_else_branch {
+
+    # The condition.
+    condition: external One<cqasm::values::Node>;
+
+    # The body.
+    body: One<block>;
+
+}
+
 # Represents a node that carries annotation data.
 annotated {
 
@@ -64,28 +83,153 @@ annotated {
     }
 
     # An instruction (a.k.a. gate).
-    instruction {
-
-        # Instruction type as registered through the API.
-        instruction: cqasm::instruction::InstructionRef;
-
-        # Name as it appears in the cQASM file.
-        name: cqasm::primitives::Str;
+    instruction_base {
 
         # Condition (c- notation). When there is no condition, this is a
         # constant boolean set to true.
         condition: external One<cqasm::values::Node>;
 
-        # Operands for the instruction.
-        operands: external Any<cqasm::values::Node>;
+        # A regular instruction. Until 1.2, this is the only type of instruction
+        # that exists.
+        instruction {
+
+            # Instruction type as registered through the API.
+            instruction: cqasm::instruction::InstructionRef;
+
+            # Name as it appears in the cQASM file.
+            name: cqasm::primitives::Str;
+
+            # Operands for the instruction.
+            operands: external Any<cqasm::values::Node>;
+
+            # Maintain 1.0/1.1 field order.
+            reorder(instruction, name, condition, operands, annotations);
+
+        }
+
+        # A version 1.2+ assignment instruction.
+        set_instruction {
+
+            # The assignment target.
+            lhs: external One<cqasm::values::Node>;
+
+            # The value to assign.
+            rhs: external One<cqasm::values::Node>;
+
+        }
+
+        # A version 1.2+ goto instruction.
+        goto_instruction {
+
+            # Link to the target subcircuit, used as a label.
+            target: Link<subcircuit>;
+
+        }
 
     }
 
-    # A bundle of instructions, to be executed in parallel.
+    # A bundle of instructions, to be executed in parallel. Only used for API
+    # level 1.0 and 1.1; 1.2+ uses bundle_ext.
     bundle {
 
         # The list of parallel instructions.
         items: Many<instruction>;
+
+    }
+
+    # A statement. Unused before 1.2, as only bundles existed before then.
+    statement {
+
+        # A bundle of instructions, to be executed in parallel. Only used for API
+        # level 1.2+.
+        bundle_ext {
+
+            # The list of parallel instructions.
+            items: Many<instruction_base>;
+
+        }
+
+        # Any version 1.2+ structured control-flow statement.
+        structured {
+
+            # An if-else chain.
+            if_else {
+
+                # The if-else branches.
+                branches: Many<if_else_branch>;
+
+                # The final else block, if any.
+                otherwise: Maybe<block>;
+
+
+            }
+
+            # A C-style for loop.
+            for_loop {
+
+                # The optional initializing assignment, run before the loop starts.
+                initialize: Maybe<set_instruction>;
+
+                # The condition for starting another iteration.
+                condition: external One<cqasm::values::Node>;
+
+                # The updating assignment, done at the end of the loop body and upon
+                # continue.
+                update: Maybe<set_instruction>;
+
+                # The loop body.
+                body: One<block>;
+
+            }
+
+            # A foreach loop. Note that this is rather dumbed-down in cQASM 1.2
+            # compared to the cQASM 2.0 syntax it was inspired from, and is only
+            # usable as a range-based loop.
+            foreach_loop {
+
+                # Reference to the variable used for looping.
+                lhs: external One<cqasm::values::Node>;
+
+                # The first value.
+                from: cqasm::primitives::Int;
+
+                # The last value.
+                to: cqasm::primitives::Int;
+
+                # The loop body.
+                body: One<block>;
+
+            }
+
+            # A while loop.
+            while_loop {
+
+                # The condition for starting another iteration.
+                condition: external One<cqasm::values::Node>;
+
+                # The loop body.
+                body: One<block>;
+
+            }
+
+            # A repeat-until loop.
+            repeat_until_loop {
+
+                # The loop body.
+                body: One<block>;
+
+                # The condition for stopping iteration.
+                condition: external One<cqasm::values::Node>;
+
+            }
+
+            # A break statement.
+            break_statement {}
+
+            # A continue statement.
+            continue_statement {}
+
+        }
 
     }
 
@@ -102,8 +246,16 @@ annotated {
         # not specified.
         iterations: cqasm::primitives::Int;
 
-        # The instruction bundles contained by this subcircuit.
+        # The instruction bundles contained by this subcircuit. Only used for
+        # API level 1.0 and 1.1; use body for 1.2+.
         bundles: Any<bundle>;
+
+        # The statements contained by this subcircuit. Only used for API level
+        # 1.2+; use bundles for 1.0 and 1.1.
+        body: Maybe<block>;
+
+        # Maintain 1.0/1.1 field order.
+        reorder(name, iterations, bundles, annotations, body);
 
     }
 
@@ -157,7 +309,13 @@ program {
     # The list of all user-defined mappings after parsing.
     mappings: Any<mapping>;
 
-    # This list of all user-defined variables at any point in the code.
+    # This list of all user-defined variables at any point in the code. Only
+    # used for API level 1.1+.
     variables: Any<variable>;
+
+    # API version. This may be greater than or equal to the file version. This
+    # controls which fields of the tree are used, where such usage depends on
+    # the version.
+    api_version: cqasm::primitives::Version;
 
 }

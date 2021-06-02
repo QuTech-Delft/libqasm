@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:4:10..13: subcircuit iteration count must be positive, but is -10

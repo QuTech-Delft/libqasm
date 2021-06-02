@@ -1,0 +1,14 @@
+version 1.2
+qubits 10
+
+var i, i2: int
+var r: real
+var r, r2: real
+var b: bit
+
+set i = 3
+set i2 = i
+set r = 3
+set r = 3.0
+set r2 = r
+set b = true

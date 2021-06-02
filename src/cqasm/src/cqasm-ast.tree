@@ -298,6 +298,28 @@ annotation_data {
 
 }
 
+# An assignment statement within a loop definition.
+assignment {
+
+    # Name of the variable being assigned.
+    lhs: One<expression>;
+
+    # Value being assigned to the variable.
+    rhs: One<expression>;
+
+}
+
+# A single condition + block for use in an if-else chain.
+if_else_branch {
+
+    # The condition.
+    condition: One<expression>;
+
+    # The body.
+    body: One<statement_list>;
+
+}
+
 # Represents a node that carries annotation data.
 annotated {
 
@@ -363,6 +385,87 @@ annotated {
             # An optional integer expression representing the number of
             # iterations for this subcircuit.
             iterations: Maybe<expression>;
+
+        }
+
+        # Any version 1.2+ structured control-flow statement.
+        structured {
+
+            # An if-else chain.
+            if_else {
+
+                # The if-else branches.
+                branches: Many<if_else_branch>;
+
+                # The final else block, if any.
+                otherwise: Maybe<statement_list>;
+
+            }
+
+            # A C-style for loop.
+            for_loop {
+
+                # The optional initializing assignment, run before the loop starts.
+                initialize: Maybe<assignment>;
+
+                # The condition for starting another iteration.
+                condition: One<expression>;
+
+                # The updating assignment, done at the end of the loop body and upon
+                # continue.
+                update: Maybe<assignment>;
+
+                # The loop body.
+                body: One<statement_list>;
+
+            }
+
+            # A foreach loop. Note that this is rather dumbed-down in cQASM 1.2
+            # compared to the cQASM 2.0 syntax it was inspired from, and is only
+            # usable as a range-based loop.
+            foreach_loop {
+
+                # Reference to the variable used for looping.
+                lhs: One<expression>;
+
+                # The first value.
+                from: One<expression>;
+
+                # The last value.
+                to: One<expression>;
+
+                # The loop body.
+                body: One<statement_list>;
+
+            }
+
+            # A while loop.
+            while_loop {
+
+                # The condition for starting another iteration.
+                condition: One<expression>;
+
+                # The loop body.
+                body: One<statement_list>;
+
+            }
+
+            # A repeat-until loop.
+            repeat_until_loop {
+
+                # The loop body.
+                body: One<statement_list>;
+
+                # The condition for stopping iteration.
+                condition: One<expression>;
+
+            }
+
+            # A break statement.
+            break_statement {}
+
+            # A continue statement.
+            continue_statement {}
 
         }
 

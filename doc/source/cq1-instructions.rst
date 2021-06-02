@@ -20,6 +20,51 @@ Note the lack of parentheses around the operands.
     set was in fact baked into the language). This standardized instruction set
     is specified at the bottom of this section.
 
+Assignment instruction
+----------------------
+
+Special syntax is available for the ``set`` instruction, namely:
+
+.. code:: text
+
+    set <expr> = <expr>
+
+This intends to make variable assignments more readable.
+
+.. note::
+
+    In cQASM 1.0 and 1.1, ``set`` behaves like a normal instruction with two
+    operands. That means it must be defined as part of the instruction set via
+    the API prior to parsing if the target supports it. In cQASM 1.2+, ``set``
+    is a special instruction that requires no definition; cQASM 1.2+ readers
+    are expected to support set instructions in all cases.
+
+Goto instruction (1.2+)
+-----------------------
+
+In cQASM 1.2+, unstructured control-flow can be represented using
+(non-repeating) subcircuits as labels and goto instructions. The syntax for a
+``goto`` instruction is:
+
+.. code:: text
+
+    goto <name>
+
+``<name>`` must match the name of exactly one subcircuit header in the program.
+
+.. note::
+
+    ``goto`` is a special instruction that bypasses the type system in order to
+    correctly resolve the subcircuit name. It is always defined, regardless of
+    whether a ``goto`` instruction is added to the instruction set via the API.
+    In file versions older than 1.2, ``goto`` behaves like a normal
+    instruction.
+
+.. note::
+
+    Conditional branches can be represented using the notation for conditional
+    execution as defined in the next section.
+
 Conditional instructions
 ------------------------
 
@@ -31,8 +76,8 @@ be made conditional in two ways:
 
 .. code:: text
 
-    cond (<condition>) <name> <comma-separated-operands>
-    c-<name> <condition>, <comma-separated-operands>
+    cond (<condition>) <name> <operands>
+    c-<name> <condition>, <operands>
 
 Both forms are equivalent. The latter mostly exists for backward-compatibility,
 as the former is considered more readable.

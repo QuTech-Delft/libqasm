@@ -1,0 +1,263 @@
+SUCCESS
+Program( # input.cq:1:1..23:1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: 3
+  error_model: -
+  subcircuits: [
+    Subcircuit( # input.cq:11:1..12
+      name: 
+      iterations: 1
+      bundles: [
+        Bundle( # input.cq:11:1..12
+          items: [
+            Instruction( # input.cq:11:1..12
+              instruction: prep_z(qubit reference)
+              name: prep_z
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:11:8..12
+                  index: [
+                    ConstInt( # input.cq:6:7..8
+                      value: 0
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:12:1..15
+          items: [
+            Instruction( # input.cq:12:1..15
+              instruction: prep_z(qubit reference)
+              name: prep_z
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:12:8..15
+                  index: [
+                    ConstInt( # input.cq:7:7..8
+                      value: 1
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:13:1..14
+          items: [
+            Instruction( # input.cq:13:1..14
+              instruction: prep_z(qubit reference)
+              name: prep_z
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:13:8..14
+                  index: [
+                    ConstInt( # input.cq:8:7..8
+                      value: 2
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:14:1..19
+          items: [
+            Instruction( # input.cq:14:1..19
+              instruction: cnot(qubit reference, qubit reference)
+              name: cnot
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:14:7..11
+                  index: [
+                    ConstInt( # input.cq:6:7..8
+                      value: 0
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:14:12..19
+                  index: [
+                    ConstInt( # input.cq:7:7..8
+                      value: 1
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:15:1..18
+          items: [
+            Instruction( # input.cq:15:1..18
+              instruction: cnot(qubit reference, qubit reference)
+              name: cnot
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:15:7..11
+                  index: [
+                    ConstInt( # input.cq:6:7..8
+                      value: 0
+                    )
+                  ]
+                )
+                QubitRefs( # input.cq:15:12..18
+                  index: [
+                    ConstInt( # input.cq:8:7..8
+                      value: 2
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:19:1..16
+          items: [
+            Instruction( # input.cq:19:1..16
+              instruction: measure(qubit reference)
+              name: measure
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:19:9..16
+                  index: [
+                    ConstInt( # input.cq:7:7..8
+                      value: 1
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:22:1..24
+          items: [
+            Instruction( # input.cq:22:1..24
+              instruction: x(qubit reference)
+              name: x
+              condition: <
+                BitRefs( # input.cq:22:5..19
+                  index: [
+                    ConstInt( # input.cq:18:7..8
+                      value: 1
+                    )
+                  ]
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:22:20..24
+                  index: [
+                    ConstInt( # input.cq:22:22..23
+                      value: 2
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+      ]
+      annotations: []
+      body: -
+    )
+  ]
+  mappings: [
+    Mapping( # input.cq:6:1..14
+      name: data
+      value: <
+        QubitRefs( # input.cq:6:5..9
+          index: [
+            ConstInt( # input.cq:6:7..8
+              value: 0
+            )
+          ]
+        )
+      >
+      annotations: []
+    )
+    Mapping( # input.cq:7:1..17
+      name: ancilla
+      value: <
+        QubitRefs( # input.cq:7:5..9
+          index: [
+            ConstInt( # input.cq:7:7..8
+              value: 1
+            )
+          ]
+        )
+      >
+      annotations: []
+    )
+    Mapping( # input.cq:8:1..16
+      name: output
+      value: <
+        QubitRefs( # input.cq:8:5..9
+          index: [
+            ConstInt( # input.cq:8:7..8
+              value: 2
+            )
+          ]
+        )
+      >
+      annotations: []
+    )
+    Mapping( # input.cq:18:1..24
+      name: error_syndrome
+      value: <
+        BitRefs( # input.cq:18:5..9
+          index: [
+            ConstInt( # input.cq:18:7..8
+              value: 1
+            )
+          ]
+        )
+      >
+      annotations: []
+    )
+  ]
+  variables: []
+  api_version: 1.1
+)
+

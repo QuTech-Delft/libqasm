@@ -1,0 +1,79 @@
+SUCCESS
+Program( # input.cq:1:1..9:1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.2
+    )
+  >
+  num_qubits: <
+    IntegerLiteral( # input.cq:2:8..9
+      value: 1
+    )
+  >
+  statements: <
+    StatementList( # input.cq:2:1..9:17
+      items: [
+        Variables( # input.cq:4:1..11
+          names: [
+            Identifier( # input.cq:4:5..6
+              name: i
+            )
+          ]
+          typ: <
+            Identifier( # input.cq:4:8..11
+              name: int
+            )
+          >
+          annotations: []
+        )
+        RepeatUntilLoop( # input.cq:6:1..8:17
+          body: <
+            StatementList( # input.cq:6:5..8:8
+              items: [
+                Bundle( # input.cq:7:5..8
+                  items: [
+                    Instruction( # input.cq:7:5..8
+                      name: <
+                        Identifier( # input.cq:7:5..6
+                          name: x
+                        )
+                      >
+                      condition: -
+                      operands: <
+                        ExpressionList( # input.cq:7:7..8
+                          items: [
+                            Identifier( # input.cq:7:7..8
+                              name: q
+                            )
+                          ]
+                        )
+                      >
+                      annotations: []
+                    )
+                  ]
+                  annotations: []
+                )
+              ]
+            )
+          >
+          condition: <
+            CmpLt( # input.cq:8:10..16
+              lhs: <
+                Identifier( # input.cq:8:10..11
+                  name: i
+                )
+              >
+              rhs: <
+                IntegerLiteral( # input.cq:8:14..16
+                  value: 10
+                )
+              >
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

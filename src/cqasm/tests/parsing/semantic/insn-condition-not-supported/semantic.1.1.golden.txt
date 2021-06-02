@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:4:1..21: conditional execution is not supported for this instruction

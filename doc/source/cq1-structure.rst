@@ -8,8 +8,9 @@ of the following statement types:
 
 - mappings,
 - variables (version 1.1+),
-- subcircuit headers, and
-- bundles.
+- subcircuit headers,
+- bundles, and
+- structured control-flow statements (version 1.2+).
 
 A simple algorithm might look like this.
 
@@ -88,7 +89,8 @@ mappings or variables.
 
 .. code-block:: text
 
-    qubits  map  var  cond
+    break  cond  continue  else  for  foreach  if
+    map  repeat  set  qubits  until  var  while
 
 .. note::
 

@@ -6,6 +6,9 @@
 #include <unordered_set>
 #include <cctype>
 #include <cmath>
+#include <list>
+#include <map>
+#include <utility>
 #include "cqasm-analyzer.hpp"
 #include "cqasm-parse-helper.hpp"
 #include "cqasm-utils.hpp"
@@ -33,22 +36,22 @@ ast::One<semantic::Program> AnalysisResult::unwrap(std::ostream &out) const {
 /**
  * Creates a new semantic analyzer.
  */
-Analyzer::Analyzer(const std::string &max_version)
-    : max_version(max_version), resolve_instructions(false), resolve_error_model(false)
+Analyzer::Analyzer(const std::string &api_version)
+    : api_version(api_version), resolve_instructions(false), resolve_error_model(false)
 {
-    if (max_version.compare("1.1") > 0) {
-        throw std::invalid_argument("this analyzer only supports up to cQASM 1.1");
+    if (api_version.compare("1.2") > 0) {
+        throw std::invalid_argument("this analyzer only supports up to cQASM 1.2");
     }
 }
 
 /**
  * Creates a new semantic analyzer.
  */
-Analyzer::Analyzer(const primitives::Version &max_version)
-    : max_version(max_version), resolve_instructions(false), resolve_error_model(false)
+Analyzer::Analyzer(const primitives::Version &api_version)
+    : api_version(api_version), resolve_instructions(false), resolve_error_model(false)
 {
-    if (max_version.compare("1.1") > 0) {
-        throw std::invalid_argument("this analyzer only supports up to cQASM 1.1");
+    if (api_version.compare("1.2") > 0) {
+        throw std::invalid_argument("this analyzer only supports up to cQASM 1.2");
     }
 }
 
@@ -156,10 +159,40 @@ void Analyzer::register_error_model(
  */
 class Scope {
 public:
+
+    /**
+     * The mappings visible within this scope.
+     */
     resolver::MappingTable mappings;
+
+    /**
+     * The functions visible within this scope.
+     */
     resolver::FunctionTable functions;
+
+    /**
+     * The instruction set visible within this scope.
+     */
     resolver::InstructionTable instruction_set;
 
+    /**
+     * The block associated with this scope, if any. If this is empty, this is
+     * the global scope, and the active block is that of the current subcircuit,
+     * which is lazily created when needed in case no subcircuit label is
+     * explicitly specified, and can thus not easily be populated here.
+     */
+    tree::Maybe<semantic::Block> block;
+
+    /**
+     * Whether we're within at least one for, foreach, while, or repeat-until
+     * loop. This is a necessary condition for break and continue statements to
+     * be allowed.
+     */
+    bool within_loop;
+
+    /**
+     * Creates the global scope.
+     */
     Scope(
         const resolver::MappingTable &mappings,
         const resolver::FunctionTable &functions,
@@ -167,7 +200,9 @@ public:
     ) :
         mappings(mappings),
         functions(functions),
-        instruction_set(instruction_set)
+        instruction_set(instruction_set),
+        block(),
+        within_loop(false)
     {}
 
 };
@@ -178,9 +213,27 @@ public:
  */
 class AnalyzerHelper {
 public:
+
+    /**
+     * The analyzer associated with this helper.
+     */
     const Analyzer &analyzer;
+
+    /**
+     * The analysis result being constructed.
+     */
     AnalysisResult result;
-    Scope scope;
+
+    /**
+     * Scope stack. back() is the global scope, front() is the current scope.
+     */
+    std::list<Scope> scope_stack;
+
+    /**
+     * List of all goto instructions in the program, for name resolution when
+     * all other analysis completes.
+     */
+    std::list<std::pair<tree::Maybe<semantic::GotoInstruction>, std::string>> gotos;
 
     /**
      * Analyzes the given AST using the given analyzer.
@@ -200,17 +253,88 @@ public:
     void analyze_qubits(const ast::Expression &count);
 
     /**
+     * Returns a reference to the subcircuit that's currently being built. If there
+     * is no subcircuit yet, a default one is created, using the source location
+     * annotation on the source node.
+     */
+    tree::Maybe<semantic::Subcircuit> get_current_subcircuit(const tree::Annotatable &source);
+
+    /**
+     * Returns a reference to the current scope.
+     */
+    Scope &get_current_scope();
+
+    /**
+     * Returns a reference to the global scope.
+     */
+    Scope &get_global_scope();
+
+    /**
+     * Returns a reference to the block that's currently being built (1.2+).
+     */
+    tree::Maybe<semantic::Block> get_current_block(const tree::Annotatable &source);
+
+    /**
+     * Adds an analyzed statement to the current block (1.2+).
+     */
+    void add_to_current_block(const tree::Maybe<semantic::Statement> &stmt);
+
+    /**
+     * Analyzes the given statement list, adding the analyzed statements to the
+     * current subcircuit (API 1.0/1.1) or block (API 1.2+).
+     */
+    void analyze_statements(const ast::StatementList &statements);
+
+    /**
+     * Analyzes a statement list corresponding to a structured control-flow
+     * subblock (1.2+). Handles the requisite scoping, then defers to
+     * analyze_statements().
+     */
+    tree::Maybe<semantic::Block> analyze_subblock(const ast::StatementList &statements, bool is_loop);
+
+    /**
      * Analyzes the given bundle and, if valid, adds it to the current
-     * subcircuit. If an error occurs, the message is added to the result
-     * error vector, and nothing is added to the subcircuit.
+     * subcircuit using API version 1.0/1.1. If an error occurs, the message is
+     * added to the result error vector, and nothing is added to the subcircuit.
      */
     void analyze_bundle(const ast::Bundle &bundle);
+
+    /**
+     * Analyzes the given bundle and, if valid, adds it to the current
+     * scope/block using API version 1.2+. If an error occurs, the message is
+     * added to the result error vector, and nothing is added to the block.
+     */
+    void analyze_bundle_ext(const ast::Bundle &bundle);
 
     /**
      * Analyzes the given instruction. If an error occurs, the message is added to
      * the result error vector, and an empty Maybe is returned.
      */
     tree::Maybe<semantic::Instruction> analyze_instruction(const ast::Instruction &insn);
+
+    /**
+     * Analyzes the given cQASM 1.2+ set instruction. If an error occurs, the
+     * message is added to the result error vector, and an empty Maybe is
+     * returned.
+     */
+    tree::Maybe<semantic::SetInstruction> analyze_set_instruction(const ast::Instruction &insn);
+
+    /**
+     * Analyzes the given two operands as lhs and rhs of a set instruction. Used for
+     * the actual set instruction as well as the assignments in the header of a
+     * C-style for loop.
+     */
+    tree::Maybe<semantic::SetInstruction> analyze_set_instruction_operands(
+        const ast::Expression &lhs_expr,
+        const ast::Expression &rhs_expr
+    );
+
+    /**
+     * Analyzes the given cQASM 1.2+ goto instruction. If an error occurs, the
+     * message is added to the result error vector, and an empty Maybe is
+     * returned.
+     */
+    tree::Maybe<semantic::GotoInstruction> analyze_goto_instruction(const ast::Instruction &insn);
 
     /**
      * Analyzes the error model meta-instruction and, if valid, adds it to the
@@ -239,6 +363,44 @@ public:
      * error vector, and nothing is added to the result.
      */
     void analyze_subcircuit(const ast::Subcircuit &subcircuit);
+
+    /**
+     * Analyzes the given structured control-flow statement and, if valid, adds
+     * it to the current scope/block using API version 1.2+. If an error occurs,
+     * the message is added to the result error vector, and nothing is added to
+     * the block.
+     */
+    void analyze_structured(const ast::Structured &structured);
+
+    /**
+     * Analyzes the given if-else chain. Only intended for use as a helper
+     * function within analyze_structured().
+     */
+    tree::Maybe<semantic::IfElse> analyze_if_else(const ast::IfElse &if_else);
+
+    /**
+     * Analyzes the given C-style for loop. Only intended for use as a helper
+     * function within analyze_structured().
+     */
+    tree::Maybe<semantic::ForLoop> analyze_for_loop(const ast::ForLoop &for_loop);
+
+    /**
+     * Analyzes the given static for loop. Only intended for use as a helper
+     * function within analyze_structured().
+     */
+    tree::Maybe<semantic::ForeachLoop> analyze_foreach_loop(const ast::ForeachLoop &foreach_loop);
+
+    /**
+     * Analyzes the given while loop. Only intended for use as a helper function
+     * within analyze_structured().
+     */
+    tree::Maybe<semantic::WhileLoop> analyze_while_loop(const ast::WhileLoop &while_loop);
+
+    /**
+     * Analyzes the given repeat-until loop. Only intended for use as a helper
+     * function within analyze_structured().
+     */
+    tree::Maybe<semantic::RepeatUntilLoop> analyze_repeat_until_loop(const ast::RepeatUntilLoop &repeat_until_loop);
 
     /**
      * Analyzes the given list of annotations. Any errors found result in the
@@ -378,13 +540,14 @@ AnalyzerHelper::AnalyzerHelper(
 ) :
     analyzer(analyzer),
     result(),
-    scope(analyzer.mappings, analyzer.functions, analyzer.instruction_set)
+    scope_stack({Scope(analyzer.mappings, analyzer.functions, analyzer.instruction_set)})
 {
     try {
 
         // Construct the program node.
         result.root.set(tree::make<semantic::Program>());
         result.root->copy_annotation<parser::SourceLocation>(ast);
+        result.root->api_version = analyzer.api_version;
 
         // Check and set the version.
         analyze_version(*ast.version);
@@ -401,27 +564,50 @@ AnalyzerHelper::AnalyzerHelper(
         }
 
         // Read the statements.
-        for (auto stmt : ast.statements->items) {
-            try {
-                if (auto bundle = stmt->as_bundle()) {
-                    analyze_bundle(*bundle);
-                } else if (auto mapping = stmt->as_mapping()) {
-                    analyze_mapping(*mapping);
-                } else if (auto variables = stmt->as_variables()) {
-                    analyze_variables(*variables);
-                } else if (auto subcircuit = stmt->as_subcircuit()) {
-                    analyze_subcircuit(*subcircuit);
-                } else {
-                    throw std::runtime_error("unexpected statement node");
+        analyze_statements(*ast.statements);
+
+        // Resolve goto targets.
+        if (ast.version->items.compare("1.2") >= 0) {
+
+            // Figure out all the subcircuit names and check for duplicates.
+            std::map<std::string, tree::Maybe<semantic::Subcircuit>> subcircuits;
+            for (const auto &subcircuit : result.root->subcircuits) {
+                try {
+                    auto insert_result = subcircuits.insert({subcircuit->name, subcircuit});
+                    if (!insert_result.second) {
+                        std::ostringstream ss;
+                        ss << "duplicate subcircuit name \"" << subcircuit->name << "\"";
+                        if (auto loc = insert_result.first->second->get_annotation_ptr<parser::SourceLocation>()) {
+                            ss << "; previous definition was at " << *loc;
+                        }
+                        throw error::AnalysisError(ss.str());
+                    }
+                } catch (error::AnalysisError &e) {
+                    e.context(*subcircuit);
+                    result.errors.push_back(e.get_message());
                 }
-            } catch (error::AnalysisError &e) {
-                e.context(*stmt);
-                result.errors.push_back(e.get_message());
             }
+
+            // Resolve the goto instruction targets.
+            for (const auto &it : gotos) {
+                try {
+                    auto it2 = subcircuits.find(it.second);
+                    if (it2 == subcircuits.end()) {
+                        throw error::AnalysisError(
+                            "failed to resolve subcircuit \"" + it.second + "\""
+                        );
+                    }
+                    it.first->target = it2->second;
+                } catch (error::AnalysisError &e) {
+                    e.context(*it.first);
+                    result.errors.push_back(e.get_message());
+                }
+            }
+
         }
 
         // Save the list of final mappings.
-        for (const auto &it : scope.mappings.get_table()) {
+        for (const auto &it : get_current_scope().mappings.get_table()) {
             const auto &name = it.first;
             const auto &value = it.second.first;
             const auto &ast_node = it.second.second;
@@ -472,19 +658,27 @@ AnalyzerHelper::AnalyzerHelper(
  */
 void AnalyzerHelper::analyze_version(const ast::Version &ast) {
     try {
+
+        // Default to API version in case the version in the AST is broken.
         result.root->version = tree::make<semantic::Version>();
+        result.root->version->items = analyzer.api_version;
+
+        // Check API version.
         for (auto item : ast.items) {
             if (item < 0) {
                 throw error::AnalysisError("invalid version component");
             }
         }
-        result.root->version->items = ast.items;
-        if (ast.items.compare(analyzer.max_version) > 0) {
+        if (ast.items.compare(analyzer.api_version) > 0) {
             std::ostringstream ss{};
-            ss << "the maximum cQASM version supported is " << analyzer.max_version;
+            ss << "the maximum cQASM version supported is " << analyzer.api_version;
             ss << ", but the cQASM file is version " << ast.items;
             throw error::AnalysisError(ss.str());
         }
+
+        // Save the file version.
+        result.root->version->items = ast.items;
+
     } catch (error::AnalysisError &e) {
         e.context(ast);
         result.errors.push_back(e.get_message());
@@ -517,8 +711,8 @@ void AnalyzerHelper::analyze_qubits(const ast::Expression &count) {
             vi->copy_annotation<parser::SourceLocation>(count);
             all_qubits.add(vi);
         }
-        scope.mappings.add("q", tree::make<values::QubitRefs>(all_qubits));
-        scope.mappings.add("b", tree::make<values::BitRefs>(all_qubits));
+        get_current_scope().mappings.add("q", tree::make<values::QubitRefs>(all_qubits));
+        get_current_scope().mappings.add("b", tree::make<values::BitRefs>(all_qubits));
 
     } catch (error::AnalysisError &e) {
         e.context(count);
@@ -527,9 +721,152 @@ void AnalyzerHelper::analyze_qubits(const ast::Expression &count) {
 }
 
 /**
+ * Returns a reference to the subcircuit that's currently being built. If there
+ * is no subcircuit yet, a default one is created, using the source location
+ * annotation on the source node.
+ */
+tree::Maybe<semantic::Subcircuit> AnalyzerHelper::get_current_subcircuit(
+    const tree::Annotatable &source
+) {
+
+    // If we don't have a subcircuit yet, add a default one. Note that the
+    // original libqasm always had this default subcircuit (even if it was
+    // empty) and used the name "default" vs. the otherwise invalid empty
+    // string.
+    if (result.root->subcircuits.empty()) {
+        auto subcircuit_node = tree::make<semantic::Subcircuit>("", 1);
+        subcircuit_node->copy_annotation<parser::SourceLocation>(source);
+        if (analyzer.api_version.compare("1.2") >= 0) {
+            subcircuit_node->body = tree::make<semantic::Block>();
+        }
+        result.root->subcircuits.add(subcircuit_node);
+    }
+
+    // Add the node to the last subcircuit.
+    return result.root->subcircuits.back();
+
+}
+
+/**
+ * Returns a reference to the current scope.
+ */
+Scope &AnalyzerHelper::get_current_scope() {
+    return scope_stack.back();
+}
+
+/**
+ * Returns a reference to the global scope.
+ */
+Scope &AnalyzerHelper::get_global_scope() {
+    return scope_stack.front();
+}
+
+/**
+ * Returns a reference to the block that's currently being built.
+ */
+tree::Maybe<semantic::Block> AnalyzerHelper::get_current_block(
+    const tree::Annotatable &source
+) {
+
+    // If we're in a local scope/block, return that block.
+    const auto &scope = get_current_scope();
+    if (!scope.block.empty()) {
+        return scope.block;
+    }
+
+    // Otherwise return the block belonging to the current subcircuit.
+    return get_current_subcircuit(source)->body;
+}
+
+/**
+ * Adds an analyzed statement to the current block (1.2+).
+ */
+void AnalyzerHelper::add_to_current_block(const tree::Maybe<semantic::Statement> &stmt) {
+
+    // Add the statement to the current block.
+    auto block = get_current_block(*stmt);
+    block->statements.add(stmt);
+
+    // Expand the source location annotation of the block to include the
+    // statement.
+    if (auto stmt_loc = stmt->get_annotation_ptr<parser::SourceLocation>()) {
+        if (auto block_loc = block->get_annotation_ptr<parser::SourceLocation>()) {
+            block_loc->expand_to_include(stmt_loc->first_line, stmt_loc->first_column);
+            block_loc->expand_to_include(stmt_loc->last_line, stmt_loc->last_column);
+        } else {
+            block->set_annotation<parser::SourceLocation>(*stmt_loc);
+        }
+    }
+
+}
+
+/**
+ * Analyzes the given statement list, adding the analyzed statements to the
+ * current subcircuit (API 1.0/1.1) or block (API 1.2+).
+ */
+void AnalyzerHelper::analyze_statements(const ast::StatementList &statements) {
+    for (const auto &stmt : statements.items) {
+        try {
+            if (auto bundle = stmt->as_bundle()) {
+                if (analyzer.api_version.compare("1.2") >= 0) {
+                    analyze_bundle_ext(*bundle);
+                } else {
+                    analyze_bundle(*bundle);
+                }
+            } else if (auto mapping = stmt->as_mapping()) {
+                analyze_mapping(*mapping);
+            } else if (auto variables = stmt->as_variables()) {
+                analyze_variables(*variables);
+            } else if (auto subcircuit = stmt->as_subcircuit()) {
+                analyze_subcircuit(*subcircuit);
+            } else if (auto structured = stmt->as_structured()) {
+                if (result.root->version->items.compare("1.2") < 0) {
+                    throw error::AnalysisError("structured control-flow is not supported (need version 1.2+)");
+                }
+                analyze_structured(*structured);
+            } else {
+                throw std::runtime_error("unexpected statement node");
+            }
+        } catch (error::AnalysisError &e) {
+            e.context(*stmt);
+            result.errors.push_back(e.get_message());
+        }
+    }
+}
+
+/**
+ * Analyzes a statement list corresponding to a structured control-flow
+ * subblock (1.2+). Handles the requisite scoping, then defers to
+ * analyze_statements().
+ */
+tree::Maybe<semantic::Block> AnalyzerHelper::analyze_subblock(
+    const ast::StatementList &statements,
+    bool is_loop
+) {
+
+    // Create the block.
+    tree::Maybe<semantic::Block> block;
+    block.emplace();
+
+    // Create a scope for the block.
+    scope_stack.emplace_back(get_current_scope());
+    get_current_scope().block = block;
+    get_current_scope().within_loop |= is_loop;
+
+    // Analyze the statements within the block. The statements will be added
+    // to the current scope, which we just updated.
+    analyze_statements(statements);
+
+    // Pop the scope from the stack.
+    scope_stack.pop_back();
+
+    return block;
+}
+
+/**
  * Analyzes the given bundle and, if valid, adds it to the current
- * subcircuit. If an error occurs, the message is added to the result
- * error vector, and nothing is added to the subcircuit.
+ * subcircuit using API version 1.0/1.1. If an error occurs, the message is
+ * added to the result error vector, and nothing is added to the subcircuit.
  */
 void AnalyzerHelper::analyze_bundle(const ast::Bundle &bundle) {
     try {
@@ -590,18 +927,89 @@ void AnalyzerHelper::analyze_bundle(const ast::Bundle &bundle) {
         node->annotations = analyze_annotations(bundle.annotations);
         node->copy_annotation<parser::SourceLocation>(bundle);
 
-        // If we don't have a subcircuit yet, add a default one. Note that the
-        // original libqasm always had this default subcircuit (even if it was
-        // empty) and used the name "default" vs. the otherwise invalid empty
-        // string.
-        if (result.root->subcircuits.empty()) {
-            auto subcircuit_node = tree::make<semantic::Subcircuit>("", 1);
-            subcircuit_node->copy_annotation<parser::SourceLocation>(bundle);
-            result.root->subcircuits.add(subcircuit_node);
+        // Add the node to the last subcircuit.
+        get_current_subcircuit(bundle)->bundles.add(node);
+
+    } catch (error::AnalysisError &e) {
+        e.context(bundle);
+        result.errors.push_back(e.get_message());
+    }
+}
+
+/**
+ * Analyzes the given bundle and, if valid, adds it to the current
+ * subcircuit using API version 1.2+. If an error occurs, the message is
+ * added to the result error vector, and nothing is added to the subcircuit.
+ */
+void AnalyzerHelper::analyze_bundle_ext(const ast::Bundle &bundle) {
+    try {
+
+        // The error model statement from the original cQASM grammar is a bit
+        // of a pain, because it conflicts with gates/instructions, so we have
+        // to special-case it here. Technically we could also have made it a
+        // keyword, but the less random keywords there are, the better.
+        if (bundle.items.size() == 1) {
+            if (utils::case_insensitive_equals(bundle.items[0]->name->name, "error_model")) {
+                analyze_error_model(*bundle.items[0]);
+                return;
+            }
         }
 
+        // Analyze and add the instructions.
+        auto node = tree::make<semantic::BundleExt>();
+        for (const auto &insn : bundle.items) {
+            if (utils::case_insensitive_equals(insn->name->name, "set")) {
+                node->items.add(analyze_set_instruction(*insn));
+            } else if (utils::case_insensitive_equals(insn->name->name, "goto")) {
+                node->items.add(analyze_goto_instruction(*insn));
+            } else {
+                node->items.add(analyze_instruction(*insn));
+            }
+        }
+
+        // If we have more than two instructions, ensure that all instructions
+        // are parallelizable.
+        if (node->items.size() > 1) {
+            for (const auto &insn_base : node->items) {
+                try {
+                    if (auto insn = insn_base->as_instruction()) {
+                        if (!insn->instruction.empty()) {
+                            if (!insn->instruction->allow_parallel) {
+                                std::ostringstream ss;
+                                ss << "instruction ";
+                                ss << insn->instruction->name;
+                                ss << " with parameter pack ";
+                                ss << insn->instruction->param_types;
+                                ss << " is not parallelizable, but is bundled with ";
+                                ss << (node->items.size() - 1);
+                                ss << " other instruction";
+                                if (node->items.size() != 2) {
+                                    ss << "s";
+                                }
+                                throw error::AnalysisError(ss.str());
+                            }
+                        }
+                    }
+                } catch (error::AnalysisError &e) {
+                    e.context(*insn_base);
+                    result.errors.push_back(e.get_message());
+                }
+            }
+        }
+
+        // It's possible that no instructions end up being added, due to all
+        // condition codes resolving to constant false. In that case the entire
+        // bundle is removed.
+        if (node->items.empty()) {
+            return;
+        }
+
+        // Copy annotation data.
+        node->annotations = analyze_annotations(bundle.annotations);
+        node->copy_annotation<parser::SourceLocation>(bundle);
+
         // Add the node to the last subcircuit.
-        result.root->subcircuits.back()->bundles.add(node);
+        add_to_current_block(node.as<semantic::Statement>());
 
     } catch (error::AnalysisError &e) {
         e.context(bundle);
@@ -627,7 +1035,7 @@ tree::Maybe<semantic::Instruction> AnalyzerHelper::analyze_instruction(const ast
         // Resolve the instruction and/or make the instruction node.
         tree::Maybe<semantic::Instruction> node;
         if (analyzer.resolve_instructions) {
-            node.set(scope.instruction_set.resolve(insn.name->name, operands));
+            node.set(get_current_scope().instruction_set.resolve(insn.name->name, operands));
         } else {
             node.set(tree::make<semantic::Instruction>(
                 tree::Maybe<instruction::Instruction>(),
@@ -644,8 +1052,7 @@ tree::Maybe<semantic::Instruction> AnalyzerHelper::analyze_instruction(const ast
             auto condition_val = analyze_expression(*insn.condition);
             node->condition = values::promote(condition_val, tree::make<types::Bool>());
             if (node->condition.empty()) {
-                throw error::AnalysisError(
-                    "condition must be a boolean");
+                throw error::AnalysisError("condition must be a boolean");
             }
 
             // If the condition is constant false, optimize the instruction
@@ -724,6 +1131,161 @@ tree::Maybe<semantic::Instruction> AnalyzerHelper::analyze_instruction(const ast
 }
 
 /**
+ * Analyzes the given cQASM 1.2+ set instruction. If an error occurs, the
+ * message is added to the result error vector, and an empty Maybe is
+ * returned.
+ */
+tree::Maybe<semantic::SetInstruction> AnalyzerHelper::analyze_set_instruction(
+    const ast::Instruction &insn
+) {
+    try {
+
+        // Figure out the operand list.
+        if (insn.operands->items.size() != 2) {
+            throw error::AnalysisError("set instruction must have two operands");
+        }
+
+        // Analyze the operands.
+        auto node = analyze_set_instruction_operands(
+            *insn.operands->items[0],
+            *insn.operands->items[1]
+        );
+
+        // Resolve the condition code.
+        if (!insn.condition.empty()) {
+            auto condition_val = analyze_expression(*insn.condition);
+            node->condition = values::promote(condition_val, tree::make<types::Bool>());
+            if (node->condition.empty()) {
+                throw error::AnalysisError("condition must be a boolean");
+            }
+
+            // If the condition is constant false, optimize the instruction
+            // away.
+            if (auto x = node->condition->as_const_bool()) {
+                if (!x->value) {
+                    return tree::Maybe<semantic::SetInstruction>();
+                }
+            }
+        } else {
+            node->condition.set(tree::make<values::ConstBool>(true));
+        }
+
+        // Copy annotation data.
+        node->annotations = analyze_annotations(insn.annotations);
+        node->copy_annotation<parser::SourceLocation>(insn);
+
+        return node;
+    } catch (error::AnalysisError &e) {
+        e.context(insn);
+        result.errors.push_back(e.get_message());
+    }
+    return tree::Maybe<semantic::SetInstruction>();
+}
+
+/**
+ * Analyzes the given two operands as lhs and rhs of a set instruction. Used for
+ * the actual set instruction as well as the assignments in the header of a
+ * C-style for loop.
+ */
+tree::Maybe<semantic::SetInstruction> AnalyzerHelper::analyze_set_instruction_operands(
+    const ast::Expression &lhs_expr,
+    const ast::Expression &rhs_expr
+) {
+
+    // Analyze the expressions.
+    auto lhs = analyze_expression(lhs_expr);
+    auto rhs = analyze_expression(rhs_expr);
+
+    // Check assignability of the left-hand side.
+    if (!lhs->as_reference()) {
+        throw error::AnalysisError(
+            "left-hand side of assignment statement must be assignable"
+        );
+    }
+
+    // Type-check/promote the right-hand side.
+    auto target_type = values::type_of(lhs).clone();
+    target_type->assignable = false;
+    auto rhs_promoted = values::promote(rhs, target_type);
+    if (rhs_promoted.empty()) {
+        std::ostringstream ss;
+        ss << "type of right-hand side (" << values::type_of(rhs) << ") ";
+        ss << "could not be coerced to left-hand side (" << values::type_of(lhs) << ")";
+        throw error::AnalysisError(ss.str());
+    }
+
+    // Create the node.
+    tree::Maybe<semantic::SetInstruction> node;
+    node.emplace<semantic::SetInstruction>(lhs, rhs_promoted);
+    return node;
+}
+
+/**
+ * Analyzes the given cQASM 1.2+ goto instruction. If an error occurs, the
+ * message is added to the result error vector, and an empty Maybe is
+ * returned.
+ */
+tree::Maybe<semantic::GotoInstruction> AnalyzerHelper::analyze_goto_instruction(
+    const ast::Instruction &insn
+) {
+    try {
+
+        // Parse the operands.
+        if (insn.operands->items.size() != 1) {
+            throw error::AnalysisError(
+                "goto instruction must have a single operand"
+            );
+        }
+        std::string target;
+        if (auto identifier = insn.operands->items[0]->as_identifier()) {
+            target = identifier->name;
+        } else {
+            throw error::AnalysisError(
+                "goto instruction operand must be a subcircuit identifier"
+            );
+        }
+
+        // Create the node.
+        tree::Maybe<semantic::GotoInstruction> node;
+        node.set(tree::make<semantic::GotoInstruction>());
+
+        // We can't resolve the target subcircuit yet, because goto instructions
+        // may refer forward. Instead, we maintain a list of yet-to-be resolved
+        // goto instructions.
+        gotos.emplace_back(node, target);
+
+        // Resolve the condition code.
+        if (!insn.condition.empty()) {
+            auto condition_val = analyze_expression(*insn.condition);
+            node->condition = values::promote(condition_val, tree::make<types::Bool>());
+            if (node->condition.empty()) {
+                throw error::AnalysisError("condition must be a boolean");
+            }
+
+            // If the condition is constant false, optimize the instruction
+            // away.
+            if (auto x = node->condition->as_const_bool()) {
+                if (!x->value) {
+                    return tree::Maybe<semantic::GotoInstruction>();
+                }
+            }
+        } else {
+            node->condition.set(tree::make<values::ConstBool>(true));
+        }
+
+        // Copy annotation data.
+        node->annotations = analyze_annotations(insn.annotations);
+        node->copy_annotation<parser::SourceLocation>(insn);
+
+        return node;
+    } catch (error::AnalysisError &e) {
+        e.context(insn);
+        result.errors.push_back(e.get_message());
+    }
+    return tree::Maybe<semantic::GotoInstruction>();
+}
+
+/**
  * Analyzes the error model meta-instruction and, if valid, adds it to the
  * analysis result. If an error occurs, the message is added to the result
  * error vector, and nothing is added.
@@ -794,7 +1356,7 @@ void AnalyzerHelper::analyze_error_model(const ast::Instruction &insn) {
  */
 void AnalyzerHelper::analyze_mapping(const ast::Mapping &mapping) {
     try {
-        scope.mappings.add(
+        get_current_scope().mappings.add(
             mapping.alias->name,
             analyze_expression(*mapping.expr),
             tree::make<ast::Mapping>(mapping)
@@ -846,7 +1408,7 @@ void AnalyzerHelper::analyze_variables(const ast::Variables &variables) {
             result.root->variables.add(var);
 
             // Add a mapping for the variable.
-            scope.mappings.add(
+            get_current_scope().mappings.add(
                 identifier->name,
                 tree::make<values::VariableRef>(var),
                 tree::Maybe<ast::Mapping>()
@@ -866,6 +1428,9 @@ void AnalyzerHelper::analyze_variables(const ast::Variables &variables) {
  */
 void AnalyzerHelper::analyze_subcircuit(const ast::Subcircuit &subcircuit) {
     try {
+        if (scope_stack.size() > 1) {
+            throw error::AnalysisError("cannot open subcircuit within subblock");
+        }
         primitives::Int iterations = 1;
         if (!subcircuit.iterations.empty()) {
             iterations = analyze_as_const_int(*subcircuit.iterations);
@@ -881,11 +1446,286 @@ void AnalyzerHelper::analyze_subcircuit(const ast::Subcircuit &subcircuit) {
             tree::Any<semantic::Bundle>(),
             analyze_annotations(subcircuit.annotations));
         node->copy_annotation<parser::SourceLocation>(subcircuit);
+        if (analyzer.api_version.compare("1.2") >= 0) {
+            node->body = tree::make<semantic::Block>();
+            node->body->copy_annotation<parser::SourceLocation>(subcircuit);
+        }
         result.root->subcircuits.add(node);
     } catch (error::AnalysisError &e) {
         e.context(subcircuit);
         result.errors.push_back(e.get_message());
     }
+}
+
+/**
+ * Analyzes the given structured control-flow statement and, if valid, adds
+ * it to the current scope/block using API version 1.2+. If an error occurs,
+ * the message is added to the result error vector, and nothing is added to
+ * the block.
+ */
+void AnalyzerHelper::analyze_structured(const ast::Structured &structured) {
+    try {
+        tree::Maybe<semantic::Structured> node;
+
+        // Switch based on statement type.
+        if (auto if_else = structured.as_if_else()) {
+            node = analyze_if_else(*if_else);
+        } else if (auto for_loop = structured.as_for_loop()) {
+            node = analyze_for_loop(*for_loop);
+        } else if (auto foreach_loop = structured.as_foreach_loop()) {
+            node = analyze_foreach_loop(*foreach_loop);
+        } else if (auto while_loop = structured.as_while_loop()) {
+            node = analyze_while_loop(*while_loop);
+        } else if (auto repeat_until_loop = structured.as_repeat_until_loop()) {
+            node = analyze_repeat_until_loop(*repeat_until_loop);
+        } else if (structured.as_break_statement()) {
+
+            // Handle break statement.
+            if (!get_current_scope().within_loop) {
+                throw error::AnalysisError(
+                    "cannot use break outside of a structured loop"
+                );
+            }
+            node.emplace<semantic::BreakStatement>();
+
+        } else if (structured.as_continue_statement()) {
+
+            // Handle continue statement.
+            if (!get_current_scope().within_loop) {
+                throw error::AnalysisError(
+                    "cannot use continue outside of a structured loop"
+                );
+            }
+            node.emplace<semantic::ContinueStatement>();
+
+        } else {
+            throw std::runtime_error("unexpected statement node");
+        }
+
+        // Stop if the node was optimized away.
+        if (node.empty()) {
+            return;
+        }
+
+        // Copy annotation data.
+        node->annotations = analyze_annotations(structured.annotations);
+        node->copy_annotation<parser::SourceLocation>(structured);
+
+        // Add the node to the current block.
+        add_to_current_block(node.as<semantic::Statement>());
+
+    } catch (error::AnalysisError &e) {
+        e.context(structured);
+        result.errors.push_back(e.get_message());
+    }
+}
+
+/**
+ * Analyzes the given if-else chain. Only intended for use as a helper
+ * function within analyze_structured().
+ */
+tree::Maybe<semantic::IfElse> AnalyzerHelper::analyze_if_else(
+    const ast::IfElse &if_else
+) {
+
+    // Create the if-else node.
+    tree::Maybe<semantic::IfElse> node;
+    node.emplace();
+
+    // Analyze the branches.
+    for (const auto &branch : if_else.branches) {
+
+        // Analyze the condition.
+        auto condition = analyze_expression(*branch->condition);
+        condition = values::promote(condition, tree::make<types::Bool>());
+        if (condition.empty()) {
+            throw error::AnalysisError("if/else condition must be a boolean");
+        }
+
+        // Analyze the block.
+        auto body = analyze_subblock(*branch->body, false);
+
+        // Add the branch.
+        node->branches.emplace(condition, body);
+
+    }
+
+    // Analyze the otherwise block, if any.
+    if (!if_else.otherwise.empty()) {
+        node->otherwise = analyze_subblock(*if_else.otherwise, false);
+    }
+
+    // Remove branches that are never taken due to constant-propagated
+    // conditions.
+    for (size_t idx = 0; idx < node->branches.size(); ) {
+        if (auto val = node->branches[idx]->condition->as_const_bool()) {
+            if (val->value) {
+
+                // Constant true: optimize away all subsequent branches and
+                // replace the otherwise block with this one.
+                node->otherwise = node->branches[idx]->body;
+                while (node->branches.size() > idx) node->branches.remove();
+
+            } else {
+
+                // Constant false: remove this condition/block.
+                node->branches.remove(idx);
+
+            }
+        } else {
+            idx++;
+        }
+    }
+
+    // If no branches remain, optimize the entire statement away.
+    if (node->branches.empty()) {
+        if (!node->otherwise.empty()) {
+            for (const auto &stmt : node->otherwise->statements) {
+                add_to_current_block(stmt);
+            }
+        }
+        return {};
+    }
+
+    return node;
+}
+
+/**
+ * Analyzes the given C-style for loop. Only intended for use as a helper
+ * function within analyze_structured().
+ */
+tree::Maybe<semantic::ForLoop> AnalyzerHelper::analyze_for_loop(
+    const ast::ForLoop &for_loop
+) {
+
+    // Create the for-loop node.
+    tree::Maybe<semantic::ForLoop> node;
+    node.emplace();
+
+    // Analyze the initialization assignment.
+    if (!for_loop.initialize.empty()) {
+        node->initialize = analyze_set_instruction_operands(
+            *for_loop.initialize->lhs,
+            *for_loop.initialize->rhs
+        );
+        node->initialize->condition.emplace<values::ConstBool>(true);
+    }
+
+    // Analyze the condition.
+    auto condition = analyze_expression(*for_loop.condition);
+    node->condition = values::promote(condition, tree::make<types::Bool>());
+    if (node->condition.empty()) {
+        throw error::AnalysisError("loop condition must be a boolean");
+    }
+
+    // Analyze the update assignment.
+    if (!for_loop.update.empty()) {
+        node->update = analyze_set_instruction_operands(
+            *for_loop.update->lhs,
+            *for_loop.update->rhs
+        );
+        node->update->condition.emplace<values::ConstBool>(true);
+    }
+
+    // Analyze the body.
+    node->body = analyze_subblock(*for_loop.body, true);
+
+    return node;
+}
+
+/**
+ * Analyzes the given static for loop. Only intended for use as a helper
+ * function within analyze_structured().
+ */
+tree::Maybe<semantic::ForeachLoop> AnalyzerHelper::analyze_foreach_loop(
+    const ast::ForeachLoop &foreach_loop
+) {
+
+    // Create the foreach loop node.
+    tree::Maybe<semantic::ForeachLoop> node;
+    node.emplace();
+
+    // Analyze the loop variable.
+    node->lhs = values::promote(analyze_expression(*foreach_loop.lhs), tree::make<types::Int>(true));
+    if (node->lhs.empty()) {
+        throw error::AnalysisError("foreach loop variable must be an assignable integer");
+    }
+
+    // Analyze the boundaries.
+    node->from = analyze_as_const_int(*foreach_loop.from);
+    node->to = analyze_as_const_int(*foreach_loop.to);
+
+    // Analyze the body.
+    node->body = analyze_subblock(*foreach_loop.body, true);
+
+    return node;
+}
+
+/**
+ * Analyzes the given while loop. Only intended for use as a helper function
+ * within analyze_structured().
+ */
+tree::Maybe<semantic::WhileLoop> AnalyzerHelper::analyze_while_loop(
+    const ast::WhileLoop &while_loop
+) {
+
+    // Create the while-loop node.
+    tree::Maybe<semantic::WhileLoop> node;
+    node.emplace();
+
+    // Analyze the condition.
+    auto condition = analyze_expression(*while_loop.condition);
+    node->condition = values::promote(condition, tree::make<types::Bool>());
+    if (node->condition.empty()) {
+        throw error::AnalysisError("loop condition must be a boolean");
+    }
+
+    // Analyze the body.
+    node->body = analyze_subblock(*while_loop.body, true);
+
+    // If the condition is constant false, optimize away.
+    if (auto cond = node->condition->as_const_bool()) {
+        if (!cond->value) {
+            return {};
+        }
+    }
+
+    return node;
+}
+
+/**
+ * Analyzes the given repeat-until loop. Only intended for use as a helper
+ * function within analyze_structured().
+ */
+tree::Maybe<semantic::RepeatUntilLoop> AnalyzerHelper::analyze_repeat_until_loop(
+    const ast::RepeatUntilLoop &repeat_until_loop
+) {
+
+    // Create the repeat-until-loop node.
+    tree::Maybe<semantic::RepeatUntilLoop> node;
+    node.emplace();
+
+    // Analyze the body.
+    node->body = analyze_subblock(*repeat_until_loop.body, true);
+
+    // Analyze the condition.
+    auto condition = analyze_expression(*repeat_until_loop.condition);
+    node->condition = values::promote(condition, tree::make<types::Bool>());
+    if (node->condition.empty()) {
+        throw error::AnalysisError("loop condition must be a boolean");
+    }
+
+    // If the condition is constant true, optimize away.
+    if (auto cond = node->condition->as_const_bool()) {
+        if (cond->value) {
+            for (const auto &stmt : node->body->statements) {
+                add_to_current_block(stmt);
+            }
+            return {};
+        }
+    }
+
+    return node;
 }
 
 /**
@@ -938,7 +1778,7 @@ values::Value AnalyzerHelper::analyze_expression(const ast::Expression &expressi
         } else if (auto matrix_lit = expression.as_matrix_literal()) {
             retval.set(analyze_matrix(*matrix_lit));
         } else if (auto ident = expression.as_identifier()) {
-            retval.set(scope.mappings.resolve(ident->name));
+            retval.set(get_current_scope().mappings.resolve(ident->name));
         } else if (auto index = expression.as_index()) {
             retval.set(analyze_index(*index));
         } else if (auto func = expression.as_function_call()) {
@@ -999,8 +1839,8 @@ values::Value AnalyzerHelper::analyze_expression(const ast::Expression &expressi
             throw std::runtime_error("unexpected expression node");
         }
         if (!retval.empty() && (retval->as_function() || retval->as_variable_ref())) {
-            if (analyzer.max_version.compare("1.1") < 0) {
-                throw std::runtime_error("dynamic expressions are only supported from cQASM 1.1 onwards");
+            if (analyzer.api_version.compare("1.1") < 0) {
+                throw error::AnalysisError("dynamic expressions are only supported from cQASM 1.1 onwards");
             }
         }
     } catch (error::AnalysisError &e) {
@@ -1029,14 +1869,19 @@ values::Value AnalyzerHelper::analyze_as(const ast::Expression &expression, Type
  * Shorthand for parsing an expression to a constant integer.
  */
 primitives::Int AnalyzerHelper::analyze_as_const_int(const ast::Expression &expression) {
-    auto value = analyze_as<types::Int>(expression);
-    if (value.empty()) {
-        throw error::AnalysisError("expected an integer");
-    }
-    if (auto int_value = value->as_const_int()) {
-        return int_value->value;
-    } else {
-        throw error::AnalysisError("integer must be constant");
+    try {
+        auto value = analyze_as<types::Int>(expression);
+        if (value.empty()) {
+            throw error::AnalysisError("expected an integer");
+        }
+        if (auto int_value = value->as_const_int()) {
+            return int_value->value;
+        } else {
+            throw error::AnalysisError("integer must be constant");
+        }
+    } catch (error::AnalysisError &e) {
+        e.context(expression);
+        throw;
     }
 }
 
@@ -1124,8 +1969,7 @@ values::Value AnalyzerHelper::analyze_index(const ast::Index &index) {
     if (auto qubit_refs = expr->as_qubit_refs()) {
 
         // Qubit refs.
-        auto indices = analyze_index_list(*index.indices,
-                                          qubit_refs->index.size());
+        auto indices = analyze_index_list(*index.indices, qubit_refs->index.size());
         for (auto idx : indices) {
             idx->value = qubit_refs->index[idx->value]->value;
         }
@@ -1134,8 +1978,7 @@ values::Value AnalyzerHelper::analyze_index(const ast::Index &index) {
     } else if (auto bit_refs = expr->as_bit_refs()) {
 
         // Measurement bit refs.
-        auto indices = analyze_index_list(*index.indices,
-                                          bit_refs->index.size());
+        auto indices = analyze_index_list(*index.indices, bit_refs->index.size());
         for (auto idx : indices) {
             idx->value = bit_refs->index[idx->value]->value;
         }
@@ -1213,7 +2056,7 @@ values::Value AnalyzerHelper::analyze_function(const ast::Identifier &name, cons
     for (auto arg : args.items) {
         arg_values.add(analyze_expression(*arg));
     }
-    auto retval = scope.functions.call(name.name, arg_values);
+    auto retval = get_current_scope().functions.call(name.name, arg_values);
     if (retval.empty()) {
         throw std::runtime_error("function implementation returned empty value");
     }

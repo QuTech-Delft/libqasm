@@ -13,7 +13,7 @@ from plumbum import local, FG
 
 def diff():
     is_test_dir = False
-    for t in ('ast', 'semantic'):
+    for t in ('ast', 'semantic.1.0', 'semantic.1.1', 'semantic.1.2'):
         if os.path.isfile(t + '.actual.txt') and os.path.isfile(t + '.golden.txt'):
             with open(t + '.actual.txt', 'r') as a:
                 a = a.read()
@@ -31,6 +31,20 @@ def diff():
                 print('Entering %s...' % sub)
                 with local.cwd(sub):
                     diff()
+                print('Leaving %s...' % sub)
+
+def gild_all():
+    is_test_dir = False
+    for t in ('ast', 'semantic.1.0', 'semantic.1.1', 'semantic.1.2'):
+        if os.path.isfile(t + '.actual.txt'):
+            local['cp'](t + '.actual.txt', t + '.golden.txt')
+            is_test_dir = True
+    if not is_test_dir:
+        for sub in os.listdir():
+            if os.path.isdir(sub):
+                print('Entering %s...' % sub)
+                with local.cwd(sub):
+                    gild_all()
                 print('Leaving %s...' % sub)
 
 cmd = sys.argv[1]
@@ -57,6 +71,9 @@ elif cmd == 'gild':
         elif os.path.isfile('semantic.actual.txt'):
             print('copying semantic result')
             local['cp']('-f', 'semantic.actual.txt', 'semantic.golden.txt')
+
+elif cmd == 'gild-all':
+    gild_all();
 
 else:
     print('unknown command')

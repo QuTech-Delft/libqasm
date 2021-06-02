@@ -67,24 +67,10 @@ this was recently added. Since this is a bit of a paradigm shift, but still
 entirely backward compatible, I figured it would be a good idea to name this
 cQASM 1.1.
 
-My current intentions are to nevertheless to give cQASM 2.0 another try on the
-short to medium term. It's worth noting that the people who used to drive the
-original 2.0 specification on Overleaf (Koen Bertels and Nader Khammassi) and
-maintained libqasm before me (mainly Imran Ashraf) are no longer employed by
-QuTech or QCA as far as I'm aware, and since no one has replaced them
-officially, I guess I'm as good a person as any to pick this back up.
-
-Instead of providing backward-compatibility on the language side as I did for
-variable and dynamic expression support, my aim is to disambiguate and switch
-parser based on the version statement, and then transform the old AST to the new
-one before semantic analysis; that way, workarounds and special cases only
-needed for grammatical backward compatibility can be dropped, without losing
-support for cQASM 1.0 syntax. If a 2.0 pretty-printer would be included in
-libqasm, this would also allow cQASM 1.0 files to be automatically upgraded to
-2.0 syntax, similar to the Python 2to3 tool.
-
-The goal for cQASM 2.0 remains to allow expression of control-flow, although
-instead of doing this in the form of assembly instructions, it will be done
-using high-level constructs (if/else statements, for loops, variables, perhaps
-subroutines). This is both easier to write, and closer to the intermediate
-representation we're aiming for in OpenQL.
+The idea was to continue with 2.0 after that. The latest spec for this can be
+found `here <https://github.com/QE-Lab/cQASM-spec/tree/95ee081c0910548b8201c510f88ebc89be9284e8>`_.
+However, it was ultimately determined that completing and implementing this
+specification would take more manpower than we have. Therefore, cQASM 1.2 was
+created. This update adds crude assignment statements and basic structured
+control-flow statements. It is, again, backward compatible, save for the newly
+added keywords.
