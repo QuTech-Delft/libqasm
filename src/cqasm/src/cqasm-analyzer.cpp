@@ -391,6 +391,18 @@ public:
     tree::Maybe<semantic::ForeachLoop> analyze_foreach_loop(const ast::ForeachLoop &foreach_loop);
 
     /**
+     * Analyzes the given while loop. Only intended for use as a helper function
+     * within analyze_structured().
+     */
+    tree::Maybe<semantic::WhileLoop> analyze_while_loop(const ast::WhileLoop &while_loop);
+
+    /**
+     * Analyzes the given repeat-until loop. Only intended for use as a helper
+     * function within analyze_structured().
+     */
+    tree::Maybe<semantic::RepeatUntilLoop> analyze_repeat_until_loop(const ast::RepeatUntilLoop &repeat_until_loop);
+
+    /**
      * Analyzes the given list of annotations. Any errors found result in the
      * annotation being skipped and an error being appended to the result error
      * vector.
@@ -1463,11 +1475,9 @@ void AnalyzerHelper::analyze_structured(const ast::Structured &structured) {
         } else if (auto foreach_loop = structured.as_foreach_loop()) {
             node = analyze_foreach_loop(*foreach_loop);
         } else if (auto while_loop = structured.as_while_loop()) {
-            throw error::AnalysisError("while loop is not yet implemented");
-            // TODO
+            node = analyze_while_loop(*while_loop);
         } else if (auto repeat_until_loop = structured.as_repeat_until_loop()) {
-            throw error::AnalysisError("repeat-until loop is not yet implemented");
-            // TODO
+            node = analyze_repeat_until_loop(*repeat_until_loop);
         } else if (structured.as_break_statement()) {
 
             // Handle break statement.
@@ -1647,6 +1657,73 @@ tree::Maybe<semantic::ForeachLoop> AnalyzerHelper::analyze_foreach_loop(
 
     // Analyze the body.
     node->body = analyze_subblock(*foreach_loop.body, true);
+
+    return node;
+}
+
+/**
+ * Analyzes the given while loop. Only intended for use as a helper function
+ * within analyze_structured().
+ */
+tree::Maybe<semantic::WhileLoop> AnalyzerHelper::analyze_while_loop(
+    const ast::WhileLoop &while_loop
+) {
+
+    // Create the while-loop node.
+    tree::Maybe<semantic::WhileLoop> node;
+    node.emplace();
+
+    // Analyze the condition.
+    auto condition = analyze_expression(*while_loop.condition);
+    node->condition = values::promote(condition, tree::make<types::Bool>());
+    if (node->condition.empty()) {
+        throw error::AnalysisError("loop condition must be a boolean");
+    }
+
+    // Analyze the body.
+    node->body = analyze_subblock(*while_loop.body, true);
+
+    // If the condition is constant false, optimize away.
+    if (auto cond = node->condition->as_const_bool()) {
+        if (!cond->value) {
+            return {};
+        }
+    }
+
+    return node;
+}
+
+/**
+ * Analyzes the given repeat-until loop. Only intended for use as a helper
+ * function within analyze_structured().
+ */
+tree::Maybe<semantic::RepeatUntilLoop> AnalyzerHelper::analyze_repeat_until_loop(
+    const ast::RepeatUntilLoop &repeat_until_loop
+) {
+
+    // Create the repeat-until-loop node.
+    tree::Maybe<semantic::RepeatUntilLoop> node;
+    node.emplace();
+
+    // Analyze the body.
+    node->body = analyze_subblock(*repeat_until_loop.body, true);
+
+    // Analyze the condition.
+    auto condition = analyze_expression(*repeat_until_loop.condition);
+    node->condition = values::promote(condition, tree::make<types::Bool>());
+    if (node->condition.empty()) {
+        throw error::AnalysisError("loop condition must be a boolean");
+    }
+
+    // If the condition is constant true, optimize away.
+    if (auto cond = node->condition->as_const_bool()) {
+        if (cond->value) {
+            for (const auto &stmt : node->body->statements) {
+                add_to_current_block(stmt);
+            }
+            return {};
+        }
+    }
 
     return node;
 }
