@@ -33,22 +33,22 @@ ast::One<semantic::Program> AnalysisResult::unwrap(std::ostream &out) const {
 /**
  * Creates a new semantic analyzer.
  */
-Analyzer::Analyzer(const std::string &max_version)
-    : max_version(max_version), resolve_instructions(false), resolve_error_model(false)
+Analyzer::Analyzer(const std::string &api_version)
+    : api_version(api_version), resolve_instructions(false), resolve_error_model(false)
 {
-    if (max_version.compare("1.1") > 0) {
-        throw std::invalid_argument("this analyzer only supports up to cQASM 1.1");
+    if (api_version.compare("1.2") > 0) {
+        throw std::invalid_argument("this analyzer only supports up to cQASM 1.2");
     }
 }
 
 /**
  * Creates a new semantic analyzer.
  */
-Analyzer::Analyzer(const primitives::Version &max_version)
-    : max_version(max_version), resolve_instructions(false), resolve_error_model(false)
+Analyzer::Analyzer(const primitives::Version &api_version)
+    : api_version(api_version), resolve_instructions(false), resolve_error_model(false)
 {
-    if (max_version.compare("1.1") > 0) {
-        throw std::invalid_argument("this analyzer only supports up to cQASM 1.1");
+    if (api_version.compare("1.2") > 0) {
+        throw std::invalid_argument("this analyzer only supports up to cQASM 1.2");
     }
 }
 
@@ -385,6 +385,7 @@ AnalyzerHelper::AnalyzerHelper(
         // Construct the program node.
         result.root.set(tree::make<semantic::Program>());
         result.root->copy_annotation<parser::SourceLocation>(ast);
+        result.root->api_version = analyzer.api_version;
 
         // Check and set the version.
         analyze_version(*ast.version);
@@ -479,9 +480,9 @@ void AnalyzerHelper::analyze_version(const ast::Version &ast) {
             }
         }
         result.root->version->items = ast.items;
-        if (ast.items.compare(analyzer.max_version) > 0) {
+        if (ast.items.compare(analyzer.api_version) > 0) {
             std::ostringstream ss{};
-            ss << "the maximum cQASM version supported is " << analyzer.max_version;
+            ss << "the maximum cQASM version supported is " << analyzer.api_version;
             ss << ", but the cQASM file is version " << ast.items;
             throw error::AnalysisError(ss.str());
         }
@@ -999,7 +1000,7 @@ values::Value AnalyzerHelper::analyze_expression(const ast::Expression &expressi
             throw std::runtime_error("unexpected expression node");
         }
         if (!retval.empty() && (retval->as_function() || retval->as_variable_ref())) {
-            if (analyzer.max_version.compare("1.1") < 0) {
+            if (analyzer.api_version.compare("1.1") < 0) {
                 throw std::runtime_error("dynamic expressions are only supported from cQASM 1.1 onwards");
             }
         }

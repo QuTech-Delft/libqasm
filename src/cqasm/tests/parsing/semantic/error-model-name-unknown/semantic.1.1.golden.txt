@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:4:1..20: failed to resolve unknown

@@ -1,0 +1,183 @@
+SUCCESS
+Program( # input.cq:1:1..8:1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: 10
+  error_model: -
+  subcircuits: [
+    Subcircuit( # input.cq:4:1..25
+      name: 
+      iterations: 1
+      bundles: [
+        Bundle( # input.cq:4:1..25
+          items: [
+            Instruction( # input.cq:4:1..25
+              instruction: x(qubit reference)
+              name: x
+              condition: <
+                ConstBool( # input.cq:4:5..19
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:4:21..25
+                  index: [
+                    ConstInt( # input.cq:4:23..24
+                      value: 0
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:5:1..26
+          items: [
+            Instruction( # input.cq:5:1..26
+              instruction: x(qubit reference)
+              name: x
+              condition: <
+                BitRefs( # input.cq:5:5..20
+                  index: [
+                    ConstInt( # input.cq:5:17..18
+                      value: 0
+                    )
+                  ]
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:5:22..26
+                  index: [
+                    ConstInt( # input.cq:5:24..25
+                      value: 0
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:6:1..25
+          items: [
+            Instruction( # input.cq:6:1..25
+              instruction: x(qubit reference)
+              name: x
+              condition: <
+                Function( # input.cq:6:5..19
+                  name: operator||
+                  operands: [
+                    BitRefs( # input.cq:6:8..12
+                      index: [
+                        ConstInt( # input.cq:6:10..11
+                          value: 1
+                        )
+                      ]
+                    )
+                    BitRefs( # input.cq:6:14..18
+                      index: [
+                        ConstInt( # input.cq:6:16..17
+                          value: 0
+                        )
+                      ]
+                    )
+                  ]
+                  return_type: <
+                    Bool(
+                      assignable: 0
+                    )
+                  >
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:6:21..25
+                  index: [
+                    ConstInt( # input.cq:6:23..24
+                      value: 0
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:7:1..35
+          items: [
+            Instruction( # input.cq:7:1..35
+              instruction: x(qubit reference)
+              name: x
+              condition: <
+                Function( # input.cq:7:5..29
+                  name: operator||
+                  operands: [
+                    Function( # input.cq:7:8..22
+                      name: operator||
+                      operands: [
+                        BitRefs( # input.cq:7:11..15
+                          index: [
+                            ConstInt( # input.cq:7:13..14
+                              value: 2
+                            )
+                          ]
+                        )
+                        BitRefs( # input.cq:7:17..21
+                          index: [
+                            ConstInt( # input.cq:7:19..20
+                              value: 1
+                            )
+                          ]
+                        )
+                      ]
+                      return_type: <
+                        Bool(
+                          assignable: 0
+                        )
+                      >
+                    )
+                    BitRefs( # input.cq:7:24..28
+                      index: [
+                        ConstInt( # input.cq:7:26..27
+                          value: 0
+                        )
+                      ]
+                    )
+                  ]
+                  return_type: <
+                    Bool(
+                      assignable: 0
+                    )
+                  >
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:7:31..35
+                  index: [
+                    ConstInt( # input.cq:7:33..34
+                      value: 0
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+      ]
+      annotations: []
+      body: -
+    )
+  ]
+  mappings: []
+  variables: []
+  api_version: 1.1
+)
+

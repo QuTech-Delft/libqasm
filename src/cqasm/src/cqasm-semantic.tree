@@ -295,7 +295,13 @@ program {
     # The list of all user-defined mappings after parsing.
     mappings: Any<mapping>;
 
-    # This list of all user-defined variables at any point in the code.
+    # This list of all user-defined variables at any point in the code. Only
+    # used for API level 1.1+.
     variables: Any<variable>;
+
+    # API version. This may be greater than or equal to the file version. This
+    # controls which fields of the tree are used, where such usage depends on
+    # the version.
+    api_version: cqasm::primitives::Version;
 
 }

@@ -1,0 +1,177 @@
+SUCCESS
+Program( # input.cq:1:1..15:1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: 10
+  error_model: -
+  subcircuits: [
+    Subcircuit( # input.cq:4:1..7
+      name: 
+      iterations: 1
+      bundles: [
+        Bundle( # input.cq:4:1..7
+          items: [
+            Instruction( # input.cq:4:1..7
+              instruction: x(qubit reference)
+              name: x
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:4:3..7
+                  index: [
+                    ConstInt( # input.cq:4:5..6
+                      value: 0
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+      ]
+      annotations: []
+      body: -
+    )
+    Subcircuit( # input.cq:6:1..19
+      name: test
+      iterations: 1
+      bundles: [
+        Bundle( # input.cq:8:1..7
+          items: [
+            Instruction( # input.cq:8:1..7
+              instruction: x(qubit reference)
+              name: x
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:8:3..7
+                  index: [
+                    ConstInt( # input.cq:8:5..6
+                      value: 1
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+      ]
+      annotations: [
+        AnnotationData( # input.cq:6:8..19
+          interface: annot
+          operation: first
+          operands: []
+        )
+      ]
+      body: -
+    )
+    Subcircuit( # input.cq:10:1..38
+      name: test2
+      iterations: 33
+      bundles: [
+        Bundle( # input.cq:12:1..7
+          items: [
+            Instruction( # input.cq:12:1..7
+              instruction: x(qubit reference)
+              name: x
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:12:3..7
+                  index: [
+                    ConstInt( # input.cq:12:5..6
+                      value: 2
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:13:1..7
+          items: [
+            Instruction( # input.cq:13:1..7
+              instruction: y(qubit reference)
+              name: y
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:13:3..7
+                  index: [
+                    ConstInt( # input.cq:13:5..6
+                      value: 3
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:14:1..7
+          items: [
+            Instruction( # input.cq:14:1..7
+              instruction: z(qubit reference)
+              name: z
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:14:3..7
+                  index: [
+                    ConstInt( # input.cq:14:5..6
+                      value: 4
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+      ]
+      annotations: [
+        AnnotationData( # input.cq:10:13..25
+          interface: annot
+          operation: second
+          operands: []
+        )
+        AnnotationData( # input.cq:10:27..38
+          interface: annot
+          operation: third
+          operands: []
+        )
+      ]
+      body: -
+    )
+  ]
+  mappings: []
+  variables: []
+  api_version: 1.1
+)
+
