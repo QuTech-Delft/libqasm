@@ -57,6 +57,8 @@ In cQASM 1.2+, unstructured control-flow can be represented using
     ``goto`` is a special instruction that bypasses the type system in order to
     correctly resolve the subcircuit name. It is always defined, regardless of
     whether a ``goto`` instruction is added to the instruction set via the API.
+    In file versions older than 1.2, ``goto`` behaves like a normal
+    instruction.
 
 .. note::
 

@@ -11,61 +11,65 @@ Program( # input.cq:1:1..11:1
     Subcircuit( # input.cq:5:1..7:6
       name: 
       iterations: 1
-      bundles: [
-        Bundle( # input.cq:5:1..7:6
-          items: [
-            Instruction( # input.cq:5:1..7:6
-              instruction: u(qubit reference, complex 2-by-2 matrix)
-              name: u
-              condition: <
-                ConstBool(
-                  value: 1
-                )
-              >
-              operands: [
-                QubitRefs( # input.cq:5:3..7
-                  index: [
-                    ConstInt( # input.cq:5:5..6
-                      value: 0
-                    )
-                  ]
-                )
-                ConstComplexMatrix( # input.cq:5:1..7:6
-                  value: [(1,0), (0,0); (2,0), (3,0)]
-                )
-              ]
-              annotations: []
-            )
-          ]
-          annotations: []
-        )
-        Bundle( # input.cq:9:1..40
-          items: [
-            Instruction( # input.cq:9:1..40
-              instruction: x(qubit reference)
-              name: x
-              condition: <
-                ConstBool(
-                  value: 1
-                )
-              >
-              operands: [
-                QubitRefs( # input.cq:9:36..40
-                  index: [
-                    ConstInt( # input.cq:9:38..39
-                      value: 0
-                    )
-                  ]
-                )
-              ]
-              annotations: []
-            )
-          ]
-          annotations: []
-        )
-      ]
+      bundles: []
       annotations: []
-      body: -
+      body: <
+        Block(
+          statements: [
+            BundleExt( # input.cq:5:1..7:6
+              items: [
+                Instruction( # input.cq:5:1..7:6
+                  instruction: u(qubit reference, complex 2-by-2 matrix)
+                  name: u
+                  condition: <
+                    ConstBool(
+                      value: 1
+                    )
+                  >
+                  operands: [
+                    QubitRefs( # input.cq:5:3..7
+                      index: [
+                        ConstInt( # input.cq:5:5..6
+                          value: 0
+                        )
+                      ]
+                    )
+                    ConstComplexMatrix( # input.cq:5:1..7:6
+                      value: [(1,0), (0,0); (2,0), (3,0)]
+                    )
+                  ]
+                  annotations: []
+                )
+              ]
+              annotations: []
+            )
+            BundleExt( # input.cq:9:1..40
+              items: [
+                Instruction( # input.cq:9:1..40
+                  instruction: x(qubit reference)
+                  name: x
+                  condition: <
+                    ConstBool(
+                      value: 1
+                    )
+                  >
+                  operands: [
+                    QubitRefs( # input.cq:9:36..40
+                      index: [
+                        ConstInt( # input.cq:9:38..39
+                          value: 0
+                        )
+                      ]
+                    )
+                  ]
+                  annotations: []
+                )
+              ]
+              annotations: []
+            )
+          ]
+        )
+      >
     )
   ]
   mappings: []

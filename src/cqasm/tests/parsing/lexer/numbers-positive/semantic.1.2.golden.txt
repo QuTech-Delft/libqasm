@@ -11,60 +11,64 @@ Program( # input.cq:1:1..5:1
     Subcircuit( # input.cq:4:1..68
       name: 
       iterations: 1
-      bundles: [
-        Bundle( # input.cq:4:1..68
-          items: [
-            Instruction( # input.cq:4:1..68
-              instruction: display()
-              name: display
-              condition: <
-                ConstBool(
-                  value: 1
-                )
-              >
-              operands: []
-              annotations: [
-                AnnotationData( # input.cq:4:10..68
-                  interface: test
-                  operation: test
-                  operands: [
-                    ConstInt( # input.cq:4:20..22
-                      value: -1
-                    )
-                    ConstInt( # input.cq:4:24..25
-                      value: 0
-                    )
-                    ConstInt( # input.cq:4:27..28
+      bundles: []
+      annotations: []
+      body: <
+        Block(
+          statements: [
+            BundleExt( # input.cq:4:1..68
+              items: [
+                Instruction( # input.cq:4:1..68
+                  instruction: display()
+                  name: display
+                  condition: <
+                    ConstBool(
                       value: 1
                     )
-                    ConstReal( # input.cq:4:30..34
-                      value: -1
-                    )
-                    ConstReal( # input.cq:4:36..39
-                      value: 0
-                    )
-                    ConstReal( # input.cq:4:41..44
-                      value: 1
-                    )
-                    ConstReal( # input.cq:4:46..52
-                      value: 0.1
-                    )
-                    ConstReal( # input.cq:4:54..59
-                      value: 10
-                    )
-                    ConstReal( # input.cq:4:61..67
-                      value: 10
+                  >
+                  operands: []
+                  annotations: [
+                    AnnotationData( # input.cq:4:10..68
+                      interface: test
+                      operation: test
+                      operands: [
+                        ConstInt( # input.cq:4:20..22
+                          value: -1
+                        )
+                        ConstInt( # input.cq:4:24..25
+                          value: 0
+                        )
+                        ConstInt( # input.cq:4:27..28
+                          value: 1
+                        )
+                        ConstReal( # input.cq:4:30..34
+                          value: -1
+                        )
+                        ConstReal( # input.cq:4:36..39
+                          value: 0
+                        )
+                        ConstReal( # input.cq:4:41..44
+                          value: 1
+                        )
+                        ConstReal( # input.cq:4:46..52
+                          value: 0.1
+                        )
+                        ConstReal( # input.cq:4:54..59
+                          value: 10
+                        )
+                        ConstReal( # input.cq:4:61..67
+                          value: 10
+                        )
+                      ]
                     )
                   ]
                 )
               ]
+              annotations: []
             )
           ]
-          annotations: []
         )
-      ]
-      annotations: []
-      body: -
+      >
     )
   ]
   mappings: []

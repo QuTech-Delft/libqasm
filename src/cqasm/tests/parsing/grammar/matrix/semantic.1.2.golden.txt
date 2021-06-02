@@ -11,48 +11,52 @@ Program( # input.cq:1:1..5:1
     Subcircuit( # input.cq:4:1..58
       name: 
       iterations: 1
-      bundles: [
-        Bundle( # input.cq:4:1..58
-          items: [
-            Instruction( # input.cq:4:1..58
-              instruction: display()
-              name: display
-              condition: <
-                ConstBool(
-                  value: 1
-                )
-              >
-              operands: []
-              annotations: [
-                AnnotationData( # input.cq:4:10..58
-                  interface: test
-                  operation: test
-                  operands: [
-                    ConstRealMatrix( # input.cq:4:20..22
-                      value: []
+      bundles: []
+      annotations: []
+      body: <
+        Block(
+          statements: [
+            BundleExt( # input.cq:4:1..58
+              items: [
+                Instruction( # input.cq:4:1..58
+                  instruction: display()
+                  name: display
+                  condition: <
+                    ConstBool(
+                      value: 1
                     )
-                    ConstRealMatrix( # input.cq:4:24..27
-                      value: [1]
-                    )
-                    ConstRealMatrix( # input.cq:4:29..35
-                      value: [1, 2]
-                    )
-                    ConstRealMatrix( # input.cq:4:37..43
-                      value: [1; 2]
-                    )
-                    ConstRealMatrix( # input.cq:4:45..57
-                      value: [1, 2; 3, 4]
+                  >
+                  operands: []
+                  annotations: [
+                    AnnotationData( # input.cq:4:10..58
+                      interface: test
+                      operation: test
+                      operands: [
+                        ConstRealMatrix( # input.cq:4:20..22
+                          value: []
+                        )
+                        ConstRealMatrix( # input.cq:4:24..27
+                          value: [1]
+                        )
+                        ConstRealMatrix( # input.cq:4:29..35
+                          value: [1, 2]
+                        )
+                        ConstRealMatrix( # input.cq:4:37..43
+                          value: [1; 2]
+                        )
+                        ConstRealMatrix( # input.cq:4:45..57
+                          value: [1, 2; 3, 4]
+                        )
+                      ]
                     )
                   ]
                 )
               ]
+              annotations: []
             )
           ]
-          annotations: []
         )
-      ]
-      annotations: []
-      body: -
+      >
     )
   ]
   mappings: []

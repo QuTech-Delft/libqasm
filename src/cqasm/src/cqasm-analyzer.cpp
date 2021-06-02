@@ -200,11 +200,25 @@ public:
     void analyze_qubits(const ast::Expression &count);
 
     /**
+     * Returns a reference to the subcircuit that's currently being built. If there
+     * is no subcircuit yet, a default one is created, using the source location
+     * annotation on the source node.
+     */
+    tree::Maybe<semantic::Subcircuit> get_current_subcircuit(const tree::Annotatable &source);
+
+    /**
      * Analyzes the given bundle and, if valid, adds it to the current
-     * subcircuit. If an error occurs, the message is added to the result
-     * error vector, and nothing is added to the subcircuit.
+     * subcircuit using API version 1.0/1.1. If an error occurs, the message is
+     * added to the result error vector, and nothing is added to the subcircuit.
      */
     void analyze_bundle(const ast::Bundle &bundle);
+
+    /**
+     * Analyzes the given bundle and, if valid, adds it to the current
+     * subcircuit using API version 1.2+. If an error occurs, the message is
+     * added to the result error vector, and nothing is added to the subcircuit.
+     */
+    void analyze_bundle_ext(const ast::Bundle &bundle);
 
     /**
      * Analyzes the given instruction. If an error occurs, the message is added to
@@ -405,13 +419,40 @@ AnalyzerHelper::AnalyzerHelper(
         for (auto stmt : ast.statements->items) {
             try {
                 if (auto bundle = stmt->as_bundle()) {
-                    analyze_bundle(*bundle);
+                    if (analyzer.api_version.compare("1.2") >= 0) {
+                        analyze_bundle_ext(*bundle);
+                    } else {
+                        analyze_bundle(*bundle);
+                    }
                 } else if (auto mapping = stmt->as_mapping()) {
                     analyze_mapping(*mapping);
                 } else if (auto variables = stmt->as_variables()) {
                     analyze_variables(*variables);
                 } else if (auto subcircuit = stmt->as_subcircuit()) {
                     analyze_subcircuit(*subcircuit);
+                } else if (ast.version->items.compare("1.2") < 0) {
+                    throw error::AnalysisError("unsupported statement (need version 1.2+)");
+                } else if (auto if_else = stmt->as_if_else()) {
+                    throw error::AnalysisError("if-else block is not yet implemented");
+                    // TODO
+                } else if (auto for_loop = stmt->as_for_loop()) {
+                    throw error::AnalysisError("for loop is not yet implemented");
+                    // TODO
+                } else if (auto foreach_loop = stmt->as_foreach_loop()) {
+                    throw error::AnalysisError("foreach loop is not yet implemented");
+                    // TODO
+                } else if (auto while_loop = stmt->as_while_loop()) {
+                    throw error::AnalysisError("while loop is not yet implemented");
+                    // TODO
+                } else if (auto repeat_until_loop = stmt->as_repeat_until_loop()) {
+                    throw error::AnalysisError("repeat-until loop is not yet implemented");
+                    // TODO
+                } else if (auto break_statement = stmt->as_break_statement()) {
+                    throw error::AnalysisError("break statement loop is not yet implemented");
+                    // TODO
+                } else if (auto continue_statement = stmt->as_continue_statement()) {
+                    throw error::AnalysisError("continue statement loop is not yet implemented");
+                    // TODO
                 } else {
                     throw std::runtime_error("unexpected statement node");
                 }
@@ -528,9 +569,36 @@ void AnalyzerHelper::analyze_qubits(const ast::Expression &count) {
 }
 
 /**
+ * Returns a reference to the subcircuit that's currently being built. If there
+ * is no subcircuit yet, a default one is created, using the source location
+ * annotation on the source node.
+ */
+tree::Maybe<semantic::Subcircuit> AnalyzerHelper::get_current_subcircuit(
+    const tree::Annotatable &source
+) {
+
+    // If we don't have a subcircuit yet, add a default one. Note that the
+    // original libqasm always had this default subcircuit (even if it was
+    // empty) and used the name "default" vs. the otherwise invalid empty
+    // string.
+    if (result.root->subcircuits.empty()) {
+        auto subcircuit_node = tree::make<semantic::Subcircuit>("", 1);
+        subcircuit_node->copy_annotation<parser::SourceLocation>(source);
+        if (analyzer.api_version.compare("1.2") >= 0) {
+            subcircuit_node->body = tree::make<semantic::Block>();
+        }
+        result.root->subcircuits.add(subcircuit_node);
+    }
+
+    // Add the node to the last subcircuit.
+    return result.root->subcircuits.back();
+
+}
+
+/**
  * Analyzes the given bundle and, if valid, adds it to the current
- * subcircuit. If an error occurs, the message is added to the result
- * error vector, and nothing is added to the subcircuit.
+ * subcircuit using API version 1.0/1.1. If an error occurs, the message is
+ * added to the result error vector, and nothing is added to the subcircuit.
  */
 void AnalyzerHelper::analyze_bundle(const ast::Bundle &bundle) {
     try {
@@ -591,18 +659,91 @@ void AnalyzerHelper::analyze_bundle(const ast::Bundle &bundle) {
         node->annotations = analyze_annotations(bundle.annotations);
         node->copy_annotation<parser::SourceLocation>(bundle);
 
-        // If we don't have a subcircuit yet, add a default one. Note that the
-        // original libqasm always had this default subcircuit (even if it was
-        // empty) and used the name "default" vs. the otherwise invalid empty
-        // string.
-        if (result.root->subcircuits.empty()) {
-            auto subcircuit_node = tree::make<semantic::Subcircuit>("", 1);
-            subcircuit_node->copy_annotation<parser::SourceLocation>(bundle);
-            result.root->subcircuits.add(subcircuit_node);
+        // Add the node to the last subcircuit.
+        get_current_subcircuit(bundle)->bundles.add(node);
+
+    } catch (error::AnalysisError &e) {
+        e.context(bundle);
+        result.errors.push_back(e.get_message());
+    }
+}
+
+/**
+ * Analyzes the given bundle and, if valid, adds it to the current
+ * subcircuit using API version 1.2+. If an error occurs, the message is
+ * added to the result error vector, and nothing is added to the subcircuit.
+ */
+void AnalyzerHelper::analyze_bundle_ext(const ast::Bundle &bundle) {
+    try {
+
+        // The error model statement from the original cQASM grammar is a bit
+        // of a pain, because it conflicts with gates/instructions, so we have
+        // to special-case it here. Technically we could also have made it a
+        // keyword, but the less random keywords there are, the better.
+        if (bundle.items.size() == 1) {
+            if (utils::case_insensitive_equals(bundle.items[0]->name->name, "error_model")) {
+                analyze_error_model(*bundle.items[0]);
+                return;
+            }
         }
 
+        // Analyze and add the instructions.
+        auto node = tree::make<semantic::BundleExt>();
+        for (const auto &insn : bundle.items) {
+            if (utils::case_insensitive_equals(insn->name->name, "set")) {
+                // TODO
+                throw error::AnalysisError("set insn is not yet implemented");
+            } else if (utils::case_insensitive_equals(insn->name->name, "goto")) {
+                // TODO
+                throw error::AnalysisError("goto insn is not yet implemented");
+            } else {
+                node->items.add(analyze_instruction(*insn));
+            }
+        }
+
+        // If we have more than two instructions, ensure that all instructions
+        // are parallelizable.
+        if (node->items.size() > 1) {
+            for (const auto &insn_base : node->items) {
+                try {
+                    if (auto insn = insn_base->as_instruction()) {
+                        if (!insn->instruction.empty()) {
+                            if (!insn->instruction->allow_parallel) {
+                                std::ostringstream ss;
+                                ss << "instruction ";
+                                ss << insn->instruction->name;
+                                ss << " with parameter pack ";
+                                ss << insn->instruction->param_types;
+                                ss << " is not parallelizable, but is bundled with ";
+                                ss << (node->items.size() - 1);
+                                ss << " other instruction";
+                                if (node->items.size() != 2) {
+                                    ss << "s";
+                                }
+                                throw error::AnalysisError(ss.str());
+                            }
+                        }
+                    }
+                } catch (error::AnalysisError &e) {
+                    e.context(*insn_base);
+                    result.errors.push_back(e.get_message());
+                }
+            }
+        }
+
+        // It's possible that no instructions end up being added, due to all
+        // condition codes resolving to constant false. In that case the entire
+        // bundle is removed.
+        if (node->items.empty()) {
+            return;
+        }
+
+        // Copy annotation data.
+        node->annotations = analyze_annotations(bundle.annotations);
+        node->copy_annotation<parser::SourceLocation>(bundle);
+
         // Add the node to the last subcircuit.
-        result.root->subcircuits.back()->bundles.add(node);
+        get_current_subcircuit(bundle)->body->statements.add(node);
 
     } catch (error::AnalysisError &e) {
         e.context(bundle);
@@ -882,6 +1023,9 @@ void AnalyzerHelper::analyze_subcircuit(const ast::Subcircuit &subcircuit) {
             tree::Any<semantic::Bundle>(),
             analyze_annotations(subcircuit.annotations));
         node->copy_annotation<parser::SourceLocation>(subcircuit);
+        if (analyzer.api_version.compare("1.2") >= 0) {
+            node->body = tree::make<semantic::Block>();
+        }
         result.root->subcircuits.add(node);
     } catch (error::AnalysisError &e) {
         e.context(subcircuit);

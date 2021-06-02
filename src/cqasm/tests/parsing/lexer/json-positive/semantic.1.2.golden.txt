@@ -11,25 +11,29 @@ Program( # input.cq:1:1..12:1
     Subcircuit( # input.cq:4:1..11:4
       name: 
       iterations: 1
-      bundles: [
-        Bundle( # input.cq:4:1..11:4
-          items: [
-            Instruction( # input.cq:4:1..11:8
-              instruction: display()
-              name: display
-              condition: <
-                ConstBool(
-                  value: 1
-                )
-              >
-              operands: []
-              annotations: [
-                AnnotationData( # input.cq:4:10..11:19
-                  interface: test
-                  operation: test
-                  operands: [
-                    ConstJson( # input.cq:4:20..11:3
-                      value: 
+      bundles: []
+      annotations: []
+      body: <
+        Block(
+          statements: [
+            BundleExt( # input.cq:4:1..11:4
+              items: [
+                Instruction( # input.cq:4:1..11:8
+                  instruction: display()
+                  name: display
+                  condition: <
+                    ConstBool(
+                      value: 1
+                    )
+                  >
+                  operands: []
+                  annotations: [
+                    AnnotationData( # input.cq:4:10..11:19
+                      interface: test
+                      operation: test
+                      operands: [
+                        ConstJson( # input.cq:4:20..11:3
+                          value: 
 {
     "a": [{"b": "c"}],
     "d": "|}",
@@ -37,17 +41,17 @@ Program( # input.cq:1:1..12:1
     "f": "\\\"|}",
 }
 
+                        )
+                      ]
                     )
                   ]
                 )
               ]
+              annotations: []
             )
           ]
-          annotations: []
         )
-      ]
-      annotations: []
-      body: -
+      >
     )
   ]
   mappings: []
