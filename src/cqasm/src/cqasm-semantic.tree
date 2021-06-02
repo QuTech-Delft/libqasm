@@ -97,7 +97,7 @@ annotated {
         }
 
         # A version 1.2+ assignment instruction.
-        assignment_instruction {
+        set_instruction {
 
             # The assignment target.
             lhs: external One<cqasm::values::Node>;
@@ -156,14 +156,14 @@ annotated {
         for_loop {
 
             # The optional initializing assignment, run before the loop starts.
-            initialize: Maybe<assignment_instruction>;
+            initialize: Maybe<set_instruction>;
 
             # The condition for starting another iteration.
             condition: external One<cqasm::values::Node>;
 
             # The updating assignment, done at the end of the loop body and upon
             # continue.
-            update: Maybe<assignment_instruction>;
+            update: Maybe<set_instruction>;
 
             # The loop body.
             body: One<block>;

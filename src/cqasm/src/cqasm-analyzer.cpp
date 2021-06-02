@@ -6,6 +6,9 @@
 #include <unordered_set>
 #include <cctype>
 #include <cmath>
+#include <list>
+#include <map>
+#include <utility>
 #include "cqasm-analyzer.hpp"
 #include "cqasm-parse-helper.hpp"
 #include "cqasm-utils.hpp"
@@ -183,6 +186,12 @@ public:
     Scope scope;
 
     /**
+     * List of all goto instructions in the program, for name resolution when
+     * all other analysis completes.
+     */
+    std::list<std::pair<tree::Maybe<semantic::GotoInstruction>, std::string>> gotos;
+
+    /**
      * Analyzes the given AST using the given analyzer.
      */
     AnalyzerHelper(const Analyzer &analyzer, const ast::Program &ast);
@@ -225,6 +234,20 @@ public:
      * the result error vector, and an empty Maybe is returned.
      */
     tree::Maybe<semantic::Instruction> analyze_instruction(const ast::Instruction &insn);
+
+    /**
+     * Analyzes the given cQASM 1.2+ set instruction. If an error occurs, the
+     * message is added to the result error vector, and an empty Maybe is
+     * returned.
+     */
+    tree::Maybe<semantic::SetInstruction> analyze_set_instruction(const ast::Instruction &insn);
+
+    /**
+     * Analyzes the given cQASM 1.2+ goto instruction. If an error occurs, the
+     * message is added to the result error vector, and an empty Maybe is
+     * returned.
+     */
+    tree::Maybe<semantic::GotoInstruction> analyze_goto_instruction(const ast::Instruction &insn);
 
     /**
      * Analyzes the error model meta-instruction and, if valid, adds it to the
@@ -462,6 +485,46 @@ AnalyzerHelper::AnalyzerHelper(
             }
         }
 
+        // Resolve goto targets.
+        if (ast.version->items.compare("1.2") >= 0) {
+
+            // Figure out all the subcircuit names and check for duplicates.
+            std::map<std::string, tree::Maybe<semantic::Subcircuit>> subcircuits;
+            for (const auto &subcircuit : result.root->subcircuits) {
+                try {
+                    auto insert_result = subcircuits.insert({subcircuit->name, subcircuit});
+                    if (!insert_result.second) {
+                        std::ostringstream ss;
+                        ss << "duplicate subcircuit name \"" << subcircuit->name << "\"";
+                        if (auto loc = insert_result.first->second->get_annotation_ptr<parser::SourceLocation>()) {
+                            ss << "; previous definition was at " << *loc;
+                        }
+                        throw error::AnalysisError(ss.str());
+                    }
+                } catch (error::AnalysisError &e) {
+                    e.context(*subcircuit);
+                    result.errors.push_back(e.get_message());
+                }
+            }
+
+            // Resolve the goto instruction targets.
+            for (const auto &it : gotos) {
+                try {
+                    auto it2 = subcircuits.find(it.second);
+                    if (it2 == subcircuits.end()) {
+                        throw error::AnalysisError(
+                            "failed to resolve subcircuit \"" + it.second + "\""
+                        );
+                    }
+                    it.first->target = it2->second;
+                } catch (error::AnalysisError &e) {
+                    e.context(*it.first);
+                    result.errors.push_back(e.get_message());
+                }
+            }
+
+        }
+
         // Save the list of final mappings.
         for (const auto &it : scope.mappings.get_table()) {
             const auto &name = it.first;
@@ -691,11 +754,9 @@ void AnalyzerHelper::analyze_bundle_ext(const ast::Bundle &bundle) {
         auto node = tree::make<semantic::BundleExt>();
         for (const auto &insn : bundle.items) {
             if (utils::case_insensitive_equals(insn->name->name, "set")) {
-                // TODO
-                throw error::AnalysisError("set insn is not yet implemented");
+                node->items.add(analyze_set_instruction(*insn));
             } else if (utils::case_insensitive_equals(insn->name->name, "goto")) {
-                // TODO
-                throw error::AnalysisError("goto insn is not yet implemented");
+                node->items.add(analyze_goto_instruction(*insn));
             } else {
                 node->items.add(analyze_instruction(*insn));
             }
@@ -786,8 +847,7 @@ tree::Maybe<semantic::Instruction> AnalyzerHelper::analyze_instruction(const ast
             auto condition_val = analyze_expression(*insn.condition);
             node->condition = values::promote(condition_val, tree::make<types::Bool>());
             if (node->condition.empty()) {
-                throw error::AnalysisError(
-                    "condition must be a boolean");
+                throw error::AnalysisError("condition must be a boolean");
             }
 
             // If the condition is constant false, optimize the instruction
@@ -863,6 +923,146 @@ tree::Maybe<semantic::Instruction> AnalyzerHelper::analyze_instruction(const ast
         result.errors.push_back(e.get_message());
     }
     return tree::Maybe<semantic::Instruction>();
+}
+
+/**
+ * Analyzes the given cQASM 1.2+ set instruction. If an error occurs, the
+ * message is added to the result error vector, and an empty Maybe is
+ * returned.
+ */
+tree::Maybe<semantic::SetInstruction> AnalyzerHelper::analyze_set_instruction(
+    const ast::Instruction &insn
+) {
+    try {
+
+        // Figure out the operand list.
+        auto operands = values::Values();
+        for (auto operand_expr : insn.operands->items) {
+            operands.add(analyze_expression(*operand_expr));
+        }
+
+        // Create the node.
+        tree::Maybe<semantic::SetInstruction> node;
+        node.set(tree::make<semantic::SetInstruction>());
+
+        // Unpack lhs and rhs.
+        if (operands.size() != 2) {
+            throw error::AnalysisError("set instruction must have two operands");
+        }
+
+        // Check assignability of the left-hand side.
+        if (operands[0]->as_reference() == nullptr) {
+            throw error::AnalysisError(
+                "left-hand side of assignment statement must be assignable"
+            );
+        }
+        node->lhs = operands[0];
+
+        // Type-check/promote the right-hand side.
+        auto lhs_type = values::type_of(node->lhs).clone();
+        lhs_type->assignable = values::type_of(operands[1])->assignable;
+        node->rhs = values::promote(operands[1], lhs_type);
+        if (node->rhs.empty()) {
+            std::ostringstream ss;
+            ss << "type of right-hand side (" << values::type_of(operands[1]) << ") ";
+            ss << "could not be coerced to left-hand side (" << values::type_of(node->lhs) << ")";
+            throw error::AnalysisError(ss.str());
+        }
+
+        // Resolve the condition code.
+        if (!insn.condition.empty()) {
+            auto condition_val = analyze_expression(*insn.condition);
+            node->condition = values::promote(condition_val, tree::make<types::Bool>());
+            if (node->condition.empty()) {
+                throw error::AnalysisError("condition must be a boolean");
+            }
+
+            // If the condition is constant false, optimize the instruction
+            // away.
+            if (auto x = node->condition->as_const_bool()) {
+                if (!x->value) {
+                    return tree::Maybe<semantic::SetInstruction>();
+                }
+            }
+        } else {
+            node->condition.set(tree::make<values::ConstBool>(true));
+        }
+
+        // Copy annotation data.
+        node->annotations = analyze_annotations(insn.annotations);
+        node->copy_annotation<parser::SourceLocation>(insn);
+
+        return node;
+    } catch (error::AnalysisError &e) {
+        e.context(insn);
+        result.errors.push_back(e.get_message());
+    }
+    return tree::Maybe<semantic::SetInstruction>();
+}
+
+/**
+ * Analyzes the given cQASM 1.2+ goto instruction. If an error occurs, the
+ * message is added to the result error vector, and an empty Maybe is
+ * returned.
+ */
+tree::Maybe<semantic::GotoInstruction> AnalyzerHelper::analyze_goto_instruction(
+    const ast::Instruction &insn
+) {
+    try {
+
+        // Parse the operands.
+        if (insn.operands->items.size() != 1) {
+            throw error::AnalysisError(
+                "goto instruction must have a single operand"
+            );
+        }
+        std::string target;
+        if (auto identifier = insn.operands->items[0]->as_identifier()) {
+            target = identifier->name;
+        } else {
+            throw error::AnalysisError(
+                "goto instruction operand must be a subcircuit identifier"
+            );
+        }
+
+        // Create the node.
+        tree::Maybe<semantic::GotoInstruction> node;
+        node.set(tree::make<semantic::GotoInstruction>());
+
+        // We can't resolve the target subcircuit yet, because goto instructions
+        // may refer forward. Instead, we maintain a list of yet-to-be resolved
+        // goto instructions.
+        gotos.emplace_back(node, target);
+
+        // Resolve the condition code.
+        if (!insn.condition.empty()) {
+            auto condition_val = analyze_expression(*insn.condition);
+            node->condition = values::promote(condition_val, tree::make<types::Bool>());
+            if (node->condition.empty()) {
+                throw error::AnalysisError("condition must be a boolean");
+            }
+
+            // If the condition is constant false, optimize the instruction
+            // away.
+            if (auto x = node->condition->as_const_bool()) {
+                if (!x->value) {
+                    return tree::Maybe<semantic::GotoInstruction>();
+                }
+            }
+        } else {
+            node->condition.set(tree::make<values::ConstBool>(true));
+        }
+
+        // Copy annotation data.
+        node->annotations = analyze_annotations(insn.annotations);
+        node->copy_annotation<parser::SourceLocation>(insn);
+
+        return node;
+    } catch (error::AnalysisError &e) {
+        e.context(insn);
+        result.errors.push_back(e.get_message());
+    }
+    return tree::Maybe<semantic::GotoInstruction>();
 }
 
 /**
@@ -1145,7 +1345,7 @@ values::Value AnalyzerHelper::analyze_expression(const ast::Expression &expressi
         }
         if (!retval.empty() && (retval->as_function() || retval->as_variable_ref())) {
             if (analyzer.api_version.compare("1.1") < 0) {
-                throw std::runtime_error("dynamic expressions are only supported from cQASM 1.1 onwards");
+                throw error::AnalysisError("dynamic expressions are only supported from cQASM 1.1 onwards");
             }
         }
     } catch (error::AnalysisError &e) {
@@ -1269,8 +1469,7 @@ values::Value AnalyzerHelper::analyze_index(const ast::Index &index) {
     if (auto qubit_refs = expr->as_qubit_refs()) {
 
         // Qubit refs.
-        auto indices = analyze_index_list(*index.indices,
-                                          qubit_refs->index.size());
+        auto indices = analyze_index_list(*index.indices, qubit_refs->index.size());
         for (auto idx : indices) {
             idx->value = qubit_refs->index[idx->value]->value;
         }
@@ -1279,8 +1478,7 @@ values::Value AnalyzerHelper::analyze_index(const ast::Index &index) {
     } else if (auto bit_refs = expr->as_bit_refs()) {
 
         // Measurement bit refs.
-        auto indices = analyze_index_list(*index.indices,
-                                          bit_refs->index.size());
+        auto indices = analyze_index_list(*index.indices, bit_refs->index.size());
         for (auto idx : indices) {
             idx->value = bit_refs->index[idx->value]->value;
         }
