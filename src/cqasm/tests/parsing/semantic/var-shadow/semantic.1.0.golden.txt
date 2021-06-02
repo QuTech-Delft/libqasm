@@ -1,4 +1,6 @@
 ERROR
 Error at input.cq:1:9..12: the maximum cQASM version supported is 1.0, but the cQASM file is version 1.1
-Error at input.cq:4:5..6: dynamic expressions are only supported from cQASM 1.1 onwards
-Error at input.cq:7:3..4: dynamic expressions are only supported from cQASM 1.1 onwards
+Error at input.cq:3:1..12: variables are only supported from cQASM 1.1 onwards
+Error at input.cq:4:5..6: failed to resolve v
+Error at input.cq:6:1..13: variables are only supported from cQASM 1.1 onwards
+Error at input.cq:7:3..4: failed to resolve v

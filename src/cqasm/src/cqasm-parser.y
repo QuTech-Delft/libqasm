@@ -514,9 +514,25 @@ OptAssignment   : Assignment                                                    
                 |                                                               { $$ = nullptr; }
                 ;
 
-IfElse          : IF '(' Expression ')' SubStatements                           { NEW($$, IfElse); $$->conditions.add_raw($3); $$->blocks.add_raw($5); }
-                | IF '(' Expression ')' SubStatements ELSE IfElse               { FROM($$, $7); $$->conditions.add_raw($3, 0); $$->blocks.add_raw($5, 0); }
-                | IF '(' Expression ')' SubStatements ELSE SubStatements        { NEW($$, IfElse); $$->conditions.add_raw($3); $$->blocks.add_raw($5); $$->blocks.add_raw($7); }
+IfElse          : IF '(' Expression ')' SubStatements                           {
+                                                                                    NEW($$, IfElse);
+                                                                                    $$->branches.add_raw(new IfElseBranch());
+                                                                                    $$->branches[0]->condition.set_raw($3);
+                                                                                    $$->branches[0]->body.set_raw($5);
+                                                                                }
+                | IF '(' Expression ')' SubStatements ELSE IfElse               {
+                                                                                    FROM($$, $7);
+                                                                                    $$->branches.add_raw(new IfElseBranch(), 0);
+                                                                                    $$->branches[0]->condition.set_raw($3);
+                                                                                    $$->branches[0]->body.set_raw($5);
+                                                                                }
+                | IF '(' Expression ')' SubStatements ELSE SubStatements        {
+                                                                                    NEW($$, IfElse);
+                                                                                    $$->branches.add_raw(new IfElseBranch());
+                                                                                    $$->branches[0]->condition.set_raw($3);
+                                                                                    $$->branches[0]->body.set_raw($5);
+                                                                                    $$->otherwise.set_raw($7);
+                                                                                }
                 ;
 
 ForLoop         : FOR '(' OptAssignment NEWLINE Expression NEWLINE

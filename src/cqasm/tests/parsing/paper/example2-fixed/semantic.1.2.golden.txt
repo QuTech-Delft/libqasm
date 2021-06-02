@@ -14,7 +14,7 @@ Program( # input.cq:1:1..23:1
       bundles: []
       annotations: []
       body: <
-        Block(
+        Block( # input.cq:11:1..22:24
           statements: [
             BundleExt( # input.cq:11:1..12
               items: [

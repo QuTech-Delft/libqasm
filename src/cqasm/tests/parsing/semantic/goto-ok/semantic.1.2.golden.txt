@@ -14,7 +14,7 @@ Program( # input.cq:1:1..9:1
       bundles: []
       annotations: []
       body: <
-        Block(
+        Block( # input.cq:4:1..5:11
           statements: [
             BundleExt( # input.cq:5:5..11
               items: [
@@ -26,7 +26,7 @@ Program( # input.cq:1:1..9:1
                       bundles: []
                       annotations: []
                       body: <
-                        Block(
+                        Block( # input.cq:6:1..8:23
                           statements: [
                             BundleExt( # input.cq:7:5..19
                               items: [
@@ -93,7 +93,7 @@ Program( # input.cq:1:1..9:1
       bundles: []
       annotations: []
       body: <
-        Block(
+        Block( # input.cq:6:1..8:23
           statements: [
             BundleExt( # input.cq:7:5..19
               items: [
@@ -105,7 +105,7 @@ Program( # input.cq:1:1..9:1
                       bundles: []
                       annotations: []
                       body: <
-                        Block(
+                        Block( # input.cq:4:1..5:11
                           statements: [
                             BundleExt( # input.cq:5:5..11
                               items: [
@@ -152,7 +152,7 @@ Program( # input.cq:1:1..9:1
                       bundles: []
                       annotations: []
                       body: <
-                        Block(
+                        Block( # input.cq:4:1..5:11
                           statements: [
                             BundleExt( # input.cq:5:5..11
                               items: [

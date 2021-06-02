@@ -20,7 +20,7 @@ Program( # input.cq:1:1..11:1
         )
       ]
       body: <
-        Block(
+        Block( # input.cq:4:1..6:19
           statements: [
             BundleExt( # input.cq:6:1..7
               items: [
@@ -62,7 +62,7 @@ Program( # input.cq:1:1..11:1
         )
       ]
       body: <
-        Block(
+        Block( # input.cq:8:1..21
           statements: []
         )
       >
@@ -79,7 +79,7 @@ Program( # input.cq:1:1..11:1
         )
       ]
       body: <
-        Block(
+        Block( # input.cq:10:1..20
           statements: []
         )
       >

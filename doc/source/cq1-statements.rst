@@ -97,27 +97,17 @@ make multiple variables of the same name; they will be interpreted as distinct
 variables, where references to that variable name simply refer to the latest
 declaration.
 
+The initial value of a variable is undefined.
+
 .. note::
 
     Because variables can be declared anywhere, they can also be declared
-    within structured control-flow statements in cQASM 1.2+. However, cQASM
-    does *not* support scoping of any kind aside from name resolution. All
-    variables are assumed to be mapped to distinct registers. This means that,
-    style and readability aside, the following is perfectly fine:
-
-    .. code:: text
-
-        if (...) {
-            var y: int;
-        }
-        set y = 1;
-
-    It is equivalent to the following:
-
-        if (...) {
-        }
-        var y: int;
-        set y = 1;
+    within the subblocks of cQASM 1.2+'s structured control-flow statements.
+    In this case, the variable can only be accessed from within the subblock.
+    *Typically,* the variable will behave like a global, i.e. it will retain
+    the value of the previous loop iteration for instance, but implementations
+    are *not* required to do this! Again: the initial value of a variable is
+    undefined.
 
 Variable statements can be annotated.
 

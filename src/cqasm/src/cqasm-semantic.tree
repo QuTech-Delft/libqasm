@@ -51,6 +51,17 @@ block {
 
 }
 
+# A single condition + block for use in an if-else chain.
+if_else_branch {
+
+    # The condition.
+    condition: external One<cqasm::values::Node>;
+
+    # The body.
+    body: One<block>;
+
+}
+
 # Represents a node that carries annotation data.
 annotated {
 
@@ -138,84 +149,86 @@ annotated {
 
         }
 
-        # An if-else chain.
-        if_else {
+        # Any version 1.2+ structured control-flow statement.
+        structured {
 
-            # The conditions. Condition 0 conditions block 0; if false,
-            # condition 1 conditions block 2, etc.
-            conditions: external Many<cqasm::values::Node>;
+            # An if-else chain.
+            if_else {
 
-            # The blocks. The amount must be equal to the number of conditions
-            # or one greater than that; in the latter case, the last block
-            # represents the "else" block.
-            blocks: Many<block>;
+                # The if-else branches.
+                branches: Many<if_else_branch>;
+
+                # The final else block, if any.
+                otherwise: Maybe<block>;
+
+            }
+
+            # A C-style for loop.
+            for_loop {
+
+                # The optional initializing assignment, run before the loop starts.
+                initialize: Maybe<set_instruction>;
+
+                # The condition for starting another iteration.
+                condition: external One<cqasm::values::Node>;
+
+                # The updating assignment, done at the end of the loop body and upon
+                # continue.
+                update: Maybe<set_instruction>;
+
+                # The loop body.
+                body: One<block>;
+
+            }
+
+            # A foreach loop. Note that this is rather dumbed-down in cQASM 1.2
+            # compared to the cQASM 2.0 syntax it was inspired from, and is only
+            # usable as a range-based loop.
+            foreach_loop {
+
+                # Reference to the variable used for looping.
+                lhs: external One<cqasm::values::Node>;
+
+                # The first value.
+                from: external One<cqasm::values::Node>;
+
+                # The last value.
+                to: external One<cqasm::values::Node>;
+
+                # The loop body.
+                body: One<block>;
+
+            }
+
+            # A while loop.
+            while_loop {
+
+                # The condition for starting another iteration.
+                condition: external One<cqasm::values::Node>;
+
+                # The loop body.
+                body: One<block>;
+
+            }
+
+            # A repeat-until loop.
+            repeat_until_loop {
+
+                # The loop body.
+                body: One<block>;
+
+                # The condition for stopping iteration.
+                condition: external One<cqasm::values::Node>;
+
+            }
+
+            # A break statement.
+            break_statement {}
+
+            # A continue statement.
+            continue_statement {}
 
         }
-
-        # A C-style for loop.
-        for_loop {
-
-            # The optional initializing assignment, run before the loop starts.
-            initialize: Maybe<set_instruction>;
-
-            # The condition for starting another iteration.
-            condition: external One<cqasm::values::Node>;
-
-            # The updating assignment, done at the end of the loop body and upon
-            # continue.
-            update: Maybe<set_instruction>;
-
-            # The loop body.
-            body: One<block>;
-
-        }
-
-        # A foreach loop. Note that this is rather dumbed-down in cQASM 1.2
-        # compared to the cQASM 2.0 syntax it was inspired from, and is only
-        # usable as a range-based loop.
-        foreach_loop {
-
-            # Reference to the variable used for looping.
-            lhs: external One<cqasm::values::Node>;
-
-            # The first value.
-            from: external One<cqasm::values::Node>;
-
-            # The last value.
-            to: external One<cqasm::values::Node>;
-
-            # The loop body.
-            body: One<block>;
-
-        }
-
-        # A while loop.
-        while_loop {
-
-            # The condition for starting another iteration.
-            condition: external One<cqasm::values::Node>;
-
-            # The loop body.
-            body: One<block>;
-
-        }
-
-        # A repeat-until loop.
-        repeat_until_loop {
-
-            # The loop body.
-            body: One<block>;
-
-            # The condition for stopping iteration.
-            condition: external One<cqasm::values::Node>;
-
-        }
-
-        # A break statement.
-        break_statement {}
-
-        # A continue statement.
-        continue_statement {}
 
     }
 

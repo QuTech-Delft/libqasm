@@ -1,3 +1,3 @@
 ERROR
 Error at input.cq:1:9..12: the maximum cQASM version supported is 1.0, but the cQASM file is version 1.1
-Error at input.cq:3:1..18: unknown type "unknown"
+Error at input.cq:3:1..18: variables are only supported from cQASM 1.1 onwards
