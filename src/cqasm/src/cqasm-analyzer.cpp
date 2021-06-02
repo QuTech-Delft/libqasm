@@ -379,10 +379,16 @@ public:
     tree::Maybe<semantic::IfElse> analyze_if_else(const ast::IfElse &if_else);
 
     /**
-     * Analyzes the given C-style for loop chain. Only intended for use as a
-     * helper function within analyze_structured().
+     * Analyzes the given C-style for loop. Only intended for use as a helper
+     * function within analyze_structured().
      */
     tree::Maybe<semantic::ForLoop> analyze_for_loop(const ast::ForLoop &for_loop);
+
+    /**
+     * Analyzes the given static for loop. Only intended for use as a helper
+     * function within analyze_structured().
+     */
+    tree::Maybe<semantic::ForeachLoop> analyze_foreach_loop(const ast::ForeachLoop &foreach_loop);
 
     /**
      * Analyzes the given list of annotations. Any errors found result in the
@@ -1455,8 +1461,7 @@ void AnalyzerHelper::analyze_structured(const ast::Structured &structured) {
         } else if (auto for_loop = structured.as_for_loop()) {
             node = analyze_for_loop(*for_loop);
         } else if (auto foreach_loop = structured.as_foreach_loop()) {
-            throw error::AnalysisError("foreach loop is not yet implemented");
-            // TODO
+            node = analyze_foreach_loop(*foreach_loop);
         } else if (auto while_loop = structured.as_while_loop()) {
             throw error::AnalysisError("while loop is not yet implemented");
             // TODO
@@ -1509,7 +1514,9 @@ void AnalyzerHelper::analyze_structured(const ast::Structured &structured) {
  * Analyzes the given if-else chain. Only intended for use as a helper
  * function within analyze_structured().
  */
-tree::Maybe<semantic::IfElse> AnalyzerHelper::analyze_if_else(const ast::IfElse &if_else) {
+tree::Maybe<semantic::IfElse> AnalyzerHelper::analyze_if_else(
+    const ast::IfElse &if_else
+) {
 
     // Create the if-else node.
     tree::Maybe<semantic::IfElse> node;
@@ -1574,10 +1581,12 @@ tree::Maybe<semantic::IfElse> AnalyzerHelper::analyze_if_else(const ast::IfElse 
 }
 
 /**
- * Analyzes the given C-style for loop chain. Only intended for use as a
- * helper function within analyze_structured().
+ * Analyzes the given C-style for loop. Only intended for use as a helper
+ * function within analyze_structured().
  */
-tree::Maybe<semantic::ForLoop> AnalyzerHelper::analyze_for_loop(const ast::ForLoop &for_loop) {
+tree::Maybe<semantic::ForLoop> AnalyzerHelper::analyze_for_loop(
+    const ast::ForLoop &for_loop
+) {
 
     // Create the for-loop node.
     tree::Maybe<semantic::ForLoop> node;
@@ -1610,6 +1619,34 @@ tree::Maybe<semantic::ForLoop> AnalyzerHelper::analyze_for_loop(const ast::ForLo
 
     // Analyze the body.
     node->body = analyze_subblock(*for_loop.body, true);
+
+    return node;
+}
+
+/**
+ * Analyzes the given static for loop. Only intended for use as a helper
+ * function within analyze_structured().
+ */
+tree::Maybe<semantic::ForeachLoop> AnalyzerHelper::analyze_foreach_loop(
+    const ast::ForeachLoop &foreach_loop
+) {
+
+    // Create the foreach loop node.
+    tree::Maybe<semantic::ForeachLoop> node;
+    node.emplace();
+
+    // Analyze the loop variable.
+    node->lhs = values::promote(analyze_expression(*foreach_loop.lhs), tree::make<types::Int>(true));
+    if (node->lhs.empty()) {
+        throw error::AnalysisError("foreach loop variable must be an assignable integer");
+    }
+
+    // Analyze the boundaries.
+    node->from = analyze_as_const_int(*foreach_loop.from);
+    node->to = analyze_as_const_int(*foreach_loop.to);
+
+    // Analyze the body.
+    node->body = analyze_subblock(*foreach_loop.body, true);
 
     return node;
 }
@@ -1755,14 +1792,19 @@ values::Value AnalyzerHelper::analyze_as(const ast::Expression &expression, Type
  * Shorthand for parsing an expression to a constant integer.
  */
 primitives::Int AnalyzerHelper::analyze_as_const_int(const ast::Expression &expression) {
-    auto value = analyze_as<types::Int>(expression);
-    if (value.empty()) {
-        throw error::AnalysisError("expected an integer");
-    }
-    if (auto int_value = value->as_const_int()) {
-        return int_value->value;
-    } else {
-        throw error::AnalysisError("integer must be constant");
+    try {
+        auto value = analyze_as<types::Int>(expression);
+        if (value.empty()) {
+            throw error::AnalysisError("expected an integer");
+        }
+        if (auto int_value = value->as_const_int()) {
+            return int_value->value;
+        } else {
+            throw error::AnalysisError("integer must be constant");
+        }
+    } catch (error::AnalysisError &e) {
+        e.context(expression);
+        throw;
     }
 }
 

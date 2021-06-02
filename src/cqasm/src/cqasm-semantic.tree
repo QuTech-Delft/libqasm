@@ -161,6 +161,7 @@ annotated {
                 # The final else block, if any.
                 otherwise: Maybe<block>;
 
+
             }
 
             # A C-style for loop.
@@ -190,10 +191,10 @@ annotated {
                 lhs: external One<cqasm::values::Node>;
 
                 # The first value.
-                from: external One<cqasm::values::Node>;
+                from: cqasm::primitives::Int;
 
                 # The last value.
-                to: external One<cqasm::values::Node>;
+                to: cqasm::primitives::Int;
 
                 # The loop body.
                 body: One<block>;
