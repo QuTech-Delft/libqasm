@@ -17,9 +17,9 @@ namespace v1 {
  */
 tree::One<semantic::Program> analyze(
     const std::string &filename,
-    const std::string &max_version
+    const std::string &api_version
 ) {
-    return default_analyzer(max_version).analyze(filename).unwrap();
+    return default_analyzer(api_version).analyze(filename).unwrap();
 }
 
 /**
@@ -30,9 +30,9 @@ tree::One<semantic::Program> analyze(
 tree::One<semantic::Program> analyze(
     FILE *file,
     const std::string &filename,
-    const std::string &max_version
+    const std::string &api_version
 ) {
-    return default_analyzer(max_version).analyze(file, filename).unwrap();
+    return default_analyzer(api_version).analyze(file, filename).unwrap();
 }
 
 /**
@@ -43,17 +43,17 @@ tree::One<semantic::Program> analyze(
 tree::One<semantic::Program> analyze_string(
     const std::string &data,
     const std::string &filename,
-    const std::string &max_version
+    const std::string &api_version
 ) {
-    return default_analyzer(max_version).analyze_string(data, filename).unwrap();
+    return default_analyzer(api_version).analyze_string(data, filename).unwrap();
 }
 
 /**
  * Constructs an Analyzer object with the defaults for cQASM 1.0 already loaded
  * into it.
  */
-analyzer::Analyzer default_analyzer(const std::string &max_version) {
-    analyzer::Analyzer analyzer{max_version};
+analyzer::Analyzer default_analyzer(const std::string &api_version) {
+    analyzer::Analyzer analyzer{api_version};
 
     // Register the default mappings (true, false, pi, x, y, z, etc.) and
     // functions (operators, things like trigonometric functions, etc.).

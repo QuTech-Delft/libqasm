@@ -1,0 +1,5 @@
+ERROR
+Error at input.cq:1:9..12: the maximum cQASM version supported is 1.1, but the cQASM file is version 1.2
+Error at input.cq:5:5..11: failed to resolve goto
+Error at input.cq:7:18..19: failed to resolve a
+Error at input.cq:8:22..23: failed to resolve a

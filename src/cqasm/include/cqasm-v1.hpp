@@ -25,7 +25,7 @@ namespace v1 {
  */
 tree::One<semantic::Program> analyze(
     const std::string &filename,
-    const std::string &max_version = "1.0"
+    const std::string &api_version = "1.0"
 );
 
 /**
@@ -36,7 +36,7 @@ tree::One<semantic::Program> analyze(
 tree::One<semantic::Program> analyze(
     FILE *file,
     const std::string &filename = "<unknown>",
-    const std::string &max_version = "1.0"
+    const std::string &api_version = "1.0"
 );
 
 /**
@@ -47,7 +47,7 @@ tree::One<semantic::Program> analyze(
 tree::One<semantic::Program> analyze_string(
     const std::string &data,
     const std::string &filename = "<unknown>",
-    const std::string &max_version = "1.0"
+    const std::string &api_version = "1.0"
 );
 
 /**
@@ -55,7 +55,7 @@ tree::One<semantic::Program> analyze_string(
  * into it.
  */
 analyzer::Analyzer default_analyzer(
-    const std::string &max_version = "1.0"
+    const std::string &api_version = "1.0"
 );
 
 } // namespace v1

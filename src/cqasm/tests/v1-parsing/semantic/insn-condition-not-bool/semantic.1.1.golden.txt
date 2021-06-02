@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:4:1..13: condition must be a boolean

@@ -50,7 +50,7 @@ public:
         ASSERT_TRUE(read_file(path + "/input.cq", input));
         cqasm::parser::ParseResult parse_result;
         auto version = cqasm::version::parse_string(input, "input.cq");
-        if (version > cqasm::version::Version("1.1")) {
+        if (version > cqasm::version::Version("1.2")) {
             std::ostringstream ss;
             ss << "detected version " << version;
             parse_result.errors.push_back(ss.str());
@@ -80,104 +80,135 @@ public:
             return;
         }
 
-        // If there were no errors, try semantic analysis. We analyze using the
-        // functions, error models, and instruction set available in the
-        // compatibility layer, though this is copy-pasted in here.
-        auto analyzer = cqasm::analyzer::Analyzer{"1.1"};
-        analyzer.register_default_functions_and_mappings();
-        std::ostringstream args;
-        for (int i = 0; i <= 50; i++) {
-            analyzer.register_error_model("depolarizing_channel", args.str());
-            args << "r";
-        }
-        analyzer.register_instruction("measure_all", "", false, false);
-        analyzer.register_instruction("measure_parity", "QaQa", false, false, false, true);
-        analyzer.register_instruction("x", "Q");
-        analyzer.register_instruction("y", "Q");
-        analyzer.register_instruction("z", "Q");
-        analyzer.register_instruction("i", "Q");
-        analyzer.register_instruction("h", "Q");
-        analyzer.register_instruction("x90", "Q");
-        analyzer.register_instruction("y90", "Q");
-        analyzer.register_instruction("mx90", "Q");
-        analyzer.register_instruction("my90", "Q");
-        analyzer.register_instruction("s", "Q");
-        analyzer.register_instruction("sdag", "Q");
-        analyzer.register_instruction("t", "Q");
-        analyzer.register_instruction("tdag", "Q");
-        analyzer.register_instruction("u", "Qu");
-        analyzer.register_instruction("prep", "Q", false);
-        analyzer.register_instruction("prep_x", "Q", false);
-        analyzer.register_instruction("prep_y", "Q", false);
-        analyzer.register_instruction("prep_z", "Q", false);
-        analyzer.register_instruction("measure", "Q", false);
-        analyzer.register_instruction("measure_x", "Q", false);
-        analyzer.register_instruction("measure_y", "Q", false);
-        analyzer.register_instruction("measure_z", "Q", false);
-        analyzer.register_instruction("rx", "Qr");
-        analyzer.register_instruction("ry", "Qr");
-        analyzer.register_instruction("rz", "Qr");
-        analyzer.register_instruction("cnot", "QQ");
-        analyzer.register_instruction("cz", "QQ");
-        analyzer.register_instruction("swap", "QQ");
-        analyzer.register_instruction("cr", "QQr");
-        analyzer.register_instruction("crk", "QQi");
-        analyzer.register_instruction("toffoli", "QQQ");
-        analyzer.register_instruction("not", "B");
-        analyzer.register_instruction("display", "", false, false);
-        analyzer.register_instruction("display", "B", false, false);
-        analyzer.register_instruction("display_binary", "", false, false);
-        analyzer.register_instruction("display_binary", "B", false, false);
-        analyzer.register_instruction("skip", "i", false, false);
-        analyzer.register_instruction("wait", "i", false, false);
-        analyzer.register_instruction("reset-averaging", "", false, false);
-        analyzer.register_instruction("reset-averaging", "Q", false, false);
-        analyzer.register_instruction("load_state", "s", false, false);
+        // Try different API levels.
+        for (const auto &api_version : std::vector<std::string>({"1.0", "1.1", "1.2"})) {
 
-        // Add a dynamic function in order to test the behavior of dynamic
-        // function nodes.
-        analyzer.register_function("or", "bb", [](const cqasm::values::Values &v) -> cqasm::values::Value {
-            auto lhs = v[0];
-            auto rhs = v[1];
-            if (auto lhs_const = lhs->as_const_bool()) {
-                if (lhs_const->value) {
-                    return cqasm::tree::make<cqasm::values::ConstBool>(true);
-                } else {
-                    return rhs;
+            // If there were no errors, try semantic analysis. We analyze using the
+            // functions, error models, and instruction set available in the
+            // compatibility layer, though this is copy-pasted in here.
+            auto analyzer = cqasm::analyzer::Analyzer{api_version};
+            analyzer.register_default_functions_and_mappings();
+            std::ostringstream args;
+            for (int i = 0; i <= 50; i++) {
+                analyzer.register_error_model("depolarizing_channel", args.str());
+                args << "r";
+            }
+            analyzer.register_instruction("measure_all", "", false, false);
+            analyzer.register_instruction("measure_parity", "QaQa", false, false, false, true);
+            analyzer.register_instruction("x", "Q");
+            analyzer.register_instruction("y", "Q");
+            analyzer.register_instruction("z", "Q");
+            analyzer.register_instruction("i", "Q");
+            analyzer.register_instruction("h", "Q");
+            analyzer.register_instruction("x90", "Q");
+            analyzer.register_instruction("y90", "Q");
+            analyzer.register_instruction("mx90", "Q");
+            analyzer.register_instruction("my90", "Q");
+            analyzer.register_instruction("s", "Q");
+            analyzer.register_instruction("sdag", "Q");
+            analyzer.register_instruction("t", "Q");
+            analyzer.register_instruction("tdag", "Q");
+            analyzer.register_instruction("u", "Qu");
+            analyzer.register_instruction("prep", "Q", false);
+            analyzer.register_instruction("prep_x", "Q", false);
+            analyzer.register_instruction("prep_y", "Q", false);
+            analyzer.register_instruction("prep_z", "Q", false);
+            analyzer.register_instruction("measure", "Q", false);
+            analyzer.register_instruction("measure_x", "Q", false);
+            analyzer.register_instruction("measure_y", "Q", false);
+            analyzer.register_instruction("measure_z", "Q", false);
+            analyzer.register_instruction("rx", "Qr");
+            analyzer.register_instruction("ry", "Qr");
+            analyzer.register_instruction("rz", "Qr");
+            analyzer.register_instruction("cnot", "QQ");
+            analyzer.register_instruction("cz", "QQ");
+            analyzer.register_instruction("swap", "QQ");
+            analyzer.register_instruction("cr", "QQr");
+            analyzer.register_instruction("crk", "QQi");
+            analyzer.register_instruction("toffoli", "QQQ");
+            analyzer.register_instruction("not", "B");
+            analyzer.register_instruction("display", "", false, false);
+            analyzer.register_instruction("display", "B", false, false);
+            analyzer.register_instruction("display_binary", "", false, false);
+            analyzer.register_instruction("display_binary", "B", false, false);
+            analyzer.register_instruction("skip", "i", false, false);
+            analyzer.register_instruction("wait", "i", false, false);
+            analyzer.register_instruction("reset-averaging", "", false, false);
+            analyzer.register_instruction("reset-averaging", "Q", false, false);
+            analyzer.register_instruction("load_state", "s", false, false);
+
+            // Add a dynamic function in order to test the behavior of dynamic
+            // function nodes.
+            if (api_version != "1.0") {
+                analyzer.register_function("or", "bb", [](const cqasm::values::Values &v) -> cqasm::values::Value {
+                    auto lhs = v[0];
+                    auto rhs = v[1];
+                    if (auto lhs_const = lhs->as_const_bool()) {
+                        if (lhs_const->value) {
+                            return cqasm::tree::make<cqasm::values::ConstBool>(true);
+                        } else {
+                            return rhs;
+                        }
+                    }
+                    if (auto rhs_const = lhs->as_const_bool()) {
+                        if (rhs_const->value) {
+                            return cqasm::tree::make<cqasm::values::ConstBool>(true);
+                        } else {
+                            return lhs;
+                        }
+                    }
+                    return cqasm::tree::make<cqasm::values::Function>("operator||", v, cqasm::tree::make<cqasm::types::Bool>());
+                });
+                analyzer.register_function("operator<", "ii", [](const cqasm::values::Values &v) -> cqasm::values::Value {
+                    auto lhs = v[0];
+                    auto rhs = v[1];
+                    if (auto lhs_const = lhs->as_const_int()) {
+                        if (auto rhs_const = rhs->as_const_int()) {
+                            return cqasm::tree::make<cqasm::values::ConstBool>(
+                                lhs_const->value < rhs_const->value
+                            );
+                        }
+                    }
+                    return cqasm::tree::make<cqasm::values::Function>("operator<", v, cqasm::tree::make<cqasm::types::Bool>());
+                });
+                analyzer.register_function("operator+", "ii", [](const cqasm::values::Values &v) -> cqasm::values::Value {
+                    auto lhs = v[0];
+                    auto rhs = v[1];
+                    if (auto lhs_const = lhs->as_const_int()) {
+                        if (auto rhs_const = rhs->as_const_int()) {
+                            return cqasm::tree::make<cqasm::values::ConstInt>(
+                                lhs_const->value + rhs_const->value
+                            );
+                        }
+                    }
+                    return cqasm::tree::make<cqasm::values::Function>("operator+", v, cqasm::tree::make<cqasm::types::Int>());
+                });
+            }
+
+            // Run the actual semantic analysis.
+            auto analysis_result = analyzer.analyze(*parse_result.root->as_program());
+
+            // Check the analysis results.
+            ss.str("");
+            if (analysis_result.errors.empty()) {
+                ss << "SUCCESS" << std::endl;
+                ss << *analysis_result.root << std::endl;
+            } else {
+                ss << "ERROR" << std::endl;
+                for (const auto &error : analysis_result.errors) {
+                    ss << error << std::endl;
                 }
             }
-            if (auto rhs_const = lhs->as_const_bool()) {
-                if (rhs_const->value) {
-                    return cqasm::tree::make<cqasm::values::ConstBool>(true);
-                } else {
-                    return lhs;
-                }
+            std::string semantic_result = ss.str();
+            write_file(path + "/semantic." + api_version + ".actual.txt", semantic_result);
+            std::string semantic_golden;
+            EXPECT_TRUE(read_file(path + "/semantic." + api_version + ".golden.txt", semantic_golden));
+            EXPECT_TRUE(semantic_result == semantic_golden);
+
+            if (analysis_result.errors.empty()) {
+                ::tree::base::serialize(analysis_result.root);
             }
-            return cqasm::tree::make<cqasm::values::Function>("operator||", v, cqasm::tree::make<cqasm::types::Bool>());
-        });
 
-        // Run the actual semantic analysis.
-        auto analysis_result = analyzer.analyze(*parse_result.root->as_program());
-
-        // Check the analysis results.
-        ss.str("");
-        if (analysis_result.errors.empty()) {
-            ss << "SUCCESS" << std::endl;
-            ss << *analysis_result.root << std::endl;
-        } else {
-            ss << "ERROR" << std::endl;
-            for (const auto &error : analysis_result.errors) {
-                ss << error << std::endl;
-            }
-        }
-        std::string semantic_result = ss.str();
-        write_file(path + "/semantic.actual.txt", semantic_result);
-        std::string semantic_golden;
-        EXPECT_TRUE(read_file(path + "/semantic.golden.txt", semantic_golden));
-        EXPECT_TRUE(semantic_result == semantic_golden);
-
-        if (analysis_result.errors.empty()) {
-            ::tree::base::serialize(analysis_result.root);
         }
 
     }

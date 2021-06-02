@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:11:3..4: failed to resolve q

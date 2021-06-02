@@ -1,0 +1,6 @@
+version 1.2
+qubits 10
+
+# In 1.2, subcircuit names must be unique.
+.circuit
+.circuit
