@@ -131,25 +131,51 @@ public:
 
             // Add a dynamic function in order to test the behavior of dynamic
             // function nodes.
-            analyzer.register_function("or", "bb", [](const cqasm::values::Values &v) -> cqasm::values::Value {
-                auto lhs = v[0];
-                auto rhs = v[1];
-                if (auto lhs_const = lhs->as_const_bool()) {
-                    if (lhs_const->value) {
-                        return cqasm::tree::make<cqasm::values::ConstBool>(true);
-                    } else {
-                        return rhs;
+            if (api_version != "1.0") {
+                analyzer.register_function("or", "bb", [](const cqasm::values::Values &v) -> cqasm::values::Value {
+                    auto lhs = v[0];
+                    auto rhs = v[1];
+                    if (auto lhs_const = lhs->as_const_bool()) {
+                        if (lhs_const->value) {
+                            return cqasm::tree::make<cqasm::values::ConstBool>(true);
+                        } else {
+                            return rhs;
+                        }
                     }
-                }
-                if (auto rhs_const = lhs->as_const_bool()) {
-                    if (rhs_const->value) {
-                        return cqasm::tree::make<cqasm::values::ConstBool>(true);
-                    } else {
-                        return lhs;
+                    if (auto rhs_const = lhs->as_const_bool()) {
+                        if (rhs_const->value) {
+                            return cqasm::tree::make<cqasm::values::ConstBool>(true);
+                        } else {
+                            return lhs;
+                        }
                     }
-                }
-                return cqasm::tree::make<cqasm::values::Function>("operator||", v, cqasm::tree::make<cqasm::types::Bool>());
-            });
+                    return cqasm::tree::make<cqasm::values::Function>("operator||", v, cqasm::tree::make<cqasm::types::Bool>());
+                });
+                analyzer.register_function("operator<", "ii", [](const cqasm::values::Values &v) -> cqasm::values::Value {
+                    auto lhs = v[0];
+                    auto rhs = v[1];
+                    if (auto lhs_const = lhs->as_const_int()) {
+                        if (auto rhs_const = rhs->as_const_int()) {
+                            return cqasm::tree::make<cqasm::values::ConstBool>(
+                                lhs_const->value < rhs_const->value
+                            );
+                        }
+                    }
+                    return cqasm::tree::make<cqasm::values::Function>("operator<", v, cqasm::tree::make<cqasm::types::Bool>());
+                });
+                analyzer.register_function("operator+", "ii", [](const cqasm::values::Values &v) -> cqasm::values::Value {
+                    auto lhs = v[0];
+                    auto rhs = v[1];
+                    if (auto lhs_const = lhs->as_const_int()) {
+                        if (auto rhs_const = rhs->as_const_int()) {
+                            return cqasm::tree::make<cqasm::values::ConstInt>(
+                                lhs_const->value + rhs_const->value
+                            );
+                        }
+                    }
+                    return cqasm::tree::make<cqasm::values::Function>("operator+", v, cqasm::tree::make<cqasm::types::Int>());
+                });
+            }
 
             // Run the actual semantic analysis.
             auto analysis_result = analyzer.analyze(*parse_result.root->as_program());

@@ -320,6 +320,16 @@ public:
     tree::Maybe<semantic::SetInstruction> analyze_set_instruction(const ast::Instruction &insn);
 
     /**
+     * Analyzes the given two operands as lhs and rhs of a set instruction. Used for
+     * the actual set instruction as well as the assignments in the header of a
+     * C-style for loop.
+     */
+    tree::Maybe<semantic::SetInstruction> analyze_set_instruction_operands(
+        const ast::Expression &lhs_expr,
+        const ast::Expression &rhs_expr
+    );
+
+    /**
      * Analyzes the given cQASM 1.2+ goto instruction. If an error occurs, the
      * message is added to the result error vector, and an empty Maybe is
      * returned.
@@ -367,6 +377,12 @@ public:
      * function within analyze_structured().
      */
     tree::Maybe<semantic::IfElse> analyze_if_else(const ast::IfElse &if_else);
+
+    /**
+     * Analyzes the given C-style for loop chain. Only intended for use as a
+     * helper function within analyze_structured().
+     */
+    tree::Maybe<semantic::ForLoop> analyze_for_loop(const ast::ForLoop &for_loop);
 
     /**
      * Analyzes the given list of annotations. Any errors found result in the
@@ -1107,38 +1123,15 @@ tree::Maybe<semantic::SetInstruction> AnalyzerHelper::analyze_set_instruction(
     try {
 
         // Figure out the operand list.
-        auto operands = values::Values();
-        for (auto operand_expr : insn.operands->items) {
-            operands.add(analyze_expression(*operand_expr));
-        }
-
-        // Create the node.
-        tree::Maybe<semantic::SetInstruction> node;
-        node.set(tree::make<semantic::SetInstruction>());
-
-        // Unpack lhs and rhs.
-        if (operands.size() != 2) {
+        if (insn.operands->items.size() != 2) {
             throw error::AnalysisError("set instruction must have two operands");
         }
 
-        // Check assignability of the left-hand side.
-        if (operands[0]->as_reference() == nullptr) {
-            throw error::AnalysisError(
-                "left-hand side of assignment statement must be assignable"
-            );
-        }
-        node->lhs = operands[0];
-
-        // Type-check/promote the right-hand side.
-        auto target_type = values::type_of(node->lhs).clone();
-        target_type->assignable = false;
-        node->rhs = values::promote(operands[1], target_type);
-        if (node->rhs.empty()) {
-            std::ostringstream ss;
-            ss << "type of right-hand side (" << values::type_of(operands[1]) << ") ";
-            ss << "could not be coerced to left-hand side (" << values::type_of(node->lhs) << ")";
-            throw error::AnalysisError(ss.str());
-        }
+        // Analyze the operands.
+        auto node = analyze_set_instruction_operands(
+            *insn.operands->items[0],
+            *insn.operands->items[1]
+        );
 
         // Resolve the condition code.
         if (!insn.condition.empty()) {
@@ -1169,6 +1162,44 @@ tree::Maybe<semantic::SetInstruction> AnalyzerHelper::analyze_set_instruction(
         result.errors.push_back(e.get_message());
     }
     return tree::Maybe<semantic::SetInstruction>();
+}
+
+/**
+ * Analyzes the given two operands as lhs and rhs of a set instruction. Used for
+ * the actual set instruction as well as the assignments in the header of a
+ * C-style for loop.
+ */
+tree::Maybe<semantic::SetInstruction> AnalyzerHelper::analyze_set_instruction_operands(
+    const ast::Expression &lhs_expr,
+    const ast::Expression &rhs_expr
+) {
+
+    // Analyze the expressions.
+    auto lhs = analyze_expression(lhs_expr);
+    auto rhs = analyze_expression(rhs_expr);
+
+    // Check assignability of the left-hand side.
+    if (!lhs->as_reference()) {
+        throw error::AnalysisError(
+            "left-hand side of assignment statement must be assignable"
+        );
+    }
+
+    // Type-check/promote the right-hand side.
+    auto target_type = values::type_of(lhs).clone();
+    target_type->assignable = false;
+    auto rhs_promoted = values::promote(rhs, target_type);
+    if (rhs_promoted.empty()) {
+        std::ostringstream ss;
+        ss << "type of right-hand side (" << values::type_of(rhs) << ") ";
+        ss << "could not be coerced to left-hand side (" << values::type_of(lhs) << ")";
+        throw error::AnalysisError(ss.str());
+    }
+
+    // Create the node.
+    tree::Maybe<semantic::SetInstruction> node;
+    node.emplace<semantic::SetInstruction>(lhs, rhs_promoted);
+    return node;
 }
 
 /**
@@ -1422,8 +1453,7 @@ void AnalyzerHelper::analyze_structured(const ast::Structured &structured) {
         if (auto if_else = structured.as_if_else()) {
             node = analyze_if_else(*if_else);
         } else if (auto for_loop = structured.as_for_loop()) {
-            throw error::AnalysisError("for loop is not yet implemented");
-            // TODO
+            node = analyze_for_loop(*for_loop);
         } else if (auto foreach_loop = structured.as_foreach_loop()) {
             throw error::AnalysisError("foreach loop is not yet implemented");
             // TODO
@@ -1539,6 +1569,47 @@ tree::Maybe<semantic::IfElse> AnalyzerHelper::analyze_if_else(const ast::IfElse 
         }
         return {};
     }
+
+    return node;
+}
+
+/**
+ * Analyzes the given C-style for loop chain. Only intended for use as a
+ * helper function within analyze_structured().
+ */
+tree::Maybe<semantic::ForLoop> AnalyzerHelper::analyze_for_loop(const ast::ForLoop &for_loop) {
+
+    // Create the for-loop node.
+    tree::Maybe<semantic::ForLoop> node;
+    node.emplace();
+
+    // Analyze the initialization assignment.
+    if (!for_loop.initialize.empty()) {
+        node->initialize = analyze_set_instruction_operands(
+            *for_loop.initialize->lhs,
+            *for_loop.initialize->rhs
+        );
+        node->initialize->condition.emplace<values::ConstBool>(true);
+    }
+
+    // Analyze the condition.
+    auto condition = analyze_expression(*for_loop.condition);
+    node->condition = values::promote(condition, tree::make<types::Bool>());
+    if (node->condition.empty()) {
+        throw error::AnalysisError("loop condition must be a boolean");
+    }
+
+    // Analyze the update assignment.
+    if (!for_loop.update.empty()) {
+        node->update = analyze_set_instruction_operands(
+            *for_loop.update->lhs,
+            *for_loop.update->rhs
+        );
+        node->update->condition.emplace<values::ConstBool>(true);
+    }
+
+    // Analyze the body.
+    node->body = analyze_subblock(*for_loop.body, true);
 
     return node;
 }

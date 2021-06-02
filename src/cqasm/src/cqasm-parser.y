@@ -505,6 +505,7 @@ Subcircuit      : '.' Identifier                                                
 
 /* cQASM 1.2 statements. */
 SubStatements   : '{' OptNewline StatementList OptNewline '}'                   { FROM($$, $3); }
+                | '{' OptNewline '}'                                            { NEW($$, StatementList); }
                 ;
 
 Assignment      : Expression '=' Expression                                     { NEW($$, Assignment); $$->lhs.set_raw($1); $$->rhs.set_raw($3); }
