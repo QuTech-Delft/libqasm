@@ -1,9 +1,9 @@
 Instructions
 ============
 
-Instructions, also called gates, are used to represent the atomic operations
-that must be performed in parallel or in sequence to form the desired algorithm.
-In cQASM 1.x, they follow an assembly-like syntax:
+Instructions, also called gates, are used to represent the operations that must
+be performed in parallel or in sequence to form the desired algorithm. In cQASM
+1.x, they follow an assembly-like syntax:
 
 .. code:: text
 
@@ -103,6 +103,12 @@ using an AND gate at runtime.
     a gate is completely unrelated to the single-gate-multiple-qubit notation
     described in the next subsection. Do not confuse the two! The reason for
     this oddity is, as usual, a historical one.
+
+.. note::
+
+    Selecting multiple bits at once is only supported within the condition of a
+    gate, or as a gate operand via single-gate-multiple-qubit notation. It is
+    illegal in all other contexts.
 
 Single-gate-multiple-qubit
 --------------------------
@@ -352,23 +358,50 @@ Refer to section IV-A of the `arXiv paper <https://arxiv.org/pdf/1805.09607v1.pd
 ~~~~~~~~~~~~~~~~~~
 
 Skip the specified number of cycles. The bundle following the skip will start
-the given amount plus two cycles after the bundle preceding the skip. This
-instruction cannot share a bundle with other instructions.
+the given amount plus one cycle after the bundle preceding the skip. For
+example:
+
+.. code:: text
+
+    x q[0]  # starts in cycle i
+    skip 3  # starts in cycle i+1
+    x q[0]  # starts in cycle i+4
+
+This instruction cannot share a bundle with other instructions.
 
 ``wait <integer>``
 ~~~~~~~~~~~~~~~~~~
 
 Wait for all previous instructions to finish, then wait the given number of
-cycles before starting the next bundle. This instruction cannot share a bundle
-with other instructions.
+cycles before starting the next bundle. Also known as a barrier. In essence,
+this acts as a no-op instruction with the specified duration in cycles, that
+requires access to all qubits, bits, and variables.
 
 .. note::
 
-    When OpenQL is used, you should use ``wait`` instructions to introduce
-    delays. The scheduler will ignore any other timing semantics in your
-    program, including whether you placed instructions in a bundle or not. The
-    timing of the algorithm after scheduling will be represented using skip
-    instructions and bundles exclusively.
+    When OpenQL is used, you should use ``wait`` instructions rather than
+    ``skip`` to introduce delays. The scheduler will ignore any other timing
+    semantics in your program, including whether you placed instructions in a
+    bundle or not. The timing of the algorithm after scheduling will be
+    represented using skip instructions and bundles exclusively. Nevertheless,
+    the ``wait`` instructions will remain, so the requested (minimum) delays
+    are also represented, so running the scheduler again would not break the
+    program. For example,
+
+    .. code:: text
+
+        x q[0]
+        wait 3
+        x q[1]
+
+    may compile into
+
+    .. code:: text
+
+        x q[0]  # starts in cycle 0
+        wait 3  # starts in cycle 1
+        skip 2  # starts in cycle 2
+        x q[1]  # starts in cycle 4
 
 ``not <bit-ref>``
 ~~~~~~~~~~~~~~~~~
