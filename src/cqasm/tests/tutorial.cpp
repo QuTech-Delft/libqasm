@@ -192,14 +192,18 @@ TEST(tutorial, tutorial) {
     // an entire tree using is_complete() on the root node.
     //
     // All tree nodes and the One/Maybe/Many/Any nodes define an equality
-    // operator. To avoid confusion, it always compares the contained data,
-    // whether you dereference or not. If you really want to compare pointers,
-    // you can use the get_ptr() method on One/Maybe, which grants access to the
-    // wrapped shared_ptr.
+    // operator. Note that this implements pointer-based equality: the
+    // element(s) in the containers must point to the exact same objects for
+    // two containers to be equal. However, a value-based equality operator is
+    // also provided, using the function equals(). Note that this differs from
+    // just dereferencing both sides and then testing equality, as this would
+    // only do value-based equality for the root node and pointer-based equality
+    // beyond that!
     auto clone2 = clone->clone();
-    EXPECT_TRUE(*clone2 == *clone); // compares the node
-    EXPECT_TRUE(clone2 == clone); // also compares the node
-    EXPECT_TRUE(clone2.get_ptr() != clone.get_ptr()); // compares the pointer
+    EXPECT_TRUE(clone2.equals(clone)); // compares by value
+    EXPECT_TRUE(*clone2 != *clone); // compares only the root by value
+    EXPECT_TRUE(clone2 != clone); // compares by pointer
+    EXPECT_TRUE(clone2.get_ptr() != clone.get_ptr()); // also compares by pointer
 
     clone2->as_qubit_refs()->index.add(cqasm::tree::make<cqasm::values::ConstInt>(7));
     EXPECT_TRUE(clone2 != clone);
