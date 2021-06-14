@@ -232,8 +232,10 @@ Program( # input.cq:1:1..38:1
                   >
                   operands: [
                     ConstString( # input.cq:31:12..32:25
-                      value: Hello,
-I'm a multiline string.
+                      value: cqasm::primitives::Str<<
+                        Hello,
+                        I'm a multiline string.
+                      >>
                     )
                   ]
                   annotations: []
