@@ -94,7 +94,7 @@ jobs:
       shell: powershell
       run: |
         choco install winflexbison3 --version 2.5.18.20190508
-        choco install swig --version 4.0.1
+        #choco install swig --version 4.0.1
         echo "LIBQASM_BUILD_TYPE=Release" >> $GITHUB_ENV
     - name: Build
       env:
