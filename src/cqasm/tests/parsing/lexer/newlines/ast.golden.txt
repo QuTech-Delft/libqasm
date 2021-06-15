@@ -493,9 +493,10 @@ Program( # input.cq:1:1..38:1
                     ExpressionList( # input.cq:35:34..37:3
                       items: [
                         JsonLiteral( # input.cq:35:34..37:3
-                          value: 
-    "json": "object"
-
+                          value: cqasm::primitives::Str<<
+                            
+                                "json": "object"
+                          >>
                         )
                       ]
                     )

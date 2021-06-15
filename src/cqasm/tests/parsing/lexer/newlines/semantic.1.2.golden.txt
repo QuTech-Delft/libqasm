@@ -260,9 +260,10 @@ Program( # input.cq:1:1..38:1
                       operation: with_json
                       operands: [
                         ConstJson( # input.cq:35:34..37:3
-                          value: 
-    "json": "object"
-
+                          value: cqasm::primitives::Str<<
+                            
+                                "json": "object"
+                          >>
                         )
                       ]
                     )
