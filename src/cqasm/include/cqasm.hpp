@@ -8,51 +8,18 @@
 
 #pragma once
 
-#include "cqasm-parse-helper.hpp"
-#include "cqasm-analyzer.hpp"
+#include "cqasm-v1.hpp"
 
 /**
  * Toplevel namespace with entry points for the new API.
  */
 namespace cqasm {
 
-/**
- * Parses and analyzes the given file with the default analyzer, dumping error
- * messages to stderr and throwing an analyzer::AnalysisFailed on failure.
- */
-tree::One<semantic::Program> analyze(
-    const std::string &filename,
-    const std::string &api_version = "1.0"
-);
-
-/**
- * Parses and analyzes the given file pointer with the default analyzer, dumping
- * error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
- * The optional filename is only used for error messages.
- */
-tree::One<semantic::Program> analyze(
-    FILE *file,
-    const std::string &filename = "<unknown>",
-    const std::string &api_version = "1.0"
-);
-
-/**
- * Parses and analyzes the given string with the default analyzer, dumping
- * error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
- * The optional filename is only used for error messages.
- */
-tree::One<semantic::Program> analyze_string(
-    const std::string &data,
-    const std::string &filename = "<unknown>",
-    const std::string &api_version = "1.0"
-);
-
-/**
- * Constructs an Analyzer object with the defaults for cQASM 1.0 already loaded
- * into it.
- */
-analyzer::Analyzer default_analyzer(
-    const std::string &api_version = "1.0"
-);
+// This is the toplevel public header for the new API for v1.x. At the time it
+// was written, there were no major version namespaces yet (added in
+// preparation for v2.x, though unfortunately this hasn't come to fruition yet
+// at the time of writing). Thus, to maintain API compatibility, we need to
+// pull the v1 namespace into this one when this file is used.
+using namespace v1;
 
 } // namespace cqasm

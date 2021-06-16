@@ -30,3 +30,4 @@ libqasm is a library for handling cQASM files using C++ or Python.
    :caption: API documentation
 
    cpp-api
+   python-api

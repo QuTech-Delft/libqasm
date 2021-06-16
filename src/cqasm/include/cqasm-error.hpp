@@ -8,7 +8,7 @@
 #include <sstream>
 #include <vector>
 #include "cqasm-tree.hpp"
-#include "cqasm-parse-helper.hpp"
+#include "cqasm-annotations.hpp"
 
 namespace cqasm {
 
@@ -43,7 +43,7 @@ public:
     /**
      * Attached location in the source file, if any.
      */
-    std::unique_ptr<parser::SourceLocation> location;
+    std::unique_ptr<annotations::SourceLocation> location;
 
     /**
      * Constructs a new error. If node is a non-null annotatable with a

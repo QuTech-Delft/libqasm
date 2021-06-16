@@ -28,8 +28,8 @@ AnalysisError::AnalysisError(
  */
 void AnalysisError::context(const tree::Annotatable &node) {
     if (!location) {
-        if (auto loc = node.get_annotation_ptr<parser::SourceLocation>()) {
-            location = std::unique_ptr<parser::SourceLocation>(new parser::SourceLocation(*loc));
+        if (auto loc = node.get_annotation_ptr<annotations::SourceLocation>()) {
+            location = std::unique_ptr<annotations::SourceLocation>(new annotations::SourceLocation(*loc));
         }
     }
 }
