@@ -98,7 +98,7 @@ that can be indexed and sliced. The notation is ``<register>[<index-list>]``,
 where ``<index-list>>`` is a comma-separated list of integer indices or ranges.
 Range notation specifically consists of a colon-separated (``:``) pair of
 integers representing the lower and upper limit of an inclusive, ascending
-range; ``1::4`` is for instance equivalent to ``1,2,3,4``.
+range; ``1:4`` is for instance equivalent to ``1,2,3,4``.
 
 The result of the index operator behaves as a new reference to a qubit or bit
 register, but of the size equal to the number of indices in the slice (it can

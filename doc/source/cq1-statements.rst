@@ -102,8 +102,8 @@ The initial value of a variable is undefined.
 .. note::
 
     Because variables can be declared anywhere, they can also be declared
-    within the subblocks of cQASM 1.2+'s structured control-flow statements.
-    In this case, the variable can only be accessed from within the subblock.
+    within the code blocks of cQASM 1.2+'s structured control-flow statements.
+    In this case, the variable can only be accessed from within the code block.
     *Typically,* the variable will behave like a global, i.e. it will retain
     the value of the previous loop iteration for instance, but implementations
     are *not* required to do this! Again: the initial value of a variable is
@@ -246,11 +246,12 @@ if-else chains. They have the following syntax.
         <statements>
     }
 
-The shown newlines are optional. The ``{``\ s and ``}``\ s are mandatory.
+The shown newlines are optional. The ``{``\ s and ``}``\ s surrounding the
+code blocks are mandatory.
 
 .. note::
 
-    The ``{}`` tokens do *not* imply parallel execution in this context.
+    The ``{}`` blocks do *not* imply parallel execution in this context.
 
 The conditions must evaluate to a boolean.
 
@@ -265,26 +266,29 @@ In cQASM 1.2+, C-style for loops can be written as follows.
         <statements>
     }
 
-The ``<initialize>`` subblock is optional. If specified, it must be of the form
+``<initialize>`` is optional. If specified, it must be of the form
 ``<name> = <expression>``, representing an initializing assignment statement.
 It is executed at the start of the loop.
 
 .. note::
 
-    Unlike C, it is not possible to declare a new variable as part of the
-    ``<initialize>`` subblock.
+    Unlike C, it is not possible to declare a new variable as part of
+    ``<initialize>``.
 
-The ``<condition>`` subblock must be an expression that evaluates to a boolean.
-It is evaluated at the start of each loop iteration. If it yields true,
-iteration continues; if it yields false, execution continues after the for
-loop.
+``<condition>`` must be an expression that evaluates to a single boolean. It is
+evaluated at the start of each loop iteration. If it yields true, iteration
+continues; if it yields false, execution continues after the for loop.
 
-The ``<update>`` subblock is optional. If specified, it must be of the form
+``<update>`` is optional. If specified, it must be of the form
 ``<name> = <expression>``, representing an assignment statement. It is executed
 at the end of each loop iteration. It is intended to be used to update the loop
 variable.
 
 The loop body may include ``continue`` and ``break`` statements.
+
+.. note::
+
+    The ``{}`` block for the loop body does *not* imply parallel execution.
 
 Foreach loop (1.2+)
 -------------------
@@ -307,6 +311,12 @@ will be incremented by one after each iteration. If ``<from>`` is greater than
 
 Behavior is undefined if ``<name>`` is reassigned from within the loop body.
 
+The loop body may include ``continue`` and ``break`` statements.
+
+.. note::
+
+    The ``{}`` block for the loop body does *not* imply parallel execution.
+
 While loop (1.2+)
 -----------------
 
@@ -322,6 +332,12 @@ as follows.
 ``<condition>`` must be an expression that evaluates to a boolean. It is
 evaluated at the before a new iteration. If it evaluates to true, iteration
 will continue. Otherwise, execution will continue after the while loop.
+
+The loop body may include ``continue`` and ``break`` statements.
+
+.. note::
+
+    The ``{}`` block for the loop body does *not* imply parallel execution.
 
 Repeat-until loop (1.2+)
 ------------------------
@@ -339,6 +355,12 @@ as follows.
 evaluated at the end of each iteration. If it evaluates to false, iteration
 will continue. Otherwise, execution will continue after the repeat-until
 loop.
+
+The loop body may include ``continue`` and ``break`` statements.
+
+.. note::
+
+    The ``{}`` block for the loop body does *not* imply parallel execution.
 
 Break statement (1.2+)
 ----------------------
