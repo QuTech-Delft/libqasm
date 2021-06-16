@@ -174,7 +174,7 @@ jobs:
         os:
         - ubuntu-latest
         - macos-latest
-        - windows-2016
+        #- windows-latest
         python-version:
         - '3.6'
         - '3.7'
