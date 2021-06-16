@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os, platform, shutil, sys, re
+from distutils.dir_util import copy_tree
 from setuptools import setup, Extension
 
 from distutils.command.clean        import clean        as _clean
@@ -14,12 +15,23 @@ from setuptools.command.egg_info    import egg_info     as _egg_info
 
 root_dir   = os.getcwd()                        # root of the repository
 src_dir    = root_dir   + os.sep + 'src'        # C++ source directory
+pysrc_dir  = root_dir   + os.sep + 'python'     # Python source files
 target_dir = root_dir   + os.sep + 'pybuild'    # python-specific build directory
 build_dir  = target_dir + os.sep + 'build'      # directory for setuptools to dump various files into
 dist_dir   = target_dir + os.sep + 'dist'       # wheel output directory
 cbuild_dir = target_dir + os.sep + 'cbuild'     # cmake build directory
 prefix_dir = target_dir + os.sep + 'prefix'     # cmake install prefix
+srcmod_dir = pysrc_dir  + os.sep + 'module'     # libQasm Python module directory, source files only
 module_dir = target_dir + os.sep + 'module'     # libQasm Python module directory, including generated file(s)
+
+# Copy the hand-written Python sources into the module directory that we're
+# telling setuptools is our source directory, because setuptools insists on
+# spamming output files into that directory. This is ugly, especially because
+# it has to run before setup() is invoked, but seems to be more-or-less
+# unavoidable to get editable installs to work.
+if not os.path.exists(target_dir):
+    os.makedirs(target_dir)
+copy_tree(srcmod_dir, module_dir)
 
 def get_version(verbose=0):
     return '0.2.0'
@@ -162,7 +174,7 @@ class sdist(_sdist):
 class egg_info(_egg_info):
     def initialize_options(self):
         _egg_info.initialize_options(self)
-        self.egg_base = os.path.relpath(target_dir)
+        self.egg_base = os.path.relpath(module_dir)
 
 setup(
     name='libqasm',
@@ -189,8 +201,8 @@ setup(
         'Topic :: Scientific/Engineering'
     ],
 
-    packages = ['libQasm', 'cqasm', 'cqasm.v1', 'cqasm.v2'],
-    package_dir = {'': 'python'},
+    packages = ['libQasm', 'cqasm', 'cqasm.v1'],
+    package_dir = {'': 'pybuild/module'},
 
     # NOTE: the library build process is completely overridden to let CMake
     # handle it; setuptools' implementation is horribly broken. This is here

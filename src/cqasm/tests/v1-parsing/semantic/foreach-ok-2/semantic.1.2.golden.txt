@@ -32,7 +32,7 @@ Program( # input.cq:1:1..9:1
                   >
                 )
               >
-              from: 9
+              frm: 9
               to: 0
               body: <
                 Block( # input.cq:7:5..8

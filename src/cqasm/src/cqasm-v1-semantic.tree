@@ -198,7 +198,7 @@ annotated {
                 lhs: external One<cqasm::v1::values::Node>;
 
                 # The first value.
-                from: cqasm::v1::primitives::Int;
+                frm: cqasm::v1::primitives::Int;
 
                 # The last value.
                 to: cqasm::v1::primitives::Int;
