@@ -33,7 +33,7 @@ Program( # input.cq:1:1..12:1
                       operation: test
                       operands: [
                         ConstJson( # input.cq:4:20..11:3
-                          value: cqasm::primitives::Str<<
+                          value: cqasm::v1::primitives::Str<<
                             
                             {
                                 "a": [{"b": "c"}],

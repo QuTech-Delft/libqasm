@@ -1686,7 +1686,7 @@ tree::Maybe<semantic::ForeachLoop> AnalyzerHelper::analyze_foreach_loop(
     }
 
     // Analyze the boundaries.
-    node->frm = analyze_as_const_int(*foreach_loop.from);
+    node->frm = analyze_as_const_int(*foreach_loop.frm);
     node->to = analyze_as_const_int(*foreach_loop.to);
 
     // Analyze the body.
