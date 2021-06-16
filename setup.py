@@ -34,7 +34,7 @@ if not os.path.exists(target_dir):
 copy_tree(srcmod_dir, module_dir)
 
 def get_version(verbose=0):
-    return '0.2.0'
+    return '0.3.0'
 
 def read(fname):
     with open(os.path.join(os.path.dirname(__file__), fname)) as f:
