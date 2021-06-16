@@ -556,7 +556,7 @@ ForeachLoop     : FOREACH '(' Expression '=' Expression ELLIPSIS Expression
                     ')' SubStatements                                           {
                                                                                     NEW($$, ForeachLoop);
                                                                                     $$->lhs.set_raw($3);
-                                                                                    $$->from.set_raw($5);
+                                                                                    $$->frm.set_raw($5);
                                                                                     $$->to.set_raw($7);
                                                                                     $$->body.set_raw($9);
                                                                                 }
