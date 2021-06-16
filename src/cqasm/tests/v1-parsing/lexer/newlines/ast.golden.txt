@@ -450,8 +450,10 @@ Program( # input.cq:1:1..38:1
                 ExpressionList( # input.cq:31:12..32:25
                   items: [
                     StringLiteral( # input.cq:31:12..32:25
-                      value: Hello,
-I'm a multiline string.
+                      value: cqasm::v1::primitives::Str<<
+                        Hello,
+                        I'm a multiline string.
+                      >>
                     )
                   ]
                 )
@@ -491,9 +493,10 @@ I'm a multiline string.
                     ExpressionList( # input.cq:35:34..37:3
                       items: [
                         JsonLiteral( # input.cq:35:34..37:3
-                          value: 
-    "json": "object"
-
+                          value: cqasm::v1::primitives::Str<<
+                            
+                                "json": "object"
+                          >>
                         )
                       ]
                     )

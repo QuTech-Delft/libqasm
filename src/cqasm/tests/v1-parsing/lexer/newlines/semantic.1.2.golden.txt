@@ -232,8 +232,10 @@ Program( # input.cq:1:1..38:1
                   >
                   operands: [
                     ConstString( # input.cq:31:12..32:25
-                      value: Hello,
-I'm a multiline string.
+                      value: cqasm::v1::primitives::Str<<
+                        Hello,
+                        I'm a multiline string.
+                      >>
                     )
                   ]
                   annotations: []
@@ -258,9 +260,10 @@ I'm a multiline string.
                       operation: with_json
                       operands: [
                         ConstJson( # input.cq:35:34..37:3
-                          value: 
-    "json": "object"
-
+                          value: cqasm::v1::primitives::Str<<
+                            
+                                "json": "object"
+                          >>
                         )
                       ]
                     )

@@ -45,9 +45,10 @@ Program( # input.cq:1:1..6:1
                           value: \"
                         )
                         ConstString( # input.cq:4:48..5:2
-                          value: 	
-'"\
-
+                          value: cqasm::v1::primitives::Str<<
+                            	
+                            '"\
+                          >>
                         )
                         ConstString( # input.cq:5:4..10
                           value: test

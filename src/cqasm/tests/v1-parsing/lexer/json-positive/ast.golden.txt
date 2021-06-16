@@ -43,14 +43,15 @@ Program( # input.cq:1:1..12:1
                     ExpressionList( # input.cq:4:20..11:3
                       items: [
                         JsonLiteral( # input.cq:4:20..11:3
-                          value: 
-{
-    "a": [{"b": "c"}],
-    "d": "|}",
-    "e": "\"\\|}",
-    "f": "\\\"|}",
-}
-
+                          value: cqasm::v1::primitives::Str<<
+                            
+                            {
+                                "a": [{"b": "c"}],
+                                "d": "|}",
+                                "e": "\"\\|}",
+                                "f": "\\\"|}",
+                            }
+                          >>
                         )
                       ]
                     )
