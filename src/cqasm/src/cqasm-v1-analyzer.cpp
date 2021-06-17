@@ -1231,7 +1231,11 @@ tree::Maybe<semantic::SetInstruction> AnalyzerHelper::analyze_set_instruction_op
     auto rhs = analyze_expression(rhs_expr);
 
     // Check assignability of the left-hand side.
-    if (!lhs->as_reference()) {
+    bool assignable = lhs->as_reference();
+    if (auto fn = lhs->as_function()) {
+        assignable |= fn->return_type->as_type_base()->assignable;
+    }
+    if (!assignable) {
         throw error::AnalysisError(
             "left-hand side of assignment statement must be assignable"
         );
