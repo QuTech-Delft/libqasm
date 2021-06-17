@@ -1443,6 +1443,7 @@ void AnalyzerHelper::analyze_variables(const ast::Variables &variables) {
             // record where the variable was defined.
             auto var = tree::make<semantic::Variable>(identifier->name, type.clone());
             var->copy_annotation<parser::SourceLocation>(*identifier);
+            var->annotations = analyze_annotations(variables.annotations);
             result.root->variables.add(var);
 
             // Add a mapping for the variable.
