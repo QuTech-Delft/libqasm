@@ -273,6 +273,7 @@ static void handle_parse_result(QasmRepresentation &qasm, cqasm::parser::ParseRe
     REG(SingleBit, "display_binary", "B", false, false);
     REG(SingleInt, "skip", "i", false, false);
     REG(SingleInt, "wait", "i", false, false);
+    REG(SingleQubit, "barrier", "Q", false, false);
     REG(NoArg, "reset-averaging", "", false, false);
     REG(SingleQubit, "reset-averaging", "Q", false, false);
     REG(SingleString, "load_state", "s", false, false);
