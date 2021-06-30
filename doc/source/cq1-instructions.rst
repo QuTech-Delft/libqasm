@@ -403,6 +403,12 @@ requires access to all qubits, bits, and variables.
         skip 2  # starts in cycle 2
         x q[1]  # starts in cycle 4
 
+``barrier <qubit-ref>``
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Waits for all operations on the given qubit(s) (using single-gate multiple-qubit
+notation) to finish, before advancing to the next instruction.
+
 ``not <bit-ref>``
 ~~~~~~~~~~~~~~~~~
 
