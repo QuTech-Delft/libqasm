@@ -9,6 +9,7 @@
 #include <memory>
 #include <algorithm>
 #include <stdexcept>
+#include <limits>
 
 /**
  * Namespace used for most of the original API.
