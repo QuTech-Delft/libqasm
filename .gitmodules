@@ -1,3 +1,6 @@
-[submodule "qasm_flex_bison/library/doctest"]
-	path = qasm_flex_bison/test/doctest
+[submodule "src/library/doctest"]
+	path = src/tests/cpp/doctest
 	url = https://github.com/onqtam/doctest.git
+[submodule "src/cqasm/tree-gen"]
+	path = src/cqasm/tree-gen
+	url = https://github.com/QE-Lab/tree-gen.git

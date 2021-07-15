@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:4:1..12: instruction measure_all with parameter pack () is not parallelizable, but is bundled with 1 other instruction

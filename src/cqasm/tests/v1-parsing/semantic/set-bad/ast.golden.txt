@@ -1,0 +1,85 @@
+SUCCESS
+Program( # input.cq:1:1..8:1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.2
+    )
+  >
+  num_qubits: <
+    IntegerLiteral( # input.cq:2:8..10
+      value: 10
+    )
+  >
+  statements: <
+    StatementList( # input.cq:2:1..8:16
+      items: [
+        Variables( # input.cq:4:1..11
+          names: [
+            Identifier( # input.cq:4:5..6
+              name: i
+            )
+          ]
+          typ: <
+            Identifier( # input.cq:4:8..11
+              name: int
+            )
+          >
+          annotations: []
+        )
+        Bundle( # input.cq:6:1..16
+          items: [
+            Instruction( # input.cq:6:1..16
+              name: <
+                Identifier(
+                  name: set
+                )
+              >
+              condition: -
+              operands: <
+                ExpressionList(
+                  items: [
+                    Identifier( # input.cq:6:5..6
+                      name: i
+                    )
+                    StringLiteral( # input.cq:6:9..16
+                      value: hello
+                    )
+                  ]
+                )
+              >
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:7:1..10
+          items: [
+            Instruction( # input.cq:7:1..10
+              name: <
+                Identifier(
+                  name: set
+                )
+              >
+              condition: -
+              operands: <
+                ExpressionList(
+                  items: [
+                    IntegerLiteral( # input.cq:7:5..6
+                      value: 1
+                    )
+                    IntegerLiteral( # input.cq:7:9..10
+                      value: 2
+                    )
+                  ]
+                )
+              >
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

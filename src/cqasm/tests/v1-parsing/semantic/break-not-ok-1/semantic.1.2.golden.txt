@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:7:5..10: cannot use break outside of a structured loop

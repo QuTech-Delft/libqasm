@@ -1,0 +1,7 @@
+version 1.1
+
+var v: bool
+not v
+
+var v: qubit
+x v

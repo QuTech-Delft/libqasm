@@ -1,3 +1,8 @@
+__pycache__/
+*.py[cod]
+*$py.class
+env
+
 # Prerequisites
 *.d
 
@@ -45,11 +50,28 @@ bin
 */bin/*
 
 # Add build directories
-build
-*build
-build*
-libQasm*
-*libQasm
+pybuild/
+build/
+cbuild/
+
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
 # Add Flex and Bison generated sources
 *.tab.*
@@ -60,5 +82,7 @@ log
 *.png
 
 # Add swig generated sources
-*_swig*
+library/**/*_swig*
 
+.idea/
+cmake-build-*/

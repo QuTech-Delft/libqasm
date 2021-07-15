@@ -1,0 +1,2 @@
+ERROR
+input.cq:13:15: syntax error, unexpected FLOAT_LITERAL, expecting '}'

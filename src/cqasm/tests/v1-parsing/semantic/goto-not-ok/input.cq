@@ -1,0 +1,7 @@
+version 1.2
+qubits 10
+
+.a
+    goto foo
+    goto 3
+    goto a, 4

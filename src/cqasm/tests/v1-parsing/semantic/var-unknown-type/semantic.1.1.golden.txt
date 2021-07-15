@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:3:1..18: unknown type "unknown"

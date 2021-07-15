@@ -1,0 +1,5 @@
+version 1.0
+qubits 10
+
+map 3, three @first.annot
+map also_three = three @second.annot @third.annot

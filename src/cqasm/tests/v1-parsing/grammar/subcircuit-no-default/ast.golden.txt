@@ -1,0 +1,141 @@
+SUCCESS
+Program( # input.cq:1:1..11:1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: <
+    IntegerLiteral( # input.cq:2:8..10
+      value: 10
+    )
+  >
+  statements: <
+    StatementList( # input.cq:2:1..11:21
+      items: [
+        Subcircuit( # input.cq:4:1..19
+          name: <
+            Identifier( # input.cq:4:2..6
+              name: test
+            )
+          >
+          iterations: -
+          annotations: [
+            AnnotationData( # input.cq:4:8..19
+              interface: <
+                Identifier( # input.cq:4:8..13
+                  name: annot
+                )
+              >
+              operation: <
+                Identifier( # input.cq:4:14..19
+                  name: first
+                )
+              >
+              operands: <
+                ExpressionList(
+                  items: []
+                )
+              >
+            )
+          ]
+        )
+        Bundle( # input.cq:6:1..7
+          items: [
+            Instruction( # input.cq:6:1..7
+              name: <
+                Identifier( # input.cq:6:1..2
+                  name: x
+                )
+              >
+              condition: -
+              operands: <
+                ExpressionList( # input.cq:6:3..7
+                  items: [
+                    Index( # input.cq:6:3..7
+                      expr: <
+                        Identifier( # input.cq:6:3..4
+                          name: q
+                        )
+                      >
+                      indices: <
+                        IndexList( # input.cq:6:5..6
+                          items: [
+                            IndexItem( # input.cq:6:5..6
+                              index: <
+                                IntegerLiteral( # input.cq:6:5..6
+                                  value: 1
+                                )
+                              >
+                            )
+                          ]
+                        )
+                      >
+                    )
+                  ]
+                )
+              >
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Subcircuit( # input.cq:8:1..21
+          name: <
+            Identifier( # input.cq:8:2..7
+              name: empty
+            )
+          >
+          iterations: -
+          annotations: [
+            AnnotationData( # input.cq:8:9..21
+              interface: <
+                Identifier( # input.cq:8:9..14
+                  name: annot
+                )
+              >
+              operation: <
+                Identifier( # input.cq:8:15..21
+                  name: second
+                )
+              >
+              operands: <
+                ExpressionList(
+                  items: []
+                )
+              >
+            )
+          ]
+        )
+        Subcircuit( # input.cq:10:1..20
+          name: <
+            Identifier( # input.cq:10:2..7
+              name: empty
+            )
+          >
+          iterations: -
+          annotations: [
+            AnnotationData( # input.cq:10:9..20
+              interface: <
+                Identifier( # input.cq:10:9..14
+                  name: annot
+                )
+              >
+              operation: <
+                Identifier( # input.cq:10:15..20
+                  name: third
+                )
+              >
+              operands: <
+                ExpressionList(
+                  items: []
+                )
+              >
+            )
+          ]
+        )
+      ]
+    )
+  >
+)
+

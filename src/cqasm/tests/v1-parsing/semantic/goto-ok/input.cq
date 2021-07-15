@@ -1,0 +1,8 @@
+version 1.2
+qubits 10
+
+.a
+    goto b
+.b
+    c-goto b[0], a
+    cond (b[0]) goto a

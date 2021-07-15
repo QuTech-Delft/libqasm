@@ -1,0 +1,12 @@
+version 1.2
+
+var a: bool
+var q: qubit
+
+if (a) {
+    x q
+} else if (false) {
+    y q
+} else {
+    z q
+}

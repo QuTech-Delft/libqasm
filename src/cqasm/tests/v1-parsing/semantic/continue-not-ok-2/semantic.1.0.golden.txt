@@ -1,0 +1,3 @@
+ERROR
+Error at input.cq:1:9..12: the maximum cQASM version supported is 1.0, but the cQASM file is version 1.2
+Error at input.cq:5:5..13: structured control-flow is not supported (need version 1.2+)

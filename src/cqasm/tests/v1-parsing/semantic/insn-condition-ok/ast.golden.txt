@@ -1,0 +1,91 @@
+SUCCESS
+Program( # input.cq:1:1..6:1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: <
+    IntegerLiteral( # input.cq:2:8..10
+      value: 10
+    )
+  >
+  statements: <
+    StatementList( # input.cq:2:1..6:19
+      items: [
+        Bundle( # input.cq:5:1..19
+          items: [
+            Instruction( # input.cq:5:1..19
+              name: <
+                Identifier( # input.cq:5:3..4
+                  name: x
+                )
+              >
+              condition: <
+                Index( # input.cq:5:5..11
+                  expr: <
+                    Identifier( # input.cq:5:5..6
+                      name: b
+                    )
+                  >
+                  indices: <
+                    IndexList( # input.cq:5:7..10
+                      items: [
+                        IndexRange( # input.cq:5:7..10
+                          first: <
+                            IntegerLiteral( # input.cq:5:7..8
+                              value: 0
+                            )
+                          >
+                          last: <
+                            IntegerLiteral( # input.cq:5:9..10
+                              value: 3
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
+                )
+              >
+              operands: <
+                ExpressionList( # input.cq:5:13..19
+                  items: [
+                    Index( # input.cq:5:13..19
+                      expr: <
+                        Identifier( # input.cq:5:13..14
+                          name: q
+                        )
+                      >
+                      indices: <
+                        IndexList( # input.cq:5:15..18
+                          items: [
+                            IndexRange( # input.cq:5:15..18
+                              first: <
+                                IntegerLiteral( # input.cq:5:15..16
+                                  value: 4
+                                )
+                              >
+                              last: <
+                                IntegerLiteral( # input.cq:5:17..18
+                                  value: 5
+                                )
+                              >
+                            )
+                          ]
+                        )
+                      >
+                    )
+                  ]
+                )
+              >
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+
