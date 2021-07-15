@@ -19,6 +19,8 @@
         yylloc->last_column = 1; yylloc->last_line = 1;
     #define LOCATION_LINE \
         yylloc->last_column = 1; yylloc->last_line += 1;
+    #define LOCATION_OVERRIDE_LINE \
+        yylloc->last_column = 1; yylloc->last_line = std::strtol(yylval->str + 12, nullptr, 10);
     #define LOCATION_STEP \
         yylloc->first_column = yylloc->last_column; \
         yylloc->first_line = yylloc->last_line;
@@ -47,6 +49,9 @@
 
 <INITIAL>{
 (\n|\r\n?)                                          LOCATION_LINE; DELETE;
+\\(\n|\r\n?)                                        LOCATION_LINE; DELETE;
+(@@NEXT_LINE=[0-9]+\n|\r\n?)                        LOCATION_OVERRIDE_LINE; DELETE;
+(@@NEXT_LINE=[0-9]+\\\n|\r\n?)                      LOCATION_OVERRIDE_LINE; DELETE;
 #.*                                                 DELETE;
 "/*"                                                BEGIN(MODE_MULTILINE_COMMENT); DELETE;
 [ \t]+                                              DELETE;
