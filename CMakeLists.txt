@@ -19,6 +19,7 @@ option(
     OFF
 )
 if (LIBQASM_BUILD_TESTS)
+    set(CMAKE_CTEST_ARGUMENTS "--output-on-failure")
     enable_testing()
 endif()
 
