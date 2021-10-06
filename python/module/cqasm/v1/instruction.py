@@ -1,5 +1,6 @@
 import cqasm.v1.types
 
+
 class Instruction(object):
     def __init__(
         self,

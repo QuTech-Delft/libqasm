@@ -1,4 +1,7 @@
-/** This test is for barriers qasm file in the paper **/
+/** This test is for the barriers qasm file.
+ *
+ * Note that this is not an example from the paper,
+ * but one added specifically to check barriers are working for cQASM v1. **/
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 
 // [[noreturn]] completely breaks MSVC 2015, and is basically unnecessary
