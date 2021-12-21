@@ -1,0 +1,10 @@
+version 1.0
+qubits 4
+
+map q[2] , q2
+
+wait q[0], 1
+wait q2, 10
+wait q[1:2], 100
+wait q[0:2], 0
+wait q[0,2,3], 1000

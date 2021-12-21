@@ -109,9 +109,10 @@ namespace compiler
                 {
                     result = checkResetAveraging(op, linenumber);
                 }
-                else if (type_ == "skip" || type_ == "wait" || type_ == "display" || type_ == "display_binary" || type_ == "not" || type_ == "load_state")
+                //else if (type_ == "skip" || type_ == "wait" || type_ == "display" || type_ == "display_binary" || type_ == "not" || type_ == "load_state")
+                else if (type_ == "skip" || type_ == "display" || type_ == "display_binary" || type_ == "not" || type_ == "load_state")
                 {
-                    result = checkWaitDisplayNot(op, linenumber);
+                    result = checkSkipDisplayNot(op, linenumber);
                 }
                 else
                 // No other special operations. Left with single qubits
@@ -175,7 +176,7 @@ namespace compiler
                 return checkQubitList(op.getQubitsInvolved(), linenumber);
             }
 
-            int checkWaitDisplayNot(const compiler::Operation& op, int linenumber) const
+            int checkSkipDisplayNot(const compiler::Operation& op, int linenumber) const
             {
                 (void)op;
                 (void)linenumber;

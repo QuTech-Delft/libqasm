@@ -26,6 +26,7 @@ enum class ParameterType {
     NoArg,
     SingleBit,
     SingleQubit,
+    SingleQubitInt,
     SingleQubitReal,
     SingleQubitMatrix,
     TwoQubit,
@@ -89,6 +90,13 @@ static Operation *convert_instruction(const cqasm::semantic::Instruction &instru
         case ParameterType::SingleQubit:
             op = new Operation(
                 instruction.instruction->name,
+                Qubits(convert_indices(instruction.operands[0]->as_qubit_refs()->index))
+            );
+            break;
+        case ParameterType::SingleQubitInt:
+            op = new Operation(
+                instruction.instruction->name,
+                instruction.operands[1]->as_const_int()->value,
                 Qubits(convert_indices(instruction.operands[0]->as_qubit_refs()->index))
             );
             break;
@@ -272,7 +280,7 @@ static void handle_parse_result(QasmRepresentation &qasm, cqasm::parser::ParseRe
     REG(NoArg, "display_binary", "", false, false);
     REG(SingleBit, "display_binary", "B", false, false);
     REG(SingleInt, "skip", "i", false, false);
-    REG(SingleInt, "wait", "i", false, false);
+    REG(SingleQubitInt, "wait", "Qi", false, false);
     REG(SingleQubit, "barrier", "Q", false, false);
     REG(NoArg, "reset-averaging", "", false, false);
     REG(SingleQubit, "reset-averaging", "Q", false, false);

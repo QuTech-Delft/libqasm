@@ -143,6 +143,17 @@ namespace compiler
                 type_ = toLowerCase(type);
             }
 
+            Operation(const std::string type, const int waitInt, Qubits qubits_involved)
+            : qubits_ (qubits_involved),
+              rotation_angle_ (std::numeric_limits<double>::max()), bit_controlled_(false)
+            // Single qubit wait
+            // NOTE to avoid ambigious overload with single qubit rotation (double),
+            // the int is the first argument (FIXME?)
+            {
+                type_ = toLowerCase(type);
+                wait_time_ = waitInt;
+            }
+
             Operation(const std::string type, Qubits qubit_pair1, std::string axis1, Qubits qubit_pair2, std::string axis2)
             : rotation_angle_ (std::numeric_limits<double>::max()), bit_controlled_(false)
             // Measure parity operation
@@ -372,6 +383,7 @@ namespace compiler
                 else if (type_ == "wait")
                 {
                     std::cout << std::endl;
+                    // TODO also print qubits
                     std::cout << "Wait time (integer) = " << getWaitTime() << std::endl;
                 }
                 else if ( (type_ == "display") || (type_ == "display_binary") )
