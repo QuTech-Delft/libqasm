@@ -369,13 +369,12 @@ example:
 
 This instruction cannot share a bundle with other instructions.
 
-``wait <integer>``
-~~~~~~~~~~~~~~~~~~
+``wait <qubit-ref>, <integer>``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Wait for all previous instructions to finish, then wait the given number of
-cycles before starting the next bundle. Also known as a barrier. In essence,
-this acts as a no-op instruction with the specified duration in cycles, that
-requires access to all qubits, bits, and variables.
+Wait for all previous instructions involving the specified qubit(s) to finish,
+then wait the given number of cycles before starting the next bundle.
+In essence, this acts as a no-op instruction with the specified duration in cycles.
 
 .. note::
 
@@ -391,17 +390,17 @@ requires access to all qubits, bits, and variables.
     .. code:: text
 
         x q[0]
-        wait 3
-        x q[1]
+        wait q[0], 3
+        z q[0]
 
     may compile into
 
     .. code:: text
 
-        x q[0]  # starts in cycle 0
-        wait 3  # starts in cycle 1
-        skip 2  # starts in cycle 2
-        x q[1]  # starts in cycle 4
+        x q[0]       # starts in cycle 0
+        wait q[0],3  # starts in cycle 1
+        skip 2       # starts in cycle 2
+        z q[0]       # starts in cycle 4
 
 ``barrier <qubit-ref>``
 ~~~~~~~~~~~~~~~~~~~~~~~
