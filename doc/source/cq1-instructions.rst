@@ -279,8 +279,8 @@ Applies a controlled phase (controlled Z) gate with the given rotation angle in
 radians on the given qubit pair. The first qubit is the control qubit, the
 second is the target.
 
-``cr <qubit>, <qubit>, <k>``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``crk <qubit>, <qubit>, <k>``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Applies a controlled phase (controlled Z) gate with the given rotation angle on
 the given qubit pair. The rotation angle is π/2\ :sup:`k` radians. The first
