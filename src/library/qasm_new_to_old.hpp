@@ -96,15 +96,15 @@ static Operation *convert_instruction(const cqasm::semantic::Instruction &instru
         case ParameterType::SingleQubitInt:
             op = new Operation(
                 instruction.instruction->name,
-                instruction.operands[1]->as_const_int()->value,
-                Qubits(convert_indices(instruction.operands[0]->as_qubit_refs()->index))
+                Qubits(convert_indices(instruction.operands[0]->as_qubit_refs()->index)),
+                (const int)instruction.operands[1]->as_const_int()->value
             );
             break;
         case ParameterType::SingleQubitReal:
             op = new Operation(
                 instruction.instruction->name,
                 Qubits(convert_indices(instruction.operands[0]->as_qubit_refs()->index)),
-                instruction.operands[1]->as_const_real()->value
+                (const double)instruction.operands[1]->as_const_real()->value
             );
             break;
         case ParameterType::SingleQubitMatrix:

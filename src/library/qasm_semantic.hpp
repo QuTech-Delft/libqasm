@@ -109,7 +109,6 @@ namespace compiler
                 {
                     result = checkResetAveraging(op, linenumber);
                 }
-                //else if (type_ == "skip" || type_ == "wait" || type_ == "display" || type_ == "display_binary" || type_ == "not" || type_ == "load_state")
                 else if (type_ == "skip" || type_ == "display" || type_ == "display_binary" || type_ == "not" || type_ == "load_state")
                 {
                     result = checkSkipDisplayNot(op, linenumber);

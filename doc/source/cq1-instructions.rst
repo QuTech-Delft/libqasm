@@ -369,12 +369,16 @@ example:
 
 This instruction cannot share a bundle with other instructions.
 
-``wait <qubit-ref>, <integer>``
+``wait <qubit>, <integer>``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Wait for all previous instructions involving the specified qubit(s) to finish,
-then wait the given number of cycles before starting the next bundle.
-In essence, this acts as a no-op instruction with the specified duration in cycles.
+For each of the specified qubits, wait independently for all previous instructions
+involving the specified qubit to finish, and then wait at least the given number
+of cycles before starting a next instruction involving the specified qubit.
+In essence, this acts as a no-op instruction for the specified qubit with the
+specified duration in cycles. The individual waits on each of the qubits
+are independent of each other, following the regular single-gate-multiple-qubit
+rules.
 
 .. note::
 
@@ -402,7 +406,7 @@ In essence, this acts as a no-op instruction with the specified duration in cycl
         skip 2       # starts in cycle 2
         z q[0]       # starts in cycle 4
 
-``barrier <qubit-ref>``
+``barrier <qubit>``
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Waits for all operations on the given qubit(s) (using single-gate multiple-qubit
