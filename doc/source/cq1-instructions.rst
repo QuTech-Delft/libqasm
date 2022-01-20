@@ -370,7 +370,7 @@ example:
 This instruction cannot share a bundle with other instructions.
 
 ``wait <qubit>, <integer>``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For each of the specified qubits, wait independently for all previous instructions
 involving the specified qubit to finish, and then wait at least the given number
@@ -407,7 +407,7 @@ rules.
         z q[0]       # starts in cycle 4
 
 ``barrier <qubit>``
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 Waits for all operations on the given qubit(s) (using single-gate multiple-qubit
 notation) to finish, before advancing to the next instruction.
