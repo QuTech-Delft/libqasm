@@ -409,8 +409,21 @@ rules.
 ``barrier <qubit>``
 ~~~~~~~~~~~~~~~~~~~
 
-Waits for all operations on the given qubit(s) (using single-gate multiple-qubit
-notation) to finish, before advancing to the next instruction.
+Waits for all operations on all given qubit(s) to finish, before advancing to the
+next instruction. For the qubit argument of barrier, single-gate multiple-qubit notation
+is used.
+
+.. note::
+
+    While the single-gate-multiple-qubit notation is used to specify multiple qubits
+    involved in the barrier gate, the individual qubits should not broadcast to
+    individual barrier gates. For example:
+
+    .. code:: text
+
+        barrier q[0:3]
+        # should not broadcast to
+        barrier q[0] | barrier q[1] | barrier q[2] | barrier q[3]
 
 ``not <bit-ref>``
 ~~~~~~~~~~~~~~~~~
