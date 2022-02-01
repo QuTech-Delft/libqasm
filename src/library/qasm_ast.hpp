@@ -143,6 +143,15 @@ namespace compiler
                 type_ = toLowerCase(type);
             }
 
+            Operation(const std::string type, Qubits qubits_involved, const int wait_int)
+            : qubits_ (qubits_involved),
+              rotation_angle_ (std::numeric_limits<double>::max()), bit_controlled_(false)
+            // Single qubit wait
+            {
+                type_ = toLowerCase(type);
+                wait_time_ = wait_int;
+            }
+
             Operation(const std::string type, Qubits qubit_pair1, std::string axis1, Qubits qubit_pair2, std::string axis2)
             : rotation_angle_ (std::numeric_limits<double>::max()), bit_controlled_(false)
             // Measure parity operation
@@ -160,12 +169,12 @@ namespace compiler
                 all_qubits_bits_ = true;
             }
 
-            Operation(const std::string type, const int waitInt)
+            Operation(const std::string type, const int wait_int)
             : rotation_angle_ (std::numeric_limits<double>::max()), bit_controlled_(false)
-            // Wait and Skip commands
+            // Skip command
             {
                 type_ = toLowerCase(type);
-                wait_time_ = waitInt;
+                wait_time_ = wait_int;
             }
 
             Operation(const std::string type, const Bits display_bits)
@@ -244,15 +253,15 @@ namespace compiler
                     switch(qubit_pair_index){
                         case 1: return two_qubit_pairs_.first; break;
                         case 2: return two_qubit_pairs_.second; break;
-                        default: throw std::runtime_error( std::string("Accessing qubit pair ") 
-                                              + std::to_string(qubit_pair_index) 
+                        default: throw std::runtime_error( std::string("Accessing qubit pair ")
+                                              + std::to_string(qubit_pair_index)
                                               + std::string(" on operation ") + type_ ); return qubits_;
                     }
                 }
                 else
                 {
-                    throw std::runtime_error( std::string("Accessing qubit pair ") 
-                                              + std::to_string(qubit_pair_index) 
+                    throw std::runtime_error( std::string("Accessing qubit pair ")
+                                              + std::to_string(qubit_pair_index)
                                               + std::string(" on operation ") + type_ );
                     return qubits_;
                 }
@@ -372,6 +381,7 @@ namespace compiler
                 else if (type_ == "wait")
                 {
                     std::cout << std::endl;
+                    getQubitsInvolved().printMembers();
                     std::cout << "Wait time (integer) = " << getWaitTime() << std::endl;
                 }
                 else if ( (type_ == "display") || (type_ == "display_binary") )

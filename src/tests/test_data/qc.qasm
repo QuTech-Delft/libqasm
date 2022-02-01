@@ -36,7 +36,7 @@ map q[6] , q6
 map q[7] , q7
 
 .waits
-   wait 2
+   wait q[0:7],2
 
 .first_circuit(50)
    H q0 
