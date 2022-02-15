@@ -198,3 +198,13 @@ install(
     DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v1"
     RENAME "values.py"
 )
+
+# add tests that can be run by pytest to cmake
+find_package(Python3 COMPONENTS Interpreter)
+if(Python3_Interpreter_FOUND)
+    add_test(
+        NAME pytest
+        COMMAND Python3::Interpreter -m pytest
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    )
+endif()
