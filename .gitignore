@@ -88,3 +88,7 @@ library/**/*_swig*
 cmake-build-*/
 
 tags
+
+# IDE's
+.project
+.cproject
