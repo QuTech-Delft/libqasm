@@ -22,7 +22,7 @@ class Analyzer(libQasm.V1Analyzer):
         retval = super().analyze_file(*args)
         if len(retval) == 1:
             import cqasm.v1.semantic as semantic
-            print(retval[0].encode("utf-8", errors="surrogateescape"))
+            # print(retval[0].encode("utf-8", errors="surrogateescape"))
             return semantic.Program.deserialize(retval[0].encode("utf-8", errors="surrogateescape"))
         return list(retval[1:])
 

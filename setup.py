@@ -204,6 +204,8 @@ setup(
     packages = ['libQasm', 'cqasm', 'cqasm.v1'],
     package_dir = {'': 'pybuild/module'},
 
+    scripts=['python/commandline/cqasm-analyze'],
+
     # NOTE: the library build process is completely overridden to let CMake
     # handle it; setuptools' implementation is horribly broken. This is here
     # just to have the rest of setuptools understand that this is a Python
