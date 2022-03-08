@@ -28,7 +28,7 @@ various attempts had been made before at this time, and there was also already
 <https://www.overleaf.com/project/59690199d094287443563643>`_ (unfortunately not
 publicly accessible for whatever reason) to express and discuss requirements
 that no one at QCA could tell me about. `The specification I wrote independently
-<https://github.com/QE-Lab/cQASM-spec/tree/7967e00dd3ec965b37edcbff30a666b0baada9dd>`_
+<https://github.com/QuTech-Delft/cQASM-spec/tree/7967e00dd3ec965b37edcbff30a666b0baada9dd>`_
 was ultimately shot down for being far too extensive and ambitious, so in the end,
 all I could do was add to the Overleaf document. Unfortunately no one has felt
 responsible to pursue cQASM 2.0 since then, that I know of.
@@ -40,7 +40,7 @@ be used as a representation of OpenQL's internal intermediate representation, as
 part of OpenQL's modularization effort. However, since libqasm's Flex/Bison
 parser was written with the instruction set hardcoded into it, this
 automatically `required a complete rewrite of the library
-<https://github.com/QE-Lab/libqasm/pull/105>`_. Backward compatibility was key
+<https://github.com/QuTech-Delft/libqasm/pull/105>`_. Backward compatibility was key
 here; after all, libqasm is used in many places beyond QX at this time (most
 importantly, various benchmark suites have been ported to cQASM 1.0, and Quantum
 Inspire runs on it). This required some special cases in the grammar and a type
@@ -68,7 +68,7 @@ entirely backward compatible, I figured it would be a good idea to name this
 cQASM 1.1.
 
 The idea was to continue with 2.0 after that. The latest spec for this can be
-found `here <https://github.com/QE-Lab/cQASM-spec/tree/95ee081c0910548b8201c510f88ebc89be9284e8>`_.
+found `here <https://github.com/QuTech-Delft/cQASM-spec/tree/95ee081c0910548b8201c510f88ebc89be9284e8>`_.
 However, it was ultimately determined that completing and implementing this
 specification would take more manpower than we have. Therefore, cQASM 1.2 was
 created. This update adds crude assignment statements and basic structured

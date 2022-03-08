@@ -183,7 +183,7 @@ setup(
     long_description=read('README.md'),
     long_description_content_type = 'text/markdown',
     author='QuTech, TU Delft',
-    url='https://github.com/QE-Lab/libqasm',
+    url='https://github.com/QuTech-Delft/libqasm',
 
     classifiers = [
         'License :: OSI Approved :: Apache Software License',
