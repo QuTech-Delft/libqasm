@@ -3,7 +3,7 @@
 
 [![CI](https://github.com/QuTech-Delft/libqasm/workflows/Test/badge.svg)](https://github.com/qutech-delft/libqasm/actions)
 [![PyPI](https://badgen.net/pypi/v/libqasm)](https://pypi.org/project/libqasm/)
-[![Anaconda](https://anaconda.org/qe-lab/libqasm/badges/version.svg)](https://anaconda.org/qe-lab/libqasm/)
+[![Anaconda](https://anaconda.org/qutech/libqasm/badges/version.svg)](https://anaconda.org/qutech/libqasm/)
 [![API docs](https://readthedocs.org/projects/libqasm/badge/?version=latest)](https://libqasm.readthedocs.io/en/latest/)
 
 ## Dependencies
