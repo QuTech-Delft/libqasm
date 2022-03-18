@@ -4,7 +4,8 @@ FROM python:${PYTHON_VERSION}-buster
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update &&\
-    apt install -y bison build-essential cmake git swig
+    apt install -y bison build-essential cmake git swig &&\
+    python -m pip install pytest
 
 ADD . /src
 
@@ -13,4 +14,8 @@ RUN cmake /src -DLIBQASM_BUILD_TESTS=ON -DLIBQASM_COMPAT=ON -DTREE_GEN_BUILD_TES
 RUN make -j 1
 RUN make test CTEST_OUTPUT_ON_FAILURE=TRUE
 RUN make install
+
+WORKDIR /src
+RUN python -m pip install .
+RUN python -m pytest
 

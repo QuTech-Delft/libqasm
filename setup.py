@@ -229,6 +229,7 @@ setup(
     ],
     install_requires = [
         'msvc-runtime; platform_system == "Windows"',
+        'numpy'
     ],
     tests_require = [
         'pytest'
