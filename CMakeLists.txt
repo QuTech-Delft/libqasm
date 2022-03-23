@@ -5,6 +5,10 @@ endif()
 
 project(cqasm CXX)
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 # Library type option. Default is a static library.
 option(
     BUILD_SHARED_LIBS
