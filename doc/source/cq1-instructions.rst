@@ -279,8 +279,8 @@ Applies a controlled phase (controlled Z) gate with the given rotation angle in
 radians on the given qubit pair. The first qubit is the control qubit, the
 second is the target.
 
-``cr <qubit>, <qubit>, <k>``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``crk <qubit>, <qubit>, <k>``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Applies a controlled phase (controlled Z) gate with the given rotation angle on
 the given qubit pair. The rotation angle is π/2\ :sup:`k` radians. The first
@@ -369,13 +369,16 @@ example:
 
 This instruction cannot share a bundle with other instructions.
 
-``wait <integer>``
-~~~~~~~~~~~~~~~~~~
+``wait <qubit>, <integer>``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Wait for all previous instructions to finish, then wait the given number of
-cycles before starting the next bundle. Also known as a barrier. In essence,
-this acts as a no-op instruction with the specified duration in cycles, that
-requires access to all qubits, bits, and variables.
+For each of the specified qubits, wait independently for all previous instructions
+involving the specified qubit to finish, and then wait at least the given number
+of cycles before starting a next instruction involving the specified qubit.
+In essence, this acts as a no-op instruction for the specified qubit with the
+specified duration in cycles. The individual waits on each of the qubits
+are independent of each other, following the regular single-gate-multiple-qubit
+rules.
 
 .. note::
 
@@ -391,17 +394,36 @@ requires access to all qubits, bits, and variables.
     .. code:: text
 
         x q[0]
-        wait 3
-        x q[1]
+        wait q[0], 3
+        z q[0]
 
     may compile into
 
     .. code:: text
 
-        x q[0]  # starts in cycle 0
-        wait 3  # starts in cycle 1
-        skip 2  # starts in cycle 2
-        x q[1]  # starts in cycle 4
+        x q[0]       # starts in cycle 0
+        wait q[0],3  # starts in cycle 1
+        skip 2       # starts in cycle 2
+        z q[0]       # starts in cycle 4
+
+``barrier <qubit>``
+~~~~~~~~~~~~~~~~~~~
+
+Waits for all operations on all given qubit(s) to finish, before advancing to the
+next instruction. For the qubit argument of barrier, single-gate multiple-qubit notation
+is used.
+
+.. note::
+
+    While the single-gate-multiple-qubit notation is used to specify multiple qubits
+    involved in the barrier gate, the individual qubits should not broadcast to
+    individual barrier gates. For example:
+
+    .. code:: text
+
+        barrier q[0:3]
+        # should not broadcast to
+        barrier q[0] | barrier q[1] | barrier q[2] | barrier q[3]
 
 ``not <bit-ref>``
 ~~~~~~~~~~~~~~~~~

@@ -37,5 +37,5 @@ test:
     - pytest src/tests
 
 about:
-  home: https://github.com/QE-Lab/libqasm
+  home: https://github.com/QuTech-Delft/libqasm
   license: Apache v2.0
