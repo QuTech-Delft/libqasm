@@ -1,0 +1,26 @@
+# Based on: https://github.com/QuTech-Delft/cQASM-spec/blob/master/examples.md#chevronqasm
+# FIXME: also implement other variants
+
+cQASM 2.0
+
+template parameter q: qref;
+template parameter REP_CNT: int;
+template parameter AMPL_CNT: int;
+template parameter LEN_CNT: int;
+
+parameter AMPL_MIN: frac;
+parameter AMPL_STEP: frac;
+parameter LEN_STEP: frac;
+
+var meas: bool[REP_CNT][AMPL_CNT][LEN_CNT];
+
+for(repetition=0; repetition<REP_CNT; repetition++) {
+    for(amplitude=frac(AMPL_MIN), a=0; a<AMPL_CNT; amplitude+=AMPL_STEP, a++) {
+        for(len=frac(0),l=0; l<LEN_CNT; len+=LEN_STEP,l++) {
+            flux(amplitude,len,q);     # FIXME: len as parameter to flux?
+            meas[repetition][a][l] = measure(q); # FIXME: INT_AVG?
+        };
+    };
+};
+
+return meas;

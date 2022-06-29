@@ -1,0 +1,18 @@
+cQASM 2.0
+
+# Examples from https://github.com/QuTech-Delft/cQASM-spec#treatment-of-template-arguments-and-bindings
+function prepare(q: qref[], a: int) {};
+function max(*x: real[]) -> (real) {};
+function X(template q: qref) -> () {};
+
+# Scope modifiers
+export function f_export(template q: qref) -> () {};
+global function f_global(template q: qref) -> () {};
+
+# Lifetime modifiers
+static function f_static(template q: qref) -> () {};
+
+# Implementation modifiers
+inline function f_inline(template q: qref) -> () {};
+runtime function f_runtime(template q: qref) -> () {};
+primitive function f_primitive(template q: qref) -> () {};

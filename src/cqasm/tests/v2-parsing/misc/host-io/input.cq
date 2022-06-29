@@ -1,0 +1,15 @@
+cQASM 2.0
+
+# Top level parameters (note that the types are just meaningless identifiers to the parser)
+template parameter q: qref;
+template parameter i: int;
+parameter j: int;
+parameter b: bool;
+parameter r: real;
+
+# Asynchronous host communication
+send(k);
+receive(int);
+
+# Return data to host
+return 0;

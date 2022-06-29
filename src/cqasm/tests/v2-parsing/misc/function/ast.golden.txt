@@ -1,0 +1,573 @@
+SUCCESS
+Program( # input.cq:1:1..18:59
+  version: <
+    Version( # input.cq:1:1..10
+      items: [
+        DecimalIntegerLiteral( # input.cq:1:7..8
+          value: 2
+        )
+        DecimalIntegerLiteral( # input.cq:1:9..10
+          value: 0
+        )
+      ]
+    )
+  >
+  data: <
+    SemicolonSeparated( # input.cq:1:10..18:59
+      elements: [
+        FunctionDefinition( # input.cq:1:10..4:39
+          modifiers: <
+            Modifiers( # input.cq:1:10
+              scope: <
+                ScopeLocal( # input.cq:1:10
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:1:10
+)
+              >
+              implementation: <
+                ImplementationAutomatic( # input.cq:1:10
+)
+              >
+            )
+          >
+          annotations: <
+            Annotations( # input.cq:4:17
+              data: []
+            )
+          >
+          body: <
+            Block( # input.cq:4:37..39
+              data: <
+                Void( # input.cq:4:38
+)
+              >
+            )
+          >
+          name: <
+            Identifier( # input.cq:4:10..17
+              name: prepare
+            )
+          >
+          parameters: <
+            CommaSeparated( # input.cq:4:18..35
+              elements: [
+                Colon( # input.cq:4:18..27
+                  lhs: <
+                    Identifier( # input.cq:4:18..19
+                      name: q
+                    )
+                  >
+                  rhs: <
+                    PlainIndex( # input.cq:4:21..27
+                      data: <
+                        Identifier( # input.cq:4:21..25
+                          name: qref
+                        )
+                      >
+                      index: <
+                        Void( # input.cq:4:26
+)
+                      >
+                    )
+                  >
+                )
+                Colon( # input.cq:4:29..35
+                  lhs: <
+                    Identifier( # input.cq:4:29..30
+                      name: a
+                    )
+                  >
+                  rhs: <
+                    Identifier( # input.cq:4:32..35
+                      name: int
+                    )
+                  >
+                )
+              ]
+            )
+          >
+          return_type: <
+            Void( # input.cq:4:36
+)
+          >
+        )
+        FunctionDefinition( # input.cq:4:40..5:38
+          modifiers: <
+            Modifiers( # input.cq:4:40
+              scope: <
+                ScopeLocal( # input.cq:4:40
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:4:40
+)
+              >
+              implementation: <
+                ImplementationAutomatic( # input.cq:4:40
+)
+              >
+            )
+          >
+          annotations: <
+            Annotations( # input.cq:5:13
+              data: []
+            )
+          >
+          body: <
+            Block( # input.cq:5:36..38
+              data: <
+                Void( # input.cq:5:37
+)
+              >
+            )
+          >
+          name: <
+            Identifier( # input.cq:5:10..13
+              name: max
+            )
+          >
+          parameters: <
+            Colon( # input.cq:5:14..24
+              lhs: <
+                Unpack1d( # input.cq:5:14..16
+                  data: <
+                    Identifier( # input.cq:5:15..16
+                      name: x
+                    )
+                  >
+                )
+              >
+              rhs: <
+                PlainIndex( # input.cq:5:18..24
+                  data: <
+                    Identifier( # input.cq:5:18..22
+                      name: real
+                    )
+                  >
+                  index: <
+                    Void( # input.cq:5:23
+)
+                  >
+                )
+              >
+            )
+          >
+          return_type: <
+            Identifier( # input.cq:5:26..35
+              name: real
+            )
+          >
+        )
+        FunctionDefinition( # input.cq:5:39..6:38
+          modifiers: <
+            Modifiers( # input.cq:5:39
+              scope: <
+                ScopeLocal( # input.cq:5:39
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:5:39
+)
+              >
+              implementation: <
+                ImplementationAutomatic( # input.cq:5:39
+)
+              >
+            )
+          >
+          annotations: <
+            Annotations( # input.cq:6:11
+              data: []
+            )
+          >
+          body: <
+            Block( # input.cq:6:36..38
+              data: <
+                Void( # input.cq:6:37
+)
+              >
+            )
+          >
+          name: <
+            Identifier( # input.cq:6:10..11
+              name: X
+            )
+          >
+          parameters: <
+            TemplateMarker( # input.cq:6:12..28
+              data: <
+                Colon( # input.cq:6:21..28
+                  lhs: <
+                    Identifier( # input.cq:6:21..22
+                      name: q
+                    )
+                  >
+                  rhs: <
+                    Identifier( # input.cq:6:24..28
+                      name: qref
+                    )
+                  >
+                )
+              >
+            )
+          >
+          return_type: <
+            Void( # input.cq:6:30..35
+)
+          >
+        )
+        FunctionDefinition( # input.cq:9:1..52
+          modifiers: <
+            Modifiers( # input.cq:9:1..7
+              scope: <
+                ScopeParent( # input.cq:9:1..7
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:9:7
+)
+              >
+              implementation: <
+                ImplementationAutomatic( # input.cq:9:7
+)
+              >
+            )
+          >
+          annotations: <
+            Annotations( # input.cq:9:25
+              data: []
+            )
+          >
+          body: <
+            Block( # input.cq:9:50..52
+              data: <
+                Void( # input.cq:9:51
+)
+              >
+            )
+          >
+          name: <
+            Identifier( # input.cq:9:17..25
+              name: f_export
+            )
+          >
+          parameters: <
+            TemplateMarker( # input.cq:9:26..42
+              data: <
+                Colon( # input.cq:9:35..42
+                  lhs: <
+                    Identifier( # input.cq:9:35..36
+                      name: q
+                    )
+                  >
+                  rhs: <
+                    Identifier( # input.cq:9:38..42
+                      name: qref
+                    )
+                  >
+                )
+              >
+            )
+          >
+          return_type: <
+            Void( # input.cq:9:44..49
+)
+          >
+        )
+        FunctionDefinition( # input.cq:10:1..52
+          modifiers: <
+            Modifiers( # input.cq:10:1..7
+              scope: <
+                ScopeGlobal( # input.cq:10:1..7
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:10:7
+)
+              >
+              implementation: <
+                ImplementationAutomatic( # input.cq:10:7
+)
+              >
+            )
+          >
+          annotations: <
+            Annotations( # input.cq:10:25
+              data: []
+            )
+          >
+          body: <
+            Block( # input.cq:10:50..52
+              data: <
+                Void( # input.cq:10:51
+)
+              >
+            )
+          >
+          name: <
+            Identifier( # input.cq:10:17..25
+              name: f_global
+            )
+          >
+          parameters: <
+            TemplateMarker( # input.cq:10:26..42
+              data: <
+                Colon( # input.cq:10:35..42
+                  lhs: <
+                    Identifier( # input.cq:10:35..36
+                      name: q
+                    )
+                  >
+                  rhs: <
+                    Identifier( # input.cq:10:38..42
+                      name: qref
+                    )
+                  >
+                )
+              >
+            )
+          >
+          return_type: <
+            Void( # input.cq:10:44..49
+)
+          >
+        )
+        FunctionDefinition( # input.cq:10:53..13:52
+          modifiers: <
+            Modifiers( # input.cq:10:53..13:7
+              scope: <
+                ScopeLocal( # input.cq:10:53
+)
+              >
+              lifetime: <
+                LifetimeStatic( # input.cq:13:1..7
+)
+              >
+              implementation: <
+                ImplementationAutomatic( # input.cq:13:7
+)
+              >
+            )
+          >
+          annotations: <
+            Annotations( # input.cq:13:25
+              data: []
+            )
+          >
+          body: <
+            Block( # input.cq:13:50..52
+              data: <
+                Void( # input.cq:13:51
+)
+              >
+            )
+          >
+          name: <
+            Identifier( # input.cq:13:17..25
+              name: f_static
+            )
+          >
+          parameters: <
+            TemplateMarker( # input.cq:13:26..42
+              data: <
+                Colon( # input.cq:13:35..42
+                  lhs: <
+                    Identifier( # input.cq:13:35..36
+                      name: q
+                    )
+                  >
+                  rhs: <
+                    Identifier( # input.cq:13:38..42
+                      name: qref
+                    )
+                  >
+                )
+              >
+            )
+          >
+          return_type: <
+            Void( # input.cq:13:44..49
+)
+          >
+        )
+        FunctionDefinition( # input.cq:13:53..16:52
+          modifiers: <
+            Modifiers( # input.cq:13:53..16:7
+              scope: <
+                ScopeLocal( # input.cq:13:53
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:13:53
+)
+              >
+              implementation: <
+                ImplementationInline( # input.cq:16:1..7
+)
+              >
+            )
+          >
+          annotations: <
+            Annotations( # input.cq:16:25
+              data: []
+            )
+          >
+          body: <
+            Block( # input.cq:16:50..52
+              data: <
+                Void( # input.cq:16:51
+)
+              >
+            )
+          >
+          name: <
+            Identifier( # input.cq:16:17..25
+              name: f_inline
+            )
+          >
+          parameters: <
+            TemplateMarker( # input.cq:16:26..42
+              data: <
+                Colon( # input.cq:16:35..42
+                  lhs: <
+                    Identifier( # input.cq:16:35..36
+                      name: q
+                    )
+                  >
+                  rhs: <
+                    Identifier( # input.cq:16:38..42
+                      name: qref
+                    )
+                  >
+                )
+              >
+            )
+          >
+          return_type: <
+            Void( # input.cq:16:44..49
+)
+          >
+        )
+        FunctionDefinition( # input.cq:16:53..17:54
+          modifiers: <
+            Modifiers( # input.cq:16:53..17:8
+              scope: <
+                ScopeLocal( # input.cq:16:53
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:16:53
+)
+              >
+              implementation: <
+                ImplementationRuntime( # input.cq:17:1..8
+)
+              >
+            )
+          >
+          annotations: <
+            Annotations( # input.cq:17:27
+              data: []
+            )
+          >
+          body: <
+            Block( # input.cq:17:52..54
+              data: <
+                Void( # input.cq:17:53
+)
+              >
+            )
+          >
+          name: <
+            Identifier( # input.cq:17:18..27
+              name: f_runtime
+            )
+          >
+          parameters: <
+            TemplateMarker( # input.cq:17:28..44
+              data: <
+                Colon( # input.cq:17:37..44
+                  lhs: <
+                    Identifier( # input.cq:17:37..38
+                      name: q
+                    )
+                  >
+                  rhs: <
+                    Identifier( # input.cq:17:40..44
+                      name: qref
+                    )
+                  >
+                )
+              >
+            )
+          >
+          return_type: <
+            Void( # input.cq:17:46..51
+)
+          >
+        )
+        FunctionDefinition( # input.cq:17:55..18:58
+          modifiers: <
+            Modifiers( # input.cq:17:55..18:10
+              scope: <
+                ScopeLocal( # input.cq:17:55
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:17:55
+)
+              >
+              implementation: <
+                ImplementationPrimitive( # input.cq:18:1..10
+)
+              >
+            )
+          >
+          annotations: <
+            Annotations( # input.cq:18:31
+              data: []
+            )
+          >
+          body: <
+            Block( # input.cq:18:56..58
+              data: <
+                Void( # input.cq:18:57
+)
+              >
+            )
+          >
+          name: <
+            Identifier( # input.cq:18:20..31
+              name: f_primitive
+            )
+          >
+          parameters: <
+            TemplateMarker( # input.cq:18:32..48
+              data: <
+                Colon( # input.cq:18:41..48
+                  lhs: <
+                    Identifier( # input.cq:18:41..42
+                      name: q
+                    )
+                  >
+                  rhs: <
+                    Identifier( # input.cq:18:44..48
+                      name: qref
+                    )
+                  >
+                )
+              >
+            )
+          >
+          return_type: <
+            Void( # input.cq:18:50..55
+)
+          >
+        )
+      ]
+    )
+  >
+)
+

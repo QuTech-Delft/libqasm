@@ -1,0 +1,7 @@
+cQASM 2.0
+
+qubit q;
+
+repeat {
+    # ...
+} until (!measure(q));

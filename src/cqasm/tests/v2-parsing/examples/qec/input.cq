@@ -1,0 +1,19 @@
+cQASM 2.0
+
+function QEC(x: qref, xN: qref, xE: qref, xS: qref, xW: qref, z: qref, zN: qref, zE: qref, zS: qref, zW: qref) {
+    # X stabilizers
+    rym90(x), rym90(xN), rym90(xE), rym90(xW), rym90(xS);
+    cz(x, xE), cz(x, xN), cz(x,xS), cz(x, xW);
+    ry90(x), ry90(xN), ry90(xE), ry90(xW), ry90(xS);
+
+    measure(x);
+
+    # Z stabilizers
+    rym90(z);
+    cz(z, zE), cz(z, zS), cz(z, zN), cz(z, zW);
+    ry90(z);
+
+    measure(z);
+}
+
+# FIXME: add version using 'qref[]'
