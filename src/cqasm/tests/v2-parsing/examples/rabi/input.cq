@@ -1,5 +1,14 @@
-# Based on: https://github.com/QuTech-Delft/cQASM-spec/blob/master/examples.md#rabiqasm
-# FIXME: also implement other variants
+/*
+    File:       rabi/input.cq
+    Purpose:    Rabi
+    Author:     Wouter Vlothuizen (wouter.vlothuizen@tno.nl)
+    Copyright:	QuTech/TNO
+    Notes:
+    Based on:   QuantumUseCases.doc
+                PycQED_py3::pycqed.instrument_drivers.meta_instrument.qubit_objects.CCL_Transmon.p#measure_rabi()
+                https://github.com/QuTech-Delft/cQASM-spec/blob/master/examples.md#rabiqasm
+                FIXME: also implement other variants
+*/
 
 cQASM 2.0
 
@@ -31,15 +40,6 @@ function Rabi(
             rx(q,amplitude);
             meas[repetition][a] = measure(q,INT_AVG);
         }
-    }; # FIXME: next line fails without semicolon here
+    };
     return meas;
 };
-
-qubit q[17];
-var meas: int[17][REP_CNT][AMPL_CNT];
-
-foreach(i: 0..16) {
-    meas[i] = Rabi(q[i], AMPL_MIN, AMPL_STEP, INT_AVG);
-};
-
-return meas;

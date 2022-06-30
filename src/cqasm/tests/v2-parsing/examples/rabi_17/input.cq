@@ -1,0 +1,21 @@
+/*
+    File:       rabi_17/input.cq
+    Purpose:    Rabi on 17 qubits
+    Author:     Wouter Vlothuizen (wouter.vlothuizen@tno.nl)
+    Copyright:	QuTech/TNO
+    Notes:
+    Based on:   softwareStack.doc
+*/
+
+cQASM 2.0
+
+include "rabi.cq";
+
+qubit q[17];
+var meas: int[17][REP_CNT][AMPL_CNT];
+
+foreach(i: 0..16) {
+    meas[i] = rabi(q[i], AMPL_MIN, AMPL_STEP, INT_AVG);
+};
+
+return meas;

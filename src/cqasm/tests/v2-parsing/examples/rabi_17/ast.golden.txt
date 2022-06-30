@@ -1,0 +1,240 @@
+SUCCESS
+Program( # input.cq:10:1..21:13
+  version: <
+    Version( # input.cq:10:1..10
+      items: [
+        DecimalIntegerLiteral( # input.cq:10:7..8
+          value: 2
+        )
+        DecimalIntegerLiteral( # input.cq:10:9..10
+          value: 0
+        )
+      ]
+    )
+  >
+  data: <
+    SemicolonSeparated( # input.cq:12:1..21:37
+      elements: [
+        IncludeDirective( # input.cq:12:1..18
+          path: <
+            StringLiteral( # input.cq:12:9..18
+              value: rabi.cq
+            )
+          >
+          associations: <
+            Void(
+)
+          >
+        )
+        QubitDefinition( # input.cq:12:19..14:12
+          modifiers: <
+            Modifiers( # input.cq:12:19
+              scope: <
+                ScopeLocal( # input.cq:12:19
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:12:19
+)
+              >
+              implementation: <
+                ImplementationAutomatic( # input.cq:12:19
+)
+              >
+            )
+          >
+          data: <
+            PlainIndex( # input.cq:14:7..12
+              data: <
+                Identifier( # input.cq:14:7..8
+                  name: q
+                )
+              >
+              index: <
+                DecimalIntegerLiteral( # input.cq:14:9..11
+                  value: 17
+                )
+              >
+            )
+          >
+        )
+        VariableDefinition( # input.cq:14:13..15:37
+          modifiers: <
+            Modifiers( # input.cq:14:13
+              scope: <
+                ScopeLocal( # input.cq:14:13
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:14:13
+)
+              >
+              implementation: <
+                ImplementationAutomatic( # input.cq:14:13
+)
+              >
+            )
+          >
+          data: <
+            Colon( # input.cq:15:5..37
+              lhs: <
+                Identifier( # input.cq:15:5..9
+                  name: meas
+                )
+              >
+              rhs: <
+                PlainIndex( # input.cq:15:11..37
+                  data: <
+                    PlainIndex( # input.cq:15:11..27
+                      data: <
+                        PlainIndex( # input.cq:15:11..18
+                          data: <
+                            Identifier( # input.cq:15:11..14
+                              name: int
+                            )
+                          >
+                          index: <
+                            DecimalIntegerLiteral( # input.cq:15:15..17
+                              value: 17
+                            )
+                          >
+                        )
+                      >
+                      index: <
+                        Identifier( # input.cq:15:19..26
+                          name: REP_CNT
+                        )
+                      >
+                    )
+                  >
+                  index: <
+                    Identifier( # input.cq:15:28..36
+                      name: AMPL_CNT
+                    )
+                  >
+                )
+              >
+            )
+          >
+        )
+        ForeachLoop( # input.cq:15:38..19:2
+          modifiers: <
+            Modifiers( # input.cq:15:38
+              scope: <
+                ScopeLocal( # input.cq:15:38
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:15:38
+)
+              >
+              implementation: <
+                ImplementationAutomatic( # input.cq:15:38
+)
+              >
+            )
+          >
+          label: -
+          annotations: <
+            Annotations( # input.cq:17:8
+              data: []
+            )
+          >
+          control: <
+            Colon( # input.cq:17:9..17
+              lhs: <
+                Identifier( # input.cq:17:9..10
+                  name: i
+                )
+              >
+              rhs: <
+                RangeOperator( # input.cq:17:12..17
+                  begin: <
+                    DecimalIntegerLiteral( # input.cq:17:12..13
+                      value: 0
+                    )
+                  >
+                  end: <
+                    DecimalIntegerLiteral( # input.cq:17:15..17
+                      value: 16
+                    )
+                  >
+                )
+              >
+            )
+          >
+          body: <
+            Block( # input.cq:17:19..19:2
+              data: <
+                SemicolonSeparated( # input.cq:18:5..56
+                  elements: [
+                    AssignmentOperator( # input.cq:18:5..55
+                      value: <
+                        FunctionCall( # input.cq:18:15..55
+                          function: <
+                            Identifier( # input.cq:18:15..19
+                              name: rabi
+                            )
+                          >
+                          arguments: <
+                            CommaSeparated( # input.cq:18:20..54
+                              elements: [
+                                PlainIndex( # input.cq:18:20..24
+                                  data: <
+                                    Identifier( # input.cq:18:20..21
+                                      name: q
+                                    )
+                                  >
+                                  index: <
+                                    Identifier( # input.cq:18:22..23
+                                      name: i
+                                    )
+                                  >
+                                )
+                                Identifier( # input.cq:18:26..34
+                                  name: AMPL_MIN
+                                )
+                                Identifier( # input.cq:18:36..45
+                                  name: AMPL_STEP
+                                )
+                                Identifier( # input.cq:18:47..54
+                                  name: INT_AVG
+                                )
+                              ]
+                            )
+                          >
+                        )
+                      >
+                      target: <
+                        PlainIndex( # input.cq:18:5..12
+                          data: <
+                            Identifier( # input.cq:18:5..9
+                              name: meas
+                            )
+                          >
+                          index: <
+                            Identifier( # input.cq:18:10..11
+                              name: i
+                            )
+                          >
+                        )
+                      >
+                    )
+                  ]
+                )
+              >
+            )
+          >
+        )
+        ReturnStatement( # input.cq:21:1..12
+          value: <
+            Identifier( # input.cq:21:8..12
+              name: meas
+            )
+          >
+        )
+      ]
+    )
+  >
+)
+
