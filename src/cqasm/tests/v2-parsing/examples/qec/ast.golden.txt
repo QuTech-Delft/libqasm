@@ -1,181 +1,181 @@
 SUCCESS
-Program( # input.cq:1:1..17:2
+Program( # input.cq:22:1..38:2
   version: <
-    Version( # input.cq:1:1..10
+    Version( # input.cq:22:1..10
       items: [
-        DecimalIntegerLiteral( # input.cq:1:7..8
+        DecimalIntegerLiteral( # input.cq:22:7..8
           value: 2
         )
-        DecimalIntegerLiteral( # input.cq:1:9..10
+        DecimalIntegerLiteral( # input.cq:22:9..10
           value: 0
         )
       ]
     )
   >
   data: <
-    FunctionDefinition( # input.cq:1:10..17:2
+    FunctionDefinition( # input.cq:22:10..38:2
       modifiers: <
-        Modifiers( # input.cq:1:10
+        Modifiers( # input.cq:22:10
           scope: <
-            ScopeLocal( # input.cq:1:10
+            ScopeLocal( # input.cq:22:10
 )
           >
           lifetime: <
-            LifetimeAutomatic( # input.cq:1:10
+            LifetimeAutomatic( # input.cq:22:10
 )
           >
           implementation: <
-            ImplementationAutomatic( # input.cq:1:10
+            ImplementationAutomatic( # input.cq:22:10
 )
           >
         )
       >
       annotations: <
-        Annotations( # input.cq:3:13
+        Annotations( # input.cq:24:13
           data: []
         )
       >
       body: <
-        Block( # input.cq:3:112..17:2
+        Block( # input.cq:24:112..38:2
           data: <
-            SemicolonSeparated( # input.cq:5:5..16:52
+            SemicolonSeparated( # input.cq:26:5..37:52
               elements: [
-                CommaSeparated( # input.cq:5:5..57
+                CommaSeparated( # input.cq:26:5..57
                   elements: [
-                    FunctionCall( # input.cq:5:5..13
+                    FunctionCall( # input.cq:26:5..13
                       function: <
-                        Identifier( # input.cq:5:5..10
+                        Identifier( # input.cq:26:5..10
                           name: rym90
                         )
                       >
                       arguments: <
-                        Identifier( # input.cq:5:11..12
+                        Identifier( # input.cq:26:11..12
                           name: x
                         )
                       >
                     )
-                    FunctionCall( # input.cq:5:15..24
+                    FunctionCall( # input.cq:26:15..24
                       function: <
-                        Identifier( # input.cq:5:15..20
+                        Identifier( # input.cq:26:15..20
                           name: rym90
                         )
                       >
                       arguments: <
-                        Identifier( # input.cq:5:21..23
+                        Identifier( # input.cq:26:21..23
                           name: xN
                         )
                       >
                     )
-                    FunctionCall( # input.cq:5:26..35
+                    FunctionCall( # input.cq:26:26..35
                       function: <
-                        Identifier( # input.cq:5:26..31
+                        Identifier( # input.cq:26:26..31
                           name: rym90
                         )
                       >
                       arguments: <
-                        Identifier( # input.cq:5:32..34
+                        Identifier( # input.cq:26:32..34
                           name: xE
                         )
                       >
                     )
-                    FunctionCall( # input.cq:5:37..46
+                    FunctionCall( # input.cq:26:37..46
                       function: <
-                        Identifier( # input.cq:5:37..42
+                        Identifier( # input.cq:26:37..42
                           name: rym90
                         )
                       >
                       arguments: <
-                        Identifier( # input.cq:5:43..45
+                        Identifier( # input.cq:26:43..45
                           name: xW
                         )
                       >
                     )
-                    FunctionCall( # input.cq:5:48..57
+                    FunctionCall( # input.cq:26:48..57
                       function: <
-                        Identifier( # input.cq:5:48..53
+                        Identifier( # input.cq:26:48..53
                           name: rym90
                         )
                       >
                       arguments: <
-                        Identifier( # input.cq:5:54..56
+                        Identifier( # input.cq:26:54..56
                           name: xS
                         )
                       >
                     )
                   ]
                 )
-                CommaSeparated( # input.cq:6:5..46
+                CommaSeparated( # input.cq:27:5..46
                   elements: [
-                    FunctionCall( # input.cq:6:5..14
+                    FunctionCall( # input.cq:27:5..14
                       function: <
-                        Identifier( # input.cq:6:5..7
+                        Identifier( # input.cq:27:5..7
                           name: cz
                         )
                       >
                       arguments: <
-                        CommaSeparated( # input.cq:6:8..13
+                        CommaSeparated( # input.cq:27:8..13
                           elements: [
-                            Identifier( # input.cq:6:8..9
+                            Identifier( # input.cq:27:8..9
                               name: x
                             )
-                            Identifier( # input.cq:6:11..13
+                            Identifier( # input.cq:27:11..13
                               name: xE
                             )
                           ]
                         )
                       >
                     )
-                    FunctionCall( # input.cq:6:16..25
+                    FunctionCall( # input.cq:27:16..25
                       function: <
-                        Identifier( # input.cq:6:16..18
+                        Identifier( # input.cq:27:16..18
                           name: cz
                         )
                       >
                       arguments: <
-                        CommaSeparated( # input.cq:6:19..24
+                        CommaSeparated( # input.cq:27:19..24
                           elements: [
-                            Identifier( # input.cq:6:19..20
+                            Identifier( # input.cq:27:19..20
                               name: x
                             )
-                            Identifier( # input.cq:6:22..24
+                            Identifier( # input.cq:27:22..24
                               name: xN
                             )
                           ]
                         )
                       >
                     )
-                    FunctionCall( # input.cq:6:27..35
+                    FunctionCall( # input.cq:27:27..35
                       function: <
-                        Identifier( # input.cq:6:27..29
+                        Identifier( # input.cq:27:27..29
                           name: cz
                         )
                       >
                       arguments: <
-                        CommaSeparated( # input.cq:6:30..34
+                        CommaSeparated( # input.cq:27:30..34
                           elements: [
-                            Identifier( # input.cq:6:30..31
+                            Identifier( # input.cq:27:30..31
                               name: x
                             )
-                            Identifier( # input.cq:6:32..34
+                            Identifier( # input.cq:27:32..34
                               name: xS
                             )
                           ]
                         )
                       >
                     )
-                    FunctionCall( # input.cq:6:37..46
+                    FunctionCall( # input.cq:27:37..46
                       function: <
-                        Identifier( # input.cq:6:37..39
+                        Identifier( # input.cq:27:37..39
                           name: cz
                         )
                       >
                       arguments: <
-                        CommaSeparated( # input.cq:6:40..45
+                        CommaSeparated( # input.cq:27:40..45
                           elements: [
-                            Identifier( # input.cq:6:40..41
+                            Identifier( # input.cq:27:40..41
                               name: x
                             )
-                            Identifier( # input.cq:6:43..45
+                            Identifier( # input.cq:27:43..45
                               name: xW
                             )
                           ]
@@ -184,166 +184,166 @@ Program( # input.cq:1:1..17:2
                     )
                   ]
                 )
-                CommaSeparated( # input.cq:7:5..52
+                CommaSeparated( # input.cq:28:5..52
                   elements: [
-                    FunctionCall( # input.cq:7:5..12
+                    FunctionCall( # input.cq:28:5..12
                       function: <
-                        Identifier( # input.cq:7:5..9
+                        Identifier( # input.cq:28:5..9
                           name: ry90
                         )
                       >
                       arguments: <
-                        Identifier( # input.cq:7:10..11
+                        Identifier( # input.cq:28:10..11
                           name: x
                         )
                       >
                     )
-                    FunctionCall( # input.cq:7:14..22
+                    FunctionCall( # input.cq:28:14..22
                       function: <
-                        Identifier( # input.cq:7:14..18
+                        Identifier( # input.cq:28:14..18
                           name: ry90
                         )
                       >
                       arguments: <
-                        Identifier( # input.cq:7:19..21
+                        Identifier( # input.cq:28:19..21
                           name: xN
                         )
                       >
                     )
-                    FunctionCall( # input.cq:7:24..32
+                    FunctionCall( # input.cq:28:24..32
                       function: <
-                        Identifier( # input.cq:7:24..28
+                        Identifier( # input.cq:28:24..28
                           name: ry90
                         )
                       >
                       arguments: <
-                        Identifier( # input.cq:7:29..31
+                        Identifier( # input.cq:28:29..31
                           name: xE
                         )
                       >
                     )
-                    FunctionCall( # input.cq:7:34..42
+                    FunctionCall( # input.cq:28:34..42
                       function: <
-                        Identifier( # input.cq:7:34..38
+                        Identifier( # input.cq:28:34..38
                           name: ry90
                         )
                       >
                       arguments: <
-                        Identifier( # input.cq:7:39..41
+                        Identifier( # input.cq:28:39..41
                           name: xW
                         )
                       >
                     )
-                    FunctionCall( # input.cq:7:44..52
+                    FunctionCall( # input.cq:28:44..52
                       function: <
-                        Identifier( # input.cq:7:44..48
+                        Identifier( # input.cq:28:44..48
                           name: ry90
                         )
                       >
                       arguments: <
-                        Identifier( # input.cq:7:49..51
+                        Identifier( # input.cq:28:49..51
                           name: xS
                         )
                       >
                     )
                   ]
                 )
-                FunctionCall( # input.cq:9:5..15
+                FunctionCall( # input.cq:30:5..15
                   function: <
-                    Identifier( # input.cq:9:5..12
+                    Identifier( # input.cq:30:5..12
                       name: measure
                     )
                   >
                   arguments: <
-                    Identifier( # input.cq:9:13..14
+                    Identifier( # input.cq:30:13..14
                       name: x
                     )
                   >
                 )
-                FunctionCall( # input.cq:12:5..13
+                FunctionCall( # input.cq:33:5..13
                   function: <
-                    Identifier( # input.cq:12:5..10
+                    Identifier( # input.cq:33:5..10
                       name: rym90
                     )
                   >
                   arguments: <
-                    Identifier( # input.cq:12:11..12
+                    Identifier( # input.cq:33:11..12
                       name: z
                     )
                   >
                 )
-                CommaSeparated( # input.cq:13:5..47
+                CommaSeparated( # input.cq:34:5..47
                   elements: [
-                    FunctionCall( # input.cq:13:5..14
+                    FunctionCall( # input.cq:34:5..14
                       function: <
-                        Identifier( # input.cq:13:5..7
+                        Identifier( # input.cq:34:5..7
                           name: cz
                         )
                       >
                       arguments: <
-                        CommaSeparated( # input.cq:13:8..13
+                        CommaSeparated( # input.cq:34:8..13
                           elements: [
-                            Identifier( # input.cq:13:8..9
+                            Identifier( # input.cq:34:8..9
                               name: z
                             )
-                            Identifier( # input.cq:13:11..13
+                            Identifier( # input.cq:34:11..13
                               name: zE
                             )
                           ]
                         )
                       >
                     )
-                    FunctionCall( # input.cq:13:16..25
+                    FunctionCall( # input.cq:34:16..25
                       function: <
-                        Identifier( # input.cq:13:16..18
+                        Identifier( # input.cq:34:16..18
                           name: cz
                         )
                       >
                       arguments: <
-                        CommaSeparated( # input.cq:13:19..24
+                        CommaSeparated( # input.cq:34:19..24
                           elements: [
-                            Identifier( # input.cq:13:19..20
+                            Identifier( # input.cq:34:19..20
                               name: z
                             )
-                            Identifier( # input.cq:13:22..24
+                            Identifier( # input.cq:34:22..24
                               name: zS
                             )
                           ]
                         )
                       >
                     )
-                    FunctionCall( # input.cq:13:27..36
+                    FunctionCall( # input.cq:34:27..36
                       function: <
-                        Identifier( # input.cq:13:27..29
+                        Identifier( # input.cq:34:27..29
                           name: cz
                         )
                       >
                       arguments: <
-                        CommaSeparated( # input.cq:13:30..35
+                        CommaSeparated( # input.cq:34:30..35
                           elements: [
-                            Identifier( # input.cq:13:30..31
+                            Identifier( # input.cq:34:30..31
                               name: z
                             )
-                            Identifier( # input.cq:13:33..35
+                            Identifier( # input.cq:34:33..35
                               name: zN
                             )
                           ]
                         )
                       >
                     )
-                    FunctionCall( # input.cq:13:38..47
+                    FunctionCall( # input.cq:34:38..47
                       function: <
-                        Identifier( # input.cq:13:38..40
+                        Identifier( # input.cq:34:38..40
                           name: cz
                         )
                       >
                       arguments: <
-                        CommaSeparated( # input.cq:13:41..46
+                        CommaSeparated( # input.cq:34:41..46
                           elements: [
-                            Identifier( # input.cq:13:41..42
+                            Identifier( # input.cq:34:41..42
                               name: z
                             )
-                            Identifier( # input.cq:13:44..46
+                            Identifier( # input.cq:34:44..46
                               name: zW
                             )
                           ]
@@ -352,26 +352,26 @@ Program( # input.cq:1:1..17:2
                     )
                   ]
                 )
-                FunctionCall( # input.cq:14:5..12
+                FunctionCall( # input.cq:35:5..12
                   function: <
-                    Identifier( # input.cq:14:5..9
+                    Identifier( # input.cq:35:5..9
                       name: ry90
                     )
                   >
                   arguments: <
-                    Identifier( # input.cq:14:10..11
+                    Identifier( # input.cq:35:10..11
                       name: z
                     )
                   >
                 )
-                FunctionCall( # input.cq:16:5..15
+                FunctionCall( # input.cq:37:5..15
                   function: <
-                    Identifier( # input.cq:16:5..12
+                    Identifier( # input.cq:37:5..12
                       name: measure
                     )
                   >
                   arguments: <
-                    Identifier( # input.cq:16:13..14
+                    Identifier( # input.cq:37:13..14
                       name: z
                     )
                   >
@@ -382,129 +382,129 @@ Program( # input.cq:1:1..17:2
         )
       >
       name: <
-        Identifier( # input.cq:3:10..13
+        Identifier( # input.cq:24:10..13
           name: QEC
         )
       >
       parameters: <
-        CommaSeparated( # input.cq:3:14..110
+        CommaSeparated( # input.cq:24:14..110
           elements: [
-            Colon( # input.cq:3:14..21
+            Colon( # input.cq:24:14..21
               lhs: <
-                Identifier( # input.cq:3:14..15
+                Identifier( # input.cq:24:14..15
                   name: x
                 )
               >
               rhs: <
-                Identifier( # input.cq:3:17..21
+                Identifier( # input.cq:24:17..21
                   name: qref
                 )
               >
             )
-            Colon( # input.cq:3:23..31
+            Colon( # input.cq:24:23..31
               lhs: <
-                Identifier( # input.cq:3:23..25
+                Identifier( # input.cq:24:23..25
                   name: xN
                 )
               >
               rhs: <
-                Identifier( # input.cq:3:27..31
+                Identifier( # input.cq:24:27..31
                   name: qref
                 )
               >
             )
-            Colon( # input.cq:3:33..41
+            Colon( # input.cq:24:33..41
               lhs: <
-                Identifier( # input.cq:3:33..35
+                Identifier( # input.cq:24:33..35
                   name: xE
                 )
               >
               rhs: <
-                Identifier( # input.cq:3:37..41
+                Identifier( # input.cq:24:37..41
                   name: qref
                 )
               >
             )
-            Colon( # input.cq:3:43..51
+            Colon( # input.cq:24:43..51
               lhs: <
-                Identifier( # input.cq:3:43..45
+                Identifier( # input.cq:24:43..45
                   name: xS
                 )
               >
               rhs: <
-                Identifier( # input.cq:3:47..51
+                Identifier( # input.cq:24:47..51
                   name: qref
                 )
               >
             )
-            Colon( # input.cq:3:53..61
+            Colon( # input.cq:24:53..61
               lhs: <
-                Identifier( # input.cq:3:53..55
+                Identifier( # input.cq:24:53..55
                   name: xW
                 )
               >
               rhs: <
-                Identifier( # input.cq:3:57..61
+                Identifier( # input.cq:24:57..61
                   name: qref
                 )
               >
             )
-            Colon( # input.cq:3:63..70
+            Colon( # input.cq:24:63..70
               lhs: <
-                Identifier( # input.cq:3:63..64
+                Identifier( # input.cq:24:63..64
                   name: z
                 )
               >
               rhs: <
-                Identifier( # input.cq:3:66..70
+                Identifier( # input.cq:24:66..70
                   name: qref
                 )
               >
             )
-            Colon( # input.cq:3:72..80
+            Colon( # input.cq:24:72..80
               lhs: <
-                Identifier( # input.cq:3:72..74
+                Identifier( # input.cq:24:72..74
                   name: zN
                 )
               >
               rhs: <
-                Identifier( # input.cq:3:76..80
+                Identifier( # input.cq:24:76..80
                   name: qref
                 )
               >
             )
-            Colon( # input.cq:3:82..90
+            Colon( # input.cq:24:82..90
               lhs: <
-                Identifier( # input.cq:3:82..84
+                Identifier( # input.cq:24:82..84
                   name: zE
                 )
               >
               rhs: <
-                Identifier( # input.cq:3:86..90
+                Identifier( # input.cq:24:86..90
                   name: qref
                 )
               >
             )
-            Colon( # input.cq:3:92..100
+            Colon( # input.cq:24:92..100
               lhs: <
-                Identifier( # input.cq:3:92..94
+                Identifier( # input.cq:24:92..94
                   name: zS
                 )
               >
               rhs: <
-                Identifier( # input.cq:3:96..100
+                Identifier( # input.cq:24:96..100
                   name: qref
                 )
               >
             )
-            Colon( # input.cq:3:102..110
+            Colon( # input.cq:24:102..110
               lhs: <
-                Identifier( # input.cq:3:102..104
+                Identifier( # input.cq:24:102..104
                   name: zW
                 )
               >
               rhs: <
-                Identifier( # input.cq:3:106..110
+                Identifier( # input.cq:24:106..110
                   name: qref
                 )
               >
@@ -513,7 +513,7 @@ Program( # input.cq:1:1..17:2
         )
       >
       return_type: <
-        Void( # input.cq:3:111
+        Void( # input.cq:24:111
 )
       >
     )

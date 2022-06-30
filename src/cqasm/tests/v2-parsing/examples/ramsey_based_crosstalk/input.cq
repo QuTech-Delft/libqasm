@@ -1,0 +1,37 @@
+/*
+    File:       ramsey_based_crosstalk/input.cq
+    Purpose:    Ramsey Based Crosstalk
+    Author:     Wouter Vlothuizen (wouter.vlothuizen@tno.nl)
+    Copyright:	QuTech/TNO
+    Notes:
+    Based on:   QuantumUseCases.doc
+*/
+
+cQASM 2.0;
+
+template parameter q: qref[2];
+template parameter N: int;
+template parameter REP_CNT: int;
+
+var meas: bit[REP_CNT][N];
+var repetition: int;
+var n: int;
+var i: int;
+
+for(repetition=0; repetition<REP_CNT; repetition++) {
+    for(n=0; n<N; n++) {        # FIXME: n>=1, or maybe 2
+        prepz(q[]);             # prepare both qubits
+        x90(q[0]);
+        for(i=0; i<n; i++) {
+            x180(q[1]);
+        };
+        for((); i<N; i++) {     # count onwards to N to ensure fixed timing between x90's FIXME: initializer must be present
+            I(q[1]);            # do nothing, assumes gate time of 'x180' and 'I' are equal
+        };
+        x90(q[0]);
+
+        meas[repetition][n] = measure(q[0]);
+    };
+};
+
+return meas;
