@@ -1,0 +1,149 @@
+/*
+    File:       single_qubit_gst/input.cq
+    Purpose:    single qubit GST
+    Author:     Wouter Vlothuizen (wouter.vlothuizen@tno.nl)
+    Copyright:	QuTech/TNO
+    Notes:
+    Based on:   QuantumUseCases.doc
+*/
+
+cQASM 2.0;
+
+
+# define 6 Fiducials:
+function fiducial(template q: qref, idx: int) {
+    match(idx) {
+        when 0 ->
+            I(q);    # FIXME: or no gate, i.e. zero duration?
+
+        when 1 ->
+            x90(q);
+
+        when 2 ->
+            y90(q);
+
+        when 3 ->
+            x90(q);
+            x90(q);
+
+        when 4 ->
+            x90(q);
+            x90(q);
+            x90(q);
+
+        when 5 ->
+            y90(q);
+            y90(q);
+            y90(q);
+
+        else
+            abort("Illegal case in function 'fiducial'");
+    }
+};
+
+# define 11 Germs:
+function germ(template q: qref, idx: int, cnt: int)
+{
+    var i: int;
+    for(i=0; i<cnt; i++) {
+        match(idx) {
+            when 0 ->
+                x90(q);
+    
+            when 1 ->
+                y90(q);
+    
+            when 2 ->
+                I(q);    # FIXME: or no gate, i.e. zero duration?
+    
+            when 3 ->
+                x90(q);
+                y90(q);
+    
+            when 4 ->
+                x90(q);
+                y90(q);
+                I(q);
+    
+            when 5 ->
+                x90(q);
+                I(q);
+                y90(q);
+    
+            when 6 ->
+                x90(q);
+                I(q);
+                I(q);
+    
+            when 7 ->
+                y90(q);
+                I(q);
+                I(q);
+    
+            when 8 ->
+                x90(q);
+                x90(q);
+                I(q);
+                y90(q);
+    
+            when 9 ->
+                x90(q);
+                y90(q);
+                y90(q);
+                I(q);
+    
+            when 10 ->
+                x90(q);
+                x90(q);
+                y90(q);
+                x90(q);
+                y90(q);
+                y90(q);
+    
+            else
+            abort("Illegal case in function 'germ'");
+        } # match
+    } # for
+};
+
+
+function gstStep(template q: qref, len: int) -> (bit)
+{
+    var rslt: bit;
+    var prepFid: int;
+    var g: int;
+    var measFid: int;
+
+    prepz(q);
+
+    for(prepFid=0; prepFid<6; prepFid++) {
+        fiducial(q, prepFid);
+    };
+    for(g=0; g<11; g++) {
+        germ(q, g, len);
+    };
+    for(measFid=0; measFid<6; measFid++) {
+        fiducial(q, measFid);
+    };
+
+    rslt = measure(q);
+    return rslt;
+};
+
+
+# FIXME: does the analysis have an assumption on ordering?
+function gst(template q: qref, LEN_CNT: int, LEN_STEP: int) -> (bit[LEN_CNT])
+{
+    var meas: bit[LEN_CNT];
+    var len: int;
+    var l: int;
+
+    for(len=0,l=0; l<LEN_CNT; len+=LEN_STEP,l++) {  # FIXME: use proper evolution of len
+        meas[l] = gstStep(q, len);
+    };
+
+    return meas;
+};
+
+
+# FIXME: implement main
