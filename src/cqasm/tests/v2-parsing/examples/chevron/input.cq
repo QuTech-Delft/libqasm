@@ -17,7 +17,7 @@ var meas: bool[REP_CNT][AMPL_CNT][LEN_CNT];
 for(repetition=0; repetition<REP_CNT; repetition++) {
     for(amplitude=frac(AMPL_MIN), a=0; a<AMPL_CNT; amplitude+=AMPL_STEP, a++) {
         for(len=frac(0),l=0; l<LEN_CNT; len+=LEN_STEP,l++) {
-            flux(amplitude,len,q);     # FIXME: len as parameter to flux?
+            flux(q, amplitude, len);     # FIXME: len as parameter to flux?
             meas[repetition][a][l] = measure(q); # FIXME: INT_AVG?
         };
     };

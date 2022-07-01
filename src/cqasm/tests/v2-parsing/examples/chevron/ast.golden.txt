@@ -479,23 +479,23 @@ Program( # input.cq:4:1..26:13
                                       data: <
                                         SemicolonSeparated( # input.cq:20:13..21:49
                                           elements: [
-                                            FunctionCall( # input.cq:20:13..34
+                                            FunctionCall( # input.cq:20:13..36
                                               function: <
                                                 Identifier( # input.cq:20:13..17
                                                   name: flux
                                                 )
                                               >
                                               arguments: <
-                                                CommaSeparated( # input.cq:20:18..33
+                                                CommaSeparated( # input.cq:20:18..35
                                                   elements: [
-                                                    Identifier( # input.cq:20:18..27
+                                                    Identifier( # input.cq:20:18..19
+                                                      name: q
+                                                    )
+                                                    Identifier( # input.cq:20:21..30
                                                       name: amplitude
                                                     )
-                                                    Identifier( # input.cq:20:28..31
+                                                    Identifier( # input.cq:20:32..35
                                                       name: len
-                                                    )
-                                                    Identifier( # input.cq:20:32..33
-                                                      name: q
                                                     )
                                                   ]
                                                 )

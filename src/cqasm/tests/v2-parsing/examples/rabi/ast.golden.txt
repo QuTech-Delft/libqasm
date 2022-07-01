@@ -1,32 +1,32 @@
 SUCCESS
-Program( # input.cq:13:1..45:3
+Program( # input.cq:14:1..45:3
   version: <
-    Version( # input.cq:13:1..10
+    Version( # input.cq:14:1..10
       items: [
-        DecimalIntegerLiteral( # input.cq:13:7..8
+        DecimalIntegerLiteral( # input.cq:14:7..8
           value: 2
         )
-        DecimalIntegerLiteral( # input.cq:13:9..10
+        DecimalIntegerLiteral( # input.cq:14:9..10
           value: 0
         )
       ]
     )
   >
   data: <
-    SemicolonSeparated( # input.cq:15:1..45:33
+    SemicolonSeparated( # input.cq:16:1..45:33
       elements: [
-        TemplateMarker( # input.cq:15:1..32
+        TemplateMarker( # input.cq:16:1..32
           data: <
-            ParameterDefinition( # input.cq:15:10..32
+            ParameterDefinition( # input.cq:16:10..32
               data: <
-                Colon( # input.cq:15:20..32
+                Colon( # input.cq:16:20..32
                   lhs: <
-                    Identifier( # input.cq:15:20..27
+                    Identifier( # input.cq:16:20..27
                       name: REP_CNT
                     )
                   >
                   rhs: <
-                    Identifier( # input.cq:15:29..32
+                    Identifier( # input.cq:16:29..32
                       name: int
                     )
                   >
@@ -35,18 +35,18 @@ Program( # input.cq:13:1..45:3
             )
           >
         )
-        TemplateMarker( # input.cq:16:1..33
+        TemplateMarker( # input.cq:17:1..33
           data: <
-            ParameterDefinition( # input.cq:16:10..33
+            ParameterDefinition( # input.cq:17:10..33
               data: <
-                Colon( # input.cq:16:20..33
+                Colon( # input.cq:17:20..33
                   lhs: <
-                    Identifier( # input.cq:16:20..28
+                    Identifier( # input.cq:17:20..28
                       name: AMPL_CNT
                     )
                   >
                   rhs: <
-                    Identifier( # input.cq:16:30..33
+                    Identifier( # input.cq:17:30..33
                       name: int
                     )
                   >
@@ -55,67 +55,67 @@ Program( # input.cq:13:1..45:3
             )
           >
         )
-        ParameterDefinition( # input.cq:17:1..32
+        ParameterDefinition( # input.cq:18:1..32
           data: <
-            Colon( # input.cq:17:11..32
+            Colon( # input.cq:18:11..32
               lhs: <
-                Identifier( # input.cq:17:11..19
+                Identifier( # input.cq:18:11..19
                   name: AMPL_MIN
                 )
               >
               rhs: <
-                Identifier( # input.cq:17:21..32
+                Identifier( # input.cq:18:21..32
                   name: ufixed_1_31
                 )
               >
             )
           >
         )
-        ParameterDefinition( # input.cq:18:1..33
+        ParameterDefinition( # input.cq:19:1..33
           data: <
-            Colon( # input.cq:18:11..33
+            Colon( # input.cq:19:11..33
               lhs: <
-                Identifier( # input.cq:18:11..20
+                Identifier( # input.cq:19:11..20
                   name: AMPL_STEP
                 )
               >
               rhs: <
-                Identifier( # input.cq:18:22..33
+                Identifier( # input.cq:19:22..33
                   name: ufixed_1_31
                 )
               >
             )
           >
         )
-        ParameterDefinition( # input.cq:19:1..23
+        ParameterDefinition( # input.cq:20:1..23
           data: <
-            Colon( # input.cq:19:11..23
+            Colon( # input.cq:20:11..23
               lhs: <
-                Identifier( # input.cq:19:11..18
+                Identifier( # input.cq:20:11..18
                   name: INT_AVG
                 )
               >
               rhs: <
-                Identifier( # input.cq:19:20..23
+                Identifier( # input.cq:20:20..23
                   name: int
                 )
               >
             )
           >
         )
-        FunctionDefinition( # input.cq:19:24..45:2
+        FunctionDefinition( # input.cq:20:24..45:2
           modifiers: <
-            Modifiers( # input.cq:19:24
+            Modifiers( # input.cq:20:24
               scope: <
-                ScopeLocal( # input.cq:19:24
+                ScopeLocal( # input.cq:20:24
 )
               >
               lifetime: <
-                LifetimeAutomatic( # input.cq:19:24
+                LifetimeAutomatic( # input.cq:20:24
 )
               >
               implementation: <
-                ImplementationAutomatic( # input.cq:19:24
+                ImplementationAutomatic( # input.cq:20:24
 )
               >
             )
@@ -537,7 +537,7 @@ Program( # input.cq:13:1..45:3
           >
           name: <
             Identifier( # input.cq:22:10..14
-              name: Rabi
+              name: rabi
             )
           >
           parameters: <

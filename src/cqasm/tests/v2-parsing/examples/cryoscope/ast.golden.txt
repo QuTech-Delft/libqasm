@@ -1,0 +1,951 @@
+SUCCESS
+Program( # input.cq:13:1..59:13
+  version: <
+    Version( # input.cq:13:1..10
+      items: [
+        DecimalIntegerLiteral( # input.cq:13:7..8
+          value: 2
+        )
+        DecimalIntegerLiteral( # input.cq:13:9..10
+          value: 0
+        )
+      ]
+    )
+  >
+  data: <
+    SemicolonSeparated( # input.cq:15:1..59:36
+      elements: [
+        TemplateMarker( # input.cq:15:1..27
+          data: <
+            ParameterDefinition( # input.cq:15:10..27
+              data: <
+                Colon( # input.cq:15:20..27
+                  lhs: <
+                    Identifier( # input.cq:15:20..21
+                      name: q
+                    )
+                  >
+                  rhs: <
+                    Identifier( # input.cq:15:23..27
+                      name: qref
+                    )
+                  >
+                )
+              >
+            )
+          >
+        )
+        TemplateMarker( # input.cq:16:1..32
+          data: <
+            ParameterDefinition( # input.cq:16:10..32
+              data: <
+                Colon( # input.cq:16:20..32
+                  lhs: <
+                    Identifier( # input.cq:16:20..27
+                      name: REP_CNT
+                    )
+                  >
+                  rhs: <
+                    Identifier( # input.cq:16:29..32
+                      name: int
+                    )
+                  >
+                )
+              >
+            )
+          >
+        )
+        TemplateMarker( # input.cq:17:1..32
+          data: <
+            ParameterDefinition( # input.cq:17:10..32
+              data: <
+                Colon( # input.cq:17:20..32
+                  lhs: <
+                    Identifier( # input.cq:17:20..27
+                      name: LEN_CNT
+                    )
+                  >
+                  rhs: <
+                    Identifier( # input.cq:17:29..32
+                      name: int
+                    )
+                  >
+                )
+              >
+            )
+          >
+        )
+        ParameterDefinition( # input.cq:19:1..18
+          data: <
+            Colon( # input.cq:19:11..18
+              lhs: <
+                Identifier( # input.cq:19:11..12
+                  name: T
+                )
+              >
+              rhs: <
+                Identifier( # input.cq:19:14..18
+                  name: frac
+                )
+              >
+            )
+          >
+        )
+        ParameterDefinition( # input.cq:20:1..25
+          data: <
+            Colon( # input.cq:20:11..25
+              lhs: <
+                Identifier( # input.cq:20:11..19
+                  name: LEN_STEP
+                )
+              >
+              rhs: <
+                Identifier( # input.cq:20:21..25
+                  name: frac
+                )
+              >
+            )
+          >
+        )
+        VariableDefinition( # input.cq:20:26..22:36
+          modifiers: <
+            Modifiers( # input.cq:20:26
+              scope: <
+                ScopeLocal( # input.cq:20:26
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:20:26
+)
+              >
+              implementation: <
+                ImplementationAutomatic( # input.cq:20:26
+)
+              >
+            )
+          >
+          data: <
+            Colon( # input.cq:22:5..36
+              lhs: <
+                Identifier( # input.cq:22:5..9
+                  name: meas
+                )
+              >
+              rhs: <
+                PlainIndex( # input.cq:22:11..36
+                  data: <
+                    PlainIndex( # input.cq:22:11..33
+                      data: <
+                        PlainIndex( # input.cq:22:11..24
+                          data: <
+                            Identifier( # input.cq:22:11..15
+                              name: bool
+                            )
+                          >
+                          index: <
+                            Identifier( # input.cq:22:16..23
+                              name: REP_CNT
+                            )
+                          >
+                        )
+                      >
+                      index: <
+                        Identifier( # input.cq:22:25..32
+                          name: LEN_CNT
+                        )
+                      >
+                    )
+                  >
+                  index: <
+                    DecimalIntegerLiteral( # input.cq:22:34..35
+                      value: 4
+                    )
+                  >
+                )
+              >
+            )
+          >
+        )
+        VariableDefinition( # input.cq:22:37..23:20
+          modifiers: <
+            Modifiers( # input.cq:22:37
+              scope: <
+                ScopeLocal( # input.cq:22:37
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:22:37
+)
+              >
+              implementation: <
+                ImplementationAutomatic( # input.cq:22:37
+)
+              >
+            )
+          >
+          data: <
+            Colon( # input.cq:23:5..20
+              lhs: <
+                Identifier( # input.cq:23:5..15
+                  name: repetition
+                )
+              >
+              rhs: <
+                Identifier( # input.cq:23:17..20
+                  name: int
+                )
+              >
+            )
+          >
+        )
+        VariableDefinition( # input.cq:23:21..24:11
+          modifiers: <
+            Modifiers( # input.cq:23:21
+              scope: <
+                ScopeLocal( # input.cq:23:21
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:23:21
+)
+              >
+              implementation: <
+                ImplementationAutomatic( # input.cq:23:21
+)
+              >
+            )
+          >
+          data: <
+            Colon( # input.cq:24:5..11
+              lhs: <
+                Identifier( # input.cq:24:5..6
+                  name: l
+                )
+              >
+              rhs: <
+                Identifier( # input.cq:24:8..11
+                  name: int
+                )
+              >
+            )
+          >
+        )
+        VariableDefinition( # input.cq:24:12..25:14
+          modifiers: <
+            Modifiers( # input.cq:24:12
+              scope: <
+                ScopeLocal( # input.cq:24:12
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:24:12
+)
+              >
+              implementation: <
+                ImplementationAutomatic( # input.cq:24:12
+)
+              >
+            )
+          >
+          data: <
+            Colon( # input.cq:25:5..14
+              lhs: <
+                Identifier( # input.cq:25:5..8
+                  name: len
+                )
+              >
+              rhs: <
+                Identifier( # input.cq:25:10..14
+                  name: frac
+                )
+              >
+            )
+          >
+        )
+        FunctionDefinition( # input.cq:25:15..38:2
+          modifiers: <
+            Modifiers( # input.cq:25:15
+              scope: <
+                ScopeLocal( # input.cq:25:15
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:25:15
+)
+              >
+              implementation: <
+                ImplementationAutomatic( # input.cq:25:15
+)
+              >
+            )
+          >
+          annotations: <
+            Annotations( # input.cq:28:21
+              data: []
+            )
+          >
+          body: <
+            Block( # input.cq:28:51..38:2
+              data: <
+                SemicolonSeparated( # input.cq:31:5..37:26
+                  elements: [
+                    FunctionCall( # input.cq:31:5..13
+                      function: <
+                        Identifier( # input.cq:31:5..10
+                          name: prepz
+                        )
+                      >
+                      arguments: <
+                        Identifier( # input.cq:31:11..12
+                          name: q
+                        )
+                      >
+                    )
+                    FunctionCall( # input.cq:32:5..12
+                      function: <
+                        Identifier( # input.cq:32:5..9
+                          name: rx90
+                        )
+                      >
+                      arguments: <
+                        Identifier( # input.cq:32:10..11
+                          name: q
+                        )
+                      >
+                    )
+                    FunctionCall( # input.cq:35:5..25
+                      function: <
+                        Identifier( # input.cq:35:5..9
+                          name: wait
+                        )
+                      >
+                      arguments: <
+                        CommaSeparated( # input.cq:35:10..24
+                          elements: [
+                            Identifier( # input.cq:35:10..11
+                              name: q
+                            )
+                            Identifier( # input.cq:35:13..24
+                              name: bufferTime1
+                            )
+                          ]
+                        )
+                      >
+                    )
+                    FunctionCall( # input.cq:36:5..17
+                      function: <
+                        Identifier( # input.cq:36:5..9
+                          name: flux
+                        )
+                      >
+                      arguments: <
+                        CommaSeparated( # input.cq:36:10..16
+                          elements: [
+                            Identifier( # input.cq:36:10..11
+                              name: q
+                            )
+                            Identifier( # input.cq:36:13..16
+                              name: len
+                            )
+                          ]
+                        )
+                      >
+                    )
+                    FunctionCall( # input.cq:37:5..25
+                      function: <
+                        Identifier( # input.cq:37:5..9
+                          name: wait
+                        )
+                      >
+                      arguments: <
+                        CommaSeparated( # input.cq:37:10..24
+                          elements: [
+                            Identifier( # input.cq:37:10..11
+                              name: q
+                            )
+                            Identifier( # input.cq:37:13..24
+                              name: bufferTime2
+                            )
+                          ]
+                        )
+                      >
+                    )
+                  ]
+                )
+              >
+            )
+          >
+          name: <
+            Identifier( # input.cq:28:10..21
+              name: cryo_common
+            )
+          >
+          parameters: <
+            CommaSeparated( # input.cq:28:22..49
+              elements: [
+                TemplateMarker( # input.cq:28:22..38
+                  data: <
+                    Colon( # input.cq:28:31..38
+                      lhs: <
+                        Identifier( # input.cq:28:31..32
+                          name: q
+                        )
+                      >
+                      rhs: <
+                        Identifier( # input.cq:28:34..38
+                          name: qref
+                        )
+                      >
+                    )
+                  >
+                )
+                Colon( # input.cq:28:40..49
+                  lhs: <
+                    Identifier( # input.cq:28:40..43
+                      name: len
+                    )
+                  >
+                  rhs: <
+                    Identifier( # input.cq:28:45..49
+                      name: frac
+                    )
+                  >
+                )
+              ]
+            )
+          >
+          return_type: <
+            Void( # input.cq:28:50
+)
+          >
+        )
+        ForLoop( # input.cq:38:3..58:2
+          modifiers: <
+            Modifiers( # input.cq:38:3
+              scope: <
+                ScopeLocal( # input.cq:38:3
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:38:3
+)
+              >
+              implementation: <
+                ImplementationAutomatic( # input.cq:38:3
+)
+              >
+            )
+          >
+          label: -
+          annotations: <
+            Annotations( # input.cq:40:4
+              data: []
+            )
+          >
+          control: <
+            SemicolonSeparated( # input.cq:40:5..51
+              elements: [
+                AssignmentOperator( # input.cq:40:5..17
+                  value: <
+                    DecimalIntegerLiteral( # input.cq:40:16..17
+                      value: 0
+                    )
+                  >
+                  target: <
+                    Identifier( # input.cq:40:5..15
+                      name: repetition
+                    )
+                  >
+                )
+                LessThanOperator( # input.cq:40:19..37
+                  lhs: <
+                    Identifier( # input.cq:40:19..29
+                      name: repetition
+                    )
+                  >
+                  rhs: <
+                    Identifier( # input.cq:40:30..37
+                      name: REP_CNT
+                    )
+                  >
+                )
+                PostIncrementOperator( # input.cq:40:39..51
+                  target: <
+                    Identifier( # input.cq:40:39..49
+                      name: repetition
+                    )
+                  >
+                )
+              ]
+            )
+          >
+          body: <
+            Block( # input.cq:40:53..58:2
+              data: <
+                SemicolonSeparated( # input.cq:40:54..57:7
+                  elements: [
+                    ForLoop( # input.cq:40:54..57:6
+                      modifiers: <
+                        Modifiers( # input.cq:40:54
+                          scope: <
+                            ScopeLocal( # input.cq:40:54
+)
+                          >
+                          lifetime: <
+                            LifetimeAutomatic( # input.cq:40:54
+)
+                          >
+                          implementation: <
+                            ImplementationAutomatic( # input.cq:40:54
+)
+                          >
+                        )
+                      >
+                      label: -
+                      annotations: <
+                        Annotations( # input.cq:41:8
+                          data: []
+                        )
+                      >
+                      control: <
+                        SemicolonSeparated( # input.cq:41:9..48
+                          elements: [
+                            CommaSeparated( # input.cq:41:9..18
+                              elements: [
+                                AssignmentOperator( # input.cq:41:9..14
+                                  value: <
+                                    DecimalIntegerLiteral( # input.cq:41:13..14
+                                      value: 0
+                                    )
+                                  >
+                                  target: <
+                                    Identifier( # input.cq:41:9..12
+                                      name: len
+                                    )
+                                  >
+                                )
+                                AssignmentOperator( # input.cq:41:15..18
+                                  value: <
+                                    DecimalIntegerLiteral( # input.cq:41:17..18
+                                      value: 0
+                                    )
+                                  >
+                                  target: <
+                                    Identifier( # input.cq:41:15..16
+                                      name: l
+                                    )
+                                  >
+                                )
+                              ]
+                            )
+                            LessThanOperator( # input.cq:41:20..29
+                              lhs: <
+                                Identifier( # input.cq:41:20..21
+                                  name: l
+                                )
+                              >
+                              rhs: <
+                                Identifier( # input.cq:41:22..29
+                                  name: LEN_CNT
+                                )
+                              >
+                            )
+                            CommaSeparated( # input.cq:41:31..48
+                              elements: [
+                                IncrementByOperator( # input.cq:41:31..44
+                                  value: <
+                                    Identifier( # input.cq:41:36..44
+                                      name: LEN_STEP
+                                    )
+                                  >
+                                  target: <
+                                    Identifier( # input.cq:41:31..34
+                                      name: len
+                                    )
+                                  >
+                                )
+                                PostIncrementOperator( # input.cq:41:45..48
+                                  target: <
+                                    Identifier( # input.cq:41:45..46
+                                      name: l
+                                    )
+                                  >
+                                )
+                              ]
+                            )
+                          ]
+                        )
+                      >
+                      body: <
+                        Block( # input.cq:41:50..57:6
+                          data: <
+                            SemicolonSeparated( # input.cq:42:9..56:54
+                              elements: [
+                                FunctionCall( # input.cq:42:9..28
+                                  function: <
+                                    Identifier( # input.cq:42:9..20
+                                      name: cryo_common
+                                    )
+                                  >
+                                  arguments: <
+                                    CommaSeparated( # input.cq:42:21..27
+                                      elements: [
+                                        Identifier( # input.cq:42:21..22
+                                          name: q
+                                        )
+                                        Identifier( # input.cq:42:24..27
+                                          name: len
+                                        )
+                                      ]
+                                    )
+                                  >
+                                )
+                                FunctionCall( # input.cq:43:9..16
+                                  function: <
+                                    Identifier( # input.cq:43:9..13
+                                      name: rx90
+                                    )
+                                  >
+                                  arguments: <
+                                    Identifier( # input.cq:43:14..15
+                                      name: q
+                                    )
+                                  >
+                                )
+                                AssignmentOperator( # input.cq:44:9..53
+                                  value: <
+                                    FunctionCall( # input.cq:44:34..53
+                                      function: <
+                                        Identifier( # input.cq:44:34..41
+                                          name: measure
+                                        )
+                                      >
+                                      arguments: <
+                                        CommaSeparated( # input.cq:44:42..52
+                                          elements: [
+                                            Identifier( # input.cq:44:42..43
+                                              name: q
+                                            )
+                                            Identifier( # input.cq:44:45..52
+                                              name: INT_AVG
+                                            )
+                                          ]
+                                        )
+                                      >
+                                    )
+                                  >
+                                  target: <
+                                    PlainIndex( # input.cq:44:9..31
+                                      data: <
+                                        PlainIndex( # input.cq:44:9..28
+                                          data: <
+                                            PlainIndex( # input.cq:44:9..25
+                                              data: <
+                                                Identifier( # input.cq:44:9..13
+                                                  name: meas
+                                                )
+                                              >
+                                              index: <
+                                                Identifier( # input.cq:44:14..24
+                                                  name: repetition
+                                                )
+                                              >
+                                            )
+                                          >
+                                          index: <
+                                            Identifier( # input.cq:44:26..27
+                                              name: l
+                                            )
+                                          >
+                                        )
+                                      >
+                                      index: <
+                                        DecimalIntegerLiteral( # input.cq:44:29..30
+                                          value: 0
+                                        )
+                                      >
+                                    )
+                                  >
+                                )
+                                FunctionCall( # input.cq:46:9..28
+                                  function: <
+                                    Identifier( # input.cq:46:9..20
+                                      name: cryo_common
+                                    )
+                                  >
+                                  arguments: <
+                                    CommaSeparated( # input.cq:46:21..27
+                                      elements: [
+                                        Identifier( # input.cq:46:21..22
+                                          name: q
+                                        )
+                                        Identifier( # input.cq:46:24..27
+                                          name: len
+                                        )
+                                      ]
+                                    )
+                                  >
+                                )
+                                FunctionCall( # input.cq:47:9..16
+                                  function: <
+                                    Identifier( # input.cq:47:9..13
+                                      name: ry90
+                                    )
+                                  >
+                                  arguments: <
+                                    Identifier( # input.cq:47:14..15
+                                      name: q
+                                    )
+                                  >
+                                )
+                                AssignmentOperator( # input.cq:48:9..53
+                                  value: <
+                                    FunctionCall( # input.cq:48:34..53
+                                      function: <
+                                        Identifier( # input.cq:48:34..41
+                                          name: measure
+                                        )
+                                      >
+                                      arguments: <
+                                        CommaSeparated( # input.cq:48:42..52
+                                          elements: [
+                                            Identifier( # input.cq:48:42..43
+                                              name: q
+                                            )
+                                            Identifier( # input.cq:48:45..52
+                                              name: INT_AVG
+                                            )
+                                          ]
+                                        )
+                                      >
+                                    )
+                                  >
+                                  target: <
+                                    PlainIndex( # input.cq:48:9..31
+                                      data: <
+                                        PlainIndex( # input.cq:48:9..28
+                                          data: <
+                                            PlainIndex( # input.cq:48:9..25
+                                              data: <
+                                                Identifier( # input.cq:48:9..13
+                                                  name: meas
+                                                )
+                                              >
+                                              index: <
+                                                Identifier( # input.cq:48:14..24
+                                                  name: repetition
+                                                )
+                                              >
+                                            )
+                                          >
+                                          index: <
+                                            Identifier( # input.cq:48:26..27
+                                              name: l
+                                            )
+                                          >
+                                        )
+                                      >
+                                      index: <
+                                        DecimalIntegerLiteral( # input.cq:48:29..30
+                                          value: 1
+                                        )
+                                      >
+                                    )
+                                  >
+                                )
+                                FunctionCall( # input.cq:50:9..28
+                                  function: <
+                                    Identifier( # input.cq:50:9..20
+                                      name: cryo_common
+                                    )
+                                  >
+                                  arguments: <
+                                    CommaSeparated( # input.cq:50:21..27
+                                      elements: [
+                                        Identifier( # input.cq:50:21..22
+                                          name: q
+                                        )
+                                        Identifier( # input.cq:50:24..27
+                                          name: len
+                                        )
+                                      ]
+                                    )
+                                  >
+                                )
+                                FunctionCall( # input.cq:51:9..17
+                                  function: <
+                                    Identifier( # input.cq:51:9..14
+                                      name: rxm90
+                                    )
+                                  >
+                                  arguments: <
+                                    Identifier( # input.cq:51:15..16
+                                      name: q
+                                    )
+                                  >
+                                )
+                                AssignmentOperator( # input.cq:52:9..53
+                                  value: <
+                                    FunctionCall( # input.cq:52:34..53
+                                      function: <
+                                        Identifier( # input.cq:52:34..41
+                                          name: measure
+                                        )
+                                      >
+                                      arguments: <
+                                        CommaSeparated( # input.cq:52:42..52
+                                          elements: [
+                                            Identifier( # input.cq:52:42..43
+                                              name: q
+                                            )
+                                            Identifier( # input.cq:52:45..52
+                                              name: INT_AVG
+                                            )
+                                          ]
+                                        )
+                                      >
+                                    )
+                                  >
+                                  target: <
+                                    PlainIndex( # input.cq:52:9..31
+                                      data: <
+                                        PlainIndex( # input.cq:52:9..28
+                                          data: <
+                                            PlainIndex( # input.cq:52:9..25
+                                              data: <
+                                                Identifier( # input.cq:52:9..13
+                                                  name: meas
+                                                )
+                                              >
+                                              index: <
+                                                Identifier( # input.cq:52:14..24
+                                                  name: repetition
+                                                )
+                                              >
+                                            )
+                                          >
+                                          index: <
+                                            Identifier( # input.cq:52:26..27
+                                              name: l
+                                            )
+                                          >
+                                        )
+                                      >
+                                      index: <
+                                        DecimalIntegerLiteral( # input.cq:52:29..30
+                                          value: 2
+                                        )
+                                      >
+                                    )
+                                  >
+                                )
+                                FunctionCall( # input.cq:54:9..28
+                                  function: <
+                                    Identifier( # input.cq:54:9..20
+                                      name: cryo_common
+                                    )
+                                  >
+                                  arguments: <
+                                    CommaSeparated( # input.cq:54:21..27
+                                      elements: [
+                                        Identifier( # input.cq:54:21..22
+                                          name: q
+                                        )
+                                        Identifier( # input.cq:54:24..27
+                                          name: len
+                                        )
+                                      ]
+                                    )
+                                  >
+                                )
+                                FunctionCall( # input.cq:55:9..17
+                                  function: <
+                                    Identifier( # input.cq:55:9..14
+                                      name: rym90
+                                    )
+                                  >
+                                  arguments: <
+                                    Identifier( # input.cq:55:15..16
+                                      name: q
+                                    )
+                                  >
+                                )
+                                AssignmentOperator( # input.cq:56:9..53
+                                  value: <
+                                    FunctionCall( # input.cq:56:34..53
+                                      function: <
+                                        Identifier( # input.cq:56:34..41
+                                          name: measure
+                                        )
+                                      >
+                                      arguments: <
+                                        CommaSeparated( # input.cq:56:42..52
+                                          elements: [
+                                            Identifier( # input.cq:56:42..43
+                                              name: q
+                                            )
+                                            Identifier( # input.cq:56:45..52
+                                              name: INT_AVG
+                                            )
+                                          ]
+                                        )
+                                      >
+                                    )
+                                  >
+                                  target: <
+                                    PlainIndex( # input.cq:56:9..31
+                                      data: <
+                                        PlainIndex( # input.cq:56:9..28
+                                          data: <
+                                            PlainIndex( # input.cq:56:9..25
+                                              data: <
+                                                Identifier( # input.cq:56:9..13
+                                                  name: meas
+                                                )
+                                              >
+                                              index: <
+                                                Identifier( # input.cq:56:14..24
+                                                  name: repetition
+                                                )
+                                              >
+                                            )
+                                          >
+                                          index: <
+                                            Identifier( # input.cq:56:26..27
+                                              name: l
+                                            )
+                                          >
+                                        )
+                                      >
+                                      index: <
+                                        DecimalIntegerLiteral( # input.cq:56:29..30
+                                          value: 3
+                                        )
+                                      >
+                                    )
+                                  >
+                                )
+                              ]
+                            )
+                          >
+                        )
+                      >
+                    )
+                  ]
+                )
+              >
+            )
+          >
+        )
+        ReturnStatement( # input.cq:59:1..12
+          value: <
+            Identifier( # input.cq:59:8..12
+              name: meas
+            )
+          >
+        )
+      ]
+    )
+  >
+)
+

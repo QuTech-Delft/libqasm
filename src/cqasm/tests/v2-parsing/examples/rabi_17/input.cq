@@ -2,6 +2,7 @@
     File:       rabi_17/input.cq
     Purpose:    Rabi on 17 qubits
     Author:     Wouter Vlothuizen (wouter.vlothuizen@tno.nl)
+                Jeroen van Straten
     Copyright:	QuTech/TNO
     Notes:
     Based on:   softwareStack.doc

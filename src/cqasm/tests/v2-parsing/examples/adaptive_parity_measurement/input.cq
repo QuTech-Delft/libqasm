@@ -1,3 +1,13 @@
+/*
+    File:       AdaptiveParityMeasurement.qasm
+    Purpose:    Adaptive Parity Measurement
+    Author:     Wouter Vlothuizen (wouter.vlothuizen@tno.nl)
+                Jeroen van Straten
+    Copyright:	QuTech/TNO
+    Notes:      in this example, a bit ('sel') is assigned from an expression, not a measurement
+    Based on:   QuantumUseCases.doc
+*/
+
 cQASM 2.0
 
 qubit q;

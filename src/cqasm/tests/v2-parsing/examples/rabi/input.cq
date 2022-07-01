@@ -2,6 +2,7 @@
     File:       rabi/input.cq
     Purpose:    Rabi
     Author:     Wouter Vlothuizen (wouter.vlothuizen@tno.nl)
+                Jeroen van Straten
     Copyright:	QuTech/TNO
     Notes:
     Based on:   QuantumUseCases.doc
@@ -18,8 +19,7 @@ parameter AMPL_MIN: ufixed_1_31;
 parameter AMPL_STEP: ufixed_1_31;
 parameter INT_AVG: int;
 
-# FIXME: move to include file
-function Rabi(
+function rabi(
     template q: qref,
     template REP_CNT: int,
     template AMPL_CNT: int,

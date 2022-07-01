@@ -1,77 +1,77 @@
 SUCCESS
-Program( # input.cq:1:1..7:23
+Program( # input.cq:11:1..17:23
   version: <
-    Version( # input.cq:1:1..10
+    Version( # input.cq:11:1..10
       items: [
-        DecimalIntegerLiteral( # input.cq:1:7..8
+        DecimalIntegerLiteral( # input.cq:11:7..8
           value: 2
         )
-        DecimalIntegerLiteral( # input.cq:1:9..10
+        DecimalIntegerLiteral( # input.cq:11:9..10
           value: 0
         )
       ]
     )
   >
   data: <
-    SemicolonSeparated( # input.cq:1:10..7:23
+    SemicolonSeparated( # input.cq:11:10..17:23
       elements: [
-        QubitDefinition( # input.cq:1:10..3:8
+        QubitDefinition( # input.cq:11:10..13:8
           modifiers: <
-            Modifiers( # input.cq:1:10
+            Modifiers( # input.cq:11:10
               scope: <
-                ScopeLocal( # input.cq:1:10
+                ScopeLocal( # input.cq:11:10
 )
               >
               lifetime: <
-                LifetimeAutomatic( # input.cq:1:10
+                LifetimeAutomatic( # input.cq:11:10
 )
               >
               implementation: <
-                ImplementationAutomatic( # input.cq:1:10
+                ImplementationAutomatic( # input.cq:11:10
 )
               >
             )
           >
           data: <
-            Identifier( # input.cq:3:7..8
+            Identifier( # input.cq:13:7..8
               name: q
             )
           >
         )
-        RepeatUntilLoop( # input.cq:3:9..7:22
+        RepeatUntilLoop( # input.cq:13:9..17:22
           modifiers: <
-            Modifiers( # input.cq:3:9
+            Modifiers( # input.cq:13:9
               scope: <
-                ScopeLocal( # input.cq:3:9
+                ScopeLocal( # input.cq:13:9
 )
               >
               lifetime: <
-                LifetimeAutomatic( # input.cq:3:9
+                LifetimeAutomatic( # input.cq:13:9
 )
               >
               implementation: <
-                ImplementationAutomatic( # input.cq:3:9
+                ImplementationAutomatic( # input.cq:13:9
 )
               >
             )
           >
           label: -
           annotations: <
-            Annotations( # input.cq:5:7
+            Annotations( # input.cq:15:7
               data: []
             )
           >
           control: <
-            BitwiseNotOperator( # input.cq:7:10..21
+            BitwiseNotOperator( # input.cq:17:10..21
               operand: <
-                FunctionCall( # input.cq:7:11..21
+                FunctionCall( # input.cq:17:11..21
                   function: <
-                    Identifier( # input.cq:7:11..18
+                    Identifier( # input.cq:17:11..18
                       name: measure
                     )
                   >
                   arguments: <
-                    Identifier( # input.cq:7:19..20
+                    Identifier( # input.cq:17:19..20
                       name: q
                     )
                   >
@@ -80,9 +80,9 @@ Program( # input.cq:1:1..7:23
             )
           >
           body: <
-            Block( # input.cq:5:8..7:2
+            Block( # input.cq:15:8..17:2
               data: <
-                Void( # input.cq:5:9
+                Void( # input.cq:15:9
 )
               >
             )

@@ -1,0 +1,674 @@
+SUCCESS
+Program( # input.cq:10:1..37:13
+  version: <
+    Version( # input.cq:10:1..10
+      items: [
+        DecimalIntegerLiteral( # input.cq:10:7..8
+          value: 2
+        )
+        DecimalIntegerLiteral( # input.cq:10:9..10
+          value: 0
+        )
+      ]
+    )
+  >
+  data: <
+    SemicolonSeparated( # input.cq:12:1..37:32
+      elements: [
+        TemplateMarker( # input.cq:12:1..30
+          data: <
+            ParameterDefinition( # input.cq:12:10..30
+              data: <
+                Colon( # input.cq:12:20..30
+                  lhs: <
+                    Identifier( # input.cq:12:20..21
+                      name: q
+                    )
+                  >
+                  rhs: <
+                    PlainIndex( # input.cq:12:23..30
+                      data: <
+                        Identifier( # input.cq:12:23..27
+                          name: qref
+                        )
+                      >
+                      index: <
+                        DecimalIntegerLiteral( # input.cq:12:28..29
+                          value: 2
+                        )
+                      >
+                    )
+                  >
+                )
+              >
+            )
+          >
+        )
+        TemplateMarker( # input.cq:13:1..26
+          data: <
+            ParameterDefinition( # input.cq:13:10..26
+              data: <
+                Colon( # input.cq:13:20..26
+                  lhs: <
+                    Identifier( # input.cq:13:20..21
+                      name: N
+                    )
+                  >
+                  rhs: <
+                    Identifier( # input.cq:13:23..26
+                      name: int
+                    )
+                  >
+                )
+              >
+            )
+          >
+        )
+        TemplateMarker( # input.cq:14:1..32
+          data: <
+            ParameterDefinition( # input.cq:14:10..32
+              data: <
+                Colon( # input.cq:14:20..32
+                  lhs: <
+                    Identifier( # input.cq:14:20..27
+                      name: REP_CNT
+                    )
+                  >
+                  rhs: <
+                    Identifier( # input.cq:14:29..32
+                      name: int
+                    )
+                  >
+                )
+              >
+            )
+          >
+        )
+        VariableDefinition( # input.cq:14:33..16:26
+          modifiers: <
+            Modifiers( # input.cq:14:33
+              scope: <
+                ScopeLocal( # input.cq:14:33
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:14:33
+)
+              >
+              implementation: <
+                ImplementationAutomatic( # input.cq:14:33
+)
+              >
+            )
+          >
+          data: <
+            Colon( # input.cq:16:5..26
+              lhs: <
+                Identifier( # input.cq:16:5..9
+                  name: meas
+                )
+              >
+              rhs: <
+                PlainIndex( # input.cq:16:11..26
+                  data: <
+                    PlainIndex( # input.cq:16:11..23
+                      data: <
+                        Identifier( # input.cq:16:11..14
+                          name: bit
+                        )
+                      >
+                      index: <
+                        Identifier( # input.cq:16:15..22
+                          name: REP_CNT
+                        )
+                      >
+                    )
+                  >
+                  index: <
+                    Identifier( # input.cq:16:24..25
+                      name: N
+                    )
+                  >
+                )
+              >
+            )
+          >
+        )
+        VariableDefinition( # input.cq:16:27..17:20
+          modifiers: <
+            Modifiers( # input.cq:16:27
+              scope: <
+                ScopeLocal( # input.cq:16:27
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:16:27
+)
+              >
+              implementation: <
+                ImplementationAutomatic( # input.cq:16:27
+)
+              >
+            )
+          >
+          data: <
+            Colon( # input.cq:17:5..20
+              lhs: <
+                Identifier( # input.cq:17:5..15
+                  name: repetition
+                )
+              >
+              rhs: <
+                Identifier( # input.cq:17:17..20
+                  name: int
+                )
+              >
+            )
+          >
+        )
+        VariableDefinition( # input.cq:17:21..18:11
+          modifiers: <
+            Modifiers( # input.cq:17:21
+              scope: <
+                ScopeLocal( # input.cq:17:21
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:17:21
+)
+              >
+              implementation: <
+                ImplementationAutomatic( # input.cq:17:21
+)
+              >
+            )
+          >
+          data: <
+            Colon( # input.cq:18:5..11
+              lhs: <
+                Identifier( # input.cq:18:5..6
+                  name: n
+                )
+              >
+              rhs: <
+                Identifier( # input.cq:18:8..11
+                  name: int
+                )
+              >
+            )
+          >
+        )
+        VariableDefinition( # input.cq:18:12..19:11
+          modifiers: <
+            Modifiers( # input.cq:18:12
+              scope: <
+                ScopeLocal( # input.cq:18:12
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:18:12
+)
+              >
+              implementation: <
+                ImplementationAutomatic( # input.cq:18:12
+)
+              >
+            )
+          >
+          data: <
+            Colon( # input.cq:19:5..11
+              lhs: <
+                Identifier( # input.cq:19:5..6
+                  name: i
+                )
+              >
+              rhs: <
+                Identifier( # input.cq:19:8..11
+                  name: int
+                )
+              >
+            )
+          >
+        )
+        ForLoop( # input.cq:19:12..35:2
+          modifiers: <
+            Modifiers( # input.cq:19:12
+              scope: <
+                ScopeLocal( # input.cq:19:12
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:19:12
+)
+              >
+              implementation: <
+                ImplementationAutomatic( # input.cq:19:12
+)
+              >
+            )
+          >
+          label: -
+          annotations: <
+            Annotations( # input.cq:21:4
+              data: []
+            )
+          >
+          control: <
+            SemicolonSeparated( # input.cq:21:5..51
+              elements: [
+                AssignmentOperator( # input.cq:21:5..17
+                  value: <
+                    DecimalIntegerLiteral( # input.cq:21:16..17
+                      value: 0
+                    )
+                  >
+                  target: <
+                    Identifier( # input.cq:21:5..15
+                      name: repetition
+                    )
+                  >
+                )
+                LessThanOperator( # input.cq:21:19..37
+                  lhs: <
+                    Identifier( # input.cq:21:19..29
+                      name: repetition
+                    )
+                  >
+                  rhs: <
+                    Identifier( # input.cq:21:30..37
+                      name: REP_CNT
+                    )
+                  >
+                )
+                PostIncrementOperator( # input.cq:21:39..51
+                  target: <
+                    Identifier( # input.cq:21:39..49
+                      name: repetition
+                    )
+                  >
+                )
+              ]
+            )
+          >
+          body: <
+            Block( # input.cq:21:53..35:2
+              data: <
+                SemicolonSeparated( # input.cq:21:54..34:7
+                  elements: [
+                    ForLoop( # input.cq:21:54..34:6
+                      modifiers: <
+                        Modifiers( # input.cq:21:54
+                          scope: <
+                            ScopeLocal( # input.cq:21:54
+)
+                          >
+                          lifetime: <
+                            LifetimeAutomatic( # input.cq:21:54
+)
+                          >
+                          implementation: <
+                            ImplementationAutomatic( # input.cq:21:54
+)
+                          >
+                        )
+                      >
+                      label: -
+                      annotations: <
+                        Annotations( # input.cq:22:8
+                          data: []
+                        )
+                      >
+                      control: <
+                        SemicolonSeparated( # input.cq:22:9..22
+                          elements: [
+                            AssignmentOperator( # input.cq:22:9..12
+                              value: <
+                                DecimalIntegerLiteral( # input.cq:22:11..12
+                                  value: 0
+                                )
+                              >
+                              target: <
+                                Identifier( # input.cq:22:9..10
+                                  name: n
+                                )
+                              >
+                            )
+                            LessThanOperator( # input.cq:22:14..17
+                              lhs: <
+                                Identifier( # input.cq:22:14..15
+                                  name: n
+                                )
+                              >
+                              rhs: <
+                                Identifier( # input.cq:22:16..17
+                                  name: N
+                                )
+                              >
+                            )
+                            PostIncrementOperator( # input.cq:22:19..22
+                              target: <
+                                Identifier( # input.cq:22:19..20
+                                  name: n
+                                )
+                              >
+                            )
+                          ]
+                        )
+                      >
+                      body: <
+                        Block( # input.cq:22:24..34:6
+                          data: <
+                            SemicolonSeparated( # input.cq:23:9..33:45
+                              elements: [
+                                FunctionCall( # input.cq:23:9..19
+                                  function: <
+                                    Identifier( # input.cq:23:9..14
+                                      name: prepz
+                                    )
+                                  >
+                                  arguments: <
+                                    PlainIndex( # input.cq:23:15..18
+                                      data: <
+                                        Identifier( # input.cq:23:15..16
+                                          name: q
+                                        )
+                                      >
+                                      index: <
+                                        Void( # input.cq:23:17
+)
+                                      >
+                                    )
+                                  >
+                                )
+                                FunctionCall( # input.cq:24:9..18
+                                  function: <
+                                    Identifier( # input.cq:24:9..12
+                                      name: x90
+                                    )
+                                  >
+                                  arguments: <
+                                    PlainIndex( # input.cq:24:13..17
+                                      data: <
+                                        Identifier( # input.cq:24:13..14
+                                          name: q
+                                        )
+                                      >
+                                      index: <
+                                        DecimalIntegerLiteral( # input.cq:24:15..16
+                                          value: 0
+                                        )
+                                      >
+                                    )
+                                  >
+                                )
+                                ForLoop( # input.cq:24:19..27:10
+                                  modifiers: <
+                                    Modifiers( # input.cq:24:19
+                                      scope: <
+                                        ScopeLocal( # input.cq:24:19
+)
+                                      >
+                                      lifetime: <
+                                        LifetimeAutomatic( # input.cq:24:19
+)
+                                      >
+                                      implementation: <
+                                        ImplementationAutomatic( # input.cq:24:19
+)
+                                      >
+                                    )
+                                  >
+                                  label: -
+                                  annotations: <
+                                    Annotations( # input.cq:25:12
+                                      data: []
+                                    )
+                                  >
+                                  control: <
+                                    SemicolonSeparated( # input.cq:25:13..26
+                                      elements: [
+                                        AssignmentOperator( # input.cq:25:13..16
+                                          value: <
+                                            DecimalIntegerLiteral( # input.cq:25:15..16
+                                              value: 0
+                                            )
+                                          >
+                                          target: <
+                                            Identifier( # input.cq:25:13..14
+                                              name: i
+                                            )
+                                          >
+                                        )
+                                        LessThanOperator( # input.cq:25:18..21
+                                          lhs: <
+                                            Identifier( # input.cq:25:18..19
+                                              name: i
+                                            )
+                                          >
+                                          rhs: <
+                                            Identifier( # input.cq:25:20..21
+                                              name: n
+                                            )
+                                          >
+                                        )
+                                        PostIncrementOperator( # input.cq:25:23..26
+                                          target: <
+                                            Identifier( # input.cq:25:23..24
+                                              name: i
+                                            )
+                                          >
+                                        )
+                                      ]
+                                    )
+                                  >
+                                  body: <
+                                    Block( # input.cq:25:28..27:10
+                                      data: <
+                                        SemicolonSeparated( # input.cq:26:13..24
+                                          elements: [
+                                            FunctionCall( # input.cq:26:13..23
+                                              function: <
+                                                Identifier( # input.cq:26:13..17
+                                                  name: x180
+                                                )
+                                              >
+                                              arguments: <
+                                                PlainIndex( # input.cq:26:18..22
+                                                  data: <
+                                                    Identifier( # input.cq:26:18..19
+                                                      name: q
+                                                    )
+                                                  >
+                                                  index: <
+                                                    DecimalIntegerLiteral( # input.cq:26:20..21
+                                                      value: 1
+                                                    )
+                                                  >
+                                                )
+                                              >
+                                            )
+                                          ]
+                                        )
+                                      >
+                                    )
+                                  >
+                                )
+                                ForLoop( # input.cq:27:11..30:10
+                                  modifiers: <
+                                    Modifiers( # input.cq:27:11
+                                      scope: <
+                                        ScopeLocal( # input.cq:27:11
+)
+                                      >
+                                      lifetime: <
+                                        LifetimeAutomatic( # input.cq:27:11
+)
+                                      >
+                                      implementation: <
+                                        ImplementationAutomatic( # input.cq:27:11
+)
+                                      >
+                                    )
+                                  >
+                                  label: -
+                                  annotations: <
+                                    Annotations( # input.cq:28:12
+                                      data: []
+                                    )
+                                  >
+                                  control: <
+                                    SemicolonSeparated( # input.cq:28:13..25
+                                      elements: [
+                                        Parentheses( # input.cq:28:13..15
+                                          data: <
+                                            Void( # input.cq:28:14
+)
+                                          >
+                                        )
+                                        LessThanOperator( # input.cq:28:17..20
+                                          lhs: <
+                                            Identifier( # input.cq:28:17..18
+                                              name: i
+                                            )
+                                          >
+                                          rhs: <
+                                            Identifier( # input.cq:28:19..20
+                                              name: N
+                                            )
+                                          >
+                                        )
+                                        PostIncrementOperator( # input.cq:28:22..25
+                                          target: <
+                                            Identifier( # input.cq:28:22..23
+                                              name: i
+                                            )
+                                          >
+                                        )
+                                      ]
+                                    )
+                                  >
+                                  body: <
+                                    Block( # input.cq:28:27..30:10
+                                      data: <
+                                        SemicolonSeparated( # input.cq:29:13..21
+                                          elements: [
+                                            FunctionCall( # input.cq:29:13..20
+                                              function: <
+                                                Identifier( # input.cq:29:13..14
+                                                  name: I
+                                                )
+                                              >
+                                              arguments: <
+                                                PlainIndex( # input.cq:29:15..19
+                                                  data: <
+                                                    Identifier( # input.cq:29:15..16
+                                                      name: q
+                                                    )
+                                                  >
+                                                  index: <
+                                                    DecimalIntegerLiteral( # input.cq:29:17..18
+                                                      value: 1
+                                                    )
+                                                  >
+                                                )
+                                              >
+                                            )
+                                          ]
+                                        )
+                                      >
+                                    )
+                                  >
+                                )
+                                FunctionCall( # input.cq:31:9..18
+                                  function: <
+                                    Identifier( # input.cq:31:9..12
+                                      name: x90
+                                    )
+                                  >
+                                  arguments: <
+                                    PlainIndex( # input.cq:31:13..17
+                                      data: <
+                                        Identifier( # input.cq:31:13..14
+                                          name: q
+                                        )
+                                      >
+                                      index: <
+                                        DecimalIntegerLiteral( # input.cq:31:15..16
+                                          value: 0
+                                        )
+                                      >
+                                    )
+                                  >
+                                )
+                                AssignmentOperator( # input.cq:33:9..44
+                                  value: <
+                                    FunctionCall( # input.cq:33:31..44
+                                      function: <
+                                        Identifier( # input.cq:33:31..38
+                                          name: measure
+                                        )
+                                      >
+                                      arguments: <
+                                        PlainIndex( # input.cq:33:39..43
+                                          data: <
+                                            Identifier( # input.cq:33:39..40
+                                              name: q
+                                            )
+                                          >
+                                          index: <
+                                            DecimalIntegerLiteral( # input.cq:33:41..42
+                                              value: 0
+                                            )
+                                          >
+                                        )
+                                      >
+                                    )
+                                  >
+                                  target: <
+                                    PlainIndex( # input.cq:33:9..28
+                                      data: <
+                                        PlainIndex( # input.cq:33:9..25
+                                          data: <
+                                            Identifier( # input.cq:33:9..13
+                                              name: meas
+                                            )
+                                          >
+                                          index: <
+                                            Identifier( # input.cq:33:14..24
+                                              name: repetition
+                                            )
+                                          >
+                                        )
+                                      >
+                                      index: <
+                                        Identifier( # input.cq:33:26..27
+                                          name: n
+                                        )
+                                      >
+                                    )
+                                  >
+                                )
+                              ]
+                            )
+                          >
+                        )
+                      >
+                    )
+                  ]
+                )
+              >
+            )
+          >
+        )
+        ReturnStatement( # input.cq:37:1..12
+          value: <
+            Identifier( # input.cq:37:8..12
+              name: meas
+            )
+          >
+        )
+      ]
+    )
+  >
+)
+

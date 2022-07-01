@@ -1,23 +1,23 @@
 SUCCESS
-Program( # input.cq:10:1..21:13
+Program( # input.cq:11:1..22:13
   version: <
-    Version( # input.cq:10:1..10
+    Version( # input.cq:11:1..10
       items: [
-        DecimalIntegerLiteral( # input.cq:10:7..8
+        DecimalIntegerLiteral( # input.cq:11:7..8
           value: 2
         )
-        DecimalIntegerLiteral( # input.cq:10:9..10
+        DecimalIntegerLiteral( # input.cq:11:9..10
           value: 0
         )
       ]
     )
   >
   data: <
-    SemicolonSeparated( # input.cq:12:1..21:37
+    SemicolonSeparated( # input.cq:13:1..22:37
       elements: [
-        IncludeDirective( # input.cq:12:1..18
+        IncludeDirective( # input.cq:13:1..18
           path: <
-            StringLiteral( # input.cq:12:9..18
+            StringLiteral( # input.cq:13:9..18
               value: rabi.cq
             )
           >
@@ -26,89 +26,89 @@ Program( # input.cq:10:1..21:13
 )
           >
         )
-        QubitDefinition( # input.cq:12:19..14:12
+        QubitDefinition( # input.cq:13:19..15:12
           modifiers: <
-            Modifiers( # input.cq:12:19
+            Modifiers( # input.cq:13:19
               scope: <
-                ScopeLocal( # input.cq:12:19
+                ScopeLocal( # input.cq:13:19
 )
               >
               lifetime: <
-                LifetimeAutomatic( # input.cq:12:19
+                LifetimeAutomatic( # input.cq:13:19
 )
               >
               implementation: <
-                ImplementationAutomatic( # input.cq:12:19
+                ImplementationAutomatic( # input.cq:13:19
 )
               >
             )
           >
           data: <
-            PlainIndex( # input.cq:14:7..12
+            PlainIndex( # input.cq:15:7..12
               data: <
-                Identifier( # input.cq:14:7..8
+                Identifier( # input.cq:15:7..8
                   name: q
                 )
               >
               index: <
-                DecimalIntegerLiteral( # input.cq:14:9..11
+                DecimalIntegerLiteral( # input.cq:15:9..11
                   value: 17
                 )
               >
             )
           >
         )
-        VariableDefinition( # input.cq:14:13..15:37
+        VariableDefinition( # input.cq:15:13..16:37
           modifiers: <
-            Modifiers( # input.cq:14:13
+            Modifiers( # input.cq:15:13
               scope: <
-                ScopeLocal( # input.cq:14:13
+                ScopeLocal( # input.cq:15:13
 )
               >
               lifetime: <
-                LifetimeAutomatic( # input.cq:14:13
+                LifetimeAutomatic( # input.cq:15:13
 )
               >
               implementation: <
-                ImplementationAutomatic( # input.cq:14:13
+                ImplementationAutomatic( # input.cq:15:13
 )
               >
             )
           >
           data: <
-            Colon( # input.cq:15:5..37
+            Colon( # input.cq:16:5..37
               lhs: <
-                Identifier( # input.cq:15:5..9
+                Identifier( # input.cq:16:5..9
                   name: meas
                 )
               >
               rhs: <
-                PlainIndex( # input.cq:15:11..37
+                PlainIndex( # input.cq:16:11..37
                   data: <
-                    PlainIndex( # input.cq:15:11..27
+                    PlainIndex( # input.cq:16:11..27
                       data: <
-                        PlainIndex( # input.cq:15:11..18
+                        PlainIndex( # input.cq:16:11..18
                           data: <
-                            Identifier( # input.cq:15:11..14
+                            Identifier( # input.cq:16:11..14
                               name: int
                             )
                           >
                           index: <
-                            DecimalIntegerLiteral( # input.cq:15:15..17
+                            DecimalIntegerLiteral( # input.cq:16:15..17
                               value: 17
                             )
                           >
                         )
                       >
                       index: <
-                        Identifier( # input.cq:15:19..26
+                        Identifier( # input.cq:16:19..26
                           name: REP_CNT
                         )
                       >
                     )
                   >
                   index: <
-                    Identifier( # input.cq:15:28..36
+                    Identifier( # input.cq:16:28..36
                       name: AMPL_CNT
                     )
                   >
@@ -117,45 +117,45 @@ Program( # input.cq:10:1..21:13
             )
           >
         )
-        ForeachLoop( # input.cq:15:38..19:2
+        ForeachLoop( # input.cq:16:38..20:2
           modifiers: <
-            Modifiers( # input.cq:15:38
+            Modifiers( # input.cq:16:38
               scope: <
-                ScopeLocal( # input.cq:15:38
+                ScopeLocal( # input.cq:16:38
 )
               >
               lifetime: <
-                LifetimeAutomatic( # input.cq:15:38
+                LifetimeAutomatic( # input.cq:16:38
 )
               >
               implementation: <
-                ImplementationAutomatic( # input.cq:15:38
+                ImplementationAutomatic( # input.cq:16:38
 )
               >
             )
           >
           label: -
           annotations: <
-            Annotations( # input.cq:17:8
+            Annotations( # input.cq:18:8
               data: []
             )
           >
           control: <
-            Colon( # input.cq:17:9..17
+            Colon( # input.cq:18:9..17
               lhs: <
-                Identifier( # input.cq:17:9..10
+                Identifier( # input.cq:18:9..10
                   name: i
                 )
               >
               rhs: <
-                RangeOperator( # input.cq:17:12..17
+                RangeOperator( # input.cq:18:12..17
                   begin: <
-                    DecimalIntegerLiteral( # input.cq:17:12..13
+                    DecimalIntegerLiteral( # input.cq:18:12..13
                       value: 0
                     )
                   >
                   end: <
-                    DecimalIntegerLiteral( # input.cq:17:15..17
+                    DecimalIntegerLiteral( # input.cq:18:15..17
                       value: 16
                     )
                   >
@@ -164,40 +164,40 @@ Program( # input.cq:10:1..21:13
             )
           >
           body: <
-            Block( # input.cq:17:19..19:2
+            Block( # input.cq:18:19..20:2
               data: <
-                SemicolonSeparated( # input.cq:18:5..56
+                SemicolonSeparated( # input.cq:19:5..56
                   elements: [
-                    AssignmentOperator( # input.cq:18:5..55
+                    AssignmentOperator( # input.cq:19:5..55
                       value: <
-                        FunctionCall( # input.cq:18:15..55
+                        FunctionCall( # input.cq:19:15..55
                           function: <
-                            Identifier( # input.cq:18:15..19
+                            Identifier( # input.cq:19:15..19
                               name: rabi
                             )
                           >
                           arguments: <
-                            CommaSeparated( # input.cq:18:20..54
+                            CommaSeparated( # input.cq:19:20..54
                               elements: [
-                                PlainIndex( # input.cq:18:20..24
+                                PlainIndex( # input.cq:19:20..24
                                   data: <
-                                    Identifier( # input.cq:18:20..21
+                                    Identifier( # input.cq:19:20..21
                                       name: q
                                     )
                                   >
                                   index: <
-                                    Identifier( # input.cq:18:22..23
+                                    Identifier( # input.cq:19:22..23
                                       name: i
                                     )
                                   >
                                 )
-                                Identifier( # input.cq:18:26..34
+                                Identifier( # input.cq:19:26..34
                                   name: AMPL_MIN
                                 )
-                                Identifier( # input.cq:18:36..45
+                                Identifier( # input.cq:19:36..45
                                   name: AMPL_STEP
                                 )
-                                Identifier( # input.cq:18:47..54
+                                Identifier( # input.cq:19:47..54
                                   name: INT_AVG
                                 )
                               ]
@@ -206,14 +206,14 @@ Program( # input.cq:10:1..21:13
                         )
                       >
                       target: <
-                        PlainIndex( # input.cq:18:5..12
+                        PlainIndex( # input.cq:19:5..12
                           data: <
-                            Identifier( # input.cq:18:5..9
+                            Identifier( # input.cq:19:5..9
                               name: meas
                             )
                           >
                           index: <
-                            Identifier( # input.cq:18:10..11
+                            Identifier( # input.cq:19:10..11
                               name: i
                             )
                           >
@@ -226,9 +226,9 @@ Program( # input.cq:10:1..21:13
             )
           >
         )
-        ReturnStatement( # input.cq:21:1..12
+        ReturnStatement( # input.cq:22:1..12
           value: <
-            Identifier( # input.cq:21:8..12
+            Identifier( # input.cq:22:8..12
               name: meas
             )
           >

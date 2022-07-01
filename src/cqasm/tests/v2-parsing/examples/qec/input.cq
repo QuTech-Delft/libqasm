@@ -1,7 +1,8 @@
 /*
-    File:       QEC.qasm
+    File:       qec/input.cq
     Purpose:    pipelined Quantum Error Correction cycle
     Author:     Wouter Vlothuizen (wouter.vlothuizen@tno.nl)
+                Jeroen van Straten
     Copyright:	QuTech/TNO
     Notes:      see: R. Versluis et al., Phys. Rev. A 8, 034021 (2017)
                 - we rotate grid by 45 deg for convenience: [nw, ne, sw, se] -> [n, e, w, s]
