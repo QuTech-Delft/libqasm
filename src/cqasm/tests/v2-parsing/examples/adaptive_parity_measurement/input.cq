@@ -1,0 +1,27 @@
+/*
+    File:       AdaptiveParityMeasurement.qasm
+    Purpose:    Adaptive Parity Measurement
+    Author:     Wouter Vlothuizen (wouter.vlothuizen@tno.nl)
+                Jeroen van Straten
+    Copyright:	QuTech/TNO
+    Notes:      in this example, a bit ('sel') is assigned from an expression, not a measurement
+    Based on:   QuantumUseCases.doc
+*/
+
+cQASM 2.0
+
+qubit q;
+var sel = false;
+
+#...
+
+while (true) {
+    #...
+
+    # toggle selector if q is measured as 1
+    sel ^= measure(q);
+
+    # perform gate 'a' or 'b', depending on 'sel'.
+    if (sel) a(q) else b(q);
+
+};

@@ -1,0 +1,17 @@
+/*
+    File:       repeat_until_success/input.cq
+    Purpose:    Repeat Until Success
+    Author:     Wouter Vlothuizen (wouter.vlothuizen@tno.nl)
+                Jeroen van Straten
+    Copyright:	QuTech/TNO
+    Notes:
+    Based on:   QuantumUseCases.doc
+*/
+
+cQASM 2.0
+
+qubit q;
+
+repeat {
+    # ...
+} until (!measure(q));

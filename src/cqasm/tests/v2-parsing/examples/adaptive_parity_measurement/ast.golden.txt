@@ -1,0 +1,201 @@
+SUCCESS
+Program( # input.cq:11:1..27:3
+  version: <
+    Version( # input.cq:11:1..10
+      items: [
+        DecimalIntegerLiteral( # input.cq:11:7..8
+          value: 2
+        )
+        DecimalIntegerLiteral( # input.cq:11:9..10
+          value: 0
+        )
+      ]
+    )
+  >
+  data: <
+    SemicolonSeparated( # input.cq:11:10..27:16
+      elements: [
+        QubitDefinition( # input.cq:11:10..13:8
+          modifiers: <
+            Modifiers( # input.cq:11:10
+              scope: <
+                ScopeLocal( # input.cq:11:10
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:11:10
+)
+              >
+              implementation: <
+                ImplementationAutomatic( # input.cq:11:10
+)
+              >
+            )
+          >
+          data: <
+            Identifier( # input.cq:13:7..8
+              name: q
+            )
+          >
+        )
+        VariableDefinition( # input.cq:13:9..14:16
+          modifiers: <
+            Modifiers( # input.cq:13:9
+              scope: <
+                ScopeLocal( # input.cq:13:9
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:13:9
+)
+              >
+              implementation: <
+                ImplementationAutomatic( # input.cq:13:9
+)
+              >
+            )
+          >
+          data: <
+            AssignmentOperator( # input.cq:14:5..16
+              value: <
+                Identifier( # input.cq:14:11..16
+                  name: false
+                )
+              >
+              target: <
+                Identifier( # input.cq:14:5..8
+                  name: sel
+                )
+              >
+            )
+          >
+        )
+        WhileLoop( # input.cq:14:17..27:2
+          modifiers: <
+            Modifiers( # input.cq:14:17
+              scope: <
+                ScopeLocal( # input.cq:14:17
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:14:17
+)
+              >
+              implementation: <
+                ImplementationAutomatic( # input.cq:14:17
+)
+              >
+            )
+          >
+          label: -
+          annotations: <
+            Annotations( # input.cq:18:6
+              data: []
+            )
+          >
+          control: <
+            Identifier( # input.cq:18:8..12
+              name: true
+            )
+          >
+          body: <
+            Block( # input.cq:18:14..27:2
+              data: <
+                SemicolonSeparated( # input.cq:22:5..25:29
+                  elements: [
+                    BitwiseXorByOperator( # input.cq:22:5..22
+                      value: <
+                        FunctionCall( # input.cq:22:12..22
+                          function: <
+                            Identifier( # input.cq:22:12..19
+                              name: measure
+                            )
+                          >
+                          arguments: <
+                            Identifier( # input.cq:22:20..21
+                              name: q
+                            )
+                          >
+                        )
+                      >
+                      target: <
+                        Identifier( # input.cq:22:5..8
+                          name: sel
+                        )
+                      >
+                    )
+                    IfElifElseBlock( # input.cq:22:23..25:28
+                      modifiers: <
+                        Modifiers( # input.cq:22:23
+                          scope: <
+                            ScopeLocal( # input.cq:22:23
+)
+                          >
+                          lifetime: <
+                            LifetimeAutomatic( # input.cq:22:23
+)
+                          >
+                          implementation: <
+                            ImplementationAutomatic( # input.cq:22:23
+)
+                          >
+                        )
+                      >
+                      annotations: <
+                        Annotations( # input.cq:25:7
+                          data: []
+                        )
+                      >
+                      return_type: <
+                        Void( # input.cq:25:13
+)
+                      >
+                      arms: [
+                        MatchArm(
+                          condition: <
+                            Identifier( # input.cq:25:9..12
+                              name: sel
+                            )
+                          >
+                          body: <
+                            FunctionCall( # input.cq:25:14..18
+                              function: <
+                                Identifier( # input.cq:25:14..15
+                                  name: a
+                                )
+                              >
+                              arguments: <
+                                Identifier( # input.cq:25:16..17
+                                  name: q
+                                )
+                              >
+                            )
+                          >
+                        )
+                      ]
+                      otherwise: <
+                        FunctionCall( # input.cq:25:24..28
+                          function: <
+                            Identifier( # input.cq:25:24..25
+                              name: b
+                            )
+                          >
+                          arguments: <
+                            Identifier( # input.cq:25:26..27
+                              name: q
+                            )
+                          >
+                        )
+                      >
+                    )
+                  ]
+                )
+              >
+            )
+          >
+        )
+      ]
+    )
+  >
+)
+

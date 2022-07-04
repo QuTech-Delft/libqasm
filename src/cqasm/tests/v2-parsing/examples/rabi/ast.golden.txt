@@ -1,0 +1,661 @@
+SUCCESS
+Program( # input.cq:14:1..45:3
+  version: <
+    Version( # input.cq:14:1..10
+      items: [
+        DecimalIntegerLiteral( # input.cq:14:7..8
+          value: 2
+        )
+        DecimalIntegerLiteral( # input.cq:14:9..10
+          value: 0
+        )
+      ]
+    )
+  >
+  data: <
+    SemicolonSeparated( # input.cq:16:1..45:33
+      elements: [
+        TemplateMarker( # input.cq:16:1..32
+          data: <
+            ParameterDefinition( # input.cq:16:10..32
+              data: <
+                Colon( # input.cq:16:20..32
+                  lhs: <
+                    Identifier( # input.cq:16:20..27
+                      name: REP_CNT
+                    )
+                  >
+                  rhs: <
+                    Identifier( # input.cq:16:29..32
+                      name: int
+                    )
+                  >
+                )
+              >
+            )
+          >
+        )
+        TemplateMarker( # input.cq:17:1..33
+          data: <
+            ParameterDefinition( # input.cq:17:10..33
+              data: <
+                Colon( # input.cq:17:20..33
+                  lhs: <
+                    Identifier( # input.cq:17:20..28
+                      name: AMPL_CNT
+                    )
+                  >
+                  rhs: <
+                    Identifier( # input.cq:17:30..33
+                      name: int
+                    )
+                  >
+                )
+              >
+            )
+          >
+        )
+        ParameterDefinition( # input.cq:18:1..32
+          data: <
+            Colon( # input.cq:18:11..32
+              lhs: <
+                Identifier( # input.cq:18:11..19
+                  name: AMPL_MIN
+                )
+              >
+              rhs: <
+                Identifier( # input.cq:18:21..32
+                  name: ufixed_1_31
+                )
+              >
+            )
+          >
+        )
+        ParameterDefinition( # input.cq:19:1..33
+          data: <
+            Colon( # input.cq:19:11..33
+              lhs: <
+                Identifier( # input.cq:19:11..20
+                  name: AMPL_STEP
+                )
+              >
+              rhs: <
+                Identifier( # input.cq:19:22..33
+                  name: ufixed_1_31
+                )
+              >
+            )
+          >
+        )
+        ParameterDefinition( # input.cq:20:1..23
+          data: <
+            Colon( # input.cq:20:11..23
+              lhs: <
+                Identifier( # input.cq:20:11..18
+                  name: INT_AVG
+                )
+              >
+              rhs: <
+                Identifier( # input.cq:20:20..23
+                  name: int
+                )
+              >
+            )
+          >
+        )
+        FunctionDefinition( # input.cq:20:24..45:2
+          modifiers: <
+            Modifiers( # input.cq:20:24
+              scope: <
+                ScopeLocal( # input.cq:20:24
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:20:24
+)
+              >
+              implementation: <
+                ImplementationAutomatic( # input.cq:20:24
+)
+              >
+            )
+          >
+          annotations: <
+            Annotations( # input.cq:22:14
+              data: []
+            )
+          >
+          body: <
+            Block( # input.cq:31:3..45:2
+              data: <
+                SemicolonSeparated( # input.cq:31:4..44:31
+                  elements: [
+                    VariableDefinition( # input.cq:31:4..32:37
+                      modifiers: <
+                        Modifiers( # input.cq:31:4
+                          scope: <
+                            ScopeLocal( # input.cq:31:4
+)
+                          >
+                          lifetime: <
+                            LifetimeAutomatic( # input.cq:31:4
+)
+                          >
+                          implementation: <
+                            ImplementationAutomatic( # input.cq:31:4
+)
+                          >
+                        )
+                      >
+                      data: <
+                        Colon( # input.cq:32:9..37
+                          lhs: <
+                            Identifier( # input.cq:32:9..13
+                              name: meas
+                            )
+                          >
+                          rhs: <
+                            PlainIndex( # input.cq:32:15..37
+                              data: <
+                                PlainIndex( # input.cq:32:15..27
+                                  data: <
+                                    Identifier( # input.cq:32:15..18
+                                      name: int
+                                    )
+                                  >
+                                  index: <
+                                    Identifier( # input.cq:32:19..26
+                                      name: REP_CNT
+                                    )
+                                  >
+                                )
+                              >
+                              index: <
+                                Identifier( # input.cq:32:28..36
+                                  name: AMPL_CNT
+                                )
+                              >
+                            )
+                          >
+                        )
+                      >
+                    )
+                    VariableDefinition( # input.cq:32:38..33:24
+                      modifiers: <
+                        Modifiers( # input.cq:32:38
+                          scope: <
+                            ScopeLocal( # input.cq:32:38
+)
+                          >
+                          lifetime: <
+                            LifetimeAutomatic( # input.cq:32:38
+)
+                          >
+                          implementation: <
+                            ImplementationAutomatic( # input.cq:32:38
+)
+                          >
+                        )
+                      >
+                      data: <
+                        Colon( # input.cq:33:9..24
+                          lhs: <
+                            Identifier( # input.cq:33:9..19
+                              name: repetition
+                            )
+                          >
+                          rhs: <
+                            Identifier( # input.cq:33:21..24
+                              name: int
+                            )
+                          >
+                        )
+                      >
+                    )
+                    VariableDefinition( # input.cq:33:25..34:15
+                      modifiers: <
+                        Modifiers( # input.cq:33:25
+                          scope: <
+                            ScopeLocal( # input.cq:33:25
+)
+                          >
+                          lifetime: <
+                            LifetimeAutomatic( # input.cq:33:25
+)
+                          >
+                          implementation: <
+                            ImplementationAutomatic( # input.cq:33:25
+)
+                          >
+                        )
+                      >
+                      data: <
+                        Colon( # input.cq:34:9..15
+                          lhs: <
+                            Identifier( # input.cq:34:9..10
+                              name: a
+                            )
+                          >
+                          rhs: <
+                            Identifier( # input.cq:34:12..15
+                              name: int
+                            )
+                          >
+                        )
+                      >
+                    )
+                    VariableDefinition( # input.cq:34:16..35:31
+                      modifiers: <
+                        Modifiers( # input.cq:34:16
+                          scope: <
+                            ScopeLocal( # input.cq:34:16
+)
+                          >
+                          lifetime: <
+                            LifetimeAutomatic( # input.cq:34:16
+)
+                          >
+                          implementation: <
+                            ImplementationAutomatic( # input.cq:34:16
+)
+                          >
+                        )
+                      >
+                      data: <
+                        Colon( # input.cq:35:9..31
+                          lhs: <
+                            Identifier( # input.cq:35:9..18
+                              name: amplitude
+                            )
+                          >
+                          rhs: <
+                            Identifier( # input.cq:35:20..31
+                              name: ufixed_1_31
+                            )
+                          >
+                        )
+                      >
+                    )
+                    ForLoop( # input.cq:35:32..43:6
+                      modifiers: <
+                        Modifiers( # input.cq:35:32
+                          scope: <
+                            ScopeLocal( # input.cq:35:32
+)
+                          >
+                          lifetime: <
+                            LifetimeAutomatic( # input.cq:35:32
+)
+                          >
+                          implementation: <
+                            ImplementationAutomatic( # input.cq:35:32
+)
+                          >
+                        )
+                      >
+                      label: -
+                      annotations: <
+                        Annotations( # input.cq:37:8
+                          data: []
+                        )
+                      >
+                      control: <
+                        SemicolonSeparated( # input.cq:37:9..55
+                          elements: [
+                            AssignmentOperator( # input.cq:37:9..21
+                              value: <
+                                DecimalIntegerLiteral( # input.cq:37:20..21
+                                  value: 0
+                                )
+                              >
+                              target: <
+                                Identifier( # input.cq:37:9..19
+                                  name: repetition
+                                )
+                              >
+                            )
+                            LessThanOperator( # input.cq:37:23..41
+                              lhs: <
+                                Identifier( # input.cq:37:23..33
+                                  name: repetition
+                                )
+                              >
+                              rhs: <
+                                Identifier( # input.cq:37:34..41
+                                  name: REP_CNT
+                                )
+                              >
+                            )
+                            PostIncrementOperator( # input.cq:37:43..55
+                              target: <
+                                Identifier( # input.cq:37:43..53
+                                  name: repetition
+                                )
+                              >
+                            )
+                          ]
+                        )
+                      >
+                      body: <
+                        Block( # input.cq:37:57..43:6
+                          data: <
+                            ForLoop( # input.cq:37:58..42:10
+                              modifiers: <
+                                Modifiers( # input.cq:37:58
+                                  scope: <
+                                    ScopeLocal( # input.cq:37:58
+)
+                                  >
+                                  lifetime: <
+                                    LifetimeAutomatic( # input.cq:37:58
+)
+                                  >
+                                  implementation: <
+                                    ImplementationAutomatic( # input.cq:37:58
+)
+                                  >
+                                )
+                              >
+                              label: -
+                              annotations: <
+                                Annotations( # input.cq:38:12
+                                  data: []
+                                )
+                              >
+                              control: <
+                                SemicolonSeparated( # input.cq:38:13..73
+                                  elements: [
+                                    CommaSeparated( # input.cq:38:13..35
+                                      elements: [
+                                        AssignmentOperator( # input.cq:38:13..31
+                                          value: <
+                                            Identifier( # input.cq:38:23..31
+                                              name: AMPL_MIN
+                                            )
+                                          >
+                                          target: <
+                                            Identifier( # input.cq:38:13..22
+                                              name: amplitude
+                                            )
+                                          >
+                                        )
+                                        AssignmentOperator( # input.cq:38:32..35
+                                          value: <
+                                            DecimalIntegerLiteral( # input.cq:38:34..35
+                                              value: 0
+                                            )
+                                          >
+                                          target: <
+                                            Identifier( # input.cq:38:32..33
+                                              name: a
+                                            )
+                                          >
+                                        )
+                                      ]
+                                    )
+                                    LessThanOperator( # input.cq:38:37..47
+                                      lhs: <
+                                        Identifier( # input.cq:38:37..38
+                                          name: a
+                                        )
+                                      >
+                                      rhs: <
+                                        Identifier( # input.cq:38:39..47
+                                          name: AMPL_CNT
+                                        )
+                                      >
+                                    )
+                                    CommaSeparated( # input.cq:38:49..73
+                                      elements: [
+                                        IncrementByOperator( # input.cq:38:49..69
+                                          value: <
+                                            Identifier( # input.cq:38:60..69
+                                              name: AMPL_STEP
+                                            )
+                                          >
+                                          target: <
+                                            Identifier( # input.cq:38:49..58
+                                              name: amplitude
+                                            )
+                                          >
+                                        )
+                                        PostIncrementOperator( # input.cq:38:70..73
+                                          target: <
+                                            Identifier( # input.cq:38:70..71
+                                              name: a
+                                            )
+                                          >
+                                        )
+                                      ]
+                                    )
+                                  ]
+                                )
+                              >
+                              body: <
+                                Block( # input.cq:38:75..42:10
+                                  data: <
+                                    SemicolonSeparated( # input.cq:39:13..41:54
+                                      elements: [
+                                        FunctionCall( # input.cq:39:13..21
+                                          function: <
+                                            Identifier( # input.cq:39:13..18
+                                              name: prepz
+                                            )
+                                          >
+                                          arguments: <
+                                            Identifier( # input.cq:39:19..20
+                                              name: q
+                                            )
+                                          >
+                                        )
+                                        FunctionCall( # input.cq:40:13..28
+                                          function: <
+                                            Identifier( # input.cq:40:13..15
+                                              name: rx
+                                            )
+                                          >
+                                          arguments: <
+                                            CommaSeparated( # input.cq:40:16..27
+                                              elements: [
+                                                Identifier( # input.cq:40:16..17
+                                                  name: q
+                                                )
+                                                Identifier( # input.cq:40:18..27
+                                                  name: amplitude
+                                                )
+                                              ]
+                                            )
+                                          >
+                                        )
+                                        AssignmentOperator( # input.cq:41:13..53
+                                          value: <
+                                            FunctionCall( # input.cq:41:35..53
+                                              function: <
+                                                Identifier( # input.cq:41:35..42
+                                                  name: measure
+                                                )
+                                              >
+                                              arguments: <
+                                                CommaSeparated( # input.cq:41:43..52
+                                                  elements: [
+                                                    Identifier( # input.cq:41:43..44
+                                                      name: q
+                                                    )
+                                                    Identifier( # input.cq:41:45..52
+                                                      name: INT_AVG
+                                                    )
+                                                  ]
+                                                )
+                                              >
+                                            )
+                                          >
+                                          target: <
+                                            PlainIndex( # input.cq:41:13..32
+                                              data: <
+                                                PlainIndex( # input.cq:41:13..29
+                                                  data: <
+                                                    Identifier( # input.cq:41:13..17
+                                                      name: meas
+                                                    )
+                                                  >
+                                                  index: <
+                                                    Identifier( # input.cq:41:18..28
+                                                      name: repetition
+                                                    )
+                                                  >
+                                                )
+                                              >
+                                              index: <
+                                                Identifier( # input.cq:41:30..31
+                                                  name: a
+                                                )
+                                              >
+                                            )
+                                          >
+                                        )
+                                      ]
+                                    )
+                                  >
+                                )
+                              >
+                            )
+                          >
+                        )
+                      >
+                    )
+                    ReturnStatement( # input.cq:44:5..16
+                      value: <
+                        Identifier( # input.cq:44:12..16
+                          name: meas
+                        )
+                      >
+                    )
+                  ]
+                )
+              >
+            )
+          >
+          name: <
+            Identifier( # input.cq:22:10..14
+              name: rabi
+            )
+          >
+          parameters: <
+            CommaSeparated( # input.cq:23:5..28:27
+              elements: [
+                TemplateMarker( # input.cq:23:5..21
+                  data: <
+                    Colon( # input.cq:23:14..21
+                      lhs: <
+                        Identifier( # input.cq:23:14..15
+                          name: q
+                        )
+                      >
+                      rhs: <
+                        Identifier( # input.cq:23:17..21
+                          name: qref
+                        )
+                      >
+                    )
+                  >
+                )
+                TemplateMarker( # input.cq:24:5..26
+                  data: <
+                    Colon( # input.cq:24:14..26
+                      lhs: <
+                        Identifier( # input.cq:24:14..21
+                          name: REP_CNT
+                        )
+                      >
+                      rhs: <
+                        Identifier( # input.cq:24:23..26
+                          name: int
+                        )
+                      >
+                    )
+                  >
+                )
+                TemplateMarker( # input.cq:25:5..27
+                  data: <
+                    Colon( # input.cq:25:14..27
+                      lhs: <
+                        Identifier( # input.cq:25:14..22
+                          name: AMPL_CNT
+                        )
+                      >
+                      rhs: <
+                        Identifier( # input.cq:25:24..27
+                          name: int
+                        )
+                      >
+                    )
+                  >
+                )
+                Colon( # input.cq:26:5..26
+                  lhs: <
+                    Identifier( # input.cq:26:5..13
+                      name: AMPL_MIN
+                    )
+                  >
+                  rhs: <
+                    Identifier( # input.cq:26:15..26
+                      name: ufixed_1_31
+                    )
+                  >
+                )
+                Colon( # input.cq:27:5..27
+                  lhs: <
+                    Identifier( # input.cq:27:5..14
+                      name: AMPL_STEP
+                    )
+                  >
+                  rhs: <
+                    Identifier( # input.cq:27:16..27
+                      name: ufixed_1_31
+                    )
+                  >
+                )
+                Colon( # input.cq:28:5..17
+                  lhs: <
+                    Identifier( # input.cq:28:5..12
+                      name: INT_AVG
+                    )
+                  >
+                  rhs: <
+                    Identifier( # input.cq:28:14..17
+                      name: int
+                    )
+                  >
+                )
+              ]
+            )
+          >
+          return_type: <
+            PlainIndex( # input.cq:29:3..31:27
+              data: <
+                PlainIndex( # input.cq:30:5..17
+                  data: <
+                    Identifier( # input.cq:30:5..8
+                      name: int
+                    )
+                  >
+                  index: <
+                    Identifier( # input.cq:30:9..16
+                      name: REP_CNT
+                    )
+                  >
+                )
+              >
+              index: <
+                Identifier( # input.cq:30:18..26
+                  name: AMPL_CNT
+                )
+              >
+            )
+          >
+        )
+      ]
+    )
+  >
+)
+

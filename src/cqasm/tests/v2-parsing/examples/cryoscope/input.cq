@@ -1,0 +1,59 @@
+/*
+    File:       cryoscope/input.cq
+    Purpose:    Cryoscope
+    Author:     Wouter Vlothuizen (wouter.vlothuizen@tno.nl)
+    Copyright:	QuTech/TNO
+    Notes:      example flux pulse durations in original code:
+                "times = np.arange(20e-9, 120e-9, 1/2.4e9)"
+                i.e. 240 steps of 1 AWG sample @ 2.4 Gsps, so the time steps required are much smaller than the
+                duration of a normal gate
+    Based on:   QuantumUseCases.doc
+*/
+
+cQASM 2.0;
+
+template parameter q: qref;
+template parameter REP_CNT: int;
+template parameter LEN_CNT: int;
+
+parameter T: frac;
+parameter LEN_STEP: frac;
+
+var meas: bool[REP_CNT][LEN_CNT][4];
+var repetition: int;
+var l: int;
+var len: frac;
+
+
+function cryo_common(template q: qref, len: frac) {
+    # FIXME: compute bufferTime1/bufferTime2
+
+    prepz(q);
+    rx90(q);
+
+    # variable high time, fixed total duration
+    wait(q, bufferTime1);
+    flux(q, len);
+    wait(q, bufferTime2);
+};
+
+for(repetition=0; repetition<REP_CNT; repetition++) {
+    for(len=0,l=0; l<LEN_CNT; len+=LEN_STEP,l++) {
+        cryo_common(q, len);
+        rx90(q);
+        meas[repetition][l][0] = measure(q, INT_AVG);
+
+        cryo_common(q, len);
+        ry90(q);
+        meas[repetition][l][1] = measure(q, INT_AVG);
+
+        cryo_common(q, len);
+        rxm90(q);
+        meas[repetition][l][2] = measure(q, INT_AVG);
+
+        cryo_common(q, len);
+        rym90(q);
+        meas[repetition][l][3] = measure(q, INT_AVG);
+    };
+};
+return meas;

@@ -1,0 +1,95 @@
+SUCCESS
+Program( # input.cq:11:1..17:23
+  version: <
+    Version( # input.cq:11:1..10
+      items: [
+        DecimalIntegerLiteral( # input.cq:11:7..8
+          value: 2
+        )
+        DecimalIntegerLiteral( # input.cq:11:9..10
+          value: 0
+        )
+      ]
+    )
+  >
+  data: <
+    SemicolonSeparated( # input.cq:11:10..17:23
+      elements: [
+        QubitDefinition( # input.cq:11:10..13:8
+          modifiers: <
+            Modifiers( # input.cq:11:10
+              scope: <
+                ScopeLocal( # input.cq:11:10
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:11:10
+)
+              >
+              implementation: <
+                ImplementationAutomatic( # input.cq:11:10
+)
+              >
+            )
+          >
+          data: <
+            Identifier( # input.cq:13:7..8
+              name: q
+            )
+          >
+        )
+        RepeatUntilLoop( # input.cq:13:9..17:22
+          modifiers: <
+            Modifiers( # input.cq:13:9
+              scope: <
+                ScopeLocal( # input.cq:13:9
+)
+              >
+              lifetime: <
+                LifetimeAutomatic( # input.cq:13:9
+)
+              >
+              implementation: <
+                ImplementationAutomatic( # input.cq:13:9
+)
+              >
+            )
+          >
+          label: -
+          annotations: <
+            Annotations( # input.cq:15:7
+              data: []
+            )
+          >
+          control: <
+            BitwiseNotOperator( # input.cq:17:10..21
+              operand: <
+                FunctionCall( # input.cq:17:11..21
+                  function: <
+                    Identifier( # input.cq:17:11..18
+                      name: measure
+                    )
+                  >
+                  arguments: <
+                    Identifier( # input.cq:17:19..20
+                      name: q
+                    )
+                  >
+                )
+              >
+            )
+          >
+          body: <
+            Block( # input.cq:15:8..17:2
+              data: <
+                Void( # input.cq:15:9
+)
+              >
+            )
+          >
+        )
+      ]
+    )
+  >
+)
+

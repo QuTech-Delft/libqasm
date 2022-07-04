@@ -1,0 +1,38 @@
+/*
+    File:       t2/input.cq
+    Purpose:    T2 measurement
+    Author:     Wouter Vlothuizen (wouter.vlothuizen@tno.nl)
+    Copyright:	QuTech/TNO
+    Notes:
+    Based on:   QuantumUseCases.doc
+*/
+
+cQASM 2.0;
+
+template parameter q: qref;
+template parameter REP_CNT: int;
+template parameter TIME_CNT: int;
+
+parameter T: frac;
+parameter TIME_MIN: frac;
+parameter TIME_STEP: frac;
+
+var meas: bool[REP_CNT][TIME_CNT];
+
+var repetition: int;
+var t: int;
+var time: frac;      # FIXME: define unit of time, and range
+
+for(repetition=0; repetition<REP_CNT; repetition++) {
+    for(time=TIME_MIN,t=0; t<TIME_CNT; time+=TIME_STEP,t++) {
+        x90(q);
+        wait(q, time);
+        x180(q);
+        wait(q, time);
+        x90(q);
+
+        meas[repetition][t] = measure(q, INT_AVG);
+        prepz(q);
+    };
+};
+return meas;

@@ -1,0 +1,45 @@
+/*
+    File:       rabi/input.cq
+    Purpose:    Rabi
+    Author:     Wouter Vlothuizen (wouter.vlothuizen@tno.nl)
+                Jeroen van Straten
+    Copyright:	QuTech/TNO
+    Notes:
+    Based on:   QuantumUseCases.doc
+                PycQED_py3::pycqed.instrument_drivers.meta_instrument.qubit_objects.CCL_Transmon.p#measure_rabi()
+                https://github.com/QuTech-Delft/cQASM-spec/blob/master/examples.md#rabiqasm
+                FIXME: also implement other variants
+*/
+
+cQASM 2.0
+
+template parameter REP_CNT: int;
+template parameter AMPL_CNT: int;
+parameter AMPL_MIN: ufixed_1_31;
+parameter AMPL_STEP: ufixed_1_31;
+parameter INT_AVG: int;
+
+function rabi(
+    template q: qref,
+    template REP_CNT: int,
+    template AMPL_CNT: int,
+    AMPL_MIN: ufixed_1_31,
+    AMPL_STEP: ufixed_1_31,
+    INT_AVG: int
+) -> (
+    int[REP_CNT][AMPL_CNT]
+) {
+    var meas: int[REP_CNT][AMPL_CNT];
+    var repetition: int;
+    var a: int;
+    var amplitude: ufixed_1_31;
+
+    for(repetition=0; repetition<REP_CNT; repetition++) {
+        for(amplitude=AMPL_MIN,a=0; a<AMPL_CNT; amplitude+=AMPL_STEP,a++) {
+            prepz(q);
+            rx(q,amplitude);
+            meas[repetition][a] = measure(q,INT_AVG);
+        }
+    };
+    return meas;
+};

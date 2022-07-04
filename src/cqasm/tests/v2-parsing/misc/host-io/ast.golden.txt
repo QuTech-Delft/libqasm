@@ -1,0 +1,131 @@
+SUCCESS
+Program( # input.cq:1:1..15:10
+  version: <
+    Version( # input.cq:1:1..10
+      items: [
+        DecimalIntegerLiteral( # input.cq:1:7..8
+          value: 2
+        )
+        DecimalIntegerLiteral( # input.cq:1:9..10
+          value: 0
+        )
+      ]
+    )
+  >
+  data: <
+    SemicolonSeparated( # input.cq:4:1..15:26
+      elements: [
+        TemplateMarker( # input.cq:4:1..27
+          data: <
+            ParameterDefinition( # input.cq:4:10..27
+              data: <
+                Colon( # input.cq:4:20..27
+                  lhs: <
+                    Identifier( # input.cq:4:20..21
+                      name: q
+                    )
+                  >
+                  rhs: <
+                    Identifier( # input.cq:4:23..27
+                      name: qref
+                    )
+                  >
+                )
+              >
+            )
+          >
+        )
+        TemplateMarker( # input.cq:5:1..26
+          data: <
+            ParameterDefinition( # input.cq:5:10..26
+              data: <
+                Colon( # input.cq:5:20..26
+                  lhs: <
+                    Identifier( # input.cq:5:20..21
+                      name: i
+                    )
+                  >
+                  rhs: <
+                    Identifier( # input.cq:5:23..26
+                      name: int
+                    )
+                  >
+                )
+              >
+            )
+          >
+        )
+        ParameterDefinition( # input.cq:6:1..17
+          data: <
+            Colon( # input.cq:6:11..17
+              lhs: <
+                Identifier( # input.cq:6:11..12
+                  name: j
+                )
+              >
+              rhs: <
+                Identifier( # input.cq:6:14..17
+                  name: int
+                )
+              >
+            )
+          >
+        )
+        ParameterDefinition( # input.cq:7:1..18
+          data: <
+            Colon( # input.cq:7:11..18
+              lhs: <
+                Identifier( # input.cq:7:11..12
+                  name: b
+                )
+              >
+              rhs: <
+                Identifier( # input.cq:7:14..18
+                  name: bool
+                )
+              >
+            )
+          >
+        )
+        ParameterDefinition( # input.cq:8:1..18
+          data: <
+            Colon( # input.cq:8:11..18
+              lhs: <
+                Identifier( # input.cq:8:11..12
+                  name: r
+                )
+              >
+              rhs: <
+                Identifier( # input.cq:8:14..18
+                  name: real
+                )
+              >
+            )
+          >
+        )
+        SendStatement( # input.cq:11:1..8
+          data: <
+            Identifier( # input.cq:11:6..7
+              name: k
+            )
+          >
+        )
+        ReceiveStatement( # input.cq:12:1..13
+          expected_type: <
+            Identifier( # input.cq:12:9..12
+              name: int
+            )
+          >
+        )
+        ReturnStatement( # input.cq:15:1..9
+          value: <
+            DecimalIntegerLiteral( # input.cq:15:8..9
+              value: 0
+            )
+          >
+        )
+      ]
+    )
+  >
+)
+
