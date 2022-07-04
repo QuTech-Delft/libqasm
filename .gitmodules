@@ -3,4 +3,4 @@
 	url = https://github.com/onqtam/doctest.git
 [submodule "src/cqasm/tree-gen"]
 	path = src/cqasm/tree-gen
-	url = https://github.com/QE-Lab/tree-gen.git
+	url = https://github.com/QuTech-Delft/tree-gen.git

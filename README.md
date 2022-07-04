@@ -1,9 +1,9 @@
 
 # libQASM: Library to parse cQASM v1.0 files
 
-[![CI](https://github.com/QE-Lab/libqasm/workflows/Test/badge.svg)](https://github.com/qe-lab/libqasm/actions)
+[![CI](https://github.com/QuTech-Delft/libqasm/workflows/Test/badge.svg)](https://github.com/qutech-delft/libqasm/actions)
 [![PyPI](https://badgen.net/pypi/v/libqasm)](https://pypi.org/project/libqasm/)
-[![Anaconda](https://anaconda.org/qe-lab/libqasm/badges/version.svg)](https://anaconda.org/qe-lab/libqasm/)
+[![Anaconda](https://anaconda.org/qutech/libqasm/badges/version.svg)](https://anaconda.org/qutech/libqasm/)
 [![API docs](https://readthedocs.org/projects/libqasm/badge/?version=latest)](https://libqasm.readthedocs.io/en/latest/)
 
 ## Dependencies
@@ -158,3 +158,10 @@ This tests the library in a container with the bare minimum requirements for lib
 ```
 docker build .
 ```
+
+**Note for Windows users:** The above might fail on Windows to the autocrlf transformation that git does. If you are having trouble with this just create new clone of this repository using:
+
+```
+git clone --config core.autocrlf=input git@github.com:QuTech-Delft/libqasm.git
+```
+

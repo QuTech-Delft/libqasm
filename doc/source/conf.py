@@ -41,7 +41,7 @@ html_extra_path = ['../doxygen']
 # -- Project information -----------------------------------------------------
 
 project = 'libqasm'
-copyright = '2020, QuTech, TU Delft'
+copyright = '2022, QuTech, TU Delft'
 author = 'QuTech, TU Delft'
 
 # The short X.Y version

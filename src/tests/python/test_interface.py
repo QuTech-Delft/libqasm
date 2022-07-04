@@ -125,3 +125,13 @@ class TestInterface(LibQasmTest):
         qasm_representation.setErrorModel('depolarizing_channel', (0.001, 0.1, 3.4))
         self.assertEqual(qasm_representation.getErrorModelType(), 'depolarizing_channel')
         self.assertEqual(qasm_representation.getErrorModelParameters(), (0.001, 0.1, 3.4))
+
+    def test_barriers(self):
+        lib_qasm = self._generic_test_steps('barriers')
+        parse_res = lib_qasm.getParseResult()
+        self.assertEqual(parse_res, 0)
+
+    def test_grover(self):
+        lib_qasm = self._generic_test_steps('grover')
+        parse_res = lib_qasm.getParseResult()
+        self.assertEqual(parse_res, 0)

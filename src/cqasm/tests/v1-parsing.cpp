@@ -132,7 +132,8 @@ public:
             analyzer.register_instruction("display_binary", "", false, false);
             analyzer.register_instruction("display_binary", "B", false, false);
             analyzer.register_instruction("skip", "i", false, false);
-            analyzer.register_instruction("wait", "i", false, false);
+            analyzer.register_instruction("wait", "Qi", false, false);
+            analyzer.register_instruction("barrier", "Q", false, false);
             analyzer.register_instruction("reset-averaging", "", false, false);
             analyzer.register_instruction("reset-averaging", "Q", false, false);
             analyzer.register_instruction("load_state", "s", false, false);

@@ -19,6 +19,8 @@
         yylloc->last_column = 1; yylloc->last_line = 1;
     #define LOCATION_LINE \
         yylloc->last_column = 1; yylloc->last_line += 1;
+    #define LOCATION_OVERRIDE_LINE \
+        yylloc->last_column = 1; yylloc->last_line = std::strtol(yylval->str + 12, nullptr, 10);
     #define LOCATION_STEP \
         yylloc->first_column = yylloc->last_column; \
         yylloc->first_line = yylloc->last_line;
@@ -62,6 +64,13 @@
 
     /* And then there's the opposite, the escaped newline */
 \\(\n|\r\n?)                                        LOCATION_LINE; DELETE;
+
+    /* We can also do a newline or an escaped newline that sets the line */
+    /* number for the next line. That's useful primarily for generated */
+    /* code, to make line numbers more sensible for the user. */
+(@@NEXT_LINE=[0-9]+\n|\r\n?)                        LOCATION_OVERRIDE_LINE; WITHOUT_STR(NEWLINE);
+(@@NEXT_LINE=[0-9]+\\\n|\r\n?)                      LOCATION_OVERRIDE_LINE; DELETE;
+
 
     /* Gobble up comments */
 #.*                                                 DELETE;

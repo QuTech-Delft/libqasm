@@ -11,6 +11,7 @@ if len(sys.argv) != 2:
 
 from plumbum import local, FG
 
+
 def diff():
     is_test_dir = False
     for t in ('ast', 'semantic.1.0', 'semantic.1.1', 'semantic.1.2'):

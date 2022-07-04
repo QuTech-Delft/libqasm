@@ -1,3 +1,7 @@
 /.git
 /Dockerfile
 /build
+/cbuild
+/pybuild
+/.eggs
+/.pytest_cache
