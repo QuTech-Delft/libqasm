@@ -1,0 +1,8 @@
+version 1.0
+qubits 2
+
+x q[0]
+measure_z q[0]
+x q[0]
+c-barrier b[0],q[0,1]
+x q[1]
