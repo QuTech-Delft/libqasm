@@ -67,7 +67,7 @@ endif()
 
 if(NOT BISON_FOUND)
 
-    message(WARNING "bison ${BISON_VERSION_REQUIRED} not found on your system. trying to build from source...")
+    message(WARNING "bison ${BISON_VERSION_REQUIRED} not found on your system. trying to build Bison ${BISON_VERSION_TO_BUILD} from source...")
 
     configure_file(
         "${CMAKE_CURRENT_SOURCE_DIR}/cmake/bison-download.cmake"
@@ -80,7 +80,7 @@ if(NOT BISON_FOUND)
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bison-download"
     )
     if(result)
-        message(FATAL_ERROR "download step for bison ${BISON_VERSION_REQUIRED} failed: ${result}")
+        message(FATAL_ERROR "download step for bison ${BISON_VERSION_TO_BUILD} failed: ${result}")
     endif()
 
     execute_process(
@@ -89,7 +89,7 @@ if(NOT BISON_FOUND)
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bison-download"
     )
     if(result)
-        message(FATAL_ERROR "download step for bison ${BISON_VERSION_REQUIRED} failed: ${result}")
+        message(FATAL_ERROR "download step for bison ${BISON_VERSION_TO_BUILD} failed: ${result}")
     endif()
 
     execute_process(
@@ -98,7 +98,7 @@ if(NOT BISON_FOUND)
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bison-build"
     )
     if(result)
-        message(FATAL_ERROR "configure step for bison ${BISON_VERSION_REQUIRED} failed: ${result}")
+        message(FATAL_ERROR "configure step for bison ${BISON_VERSION_TO_BUILD} failed: ${result}")
     endif()
 
     execute_process(
@@ -107,7 +107,7 @@ if(NOT BISON_FOUND)
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bison-build"
     )
     if(result)
-        message(FATAL_ERROR "build step for bison ${BISON_VERSION_REQUIRED} failed: ${result}")
+        message(FATAL_ERROR "build step for bison ${BISON_VERSION_TO_BUILD} failed: ${result}")
     endif()
 
     execute_process(
@@ -116,7 +116,7 @@ if(NOT BISON_FOUND)
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bison-build"
     )
     if(result)
-        message(FATAL_ERROR "install step for bison ${BISON_VERSION_REQUIRED} failed: ${result}")
+        message(FATAL_ERROR "install step for bison ${BISON_VERSION_TO_BUILD} failed: ${result}")
     endif()
 
     # Add the binary directory to the system environment path. Not sure if this
@@ -133,7 +133,7 @@ if(NOT BISON_FOUND)
 
     # Find again.
     find_package(
-        BISON ${BISON_VERSION_REQUIRED} EXACT
+        BISON ${BISON_VERSION_TO_BUILD} EXACT
         REQUIRED
     )
 
