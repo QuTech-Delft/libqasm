@@ -42,6 +42,7 @@ endif()
 # Require flex/bison; if not installed, this will try to build from source.
 set(FLEX_VERSION_REQUIRED 2.6.1)
 set(BISON_VERSION_REQUIRED 3.0)
+set(BISON_VERSION_TO_BUILD 3.8)
 include(cmake/flex-bison.cmake)
 if(WIN32)
     set(flex_win_compat --wincompat)
