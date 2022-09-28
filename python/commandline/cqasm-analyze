@@ -1,0 +1,24 @@
+#!/usr/bin/env python3
+
+import argparse
+
+from cqasm.v1 import Analyzer
+
+def cli_handler(args):
+    analyzer = Analyzer(args.version)
+    result = analyzer.analyze_file(args.file)
+    print(result)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "file", metavar="file", type=str, help="The cqasm file to analyze"
+    )
+    parser.add_argument(
+        "--version",
+        type=str,
+        help="bound on norm of aux primes in PreTypeOneTwo case",
+        default="1.2"
+    )
+    args = parser.parse_args()
+    cli_handler(args)
