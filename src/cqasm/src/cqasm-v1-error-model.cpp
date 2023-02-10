@@ -77,7 +77,7 @@ error_model::ErrorModelRef deserialize(const ::tree::cbor::MapReader &map) {
     for (size_t i = 0; i < ar.size(); i++) {
         model->param_types.add(::tree::base::deserialize<types::Node>(ar.at(i).as_binary()));
     }
-    return std::move(model);
+    return model;
 }
 
 } // namespace primitives
