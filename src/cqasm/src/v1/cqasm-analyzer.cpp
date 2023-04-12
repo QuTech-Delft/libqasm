@@ -1,5 +1,5 @@
 /** \file
- * Implementation for \ref include/cqasm-v1-analyzer.hpp "cqasm-v1-analyzer.hpp".
+ * Implementation for \ref include/v1/cqasm-analyzer.hpp "v1/cqasm-analyzer.hpp".
  */
 
 #define _USE_MATH_DEFINES
@@ -9,9 +9,9 @@
 #include <list>
 #include <map>
 #include <utility>
-#include "cqasm-utils.hpp"
-#include "cqasm-v1-analyzer.hpp"
-#include "cqasm-v1-parse-helper.hpp"
+#include "../cqasm-utils.hpp"
+#include "v1/cqasm-analyzer.hpp"
+#include "v1/cqasm-parse-helper.hpp"
 #include "cqasm-v1-functions-gen.hpp"
 
 namespace cqasm {

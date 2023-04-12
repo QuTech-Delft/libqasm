@@ -11,9 +11,9 @@ include "cqasm-tree.hpp"
 tree_namespace cqasm::tree
 
 // Include primitive types.
-include "cqasm-v1-primitives.hpp"
-include "cqasm-v1-semantic-helper.hpp"
-src_include "cqasm-v1-semantic.hpp"
+include "v1/cqasm-primitives.hpp"
+include "v1/cqasm-semantic-helper.hpp"
+src_include "v1/cqasm-semantic.hpp"
 import cqasm.v1.primitives
 import cqasm.v1.semantic
 

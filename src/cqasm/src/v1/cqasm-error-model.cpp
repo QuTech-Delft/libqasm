@@ -1,10 +1,10 @@
 /** \file
- * Implementation for \ref include/cqasm-v1-error-model.hpp "cqasm-v1-error-model.hpp".
+ * Implementation for \ref include/v1/cqasm-error-model.hpp "v1/cqasm-error-model.hpp".
  */
 
-#include "cqasm-utils.hpp"
-#include "cqasm-v1-error-model.hpp"
-#include "cqasm-v1-semantic.hpp"
+#include "../cqasm-utils.hpp"
+#include "v1/cqasm-error-model.hpp"
+#include "v1/cqasm-semantic.hpp"
 
 namespace cqasm {
 namespace v1 {

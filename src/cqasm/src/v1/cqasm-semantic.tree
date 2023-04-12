@@ -9,10 +9,10 @@ include "cqasm-tree.hpp"
 tree_namespace cqasm::tree
 
 // Include primitive types.
-include "cqasm-v1-primitives.hpp"
-include "cqasm-v1-values.hpp"
-include "cqasm-v1-error-model.hpp"
-include "cqasm-v1-instruction.hpp"
+include "v1/cqasm-primitives.hpp"
+include "v1/cqasm-values.hpp"
+include "v1/cqasm-error-model.hpp"
+include "v1/cqasm-instruction.hpp"
 import cqasm.v1.primitives
 import cqasm.v1.values
 import cqasm.v1.types

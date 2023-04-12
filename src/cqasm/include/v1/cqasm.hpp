@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "cqasm-v1-parse-helper.hpp"
-#include "cqasm-v1-analyzer.hpp"
+#include "cqasm-parse-helper.hpp"
+#include "cqasm-analyzer.hpp"
 
 /**
  * Toplevel namespace with entry points for the new API.

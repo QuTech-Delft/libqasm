@@ -1,9 +1,9 @@
 /** \file
- * Implementation for \ref include/cqasm-v1-types.hpp "cqasm-v1-types.hpp".
+ * Implementation for \ref include/v1/cqasm-types.hpp "v1/cqasm-types.hpp".
  */
 
 #include <cctype>
-#include "cqasm-v1-types.hpp"
+#include "v1/cqasm-types.hpp"
 
 namespace cqasm {
 namespace v1 {

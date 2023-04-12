@@ -309,7 +309,7 @@ public:
 
 #pragma once
 
-#include "cqasm-v1-resolver.hpp"
+#include "v1/cqasm-resolver.hpp"
 
 namespace cqasm {
 namespace v1 {

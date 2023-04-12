@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "cqasm-annotations.hpp"
-#include "cqasm-v1-ast.hpp"
+#include "../cqasm-annotations.hpp"
+#include "cqasm-ast.hpp"
 #include <cstdio>
 
 namespace cqasm {

@@ -11,8 +11,8 @@
     #include <cstdio>
     #include <cstdint>
     #include "cqasm-annotations.hpp"
-    #include "cqasm-v1-ast.hpp"
-    #include "cqasm-v1-parse-helper.hpp"
+    #include "v1/cqasm-ast.hpp"
+    #include "v1/cqasm-parse-helper.hpp"
     using namespace cqasm::v1::ast;
     typedef void* yyscan_t;
 
@@ -242,7 +242,7 @@ priority than '|' */
 %left '@'
 
 /* Misc. Yacc directives */
-%error-verbose
+%define parse.error verbose
 %start Root
 
 %%

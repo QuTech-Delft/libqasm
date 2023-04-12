@@ -9,7 +9,7 @@
 #include <complex>
 #include <vector>
 
-#include "cqasm-version.hpp"
+#include "../cqasm-version.hpp"
 #include "tree-cbor.hpp"
 
 namespace cqasm {

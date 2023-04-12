@@ -92,3 +92,6 @@ tags
 # IDE's
 .project
 .cproject
+
+# Git submodules
+src/cqasm/tree-gen

@@ -108,22 +108,22 @@ add_flex_bison_dependency(
 
 # List of non-generated sources.
 set(CQASM_V1_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v1.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v1-primitives.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v1-ast.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v1-types.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v1-values.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v1-error-model.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v1-instruction.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v1-resolver.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v1-parse-helper.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v1-analyzer.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/v1/cqasm.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/v1/cqasm-primitives.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/v1/cqasm-ast.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/v1/cqasm-types.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/v1/cqasm-values.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/v1/cqasm-error-model.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/v1/cqasm-instruction.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/v1/cqasm-resolver.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/v1/cqasm-parse-helper.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/v1/cqasm-analyzer.cpp"
 )
 
 # Generate the lexer.
 flex_target(
     cqasm-v1-lexer
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v1-lexer.l"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/v1/cqasm-lexer.l"
     "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-lexer.cpp"
     COMPILE_FLAGS
         "--header-file=${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-lexer.hpp ${flex_win_compat}"
@@ -133,7 +133,7 @@ list(APPEND CQASM_V1_SOURCES ${FLEX_cqasm-v1-lexer_OUTPUTS})
 # Generate the parser.
 bison_target(
     cqasm-v1-parser
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v1-parser.y"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/v1/cqasm-parser.y"
     "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-parser.cpp"
     COMPILE_FLAGS
         "-rall --report-file=${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-parser.txt -Werror=conflicts-sr -Werror=conflicts-rr"
@@ -148,7 +148,7 @@ add_flex_bison_dependency(
 
 # Generate the abstract syntax tree classes.
 generate_tree_py(
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v1-ast.tree"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/v1/cqasm-ast.tree"
     "${CMAKE_CURRENT_BINARY_DIR}/include/cqasm-v1-ast-gen.hpp"
     "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-ast-gen.cpp"
     "${LIBQASM_GENERATED_PYTHON_FILES}/cqasm-v1-ast-gen.py"
@@ -157,7 +157,7 @@ list(APPEND CQASM_V1_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-ast-gen.cpp")
 
 # Generate the type tree classes.
 generate_tree_py(
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v1-types.tree"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/v1/cqasm-types.tree"
     "${CMAKE_CURRENT_BINARY_DIR}/include/cqasm-v1-types-gen.hpp"
     "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-types-gen.cpp"
     "${LIBQASM_GENERATED_PYTHON_FILES}/cqasm-v1-types-gen.py"
@@ -168,7 +168,7 @@ list(APPEND CQASM_V1_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-types-gen.cpp
 # compile-time or only at runtime, but their type is resolved to one of the
 # type tree nodes at compile-time.
 generate_tree_py(
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v1-values.tree"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/v1/cqasm-values.tree"
     "${CMAKE_CURRENT_BINARY_DIR}/include/cqasm-v1-values-gen.hpp"
     "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-values-gen.cpp"
     "${LIBQASM_GENERATED_PYTHON_FILES}/cqasm-v1-values-gen.py"
@@ -177,7 +177,7 @@ list(APPEND CQASM_V1_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-values-gen.cp
 
 # Generate the semantic tree classes.
 generate_tree_py(
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/cqasm-v1-semantic.tree"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/v1/cqasm-semantic.tree"
     "${CMAKE_CURRENT_BINARY_DIR}/include/cqasm-v1-semantic-gen.hpp"
     "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-semantic-gen.cpp"
     "${LIBQASM_GENERATED_PYTHON_FILES}/cqasm-v1-semantic-gen.py"

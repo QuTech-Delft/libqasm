@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "cqasm-v1-types.hpp"
-#include "cqasm-v1-values.hpp"
+#include "cqasm-types.hpp"
+#include "cqasm-values.hpp"
 
 namespace cqasm {
 namespace v1 {

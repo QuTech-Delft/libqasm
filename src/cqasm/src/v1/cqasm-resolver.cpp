@@ -1,11 +1,11 @@
 /** \file
- * Implementation for \ref include/cqasm-v1-resolver.hpp "cqasm-v1-resolver.hpp".
+ * Implementation for \ref include/v1/cqasm-resolver.hpp "v1/cqasm-resolver.hpp".
  */
 
 #include <unordered_set>
-#include "cqasm-utils.hpp"
+#include "../cqasm-utils.hpp"
 #include "cqasm-error.hpp"
-#include "cqasm-v1-resolver.hpp"
+#include "v1/cqasm-resolver.hpp"
 
 namespace cqasm {
 namespace v1 {

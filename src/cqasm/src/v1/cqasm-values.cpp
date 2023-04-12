@@ -1,12 +1,12 @@
 /** \file
- * Implementation for \ref include/cqasm-v1-values.hpp "cqasm-v1-values.hpp".
+ * Implementation for \ref include/v1/cqasm-values.hpp "v1/cqasm-values.hpp".
  */
 
 #include "cqasm-error.hpp"
-#include "cqasm-v1-parse-helper.hpp"
-#include "cqasm-v1-values.hpp"
-#include "cqasm-v1-types.hpp"
-#include "cqasm-v1-semantic.hpp"
+#include "v1/cqasm-parse-helper.hpp"
+#include "v1/cqasm-values.hpp"
+#include "v1/cqasm-types.hpp"
+#include "v1/cqasm-semantic.hpp"
 
 namespace cqasm {
 namespace v1 {

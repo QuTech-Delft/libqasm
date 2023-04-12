@@ -11,10 +11,10 @@
 
 #include <cstdio>
 #include <functional>
-#include "cqasm-v1-ast.hpp"
-#include "cqasm-v1-semantic.hpp"
-#include "cqasm-v1-resolver.hpp"
-#include "cqasm-v1-parse-helper.hpp"
+#include "cqasm-ast.hpp"
+#include "cqasm-semantic.hpp"
+#include "cqasm-resolver.hpp"
+#include "cqasm-parse-helper.hpp"
 
 namespace cqasm {
 namespace v1 {

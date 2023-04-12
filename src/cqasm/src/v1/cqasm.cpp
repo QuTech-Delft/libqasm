@@ -3,10 +3,10 @@
  * Contains the non-generated source files and private header files for libqasm.
  *
  * \file
- * Implementation for \ref include/cqasm-v1.hpp "cqasm-v1.hpp".
+ * Implementation for \ref include/v1/cqasm.hpp "v1/cqasm.hpp".
  */
 
-#include "cqasm-v1.hpp"
+#include "v1/cqasm.hpp"
 
 namespace cqasm {
 namespace v1 {

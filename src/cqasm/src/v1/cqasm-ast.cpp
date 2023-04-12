@@ -1,8 +1,8 @@
 /** \file
- * Implementation for \ref include/cqasm-v1-ast.hpp "cqasm-v1-ast.hpp".
+ * Implementation for \ref include/v1/cqasm-ast.hpp "v1/cqasm-ast.hpp".
  */
 
-#include "cqasm-v1-ast.hpp"
+#include "v1/cqasm-ast.hpp"
 #include <stdexcept>
 
 namespace cqasm {

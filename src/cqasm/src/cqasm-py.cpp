@@ -3,7 +3,7 @@
  */
 
 #include "cqasm-py.hpp"
-#include "cqasm-v1.hpp"
+#include "v1/cqasm.hpp"
 
 namespace v1 = cqasm::v1;
 

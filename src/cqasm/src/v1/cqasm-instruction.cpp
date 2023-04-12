@@ -1,10 +1,10 @@
 /** \file
- * Implementation for \ref include/cqasm-v1-instruction.hpp "cqasm-v1-instruction.hpp".
+ * Implementation for \ref include/v1/cqasm-instruction.hpp "v1/cqasm-instruction.hpp".
  */
 
-#include "cqasm-utils.hpp"
-#include "cqasm-v1-instruction.hpp"
-#include "cqasm-v1-semantic.hpp"
+#include "../cqasm-utils.hpp"
+#include "v1/cqasm-instruction.hpp"
+#include "v1/cqasm-semantic.hpp"
 
 namespace cqasm {
 namespace v1 {

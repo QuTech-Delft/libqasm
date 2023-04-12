@@ -1,8 +1,8 @@
 /** \file
- * Implementation for \ref include/cqasm-v1-primitives.hpp "cqasm-v1-primitives.hpp".
+ * Implementation for \ref include/v1/cqasm-primitives.hpp "v1/cqasm-primitives.hpp".
  */
 
-#include "cqasm-v1-primitives.hpp"
+#include "v1/cqasm-primitives.hpp"
 
 namespace cqasm {
 namespace v1 {
