@@ -2,7 +2,7 @@
 source
 
 # Header file for the semantic tree node classes.
-header
+header "v1/cqasm-semantic-gen.hpp"
 
 // Include tree base classes.
 include "cqasm-tree.hpp"

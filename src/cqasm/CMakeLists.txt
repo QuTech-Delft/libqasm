@@ -124,9 +124,9 @@ set(CQASM_V1_SOURCES
 flex_target(
     cqasm-v1-lexer
     "${CMAKE_CURRENT_SOURCE_DIR}/src/v1/cqasm-lexer.l"
-    "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-lexer.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v1/cqasm-lexer.cpp"
     COMPILE_FLAGS
-        "--header-file=${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-lexer.hpp ${flex_win_compat}"
+        "--header-file=${CMAKE_CURRENT_BINARY_DIR}/v1/cqasm-lexer.hpp ${flex_win_compat}"
 )
 list(APPEND CQASM_V1_SOURCES ${FLEX_cqasm-v1-lexer_OUTPUTS})
 
@@ -134,9 +134,9 @@ list(APPEND CQASM_V1_SOURCES ${FLEX_cqasm-v1-lexer_OUTPUTS})
 bison_target(
     cqasm-v1-parser
     "${CMAKE_CURRENT_SOURCE_DIR}/src/v1/cqasm-parser.y"
-    "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-parser.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v1/cqasm-parser.cpp"
     COMPILE_FLAGS
-        "-rall --report-file=${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-parser.txt -Werror=conflicts-sr -Werror=conflicts-rr"
+        "-rall --report-file=${CMAKE_CURRENT_BINARY_DIR}/v1/cqasm-parser.txt -Werror=conflicts-sr -Werror=conflicts-rr"
 )
 list(APPEND CQASM_V1_SOURCES ${BISON_cqasm-v1-parser_OUTPUTS})
 
@@ -149,47 +149,47 @@ add_flex_bison_dependency(
 # Generate the abstract syntax tree classes.
 generate_tree_py(
     "${CMAKE_CURRENT_SOURCE_DIR}/src/v1/cqasm-ast.tree"
-    "${CMAKE_CURRENT_BINARY_DIR}/include/cqasm-v1-ast-gen.hpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-ast-gen.cpp"
-    "${LIBQASM_GENERATED_PYTHON_FILES}/cqasm-v1-ast-gen.py"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/v1/cqasm-ast-gen.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v1/cqasm-ast-gen.cpp"
+    "${LIBQASM_GENERATED_PYTHON_FILES}/v1/cqasm-ast-gen.py"
 )
-list(APPEND CQASM_V1_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-ast-gen.cpp")
+list(APPEND CQASM_V1_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v1/cqasm-ast-gen.cpp")
 
 # Generate the type tree classes.
 generate_tree_py(
     "${CMAKE_CURRENT_SOURCE_DIR}/src/v1/cqasm-types.tree"
-    "${CMAKE_CURRENT_BINARY_DIR}/include/cqasm-v1-types-gen.hpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-types-gen.cpp"
-    "${LIBQASM_GENERATED_PYTHON_FILES}/cqasm-v1-types-gen.py"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/v1/cqasm-types-gen.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v1/cqasm-types-gen.cpp"
+    "${LIBQASM_GENERATED_PYTHON_FILES}/v1/cqasm-types-gen.py"
 )
-list(APPEND CQASM_V1_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-types-gen.cpp")
+list(APPEND CQASM_V1_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v1/cqasm-types-gen.cpp")
 
 # Generate the semantic value classes. Values can be either known at
 # compile-time or only at runtime, but their type is resolved to one of the
 # type tree nodes at compile-time.
 generate_tree_py(
     "${CMAKE_CURRENT_SOURCE_DIR}/src/v1/cqasm-values.tree"
-    "${CMAKE_CURRENT_BINARY_DIR}/include/cqasm-v1-values-gen.hpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-values-gen.cpp"
-    "${LIBQASM_GENERATED_PYTHON_FILES}/cqasm-v1-values-gen.py"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/v1/cqasm-values-gen.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v1/cqasm-values-gen.cpp"
+    "${LIBQASM_GENERATED_PYTHON_FILES}/v1/cqasm-values-gen.py"
 )
-list(APPEND CQASM_V1_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-values-gen.cpp")
+list(APPEND CQASM_V1_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v1/cqasm-values-gen.cpp")
 
 # Generate the semantic tree classes.
 generate_tree_py(
     "${CMAKE_CURRENT_SOURCE_DIR}/src/v1/cqasm-semantic.tree"
-    "${CMAKE_CURRENT_BINARY_DIR}/include/cqasm-v1-semantic-gen.hpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-semantic-gen.cpp"
-    "${LIBQASM_GENERATED_PYTHON_FILES}/cqasm-v1-semantic-gen.py"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/v1/cqasm-semantic-gen.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v1/cqasm-semantic-gen.cpp"
+    "${LIBQASM_GENERATED_PYTHON_FILES}/v1/cqasm-semantic-gen.py"
 )
-list(APPEND CQASM_V1_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-semantic-gen.cpp")
+list(APPEND CQASM_V1_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v1/cqasm-semantic-gen.cpp")
 
 # Generate the cQASM default function set.
 generate_funcs(
-    "${CMAKE_CURRENT_BINARY_DIR}/include/cqasm-v1-functions-gen.hpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-functions-gen.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/v1/cqasm-functions-gen.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v1/cqasm-functions-gen.cpp"
 )
-list(APPEND CQASM_V1_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/cqasm-v1-functions-gen.cpp")
+list(APPEND CQASM_V1_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v1/cqasm-functions-gen.cpp")
 
 #-------------------------------------------------------------------------------
 # Compilation instructions

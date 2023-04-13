@@ -12,7 +12,7 @@
 #include "../cqasm-utils.hpp"
 #include "v1/cqasm-analyzer.hpp"
 #include "v1/cqasm-parse-helper.hpp"
-#include "cqasm-v1-functions-gen.hpp"
+#include "v1/cqasm-functions-gen.hpp"
 
 namespace cqasm {
 namespace v1 {

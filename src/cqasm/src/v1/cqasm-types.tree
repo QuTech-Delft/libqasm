@@ -4,7 +4,7 @@ source
 
 # Header file for the various classes representing the types of values
 # available in cQASM.
-header
+header "v1/cqasm-types-gen.hpp"
 
 // Include tree base classes.
 include "cqasm-tree.hpp"

@@ -2,7 +2,7 @@
 source
 
 # Header file for the abstract syntax tree node classes.
-header
+header "v1/cqasm-ast-gen.hpp"
 
 // Include tree base classes.
 include "cqasm-tree.hpp"

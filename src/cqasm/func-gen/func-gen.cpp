@@ -322,7 +322,7 @@ namespace functions {
 
 #include <cmath>
 #include <complex>
-#include ")" << header_name << R"("
+#include "v1/)" << header_name << R"("
 
 namespace cqasm {
 namespace v1 {

@@ -4,7 +4,7 @@ source
 
 # Header file for the various classes representing constants, references,
 # and dynamic expressions in cQASM.
-header
+header "v1/cqasm-values-gen.hpp"
 
 // Include tree base classes.
 include "cqasm-tree.hpp"

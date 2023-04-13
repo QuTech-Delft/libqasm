@@ -10,4 +10,4 @@
 #pragma once
 
 #include "cqasm-semantic-helper.hpp"
-#include "cqasm-v1-semantic-gen.hpp"
+#include "v1/cqasm-semantic-gen.hpp"

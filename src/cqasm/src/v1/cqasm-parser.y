@@ -1,5 +1,5 @@
 %define api.pure full
-%define api.prefix {cqasm_v1}
+%define api.prefix {cqasm_v1_}
 %locations
 
 %code requires {
@@ -16,8 +16,8 @@
     using namespace cqasm::v1::ast;
     typedef void* yyscan_t;
 
-    #define YYSTYPE CQASM_V1STYPE
-    #define YYLTYPE CQASM_V1LTYPE
+    #define YYSTYPE CQASM_V1_STYPE
+    #define YYLTYPE CQASM_V1_LTYPE
 
 }
 

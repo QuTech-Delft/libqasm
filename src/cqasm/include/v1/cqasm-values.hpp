@@ -7,7 +7,7 @@
 #pragma once
 
 #include "cqasm-ast.hpp"
-#include "cqasm-v1-values-gen.hpp"
+#include "v1/cqasm-values-gen.hpp"
 #include "cqasm-types.hpp"
 
 namespace cqasm {

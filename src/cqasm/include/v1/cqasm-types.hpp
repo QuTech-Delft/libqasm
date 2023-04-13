@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "cqasm-v1-types-gen.hpp"
+#include "v1/cqasm-types-gen.hpp"
 
 namespace cqasm {
 namespace v1 {

@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "cqasm-v1-ast-gen.hpp"
+#include "v1/cqasm-ast-gen.hpp"
 #include <iostream>
 #include <sstream>
 

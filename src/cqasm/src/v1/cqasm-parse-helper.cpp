@@ -57,9 +57,9 @@ ParseHelper::ParseHelper(
             push_error(sb.str());
             return;
         }
-        cqasm_v1set_in(fptr, (yyscan_t)scanner);
+        cqasm_v1_set_in(fptr, (yyscan_t)scanner);
     } else {
-        buf = cqasm_v1_scan_string(data.c_str(), (yyscan_t)scanner);
+        buf = cqasm_v1__scan_string(data.c_str(), (yyscan_t)scanner);
     }
 
     // Do the actual parsing.
@@ -80,7 +80,7 @@ ParseHelper::ParseHelper(
     if (!construct()) return;
 
     // Open the file or pass the data buffer to flex.
-    cqasm_v1set_in(fptr, (yyscan_t)scanner);
+    cqasm_v1_set_in(fptr, (yyscan_t)scanner);
 
     // Do the actual parsing.
     parse();
@@ -91,7 +91,7 @@ ParseHelper::ParseHelper(
  * Initializes the scanner. Returns whether this was successful.
  */
 bool ParseHelper::construct() {
-    int retcode = cqasm_v1lex_init((yyscan_t*)&scanner);
+    int retcode = cqasm_v1_lex_init((yyscan_t*)&scanner);
     if (retcode) {
         std::ostringstream sb;
         sb << "Failed to construct scanner: " << strerror(retcode);
@@ -106,7 +106,7 @@ bool ParseHelper::construct() {
  * Does the actual parsing.
  */
 void ParseHelper::parse() {
-    int retcode = cqasm_v1parse((yyscan_t) scanner, *this);
+    int retcode = cqasm_v1_parse((yyscan_t) scanner, *this);
     if (retcode == 2) {
         std::ostringstream sb;
         sb << "Out of memory while parsing " << filename;
@@ -132,10 +132,10 @@ ParseHelper::~ParseHelper() {
         fclose(fptr);
     }
     if (buf) {
-        cqasm_v1_delete_buffer((YY_BUFFER_STATE)buf, (yyscan_t)scanner);
+        cqasm_v1__delete_buffer((YY_BUFFER_STATE)buf, (yyscan_t)scanner);
     }
     if (scanner) {
-        cqasm_v1lex_destroy((yyscan_t)scanner);
+        cqasm_v1_lex_destroy((yyscan_t)scanner);
     }
 }
 
