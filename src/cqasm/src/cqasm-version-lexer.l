@@ -1,5 +1,5 @@
 %option noinput nounput noyywrap 8bit nodefault
-%option prefix="cqasm_version"
+%option prefix="cqasm_version_"
 %option yylineno
 %option reentrant bison-bridge bison-locations
 
