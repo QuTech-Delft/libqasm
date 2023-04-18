@@ -30,11 +30,11 @@ test:
   imports:
     - libQasm
   source_files:
-    - src/tests
+    - src/test
   requires:
     - pytest
   commands:
-    - pytest src/tests
+    - pytest src/test
 
 about:
   home: https://github.com/QuTech-Delft/libqasm

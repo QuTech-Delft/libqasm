@@ -78,18 +78,24 @@ set(LIBQASM_GENERATED_PYTHON_FILES ${CMAKE_CURRENT_BINARY_DIR}/py_gen)
 file(MAKE_DIRECTORY ${LIBQASM_GENERATED_PYTHON_FILES})
 
 # Jump to where the new API and the core of libqasm lives.
-add_subdirectory(src/cqasm)
+add_subdirectory(src)
+
+# Add the test directory.
+if(LIBQASM_BUILD_TESTS)
+    include(cmake/googletest.cmake)
+    enable_testing()
+    add_subdirectory(test)
+endif()
 
 # Compatibility mode: provide/test the original API in addition to the new one.
 if (LIBQASM_COMPAT)
-
     # Add the compatibility headers to the include path.
-    target_include_directories(cqasm_objlib INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/src/library/)
+    target_include_directories(cqasm_objlib INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/src/include/v1.0)
 
     # Make sure to install the headers as well.
     include(GNUInstallDirs)
     install(
-        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/library/
+        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/include/v1.0/
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         FILES_MATCHING PATTERN "*.hpp"
     )
@@ -97,20 +103,19 @@ if (LIBQASM_COMPAT)
     # If LIBQASM_BUILD_TESTS is also enabled, also add the tests for the
     # original API.
     if (LIBQASM_BUILD_TESTS)
-        file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/tests/cpp/*.cpp)
+        file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} test/v1.0/cpp/*.cpp)
         foreach(TEST_SRC ${TEST_SRCS})
             get_filename_component(TEST_NAME ${TEST_SRC} NAME_WE)
             add_executable(${TEST_NAME} ${TEST_SRC})
-            target_include_directories(${TEST_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/tests/cpp/doctest)
+            target_include_directories(${TEST_NAME} PRIVATE test/v1.0/cpp/doctest)
             target_link_libraries(${TEST_NAME} cqasm)
             add_test(
                 NAME ${TEST_NAME}
-                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/tests/test_data
+                WORKING_DIRECTORY test/v1.0/res
                 COMMAND ${TEST_NAME}
             )
         endforeach()
     endif()
-
 endif()
 
 # Include the tests directory if requested.

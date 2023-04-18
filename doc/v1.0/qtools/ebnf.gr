@@ -1,0 +1,6 @@
+# ebnf.gr -- an example extended BNF grammar for expressions
+> expression
+/ ''
+expression = term { ( '+' | '-' ) term }
+term = factor { ( '*' | '/' ) factor }
+factor = [ '-' ] ( number | identifier | '(' expression ')' )
