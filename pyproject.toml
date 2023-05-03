@@ -1,4 +1,4 @@
 [tool.pytest.ini_options]
 testpaths = [
-    "src/tests/python"
+    "test/v1.0/python"
 ]
