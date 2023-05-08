@@ -1,0 +1,327 @@
+# Implementation for the semantic tree node classes.
+source
+
+# Header file for the semantic tree node classes.
+header "v3/cqasm-semantic-gen.hpp"
+
+// Include tree base classes.
+include "cqasm-tree.hpp"
+tree_namespace cqasm::tree
+
+// Include primitive types.
+include "v3/cqasm-primitives.hpp"
+include "v3/cqasm-values.hpp"
+include "v3/cqasm-error-model.hpp"
+include "v3/cqasm-instruction.hpp"
+import cqasm.v3.primitives
+import cqasm.v3.values
+import cqasm.v3.types
+import cqasm.v3.error_model
+import cqasm.v3.instruction
+
+// Initialization function to use to construct default values for the tree base
+// classes and primitives.
+initialize_function cqasm::v3::primitives::initialize
+serdes_functions cqasm::v3::primitives::serialize cqasm::v3::primitives::deserialize
+
+// Include SourceLocation annotation object for the debug dump generator.
+src_include "cqasm-annotations.hpp"
+location cqasm::annotations::SourceLocation
+
+# Namespace for the semantic tree node classes.
+namespace cqasm
+namespace v3
+namespace semantic
+
+# Represents an annotation.
+annotation_data {
+
+    # The interface this annotation is intended for. If a target doesn't
+    # support an interface, it should silently ignore the annotation.
+    interface: cqasm::v3::primitives::Str;
+
+    # The operation within the interface that this annotation is intended for.
+    # If a supports the corresponding interface but not the operation, it
+    # should throw an error.
+    operation: cqasm::v3::primitives::Str;
+
+    # Any operands attached to the annotation.
+    operands: external Any<cqasm::v3::values::Node>;
+
+}
+
+# A block of statements. Only used for API level 1.2+.
+block {
+
+    # The statements contained by the block.
+    statements: Any<statement>;
+
+}
+
+# A single condition + block for use in an if-else chain.
+if_else_branch {
+
+    # The condition.
+    condition: external One<cqasm::v3::values::Node>;
+
+    # The body.
+    body: One<block>;
+
+}
+
+# Represents a node that carries annotation data.
+annotated {
+
+    # Zero or more annotations attached to this object.
+    annotations: Any<annotation_data>;
+
+    # Error model information.
+    error_model {
+
+        # Error model type as registered through the API.
+        model: cqasm::v3::error_model::ErrorModelRef;
+
+        # Name as it appears in the cQASM file.
+        name: cqasm::v3::primitives::Str;
+
+        # Error model parameters.
+        parameters: external Any<cqasm::v3::values::Node>;
+
+    }
+
+    # An instruction (a.k.a. gate).
+    instruction_base {
+
+        # Condition (c- notation). When there is no condition, this is a
+        # constant boolean set to true.
+        condition: external One<cqasm::v3::values::Node>;
+
+        # A regular instruction. Until 1.2, this is the only type of instruction
+        # that exists.
+        instruction {
+
+            # Instruction type as registered through the API.
+            instruction: cqasm::v3::instruction::InstructionRef;
+
+            # Name as it appears in the cQASM file.
+            name: cqasm::v3::primitives::Str;
+
+            # Operands for the instruction.
+            operands: external Any<cqasm::v3::values::Node>;
+
+            # Maintain 1.0/1.1 field order.
+            reorder(instruction, name, condition, operands, annotations);
+
+        }
+
+        # A version 1.2+ assignment instruction.
+        set_instruction {
+
+            # The assignment target.
+            lhs: external One<cqasm::v3::values::Node>;
+
+            # The value to assign.
+            rhs: external One<cqasm::v3::values::Node>;
+
+        }
+
+        # A version 1.2+ goto instruction.
+        goto_instruction {
+
+            # Link to the target subcircuit, used as a label.
+            target: Link<subcircuit>;
+
+        }
+
+    }
+
+    # A bundle of instructions, to be executed in parallel. Only used for API
+    # level 1.0 and 1.1; 1.2+ uses bundle_ext.
+    bundle {
+
+        # The list of parallel instructions.
+        items: Many<instruction>;
+
+    }
+
+    # A statement. Unused before 1.2, as only bundles existed before then.
+    statement {
+
+        # A bundle of instructions, to be executed in parallel. Only used for API
+        # level 1.2+.
+        bundle_ext {
+
+            # The list of parallel instructions.
+            items: Many<instruction_base>;
+
+        }
+
+        # Any version 1.2+ structured control-flow statement.
+        structured {
+
+            # An if-else chain.
+            if_else {
+
+                # The if-else branches.
+                branches: Many<if_else_branch>;
+
+                # The final else block, if any.
+                otherwise: Maybe<block>;
+
+            }
+
+            # A C-style for loop.
+            for_loop {
+
+                # The optional initializing assignment, run before the loop starts.
+                initialize: Maybe<set_instruction>;
+
+                # The condition for starting another iteration.
+                condition: external One<cqasm::v3::values::Node>;
+
+                # The updating assignment, done at the end of the loop body and upon
+                # continue.
+                update: Maybe<set_instruction>;
+
+                # The loop body.
+                body: One<block>;
+
+            }
+
+            # A foreach loop. Note that this is rather dumbed-down in cQASM 1.2
+            # compared to the cQASM 2.0 syntax it was inspired from, and is only
+            # usable as a range-based loop.
+            foreach_loop {
+
+                # Reference to the variable used for looping.
+                lhs: external One<cqasm::v3::values::Node>;
+
+                # The first value.
+                frm: cqasm::v3::primitives::Int;
+
+                # The last value.
+                to: cqasm::v3::primitives::Int;
+
+                # The loop body.
+                body: One<block>;
+
+            }
+
+            # A while loop.
+            while_loop {
+
+                # The condition for starting another iteration.
+                condition: external One<cqasm::v3::values::Node>;
+
+                # The loop body.
+                body: One<block>;
+
+            }
+
+            # A repeat-until loop.
+            repeat_until_loop {
+
+                # The loop body.
+                body: One<block>;
+
+                # The condition for stopping iteration.
+                condition: external One<cqasm::v3::values::Node>;
+
+            }
+
+            # A break statement.
+            break_statement {}
+
+            # A continue statement.
+            continue_statement {}
+
+        }
+
+    }
+
+    # A subcircuit. That is, a named collection of bundles, possibly repeated a
+    # number of times.
+    subcircuit {
+
+        # The name of the subcircuit. If the file doesn't start with a subcircuit
+        # definition, this is empty for the first subcircuit.
+        name: cqasm::v3::primitives::Str;
+
+        # An optional integer expression representing the number of
+        # iterations for this subcircuit. This is 1 when the iteration count is
+        # not specified.
+        iterations: cqasm::v3::primitives::Int;
+
+        # The instruction bundles contained by this subcircuit. Only used for
+        # API level 1.0 and 1.1; use body for 1.2+.
+        bundles: Any<bundle>;
+
+        # The statements contained by this subcircuit. Only used for API level
+        # 1.2+; use bundles for 1.0 and 1.1.
+        body: Maybe<block>;
+
+        # Maintain 1.0/1.1 field order.
+        reorder(name, iterations, bundles, annotations, body);
+
+    }
+
+    # A mapping. That is, a user-defined identifier mapping to some value.
+    mapping {
+
+        # The name of the mapping.
+        name: cqasm::v3::primitives::Str;
+
+        # The value it maps to.
+        value: external One<cqasm::v3::values::Node>;
+
+    }
+
+    # A variable.
+    variable {
+
+        # The name of the variable.
+        name: cqasm::v3::primitives::Str;
+
+        # The type of the variable.
+        typ: external One<cqasm::v3::types::Node>;
+
+    }
+
+}
+
+# The file version identifier.
+version {
+
+    # The list of version components, ordered major to minor.
+    items: cqasm::v3::primitives::Version;
+
+}
+
+# A complete program.
+program {
+
+    # File version.
+    version: One<version>;
+
+    # The required qubit register size.
+    num_qubits: cqasm::v3::primitives::Int;
+
+    # Error model information.
+    error_model: Maybe<error_model>;
+
+    # The list of subcircuit.
+    subcircuits: Any<subcircuit>;
+
+    # The list of all user-defined mappings after parsing.
+    mappings: Any<mapping>;
+
+    # This list of all user-defined variables at any point in the code. Only
+    # used for API level 1.1+.
+    variables: Any<variable>;
+
+    # API version. This may be greater than or equal to the file version. This
+    # controls which fields of the tree are used, where such usage depends on
+    # the version.
+    api_version: cqasm::v3::primitives::Version;
+
+}

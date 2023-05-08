@@ -7,6 +7,8 @@
 
 #include <cqasm.hpp>
 
+namespace cq1 = cqasm::v1;
+
 /**
  * Reads the given file into the given string buffer and returns true if it
  * exists, otherwise do nothing with the buffer and return false.
@@ -48,14 +50,14 @@ public:
         // Parse the test input file.
         std::string input;
         ASSERT_TRUE(read_file(path + "/input.cq", input));
-        cqasm::parser::ParseResult parse_result;
+        cq1::parser::ParseResult parse_result;
         auto version = cqasm::version::parse_string(input, "input.cq");
         if (version > cqasm::version::Version("1.2")) {
             std::ostringstream ss;
             ss << "detected version " << version;
             parse_result.errors.push_back(ss.str());
         } else {
-            parse_result = cqasm::parser::parse_string(input, "input.cq");
+            parse_result = cq1::parser::parse_string(input, "input.cq");
         }
 
         // Check the parse result.
@@ -86,7 +88,7 @@ public:
             // If there were no errors, try semantic analysis. We analyze using the
             // functions, error models, and instruction set available in the
             // compatibility layer, though this is copy-pasted in here.
-            auto analyzer = cqasm::analyzer::Analyzer{api_version};
+            auto analyzer = cq1::analyzer::Analyzer{api_version};
             analyzer.register_default_functions_and_mappings();
             std::ostringstream args;
             for (int i = 0; i <= 50; i++) {
@@ -141,48 +143,48 @@ public:
             // Add a dynamic function in order to test the behavior of dynamic
             // function nodes.
             if (api_version != "1.0") {
-                analyzer.register_function("or", "bb", [](const cqasm::values::Values &v) -> cqasm::values::Value {
+                analyzer.register_function("or", "bb", [](const cq1::values::Values &v) -> cq1::values::Value {
                     auto lhs = v[0];
                     auto rhs = v[1];
                     if (auto lhs_const = lhs->as_const_bool()) {
                         if (lhs_const->value) {
-                            return cqasm::tree::make<cqasm::values::ConstBool>(true);
+                            return cqasm::tree::make<cq1::values::ConstBool>(true);
                         } else {
                             return rhs;
                         }
                     }
                     if (auto rhs_const = lhs->as_const_bool()) {
                         if (rhs_const->value) {
-                            return cqasm::tree::make<cqasm::values::ConstBool>(true);
+                            return cqasm::tree::make<cq1::values::ConstBool>(true);
                         } else {
                             return lhs;
                         }
                     }
-                    return cqasm::tree::make<cqasm::values::Function>("operator||", v, cqasm::tree::make<cqasm::types::Bool>());
+                    return cqasm::tree::make<cq1::values::Function>("operator||", v, cqasm::tree::make<cq1::types::Bool>());
                 });
-                analyzer.register_function("operator<", "ii", [](const cqasm::values::Values &v) -> cqasm::values::Value {
+                analyzer.register_function("operator<", "ii", [](const cq1::values::Values &v) -> cq1::values::Value {
                     auto lhs = v[0];
                     auto rhs = v[1];
                     if (auto lhs_const = lhs->as_const_int()) {
                         if (auto rhs_const = rhs->as_const_int()) {
-                            return cqasm::tree::make<cqasm::values::ConstBool>(
+                            return cqasm::tree::make<cq1::values::ConstBool>(
                                 lhs_const->value < rhs_const->value
                             );
                         }
                     }
-                    return cqasm::tree::make<cqasm::values::Function>("operator<", v, cqasm::tree::make<cqasm::types::Bool>());
+                    return cqasm::tree::make<cq1::values::Function>("operator<", v, cqasm::tree::make<cq1::types::Bool>());
                 });
-                analyzer.register_function("operator+", "ii", [](const cqasm::values::Values &v) -> cqasm::values::Value {
+                analyzer.register_function("operator+", "ii", [](const cq1::values::Values &v) -> cq1::values::Value {
                     auto lhs = v[0];
                     auto rhs = v[1];
                     if (auto lhs_const = lhs->as_const_int()) {
                         if (auto rhs_const = rhs->as_const_int()) {
-                            return cqasm::tree::make<cqasm::values::ConstInt>(
+                            return cqasm::tree::make<cq1::values::ConstInt>(
                                 lhs_const->value + rhs_const->value
                             );
                         }
                     }
-                    return cqasm::tree::make<cqasm::values::Function>("operator+", v, cqasm::tree::make<cqasm::types::Int>());
+                    return cqasm::tree::make<cq1::values::Function>("operator+", v, cqasm::tree::make<cq1::types::Int>());
                 });
             }
 

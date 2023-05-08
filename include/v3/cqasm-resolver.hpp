@@ -1,7 +1,7 @@
 /** \file
- * Contains \ref cqasm::v1::resolver::MappingTable "MappingTable",
- * \ref cqasm::v1::resolver::FunctionTable "FunctionTable", and
- * \ref cqasm::v1::resolver::ErrorModelTable "ErrorModelTable", representing the
+ * Contains \ref cqasm::v3::resolver::MappingTable "MappingTable",
+ * \ref cqasm::v3::resolver::FunctionTable "FunctionTable", and
+ * \ref cqasm::v3::resolver::ErrorModelTable "ErrorModelTable", representing the
  * various cQASM namespaces and their members in scope at some instant.
  */
 
@@ -15,7 +15,7 @@
 #include "../cqasm-error.hpp"
 
 namespace cqasm {
-namespace v1 {
+namespace v3 {
 
 /**
  * Namespace for everything to do with name and overload resolution in cQASM.
@@ -188,5 +188,5 @@ public:
 };
 
 } // namespace resolver
-} // namespace v1
+} // namespace v3
 } // namespace cqasm

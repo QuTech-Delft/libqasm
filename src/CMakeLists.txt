@@ -69,16 +69,16 @@ add_subdirectory(func-gen)
 
 # List of non-generated sources.
 set(CQASM_COMMON_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-utils.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-annotations.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-error.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-version.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-py.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-string-builder.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-utils.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-version.cpp"
 )
 
-# Generate the lexer.
-flex_target(
-    cqasm-version-lexer
+# Generate the version lexer.
+flex_target(cqasm-version-lexer
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-version-lexer.l"
     "${CMAKE_CURRENT_BINARY_DIR}/cqasm-version-lexer.cpp"
     COMPILE_FLAGS
@@ -86,9 +86,8 @@ flex_target(
 )
 list(APPEND CQASM_COMMON_SOURCES ${FLEX_cqasm-version-lexer_OUTPUTS})
 
-# Generate the parser.
-bison_target(
-    cqasm-version-parser
+# Generate the version parser.
+bison_target(cqasm-version-parser
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-version-parser.y"
     "${CMAKE_CURRENT_BINARY_DIR}/cqasm-version-parser.cpp"
     COMPILE_FLAGS
@@ -105,24 +104,10 @@ add_flex_bison_dependency(
 #-------------------------------------------------------------------------------
 # cQASM v1.x code generation and inclusion
 #-------------------------------------------------------------------------------
-
-# List of non-generated sources.
-set(CQASM_V1_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/v1/cqasm.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/v1/cqasm-primitives.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/v1/cqasm-ast.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/v1/cqasm-types.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/v1/cqasm-values.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/v1/cqasm-error-model.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/v1/cqasm-instruction.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/v1/cqasm-resolver.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/v1/cqasm-parse-helper.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/v1/cqasm-analyzer.cpp"
-)
+add_subdirectory(v1)
 
 # Generate the lexer.
-flex_target(
-    cqasm-v1-lexer
+flex_target(cqasm-v1-lexer
     "${CMAKE_CURRENT_SOURCE_DIR}/v1/cqasm-lexer.l"
     "${CMAKE_CURRENT_BINARY_DIR}/v1/cqasm-lexer.cpp"
     COMPILE_FLAGS
@@ -131,8 +116,7 @@ flex_target(
 list(APPEND CQASM_V1_SOURCES ${FLEX_cqasm-v1-lexer_OUTPUTS})
 
 # Generate the parser.
-bison_target(
-    cqasm-v1-parser
+bison_target(cqasm-v1-parser
     "${CMAKE_CURRENT_SOURCE_DIR}/v1/cqasm-parser.y"
     "${CMAKE_CURRENT_BINARY_DIR}/v1/cqasm-parser.cpp"
     COMPILE_FLAGS
@@ -188,8 +172,84 @@ list(APPEND CQASM_V1_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v1/cqasm-semantic-gen.
 generate_funcs(
     "${CMAKE_CURRENT_BINARY_DIR}/../include/v1/cqasm-functions-gen.hpp"
     "${CMAKE_CURRENT_BINARY_DIR}/v1/cqasm-functions-gen.cpp"
+    "v1"
 )
 list(APPEND CQASM_V1_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v1/cqasm-functions-gen.cpp")
+
+#-------------------------------------------------------------------------------
+# cQASM v3 parser generation and inclusion
+#-------------------------------------------------------------------------------
+add_subdirectory(v3)
+
+# Generate the lexer.
+flex_target(cqasm-v3-lexer
+    "${CMAKE_CURRENT_SOURCE_DIR}/v3/cqasm-lexer.l"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3/cqasm-lexer.cpp"
+    COMPILE_FLAGS
+    "--header-file=${CMAKE_CURRENT_BINARY_DIR}/v3/cqasm-lexer.hpp ${flex_win_compat}"
+    )
+list(APPEND CQASM_V3_SOURCES ${FLEX_cqasm-v3-lexer_OUTPUTS})
+
+# Generate the parser.
+bison_target(cqasm-v3-parser
+    "${CMAKE_CURRENT_SOURCE_DIR}/v3/cqasm-parser.y"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3/cqasm-parser.cpp"
+    COMPILE_FLAGS
+    "-rall --report-file=${CMAKE_CURRENT_BINARY_DIR}/v3/cqasm-parser.txt -Werror=conflicts-sr -Werror=conflicts-rr"
+    )
+list(APPEND CQASM_V3_SOURCES ${BISON_cqasm-v3-parser_OUTPUTS})
+
+# Dependency between lexer and parser.
+add_flex_bison_dependency(
+    cqasm-v3-lexer
+    cqasm-v3-parser
+)
+
+# Generate the abstract syntax tree classes.
+generate_tree_py(
+    "${CMAKE_CURRENT_SOURCE_DIR}/v3/cqasm-ast.tree"
+    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3/cqasm-ast-gen.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3/cqasm-ast-gen.cpp"
+    "${LIBQASM_GENERATED_PYTHON_FILES}/v3/cqasm-ast-gen.py"
+)
+list(APPEND CQASM_V3_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3/cqasm-ast-gen.cpp")
+
+# Generate the type tree classes.
+generate_tree_py(
+    "${CMAKE_CURRENT_SOURCE_DIR}/v3/cqasm-types.tree"
+    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3/cqasm-types-gen.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3/cqasm-types-gen.cpp"
+    "${LIBQASM_GENERATED_PYTHON_FILES}/v3/cqasm-types-gen.py"
+)
+list(APPEND CQASM_V3_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3/cqasm-types-gen.cpp")
+
+# Generate the semantic value classes. Values can be either known at
+# compile-time or only at runtime, but their type is resolved to one of the
+# type tree nodes at compile-time.
+generate_tree_py(
+    "${CMAKE_CURRENT_SOURCE_DIR}/v3/cqasm-values.tree"
+    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3/cqasm-values-gen.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3/cqasm-values-gen.cpp"
+    "${LIBQASM_GENERATED_PYTHON_FILES}/v3/cqasm-values-gen.py"
+)
+list(APPEND CQASM_V3_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3/cqasm-values-gen.cpp")
+
+# Generate the semantic tree classes.
+generate_tree_py(
+    "${CMAKE_CURRENT_SOURCE_DIR}/v3/cqasm-semantic.tree"
+    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3/cqasm-semantic-gen.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3/cqasm-semantic-gen.cpp"
+    "${LIBQASM_GENERATED_PYTHON_FILES}/v3/cqasm-semantic-gen.py"
+)
+list(APPEND CQASM_V3_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3/cqasm-semantic-gen.cpp")
+
+# Generate the cQASM default function set.
+generate_funcs(
+    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3/cqasm-functions-gen.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3/cqasm-functions-gen.cpp"
+    "v3"
+)
+list(APPEND CQASM_V3_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3/cqasm-functions-gen.cpp")
 
 #-------------------------------------------------------------------------------
 # Compilation instructions
@@ -205,6 +265,7 @@ add_library(
     ${TREE_LIB_SRCS}
     ${CQASM_COMMON_SOURCES}
     ${CQASM_V1_SOURCES}
+    ${CQASM_V3_SOURCES}
 )
 
 target_compile_definitions(cqasm_objlib PRIVATE ${TREE_LIB_PRIVATE_DEFS})

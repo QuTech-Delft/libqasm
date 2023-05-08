@@ -1,5 +1,5 @@
 %define api.pure full
-%define api.prefix {cqasm_v1_}
+%define api.prefix {cqasm_v3_}
 %locations
 
 %code requires {
@@ -12,20 +12,20 @@
     #include <cstdint>
     #include "cqasm-annotations.hpp"
     #include "cqasm-string-builder.hpp"
-    #include "v1/cqasm-ast.hpp"
-    #include "v1/cqasm-parse-helper.hpp"
+    #include "v3/cqasm-ast.hpp"
+    #include "v3/cqasm-parse-helper.hpp"
     using namespace cqasm::ast;  // for StringBuilder
-    using namespace cqasm::v1::ast;
+    using namespace cqasm::v3::ast;
     typedef void* yyscan_t;
 
-    #define YYSTYPE CQASM_V1_STYPE
-    #define YYLTYPE CQASM_V1_LTYPE
+    #define YYSTYPE CQASM_V3_STYPE
+    #define YYLTYPE CQASM_V3_LTYPE
 
 }
 
 %code {
     int yylex(YYSTYPE* yylvalp, YYLTYPE* yyllocp, yyscan_t scanner);
-    void yyerror(YYLTYPE* yyllocp, yyscan_t scanner, cqasm::v1::parser::ParseHelper &helper, const char* msg);
+    void yyerror(YYLTYPE* yyllocp, yyscan_t scanner, cqasm::v3::parser::ParseHelper &helper, const char* msg);
 }
 
 %code top {
@@ -72,7 +72,7 @@
 }
 
 %param { yyscan_t scanner }
-%parse-param { cqasm::v1::parser::ParseHelper &helper }
+%parse-param { cqasm::v3::parser::ParseHelper &helper }
 
 /* YYSTYPE union */
 %union {
@@ -630,7 +630,7 @@ Root            : Program                                                       
 
 %%
 
-void yyerror(YYLTYPE* yyllocp, yyscan_t unused, cqasm::v1::parser::ParseHelper &helper, const char* msg) {
+void yyerror(YYLTYPE* yyllocp, yyscan_t unused, cqasm::v3::parser::ParseHelper &helper, const char* msg) {
     (void)unused;
     std::ostringstream sb;
     sb << helper.filename
