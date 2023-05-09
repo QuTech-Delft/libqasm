@@ -1,0 +1,215 @@
+SUCCESS
+Program( # input.cq:1:1..13:1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: <
+    IntegerLiteral( # input.cq:2:8..10
+      value: 10
+    )
+  >
+  statements: <
+    StatementList( # input.cq:2:1..13:15
+      items: [
+        Subcircuit( # input.cq:4:1..11
+          name: <
+            Identifier( # input.cq:4:2..11
+              name: circuit_1
+            )
+          >
+          iterations: -
+          annotations: []
+        )
+        Bundle( # input.cq:5:5..11
+          items: [
+            Instruction( # input.cq:5:5..11
+              name: <
+                Identifier( # input.cq:5:5..6
+                  name: x
+                )
+              >
+              condition: -
+              operands: <
+                ExpressionList( # input.cq:5:7..11
+                  items: [
+                    Index( # input.cq:5:7..11
+                      expr: <
+                        Identifier( # input.cq:5:7..8
+                          name: q
+                        )
+                      >
+                      indices: <
+                        IndexList( # input.cq:5:9..10
+                          items: [
+                            IndexItem( # input.cq:5:9..10
+                              index: <
+                                IntegerLiteral( # input.cq:5:9..10
+                                  value: 0
+                                )
+                              >
+                            )
+                          ]
+                        )
+                      >
+                    )
+                  ]
+                )
+              >
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Subcircuit( # input.cq:7:1..15
+          name: <
+            Identifier( # input.cq:7:2..11
+              name: circuit_2
+            )
+          >
+          iterations: <
+            IntegerLiteral( # input.cq:7:12..14
+              value: 10
+            )
+          >
+          annotations: []
+        )
+        Bundle( # input.cq:8:5..11
+          items: [
+            Instruction( # input.cq:8:5..11
+              name: <
+                Identifier( # input.cq:8:5..6
+                  name: x
+                )
+              >
+              condition: -
+              operands: <
+                ExpressionList( # input.cq:8:7..11
+                  items: [
+                    Index( # input.cq:8:7..11
+                      expr: <
+                        Identifier( # input.cq:8:7..8
+                          name: q
+                        )
+                      >
+                      indices: <
+                        IndexList( # input.cq:8:9..10
+                          items: [
+                            IndexItem( # input.cq:8:9..10
+                              index: <
+                                IntegerLiteral( # input.cq:8:9..10
+                                  value: 1
+                                )
+                              >
+                            )
+                          ]
+                        )
+                      >
+                    )
+                  ]
+                )
+              >
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:9:5..11
+          items: [
+            Instruction( # input.cq:9:5..11
+              name: <
+                Identifier( # input.cq:9:5..6
+                  name: x
+                )
+              >
+              condition: -
+              operands: <
+                ExpressionList( # input.cq:9:7..11
+                  items: [
+                    Index( # input.cq:9:7..11
+                      expr: <
+                        Identifier( # input.cq:9:7..8
+                          name: q
+                        )
+                      >
+                      indices: <
+                        IndexList( # input.cq:9:9..10
+                          items: [
+                            IndexItem( # input.cq:9:9..10
+                              index: <
+                                IntegerLiteral( # input.cq:9:9..10
+                                  value: 2
+                                )
+                              >
+                            )
+                          ]
+                        )
+                      >
+                    )
+                  ]
+                )
+              >
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Subcircuit( # input.cq:11:1..14
+          name: <
+            Identifier( # input.cq:11:2..11
+              name: circuit_3
+            )
+          >
+          iterations: <
+            IntegerLiteral( # input.cq:11:12..13
+              value: 1
+            )
+          >
+          annotations: []
+        )
+        Bundle( # input.cq:12:5..11
+          items: [
+            Instruction( # input.cq:12:5..11
+              name: <
+                Identifier( # input.cq:12:5..6
+                  name: x
+                )
+              >
+              condition: -
+              operands: <
+                ExpressionList( # input.cq:12:7..11
+                  items: [
+                    Index( # input.cq:12:7..11
+                      expr: <
+                        Identifier( # input.cq:12:7..8
+                          name: q
+                        )
+                      >
+                      indices: <
+                        IndexList( # input.cq:12:9..10
+                          items: [
+                            IndexItem( # input.cq:12:9..10
+                              index: <
+                                IntegerLiteral( # input.cq:12:9..10
+                                  value: 3
+                                )
+                              >
+                            )
+                          ]
+                        )
+                      >
+                    )
+                  ]
+                )
+              >
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

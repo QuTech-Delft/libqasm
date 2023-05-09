@@ -1,0 +1,301 @@
+SUCCESS
+Program( # input.cq:1:1..15:1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.2
+    )
+  >
+  num_qubits: 10
+  error_model: -
+  subcircuits: [
+    Subcircuit( # input.cq:9:1..10
+      name: 
+      iterations: 1
+      bundles: []
+      annotations: []
+      body: <
+        Block( # input.cq:9:1..14:13
+          statements: [
+            BundleExt( # input.cq:9:1..10
+              items: [
+                SetInstruction( # input.cq:9:1..10
+                  lhs: <
+                    VariableRef( # input.cq:9:5..6
+                      variable --> <
+                        Variable( # input.cq:4:5..6
+                          name: i
+                          typ: <
+                            Int(
+                              assignable: 1
+                            )
+                          >
+                          annotations: []
+                        )
+                      >
+                    )
+                  >
+                  rhs: <
+                    ConstInt( # input.cq:9:9..10
+                      value: 3
+                    )
+                  >
+                  condition: <
+                    ConstBool(
+                      value: 1
+                    )
+                  >
+                  annotations: []
+                )
+              ]
+              annotations: []
+            )
+            BundleExt( # input.cq:10:1..11
+              items: [
+                SetInstruction( # input.cq:10:1..11
+                  lhs: <
+                    VariableRef( # input.cq:10:5..7
+                      variable --> <
+                        Variable( # input.cq:4:8..10
+                          name: i2
+                          typ: <
+                            Int(
+                              assignable: 1
+                            )
+                          >
+                          annotations: []
+                        )
+                      >
+                    )
+                  >
+                  rhs: <
+                    VariableRef( # input.cq:10:10..11
+                      variable --> <
+                        Variable( # input.cq:4:5..6
+                          name: i
+                          typ: <
+                            Int(
+                              assignable: 1
+                            )
+                          >
+                          annotations: []
+                        )
+                      >
+                    )
+                  >
+                  condition: <
+                    ConstBool(
+                      value: 1
+                    )
+                  >
+                  annotations: []
+                )
+              ]
+              annotations: []
+            )
+            BundleExt( # input.cq:11:1..10
+              items: [
+                SetInstruction( # input.cq:11:1..10
+                  lhs: <
+                    VariableRef( # input.cq:11:5..6
+                      variable --> <
+                        Variable( # input.cq:6:5..6
+                          name: r
+                          typ: <
+                            Real(
+                              assignable: 1
+                            )
+                          >
+                          annotations: []
+                        )
+                      >
+                    )
+                  >
+                  rhs: <
+                    ConstReal( # input.cq:11:9..10
+                      value: 3
+                    )
+                  >
+                  condition: <
+                    ConstBool(
+                      value: 1
+                    )
+                  >
+                  annotations: []
+                )
+              ]
+              annotations: []
+            )
+            BundleExt( # input.cq:12:1..12
+              items: [
+                SetInstruction( # input.cq:12:1..12
+                  lhs: <
+                    VariableRef( # input.cq:12:5..6
+                      variable --> <
+                        Variable( # input.cq:6:5..6
+                          name: r
+                          typ: <
+                            Real(
+                              assignable: 1
+                            )
+                          >
+                          annotations: []
+                        )
+                      >
+                    )
+                  >
+                  rhs: <
+                    ConstReal( # input.cq:12:9..12
+                      value: 3
+                    )
+                  >
+                  condition: <
+                    ConstBool(
+                      value: 1
+                    )
+                  >
+                  annotations: []
+                )
+              ]
+              annotations: []
+            )
+            BundleExt( # input.cq:13:1..11
+              items: [
+                SetInstruction( # input.cq:13:1..11
+                  lhs: <
+                    VariableRef( # input.cq:13:5..7
+                      variable --> <
+                        Variable( # input.cq:6:8..10
+                          name: r2
+                          typ: <
+                            Real(
+                              assignable: 1
+                            )
+                          >
+                          annotations: []
+                        )
+                      >
+                    )
+                  >
+                  rhs: <
+                    VariableRef( # input.cq:13:10..11
+                      variable --> <
+                        Variable( # input.cq:6:5..6
+                          name: r
+                          typ: <
+                            Real(
+                              assignable: 1
+                            )
+                          >
+                          annotations: []
+                        )
+                      >
+                    )
+                  >
+                  condition: <
+                    ConstBool(
+                      value: 1
+                    )
+                  >
+                  annotations: []
+                )
+              ]
+              annotations: []
+            )
+            BundleExt( # input.cq:14:1..13
+              items: [
+                SetInstruction( # input.cq:14:1..13
+                  lhs: <
+                    VariableRef( # input.cq:14:5..6
+                      variable --> <
+                        Variable( # input.cq:7:5..6
+                          name: b
+                          typ: <
+                            Bool(
+                              assignable: 1
+                            )
+                          >
+                          annotations: []
+                        )
+                      >
+                    )
+                  >
+                  rhs: <
+                    ConstBool( # input.cq:14:9..13
+                      value: 1
+                    )
+                  >
+                  condition: <
+                    ConstBool(
+                      value: 1
+                    )
+                  >
+                  annotations: []
+                )
+              ]
+              annotations: []
+            )
+          ]
+        )
+      >
+    )
+  ]
+  mappings: []
+  variables: [
+    Variable( # input.cq:4:8..10
+      name: i2
+      typ: <
+        Int(
+          assignable: 1
+        )
+      >
+      annotations: []
+    )
+    Variable( # input.cq:4:5..6
+      name: i
+      typ: <
+        Int(
+          assignable: 1
+        )
+      >
+      annotations: []
+    )
+    Variable( # input.cq:5:5..6
+      name: r
+      typ: <
+        Real(
+          assignable: 1
+        )
+      >
+      annotations: []
+    )
+    Variable( # input.cq:6:8..10
+      name: r2
+      typ: <
+        Real(
+          assignable: 1
+        )
+      >
+      annotations: []
+    )
+    Variable( # input.cq:6:5..6
+      name: r
+      typ: <
+        Real(
+          assignable: 1
+        )
+      >
+      annotations: []
+    )
+    Variable( # input.cq:7:5..6
+      name: b
+      typ: <
+        Bool(
+          assignable: 1
+        )
+      >
+      annotations: []
+    )
+  ]
+  api_version: 1.2
+)
+

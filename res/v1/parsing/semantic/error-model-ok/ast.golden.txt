@@ -1,0 +1,70 @@
+SUCCESS
+Program( # input.cq:1:1..5:1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: <
+    IntegerLiteral( # input.cq:2:8..10
+      value: 10
+    )
+  >
+  statements: <
+    StatementList( # input.cq:2:1..5:55
+      items: [
+        Bundle( # input.cq:4:1..55
+          items: [
+            Instruction( # input.cq:4:1..55
+              name: <
+                Identifier( # input.cq:4:1..12
+                  name: error_model
+                )
+              >
+              condition: -
+              operands: <
+                ExpressionList( # input.cq:4:13..42
+                  items: [
+                    Identifier( # input.cq:4:13..33
+                      name: depolarizing_channel
+                    )
+                    IntegerLiteral( # input.cq:4:35..36
+                      value: 1
+                    )
+                    IntegerLiteral( # input.cq:4:38..39
+                      value: 2
+                    )
+                    IntegerLiteral( # input.cq:4:41..42
+                      value: 3
+                    )
+                  ]
+                )
+              >
+              annotations: [
+                AnnotationData( # input.cq:4:44..55
+                  interface: <
+                    Identifier( # input.cq:4:44..49
+                      name: annot
+                    )
+                  >
+                  operation: <
+                    Identifier( # input.cq:4:50..55
+                      name: first
+                    )
+                  >
+                  operands: <
+                    ExpressionList(
+                      items: []
+                    )
+                  >
+                )
+              ]
+            )
+          ]
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

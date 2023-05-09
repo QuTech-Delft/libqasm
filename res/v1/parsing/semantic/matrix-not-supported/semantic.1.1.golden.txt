@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:4:20..30: only matrices of constant real or complex numbers are currently supported

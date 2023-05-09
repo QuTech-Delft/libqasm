@@ -1,0 +1,92 @@
+SUCCESS
+Program( # input.cq:1:1..5:1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: <
+    IntegerLiteral( # input.cq:2:8..10
+      value: 10
+    )
+  >
+  statements: <
+    StatementList( # input.cq:2:1..5:36
+      items: [
+        Bundle( # input.cq:4:1..36
+          items: [
+            Instruction( # input.cq:4:1..36
+              name: <
+                Identifier( # input.cq:4:1..8
+                  name: display
+                )
+              >
+              condition: -
+              operands: <
+                ExpressionList(
+                  items: []
+                )
+              >
+              annotations: [
+                AnnotationData( # input.cq:4:10..36
+                  interface: <
+                    Identifier( # input.cq:4:10..14
+                      name: test
+                    )
+                  >
+                  operation: <
+                    Identifier( # input.cq:4:15..19
+                      name: test
+                    )
+                  >
+                  operands: <
+                    ExpressionList( # input.cq:4:20..35
+                      items: [
+                        FunctionCall( # input.cq:4:20..23
+                          name: <
+                            Identifier( # input.cq:4:20..21
+                              name: a
+                            )
+                          >
+                          arguments: <
+                            ExpressionList(
+                              items: []
+                            )
+                          >
+                        )
+                        FunctionCall( # input.cq:4:25..35
+                          name: <
+                            Identifier( # input.cq:4:25..26
+                              name: b
+                            )
+                          >
+                          arguments: <
+                            ExpressionList( # input.cq:4:27..34
+                              items: [
+                                IntegerLiteral( # input.cq:4:27..28
+                                  value: 1
+                                )
+                                IntegerLiteral( # input.cq:4:30..31
+                                  value: 2
+                                )
+                                IntegerLiteral( # input.cq:4:33..34
+                                  value: 3
+                                )
+                              ]
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
+                )
+              ]
+            )
+          ]
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

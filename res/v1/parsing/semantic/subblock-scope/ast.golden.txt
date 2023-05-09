@@ -1,0 +1,107 @@
+SUCCESS
+Program( # input.cq:1:1..12:1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.2
+    )
+  >
+  num_qubits: -
+  statements: <
+    StatementList( # input.cq:1:1..12:12
+      items: [
+        Variables( # input.cq:3:1..12
+          names: [
+            Identifier( # input.cq:3:5..6
+              name: a
+            )
+          ]
+          typ: <
+            Identifier( # input.cq:3:8..12
+              name: bool
+            )
+          >
+          annotations: []
+        )
+        IfElse( # input.cq:5:1..8:2
+          branches: [
+            IfElseBranch(
+              condition: <
+                Identifier( # input.cq:5:5..6
+                  name: a
+                )
+              >
+              body: <
+                StatementList( # input.cq:5:5..8:17
+                  items: [
+                    Variables( # input.cq:6:5..17
+                      names: [
+                        Identifier( # input.cq:6:9..10
+                          name: q
+                        )
+                      ]
+                      typ: <
+                        Identifier( # input.cq:6:12..17
+                          name: qubit
+                        )
+                      >
+                      annotations: []
+                    )
+                    Bundle( # input.cq:7:5..8
+                      items: [
+                        Instruction( # input.cq:7:5..8
+                          name: <
+                            Identifier( # input.cq:7:5..6
+                              name: x
+                            )
+                          >
+                          condition: -
+                          operands: <
+                            ExpressionList( # input.cq:7:7..8
+                              items: [
+                                Identifier( # input.cq:7:7..8
+                                  name: q
+                                )
+                              ]
+                            )
+                          >
+                          annotations: []
+                        )
+                      ]
+                      annotations: []
+                    )
+                  ]
+                )
+              >
+            )
+          ]
+          otherwise: -
+          annotations: []
+        )
+        Bundle( # input.cq:11:1..4
+          items: [
+            Instruction( # input.cq:11:1..4
+              name: <
+                Identifier( # input.cq:11:1..2
+                  name: y
+                )
+              >
+              condition: -
+              operands: <
+                ExpressionList( # input.cq:11:3..4
+                  items: [
+                    Identifier( # input.cq:11:3..4
+                      name: q
+                    )
+                  ]
+                )
+              >
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

@@ -1,21 +1,24 @@
 #=============================================================================#
 # v1 tests                                                                    #
 #=============================================================================#
+add_subdirectory(v1)
+#[[
 add_executable(test-v1-parsing v1/parsing.cpp)
 target_link_libraries(test-v1-parsing gtest cqasm)
+message(STATUS "*** Adding test with working dir = ${CMAKE_CURRENT_SOURCE_DIR}/v1\n")
 add_test(
     NAME test-v1-parsing
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/v1"
     COMMAND test-v1-parsing
 )
 
 add_executable(tutorial v1/tutorial.cpp)
 target_link_libraries(tutorial gtest_main cqasm)
+message(STATUS "*** Adding test with working dir = ${CMAKE_CURRENT_SOURCE_DIR}/v1/res\n")
 add_test(
     NAME tutorial
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/v1/res"
     COMMAND tutorial
 )
+#]]
 
 
 #=============================================================================#
@@ -28,6 +31,7 @@ add_subdirectory(v3)
 
 # Test sources
 set(test_sources
+    ${v1_test_sources}
     ${v3_test_sources}
 )
 set(app_sources
@@ -84,3 +88,10 @@ endif()
 
 include(GoogleTest)
 gtest_discover_tests(${PROJECT_NAME}_test)
+
+add_custom_command(
+    TARGET ${PROJECT_NAME}_test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/../res
+    ${CMAKE_CURRENT_BINARY_DIR}/res
+)

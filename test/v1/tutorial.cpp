@@ -1,8 +1,10 @@
-#include <gtest/gtest.h> // googletest header file
+#include "v1/cqasm.hpp"
 
-#include <cqasm.hpp>
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
 
 namespace cq1 = cqasm::v1;
+
 
 TEST(tutorial, tutorial) {
 
@@ -11,7 +13,7 @@ TEST(tutorial, tutorial) {
     // (cqasm::tree::One<cq1::semantic::Program> to be specific), or the
     // error messages printed to stderr and a cq1::analysis::AnalysisError
     // exception (derived from std::runtime_error) on failure.
-    auto result = cq1::analyze("grover.cq");
+    auto result = cq1::analyze("res/v1/grover.cq");
 
     // There is also an overload for a FILE* directly (with an optional second
     // argument for the filename used in error messages to refer back to the
@@ -216,18 +218,18 @@ TEST(tutorial, tutorial) {
     std::ostringstream ss;
     ss << clone;
     EXPECT_EQ(ss.str(),
-R"(QubitRefs( # grover.cq:10:9..15
+R"(QubitRefs( # res/v1/grover.cq:10:9..15
   index: [
-    ConstInt( # grover.cq:10:11..14
+    ConstInt( # res/v1/grover.cq:10:11..14
       value: 0
     )
-    ConstInt( # grover.cq:10:11..14
+    ConstInt( # res/v1/grover.cq:10:11..14
       value: 1
     )
-    ConstInt( # grover.cq:10:11..14
+    ConstInt( # res/v1/grover.cq:10:11..14
       value: 2
     )
-    ConstInt( # grover.cq:10:11..14
+    ConstInt( # res/v1/grover.cq:10:11..14
       value: 3
     )
     ConstInt(
@@ -240,7 +242,7 @@ R"(QubitRefs( # grover.cq:10:9..15
     // Notice that the tree stores where the nodes that we didn't make ourselves
     // in this test case came from. This is accomplished using annotations,
     // of the type cq1::parser::SourceLocation in this case:
-    EXPECT_EQ(clone->get_annotation<cq1::parser::SourceLocation>().filename, "grover.cq");
+    EXPECT_EQ(clone->get_annotation<cq1::parser::SourceLocation>().filename, "res/v1/grover.cq");
 
     // Annotations are a big magical in C++ land, in that you can annotate nodes
     // with *any* C++ object of *any* type, without having to modify libqasm!
@@ -262,7 +264,7 @@ R"(QubitRefs( # grover.cq:10:9..15
     // It's not just a void* wrapped in some casting either; you can in fact
     // have zero or one annotation of *every* C++ type *at the same time*.
     // So the source location is still there:
-    EXPECT_EQ(clone->get_annotation<cq1::parser::SourceLocation>().filename, "grover.cq");
+    EXPECT_EQ(clone->get_annotation<cq1::parser::SourceLocation>().filename, "res/v1/grover.cq");
 
     // When you call set_annotation, your object is either moved or copied into
     // the underlying annotation map. If you have something that cannot be moved

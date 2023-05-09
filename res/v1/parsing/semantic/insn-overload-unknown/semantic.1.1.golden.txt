@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:4:1..9: failed to resolve overload for not with argument pack (qubit reference)

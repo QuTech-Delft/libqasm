@@ -18,6 +18,8 @@ namespace compiler {
  */
 namespace new_to_old {
 
+namespace cq1 = cqasm::v1;
+
 /**
  * All instruction types supported by the old API based on the
  * types of their parameters alone.
@@ -47,7 +49,7 @@ enum class ParameterType {
  * Converts a list of indices from the new API format to the old API
  * format.
  */
-static NumericalIdentifiers convert_indices(const cqasm::tree::Many<cqasm::values::ConstInt> &indices) {
+static NumericalIdentifiers convert_indices(const cqasm::tree::Many<cq1::values::ConstInt> &indices) {
     NumericalIdentifiers retval;
     for (auto control_bit : indices) {
         retval.addToVector(control_bit->value);
@@ -58,11 +60,11 @@ static NumericalIdentifiers convert_indices(const cqasm::tree::Many<cqasm::value
 /**
  * Converts an axis from the new API format to the old API format.
  */
-static std::string convert_axis(const cqasm::values::Value &value) {
+static std::string convert_axis(const cq1::values::Value &value) {
     switch (value->as_const_axis()->value) {
-        case cqasm::primitives::Axis::X: return "x";
-        case cqasm::primitives::Axis::Y: return "y";
-        case cqasm::primitives::Axis::Z: return "z";
+        case cq1::primitives::Axis::X: return "x";
+        case cq1::primitives::Axis::Y: return "y";
+        case cq1::primitives::Axis::Z: return "z";
     }
     throw std::runtime_error("unreachable code, corrupted axis enum");
 }
@@ -71,7 +73,7 @@ static std::string convert_axis(const cqasm::values::Value &value) {
  * Converts an instruction from the new API format to the old API
  * format. May return null to optimize the instruction away.
  */
-static Operation *convert_instruction(const cqasm::semantic::Instruction &instruction) {
+static Operation *convert_instruction(const cq1::semantic::Instruction &instruction) {
 
     // Handle the normal arguments.
     Operation *op = nullptr;
@@ -217,7 +219,7 @@ static Operation *convert_instruction(const cqasm::semantic::Instruction &instru
  * the result, checks *that* for errors, and then converts from the
  * new API format to the old one.
  */
-static void handle_parse_result(QasmRepresentation &qasm, cqasm::parser::ParseResult &&result) {
+static void handle_parse_result(QasmRepresentation &qasm, cq1::parser::ParseResult &&result) {
 
     // Throw an error if parsing failed.
     if (!result.errors.empty()) {
@@ -225,7 +227,7 @@ static void handle_parse_result(QasmRepresentation &qasm, cqasm::parser::ParseRe
     }
 
     // Create the semantic analyzer.
-    auto analyzer = cqasm::analyzer::Analyzer{"1.0"};
+    auto analyzer = cq1::analyzer::Analyzer{"1.0"};
     analyzer.register_default_functions_and_mappings();
 
     // The old library accepted the depolarizing_channel error model
@@ -338,7 +340,7 @@ static void handle_parse_result(QasmRepresentation &qasm, cqasm::parser::ParseRe
         // doing the right thing.
         if (!subcircuit->name.empty()) {
             int line_number = 0;
-            if (auto loc = subcircuit->get_annotation_ptr<cqasm::parser::SourceLocation>()) {
+            if (auto loc = subcircuit->get_annotation_ptr<cq1::parser::SourceLocation>()) {
                 line_number = loc->first_line;
             }
             SubCircuit sc {
@@ -371,7 +373,7 @@ static void handle_parse_result(QasmRepresentation &qasm, cqasm::parser::ParseRe
                 // the cluster as parallel.
                 if (!opclus) {
                     int line_number = 0;
-                    if (auto loc = instruction->get_annotation_ptr<cqasm::parser::SourceLocation>()) {
+                    if (auto loc = instruction->get_annotation_ptr<cq1::parser::SourceLocation>()) {
                         line_number = loc->first_line;
                     }
                     opclus = new OperationsCluster(op, line_number);

@@ -1,0 +1,188 @@
+SUCCESS
+Program( # input.cq:1:1..5:1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: <
+    IntegerLiteral( # input.cq:2:8..10
+      value: 10
+    )
+  >
+  statements: <
+    StatementList( # input.cq:2:1..5:59
+      items: [
+        Bundle( # input.cq:4:1..59
+          items: [
+            Instruction( # input.cq:4:1..59
+              name: <
+                Identifier( # input.cq:4:1..8
+                  name: display
+                )
+              >
+              condition: -
+              operands: <
+                ExpressionList(
+                  items: []
+                )
+              >
+              annotations: [
+                AnnotationData( # input.cq:4:10..59
+                  interface: <
+                    Identifier( # input.cq:4:10..14
+                      name: test
+                    )
+                  >
+                  operation: <
+                    Identifier( # input.cq:4:15..19
+                      name: test
+                    )
+                  >
+                  operands: <
+                    ExpressionList( # input.cq:4:20..58
+                      items: [
+                        Index( # input.cq:4:20..24
+                          expr: <
+                            Identifier( # input.cq:4:20..21
+                              name: q
+                            )
+                          >
+                          indices: <
+                            IndexList( # input.cq:4:22..23
+                              items: [
+                                IndexItem( # input.cq:4:22..23
+                                  index: <
+                                    IntegerLiteral( # input.cq:4:22..23
+                                      value: 0
+                                    )
+                                  >
+                                )
+                              ]
+                            )
+                          >
+                        )
+                        Index( # input.cq:4:26..32
+                          expr: <
+                            Identifier( # input.cq:4:26..27
+                              name: q
+                            )
+                          >
+                          indices: <
+                            IndexList( # input.cq:4:28..31
+                              items: [
+                                IndexRange( # input.cq:4:28..31
+                                  first: <
+                                    IntegerLiteral( # input.cq:4:28..29
+                                      value: 0
+                                    )
+                                  >
+                                  last: <
+                                    IntegerLiteral( # input.cq:4:30..31
+                                      value: 1
+                                    )
+                                  >
+                                )
+                              ]
+                            )
+                          >
+                        )
+                        Index( # input.cq:4:34..42
+                          expr: <
+                            Identifier( # input.cq:4:34..35
+                              name: q
+                            )
+                          >
+                          indices: <
+                            IndexList( # input.cq:4:36..41
+                              items: [
+                                IndexItem( # input.cq:4:36..37
+                                  index: <
+                                    IntegerLiteral( # input.cq:4:36..37
+                                      value: 0
+                                    )
+                                  >
+                                )
+                                IndexItem( # input.cq:4:38..39
+                                  index: <
+                                    IntegerLiteral( # input.cq:4:38..39
+                                      value: 2
+                                    )
+                                  >
+                                )
+                                IndexItem( # input.cq:4:40..41
+                                  index: <
+                                    IntegerLiteral( # input.cq:4:40..41
+                                      value: 4
+                                    )
+                                  >
+                                )
+                              ]
+                            )
+                          >
+                        )
+                        Index( # input.cq:4:44..58
+                          expr: <
+                            Identifier( # input.cq:4:44..45
+                              name: q
+                            )
+                          >
+                          indices: <
+                            IndexList( # input.cq:4:46..57
+                              items: [
+                                IndexItem( # input.cq:4:46..47
+                                  index: <
+                                    IntegerLiteral( # input.cq:4:46..47
+                                      value: 0
+                                    )
+                                  >
+                                )
+                                IndexRange( # input.cq:4:48..51
+                                  first: <
+                                    IntegerLiteral( # input.cq:4:48..49
+                                      value: 2
+                                    )
+                                  >
+                                  last: <
+                                    IntegerLiteral( # input.cq:4:50..51
+                                      value: 3
+                                    )
+                                  >
+                                )
+                                IndexItem( # input.cq:4:52..53
+                                  index: <
+                                    IntegerLiteral( # input.cq:4:52..53
+                                      value: 5
+                                    )
+                                  >
+                                )
+                                IndexRange( # input.cq:4:54..57
+                                  first: <
+                                    IntegerLiteral( # input.cq:4:54..55
+                                      value: 7
+                                    )
+                                  >
+                                  last: <
+                                    IntegerLiteral( # input.cq:4:56..57
+                                      value: 8
+                                    )
+                                  >
+                                )
+                              ]
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
+                )
+              ]
+            )
+          ]
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

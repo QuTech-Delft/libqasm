@@ -1,0 +1,60 @@
+SUCCESS
+Program( # input.cq:1:1..5:1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: <
+    IntegerLiteral( # input.cq:2:8..10
+      value: 10
+    )
+  >
+  statements: <
+    StatementList( # input.cq:2:1..5:18
+      items: [
+        Bundle( # input.cq:4:1..18
+          items: [
+            Instruction( # input.cq:4:1..18
+              name: <
+                Identifier( # input.cq:4:1..13
+                  name: invalid_insn
+                )
+              >
+              condition: -
+              operands: <
+                ExpressionList( # input.cq:4:14..18
+                  items: [
+                    Index( # input.cq:4:14..18
+                      expr: <
+                        Identifier( # input.cq:4:14..15
+                          name: q
+                        )
+                      >
+                      indices: <
+                        IndexList( # input.cq:4:16..17
+                          items: [
+                            IndexItem( # input.cq:4:16..17
+                              index: <
+                                IntegerLiteral( # input.cq:4:16..17
+                                  value: 0
+                                )
+                              >
+                            )
+                          ]
+                        )
+                      >
+                    )
+                  ]
+                )
+              >
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

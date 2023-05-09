@@ -8,8 +8,8 @@
 %}
 
 %{
-#include "qasm_ast.hpp"
-#include "libQasm.hpp"
+#include "v1.0/qasm_ast.hpp"
+#include "v1.0/libQasm.hpp"
 #include "cqasm-py.hpp"
 %}
 
@@ -41,8 +41,8 @@ namespace std {
     }
 }
 
-%include "qasm_ast.hpp"
-%include "libQasm.hpp"
+%include "v1.0/qasm_ast.hpp"
+%include "v1.0/libQasm.hpp"
 %include "cqasm-py.hpp"
 
 namespace std {

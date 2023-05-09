@@ -2,10 +2,12 @@
  * Implementation for \ref include/cqasm-version.hpp "cqasm-version.hpp".
  */
 
-#include "cqasm-version.hpp"
 #include "cqasm-error.hpp"
+#include "cqasm-version.hpp"
 #include "cqasm-version-parser.hpp"
 #include "cqasm-version-lexer.hpp"
+
+#include <memory>
 
 namespace cqasm {
 namespace version {
@@ -31,11 +33,12 @@ Version::Version(const std::string &version) {
 }
 
 /**
- * Compares this version against the other version. Returns 1 if this version
- * is newer than the other, returns -1 if this version is older than the other,
- * or returns 0 if both versions are the same. When there is a mismatch in the
- * number of components between the versions, missing components are interpreted
- * as 0.
+ * Compares this version against the other version.
+ * Returns:
+ *   1 if this version is newer than the other,
+ *   -1 if this version is older than the other, or
+ *   0 if both versions are the same.
+ * When there is a mismatch in the number of components between the versions, missing components are interpreted as 0.
  */
 int Version::compare(const Version &other) const {
     for (size_t i = 0; i < this->size() || i < other.size(); i++) {
@@ -48,11 +51,12 @@ int Version::compare(const Version &other) const {
 }
 
 /**
- * Compares this version against the other version. Returns 1 if this version
- * is newer than the other, returns -1 if this version is older than the other,
- * or returns 0 if both versions are the same. When there is a mismatch in the
- * number of components between the versions, missing components are interpreted
- * as 0.
+ * Compares this version against the other version.
+ * Returns:
+ *   1 if this version is newer than the other,
+ *   -1 if this version is older than the other, or
+ *   0 if both versions are the same.
+ * When there is a mismatch in the number of components between the versions, missing components are interpreted as 0.
  */
 int Version::compare(const std::string &other) const {
     return compare(Version(other));
@@ -74,149 +78,105 @@ std::ostream &operator<<(std::ostream &os, const Version &object) {
     return os;
 }
 
+
+ScannerFlexBison::ScannerFlexBison() {
+    int result = cqasm_version_lex_init(static_cast<yyscan_t*>(&scanner_));
+    if (result != 0) {
+        throw error::AnalysisError(std::string{ "Failed to construct scanner: " } + strerror(result));
+    }
+}
+
+ScannerFlexBison::~ScannerFlexBison() {
+    if (scanner_) {
+        cqasm_version_lex_destroy(static_cast<yyscan_t>(scanner_));
+    }
+}
+
+
+ScannerFlexBisonFile::ScannerFlexBisonFile(FILE *fp
+) : fp_{ fp } {}
+
+ScannerFlexBisonFile::~ScannerFlexBisonFile() {
+    if (fp_) {
+        fclose(fp_);
+    }
+}
+
+int ScannerFlexBisonFile::parse(const std::string &filename, Version &version) const {
+    cqasm_version_set_in(fp_, static_cast<yyscan_t>(scanner_));
+    return cqasm_version_parse(static_cast<yyscan_t>(scanner_), filename, version);
+}
+
+
+ScannerFlexBisonString::ScannerFlexBisonString(const char *data
+) : data_{ data } {}
+
+int ScannerFlexBisonString::parse(const std::string &filename, Version &version) const {
+    auto buffer = cqasm_version__scan_string(data_, static_cast<yyscan_t>(scanner_));
+    if (!buffer) {
+        throw error::AnalysisError("Failed to scan input data string.");
+    }
+    int result = cqasm_version_parse(static_cast<yyscan_t>(scanner_), filename, version);
+    cqasm_version__delete_buffer(buffer, static_cast<yyscan_t>(scanner_));
+    return result;
+}
+
+
 /**
- * Parse the given file to get its version number. Throws an AnalysisError if
- * this fails.
+ * Parse the given file to get its version number.
+ * Throws an AnalysisError if this fails.
  */
 Version parse_file(const std::string &filename) {
-    return std::move(ParseHelper(filename, "", true).version);
+    // Open the file or pass the data buffer to flex.
+    FILE *fp = fopen(filename.c_str(), "r");
+    if (!fp) {
+        throw error::AnalysisError(std::string{ "Failed to open input file " } + filename + ": " + strerror(errno));
+    }
+    auto scanner = std::unique_ptr<ScannerFlexBisonFile>(new ScannerFlexBisonFile(fp));
+    return ParseHelper(filename, std::move(scanner)).parse();
 }
 
 /**
- * Parse using the given file pointer to get its version number. Throws an
- * AnalysisError if this fails. The file is rewound back to the start when
- * parsing completes.
+ * Parse using the given file pointer to get its version number.
+ * Throws an AnalysisError if this fails.
+ * The file is rewound back to the start when parsing completes.
  */
-Version parse_file(FILE *file, const std::string &filename) {
-    auto retval = std::move(ParseHelper(filename, file).version);
-    if (fseek(file, 0, SEEK_SET)) {
+Version parse_file(FILE *fp, const std::string &filename) {
+    auto scanner = std::unique_ptr<ScannerFlexBisonFile>(new ScannerFlexBisonFile(fp));
+    auto version = ParseHelper(filename, std::move(scanner)).parse();
+    if (fseek(fp, 0, SEEK_SET)) {
         throw error::AnalysisError("failed to rewind file pointer");
     }
-    return retval;
+    return version;
 }
 
 /**
- * Parse the given string as a file to get its version number. A filename may
- * be given in addition for use within the AnalysisError thrown when version
- * parsing fails.
+ * Parse the given string as a file to get its version number.
  */
 Version parse_string(const std::string &data, const std::string &filename) {
-    return std::move(ParseHelper(filename, data, false).version);
+    auto scanner = std::unique_ptr<ScannerFlexBisonString>(new ScannerFlexBisonString(data.c_str()));
+    return ParseHelper(filename, std::move(scanner)).parse();
 }
 
-/**
- * Parse a string or file with flex/bison. If use_file is set, the file
- * specified by filename is read and data is ignored. Otherwise, filename
- * is used only for error messages, and data is read instead. Don't use
- * this directly, use parse().
- */
-ParseHelper::ParseHelper(
-    const std::string &filename,
-    const std::string &data,
-    bool use_file
-) : filename(filename), version("") {
 
-    // Create the scanner.
-    if (!construct()) return;
-
-    // Open the file or pass the data buffer to flex.
-    if (use_file) {
-        fptr = fopen(filename.c_str(), "r");
-        if (!fptr) {
-            std::ostringstream sb;
-            sb << "Failed to open input file " << filename << ": "
-               << strerror(errno);
-            push_error(sb.str());
-            return;
-        }
-        cqasm_version_set_in(fptr, (yyscan_t)scanner);
-    } else {
-        buf = cqasm_version__scan_string(data.c_str(), (yyscan_t)scanner);
-    }
-
-    // Do the actual parsing.
-    parse();
-
-}
-
-/**
- * Construct the analyzer internals for the given filename, and analyze
- * the file.
- */
-ParseHelper::ParseHelper(
-    const std::string &filename,
-    FILE *fptr
-) : filename(filename), version("") {
-
-    // Create the scanner.
-    if (!construct()) return;
-
-    // Open the file or pass the data buffer to flex.
-    cqasm_version_set_in(fptr, (yyscan_t)scanner);
-
-    // Do the actual parsing.
-    parse();
-
-}
-
-/**
- * Initializes the scanner. Returns whether this was successful.
- */
-bool ParseHelper::construct() {
-    int retcode = cqasm_version_lex_init((yyscan_t*)&scanner);
-    if (retcode) {
-        std::ostringstream sb;
-        sb << "Failed to construct scanner: " << strerror(retcode);
-        push_error(sb.str());
-        return false;
-    } else {
-        return true;
-    }
-}
+ParseHelper::ParseHelper(const std::string &filename, std::unique_ptr<ScannerAdaptor> scanner_up
+) : filename(filename), scanner_up_(std::move(scanner_up)) {}
 
 /**
  * Does the actual parsing.
  */
-void ParseHelper::parse() {
-    int retcode = cqasm_version_parse((yyscan_t) scanner, *this);
-    if (retcode == 2) {
-        std::ostringstream sb;
-        sb << "Out of memory while parsing " << filename;
-        push_error(sb.str());
-        return;
-    } else if (retcode) {
-        std::ostringstream sb;
-        sb << "Failed to parse " << filename;
-        push_error(sb.str());
-        return;
+Version ParseHelper::parse() {
+    Version version{ "" };
+    int result = scanner_up_->parse(filename, version);
+    if (result == 2) {
+        throw error::AnalysisError(std::string{"Out of memory while parsing '" } + filename + "'.");
+    } else if (result != 0) {
+        throw error::AnalysisError(std::string{ "Failed to parse '" } + filename + "'.");
     }
     if (version.empty()) {
-        throw error::AnalysisError(
-            "Internal error; no version info nor error info was returned "
-            "by version parser");
+        throw error::AnalysisError("Internal error: no version info nor error info was returned by version parser.");
     }
-}
-
-/**
- * Destroys the analyzer.
- */
-ParseHelper::~ParseHelper() {
-    if (fptr) {
-        fclose(fptr);
-    }
-    if (buf) {
-        cqasm_version__delete_buffer((YY_BUFFER_STATE)buf, (yyscan_t)scanner);
-    }
-    if (scanner) {
-        cqasm_version_lex_destroy((yyscan_t)scanner);
-    }
-}
-
-/**
- * Pushes an error.
- */
-void ParseHelper::push_error(const std::string &error) {
-    throw error::AnalysisError(std::string(error));
+    return version;
 }
 
 } // namespace version

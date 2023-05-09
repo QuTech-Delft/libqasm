@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:15:12..17: failed to resolve extra

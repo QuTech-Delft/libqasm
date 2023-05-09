@@ -10,6 +10,7 @@
     #include <memory>
     #include <cstdio>
     #include <cstdint>
+    #include <string>
     #include "cqasm-error.hpp"
     #include "cqasm-version.hpp"
     using namespace cqasm::version;
@@ -22,11 +23,12 @@
 
 %code {
     int yylex(YYSTYPE* yylvalp, YYLTYPE* yyllocp, yyscan_t scanner);
-    void yyerror(YYLTYPE* yyllocp, yyscan_t scanner, cqasm::version::ParseHelper &helper, const char* msg);
+    void yyerror(YYLTYPE* yyllocp, yyscan_t scanner, const std::string &filename, cqasm::version::Version &version, const char* msg);
 }
 
 %param { yyscan_t scanner }
-%parse-param { cqasm::version::ParseHelper &helper }
+%parse-param { const std::string &filename }
+%parse-param { cqasm::version::Version &version }
 
 /* YYSTYPE union */
 %union {
@@ -50,8 +52,8 @@
 
 %%
 
-Version : INT_LITERAL               { helper.version.push_back(std::atoll($1)); std::free($1); }
-        | Version '.' INT_LITERAL   { helper.version.push_back(std::atoll($3)); std::free($3); }
+Version : INT_LITERAL               { version.push_back(std::atoll($1)); std::free($1); }
+        | Version '.' INT_LITERAL   { version.push_back(std::atoll($3)); std::free($3); }
         ;
 
 Root    : VERSION Version           {}
@@ -59,12 +61,13 @@ Root    : VERSION Version           {}
 
 %%
 
-void yyerror(YYLTYPE* yyllocp, yyscan_t unused, cqasm::version::ParseHelper &helper, const char* msg) {
-    (void)unused;
+void yyerror(YYLTYPE* yyllocp, yyscan_t unused, const std::string &filename, cqasm::version::Version &version, const char* msg) {
+    (void) unused;
+    (void) version;
     std::ostringstream sb;
-    sb << helper.filename
+    sb << filename
        << ":"  << yyllocp->first_line
        << ":"  << yyllocp->first_column
        << ": " << msg;
-    helper.push_error(sb.str());
+    throw cqasm::error::AnalysisError(sb.str());
 }

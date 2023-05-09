@@ -1,11 +1,12 @@
-#include <gtest/gtest.h> // googletest header file
-#include <string>
+#include "dirent-compat.h"
+#include "parsing.hpp"
+#include "v1/cqasm.hpp"
+
 #include <fstream>
+#include <gtest/gtest.h> // googletest header file
 #include <sstream>
 #include <streambuf>
-#include "dirent-compat.h"
-
-#include <cqasm.hpp>
+#include <string>
 
 namespace cq1 = cqasm::v1;
 
@@ -163,8 +164,8 @@ public:
                     return cqasm::tree::make<cq1::values::Function>("operator||", v, cqasm::tree::make<cq1::types::Bool>());
                 });
                 analyzer.register_function("operator<", "ii", [](const cq1::values::Values &v) -> cq1::values::Value {
-                    auto lhs = v[0];
-                    auto rhs = v[1];
+                    const auto& lhs = v[0];
+                    const auto& rhs = v[1];
                     if (auto lhs_const = lhs->as_const_int()) {
                         if (auto rhs_const = rhs->as_const_int()) {
                             return cqasm::tree::make<cq1::values::ConstBool>(
@@ -175,8 +176,8 @@ public:
                     return cqasm::tree::make<cq1::values::Function>("operator<", v, cqasm::tree::make<cq1::types::Bool>());
                 });
                 analyzer.register_function("operator+", "ii", [](const cq1::values::Values &v) -> cq1::values::Value {
-                    auto lhs = v[0];
-                    auto rhs = v[1];
+                    const auto& lhs = v[0];
+                    const auto& rhs = v[1];
                     if (auto lhs_const = lhs->as_const_int()) {
                         if (auto rhs_const = rhs->as_const_int()) {
                             return cqasm::tree::make<cq1::values::ConstInt>(
@@ -218,17 +219,13 @@ public:
 
 };
 
-/**
- * Entry point.
- */
-int main(int argc, char** argv) {
-    testing::InitGoogleTest();
+void register_v1_parsing_tests() {
 
     // Discover the tests. They should live in a directory tree with the
     // following structure:
     //
     // <CWD>
-    // |-  parsing
+    // |-  res/v1/parsing
     //     |- <suite-name>                   test suite directory
     //     |   |- <test-name>                test case directory
     //     |   |   |- input.cq               the input file
@@ -243,7 +240,7 @@ int main(int argc, char** argv) {
     //     |   :
     //     |- ...                            other test suite directories
     //     :
-    DIR *parsing_dir = opendir("parsing");
+    DIR *parsing_dir = opendir("res/v1/parsing");
     if (!parsing_dir) {
         throw std::runtime_error("failed to open dir for parsing tests");
     }
@@ -252,7 +249,7 @@ int main(int argc, char** argv) {
             continue;
         }
         auto suite_name = std::string(parsing_dir_ent->d_name);
-        auto suite_path = "parsing/" + suite_name;
+        auto suite_path = "res/v1/parsing/" + suite_name;
         DIR *suite_dir = opendir(suite_path.c_str());
         if (!suite_dir) {
             continue;
@@ -279,6 +276,4 @@ int main(int argc, char** argv) {
         closedir(suite_dir);
     }
     closedir(parsing_dir);
-
-    return RUN_ALL_TESTS();
 }
