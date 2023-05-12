@@ -74,10 +74,10 @@ error_model::ErrorModelRef deserialize(const ::tree::cbor::MapReader &map) {
     }
     auto model = tree::make<error_model::ErrorModel>(map.at("n").as_string(), "");
     auto ar = map.at("t").as_array();
-    for (size_t i = 0; i < ar.size(); i++) {
-        model->param_types.add(::tree::base::deserialize<types::Node>(ar.at(i).as_binary()));
+    for (const auto &element : ar) {
+        model->param_types.add(::tree::base::deserialize<types::Node>(element.as_binary()));
     }
-    return std::move(model);
+    return model;
 }
 
 } // namespace primitives

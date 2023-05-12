@@ -105,10 +105,10 @@ instruction::InstructionRef deserialize(const ::tree::cbor::MapReader &map) {
         map.at("d").as_bool()
     );
     auto ar = map.at("t").as_array();
-    for (size_t i = 0; i < ar.size(); i++) {
-        insn->param_types.add(::tree::base::deserialize<types::Node>(ar.at(i).as_binary()));
+    for (const auto &element : ar) {
+        insn->param_types.add(::tree::base::deserialize<types::Node>(element.as_binary()));
     }
-    return std::move(insn);
+    return insn;
 }
 
 } // namespace primitives

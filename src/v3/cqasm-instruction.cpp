@@ -44,18 +44,17 @@ Instruction::Instruction(
  */
 bool Instruction::operator==(const Instruction& rhs) const {
     return utils::case_insensitive_equals(name, rhs.name)
-            && param_types == rhs.param_types
-            && allow_conditional == rhs.allow_conditional
-            && allow_parallel == rhs.allow_parallel
-            && allow_reused_qubits == rhs.allow_reused_qubits;
+        && param_types == rhs.param_types
+        && allow_conditional == rhs.allow_conditional
+        && allow_parallel == rhs.allow_parallel
+        && allow_reused_qubits == rhs.allow_reused_qubits;
 }
 
 /**
  * Stream << overload for instructions.
  */
 std::ostream &operator<<(std::ostream &os, const Instruction &insn) {
-    os << insn.name << insn.param_types;
-    return os;
+    return os << insn.name << insn.param_types;
 }
 
 /**
@@ -105,10 +104,10 @@ instruction::InstructionRef deserialize(const ::tree::cbor::MapReader &map) {
         map.at("d").as_bool()
     );
     auto ar = map.at("t").as_array();
-    for (size_t i = 0; i < ar.size(); i++) {
-        insn->param_types.add(::tree::base::deserialize<types::Node>(ar.at(i).as_binary()));
+    for (const auto &element : ar) {
+        insn->param_types.add(::tree::base::deserialize<types::Node>(element.as_binary()));
     }
-    return std::move(insn);
+    return insn;
 }
 
 } // namespace primitives
