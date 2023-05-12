@@ -77,13 +77,7 @@ elseif(UNIX)
 endif()
 
 
-add_custom_command(
-    TARGET ${PROJECT_NAME}_test POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_CURRENT_SOURCE_DIR}/../res
-    ${CMAKE_CURRENT_BINARY_DIR}/res
-)
-
-
 include(GoogleTest)
-gtest_discover_tests(${PROJECT_NAME}_test)
+gtest_discover_tests(${PROJECT_NAME}_test
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+)
