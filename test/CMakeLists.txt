@@ -1,3 +1,11 @@
+include(FetchContent)
+FetchContent_Declare(doctest
+    GIT_REPOSITORY https://github.com/onqtam/doctest.git
+    GIT_TAG "ae7a13539fb71f270b87eb2e874fbac80bc8dda2"
+)
+FetchContent_MakeAvailable(doctest)
+
+
 #=============================================================================#
 # v1 tests                                                                    #
 #=============================================================================#
@@ -26,7 +34,7 @@ list(APPEND app_sources ${test_sources})
 # Test executable
 add_executable(${PROJECT_NAME}_test ${app_sources})
 target_link_libraries(${PROJECT_NAME}_test PRIVATE
-    cqasm_objlib
+    cqasm
     gmock
     gtest
 )

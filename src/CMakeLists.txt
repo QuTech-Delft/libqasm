@@ -50,10 +50,16 @@ else()
     set(flex_win_compat)
 endif()
 
-# Include tree-gen, a custom utility to generate classes for typed tree-like
+# Packages
+include(FetchContent)
+# tree-gen, a custom utility to generate classes for typed tree-like
 # structures and enums with variants containing data. This exposes the
 # generate_tree() function.
-add_subdirectory(tree-gen)
+FetchContent_Declare(tree-gen
+    GIT_REPOSITORY https://github.com/QuTech-Delft/tree-gen.git
+    GIT_TAG "1566be4cd8d6dea1882e9acd0859dad54defbada"
+)
+FetchContent_MakeAvailable(tree-gen)
 
 # Include func-gen, a simple program that generates the function that registers
 # all default functions (operators, trigonometry, etc) with a
@@ -256,26 +262,21 @@ list(APPEND CQASM_V3_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3/cqasm-functions-gen
 #-------------------------------------------------------------------------------
 
 # Main cQASM library as an object library.
-# NOTE: tree-gen's support library is included here directly. It'd be great to
-# just be able to use target_link_libraries(cqasm_objlib tree-lib-obj), but
-# that only works from CMake 3.12 onwards. So for compatibility, we're forced
-# to do it the old-fashioned way.
 add_library(
-    cqasm_objlib OBJECT
-    ${TREE_LIB_SRCS}
+    cqasm-lib-obj OBJECT
     ${CQASM_COMMON_SOURCES}
     ${CQASM_V1_SOURCES}
     ${CQASM_V3_SOURCES}
 )
 
-target_compile_definitions(cqasm_objlib PRIVATE ${TREE_LIB_PRIVATE_DEFS})
+target_compile_definitions(cqasm-lib-obj PRIVATE ${TREE_LIB_PRIVATE_DEFS})
 
 # The src directory and binary directory (for generated header files) are
 # private. The include directory is public. That is, the files in include
 # must not try to include generated files and files from the src directory,
 # but the other direction is fine.
 target_include_directories(
-    cqasm_objlib
+    cqasm-lib-obj
     PRIVATE ${TREE_LIB_PRIVATE_INCLUDE}
     PUBLIC ${TREE_LIB_PUBLIC_INCLUDE}
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src"
@@ -284,23 +285,25 @@ target_include_directories(
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include"
 )
 
+target_link_libraries(cqasm-lib-obj PUBLIC tree-lib-obj)
+
 # Enable all warnings and treat them as errors when compiling libcqasm.
 if(MSVC)
-    #set_target_properties(cqasm_objlib PROPERTIES COMPILE_FLAGS "/Wall")
+    #set_target_properties(cqasm-lib-obj PROPERTIES COMPILE_FLAGS "/Wall")
 else()
-    set_target_properties(cqasm_objlib PROPERTIES COMPILE_FLAGS "-Wall -Wextra")
+    set_target_properties(cqasm-lib-obj PROPERTIES COMPILE_FLAGS "-Wall -Wextra")
 endif()
 
 # Always compiled with -fPIC, otherwise some weirdness happens with pthreads or
 # something when linking statically.
-set_target_properties(cqasm_objlib PROPERTIES POSITION_INDEPENDENT_CODE ON)
+set_target_properties(cqasm-lib-obj PROPERTIES POSITION_INDEPENDENT_CODE ON)
 set_target_properties(tree-lib-obj PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 # Main cQASM library in shared or static form as managed by cmake's
 # internal BUILD_SHARED_LIBS variable.
-add_library(cqasm $<TARGET_OBJECTS:cqasm_objlib>)
-target_include_directories(cqasm PUBLIC $<TARGET_PROPERTY:cqasm_objlib,INTERFACE_INCLUDE_DIRECTORIES>)
-target_link_libraries(cqasm PUBLIC $<TARGET_PROPERTY:cqasm_objlib,LINK_LIBRARIES>)
+add_library(cqasm $<TARGET_OBJECTS:cqasm-lib-obj>)
+target_include_directories(cqasm PUBLIC $<TARGET_PROPERTY:cqasm-lib-obj,INTERFACE_INCLUDE_DIRECTORIES>)
+target_link_libraries(cqasm PUBLIC $<TARGET_PROPERTY:cqasm-lib-obj,LINK_LIBRARIES>)
 
 #-------------------------------------------------------------------------------
 # Install instructions
@@ -314,9 +317,9 @@ install(
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
-get_target_property(INCLUDE_DIRS cqasm_objlib INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(INCLUDE_DIRS cqasm-lib-obj INTERFACE_INCLUDE_DIRECTORIES)
 install(
     DIRECTORY ${INCLUDE_DIRS}
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    FILES_MATCHING PATTERN "*.hpp"
+    FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inc"
 )

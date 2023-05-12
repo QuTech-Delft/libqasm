@@ -36,15 +36,15 @@ There are two ways in which you can link against the new API of libqasm:
    `target_link_libraries(<your-target> <PRIVATE|PUBLIC> cqasm`. Again,
    depending on CMake's `BUILD_SHARED_LIBS` variable, shared or static linking
    will be used. You can also link the objects directly into your target; in
-   this case `$<TARGET_OBJECTS:cqasm_objlib>` expands to the objects (add it
+   this case `$<TARGET_OBJECTS:cqasm-lib-obj>` expands to the objects (add it
    to your target as if it's a source file). You will need the following two
    lines in addition to copy over the public include directories and any
    dependencies of libqasm (currently there are none, this is for the sake of
    future-proofing) into your target:
 
    ```cmake
-   target_include_directories(<your-target> <PRIVATE|PUBLIC> $<TARGET_PROPERTY:cqasm_objlib,INTERFACE_INCLUDE_DIRECTORIES>)
-   target_link_libraries(<your-target> <PRIVATE|PUBLIC> $<TARGET_PROPERTY:cqasm_objlib,LINK_LIBRARIES>)
+   target_include_directories(<your-target> <PRIVATE|PUBLIC> $<TARGET_PROPERTY:cqasm-lib-obj,INTERFACE_INCLUDE_DIRECTORIES>)
+   target_link_libraries(<your-target> <PRIVATE|PUBLIC> $<TARGET_PROPERTY:cqasm-lib-obj,LINK_LIBRARIES>)
    ```
 
 When configuring the project using the `cmake` command, you may want to add one

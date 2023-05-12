@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
-if(CMAKE_VERSION VERSION_GREATER 3.0)
+
+if(POLICY CMP0048)
     cmake_policy(SET CMP0048 NEW)
+endif()
+
+if(POLICY CMP0058)
+    cmake_policy(SET CMP0058 NEW)
 endif()
 
 project(cqasm CXX)
@@ -90,12 +95,12 @@ endif()
 # Compatibility mode: provide/test the original API in addition to the new one.
 if (LIBQASM_COMPAT)
     # Add the compatibility headers to the include path.
-    target_include_directories(cqasm_objlib INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/src/include/v1.0)
+    target_include_directories(cqasm-lib-obj INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include/v1.0)
 
     # Make sure to install the headers as well.
     include(GNUInstallDirs)
     install(
-        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/include/v1.0/
+        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/v1.0/
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         FILES_MATCHING PATTERN "*.hpp"
     )
@@ -107,11 +112,11 @@ if (LIBQASM_COMPAT)
         foreach(TEST_SRC ${TEST_SRCS})
             get_filename_component(TEST_NAME ${TEST_SRC} NAME_WE)
             add_executable(${TEST_NAME} ${TEST_SRC})
-            target_include_directories(${TEST_NAME} PRIVATE test/v1.0/cpp/doctest)
-            target_link_libraries(${TEST_NAME} cqasm)
+            target_include_directories(${TEST_NAME} PRIVATE ${DOCTEST_INCLUDE_DIR})
+            target_link_libraries(${TEST_NAME} PRIVATE cqasm doctest::doctest)
             add_test(
                 NAME ${TEST_NAME}
-                WORKING_DIRECTORY test/v1.0/res
+                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/res/v1.0
                 COMMAND ${TEST_NAME}
             )
         endforeach()

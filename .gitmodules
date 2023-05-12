@@ -1,6 +1,0 @@
-[submodule "doctest"]
-	path = test/v1.0/cpp/doctest
-	url = https://github.com/onqtam/doctest.git
-[submodule "tree-gen"]
-	path = src/tree-gen
-	url = https://github.com/QuTech-Delft/tree-gen.git
