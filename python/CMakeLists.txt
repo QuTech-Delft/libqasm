@@ -104,13 +104,13 @@ endif()
 # This sort of fixes that (https://stackoverflow.com/questions/1941443)
 SET(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-# Require C++11 compiler support.
+# Require C++23 compiler support
 if(CMAKE_VERSION VERSION_LESS "3.1")
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++23")
     endif()
 else()
-    set(CMAKE_CXX_STANDARD 11)
+    set(CMAKE_CXX_STANDARD 23)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     set(CMAKE_CXX_EXTENSIONS OFF)
 endif()
