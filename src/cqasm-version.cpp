@@ -19,7 +19,8 @@ Version::Version(const std::string &version) {
     if (version.empty()) {
         return;
     }
-    size_t next, last = 0;
+    size_t next = 0;
+    size_t last = 0;
     while ((next = version.find('.', last)) != std::string::npos) {
         push_back(std::stoi(version.substr(last, next - last)));
         last = next + 1;
@@ -42,10 +43,18 @@ Version::Version(const std::string &version) {
  */
 int Version::compare(const Version &other) const {
     for (size_t i = 0; i < this->size() || i < other.size(); i++) {
-        auto lhs = i < this->size() ? (*this)[i] : 0;
-        auto rhs = i < other.size() ? other[i] : 0;
-        if (lhs > rhs) return 1;
-        if (lhs < rhs) return -1;
+        auto lhs = (i < this->size())
+            ? (*this)[i]
+            : 0;
+        auto rhs = (i < other.size())
+            ? other[i]
+            : 0;
+        if (lhs > rhs) {
+            return 1;
+        }
+        if (lhs < rhs) {
+            return -1;
+        }
     }
     return 0;
 }
@@ -82,7 +91,7 @@ std::ostream &operator<<(std::ostream &os, const Version &object) {
 ScannerFlexBison::ScannerFlexBison() {
     int result = cqasm_version_lex_init(static_cast<yyscan_t*>(&scanner_));
     if (result != 0) {
-        throw error::AnalysisError(std::string{ "Failed to construct scanner: " } + strerror(result));
+        throw error::AnalysisError(std::string("ScannerFlexBison failed to initialize lexer: ") + strerror(result));
     }
 }
 
@@ -94,11 +103,9 @@ ScannerFlexBison::~ScannerFlexBison() {
 
 
 ScannerFlexBisonFile::ScannerFlexBisonFile(FILE *fp
-) : fp_{ fp } {}
-
-ScannerFlexBisonFile::~ScannerFlexBisonFile() {
-    if (fp_) {
-        fclose(fp_);
+) : fp_{ fp } {
+    if (!fp_) {
+        throw error::AnalysisError("ScannerFlexBisonFile couldn't access file.");
     }
 }
 
@@ -114,7 +121,7 @@ ScannerFlexBisonString::ScannerFlexBisonString(const char *data
 int ScannerFlexBisonString::parse(const std::string &filename, Version &version) const {
     auto buffer = cqasm_version__scan_string(data_, static_cast<yyscan_t>(scanner_));
     if (!buffer) {
-        throw error::AnalysisError("Failed to scan input data string.");
+        throw error::AnalysisError("ScannerFlexBisonString failed to scan input data string.");
     }
     int result = cqasm_version_parse(static_cast<yyscan_t>(scanner_), filename, version);
     cqasm_version__delete_buffer(buffer, static_cast<yyscan_t>(scanner_));
@@ -127,13 +134,15 @@ int ScannerFlexBisonString::parse(const std::string &filename, Version &version)
  * Throws an AnalysisError if this fails.
  */
 Version parse_file(const std::string &filename) {
-    // Open the file or pass the data buffer to flex.
     FILE *fp = fopen(filename.c_str(), "r");
     if (!fp) {
-        throw error::AnalysisError(std::string{ "Failed to open input file " } + filename + ": " + strerror(errno));
+        throw error::AnalysisError(
+            std::string("parse_file failed to open input file '") + filename + "': " + strerror(errno) + ".");
     }
-    auto scanner = std::unique_ptr<ScannerFlexBisonFile>(new ScannerFlexBisonFile(fp));
-    return ParseHelper(filename, std::move(scanner)).parse();
+    auto scanner_up = std::unique_ptr<ScannerFlexBisonFile>(new ScannerFlexBisonFile(fp));
+    auto version = ParseHelper(filename, std::move(scanner_up)).parse();
+    fclose(fp);
+    return version;
 }
 
 /**
@@ -142,11 +151,9 @@ Version parse_file(const std::string &filename) {
  * The file is rewound back to the start when parsing completes.
  */
 Version parse_file(FILE *fp, const std::string &filename) {
-    auto scanner = std::unique_ptr<ScannerFlexBisonFile>(new ScannerFlexBisonFile(fp));
-    auto version = ParseHelper(filename, std::move(scanner)).parse();
-    if (fseek(fp, 0, SEEK_SET)) {
-        throw error::AnalysisError("failed to rewind file pointer");
-    }
+    auto scanner_up = std::unique_ptr<ScannerFlexBisonFile>(new ScannerFlexBisonFile(fp));
+    auto version = ParseHelper(filename, std::move(scanner_up)).parse();
+    rewind(fp);
     return version;
 }
 
@@ -154,8 +161,8 @@ Version parse_file(FILE *fp, const std::string &filename) {
  * Parse the given string as a file to get its version number.
  */
 Version parse_string(const std::string &data, const std::string &filename) {
-    auto scanner = std::unique_ptr<ScannerFlexBisonString>(new ScannerFlexBisonString(data.c_str()));
-    return ParseHelper(filename, std::move(scanner)).parse();
+    auto scanner_up = std::unique_ptr<ScannerFlexBisonString>(new ScannerFlexBisonString(data.c_str()));
+    return ParseHelper(filename, std::move(scanner_up)).parse();
 }
 
 
@@ -166,15 +173,15 @@ ParseHelper::ParseHelper(const std::string &filename, std::unique_ptr<ScannerAda
  * Does the actual parsing.
  */
 Version ParseHelper::parse() {
-    Version version{ "" };
+    Version version;
     int result = scanner_up_->parse(filename, version);
     if (result == 2) {
-        throw error::AnalysisError(std::string{"Out of memory while parsing '" } + filename + "'.");
+        throw error::AnalysisError(std::string("ParseHelper::parse: out of memory while parsing '") + filename + "'.");
     } else if (result != 0) {
-        throw error::AnalysisError(std::string{ "Failed to parse '" } + filename + "'.");
+        throw error::AnalysisError(std::string("ParseHelper::parse: failed to parse '") + filename + "'.");
     }
     if (version.empty()) {
-        throw error::AnalysisError("Internal error: no version info nor error info was returned by version parser.");
+        throw error::AnalysisError("ParseHelper::parse: no version info nor error info was returned by version parser.");
     }
     return version;
 }

@@ -25,9 +25,14 @@ namespace version {
 class Version : public std::vector<std::int64_t> {
 public:
     /**
-     * Constructs a version object from a string, defaulting to 1.0.
+     * Default constructor.
      */
-    explicit Version(const std::string &version = "1.0");
+    Version() = default;
+
+    /**
+     * Constructs a version object from a string.
+     */
+    explicit Version(const std::string &version);
 
     /**
      * Compares this version against the other version.
@@ -77,7 +82,7 @@ class ScannerFlexBisonFile : public ScannerFlexBison {
     FILE *fp_{ nullptr };
 public:
     explicit ScannerFlexBisonFile(FILE *fp);
-    ~ScannerFlexBisonFile() override;
+    ~ScannerFlexBisonFile() override = default;
     int parse(const std::string &filename, Version &version) const override;
 };
 
