@@ -26,6 +26,7 @@ set(test_sources
     ${v3_test_sources}
 )
 set(app_sources
+    "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-version.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
 )
 list(APPEND app_sources ${test_sources})
