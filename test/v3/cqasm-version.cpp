@@ -182,36 +182,44 @@ TEST(parse_string, string_version_4_0) {
 
 
 struct ScannerMock : public ScannerAdaptor {
-    MOCK_METHOD((int), parse, (const std::string &, Version &), (const, override));
+    MOCK_METHOD((void), parse, (const std::string &, Version &), (const, override));
 };
 
-TEST(ParseHelper_parse, scanner_returns_2) {
-    auto scanner_up = std::unique_ptr<ScannerMock>(new ScannerMock());
+ACTION_P(ThrowOutOfMemoryAnalysisError, filename) {
+    throw AnalysisError(std::string("ScannerFlexBison::parse_: out of memory while parsing '") + filename + "'.");
+}
+
+ACTION_P(ThrowFailedToParseAnalysisError, filename) {
+    throw AnalysisError(std::string("ScannerFlexBison::parse_: failed to parse '") + filename + "'.");
+}
+
+TEST(ParseHelper_parse, scanner_throws_out_of_memory) {
+    auto scanner_up = std::make_unique<ScannerMock>();
     const auto &scanner = *(dynamic_cast<ScannerMock*>(scanner_up.get()));
     const std::string filename = "huge_file.cq";
-    EXPECT_CALL(scanner, parse(filename, _)).WillOnce(Return(2));
+    EXPECT_CALL(scanner, parse(filename, _)).WillOnce(ThrowOutOfMemoryAnalysisError(filename));
     EXPECT_THROW(ParseHelper(filename, std::move(scanner_up)).parse(), AnalysisError);
 }
-TEST(ParseHelper_parse, scanner_returns_10) {
-    auto scanner_up = std::unique_ptr<ScannerMock>(new ScannerMock);
+TEST(ParseHelper_parse, scanner_throws_failed_to_parse) {
+    auto scanner_up = std::make_unique<ScannerMock>();
     const auto &scanner = *(dynamic_cast<ScannerMock*>(scanner_up.get()));
     const std::string filename = "wrong_file.cq";
-    EXPECT_CALL(scanner, parse(filename, _)).WillOnce(Return(10));
+    EXPECT_CALL(scanner, parse(filename, _)).WillOnce(ThrowFailedToParseAnalysisError(filename));
     EXPECT_THROW(ParseHelper(filename, std::move(scanner_up)).parse(), AnalysisError);
 }
-TEST(ParseHelper_parse, scanner_returns_0_and_version_is_empty) {
-    auto scanner_up = std::unique_ptr<ScannerMock>(new ScannerMock);
+TEST(ParseHelper_parse, scanner_returns_empty_version) {
+    auto scanner_up = std::make_unique<ScannerMock>();
     const auto &scanner = *(dynamic_cast<ScannerMock*>(scanner_up.get()));
     const std::string filename = "file_no_version.cq";
-    EXPECT_CALL(scanner, parse(filename, _)).WillOnce(Return(0));
+    Version ret;
+    EXPECT_CALL(scanner, parse(filename, _)).WillOnce(SetArgReferee<1>(ret));
     EXPECT_THROW(ParseHelper(filename, std::move(scanner_up)).parse(), AnalysisError);
 }
-TEST(ParseHelper_parse, scanner_returns_0_and_version_is_ok) {
-    auto scanner_up = std::unique_ptr<ScannerMock>(new ScannerMock);
+TEST(ParseHelper_parse, scanner_returns_correct_version) {
+    auto scanner_up = std::make_unique<ScannerMock>();
     const auto &scanner = *(dynamic_cast<ScannerMock*>(scanner_up.get()));
     const std::string filename = "file_version_3_0.cq";
     Version ret{ "3.0" };
-    EXPECT_CALL(scanner, parse(filename, _))
-        .WillOnce(DoAll(SetArgReferee<1>(ret), Return(0)));
+    EXPECT_CALL(scanner, parse(filename, _)).WillOnce(SetArgReferee<1>(ret));
     EXPECT_EQ(ParseHelper(filename, std::move(scanner_up)).parse(), Version{ "3.0" });
 }

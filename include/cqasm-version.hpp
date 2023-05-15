@@ -12,12 +12,10 @@
 #include <memory>
 #include <vector>
 
-namespace cqasm {
-
 /**
  * Namespace for detecting and dealing with cQASM language versions.
  */
-namespace version {
+namespace cqasm::version {
 
 /**
  * Version number primitive used within the AST and semantic trees.
@@ -42,7 +40,7 @@ public:
      *   0 if both versions are the same.
      * When there is a mismatch in the number of components between the versions, missing components are interpreted as 0.
      */
-    int compare(const Version &other) const;
+    [[nodiscard]] int compare(const Version &other) const;
 
     /**
      * Compares this version against the other version.
@@ -52,7 +50,7 @@ public:
      *   0 if both versions are the same.
      * When there is a mismatch in the number of components between the versions, missing components are interpreted as 0.
      */
-    int compare(const std::string &other) const;
+    [[nodiscard]] int compare(const std::string &other) const;
 };
 
 /**
@@ -64,17 +62,18 @@ std::ostream &operator<<(std::ostream &os, const Version &object);
 struct ScannerAdaptor {
     virtual ~ScannerAdaptor() = default;
 
-    virtual int parse(const std::string &filename, Version &version) const = 0;
+    virtual void parse(const std::string &filename, Version &version) const = 0;
 };
 
 
 class ScannerFlexBison : public ScannerAdaptor {
 protected:
     void *scanner_{ nullptr };
+    void parse_(const std::string &filename, Version &version) const;
 public:
     ScannerFlexBison();
     ~ScannerFlexBison() override;
-    int parse(const std::string &filename, Version &version) const override = 0;
+    void parse(const std::string &filename, Version &version) const override = 0;
 };
 
 
@@ -83,7 +82,7 @@ class ScannerFlexBisonFile : public ScannerFlexBison {
 public:
     explicit ScannerFlexBisonFile(FILE *fp);
     ~ScannerFlexBisonFile() override = default;
-    int parse(const std::string &filename, Version &version) const override;
+    void parse(const std::string &filename, Version &version) const override;
 };
 
 
@@ -92,7 +91,7 @@ class ScannerFlexBisonString : public ScannerFlexBison {
 public:
     explicit ScannerFlexBisonString(const char *data);
     ~ScannerFlexBisonString() override = default;
-    int parse(const std::string &filename, Version &version) const override;
+    void parse(const std::string &filename, Version &version) const override;
 };
 
 
@@ -135,7 +134,7 @@ public:
     /**
      * Parse a file with flex/bison.
      */
-    ParseHelper(const std::string &filename, std::unique_ptr<ScannerAdaptor> scanner_up);
+    ParseHelper(std::string filename, std::unique_ptr<ScannerAdaptor> scanner_up);
 
     /**
      * Does the actual parsing.
@@ -144,5 +143,4 @@ public:
 };
 
 
-} // namespace version
-} // namespace cqasm
+} // namespace cqasm::version
