@@ -4,6 +4,7 @@ on:
   push:
     branches:
     - develop
+    - v3
   pull_request:
 
 jobs:
@@ -39,7 +40,7 @@ jobs:
       if: matrix.os == 'windows-latest'
       run: choco install winflexbison3 --version 2.5.18.20190508
     - name: Configure
-      run: cmake . -DCMAKE_BUILD_TYPE=Debug -DLIBQASM_BUILD_TESTS=ON -DBUILD_SHARED_LIBS=OFF
+      run: cmake . -DCMAKE_BUILD_TYPE=Debug -DLIBQASM_BUILD_TESTS=ON -DBUILD_SHARED_LIBS=OFF -DLIBQASM_BUILD_COMPAT=ON
     - name: Build
       run: cmake --build . --parallel
     - name: Test
