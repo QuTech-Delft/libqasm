@@ -1,2 +1,0 @@
-ERROR
-Error at input.cq:5:1..29: failed to resolve overload for u with argument pack (qubit reference, real 4-dimensional vector)
