@@ -2,34 +2,30 @@
  *
  * Note that this is not an example from the paper,
  * but one added specifically to check barriers are working for cQASM v1. **/
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 
-// [[noreturn]] completely breaks MSVC 2015, and is basically unnecessary
-#ifdef _MSC_VER
-#define DOCTEST_NORETURN
-#endif
-
-#include <iostream>
-#include <vector>
-#include <string>
 #include "qasm_semantic.hpp"
-#include "doctest/doctest.h"
 
-TEST_CASE("Test for the barriers.qasm file")
-{
+#include <cstdio>
+#include <gtest/gtest.h>
+#include <iostream>
+#include <string>
+#include <vector>
+
+
+TEST(v1_0, barriers) {
     #if YYDEBUG == 1
     extern int yydebug;
     yydebug = 1;
     #endif
 
     // open a file handle to a particular file:
-    FILE *myfile = fopen("barriers.qasm", "r");
+    FILE *fp = fopen("res/v1.0/barriers.qasm", "r");
 
-    compiler::QasmSemanticChecker sm(myfile);
+    compiler::QasmSemanticChecker sm(fp);
 
     auto qasm_representation = sm.getQasmRepresentation();
 
     int result = sm.parseResult();
 
-    CHECK(result == 0);   // Stop here if it fails.
+    EXPECT_EQ(result, 0);
 }

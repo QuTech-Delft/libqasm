@@ -1,28 +1,24 @@
 /** This test is for an integrated file: It is not a particular algorithm **/
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 
-// [[noreturn]] completely breaks MSVC 2015, and is basically unnecessary
-#ifdef _MSC_VER
-#define DOCTEST_NORETURN
-#endif
-
-#include <iostream>
-#include <vector>
-#include <string>
 #include "qasm_semantic.hpp"
-#include "doctest/doctest.h"
 
-TEST_CASE("Test for the testqc.qasm file")
-{
+#include <cstdio>
+#include <gtest/gtest.h>
+#include <iostream>
+#include <string>
+#include <vector>
+
+
+TEST(v1_0, qc) {
     #if YYDEBUG == 1
     extern int yydebug;
     yydebug = 1;
     #endif
 
-    // open a file handle to a particular file:
-    FILE *myfile = fopen("qc.qasm", "r");
+    FILE *fp = fopen("res/v1.0/qc.qasm", "r");
+    ASSERT_NE(fp, nullptr);
 
-    compiler::QasmSemanticChecker sm(myfile);
+    compiler::QasmSemanticChecker sm(fp);
 
     auto qasm_representation = sm.getQasmRepresentation();
 
@@ -30,14 +26,13 @@ TEST_CASE("Test for the testqc.qasm file")
 
     std::vector<double> true_results_ = {0.001, 0.1, 3.4};
 
-    CHECK(true_results_.size() == error_model_params.size());
+    EXPECT_EQ(true_results_.size(), error_model_params.size());
 
-    for (size_t i = 0; i < error_model_params.size(); ++i)
-    {
-        CHECK(error_model_params.at(i) == true_results_.at(i));
+    for (size_t i = 0; i < error_model_params.size(); ++i) {
+        EXPECT_EQ(error_model_params.at(i), true_results_.at(i));
     }
 
     int result = sm.parseResult();
 
-    CHECK(result == 0);   // Stop here if it fails.
+    EXPECT_EQ(result, 0);
 }

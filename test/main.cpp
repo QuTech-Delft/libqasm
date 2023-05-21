@@ -1,10 +1,10 @@
 #include "v1/parsing.hpp"
 
-#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 #include <iostream>
 
 int main_impl(int argc, char** argv, std::ostream&) {
-    ::testing::InitGoogleTest(&argc, argv);
+    ::testing::InitGoogleMock(&argc, argv);
 
     register_v1_parsing_tests();
 

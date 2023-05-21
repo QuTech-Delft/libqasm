@@ -1,30 +1,29 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-
-// [[noreturn]] completely breaks MSVC 2015, and is basically unnecessary
-#ifdef _MSC_VER
-#define DOCTEST_NORETURN
-#endif
-
-#include <iostream>
-#include <vector>
-#include <string>
-#include <string.h>
 #include "qasm_semantic.hpp"
-#include "doctest/doctest.h"
 
-TEST_CASE("Test for the reentrant_invalid.qasm file")
-{
+#include <cstdio>
+#include <gtest/gtest.h>
+#include <gmock/gmock-matchers.h>
+#include <iostream>
+#include <string>
+#include <vector>
+
+
+TEST(v1_0, reentrant_invalid) {
     #if YYDEBUG == 1
     extern int yydebug;
     yydebug = 1;
     #endif
 
-    // open a file handle to a particular file:
-    FILE *myfile = fopen("reentrant_invalid.qasm", "r");
+    FILE *fp = fopen("res/v1.0/reentrant_invalid.qasm", "r");
+    ASSERT_NE(fp, nullptr);
 
-    CHECK_THROWS_WITH(compiler::QasmSemanticChecker sm(myfile), "Error at <unknown>:6:14..15: index 2 out of range (size 2)");
+    EXPECT_THAT([&]() { compiler::QasmSemanticChecker sm(fp); },
+        ::testing::ThrowsMessage<std::runtime_error>(
+            "Error at <unknown>:6:14..15: index 2 out of range (size 2)"));
 
-    rewind(myfile);
+    rewind(fp);
 
-    CHECK_THROWS_WITH(compiler::QasmSemanticChecker sm2(myfile), "Error at <unknown>:6:14..15: index 2 out of range (size 2)");
+    EXPECT_THAT([&]() { compiler::QasmSemanticChecker sm(fp); },
+        ::testing::ThrowsMessage<std::runtime_error>(
+            "Error at <unknown>:6:14..15: index 2 out of range (size 2)"));
 }

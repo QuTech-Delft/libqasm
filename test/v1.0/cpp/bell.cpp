@@ -1,32 +1,29 @@
 /** This test is for the bell example qasm file **/
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 
-// [[noreturn]] completely breaks MSVC 2015, and is basically unnecessary
-#ifdef _MSC_VER
-#define DOCTEST_NORETURN
-#endif
-
-#include <iostream>
-#include <vector>
-#include <string>
 #include "qasm_semantic.hpp"
-#include "doctest/doctest.h"
 
-TEST_CASE("Test for the bell.qasm file")
-{
+#include <cstdio>
+#include <gtest/gtest.h>
+#include <iostream>
+#include <string>
+#include <vector>
+
+
+TEST(v1_0, bell) {
     #if YYDEBUG == 1
     extern int yydebug;
     yydebug = 1;
     #endif
 
     // open a file handle to a particular file:
-    FILE *myfile = fopen("bell.qasm", "r");
+    FILE *fp = fopen("res/v1.0/bell.qasm", "r");
+    ASSERT_NE(fp, nullptr);
 
-    compiler::QasmSemanticChecker sm(myfile);
+    compiler::QasmSemanticChecker sm(fp);
 
     auto qasm_representation = sm.getQasmRepresentation();
 
     int result = sm.parseResult();
 
-    CHECK(result == 0);   // Stop here if it fails.
+    EXPECT_EQ(result, 0);
 }

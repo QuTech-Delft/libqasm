@@ -36,16 +36,16 @@ Value promote(const Value &value, const types::Type &type) {
     // Integers promote to real.
     if (type->as_real()) {
         if (auto const_int = value->as_const_int()) {
-            retval = tree::make<values::ConstReal>(const_int->value);
+            retval = tree::make<values::ConstReal>(static_cast<ConstReal>(const_int->value));
         }
     }
 
     // Integers and reals promote to complex.
     if (type->as_complex()) {
         if (auto const_int = value->as_const_int()) {
-            retval = tree::make<values::ConstComplex>(const_int->value);
+            retval = tree::make<values::ConstComplex>(static_cast<ConstComplex>(const_int->value));
         } else if (auto const_real = value->as_const_real()) {
-            retval = tree::make<values::ConstComplex>(const_real->value);
+            retval = tree::make<values::ConstComplex>(static_cast<ConstComplex>(const_real->value));
         }
     }
 
@@ -87,7 +87,7 @@ Value promote(const Value &value, const types::Type &type) {
                             complex_mat_value.at(row, col) = std::complex<double>(re, im);
                         }
                     }
-                    retval = tree::make<values::ConstComplexMatrix>(complex_mat_value);
+                    retval = tree::make<values::ConstComplexMatrix>(static_cast<ConstComplexMatrix>(complex_mat_value));
                 }
             }
         }

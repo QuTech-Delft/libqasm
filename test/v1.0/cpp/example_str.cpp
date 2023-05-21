@@ -1,37 +1,25 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-
-// [[noreturn]] completely breaks MSVC 2015, and is basically unnecessary
-#ifdef _MSC_VER
-#define DOCTEST_NORETURN
-#endif
-
-#include <iostream>
-#include <vector>
-#include <string>
-#include <fstream>
 #include "qasm_semantic.hpp"
-#include "doctest/doctest.h"
 
-TEST_CASE("Test for the example_str.qasm file")
-{
+#include <fstream>
+#include <gtest/gtest.h>
+#include <iostream>
+#include <iterator>
+#include <string>
+#include <vector>
+
+
+TEST(v1_0, example_str) {
     #if YYDEBUG == 1
     extern int yydebug;
     yydebug = 1;
     #endif
 
-    // open a file handle to a particular file:
-    std::string file_str;
-    std::ifstream myfile("example_str.qasm");
-    while (!myfile.eof())
-    {
-        std::string line_str;
-        std::getline(myfile, line_str);
-        file_str = file_str + line_str + std::string("\n");
-    }
+    std::ifstream ifs("res/v1.0/example_str.qasm");
+    std::string file_str{ std::istreambuf_iterator(ifs), {} };
 
     const char* qasm_str = file_str.c_str();
 
     compiler::QasmSemanticChecker sm(qasm_str);
 
-    CHECK(sm.parseResult() == 0);
+    EXPECT_EQ(sm.parseResult(), 0);
 }

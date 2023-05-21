@@ -57,7 +57,7 @@ include(FetchContent)
 # generate_tree() function.
 FetchContent_Declare(tree-gen
     GIT_REPOSITORY https://github.com/QuTech-Delft/tree-gen.git
-    GIT_TAG "1566be4cd8d6dea1882e9acd0859dad54defbada"
+    GIT_TAG "185f83c39dcfeec05c6b6092d99575d80c5b13a5"
 )
 FetchContent_MakeAvailable(tree-gen)
 
@@ -287,17 +287,18 @@ target_include_directories(
 
 target_link_libraries(cqasm-lib-obj PUBLIC tree-lib-obj)
 
-# Enable all warnings and treat them as errors when compiling libcqasm.
+# fPIC: otherwise some weirdness happens with pthreads or something when linking statically.
 if(MSVC)
-    #set_target_properties(cqasm-lib-obj PROPERTIES COMPILE_FLAGS "/Wall")
-else()
-    set_target_properties(cqasm-lib-obj PROPERTIES COMPILE_FLAGS "-Wall -Wextra")
+    target_compile_options(cqasm-lib-obj PRIVATE
+        /D_CRT_NONSTDC_NO_DEPRECATE
+        /D_CRT_SECURE_NO_WARNINGS
+   )
+elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+    target_compile_options(cqasm-lib-obj PRIVATE
+        -Wall -Wextra
+        -fPIC
+    )
 endif()
-
-# Always compiled with -fPIC, otherwise some weirdness happens with pthreads or
-# something when linking statically.
-set_target_properties(cqasm-lib-obj PROPERTIES POSITION_INDEPENDENT_CODE ON)
-set_target_properties(tree-lib-obj PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 # Main cQASM library in shared or static form as managed by cmake's
 # internal BUILD_SHARED_LIBS variable.

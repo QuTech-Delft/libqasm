@@ -52,7 +52,7 @@ enum class ParameterType {
 static NumericalIdentifiers convert_indices(const cqasm::tree::Many<cq1::values::ConstInt> &indices) {
     NumericalIdentifiers retval;
     for (auto control_bit : indices) {
-        retval.addToVector(control_bit->value);
+        retval.addToVector(static_cast<const int>(control_bit->value));
     }
     return retval;
 }
@@ -99,14 +99,14 @@ static Operation *convert_instruction(const cq1::semantic::Instruction &instruct
             op = new Operation(
                 instruction.instruction->name,
                 Qubits(convert_indices(instruction.operands[0]->as_qubit_refs()->index)),
-                (const int)instruction.operands[1]->as_const_int()->value
+                static_cast<const int>(instruction.operands[1]->as_const_int()->value)
             );
             break;
         case ParameterType::SingleQubitReal:
             op = new Operation(
                 instruction.instruction->name,
                 Qubits(convert_indices(instruction.operands[0]->as_qubit_refs()->index)),
-                (const double)instruction.operands[1]->as_const_real()->value
+                static_cast<double>(instruction.operands[1]->as_const_real()->value)
             );
             break;
         case ParameterType::SingleQubitMatrix:
@@ -147,7 +147,7 @@ static Operation *convert_instruction(const cq1::semantic::Instruction &instruct
                 instruction.instruction->name,
                 Qubits(convert_indices(instruction.operands[0]->as_qubit_refs()->index)),
                 Qubits(convert_indices(instruction.operands[1]->as_qubit_refs()->index)),
-                instruction.operands[2]->as_const_int()->value
+                static_cast<double>(instruction.operands[2]->as_const_int()->value)
             );
             break;
         case ParameterType::ThreeQubit:
@@ -170,7 +170,7 @@ static Operation *convert_instruction(const cq1::semantic::Instruction &instruct
         case ParameterType::SingleInt:
             op = new Operation(
                 instruction.instruction->name,
-                instruction.operands[0]->as_const_int()->value
+                static_cast<const int>(instruction.operands[0]->as_const_int()->value)
             );
             break;
         case ParameterType::SingleString:
@@ -304,15 +304,15 @@ static void handle_parse_result(QasmRepresentation &qasm, cq1::parser::ParseResu
     if (analysis_result.root->num_qubits == 0) {
         throw std::runtime_error("qubits statement is missing");
     }
-    qasm.qubitRegister(analysis_result.root->num_qubits);
+    qasm.qubitRegister(static_cast<int>(analysis_result.root->num_qubits));
     if (!analysis_result.root->variables.empty()) {
         throw std::runtime_error("variables are not supported");
     }
 
     // Copy version number (poorly).
-    double version = analysis_result.root->version->items[0];
+    auto version = static_cast<double>(analysis_result.root->version->items[0]);
     if (analysis_result.root->version->items.size() > 1) {
-        int sub = analysis_result.root->version->items[1];
+        auto sub = analysis_result.root->version->items[1];
         version += 0.1 * ((sub > 9) ? 9 : sub);
     }
     qasm.versionNumber(version);
@@ -348,7 +348,7 @@ static void handle_parse_result(QasmRepresentation &qasm, cq1::parser::ParseResu
                 (int)scs.numberOfSubCircuits(),
                 line_number
             };
-            sc.numberIterations(subcircuit->iterations);
+            sc.numberIterations(static_cast<int>(subcircuit->iterations));
             scs.addSubCircuit(sc);
         }
 
