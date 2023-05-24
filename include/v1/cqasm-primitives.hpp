@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include <string>
 #include <cstdint>
 #include <complex>
+#include <string>
 #include <vector>
 
 #include "../cqasm-version.hpp"
@@ -28,7 +28,7 @@ namespace primitives {
  * generated tree nodes to ensure that there's no garbage in the nodes.
  */
 template <class T>
-T initialize() { return T(); };
+T initialize() { return T(); }
 
 /**
  * Serializes the given primitive object to CBOR.
@@ -113,35 +113,35 @@ template <typename T>
 class Matrix {
 private:
     std::vector<T> data;
-    size_t nrows;
-    size_t ncols;
+    size_t nrows = 0;
+    size_t ncols = 0;
 public:
     /**
      * Creates an empty matrix.
      */
     Matrix()
-        : data(ncols), nrows(1), ncols(0)
+        : data(0), nrows(1), ncols(0)
     {}
 
     /**
      * Creates a vector.
      */
-    explicit Matrix(size_t ncols)
-        : data(ncols), nrows(1), ncols(ncols)
+    explicit Matrix(size_t cols)
+        : data(cols), nrows(1), ncols(cols)
     {}
 
     /**
      * Creates a zero-initialized matrix of the given size.
      */
-    Matrix(size_t nrows, size_t ncols)
-        : data(nrows*ncols), nrows(nrows), ncols(ncols)
+    Matrix(size_t rows, size_t cols)
+        : data(rows*cols), nrows(rows), ncols(cols)
     {}
 
     /**
      * Creates a column vector with the given data.
      */
-    explicit Matrix(const std::vector<T> &data)
-        : data(data), nrows(data.size()), ncols(1)
+    explicit Matrix(const std::vector<T> &vec)
+        : data(vec), nrows(vec.size()), ncols(1)
     {}
 
     /**
@@ -149,12 +149,14 @@ public:
      * the number of data elements is not divisible by the number of columns, a
      * range error is thrown.
      */
-    Matrix(const std::vector<T> &data, size_t ncols)
-        : data(data), nrows(data.size() / ncols), ncols(ncols)
+    Matrix(const std::vector<T> &vec, size_t cols)
     {
-        if (data.size() % ncols != 0) {
+        if (vec.size() % cols != 0) {
             throw std::range_error("invalid matrix shape");
         }
+        data = vec;
+        nrows = vec.size() / cols;
+        ncols = cols;
     }
 
     /**
