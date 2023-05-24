@@ -19,32 +19,25 @@ jobs:
         - macos-latest
         - windows-latest
     steps:
-    - uses: actions/checkout@v2
-      with:
-        submodules: true
-    - name: Install dependencies
-      if: matrix.os == 'macos-latest'
-      run: |
-        brew install bison flex
-        echo "/usr/local/opt/bison/bin" >> $GITHUB_PATH
-        echo "/usr/local/opt/flex/bin" >> $GITHUB_PATH
-    - uses: actions/cache@v2
-      if: matrix.os == 'windows-latest'
-      with:
-        path: C:\Users\runneradmin\AppData\Local\Temp\chocolatey
-        key: ${{ runner.os }}-chocolatey-cpp-0
-        restore-keys: |
-          ${{ runner.os }}-chocolatey-cpp-
-          ${{ runner.os }}-chocolatey-
-    - name: Install dependencies
-      if: matrix.os == 'windows-latest'
-      run: choco install winflexbison3 --version 2.5.18.20190508
-    - name: Configure
-      run: cmake . -DCMAKE_BUILD_TYPE=Debug -DLIBQASM_BUILD_TESTS=ON -DBUILD_SHARED_LIBS=OFF -DLIBQASM_BUILD_COMPAT=ON
-    - name: Build
-      run: cmake --build . --parallel
-    - name: Test
-      run: ctest -C Debug --output-on-failure
+      - name: Get latest CMake
+        uses: lukka/get-cmake@latest
+
+      - name: Install Conan
+        id: conan
+        uses: turtlebrowser/get-conan@main
+      - name: Conan version
+        run: echo "${{ steps.conan.outputs.version }}"
+
+      - name: Checkout
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Conan install and build
+        run: conan build . -s:h libqasm/*:build_type=Debug -o libqasm/*:build_tests=True -o libqasm/*:compat=True -b missing
+
+      - name: Run tests
+        run: ctest -C Debug --output-on-failure
 
   python:
     name: Python
@@ -62,7 +55,7 @@ jobs:
         - '3.8'
         - '3.9'
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         submodules: true
     - uses: actions/setup-python@v2
@@ -116,7 +109,7 @@ jobs:
         #- windows-latest
         #- windows-2016
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         submodules: true
     - name: Set up conda

@@ -7,18 +7,36 @@
 [![API docs](https://readthedocs.org/projects/libqasm/badge/?version=latest)](https://libqasm.readthedocs.io/en/latest/)
 
 ## Dependencies
-* Flex (>= 2.6.1)
-* Bison (>= 3.0)
 * cmake (>= 3.12)
-* gcc and g++ capable of C++11 standard
-* MinGW (For Windows builds)
-* doctest (As a git submodule)
+* gcc and g++ capable of C++23 standard
 * Python3 (Tested on Python v3.6)
+* conan: 2.0
 * Swig
     * Linux: 3.0.12
     * Windows: 4.0.0
 
-### Windows environment using MSVC (Visual C++)
+## Installation
+
+### Using conan
+
+`conan` is a package manager that is very convenient for managing dependencies. It is installed via `pip`.
+
+```
+pip install conan
+```
+
+The installation of `libqasm` dependencies, as well as the compilation, can be done in one go.<br/>
+Notice the command below is building `libqasm` in Debug mode, and passing the build options `build_tests` and `compat`.
+
+```
+$ projects> git clone https://github.com/QuTech-Delft/libqasm.git
+$ projects/libqasm> git checkout v3
+$ projects/libqasm> conan build . -s:h libqasm/*:build_type=Debug -o libqasm/*:build_tests=True -o libqasm/*:compat=True -b missing
+```
+
+### Using CMake
+
+#### Windows environment using MSVC (Visual C++)
 libqasm should work with the environment described for [building OpenQL from sources on Windows](https://openql.readthedocs.io/en/latest/installation.html#notes-for-windows-users). In case that link breaks, here's a summary.
 
 Download and install the following tools. When prompted whether you want to add them to your PATH, do so.

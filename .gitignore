@@ -95,3 +95,9 @@ tags
 # IDE's
 .project
 .cproject
+
+# conan
+CMakeUserPresets.json
+conanbuildinfo.txt
+conaninfo.txt
+graph_info.json
