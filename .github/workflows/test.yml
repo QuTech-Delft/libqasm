@@ -34,7 +34,9 @@ jobs:
           fetch-depth: 0
 
       - name: Conan install and build
-        run: conan build . -s:h libqasm/*:build_type=Debug -o libqasm/*:build_tests=True -o libqasm/*:compat=True -b missing
+        run: |
+          conan profile detect
+          conan build . -s:h libqasm/*:build_type=Debug -o libqasm/*:build_tests=True -o libqasm/*:compat=True -b missing
 
       - name: Run tests
         run: ctest -C Debug --output-on-failure
