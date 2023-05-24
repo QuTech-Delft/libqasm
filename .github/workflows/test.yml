@@ -114,7 +114,7 @@ jobs:
         channels: conda-forge
         channel-priority: strict
         miniconda-version: "latest"
-        python-version: 3.10
+        python-version: "3.10"
         show-channel-urls: true
         use-only-tar-bz2: true
     - name: Install conda dependencies
