@@ -1,21 +1,18 @@
-ARG PYTHON_VERSION='3.8'
+FROM ubuntu:22.04
 
-FROM python:${PYTHON_VERSION}-buster
+RUN apt-get -qq update && \
+    apt-get -qq upgrade && \
+    apt-get -qq -y install flex bison m4 build-essential cmake git swig python3 python3-pip && \
+    python3 -m pip install pytest
 
-ENV DEBIAN_FRONTEND=noninteractive
-RUN apt update &&\
-    apt install -y bison build-essential cmake git swig &&\
-    python -m pip install pytest
-
-ADD . /src
+ADD . /libqasm
 
 WORKDIR /build
-RUN cmake /src -DLIBQASM_BUILD_TESTS=ON -DLIBQASM_COMPAT=ON -DTREE_GEN_BUILD_TESTS=ON -DLIBQASM_BUILD_PYTHON=ON
+RUN cmake /libqasm -DLIBQASM_BUILD_TESTS=ON -DLIBQASM_COMPAT=ON -DTREE_GEN_BUILD_TESTS=ON -DLIBQASM_BUILD_PYTHON=ON
 RUN make -j 1
 RUN make test CTEST_OUTPUT_ON_FAILURE=TRUE
 RUN make install
 
-WORKDIR /src
-RUN python -m pip install .
-RUN python -m pytest
-
+WORKDIR /libqasm
+RUN python3 -m pip install .
+RUN python3 -m pytest
