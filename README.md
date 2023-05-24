@@ -25,6 +25,12 @@
 pip install conan
 ```
 
+You'll need to create a default profile before using it:
+
+```
+conan profile detect
+```
+
 The installation of `libqasm` dependencies, as well as the compilation, can be done in one go.<br/>
 Notice the command below is building `libqasm` in Debug mode, and passing the build options `build_tests` and `compat`.
 
