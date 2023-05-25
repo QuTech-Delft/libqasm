@@ -113,7 +113,6 @@ jobs:
         auto-update-conda: true
         channels: conda-forge
         miniconda-version: "latest"
-        python-version: "3.8"
         show-channel-urls: true
         use-only-tar-bz2: true
     - name: Install conda dependencies
