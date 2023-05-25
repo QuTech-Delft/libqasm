@@ -22,7 +22,7 @@ option(
 # Windows weirdness: need a .lib file to link against a DLL at compile-time
 # (I think), but only the .dll is generated when there are no exported symbols.
 # This sort of fixes that (https://stackoverflow.com/questions/1941443)
-SET(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 #-------------------------------------------------------------------------------
 # Code generation tool inclusion and build
@@ -70,6 +70,7 @@ set(CQASM_COMMON_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-string-builder.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-utils.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-version.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/libqasm.cpp"
 )
 
 # Generate the version lexer.
