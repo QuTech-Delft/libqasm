@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 
-project(libcqasm CXX)
+project(libcqasm C CXX)
 
 #-------------------------------------------------------------------------------
 # Configuration
@@ -24,17 +24,6 @@ option(
 # This sort of fixes that (https://stackoverflow.com/questions/1941443)
 SET(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-# Require C++23 compiler support.
-if(CMAKE_VERSION VERSION_LESS "3.1")
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++23")
-    endif()
-else()
-    set(CMAKE_CXX_STANDARD 23)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
-    set(CMAKE_CXX_EXTENSIONS OFF)
-endif()
-
 #-------------------------------------------------------------------------------
 # Code generation tool inclusion and build
 #-------------------------------------------------------------------------------
@@ -57,7 +46,7 @@ include(FetchContent)
 # generate_tree() function.
 FetchContent_Declare(tree-gen
     GIT_REPOSITORY https://github.com/QuTech-Delft/tree-gen.git
-    GIT_TAG "185f83c39dcfeec05c6b6092d99575d80c5b13a5"
+    GIT_TAG "e7ac05381738e60dea6931e590973e6b7eeaa1ac"
 )
 FetchContent_MakeAvailable(tree-gen)
 
@@ -285,17 +274,22 @@ target_include_directories(
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include"
 )
 
+target_compile_features(cqasm-lib-obj PUBLIC cxx_std_23)
+
 target_link_libraries(cqasm-lib-obj PUBLIC tree-lib-obj)
 
 # fPIC: otherwise some weirdness happens with pthreads or something when linking statically.
 if(MSVC)
     target_compile_options(cqasm-lib-obj PRIVATE
+        /W3 /w34996  # not using /WX at the moment because the flex generated code has some warnings
         /D_CRT_NONSTDC_NO_DEPRECATE
         /D_CRT_SECURE_NO_WARNINGS
+        /D_UNICODE /DUNICODE
+        /diagnostics:column /EHsc /FC /fp:precise /Gd /GS /MP /sdl /utf-8 /Zc:inline
    )
 elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     target_compile_options(cqasm-lib-obj PRIVATE
-        -Wall -Wextra
+        -Wall -Wextra -Werror
         -fPIC
     )
 endif()

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.2)
+cmake_minimum_required(VERSION 3.12)
 
 find_package(BISON ${BISON_VERSION_REQUIRED})
 find_package(FLEX ${FLEX_VERSION_REQUIRED})

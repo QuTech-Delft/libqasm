@@ -52,7 +52,7 @@ enum class ParameterType {
 static NumericalIdentifiers convert_indices(const cqasm::tree::Many<cq1::values::ConstInt> &indices) {
     NumericalIdentifiers retval;
     for (auto control_bit : indices) {
-        retval.addToVector(static_cast<const int>(control_bit->value));
+        retval.addToVector(static_cast<int>(control_bit->value));
     }
     return retval;
 }
@@ -99,7 +99,7 @@ static Operation *convert_instruction(const cq1::semantic::Instruction &instruct
             op = new Operation(
                 instruction.instruction->name,
                 Qubits(convert_indices(instruction.operands[0]->as_qubit_refs()->index)),
-                static_cast<const int>(instruction.operands[1]->as_const_int()->value)
+                static_cast<int>(instruction.operands[1]->as_const_int()->value)
             );
             break;
         case ParameterType::SingleQubitReal:
@@ -170,7 +170,7 @@ static Operation *convert_instruction(const cq1::semantic::Instruction &instruct
         case ParameterType::SingleInt:
             op = new Operation(
                 instruction.instruction->name,
-                static_cast<const int>(instruction.operands[0]->as_const_int()->value)
+                static_cast<int>(instruction.operands[0]->as_const_int()->value)
             );
             break;
         case ParameterType::SingleString:
@@ -313,7 +313,7 @@ static void handle_parse_result(QasmRepresentation &qasm, cq1::parser::ParseResu
     auto version = static_cast<double>(analysis_result.root->version->items[0]);
     if (analysis_result.root->version->items.size() > 1) {
         auto sub = analysis_result.root->version->items[1];
-        version += 0.1 * ((sub > 9) ? 9 : sub);
+        version += 0.1 * static_cast<double>((sub > 9) ? 9 : sub);
     }
     qasm.versionNumber(version);
 

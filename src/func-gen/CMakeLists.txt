@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.11 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 
 # Generator for functions usable within cQASM.
 add_executable(

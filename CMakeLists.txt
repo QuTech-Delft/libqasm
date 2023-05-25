@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 
 if(POLICY CMP0048)
     cmake_policy(SET CMP0048 NEW)
@@ -8,7 +8,7 @@ if(POLICY CMP0058)
     cmake_policy(SET CMP0058 NEW)
 endif()
 
-project(cqasm CXX)
+project(cqasm C CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
