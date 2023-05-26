@@ -70,7 +70,7 @@ set(CQASM_COMMON_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-string-builder.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-utils.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-version.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/libqasm.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_libqasm_conan_package.cpp"
 )
 
 # Generate the version lexer.
@@ -261,9 +261,9 @@ add_library(
 
 target_compile_definitions(cqasm-lib-obj PRIVATE ${TREE_LIB_PRIVATE_DEFS})
 
-# The src directory and binary directory (for generated header files) are
-# private. The include directory is public. That is, the files in include
-# must not try to include generated files and files from the src directory,
+# The src directory and binary directory (for generated header files) are private.
+# The include directory is public.
+# That is, the files in include must not try to include generated files and files from the src directory,
 # but the other direction is fine.
 target_include_directories(
     cqasm-lib-obj
@@ -271,8 +271,11 @@ target_include_directories(
     PUBLIC ${TREE_LIB_PUBLIC_INCLUDE}
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src"
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/"
-    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include"
-    PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include"
+    # Do not remove the ending '/' since
+    # it avoids the whole 'include' directory to be copied to the installation folder.
+    # Instead, just its contents are copied.
+    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include/"
+    PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include/"
 )
 
 target_compile_features(cqasm-lib-obj PUBLIC cxx_std_23)
@@ -317,5 +320,5 @@ get_target_property(INCLUDE_DIRS cqasm-lib-obj INTERFACE_INCLUDE_DIRECTORIES)
 install(
     DIRECTORY ${INCLUDE_DIRS}
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inc"
+    PATTERN "*.hpp" PATTERN "*.inc"
 )

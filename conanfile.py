@@ -8,7 +8,7 @@ class LibqasmConan(ConanFile):
 
     # Optional metadata
     license = "Apache-2.0"
-    author = "QuTech/TU Delft"
+    author = "QuTech-Delft"
     url = "https://center.conan.io"
     description = "Library to parse cQASM files"
     topics = ("code generation", "parser", "compiler", "quantum compilation", "quantum simulation")
@@ -18,18 +18,22 @@ class LibqasmConan(ConanFile):
     options = {
         "shared": [True, False],
         "fPIC": [True, False],
+        "build_python": [True, False],
         "build_tests": [True, False],
-        "compat": [True, False]
+        "compat": [True, False],
+        "tree_gen_build_tests": [True, False]
     }
     default_options = {
         "shared": False,
         "fPIC": True,
+        "build_python": False,
         "build_tests": False,
-        "compat": False
+        "compat": False,
+        "tree_gen_build_tests": False
     }
 
     # Sources are located in the same place as this recipe, copy them to the recipe
-    exports_sources = "CMakeLists.txt", "src/*"
+    exports_sources = "CMakeLists.txt", "cmake/*", "include/*", "src/*"
 
     def build_requirements(self):
         self.tool_requires("m4/1.4.19")
@@ -50,8 +54,10 @@ class LibqasmConan(ConanFile):
         deps = CMakeDeps(self)
         deps.generate()
         tc = CMakeToolchain(self)
+        tc.variables["LIBQASM_BUILD_PYTHON"] = self.options.build_python
         tc.variables["LIBQASM_BUILD_TESTS"] = self.options.build_tests
         tc.variables["LIBQASM_COMPAT"] = self.options.compat
+        tc.variables["TREE_GEN_BUILD_TESTS"] = self.options.tree_gen_build_tests
         tc.generate()
 
     def build(self):
