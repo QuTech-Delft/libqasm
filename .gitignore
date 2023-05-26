@@ -97,6 +97,7 @@ tags
 .cproject
 
 # conan
+/test_package/build/
 /test_package/CMakeUserPresets.json
 CMakeUserPresets.json
 conan.lock

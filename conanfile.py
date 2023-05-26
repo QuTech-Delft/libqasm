@@ -1,10 +1,10 @@
-from conan import ConanFile
+from conan import ConanFile, tools
 from conan.tools.cmake import CMakeToolchain, CMakeDeps, CMake, cmake_layout
-
+from conan.tools.scm import Git
 
 class LibqasmConan(ConanFile):
     name = "libqasm"
-    version = "0.1"
+    version = "0.5.0"
 
     # Optional metadata
     license = "Apache-2.0"
@@ -32,9 +32,6 @@ class LibqasmConan(ConanFile):
         "tree_gen_build_tests": False
     }
 
-    # Sources are located in the same place as this recipe, copy them to the recipe
-    exports_sources = "CMakeLists.txt", "cmake/*", "include/*", "src/*"
-
     def build_requirements(self):
         self.tool_requires("m4/1.4.19")
         if self.settings.os == "Windows":
@@ -49,6 +46,11 @@ class LibqasmConan(ConanFile):
 
     def layout(self):
         cmake_layout(self)
+
+    def source(self):
+        git = Git(self)
+        git.clone(url="https://github.com/QuTech-Delft/libqasm.git", target=".")
+        git.checkout("4aba125ee41ac8b95435957456694236ad218f7c")
 
     def generate(self):
         deps = CMakeDeps(self)
