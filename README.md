@@ -32,12 +32,12 @@ conan profile detect
 ```
 
 The installation of `libqasm` dependencies, as well as the compilation, can be done in one go.<br/>
-Notice the command below is building `libqasm` in Debug mode, and passing the build options `build_tests` and `compat`.
+Notice the command below is building `libqasm` in Debug mode with tests.
 
 ```
 $ projects> git clone https://github.com/QuTech-Delft/libqasm.git
 $ projects/libqasm> git checkout v3
-$ projects/libqasm> conan build . -s:h libqasm/*:build_type=Debug -o libqasm/*:build_tests=True -o libqasm/*:compat=True -b missing
+$ projects/libqasm> conan build . -s:h compiler.cppstd=23 -s:h libqasm/*:build_type=Debug -o libqasm/*:build_tests=True -b missing
 ```
 
 ### Using CMake
