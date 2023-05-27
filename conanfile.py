@@ -1,7 +1,9 @@
 from conan import ConanFile
+from conan.errors import ConanInvalidConfiguration
+from conan.tools.microsoft import check_min_vs, is_msvc
 from conan.tools.build import check_min_cppstd
 from conan.tools.cmake import CMakeToolchain, CMakeDeps, CMake, cmake_layout
-from conan.tools.scm import Git
+from conan.tools.scm import Git, Version
 
 class LibqasmConan(ConanFile):
     name = "libqasm"
@@ -31,6 +33,19 @@ class LibqasmConan(ConanFile):
         "compat": False,
         "tree_gen_build_tests": False
     }
+
+    @property
+    def _min_cppstd(self):
+        return 23
+
+    @property
+    def _compilers_minimum_version(self):
+        return {
+            "apple-clang": "13",
+            "clang": "13",
+            "gcc": "11",
+            "msvc": "19"
+        }
 
     def build_requirements(self):
         self.tool_requires("m4/1.4.19")
@@ -68,8 +83,17 @@ class LibqasmConan(ConanFile):
         cmake.build()
 
     def validate(self):
-        if self.settings.compiler.get_safe("cppstd"):
-            check_min_cppstd(self, "23")
+        if self.settings.compiler.cppstd:
+            check_min_cppstd(self, self._min_cppstd)
+        check_min_vs(self, 193)
+        if not is_msvc(self):
+            minimum_version = self._compilers_minimum_version.get(str(self.settings.compiler), False)
+            if minimum_version and Version(self.settings.compiler.version) < minimum_version:
+                raise ConanInvalidConfiguration(
+                    f"{self.ref} requires C++{self._min_cppstd}, which your compiler does not support."
+                )
+        if is_msvc(self) and self.options.shared:
+            raise ConanInvalidConfiguration(f"{self.ref} can not be built as shared on Visual Studio and msvc.")
 
     def package(self):
         cmake = CMake(self)
