@@ -1,9 +1,11 @@
 from conan import ConanFile
 from conan.errors import ConanInvalidConfiguration
-from conan.tools.microsoft import check_min_vs, is_msvc
 from conan.tools.build import check_min_cppstd
 from conan.tools.cmake import CMakeToolchain, CMakeDeps, CMake, cmake_layout
-from conan.tools.scm import Git, Version
+from conan.tools.files import get
+from conan.tools.microsoft import check_min_vs, is_msvc
+from conan.tools.scm import Version
+import os
 
 class LibqasmConan(ConanFile):
     name = "libqasm"
@@ -60,12 +62,19 @@ class LibqasmConan(ConanFile):
             del self.options.fPIC
 
     def layout(self):
-        cmake_layout(self, src_folder=".")
+        self.folders.source = "."
+        self.folders.build = os.path.join("build", str(self.settings.build_type))
+        self.folders.generators = os.path.join(self.folders.build, "generators")
+
+        self.cpp.package.libs = ["cqasm"]
+        self.cpp.package.includedirs = ["include"]
+        self.cpp.package.libdirs = ["lib"]
+
+        self.cpp.source.includedirs = ["include"]
+        self.cpp.build.libdirs = ["."]
 
     def source(self):
-        git = Git(self)
-        git.clone(url="https://github.com/QuTech-Delft/libqasm.git", target=".")
-        git.checkout("2db9916f8e32c5e36d05cb20cafb87133d4dbf16")
+        get(self, **self.conan_data["sources"]["0.5.1"], strip_root=True)
 
     def generate(self):
         deps = CMakeDeps(self)
