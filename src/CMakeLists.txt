@@ -278,7 +278,7 @@ target_include_directories(
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include/"
 )
 
-target_compile_features(cqasm-lib-obj PUBLIC cxx_std_23)
+target_compile_features(cqasm-lib-obj PUBLIC cxx_std_20)
 
 target_link_libraries(cqasm-lib-obj PUBLIC tree-lib-obj)
 
