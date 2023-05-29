@@ -89,7 +89,7 @@ class LibqasmConan(ConanFile):
         elif compiler == "gcc":
             if version < "10.0":
                 raise ConanInvalidConfiguration("libqasm requires at least g++ 11.0")
-        if compiler == "msvc":
+        elif compiler == "msvc":
             if version < "19.29":
                 raise ConanInvalidConfiguration("libqasm requires at least msvc 19.29")
         else:
