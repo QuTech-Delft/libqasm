@@ -36,20 +36,8 @@ class LibqasmConan(ConanFile):
         "tree_gen_build_tests": False
     }
 
-    @property
-    def _min_cppstd(self):
-        return 23
-
-    @property
-    def _compilers_minimum_version(self):
-        return {
-            "apple-clang": "13",
-            "clang": "13",
-            "gcc": "11",
-            "msvc": "19"
-        }
-
     def build_requirements(self):
+        self.build_requires("cmake/3.20.1")
         self.tool_requires("m4/1.4.19")
         if self.settings.os == "Windows":
             self.tool_requires("winflexbison/2.5.24")
@@ -74,7 +62,7 @@ class LibqasmConan(ConanFile):
         self.cpp.build.libdirs = ["."]
 
     def source(self):
-        get(self, **self.conan_data["sources"]["0.5.1"], strip_root=True)
+        get(self, **self.conan_data["sources"]["0.5.3"], strip_root=True)
 
     def generate(self):
         deps = CMakeDeps(self)
@@ -92,17 +80,27 @@ class LibqasmConan(ConanFile):
         cmake.build()
 
     def validate(self):
-        if self.settings.compiler.cppstd:
-            check_min_cppstd(self, self._min_cppstd)
-        check_min_vs(self, 193)
-        if not is_msvc(self):
-            minimum_version = self._compilers_minimum_version.get(str(self.settings.compiler), False)
-            if minimum_version and Version(self.settings.compiler.version) < minimum_version:
-                raise ConanInvalidConfiguration(
-                    f"{self.ref} requires C++{self._min_cppstd}, which your compiler does not support."
-                )
-        if is_msvc(self) and self.options.shared:
-            raise ConanInvalidConfiguration(f"{self.ref} can not be built as shared on Visual Studio and msvc.")
+        compiler = self.settings.compiler
+        version = Version(self.settings.compiler.version)
+        if compiler == "apple-clang":
+            if version < "13":
+                raise ConanInvalidConfiguration("libqasm requires at least apple-clang++ 13")
+        elif compiler == "clang":
+            if version < "8":
+                raise ConanInvalidConfiguration("libqasm requires at least clang++ 8")
+        elif compiler == "gcc":
+            if version < "10.0":
+                raise ConanInvalidConfiguration("libqasm requires at least g++ 11.0")
+        if compiler == "msvc":
+            if version < "19.29":
+                raise ConanInvalidConfiguration("libqasm requires at least msvc 19.29")
+        elif compiler == "Visual Studio":
+            if version < "17":
+                raise ConanInvalidConfiguration("libqasm requires at least Visual Studio 17")
+        else:
+            raise ConanInvalidConfiguration("Unsupported compiler")
+        if compiler.get_safe("cppstd"):
+            check_min_cppstd(self, "20")
 
     def package(self):
         cmake = CMake(self)

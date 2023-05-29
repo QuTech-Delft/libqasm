@@ -8,7 +8,7 @@
 
 ## Dependencies
 * cmake (>= 3.12)
-* gcc and g++ capable of C++23 standard
+* gcc and g++ capable of C++20 standard
 * Python3 (Tested on Python v3.6)
 * conan: 2.0
 * Swig
@@ -37,7 +37,7 @@ Notice the command below is building `libqasm` in Debug mode with tests.
 ```
 $ projects> git clone https://github.com/QuTech-Delft/libqasm.git
 $ projects/libqasm> git checkout v3
-$ projects/libqasm> conan build . -s:h compiler.cppstd=23 -s:h libqasm/*:build_type=Debug -o libqasm/*:build_tests=True -b missing
+$ projects/libqasm> conan build . -s:h compiler.cppstd=20 -s:h libqasm/*:build_type=Debug -o libqasm/*:build_tests=True -b missing
 ```
 
 ### Using CMake
