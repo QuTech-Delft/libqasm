@@ -3,7 +3,6 @@ from conan.errors import ConanInvalidConfiguration
 from conan.tools.build import check_min_cppstd
 from conan.tools.cmake import CMakeToolchain, CMakeDeps, CMake, cmake_layout
 from conan.tools.files import get
-from conan.tools.microsoft import check_min_vs, is_msvc
 from conan.tools.scm import Version
 import os
 
@@ -93,9 +92,6 @@ class LibqasmConan(ConanFile):
         if compiler == "msvc":
             if version < "19.29":
                 raise ConanInvalidConfiguration("libqasm requires at least msvc 19.29")
-        elif compiler == "Visual Studio":
-            if version < "17":
-                raise ConanInvalidConfiguration("libqasm requires at least Visual Studio 17")
         else:
             raise ConanInvalidConfiguration("Unsupported compiler")
         if compiler.get_safe("cppstd"):
