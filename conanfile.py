@@ -44,6 +44,8 @@ class LibqasmConan(ConanFile):
             self.tool_requires("bison/3.8.2")
 
     def config_options(self):
+        if self.options.shared:
+            del self.options.fPIC
         if self.settings.os == "Windows":
             del self.options.fPIC
 
@@ -60,7 +62,7 @@ class LibqasmConan(ConanFile):
         self.cpp.build.libdirs = ["."]
 
     def source(self):
-        get(self, **self.conan_data["sources"]["0.5.3"], strip_root=True)
+        get(self, **self.conan_data["sources"]["0.5.4"], strip_root=True)
 
     def generate(self):
         deps = CMakeDeps(self)
@@ -88,7 +90,7 @@ class LibqasmConan(ConanFile):
                 raise ConanInvalidConfiguration("libqasm requires at least clang++ 8")
         elif compiler == "gcc":
             if version < "10.0":
-                raise ConanInvalidConfiguration("libqasm requires at least g++ 11.0")
+                raise ConanInvalidConfiguration("libqasm requires at least g++ 10.0")
         elif compiler == "msvc":
             if version < "19.29":
                 raise ConanInvalidConfiguration("libqasm requires at least msvc 19.29")
