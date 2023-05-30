@@ -1,12 +1,10 @@
-import os
-
 from conan import ConanFile
 from conan.errors import ConanInvalidConfiguration
 from conan.tools.build import check_min_cppstd
-from conan.tools.cmake import CMakeToolchain, CMakeDeps, CMake
-from conan.tools.files import copy, get
+from conan.tools.cmake import CMakeToolchain, CMakeDeps, CMake, cmake_layout
+from conan.tools.files import get
 from conan.tools.scm import Version
-
+import os
 
 class LibqasmConan(ConanFile):
     name = "libqasm"
@@ -90,8 +88,8 @@ class LibqasmConan(ConanFile):
             if version < "13":
                 raise ConanInvalidConfiguration("libqasm requires at least apple-clang++ 13")
         elif compiler == "clang":
-            if version < "13":
-                raise ConanInvalidConfiguration("libqasm requires at least clang++ 13")
+            if version < "8":
+                raise ConanInvalidConfiguration("libqasm requires at least clang++ 8")
         elif compiler == "gcc":
             if version < "10.0":
                 raise ConanInvalidConfiguration("libqasm requires at least g++ 10.0")
@@ -104,7 +102,6 @@ class LibqasmConan(ConanFile):
             check_min_cppstd(self, "20")
 
     def package(self):
-        copy(self, "LICENSE.md", src=self.source_folder, dst=os.path.join(self.package_folder, "licenses"))
         cmake = CMake(self)
         cmake.install()
 
