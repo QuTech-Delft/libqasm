@@ -12,7 +12,7 @@ target_include_directories(
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}"
 )
 
-set(func-gen-path "${CMAKE_CURRENT_BINARY_DIR}/func-gen" PARENT_SCOPE)
+set(func-gen-path "${CMAKE_CURRENT_BINARY_DIR}/func-gen")
 
 function(generate_funcs HDR SRC VER)
 
