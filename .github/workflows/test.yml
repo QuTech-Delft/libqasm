@@ -16,7 +16,6 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-20.04
           - ubuntu-latest
           - macos-11
           - macos-latest
