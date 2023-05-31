@@ -46,7 +46,7 @@ include(FetchContent)
 # generate_tree() function.
 FetchContent_Declare(tree-gen
     GIT_REPOSITORY https://github.com/QuTech-Delft/tree-gen.git
-    GIT_TAG "d708ea629bad014011d3f1efc352077414dd86f7"
+    GIT_TAG "c3d2d1a041a5826d3e377e4722774cbb8264d7c0"
 )
 FetchContent_MakeAvailable(tree-gen)
 

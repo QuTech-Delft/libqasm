@@ -26,7 +26,7 @@ function(generate_funcs HDR SRC VER)
     # dependency; this makes cmake correctly recompile the generator and
     # regenerate the files with it if its source files change.
     add_custom_command(
-        COMMAND func-gen "${HDR}" "${SRC}" "${VER}"
+        COMMAND "$<TARGET_FILE:func-gen>" "${HDR}" "${SRC}" "${VER}"
         OUTPUT "${HDR}" "${SRC}"
         DEPENDS func-gen
     )
