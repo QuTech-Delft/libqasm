@@ -295,6 +295,7 @@ elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" OR ${CMAKE_CXX_COMPILER_ID} STR
     target_compile_options(cqasm-lib-obj PRIVATE
         -Wall -Wextra -Werror
         -fPIC
+        -Wno-error=sign-compare
     )
 endif()
 

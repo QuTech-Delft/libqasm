@@ -10,7 +10,7 @@ if(NOT M4_FOUND AND (NOT BISON_FOUND OR NOT FLEX_FOUND))
     set(M4_VERSION_REQUIRED 1.4.6)
 
     configure_file(
-        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/m4-download.cmake"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../cmake/m4-download.cmake"
         "${CMAKE_CURRENT_BINARY_DIR}/m4-download/CMakeLists.txt"
     )
 
@@ -70,7 +70,7 @@ if(NOT BISON_FOUND)
     message(WARNING "bison ${BISON_VERSION_REQUIRED} not found on your system. trying to build Bison ${BISON_VERSION_TO_BUILD} from source...")
 
     configure_file(
-        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/bison-download.cmake"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../cmake/bison-download.cmake"
         "${CMAKE_CURRENT_BINARY_DIR}/bison-download/CMakeLists.txt"
     )
 
@@ -147,7 +147,7 @@ if(NOT FLEX_FOUND)
     message(WARNING "flex ${FLEX_VERSION_REQUIRED} not found on your system. trying to build from source...")
 
     configure_file(
-        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/flex-download.cmake"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../cmake/flex-download.cmake"
         "${CMAKE_CURRENT_BINARY_DIR}/flex-download/CMakeLists.txt"
     )
 

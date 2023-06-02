@@ -8,8 +8,46 @@ on:
   pull_request:
 
 jobs:
-  cpp:
-    name: 'C++ tests'
+  cpp_cmake:
+    name: 'C++ tests (CMake builds)'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Install dependencies
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew install bison flex
+          echo "/usr/local/opt/bison/bin" >> $GITHUB_PATH
+          echo "/usr/local/opt/flex/bin" >> $GITHUB_PATH
+      - uses: actions/cache@v3
+        if: matrix.os == 'windows-latest'
+        with:
+          path: C:\Users\runneradmin\AppData\Local\Temp\chocolatey
+          key: ${{ runner.os }}-chocolatey-cpp-0
+          restore-keys: |
+            ${{ runner.os }}-chocolatey-cpp-
+            ${{ runner.os }}-chocolatey-
+      - name: Install dependencies
+        if: matrix.os == 'windows-latest'
+        run: choco install winflexbison3 --version 2.5.18.20190508
+      - name: Configure
+        run: cmake . -DCMAKE_BUILD_TYPE=Debug -DLIBQASM_BUILD_TESTS=ON -DLIBQASM_COMPAT=ON
+      - name: Build
+        run: cmake --build . --parallel
+      - name: Test
+        run: ctest -C Debug --output-on-failure
+
+  cpp_conan:
+    name: 'C++ tests (Conan builds)'
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
