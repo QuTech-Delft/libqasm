@@ -909,6 +909,8 @@ static const flex_int32_t yy_rule_can_match_eol[72] =
 #include <unistd.h>
 #endif
 
+#endif  # WIN32
+
 #ifndef YY_EXTRA_TYPE
 #define YY_EXTRA_TYPE void *
 #endif
