@@ -289,6 +289,8 @@ typedef unsigned char flex_uint8_t;
 typedef unsigned short int flex_uint16_t;
 typedef unsigned int flex_uint32_t;
 
+#ifndef _WIN32
+
 /* Limits of integral types. */
 #ifndef INT8_MIN
 #define INT8_MIN               (-128)
@@ -321,6 +323,8 @@ typedef unsigned int flex_uint32_t;
 #ifndef SIZE_MAX
 #define SIZE_MAX               (~(size_t)0)
 #endif
+
+#endif /* _WIN32 */
 
 #endif /* ! C99 */
 
@@ -769,6 +773,15 @@ static const flex_int32_t yy_rule_can_match_eol[23] =
 #define MODE_VERSION 2
 #define MODE_IGNORE_THE_REST 3
 
+#ifdef _WIN32
+
+/*windows compatibility case*/
+#include <io.h>
+#define isatty _isatty
+#define fileno _fileno
+
+#else
+
 #ifndef YY_NO_UNISTD_H
 /* Special case for "unistd.h", since it is non-ANSI. We include it way
  * down here because we want the user's section 1 to have been scanned first.
@@ -776,6 +789,8 @@ static const flex_int32_t yy_rule_can_match_eol[23] =
  */
 #include <unistd.h>
 #endif
+
+#endif  /* _WIN32 */
 
 #ifndef YY_EXTRA_TYPE
 #define YY_EXTRA_TYPE void *

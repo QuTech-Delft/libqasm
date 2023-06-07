@@ -464,7 +464,7 @@ void yyfree ( void * , yyscan_t yyscanner );
 
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 
 /*windows compatibility case*/
 #include <io.h>
@@ -481,7 +481,7 @@ void yyfree ( void * , yyscan_t yyscanner );
 #include <unistd.h>
 #endif
 
-#endif
+#endif  /* _WIN32 */
 
 #ifndef YY_EXTRA_TYPE
 #define YY_EXTRA_TYPE void *

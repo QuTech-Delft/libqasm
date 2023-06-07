@@ -289,6 +289,8 @@ typedef unsigned char flex_uint8_t;
 typedef unsigned short int flex_uint16_t;
 typedef unsigned int flex_uint32_t;
 
+#ifndef _WIN32
+
 /* Limits of integral types. */
 #ifndef INT8_MIN
 #define INT8_MIN               (-128)
@@ -321,6 +323,8 @@ typedef unsigned int flex_uint32_t;
 #ifndef SIZE_MAX
 #define SIZE_MAX               (~(size_t)0)
 #endif
+
+#endif /* _WIN32 */
 
 #endif /* ! C99 */
 
@@ -892,7 +896,7 @@ static const flex_int32_t yy_rule_can_match_eol[72] =
 #define MODE_JSON_STRING 5
 #define MODE_UNEXPECTED_EOF 6
 
-#ifdef WIN32
+#ifdef _WIN32
 
 /*windows compatibility case*/
 #include <io.h>
@@ -909,7 +913,7 @@ static const flex_int32_t yy_rule_can_match_eol[72] =
 #include <unistd.h>
 #endif
 
-#endif
+#endif  /* _WIN32 */
 
 #ifndef YY_EXTRA_TYPE
 #define YY_EXTRA_TYPE void *

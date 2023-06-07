@@ -461,14 +461,14 @@ void yyfree ( void * , yyscan_t yyscanner );
 
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 
 /*windows compatibility case*/
 #include <io.h>
 #define isatty _isatty
 #define fileno _fileno
 
-#else
+#else  /* _WIN32 */
 
 #ifndef YY_NO_UNISTD_H
 /* Special case for "unistd.h", since it is non-ANSI. We include it way
@@ -478,7 +478,7 @@ void yyfree ( void * , yyscan_t yyscanner );
 #include <unistd.h>
 #endif
 
-#endif
+#endif /* _WIN32 */
 
 #ifndef YY_EXTRA_TYPE
 #define YY_EXTRA_TYPE void *
