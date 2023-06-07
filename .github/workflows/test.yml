@@ -23,7 +23,6 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: true
-      - uses: actions/cache@v3
       - name: Configure
         run: cmake . -DCMAKE_BUILD_TYPE=Debug -DLIBQASM_BUILD_TESTS=ON -DLIBQASM_COMPAT=ON
       - name: Build
@@ -98,7 +97,6 @@ jobs:
         echo "/usr/local/opt/bison/bin" >> $GITHUB_PATH
         echo "/usr/local/opt/flex/bin" >> $GITHUB_PATH
         echo "LIBQASM_BUILD_TYPE=Debug" >> $GITHUB_ENV
-    - uses: actions/cache@v3
     - name: Install dependencies
       if: matrix.os == 'windows-latest'
       shell: powershell
