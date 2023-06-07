@@ -2,9 +2,9 @@
 #define cqasm_v1_HEADER_H 1
 #define cqasm_v1_IN_HEADER 1
 
-#line 5 "/mnt/c/Projects/libqasm/build/Debug/src/v1/cqasm-lexer.hpp"
+#line 5 "libqasm/src/v1/cqasm-lexer.hpp"
 
-#line 7 "/mnt/c/Projects/libqasm/build/Debug/src/v1/cqasm-lexer.hpp"
+#line 7 "libqasm/src/v1/cqasm-lexer.hpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -464,6 +464,15 @@ void yyfree ( void * , yyscan_t yyscanner );
 
 #endif
 
+#ifdef WIN32
+
+/*windows compatibility case*/
+#include <io.h>
+#define isatty _isatty
+#define fileno _fileno
+
+#else
+
 #ifndef YY_NO_UNISTD_H
 /* Special case for "unistd.h", since it is non-ANSI. We include it way
  * down here because we want the user's section 1 to have been scanned first.
@@ -732,8 +741,8 @@ extern int yylex \
 #undef yyTABLES_NAME
 #endif
 
-#line 243 "/mnt/c/Projects/libqasm/src/v1/cqasm-lexer.l"
+#line 243 "libqasm/src/v1/cqasm-lexer.l"
 
-#line 737 "/mnt/c/Projects/libqasm/build/Debug/src/v1/cqasm-lexer.hpp"
+#line 737 "libqasm/v1/cqasm-lexer.hpp"
 #undef cqasm_v1_IN_HEADER
 #endif /* cqasm_v1_HEADER_H */

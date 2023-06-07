@@ -35,8 +35,8 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_CQASM_VERSION_MNT_C_PROJECTS_LIBQASM_BUILD_DEBUG_SRC_CQASM_VERSION_PARSER_HPP_INCLUDED
-# define YY_CQASM_VERSION_MNT_C_PROJECTS_LIBQASM_BUILD_DEBUG_SRC_CQASM_VERSION_PARSER_HPP_INCLUDED
+#ifndef YY_CQASM_VERSION_LIBQASM_BUILD_DEBUG_SRC_CQASM_VERSION_PARSER_HPP_INCLUDED
+# define YY_CQASM_VERSION_LIBQASM_BUILD_DEBUG_SRC_CQASM_VERSION_PARSER_HPP_INCLUDED
 /* Debug traces.  */
 #ifndef CQASM_VERSION_DEBUG
 # if defined YYDEBUG
@@ -53,7 +53,7 @@
 extern int cqasm_version_debug;
 #endif
 /* "%code requires" blocks.  */
-#line 5 "/mnt/c/Projects/libqasm/src/cqasm-version-parser.y"
+#line 5 "libqasm/src/cqasm-version-parser.y"
 
     /**
      * \file
@@ -72,7 +72,7 @@ extern int cqasm_version_debug;
     #define YYLTYPE CQASM_VERSION_LTYPE
 
 
-#line 76 "/mnt/c/Projects/libqasm/build/Debug/src/cqasm-version-parser.hpp"
+#line 76 "libqasm/src/cqasm-version-parser.hpp"
 
 /* Token kinds.  */
 #ifndef CQASM_VERSION_TOKENTYPE
@@ -95,12 +95,12 @@ extern int cqasm_version_debug;
 #if ! defined CQASM_VERSION_STYPE && ! defined CQASM_VERSION_STYPE_IS_DECLARED
 union CQASM_VERSION_STYPE
 {
-#line 34 "/mnt/c/Projects/libqasm/src/cqasm-version-parser.y"
+#line 34 "libqasm/src/cqasm-version-parser.y"
 
     char            *str;
     Version         *vers;
 
-#line 104 "/mnt/c/Projects/libqasm/build/Debug/src/cqasm-version-parser.hpp"
+#line 104 "libqasm/src/cqasm-version-parser.hpp"
 
 };
 typedef union CQASM_VERSION_STYPE CQASM_VERSION_STYPE;
@@ -128,4 +128,4 @@ struct CQASM_VERSION_LTYPE
 int cqasm_version_parse (yyscan_t scanner, const std::string &filename, cqasm::version::Version &version);
 
 
-#endif /* !YY_CQASM_VERSION_MNT_C_PROJECTS_LIBQASM_BUILD_DEBUG_SRC_CQASM_VERSION_PARSER_HPP_INCLUDED  */
+#endif /* !YY_CQASM_VERSION_LIBQASM_BUILD_DEBUG_SRC_CQASM_VERSION_PARSER_HPP_INCLUDED  */

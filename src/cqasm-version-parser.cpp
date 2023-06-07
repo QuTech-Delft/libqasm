@@ -117,12 +117,12 @@ typedef enum yysymbol_kind_t yysymbol_kind_t;
 
 
 /* Unqualified %code blocks.  */
-#line 24 "/mnt/c/Projects/libqasm/src/cqasm-version-parser.y"
+#line 24 "libqasm/src/cqasm-version-parser.y"
 
     int yylex(YYSTYPE* yylvalp, YYLTYPE* yyllocp, yyscan_t scanner);
     void yyerror(YYLTYPE* yyllocp, yyscan_t scanner, const std::string &filename, cqasm::version::Version &version, const char* msg);
 
-#line 126 "/mnt/c/Projects/libqasm/build/Debug/src/cqasm-version-parser.cpp"
+#line 126 "libqasm/src/cqasm-version-parser.cpp"
 
 #ifdef short
 # undef short
@@ -1192,25 +1192,25 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* Version: INT_LITERAL  */
-#line 55 "/mnt/c/Projects/libqasm/src/cqasm-version-parser.y"
+#line 55 "libqasm/src/cqasm-version-parser.y"
                                     { version.push_back(std::atoll((yyvsp[0].str))); std::free((yyvsp[0].str)); }
-#line 1198 "/mnt/c/Projects/libqasm/build/Debug/src/cqasm-version-parser.cpp"
+#line 1198 "libqasm/src/cqasm-version-parser.cpp"
     break;
 
   case 3: /* Version: Version '.' INT_LITERAL  */
-#line 56 "/mnt/c/Projects/libqasm/src/cqasm-version-parser.y"
+#line 56 "libqasm/src/cqasm-version-parser.y"
                                     { version.push_back(std::atoll((yyvsp[0].str))); std::free((yyvsp[0].str)); }
-#line 1204 "/mnt/c/Projects/libqasm/build/Debug/src/cqasm-version-parser.cpp"
+#line 1204 "libqasm/src/cqasm-version-parser.cpp"
     break;
 
   case 4: /* Root: VERSION Version  */
-#line 59 "/mnt/c/Projects/libqasm/src/cqasm-version-parser.y"
+#line 59 "libqasm/src/cqasm-version-parser.y"
                                     {}
-#line 1210 "/mnt/c/Projects/libqasm/build/Debug/src/cqasm-version-parser.cpp"
+#line 1210 "libqasm/src/cqasm-version-parser.cpp"
     break;
 
 
-#line 1214 "/mnt/c/Projects/libqasm/build/Debug/src/cqasm-version-parser.cpp"
+#line 1214 "libqasm/src/cqasm-version-parser.cpp"
 
       default: break;
     }
@@ -1408,7 +1408,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 62 "/mnt/c/Projects/libqasm/src/cqasm-version-parser.y"
+#line 62 "libqasm/src/cqasm-version-parser.y"
 
 
 void yyerror(YYLTYPE* yyllocp, yyscan_t unused, const std::string &filename, cqasm::version::Version &version, const char* msg) {
