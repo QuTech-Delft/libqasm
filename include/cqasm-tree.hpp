@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "tree-annotatable.hpp"
-#include "tree-base.hpp"
+#include "tree-gen/tree-annotatable.hpp"
+#include "tree-gen/tree-base.hpp"
 
 namespace cqasm {
 

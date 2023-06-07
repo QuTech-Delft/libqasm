@@ -4,8 +4,8 @@
 
 #include "cqasm-error.hpp"
 #include "cqasm-version.hpp"
-#include "cqasm-version-parser.hpp"
-#include "cqasm-version-lexer.hpp"
+#include "../include/cqasm-version-parser.hpp"
+#include "../include/cqasm-version-lexer.hpp"
 
 #include <memory>
 

@@ -25,25 +25,15 @@ class LibqasmConan(ConanFile):
         "fPIC": [True, False],
         "build_python": [True, False],
         "build_tests": [True, False],
-        "compat": [True, False],
-        "tree_gen_build_tests": [True, False]
+        "compat": [True, False]
     }
     default_options = {
         "shared": False,
         "fPIC": True,
         "build_python": False,
         "build_tests": False,
-        "compat": False,
-        "tree_gen_build_tests": False
+        "compat": False
     }
-
-    def build_requirements(self):
-        self.tool_requires("m4/1.4.19")
-        if self.settings.os == "Windows":
-            self.tool_requires("winflexbison/2.5.24")
-        else:
-            self.tool_requires("flex/2.6.4")
-            self.tool_requires("bison/3.8.2")
 
     def config_options(self):
         if self.settings.os == "Windows":
@@ -75,7 +65,6 @@ class LibqasmConan(ConanFile):
         tc.variables["LIBQASM_BUILD_PYTHON"] = self.options.build_python
         tc.variables["LIBQASM_BUILD_TESTS"] = self.options.build_tests
         tc.variables["LIBQASM_COMPAT"] = self.options.compat
-        tc.variables["TREE_GEN_BUILD_TESTS"] = self.options.tree_gen_build_tests
         tc.generate()
 
     def build(self):

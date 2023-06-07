@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "../cqasm-version.hpp"
-#include "tree-cbor.hpp"
+#include "tree-gen/tree-cbor.hpp"
 
 namespace cqasm {
 namespace v3 {

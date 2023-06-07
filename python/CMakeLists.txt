@@ -181,22 +181,22 @@ install(
     DESTINATION "${LIBQASM_PYTHON_DIR}"
 )
 install(
-    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/v1/cqasm-ast-gen.py"
+    FILES "${CMAKE_CURRENT_SOURCE_DIR}/v1/cqasm-ast-gen.py"
     DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v1"
     RENAME "ast.py"
 )
 install(
-    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/v1/cqasm-semantic-gen.py"
+    FILES "${CMAKE_CURRENT_SOURCE_DIR}/v1/cqasm-semantic-gen.py"
     DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v1"
     RENAME "semantic.py"
 )
 install(
-    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/v1/cqasm-types-gen.py"
+    FILES "${CMAKE_CURRENT_SOURCE_DIR}/v1/cqasm-types-gen.py"
     DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v1"
     RENAME "types.py"
 )
 install(
-    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/v1/cqasm-values-gen.py"
+    FILES "${CMAKE_CURRENT_SOURCE_DIR}/v1/cqasm-values-gen.py"
     DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v1"
     RENAME "values.py"
 )

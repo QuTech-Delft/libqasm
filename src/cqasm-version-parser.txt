@@ -1,0 +1,103 @@
+Terminals unused in grammar
+
+    UNKNOWN
+    END_OF_FILE
+
+
+Grammar
+
+    0 $accept: Root $end
+
+    1 Version: INT_LITERAL
+    2        | Version '.' INT_LITERAL
+
+    3 Root: VERSION Version
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    '.' (46) 2
+    error (256)
+    VERSION (258) 3
+    INT_LITERAL <str> (259) 1 2
+    UNKNOWN (260)
+    END_OF_FILE (261)
+
+
+Nonterminals, with rules where they appear
+
+    $accept (8)
+        on left: 0
+    Version <vers> (9)
+        on left: 1 2
+        on right: 2 3
+    Root <vers> (10)
+        on left: 3
+        on right: 0
+
+
+State 0
+
+    0 $accept: • Root $end
+    3 Root: • VERSION Version
+
+    VERSION  shift, and go to state 1
+
+    Root  go to state 2
+
+
+State 1
+
+    1 Version: • INT_LITERAL
+    2        | • Version '.' INT_LITERAL
+    3 Root: VERSION • Version
+
+    INT_LITERAL  shift, and go to state 3
+
+    Version  go to state 4
+
+
+State 2
+
+    0 $accept: Root • $end
+
+    $end  shift, and go to state 5
+
+
+State 3
+
+    1 Version: INT_LITERAL •
+
+    $default  reduce using rule 1 (Version)
+
+
+State 4
+
+    2 Version: Version • '.' INT_LITERAL
+    3 Root: VERSION Version •  [$end]
+
+    '.'  shift, and go to state 6
+
+    $default  reduce using rule 3 (Root)
+
+
+State 5
+
+    0 $accept: Root $end •
+
+    $default  accept
+
+
+State 6
+
+    2 Version: Version '.' • INT_LITERAL
+
+    INT_LITERAL  shift, and go to state 7
+
+
+State 7
+
+    2 Version: Version '.' INT_LITERAL •
+
+    $default  reduce using rule 2 (Version)
