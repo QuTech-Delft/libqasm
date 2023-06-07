@@ -42,6 +42,11 @@ set(CQASM_COMMON_SOURCES
 )
 
 #-------------------------------------------------------------------------------
+# tree-gen
+#-------------------------------------------------------------------------------
+add_subdirectory(tree-gen)
+
+#-------------------------------------------------------------------------------
 # cQASM v1.x parser
 #-------------------------------------------------------------------------------
 add_subdirectory(v1)
@@ -59,6 +64,7 @@ add_subdirectory(v3)
 add_library(
     cqasm-lib-obj OBJECT
     ${CQASM_COMMON_SOURCES}
+    ${TREE_GEN_SOURCES}
     ${CQASM_V1_SOURCES}
     ${CQASM_V3_SOURCES}
 )

@@ -1,4 +1,3 @@
-# List of non-generated sources.
 set(CQASM_V1_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-analyzer.cpp"
