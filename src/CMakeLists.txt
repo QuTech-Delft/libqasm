@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 
 project(libcqasm C CXX)
 
@@ -85,6 +85,9 @@ target_include_directories(
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include/"
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include/"
 )
+if(LIBQASM_COMPAT)
+    target_include_directories(cqasm INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include/v1.0)
+endif()
 
 target_compile_features(cqasm PUBLIC cxx_std_20)
 target_compile_definitions(cqasm PRIVATE BUILDING_TREE_LIB)

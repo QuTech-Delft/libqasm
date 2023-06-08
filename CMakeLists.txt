@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 
 if(POLICY CMP0048)
     cmake_policy(SET CMP0048 NEW)
@@ -74,18 +74,12 @@ add_subdirectory(src)
 if(LIBQASM_BUILD_TESTS)
     enable_testing()
     include(CTest)
-    include(GoogleTest)
     set(CMAKE_CTEST_ARGUMENTS "--output-on-failure")
     add_subdirectory(test)
 endif()
 
 # Compatibility mode: provide/test the original API in addition to the new one.
 if(LIBQASM_COMPAT)
-    # Add the compatibility headers to the include path.
-    target_include_directories(cqasm INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include/v1.0)
-
-    # Make sure to install the headers as well.
-    include(GNUInstallDirs)
     install(
         DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/v1.0/
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}

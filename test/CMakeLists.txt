@@ -1,4 +1,4 @@
-find_package(gtest REQUIRED)
+find_package(GTest REQUIRED)
 
 # Subdirectories
 if(LIBQASM_COMPAT)
@@ -44,6 +44,7 @@ elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" OR ${CMAKE_CXX_COMPILER_ID} STR
     )
 endif()
 
+include(GoogleTest)
 gtest_discover_tests(${PROJECT_NAME}_test
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
 )
