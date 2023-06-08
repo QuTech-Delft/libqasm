@@ -1,6 +1,6 @@
 /** This test is for an integrated file: It is not a particular algorithm **/
 
-#include "qasm_semantic.hpp"
+#include "v1.0/qasm_semantic.hpp"
 
 #include <cstdio>
 #include <gtest/gtest.h>

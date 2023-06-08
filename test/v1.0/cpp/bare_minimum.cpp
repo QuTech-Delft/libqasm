@@ -1,6 +1,6 @@
 /** This test is for a bare minimum qasm file **/
 
-#include "qasm_semantic.hpp"
+#include "v1.0/qasm_semantic.hpp"
 
 #include <cstdio>
 #include <gtest/gtest.h>

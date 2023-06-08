@@ -35,6 +35,10 @@ class LibqasmConan(ConanFile):
         "compat": False
     }
 
+    def build_requirements(self):
+        if self.options.build_tests:
+            self.tool_requires("gtest/1.13.0")
+
     def config_options(self):
         if self.settings.os == "Windows":
             del self.options.fPIC

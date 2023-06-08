@@ -82,7 +82,7 @@ endif()
 # Compatibility mode: provide/test the original API in addition to the new one.
 if(LIBQASM_COMPAT)
     # Add the compatibility headers to the include path.
-    target_include_directories(cqasm-lib-obj INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include/v1.0)
+    target_include_directories(cqasm INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include/v1.0)
 
     # Make sure to install the headers as well.
     include(GNUInstallDirs)

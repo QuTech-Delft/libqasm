@@ -3,7 +3,7 @@
  * Note that this is not an example from the paper,
  * but one added specifically to check wait are working for cQASM v1. **/
 
-#include "qasm_semantic.hpp"
+#include "v1.0/qasm_semantic.hpp"
 
 #include <cstdio>
 #include <gtest/gtest.h>

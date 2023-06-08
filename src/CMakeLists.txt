@@ -60,9 +60,9 @@ add_subdirectory(v3)
 # Compilation instructions
 #-------------------------------------------------------------------------------
 
-# Main cQASM library as an object library.
+# Main cQASM library.
 add_library(
-    cqasm-lib-obj OBJECT
+    cqasm
     ${CQASM_COMMON_SOURCES}
     ${TREE_GEN_SOURCES}
     ${CQASM_V1_SOURCES}
@@ -74,9 +74,11 @@ add_library(
 # That is, the files in include must not try to include generated files and files from the src directory,
 # but the other direction is fine.
 target_include_directories(
-    cqasm-lib-obj
-    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src"
+    cqasm
+    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/"
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/"
+    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../include/tree-gen/"
+    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/tree-gen/"
     # Do not remove the ending '/' since
     # it avoids the whole 'include' directory to be copied to the installation folder.
     # Instead, just its contents are copied.
@@ -84,11 +86,12 @@ target_include_directories(
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include/"
 )
 
-target_compile_features(cqasm-lib-obj PUBLIC cxx_std_20)
+target_compile_features(cqasm PUBLIC cxx_std_20)
+target_compile_definitions(cqasm PRIVATE BUILDING_TREE_LIB)
 
 # fPIC: otherwise some weirdness happens with pthreads or something when linking statically.
 if(MSVC)
-    target_compile_options(cqasm-lib-obj PRIVATE
+    target_compile_options(cqasm PRIVATE
         /W3 /w34996  # not using /WX at the moment because the flex generated code has some warnings
         /D_CRT_NONSTDC_NO_DEPRECATE
         /D_CRT_SECURE_NO_WARNINGS
@@ -96,18 +99,12 @@ if(MSVC)
         /diagnostics:column /EHsc /FC /fp:precise /Gd /GS /MP /sdl /utf-8 /Zc:inline
    )
 elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-    target_compile_options(cqasm-lib-obj PRIVATE
+    target_compile_options(cqasm PRIVATE
         -Wall -Wextra -Werror
         -fPIC
         -Wno-error=sign-compare
     )
 endif()
-
-# Main cQASM library in shared or static form as managed by cmake's
-# internal BUILD_SHARED_LIBS variable.
-add_library(cqasm $<TARGET_OBJECTS:cqasm-lib-obj>)
-target_include_directories(cqasm PUBLIC $<TARGET_PROPERTY:cqasm-lib-obj,INTERFACE_INCLUDE_DIRECTORIES>)
-target_link_libraries(cqasm PUBLIC $<TARGET_PROPERTY:cqasm-lib-obj,LINK_LIBRARIES>)
 
 #-------------------------------------------------------------------------------
 # Install instructions
@@ -121,7 +118,7 @@ install(
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
-get_target_property(INCLUDE_DIRS cqasm-lib-obj INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(INCLUDE_DIRS cqasm INTERFACE_INCLUDE_DIRECTORIES)
 install(
     DIRECTORY ${INCLUDE_DIRS}
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
