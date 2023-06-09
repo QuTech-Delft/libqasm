@@ -8,42 +8,48 @@
 #include "qasm_ast.hpp"
 #include "qasm_semantic.hpp"
 
-class libQasm {
-public:
-    libQasm() {}
-
-    void parse_string(const char* qasm_str)  {
-        auto* sm = new compiler::QasmSemanticChecker(qasm_str);
-        qasm_rep_ = sm->getQasmRepresentation();
-        parse_result_ = sm->parseResult();
-        delete sm;
-    }
-
-    void parse_file(const char* qasm_file_path) {
-        FILE* qasm_file = fopen(qasm_file_path, "r");
-        if (!qasm_file) {
-            std::string file_not_found = std::string("File ")
-                + qasm_file_path
-                + std::string(" not found!\n");
-            throw std::runtime_error(file_not_found);
+class libQasm
+{
+    public:
+        libQasm()
+        {
         }
-        auto* sm = new compiler::QasmSemanticChecker(qasm_file);
-        qasm_rep_ = sm->getQasmRepresentation();
-        parse_result_ = sm->parseResult();
-        delete sm;
-    }
 
-    int getParseResult() const {
-        return parse_result_;
-    }
+        void parse_string(const char* qasm_str)
+        {
+            sm_ = new compiler::QasmSemanticChecker(qasm_str);
+            qasm_rep_ = sm_->getQasmRepresentation();
+            parse_result_ = sm_->parseResult();
+        }
 
-    const compiler::QasmRepresentation& getQasmRepresentation() const {
-        return qasm_rep_;
-    }
+        void parse_file(const char* qasm_file_path)
+        {
+            FILE* qasm_file = fopen(qasm_file_path, "r");
+            if (!qasm_file) {
+                std::string file_not_found = std::string("File ")
+                    + qasm_file_path
+                    + std::string(" not found!\n");
+                throw std::runtime_error(file_not_found);
+            }
+            sm_ = new compiler::QasmSemanticChecker(qasm_file);
+            qasm_rep_ = sm_->getQasmRepresentation();
+            parse_result_ = sm_->parseResult();
+        }
 
-private:
-    compiler::QasmRepresentation qasm_rep_;
-    int parse_result_;
+        int getParseResult() const
+        {
+            return parse_result_;
+        }
+
+        const compiler::QasmRepresentation& getQasmRepresentation() const
+        {
+            return qasm_rep_;
+        }
+
+    private:
+        compiler::QasmSemanticChecker* sm_;
+        compiler::QasmRepresentation qasm_rep_;
+        int parse_result_;
 };
 
 #endif  // LIBQASM_HPP
