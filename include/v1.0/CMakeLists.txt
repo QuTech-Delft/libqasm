@@ -41,13 +41,13 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 add_library(lexgram SHARED $<TARGET_OBJECTS:cqasm-lib-obj>)
 target_include_directories(lexgram PUBLIC $<TARGET_PROPERTY:cqasm-lib-obj,INTERFACE_INCLUDE_DIRECTORIES>)
 target_link_libraries(lexgram PUBLIC $<TARGET_PROPERTY:cqasm-lib-obj,LINK_LIBRARIES>)
-set_property(TARGET lexgram PROPERTY CXX_STANDARD 23)
+set_property(TARGET lexgram PROPERTY CXX_STANDARD 20)
 
 add_library(lexgramstatic STATIC $<TARGET_OBJECTS:cqasm-lib-obj>)
 target_include_directories(lexgramstatic PUBLIC $<TARGET_PROPERTY:cqasm-lib-obj,INTERFACE_INCLUDE_DIRECTORIES>)
 target_link_libraries(lexgramstatic PUBLIC $<TARGET_PROPERTY:cqasm-lib-obj,LINK_LIBRARIES>)
 set_target_properties(lexgramstatic PROPERTIES POSITION_INDEPENDENT_CODE ON)
-set_property(TARGET lexgramstatic PROPERTY CXX_STANDARD 23)
+set_property(TARGET lexgramstatic PROPERTY CXX_STANDARD 20)
 
 ## Start of testing
 include_directories(../../test/v1.0/cpp/doctest)

@@ -78,15 +78,6 @@ if(LIBQASM_BUILD_TESTS)
     add_subdirectory(test)
 endif()
 
-# Compatibility mode: provide/test the original API in addition to the new one.
-if(LIBQASM_COMPAT)
-    install(
-        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/v1.0/
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-        FILES_MATCHING PATTERN "*.hpp"
-    )
-endif()
-
 # Include the tests directory if requested.
 if(LIBQASM_BUILD_PYTHON)
     add_subdirectory(python)

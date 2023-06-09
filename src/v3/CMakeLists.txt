@@ -12,6 +12,7 @@ set(CQASM_V3_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-resolver.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-semantic-gen.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-types.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-types-gen.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-values.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-values-gen.cpp"
     PARENT_SCOPE
