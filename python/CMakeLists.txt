@@ -53,16 +53,9 @@ endif()
 if(NOT PYTHON_INCLUDE_DIRS)
     message(WARNING "Could NOT find python3 include directory with custom logic, falling back to CMake internal")
     unset(PYTHON_INCLUDE_DIRS)
-    if("${CMAKE_VERSION}" VERSION_LESS "3.12.0")
-        find_package(PythonInterp 3 REQUIRED)
-        if(${PYTHONINTERP_FOUND})
-            find_package(PythonLibs "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}" REQUIRED)
-        endif()
-    else()
-        find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
-        set(PYTHON_INCLUDE_DIRS "${Python3_INCLUDE_DIRS}")
-        set(PYTHON_EXECUTABLE "${Python3_EXECUTABLE}")
-    endif()
+    find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+    set(PYTHON_INCLUDE_DIRS "${Python3_INCLUDE_DIRS}")
+    set(PYTHON_EXECUTABLE "${Python3_EXECUTABLE}")
 endif()
 
 # Print the directory we found for reference.
@@ -74,28 +67,8 @@ message(STATUS "Found python3 include directory at ${PYTHON_INCLUDE_DIRS}")
 # Look for SWIG.
 find_package(SWIG REQUIRED)
 
-# Include the support module, providing swig_add_module/library and
-# swig_link_libraries.
-# Unfortunately, prior to CMake 3.12, there appears to be *no way whatsoever*
-# to get the result of an include dir generator expression in the form of SWIG
-# include dirs, due to the omission of COMMAND_EXPAND_LISTS in UseSWIG (and the
-# non-existence of that directive prior to 3.8). While it's possible to use
-# $<JOIN...> to insert -I into the list to turn them into flags, it's not
-# possible to make those actually separate arguments as SWIG (sanely)
-# expects them to be, because spaces are escaped, because generator
-# expressions cannot return multiple arguments as they are in double
-# quotes. Basically, the only way to use SWIG before 3.12 is to use
-# globally scoped include_directories directives everywhere, scoping and
-# transitive dependencies be damned. It's complicated and above all insane.
-# So, for versions before 3.12, a patched module is provided in the compat
-# directory. This wraps the actual SWIG command in a Python script that does
-# the list expansion CMake 3.12- is so woefully incapable of.
-if("${CMAKE_VERSION}" VERSION_LESS "3.12.0")
-    include("${CMAKE_CURRENT_SOURCE_DIR}/compat/UseSWIG.cmake")
-else()
-    include(${SWIG_USE_FILE})
-endif()
-
+# Include the support module, providing swig_add_module/library and swig_link_libraries.
+include(${SWIG_USE_FILE})
 
 #=============================================================================#
 # CMake configuration                                                         #
@@ -106,16 +79,10 @@ endif()
 # This sort of fixes that (https://stackoverflow.com/questions/1941443)
 SET(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-# Require C++23 compiler support
-if(CMAKE_VERSION VERSION_LESS "3.1")
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++23")
-    endif()
-else()
-    set(CMAKE_CXX_STANDARD 23)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
-    set(CMAKE_CXX_EXTENSIONS OFF)
-endif()
+# Require C++20 compiler support
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 
 #=============================================================================#

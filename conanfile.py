@@ -35,10 +35,6 @@ class LibqasmConan(ConanFile):
         "compat": False
     }
 
-    def build_requirements(self):
-        if self.options.build_tests:
-            self.test_requires("gtest/cci.20210126")
-
     def config_options(self):
         if self.settings.os == "Windows":
             del self.options.fPIC

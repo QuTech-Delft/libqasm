@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.15)
 
 if(POLICY CMP0078)
   cmake_policy(SET CMP0078 OLD)
@@ -12,16 +12,8 @@ enable_testing()
 
 project("libQasm")
 
-if(${CMAKE_VERSION} VERSION_LESS "3.12.0")
-    find_package(PythonInterp)
-    if (${PYTHONINTERP_FOUND})
-        find_package(PythonLibs "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
-    endif()
-    include_directories(${PYTHON_INCLUDE_DIRS})
-else()
-    find_package(Python COMPONENTS Interpreter Development)
-    include_directories(${Python_INCLUDE_DIRS})
-endif()
+find_package(Python COMPONENTS Interpreter Development)
+include_directories(${Python_INCLUDE_DIRS})
 
 set(CMAKE_REQUIRED_FLAGS "-std=c++23")
 

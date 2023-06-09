@@ -7,7 +7,7 @@
 [![API docs](https://readthedocs.org/projects/libqasm/badge/?version=latest)](https://libqasm.readthedocs.io/en/latest/)
 
 ## Dependencies
-* cmake (>= 3.12)
+* cmake (>= 3.15)
 * gcc and g++ capable of C++20 standard
 * Python3 (Tested on Python v3.6)
 * conan: 2.0
