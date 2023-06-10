@@ -2,7 +2,7 @@
  * Implementation for \ref include/v1/cqasm-error-model.hpp "v1/cqasm-error-model.hpp".
  */
 
-#include "../../include/cqasm-utils.hpp"
+#include "cqasm-utils.hpp"
 #include "v1/cqasm-error-model.hpp"
 #include "v1/cqasm-semantic.hpp"
 

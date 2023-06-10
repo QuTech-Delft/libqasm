@@ -3,7 +3,7 @@ include(FetchContent)
 FetchContent_Declare(googletest
     GIT_REPOSITORY https://github.com/google/googletest.git
     GIT_TAG "60c3602aaa3f27e1dbd691549b1d8da88c14c947"
-    )
+ )
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
@@ -29,7 +29,7 @@ list(APPEND app_sources ${test_sources})
 # Test executable
 add_executable(${PROJECT_NAME}_test ${app_sources})
 target_compile_features(${PROJECT_NAME}_test PRIVATE cxx_std_20)
-target_link_libraries(${PROJECT_NAME}_test PUBLIC
+target_link_libraries(${PROJECT_NAME}_test PRIVATE
     cqasm
     gmock
     gtest

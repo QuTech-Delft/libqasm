@@ -4,7 +4,7 @@
 
 #include <algorithm>
 #include <cctype>
-#include "../include/cqasm-utils.hpp"
+#include "cqasm-utils.hpp"
 
 namespace cqasm {
 namespace utils {

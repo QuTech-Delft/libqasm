@@ -2,7 +2,7 @@
  * Implementation for \ref include/v3/cqasm-instruction.hpp "v3/cqasm-instruction.hpp".
  */
 
-#include "../../include/cqasm-utils.hpp"
+#include "cqasm-utils.hpp"
 #include "v3/cqasm-instruction.hpp"
 #include "v3/cqasm-semantic.hpp"
 

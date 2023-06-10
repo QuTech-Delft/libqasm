@@ -3,8 +3,8 @@
  */
 
 #include <unordered_set>
-#include "../../include/cqasm-utils.hpp"
 #include "cqasm-error.hpp"
+#include "cqasm-utils.hpp"
 #include "v3/cqasm-resolver.hpp"
 
 namespace cqasm {

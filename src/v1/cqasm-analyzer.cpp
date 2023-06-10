@@ -9,7 +9,7 @@
 #include <list>
 #include <map>
 #include <utility>
-#include "../../include/cqasm-utils.hpp"
+#include "cqasm-utils.hpp"
 #include "v1/cqasm-analyzer.hpp"
 #include "v1/cqasm-parse-helper.hpp"
 #include "v1/cqasm-functions-gen.hpp"

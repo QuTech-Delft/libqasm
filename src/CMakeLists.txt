@@ -81,9 +81,6 @@ target_include_directories(
     # Instead, just its contents are copied.
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include/"
 )
-if(LIBQASM_COMPAT)
-    target_include_directories(cqasm-lib-obj INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/../include/v1.0)
-endif()
 
 target_compile_features(cqasm-lib-obj PUBLIC cxx_std_20)
 target_compile_definitions(cqasm-lib-obj PRIVATE BUILDING_TREE_LIB)
