@@ -10,18 +10,22 @@ namespace cqasm {
 namespace v1 {
 namespace parser {
 
+ParseResult::~ParseResult() {
+
+}
+
 /**
  * Parse the given file.
  */
 ParseResult parse_file(const std::string &filename) {
-    return std::move(ParseHelper(filename, "", true).result);
+    return ParseHelper(filename, "", true).result;
 }
 
 /**
  * Parse using the given file pointer.
  */
 ParseResult parse_file(FILE *file, const std::string &filename) {
-    return std::move(ParseHelper(filename, file).result);
+    return ParseHelper(filename, file).result;
 }
 
 /**
@@ -29,7 +33,7 @@ ParseResult parse_file(FILE *file, const std::string &filename) {
  * error messages.
  */
 ParseResult parse_string(const std::string &data, const std::string &filename) {
-    return std::move(ParseHelper(filename, data, false).result);
+    return ParseHelper(filename, data, false).result;
 }
 
 /**

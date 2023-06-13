@@ -49,8 +49,8 @@ enum class ParameterType {
  */
 static NumericalIdentifiers convert_indices(const cqasm::tree::Many<cqasm::values::ConstInt> &indices) {
     NumericalIdentifiers retval;
-    for (auto control_bit : indices) {
-        retval.addToVector(control_bit->value);
+    for (const auto &control_bit : indices) {
+        retval.addToVector(static_cast<int>(control_bit->value));
     }
     return retval;
 }
@@ -71,44 +71,43 @@ static std::string convert_axis(const cqasm::values::Value &value) {
  * Converts an instruction from the new API format to the old API
  * format. May return null to optimize the instruction away.
  */
-static Operation *convert_instruction(const cqasm::semantic::Instruction &instruction) {
-
+static std::shared_ptr<Operation> convert_instruction(const cqasm::semantic::Instruction &instruction) {
     // Handle the normal arguments.
-    Operation *op = nullptr;
+    std::shared_ptr<Operation> op{};
     switch (instruction.instruction->get_annotation<ParameterType>()) {
         case ParameterType::NoArg:
-            op = new Operation(
+            op = std::make_shared<Operation>(
                 instruction.instruction->name
             );
             break;
         case ParameterType::SingleBit:
-            op = new Operation(
+            op = std::make_shared<Operation>(
                 instruction.instruction->name,
                 Bits(convert_indices(instruction.operands[0]->as_bit_refs()->index))
             );
             break;
         case ParameterType::SingleQubit:
-            op = new Operation(
+            op = std::make_shared<Operation>(
                 instruction.instruction->name,
                 Qubits(convert_indices(instruction.operands[0]->as_qubit_refs()->index))
             );
             break;
         case ParameterType::SingleQubitInt:
-            op = new Operation(
+            op = std::make_shared<Operation>(
                 instruction.instruction->name,
                 Qubits(convert_indices(instruction.operands[0]->as_qubit_refs()->index)),
                 (const int)instruction.operands[1]->as_const_int()->value
             );
             break;
         case ParameterType::SingleQubitReal:
-            op = new Operation(
+            op = std::make_shared<Operation>(
                 instruction.instruction->name,
                 Qubits(convert_indices(instruction.operands[0]->as_qubit_refs()->index)),
                 (const double)instruction.operands[1]->as_const_real()->value
             );
             break;
         case ParameterType::SingleQubitMatrix:
-            op = new Operation(
+            op = std::make_shared<Operation>(
                 instruction.instruction->name,
                 Qubits(convert_indices(instruction.operands[0]->as_qubit_refs()->index))
             );
@@ -126,14 +125,14 @@ static Operation *convert_instruction(const cqasm::semantic::Instruction &instru
             }
             break;
         case ParameterType::TwoQubit:
-            op = new Operation(
+            op = std::make_shared<Operation>(
                 instruction.instruction->name,
                 Qubits(convert_indices(instruction.operands[0]->as_qubit_refs()->index)),
                 Qubits(convert_indices(instruction.operands[1]->as_qubit_refs()->index))
             );
             break;
         case ParameterType::TwoQubitReal:
-            op = new Operation(
+            op = std::make_shared<Operation>(
                 instruction.instruction->name,
                 Qubits(convert_indices(instruction.operands[0]->as_qubit_refs()->index)),
                 Qubits(convert_indices(instruction.operands[1]->as_qubit_refs()->index)),
@@ -141,7 +140,7 @@ static Operation *convert_instruction(const cqasm::semantic::Instruction &instru
             );
             break;
         case ParameterType::TwoQubitInt:
-            op = new Operation(
+            op = std::make_shared<Operation>(
                 instruction.instruction->name,
                 Qubits(convert_indices(instruction.operands[0]->as_qubit_refs()->index)),
                 Qubits(convert_indices(instruction.operands[1]->as_qubit_refs()->index)),
@@ -149,7 +148,7 @@ static Operation *convert_instruction(const cqasm::semantic::Instruction &instru
             );
             break;
         case ParameterType::ThreeQubit:
-            op = new Operation(
+            op = std::make_shared<Operation>(
                 instruction.instruction->name,
                 Qubits(convert_indices(instruction.operands[0]->as_qubit_refs()->index)),
                 Qubits(convert_indices(instruction.operands[1]->as_qubit_refs()->index)),
@@ -157,7 +156,7 @@ static Operation *convert_instruction(const cqasm::semantic::Instruction &instru
             );
             break;
         case ParameterType::MeasureParity:
-            op = new Operation(
+            op = std::make_shared<Operation>(
                 instruction.instruction->name,
                 Qubits(convert_indices(instruction.operands[0]->as_qubit_refs()->index)),
                 convert_axis(instruction.operands[1]),
@@ -166,19 +165,19 @@ static Operation *convert_instruction(const cqasm::semantic::Instruction &instru
             );
             break;
         case ParameterType::SingleInt:
-            op = new Operation(
+            op = std::make_shared<Operation>(
                 instruction.instruction->name,
                 instruction.operands[0]->as_const_int()->value
             );
             break;
         case ParameterType::SingleString:
-            op = new Operation(
+            op = std::make_shared<Operation>(
                 instruction.instruction->name,
                 instruction.operands[0]->as_const_string()->value
             );
             break;
         case ParameterType::NotGate:
-            op = new Operation(
+            op = std::make_shared<Operation>(
                 instruction.instruction->name
             );
             op->setControlBits(Bits(convert_indices(instruction.operands[0]->as_bit_refs()->index)));
@@ -232,10 +231,10 @@ static void handle_parse_result(QasmRepresentation &qasm, cqasm::parser::ParseRe
     // with *any* number of float arguments. I'm just randomly
     // assuming 50 arguments is enough... Just increase this if more
     // are needed.
-    std::ostringstream args;
+    std::ostringstream oss;
     for (int i = 0; i <= 50; i++) {
-        analyzer.register_error_model("depolarizing_channel", args.str());
-        args << "r";
+        analyzer.register_error_model("depolarizing_channel", oss.str());
+        oss << "r";
     }
 
     // Register the instructions that were baked into the old
@@ -302,15 +301,15 @@ static void handle_parse_result(QasmRepresentation &qasm, cqasm::parser::ParseRe
     if (analysis_result.root->num_qubits == 0) {
         throw std::runtime_error("qubits statement is missing");
     }
-    qasm.qubitRegister(analysis_result.root->num_qubits);
+    qasm.qubitRegister(static_cast<int>(analysis_result.root->num_qubits));
     if (!analysis_result.root->variables.empty()) {
         throw std::runtime_error("variables are not supported");
     }
 
     // Copy version number (poorly).
-    double version = analysis_result.root->version->items[0];
+    auto version = double(analysis_result.root->version->items[0]);
     if (analysis_result.root->version->items.size() > 1) {
-        int sub = analysis_result.root->version->items[1];
+        auto sub = int(analysis_result.root->version->items[1]);
         version += 0.1 * ((sub > 9) ? 9 : sub);
     }
     qasm.versionNumber(version);
@@ -318,7 +317,7 @@ static void handle_parse_result(QasmRepresentation &qasm, cqasm::parser::ParseRe
     // Copy error model.
     if (!analysis_result.root->error_model.empty()) {
         std::vector<double> args;
-        for (auto arg : analysis_result.root->error_model->parameters) {
+        for (const auto &arg : analysis_result.root->error_model->parameters) {
             args.push_back(arg->as_const_real()->value);
         }
         qasm.setErrorModel(analysis_result.root->error_model->name, args);
@@ -326,7 +325,7 @@ static void handle_parse_result(QasmRepresentation &qasm, cqasm::parser::ParseRe
 
     // Copy subcircuits.
     auto &scs = qasm.getSubCircuits();
-    for (auto subcircuit : analysis_result.root->subcircuits) {
+    for (const auto &subcircuit : analysis_result.root->subcircuits) {
 
         // The old API adds a default subcircuit automatically in
         // the QasmRepresentation constructor (so it always exists),
@@ -339,26 +338,26 @@ static void handle_parse_result(QasmRepresentation &qasm, cqasm::parser::ParseRe
         if (!subcircuit->name.empty()) {
             int line_number = 0;
             if (auto loc = subcircuit->get_annotation_ptr<cqasm::parser::SourceLocation>()) {
-                line_number = loc->first_line;
+                line_number = static_cast<int>(loc->first_line);
             }
             SubCircuit sc {
                 subcircuit->name.c_str(),
-                (int)scs.numberOfSubCircuits(),
+                static_cast<int>(scs.numberOfSubCircuits()),
                 line_number
             };
-            sc.numberIterations(subcircuit->iterations);
+            sc.numberIterations(static_cast<int>(subcircuit->iterations));
             scs.addSubCircuit(sc);
         }
 
         // Add bundles to the last subcircuit.
-        for (auto bundle : subcircuit->bundles) {
+        for (const auto &bundle : subcircuit->bundles) {
 
             // Construct the OperationsCluster for this bundle.
-            OperationsCluster *opclus = nullptr;
-            for (auto instruction : bundle->items) {
+            std::shared_ptr<OperationsCluster> opclus{};
+            for (const auto &instruction : bundle->items) {
 
                 // Convert the instruction.
-                Operation *op = convert_instruction(*instruction);
+                const auto &op = convert_instruction(*instruction);
                 if (!op) {
                     continue;
                 }
@@ -372,24 +371,24 @@ static void handle_parse_result(QasmRepresentation &qasm, cqasm::parser::ParseRe
                 if (!opclus) {
                     int line_number = 0;
                     if (auto loc = instruction->get_annotation_ptr<cqasm::parser::SourceLocation>()) {
-                        line_number = loc->first_line;
+                        line_number = static_cast<int>(loc->first_line);
                     }
-                    opclus = new OperationsCluster(op, line_number);
+                    opclus = std::make_shared<OperationsCluster>(std::move(op), line_number);
                 } else {
-                    opclus->addParallelOperation(op);
+                    opclus->addParallelOperation(std::move(op));
                 }
             }
 
             // Add the cluster to the last subcircuit if the bundle
             // was nonempty.
             if (opclus) {
-                scs.lastSubCircuit().addOperationsCluster(opclus);
+                scs.lastSubCircuit().addOperationsCluster(std::move(opclus));
             }
         }
     }
 
     // Copy mappings for as far as this is supported by the old API.
-    for (auto mapping : analysis_result.root->mappings) {
+    for (const auto &mapping : analysis_result.root->mappings) {
         if (auto qubit_refs = mapping->value->as_qubit_refs()) {
             qasm.addMappings(mapping->name, convert_indices(qubit_refs->index), true);
         } else if (auto bit_refs = mapping->value->as_bit_refs()) {
