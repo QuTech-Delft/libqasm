@@ -10,10 +10,6 @@ namespace cqasm {
 namespace v1 {
 namespace parser {
 
-ParseResult::~ParseResult() {
-
-}
-
 /**
  * Parse the given file.
  */
