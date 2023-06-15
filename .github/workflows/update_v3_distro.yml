@@ -9,7 +9,7 @@ on:
 jobs:
   v3_distro_artifacts:
     name: 'v3_distro artifacts'
-    runs/on: ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
