@@ -11,7 +11,7 @@ jobs:
     name: 'v3_distro artifacts'
     steps:
       - name: Checkout
-      - uses: actions/checkout@v3
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Get changed lexer or parser files
