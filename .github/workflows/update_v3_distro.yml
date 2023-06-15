@@ -23,25 +23,28 @@ jobs:
       - name: Get latest CMake
         if: steps.changed-files-specific.outputs.any_changed == 'true'
         uses: lukka/get-cmake@latest
-      - name: Install Conan
-        if: steps.changed-files-specific.outputs.any_changed == 'true'
-        id: conan
-        uses: turtlebrowser/get-conan@main
-      - name: Conan version
-        if: steps.changed-files-specific.outputs.any_changed == 'true'
-        run: echo "${{ steps.conan.outputs.version }}"
-      - name: Conan install and build
+      - name: Configure
         if: steps.changed-files-specific.outputs.any_changed == 'true'
         run: |
-          conan profile detect
-          conan build . -s:h compiler.cppstd=20 -b missing
+          mkdir ${{ github.workspace }}/build 
+          cd ${{ github.workspace }}/build
+          cmake .. -B .
+      - name: Build C++
+        if: steps.changed-files-specific.outputs.any_changed == 'true'
+        run: |
+          cd ${{ github.workspace }}/build
+          cmake --build . --parallel
+      - name: Build Python
+        env:
+          NPROCS: 100
+        run: python -m pip install --verbose .
       - name: Upload artifact
         if: steps.changed-files-specific.outputs.any_changed == 'true'
         uses: actions/upload-artifact@v3
         with:
           name: v3_distro-generated-files-artifact
           path: |
-            ${{ github.workspace }}/build/_deps/tree-gen-src/include/*
+            ${{ github.workspace }}/build/_deps/tree-gen-src/include/
             ${{ github.workspace }}/build/include/cqasm-version-lexer.hpp
             ${{ github.workspace }}/build/include/cqasm-version-parser.hpp
             ${{ github.workspace }}/build/include/v1/cqasm-lexer.hpp
@@ -59,5 +62,5 @@ jobs:
             ${{ github.workspace }}/build/src/v3/cqasm-parser.cpp
             ${{ github.workspace }}/build/py_gen/v1/*.py
             ${{ github.workspace }}/build/py_gen/v3/*.py
-            ${{ github.workspace }}/build/_deps/tree-gen-src/include/*
+            ${{ github.workspace }}/build/_deps/tree-gen-src/include/
             ${{ github.workspace }}/build/_deps/tree-gen-src/src/tree-all.cpp
