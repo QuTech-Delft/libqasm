@@ -45,22 +45,15 @@ jobs:
           name: v3_distro-generated-files-artifact
           path: |
             ${{ github.workspace }}/build/_deps/tree-gen-src/include/
-            ${{ github.workspace }}/build/include/cqasm-version-lexer.hpp
-            ${{ github.workspace }}/build/include/cqasm-version-parser.hpp
-            ${{ github.workspace }}/build/include/v1/cqasm-lexer.hpp
-            ${{ github.workspace }}/build/include/v1/cqasm-parser.hpp
-            ${{ github.workspace }}/build/include/v3/cqasm-lexer.hpp
-            ${{ github.workspace }}/build/include/v3/cqasm-parser.hpp
-            ${{ github.workspace }}/build/src/cqasm-version-lexer.cpp
-            ${{ github.workspace }}/build/src/cqasm-version-lexer.l
-            ${{ github.workspace }}/build/src/cqasm-version-parser.cpp
-            ${{ github.workspace }}/build/src/v1/cqasm-lexer.cpp
-            ${{ github.workspace }}/build/src/v1/cqasm-lexer.l
-            ${{ github.workspace }}/build/src/v1/cqasm-parser.cpp
-            ${{ github.workspace }}/build/src/v3/cqasm-lexer.cpp
-            ${{ github.workspace }}/build/src/v3/cqasm-lexer.l
-            ${{ github.workspace }}/build/src/v3/cqasm-parser.cpp
-            ${{ github.workspace }}/build/py_gen/v1/*.py
-            ${{ github.workspace }}/build/py_gen/v3/*.py
-            ${{ github.workspace }}/build/_deps/tree-gen-src/include/
             ${{ github.workspace }}/build/_deps/tree-gen-src/src/tree-all.cpp
+            ${{ github.workspace }}/build/include/v1/*.hpp          
+            ${{ github.workspace }}/build/py_gen/v1/*.py
+            ${{ github.workspace }}/build/src/cqasm-version-lexer.*
+            ${{ github.workspace }}/build/src/cqasm-version-parser.*
+            ${{ github.workspace }}/build/src/v1/cqasm-.*-gen.cpp
+            ${{ github.workspace }}/build/src/v1/cqasm-lexer.*
+            ${{ github.workspace }}/build/src/v1/cqasm-parser.*
+            ${{ github.workspace }}/src/cqasm-version-lexer.l
+            ${{ github.workspace }}/src/cqasm-version-parser.y
+            ${{ github.workspace }}/src/v1/cqasm-lexer.l
+            ${{ github.workspace }}/src/v1/cqasm-parser.y
