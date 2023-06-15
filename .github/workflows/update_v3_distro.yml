@@ -28,6 +28,7 @@ jobs:
         id: conan
         uses: turtlebrowser/get-conan@main
       - name: Conan version
+        if: steps.changed-files-specific.outputs.any_changed == 'true'
         run: echo "${{ steps.conan.outputs.version }}"
       - name: Conan install and build
         if: steps.changed-files-specific.outputs.any_changed == 'true'
