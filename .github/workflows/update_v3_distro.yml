@@ -1,0 +1,62 @@
+name: Test
+
+on:
+  push:
+    branches:
+    - v3
+  pull_request:
+
+jobs:
+  v3_distro_artifacts:
+    name: 'v3_distro artifacts'
+    steps:
+      - name: Checkout
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Get changed lexer or parser files
+        id: changed-files-specific
+        uses: tj-actions/changed-files@v36
+        with:
+          files: src{/v1,}/*.{l,y}
+      - name: Get latest CMake
+        if: steps.changed-files-specific.outputs.any_changed == 'true'
+        uses: lukka/get-cmake@latest
+      - name: Install Conan
+        if: steps.changed-files-specific.outputs.any_changed == 'true'
+        id: conan
+        uses: turtlebrowser/get-conan@main
+      - name: Conan version
+        run: echo "${{ steps.conan.outputs.version }}"
+      - name: Conan install and build
+        if: steps.changed-files-specific.outputs.any_changed == 'true'
+        run: |
+          conan profile detect
+          conan build . -s:h compiler.cppstd=20 -b missing
+      - name: Upload artifact
+        if: steps.changed-files-specific.outputs.any_changed == 'true'
+        uses: actions/upload-artifact@v3
+        with:
+          name: v3_distro-generated-files-artifact
+          path: |
+            ${{ github.workspace }}/
+            ${{ github.workspace }}/build/_deps/tree-gen-src/include/*
+            ${{ github.workspace }}/build/include/cqasm-version-lexer.hpp
+            ${{ github.workspace }}/build/include/cqasm-version-parser.hpp
+            ${{ github.workspace }}/build/include/v1/cqasm-lexer.hpp
+            ${{ github.workspace }}/build/include/v1/cqasm-parser.hpp
+            ${{ github.workspace }}/build/include/v3/cqasm-lexer.hpp
+            ${{ github.workspace }}/build/include/v3/cqasm-parser.hpp
+            ${{ github.workspace }}/build/src/cqasm-version-lexer.cpp
+            ${{ github.workspace }}/build/src/cqasm-version-lexer.l
+            ${{ github.workspace }}/build/src/cqasm-version-parser.cpp
+            ${{ github.workspace }}/build/src/v1/cqasm-lexer.cpp
+            ${{ github.workspace }}/build/src/v1/cqasm-lexer.l
+            ${{ github.workspace }}/build/src/v1/cqasm-parser.cpp
+            ${{ github.workspace }}/build/src/v3/cqasm-lexer.cpp
+            ${{ github.workspace }}/build/src/v3/cqasm-lexer.l
+            ${{ github.workspace }}/build/src/v3/cqasm-parser.cpp
+            ${{ github.workspace }}/build/py_gen/v1/*.py
+            ${{ github.workspace }}/build/py_gen/v3/*.py
+            ${{ github.workspace }}/build/_deps/tree-gen-src/include/*
+            ${{ github.workspace }}/build/_deps/tree-gen-src/src/tree-all.cpp
