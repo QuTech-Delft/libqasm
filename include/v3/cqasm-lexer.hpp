@@ -2,9 +2,9 @@
 #define cqasm_v3_HEADER_H 1
 #define cqasm_v3_IN_HEADER 1
 
-#line 5 "libqasm/src/v3/cqasm-lexer.hpp"
+#line 5 "src/v3/cqasm-lexer.hpp"
 
-#line 7 "libqasm/src/v3/cqasm-lexer.hpp"
+#line 7 "src/v3/cqasm-lexer.hpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -293,6 +293,8 @@ typedef unsigned char flex_uint8_t;
 typedef unsigned short int flex_uint16_t;
 typedef unsigned int flex_uint32_t;
 
+#ifndef _WIN32
+
 /* Limits of integral types. */
 #ifndef INT8_MIN
 #define INT8_MIN               (-128)
@@ -325,6 +327,8 @@ typedef unsigned int flex_uint32_t;
 #ifndef SIZE_MAX
 #define SIZE_MAX               (~(size_t)0)
 #endif
+
+#endif /* ! _WIN32 */
 
 #endif /* ! C99 */
 
@@ -464,15 +468,7 @@ void yyfree ( void * , yyscan_t yyscanner );
 
 #endif
 
-#ifdef _WIN32
-
-/*windows compatibility case*/
-#include <io.h>
-#define isatty _isatty
-#define fileno _fileno
-
-#else
-
+#define YY_NO_UNISTD_H 1
 #ifndef YY_NO_UNISTD_H
 /* Special case for "unistd.h", since it is non-ANSI. We include it way
  * down here because we want the user's section 1 to have been scanned first.
@@ -480,8 +476,6 @@ void yyfree ( void * , yyscan_t yyscanner );
  */
 #include <unistd.h>
 #endif
-
-#endif  /* _WIN32 */
 
 #ifndef YY_EXTRA_TYPE
 #define YY_EXTRA_TYPE void *
@@ -743,8 +737,8 @@ extern int yylex \
 #undef yyTABLES_NAME
 #endif
 
-#line 243 "libqasm/src/v3/cqasm-lexer.l"
+#line 245 "src/v3/cqasm-lexer.l"
 
-#line 737 "libqasm/src/v3/cqasm-lexer.hpp"
+#line 737 "src/v3/cqasm-lexer.hpp"
 #undef cqasm_v3_IN_HEADER
 #endif /* cqasm_v3_HEADER_H */

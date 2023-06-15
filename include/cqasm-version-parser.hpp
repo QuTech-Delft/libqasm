@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.8.2.  */
+/* A Bison parser, made by GNU Bison 3.7.4.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2020 Free Software Foundation,
    Inc.
 
    This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -35,8 +35,8 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_CQASM_VERSION_LIBQASM_BUILD_DEBUG_SRC_CQASM_VERSION_PARSER_HPP_INCLUDED
-# define YY_CQASM_VERSION_LIBQASM_BUILD_DEBUG_SRC_CQASM_VERSION_PARSER_HPP_INCLUDED
+#ifndef YY_CQASM_VERSION_MNT_C_PROJECTS_LIBQASM_BUILD_SRC_CQASM_VERSION_PARSER_HPP_INCLUDED
+# define YY_CQASM_VERSION_MNT_C_PROJECTS_LIBQASM_BUILD_SRC_CQASM_VERSION_PARSER_HPP_INCLUDED
 /* Debug traces.  */
 #ifndef CQASM_VERSION_DEBUG
 # if defined YYDEBUG
@@ -53,7 +53,7 @@
 extern int cqasm_version_debug;
 #endif
 /* "%code requires" blocks.  */
-#line 5 "libqasm/src/cqasm-version-parser.y"
+#line 5 "src/cqasm-version-parser.y"
 
     /**
      * \file
@@ -72,7 +72,7 @@ extern int cqasm_version_debug;
     #define YYLTYPE CQASM_VERSION_LTYPE
 
 
-#line 76 "libqasm/src/cqasm-version-parser.hpp"
+#line 76 "src/cqasm-version-parser.hpp"
 
 /* Token kinds.  */
 #ifndef CQASM_VERSION_TOKENTYPE
@@ -95,12 +95,12 @@ extern int cqasm_version_debug;
 #if ! defined CQASM_VERSION_STYPE && ! defined CQASM_VERSION_STYPE_IS_DECLARED
 union CQASM_VERSION_STYPE
 {
-#line 34 "libqasm/src/cqasm-version-parser.y"
+#line 34 "src/cqasm-version-parser.y"
 
     char            *str;
     Version         *vers;
 
-#line 104 "libqasm/src/cqasm-version-parser.hpp"
+#line 104 "src/cqasm-version-parser.hpp"
 
 };
 typedef union CQASM_VERSION_STYPE CQASM_VERSION_STYPE;
@@ -124,8 +124,6 @@ struct CQASM_VERSION_LTYPE
 
 
 
-
 int cqasm_version_parse (yyscan_t scanner, const std::string &filename, cqasm::version::Version &version);
 
-
-#endif /* !YY_CQASM_VERSION_LIBQASM_BUILD_DEBUG_SRC_CQASM_VERSION_PARSER_HPP_INCLUDED  */
+#endif /* !YY_CQASM_VERSION_MNT_C_PROJECTS_LIBQASM_BUILD_SRC_CQASM_VERSION_PARSER_HPP_INCLUDED  */

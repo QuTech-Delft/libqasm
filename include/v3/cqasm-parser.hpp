@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.8.2.  */
+/* A Bison parser, made by GNU Bison 3.7.4.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2020 Free Software Foundation,
    Inc.
 
    This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -35,8 +35,8 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_CQASM_V3_LIBQASM_BUILD_DEBUG_SRC_V3_CQASM_PARSER_HPP_INCLUDED
-# define YY_CQASM_V3_LIBQASM_BUILD_DEBUG_SRC_V3_CQASM_PARSER_HPP_INCLUDED
+#ifndef YY_CQASM_V3_MNT_C_PROJECTS_LIBQASM_BUILD_SRC_V3_CQASM_PARSER_HPP_INCLUDED
+# define YY_CQASM_V3_MNT_C_PROJECTS_LIBQASM_BUILD_SRC_V3_CQASM_PARSER_HPP_INCLUDED
 /* Debug traces.  */
 #ifndef CQASM_V3_DEBUG
 # if defined YYDEBUG
@@ -53,7 +53,7 @@
 extern int cqasm_v3_debug;
 #endif
 /* "%code requires" blocks.  */
-#line 5 "libqasm/src/v3/cqasm-parser.y"
+#line 5 "src/v3/cqasm-parser.y"
 
     /**
      * \file
@@ -74,7 +74,7 @@ extern int cqasm_v3_debug;
     #define YYLTYPE CQASM_V3_LTYPE
 
 
-#line 78 "libqasm/src/v3/cqasm-parser.hpp"
+#line 78 "src/v3/cqasm-parser.hpp"
 
 /* Token kinds.  */
 #ifndef CQASM_V3_TOKENTYPE
@@ -138,7 +138,7 @@ extern int cqasm_v3_debug;
 #if ! defined CQASM_V3_STYPE && ! defined CQASM_V3_STYPE_IS_DECLARED
 union CQASM_V3_STYPE
 {
-#line 78 "libqasm/src/v3/cqasm-parser.y"
+#line 78 "src/v3/cqasm-parser.y"
 
     char           	*str;
     IntegerLiteral  *ilit;
@@ -178,7 +178,7 @@ union CQASM_V3_STYPE
     Version         *vers;
     Program         *prog;
 
-#line 182 "libqasm/src/v3/cqasm-parser.hpp"
+#line 182 "src/v3/cqasm-parser.hpp"
 
 };
 typedef union CQASM_V3_STYPE CQASM_V3_STYPE;
@@ -202,8 +202,6 @@ struct CQASM_V3_LTYPE
 
 
 
-
 int cqasm_v3_parse (yyscan_t scanner, cqasm::v3::parser::ParseHelper &helper);
 
-
-#endif /* !YY_CQASM_V3_LIBQASM_BUILD_DEBUG_SRC_V3_CQASM_PARSER_HPP_INCLUDED  */
+#endif /* !YY_CQASM_V3_MNT_C_PROJECTS_LIBQASM_BUILD_SRC_V3_CQASM_PARSER_HPP_INCLUDED  */

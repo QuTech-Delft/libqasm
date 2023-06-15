@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.8.2.  */
+/* A Bison parser, made by GNU Bison 3.7.4.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2020 Free Software Foundation,
    Inc.
 
    This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -46,10 +46,10 @@
    USER NAME SPACE" below.  */
 
 /* Identify Bison output, and Bison version.  */
-#define YYBISON 30802
+#define YYBISON 30704
 
 /* Bison version string.  */
-#define YYBISON_VERSION "3.8.2"
+#define YYBISON_VERSION "3.7.4"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -64,7 +64,7 @@
 #define YYPULL 1
 
 /* "%code top" blocks.  */
-#line 31 "libqasm/src/v1/cqasm-parser.y"
+#line 31 "src/v1/cqasm-parser.y"
 
 
     /**
@@ -107,7 +107,7 @@
         }
 
 
-#line 111 "libqasm/src/v1/cqasm-parser.cpp"
+#line 111 "src/v1/cqasm-parser.cpp"
 /* Substitute the type names.  */
 #define YYSTYPE         CQASM_V1_STYPE
 #define YYLTYPE         CQASM_V1_LTYPE
@@ -278,12 +278,12 @@ typedef enum yysymbol_kind_t yysymbol_kind_t;
 
 
 /* Unqualified %code blocks.  */
-#line 26 "libqasm/src/v1/cqasm-parser.y"
+#line 26 "src/v1/cqasm-parser.y"
 
     int yylex(YYSTYPE* yylvalp, YYLTYPE* yyllocp, yyscan_t scanner);
     void yyerror(YYLTYPE* yyllocp, yyscan_t scanner, cqasm::v1::parser::ParseHelper &helper, const char* msg);
 
-#line 287 "libqasm/src/v1/cqasm-parser.cpp"
+#line 287 "src/v1/cqasm-parser.cpp"
 
 #ifdef short
 # undef short
@@ -320,18 +320,6 @@ typedef __INT_LEAST16_TYPE__ yytype_int16;
 typedef int_least16_t yytype_int16;
 #else
 typedef short yytype_int16;
-#endif
-
-/* Work around bug in HP-UX 11.23, which defines these macros
-   incorrectly for preprocessor constants.  This workaround can likely
-   be removed in 2023, as HPE has promised support for HP-UX 11.23
-   (aka HP-UX 11i v2) only through the end of 2022; see Table 2 of
-   <https://h20195.www2.hpe.com/V2/getpdf.aspx/4AA4-7673ENW.pdf>.  */
-#ifdef __hpux
-# undef UINT_LEAST8_MAX
-# undef UINT_LEAST16_MAX
-# define UINT_LEAST8_MAX 255
-# define UINT_LEAST16_MAX 65535
 #endif
 
 #if defined __UINT_LEAST8_MAX__ && __UINT_LEAST8_MAX__ <= __INT_MAX__
@@ -431,23 +419,17 @@ typedef int yy_state_fast_t;
 
 /* Suppress unused-variable warnings by "using" E.  */
 #if ! defined lint || defined __GNUC__
-# define YY_USE(E) ((void) (E))
+# define YYUSE(E) ((void) (E))
 #else
-# define YY_USE(E) /* empty */
+# define YYUSE(E) /* empty */
 #endif
 
+#if defined __GNUC__ && ! defined __ICC && 407 <= __GNUC__ * 100 + __GNUC_MINOR__
 /* Suppress an incorrect diagnostic about yylval being uninitialized.  */
-#if defined __GNUC__ && ! defined __ICC && 406 <= __GNUC__ * 100 + __GNUC_MINOR__
-# if __GNUC__ * 100 + __GNUC_MINOR__ < 407
-#  define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN                           \
-    _Pragma ("GCC diagnostic push")                                     \
-    _Pragma ("GCC diagnostic ignored \"-Wuninitialized\"")
-# else
-#  define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN                           \
+# define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN                            \
     _Pragma ("GCC diagnostic push")                                     \
     _Pragma ("GCC diagnostic ignored \"-Wuninitialized\"")              \
     _Pragma ("GCC diagnostic ignored \"-Wmaybe-uninitialized\"")
-# endif
 # define YY_IGNORE_MAYBE_UNINITIALIZED_END      \
     _Pragma ("GCC diagnostic pop")
 #else
@@ -669,7 +651,7 @@ static const yytype_int8 yytranslate[] =
 };
 
 #if CQASM_V1_DEBUG
-/* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
+  /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
        0,   253,   253,   254,   258,   259,   263,   267,   271,   272,
@@ -737,6 +719,22 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
+#ifdef YYPRINT
+/* YYTOKNUM[NUM] -- (External) token number corresponding to the
+   (internal) symbol number NUM (which must be that of a token).  */
+static const yytype_int16 yytoknum[] =
+{
+       0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
+     265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
+     275,   276,   277,   278,   279,   280,   281,   282,   283,   284,
+     285,   286,   287,   288,   289,   290,   291,   292,   293,   294,
+     295,   296,   297,   298,   299,    44,    58,    63,   124,    94,
+      38,    62,    60,    43,    45,    42,    47,    37,   300,   301,
+     302,    40,    91,    64,    93,    41,   126,    33,    46,    61,
+     123,   125
+};
+#endif
+
 #define YYPACT_NINF (-239)
 
 #define yypact_value_is_default(Yyn) \
@@ -747,8 +745,8 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 #define yytable_value_is_error(Yyn) \
   0
 
-/* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
-   STATE-NUM.  */
+  /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
+     STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
       78,  -239,  -239,    11,    13,  -239,    30,  -239,    15,  -239,
@@ -786,9 +784,9 @@ static const yytype_int16 yypact[] =
     -239,  -239,   104,  1484,    29,    29,  -239,  -239
 };
 
-/* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
-   Performed when YYTABLE does not specify something else to do.  Zero
-   means the default is an error.  */
+  /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
+     Performed when YYTABLE does not specify something else to do.  Zero
+     means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
        0,   170,     3,     4,     0,   169,     0,     2,     0,     1,
@@ -826,7 +824,7 @@ static const yytype_uint8 yydefact[] =
      139,   138,     0,     0,     0,     0,   140,   141
 };
 
-/* YYPGOTO[NTERM-NUM].  */
+  /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int16 yypgoto[] =
 {
     -239,     6,   222,     8,   215,  -239,   371,   146,   399,   555,
@@ -837,10 +835,10 @@ static const yytype_int16 yypgoto[] =
       77,   156,  -239,  -239,  -239
 };
 
-/* YYDEFGOTO[NTERM-NUM].  */
-static const yytype_uint8 yydefgoto[] =
+  /* YYDEFGOTO[NTERM-NUM].  */
+static const yytype_int16 yydefgoto[] =
 {
-       0,     3,    15,    61,    62,   203,    63,   111,    64,    65,
+      -1,     3,    15,    61,    62,   203,    63,   111,    64,    65,
       66,    67,   231,   232,   233,   234,    68,    97,    69,    70,
       71,    98,    99,   100,   204,   104,   205,   105,   192,   193,
       36,    37,    38,   189,    39,    76,    40,    41,    84,   153,
@@ -848,9 +846,9 @@ static const yytype_uint8 yydefgoto[] =
       51,    16,    12,     5,     6
 };
 
-/* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
-   positive, shift that token.  If negative, reduce the rule whose
-   number is the opposite.  If YYTABLE_NINF, syntax error.  */
+  /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
+     positive, shift that token.  If negative, reduce the rule whose
+     number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int16 yytable[] =
 {
       72,    74,   207,   289,   291,    52,   283,  -136,   295,    24,
@@ -1285,8 +1283,8 @@ static const yytype_int16 yycheck[] =
       57,    -1,    -1,    -1,    -1,    62
 };
 
-/* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
-   state STATE-NUM.  */
+  /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
+     symbol of state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
        0,     1,     3,    73,    74,   125,   126,     3,     4,     0,
@@ -1324,7 +1322,7 @@ static const yytype_int8 yystos[] =
      110,   113,   112,    96,    65,    65,   110,   110
 };
 
-/* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
+  /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_int8 yyr1[] =
 {
        0,    72,    73,    73,    74,    74,    75,    76,    77,    77,
@@ -1347,7 +1345,7 @@ static const yytype_int8 yyr1[] =
      126
 };
 
-/* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
+  /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_int8 yyr2[] =
 {
        0,     2,     2,     1,     1,     0,     1,     1,     3,     1,
@@ -1379,7 +1377,6 @@ enum { YYENOMEM = -2 };
 #define YYACCEPT        goto yyacceptlab
 #define YYABORT         goto yyabortlab
 #define YYERROR         goto yyerrorlab
-#define YYNOMEM         goto yyexhaustedlab
 
 
 #define YYRECOVERING()  (!!yyerrstatus)
@@ -1447,19 +1444,12 @@ do {                                            \
 } while (0)
 
 
-/* YYLOCATION_PRINT -- Print the location on the stream.
+/* YY_LOCATION_PRINT -- Print the location on the stream.
    This macro was not mandated originally: define only if we know
    we won't break user code: when these are the locations we know.  */
 
-# ifndef YYLOCATION_PRINT
-
-#  if defined YY_LOCATION_PRINT
-
-   /* Temporary convenience wrapper in case some people defined the
-      undocumented and private YY_LOCATION_PRINT macros.  */
-#   define YYLOCATION_PRINT(File, Loc)  YY_LOCATION_PRINT(File, *(Loc))
-
-#  elif defined CQASM_V1_LTYPE_IS_TRIVIAL && CQASM_V1_LTYPE_IS_TRIVIAL
+# ifndef YY_LOCATION_PRINT
+#  if defined CQASM_V1_LTYPE_IS_TRIVIAL && CQASM_V1_LTYPE_IS_TRIVIAL
 
 /* Print *YYLOCP on YYO.  Private, do not rely on its existence. */
 
@@ -1487,23 +1477,15 @@ yy_location_print_ (FILE *yyo, YYLTYPE const * const yylocp)
         res += YYFPRINTF (yyo, "-%d", end_col);
     }
   return res;
-}
+ }
 
-#   define YYLOCATION_PRINT  yy_location_print_
-
-    /* Temporary convenience wrapper in case some people defined the
-       undocumented and private YY_LOCATION_PRINT macros.  */
-#   define YY_LOCATION_PRINT(File, Loc)  YYLOCATION_PRINT(File, &(Loc))
+#   define YY_LOCATION_PRINT(File, Loc)          \
+  yy_location_print_ (File, &(Loc))
 
 #  else
-
-#   define YYLOCATION_PRINT(File, Loc) ((void) 0)
-    /* Temporary convenience wrapper in case some people defined the
-       undocumented and private YY_LOCATION_PRINT macros.  */
-#   define YY_LOCATION_PRINT  YYLOCATION_PRINT
-
+#   define YY_LOCATION_PRINT(File, Loc) ((void) 0)
 #  endif
-# endif /* !defined YYLOCATION_PRINT */
+# endif /* !defined YY_LOCATION_PRINT */
 
 
 # define YY_SYMBOL_PRINT(Title, Kind, Value, Location)                    \
@@ -1527,14 +1509,18 @@ yy_symbol_value_print (FILE *yyo,
                        yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp, yyscan_t scanner, cqasm::v1::parser::ParseHelper &helper)
 {
   FILE *yyoutput = yyo;
-  YY_USE (yyoutput);
-  YY_USE (yylocationp);
-  YY_USE (scanner);
-  YY_USE (helper);
+  YYUSE (yyoutput);
+  YYUSE (yylocationp);
+  YYUSE (scanner);
+  YYUSE (helper);
   if (!yyvaluep)
     return;
+# ifdef YYPRINT
+  if (yykind < YYNTOKENS)
+    YYPRINT (yyo, yytoknum[yykind], *yyvaluep);
+# endif
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
-  YY_USE (yykind);
+  YYUSE (yykind);
   YY_IGNORE_MAYBE_UNINITIALIZED_END
 }
 
@@ -1550,7 +1536,7 @@ yy_symbol_print (FILE *yyo,
   YYFPRINTF (yyo, "%s %s (",
              yykind < YYNTOKENS ? "token" : "nterm", yysymbol_name (yykind));
 
-  YYLOCATION_PRINT (yyo, yylocationp);
+  YY_LOCATION_PRINT (yyo, *yylocationp);
   YYFPRINTF (yyo, ": ");
   yy_symbol_value_print (yyo, yykind, yyvaluep, yylocationp, scanner, helper);
   YYFPRINTF (yyo, ")");
@@ -1919,16 +1905,16 @@ static void
 yydestruct (const char *yymsg,
             yysymbol_kind_t yykind, YYSTYPE *yyvaluep, YYLTYPE *yylocationp, yyscan_t scanner, cqasm::v1::parser::ParseHelper &helper)
 {
-  YY_USE (yyvaluep);
-  YY_USE (yylocationp);
-  YY_USE (scanner);
-  YY_USE (helper);
+  YYUSE (yyvaluep);
+  YYUSE (yylocationp);
+  YYUSE (scanner);
+  YYUSE (helper);
   if (!yymsg)
     yymsg = "Deleting";
   YY_SYMBOL_PRINT (yymsg, yykind, yyvaluep, yylocationp);
 
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
-  YY_USE (yykind);
+  YYUSE (yykind);
   YY_IGNORE_MAYBE_UNINITIALIZED_END
 }
 
@@ -2017,7 +2003,6 @@ YYLTYPE yylloc = yyloc_default;
   YYDPRINTF ((stderr, "Starting parse\n"));
 
   yychar = CQASM_V1_EMPTY; /* Cause a token to be read.  */
-
   yylsp[0] = yylloc;
   goto yysetstate;
 
@@ -2044,7 +2029,7 @@ yysetstate:
 
   if (yyss + yystacksize - 1 <= yyssp)
 #if !defined yyoverflow && !defined YYSTACK_RELOCATE
-    YYNOMEM;
+    goto yyexhaustedlab;
 #else
     {
       /* Get the current used size of the three stacks, in elements.  */
@@ -2075,7 +2060,7 @@ yysetstate:
 # else /* defined YYSTACK_RELOCATE */
       /* Extend the stack our own way.  */
       if (YYMAXDEPTH <= yystacksize)
-        YYNOMEM;
+        goto yyexhaustedlab;
       yystacksize *= 2;
       if (YYMAXDEPTH < yystacksize)
         yystacksize = YYMAXDEPTH;
@@ -2086,7 +2071,7 @@ yysetstate:
           YY_CAST (union yyalloc *,
                    YYSTACK_ALLOC (YY_CAST (YYSIZE_T, YYSTACK_BYTES (yystacksize))));
         if (! yyptr)
-          YYNOMEM;
+          goto yyexhaustedlab;
         YYSTACK_RELOCATE (yyss_alloc, yyss);
         YYSTACK_RELOCATE (yyvs_alloc, yyvs);
         YYSTACK_RELOCATE (yyls_alloc, yyls);
@@ -2109,7 +2094,6 @@ yysetstate:
         YYABORT;
     }
 #endif /* !defined yyoverflow && !defined YYSTACK_RELOCATE */
-
 
   if (yystate == YYFINAL)
     YYACCEPT;
@@ -2227,669 +2211,669 @@ yyreduce:
   switch (yyn)
     {
   case 6: /* IntegerLiteral: INT_LITERAL  */
-#line 263 "libqasm/src/v1/cqasm-parser.y"
+#line 263 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.ilit), IntegerLiteral); (yyval.ilit)->value = std::strtol((yyvsp[0].str), nullptr, 0); std::free((yyvsp[0].str)); }
-#line 2233 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2217 "src/v1/cqasm-parser.cpp"
     break;
 
   case 7: /* FloatLiteral: FLOAT_LITERAL  */
-#line 267 "libqasm/src/v1/cqasm-parser.y"
+#line 267 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.flit), FloatLiteral); (yyval.flit)->value = std::strtod((yyvsp[0].str), nullptr); std::free((yyvsp[0].str)); }
-#line 2239 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2223 "src/v1/cqasm-parser.cpp"
     break;
 
   case 8: /* MatrixRows: MatrixRows Newline ExpressionList  */
-#line 271 "libqasm/src/v1/cqasm-parser.y"
+#line 271 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.mat), (yyvsp[-2].mat)); (yyval.mat)->rows.add_raw((yyvsp[0].expl)); }
-#line 2245 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2229 "src/v1/cqasm-parser.cpp"
     break;
 
   case 9: /* MatrixRows: ExpressionList  */
-#line 272 "libqasm/src/v1/cqasm-parser.y"
+#line 272 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.mat), MatrixLiteral); (yyval.mat)->rows.add_raw((yyvsp[0].expl)); }
-#line 2251 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2235 "src/v1/cqasm-parser.cpp"
     break;
 
   case 10: /* MatrixLiteral: '[' OptNewline MatrixRows OptNewline ']'  */
-#line 275 "libqasm/src/v1/cqasm-parser.y"
+#line 275 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.mat), (yyvsp[-2].mat)); }
-#line 2257 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2241 "src/v1/cqasm-parser.cpp"
     break;
 
   case 11: /* MatrixLiteral: '[' OptNewline ']'  */
-#line 276 "libqasm/src/v1/cqasm-parser.y"
+#line 276 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.mat), MatrixLiteral); (yyval.mat)->rows.add_raw(new ExpressionList()); }
-#line 2263 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2247 "src/v1/cqasm-parser.cpp"
     break;
 
   case 12: /* StringBuilder: StringBuilder STRBUILD_APPEND  */
-#line 281 "libqasm/src/v1/cqasm-parser.y"
+#line 281 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.strb), (yyvsp[-1].strb)); (yyval.strb)->push_string(std::string((yyvsp[0].str))); std::free((yyvsp[0].str)); }
-#line 2269 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2253 "src/v1/cqasm-parser.cpp"
     break;
 
   case 13: /* StringBuilder: StringBuilder STRBUILD_ESCAPE  */
-#line 282 "libqasm/src/v1/cqasm-parser.y"
+#line 282 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.strb), (yyvsp[-1].strb)); (yyval.strb)->push_escape(std::string((yyvsp[0].str))); std::free((yyvsp[0].str)); }
-#line 2275 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2259 "src/v1/cqasm-parser.cpp"
     break;
 
   case 14: /* StringBuilder: %empty  */
-#line 283 "libqasm/src/v1/cqasm-parser.y"
+#line 283 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.strb), StringBuilder); }
-#line 2281 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2265 "src/v1/cqasm-parser.cpp"
     break;
 
   case 15: /* StringLiteral: STRING_OPEN StringBuilder STRING_CLOSE  */
-#line 287 "libqasm/src/v1/cqasm-parser.y"
+#line 287 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.slit), StringLiteral); (yyval.slit)->value = (yyvsp[-1].strb)->stream.str(); delete (yyvsp[-1].strb); }
-#line 2287 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2271 "src/v1/cqasm-parser.cpp"
     break;
 
   case 16: /* JsonLiteral: JSON_OPEN StringBuilder JSON_CLOSE  */
-#line 291 "libqasm/src/v1/cqasm-parser.y"
+#line 291 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.jlit), JsonLiteral); (yyval.jlit)->value = (yyvsp[-1].strb)->stream.str(); delete (yyvsp[-1].strb); }
-#line 2293 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2277 "src/v1/cqasm-parser.cpp"
     break;
 
   case 17: /* Identifier: IDENTIFIER  */
-#line 295 "libqasm/src/v1/cqasm-parser.y"
+#line 295 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.idnt), Identifier); (yyval.idnt)->name = std::string((yyvsp[0].str)); std::free((yyvsp[0].str)); }
-#line 2299 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2283 "src/v1/cqasm-parser.cpp"
     break;
 
   case 18: /* FunctionCall: Identifier '(' ')'  */
-#line 299 "libqasm/src/v1/cqasm-parser.y"
+#line 299 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.func), FunctionCall); (yyval.func)->name.set_raw((yyvsp[-2].idnt)); (yyval.func)->arguments.set_raw(new ExpressionList()); }
-#line 2305 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2289 "src/v1/cqasm-parser.cpp"
     break;
 
   case 19: /* FunctionCall: Identifier '(' ExpressionList ')'  */
-#line 300 "libqasm/src/v1/cqasm-parser.y"
+#line 300 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.func), FunctionCall); (yyval.func)->name.set_raw((yyvsp[-3].idnt)); (yyval.func)->arguments.set_raw((yyvsp[-1].expl)); }
-#line 2311 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2295 "src/v1/cqasm-parser.cpp"
     break;
 
   case 20: /* IndexItem: Expression  */
-#line 304 "libqasm/src/v1/cqasm-parser.y"
+#line 304 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.idxi), IndexItem); (yyval.idxi)->index.set_raw((yyvsp[0].expr)); }
-#line 2317 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2301 "src/v1/cqasm-parser.cpp"
     break;
 
   case 21: /* IndexRange: Expression ':' Expression  */
-#line 307 "libqasm/src/v1/cqasm-parser.y"
+#line 307 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.idxr), IndexRange); (yyval.idxr)->first.set_raw((yyvsp[-2].expr)); (yyval.idxr)->last.set_raw((yyvsp[0].expr)); }
-#line 2323 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2307 "src/v1/cqasm-parser.cpp"
     break;
 
   case 22: /* IndexEntry: IndexItem  */
-#line 310 "libqasm/src/v1/cqasm-parser.y"
+#line 310 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.idxe), (yyvsp[0].idxi)); }
-#line 2329 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2313 "src/v1/cqasm-parser.cpp"
     break;
 
   case 23: /* IndexEntry: IndexRange  */
-#line 311 "libqasm/src/v1/cqasm-parser.y"
+#line 311 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.idxe), (yyvsp[0].idxr)); }
-#line 2335 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2319 "src/v1/cqasm-parser.cpp"
     break;
 
   case 24: /* IndexList: IndexList ',' IndexEntry  */
-#line 314 "libqasm/src/v1/cqasm-parser.y"
+#line 314 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.idxl), (yyvsp[-2].idxl)); (yyval.idxl)->items.add_raw((yyvsp[0].idxe)); }
-#line 2341 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2325 "src/v1/cqasm-parser.cpp"
     break;
 
   case 25: /* IndexList: IndexEntry  */
-#line 315 "libqasm/src/v1/cqasm-parser.y"
+#line 315 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.idxl), IndexList); (yyval.idxl)->items.add_raw((yyvsp[0].idxe)); }
-#line 2347 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2331 "src/v1/cqasm-parser.cpp"
     break;
 
   case 26: /* Index: Expression '[' IndexList ']'  */
-#line 318 "libqasm/src/v1/cqasm-parser.y"
+#line 318 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.indx), Index); (yyval.indx)->expr.set_raw((yyvsp[-3].expr)); (yyval.indx)->indices.set_raw((yyvsp[-1].idxl)); }
-#line 2353 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2337 "src/v1/cqasm-parser.cpp"
     break;
 
   case 27: /* IndexNP: ExpressionNP '[' IndexList ']'  */
-#line 321 "libqasm/src/v1/cqasm-parser.y"
+#line 321 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.indx), Index); (yyval.indx)->expr.set_raw((yyvsp[-3].expr)); (yyval.indx)->indices.set_raw((yyvsp[-1].idxl)); }
-#line 2359 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2343 "src/v1/cqasm-parser.cpp"
     break;
 
   case 28: /* UnaryOp: '-' Expression  */
-#line 325 "libqasm/src/v1/cqasm-parser.y"
+#line 325 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.unop), Negate); (yyval.unop)->expr.set_raw((yyvsp[0].expr)); }
-#line 2365 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2349 "src/v1/cqasm-parser.cpp"
     break;
 
   case 29: /* UnaryOp: '~' Expression  */
-#line 326 "libqasm/src/v1/cqasm-parser.y"
+#line 326 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.unop), BitwiseNot); (yyval.unop)->expr.set_raw((yyvsp[0].expr)); }
-#line 2371 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2355 "src/v1/cqasm-parser.cpp"
     break;
 
   case 30: /* UnaryOp: '!' Expression  */
-#line 327 "libqasm/src/v1/cqasm-parser.y"
+#line 327 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.unop), LogicalNot); (yyval.unop)->expr.set_raw((yyvsp[0].expr)); }
-#line 2377 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2361 "src/v1/cqasm-parser.cpp"
     break;
 
   case 31: /* BinaryOp: Expression POWER Expression  */
-#line 330 "libqasm/src/v1/cqasm-parser.y"
+#line 330 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), Power);           (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2383 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2367 "src/v1/cqasm-parser.cpp"
     break;
 
   case 32: /* BinaryOp: Expression '*' Expression  */
-#line 331 "libqasm/src/v1/cqasm-parser.y"
+#line 331 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), Multiply);        (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2389 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2373 "src/v1/cqasm-parser.cpp"
     break;
 
   case 33: /* BinaryOp: Expression '/' Expression  */
-#line 332 "libqasm/src/v1/cqasm-parser.y"
+#line 332 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), Divide);          (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2395 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2379 "src/v1/cqasm-parser.cpp"
     break;
 
   case 34: /* BinaryOp: Expression INT_DIV Expression  */
-#line 333 "libqasm/src/v1/cqasm-parser.y"
+#line 333 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), IntDivide);       (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2401 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2385 "src/v1/cqasm-parser.cpp"
     break;
 
   case 35: /* BinaryOp: Expression '%' Expression  */
-#line 334 "libqasm/src/v1/cqasm-parser.y"
+#line 334 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), Modulo);          (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2407 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2391 "src/v1/cqasm-parser.cpp"
     break;
 
   case 36: /* BinaryOp: Expression '+' Expression  */
-#line 335 "libqasm/src/v1/cqasm-parser.y"
+#line 335 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), Add);             (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2413 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2397 "src/v1/cqasm-parser.cpp"
     break;
 
   case 37: /* BinaryOp: Expression '-' Expression  */
-#line 336 "libqasm/src/v1/cqasm-parser.y"
+#line 336 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), Subtract);        (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2419 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2403 "src/v1/cqasm-parser.cpp"
     break;
 
   case 38: /* BinaryOp: Expression SHL Expression  */
-#line 337 "libqasm/src/v1/cqasm-parser.y"
+#line 337 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), ShiftLeft);       (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2425 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2409 "src/v1/cqasm-parser.cpp"
     break;
 
   case 39: /* BinaryOp: Expression ARITH_SHR Expression  */
-#line 338 "libqasm/src/v1/cqasm-parser.y"
+#line 338 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), ShiftRightArith); (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2431 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2415 "src/v1/cqasm-parser.cpp"
     break;
 
   case 40: /* BinaryOp: Expression LOGIC_SHR Expression  */
-#line 339 "libqasm/src/v1/cqasm-parser.y"
+#line 339 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), ShiftRightLogic); (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2437 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2421 "src/v1/cqasm-parser.cpp"
     break;
 
   case 41: /* BinaryOp: Expression CMP_EQ Expression  */
-#line 340 "libqasm/src/v1/cqasm-parser.y"
+#line 340 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), CmpEq);           (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2443 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2427 "src/v1/cqasm-parser.cpp"
     break;
 
   case 42: /* BinaryOp: Expression CMP_NE Expression  */
-#line 341 "libqasm/src/v1/cqasm-parser.y"
+#line 341 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), CmpNe);           (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2449 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2433 "src/v1/cqasm-parser.cpp"
     break;
 
   case 43: /* BinaryOp: Expression '>' Expression  */
-#line 342 "libqasm/src/v1/cqasm-parser.y"
+#line 342 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), CmpGt);           (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2455 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2439 "src/v1/cqasm-parser.cpp"
     break;
 
   case 44: /* BinaryOp: Expression CMP_GE Expression  */
-#line 343 "libqasm/src/v1/cqasm-parser.y"
+#line 343 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), CmpGe);           (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2461 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2445 "src/v1/cqasm-parser.cpp"
     break;
 
   case 45: /* BinaryOp: Expression '<' Expression  */
-#line 344 "libqasm/src/v1/cqasm-parser.y"
+#line 344 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), CmpLt);           (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2467 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2451 "src/v1/cqasm-parser.cpp"
     break;
 
   case 46: /* BinaryOp: Expression CMP_LE Expression  */
-#line 345 "libqasm/src/v1/cqasm-parser.y"
+#line 345 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), CmpLe);           (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2473 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2457 "src/v1/cqasm-parser.cpp"
     break;
 
   case 47: /* BinaryOp: Expression '&' Expression  */
-#line 346 "libqasm/src/v1/cqasm-parser.y"
+#line 346 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), BitwiseAnd);      (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2479 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2463 "src/v1/cqasm-parser.cpp"
     break;
 
   case 48: /* BinaryOp: Expression '^' Expression  */
-#line 347 "libqasm/src/v1/cqasm-parser.y"
+#line 347 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), BitwiseXor);      (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2485 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2469 "src/v1/cqasm-parser.cpp"
     break;
 
   case 49: /* BinaryOp: Expression '|' Expression  */
-#line 348 "libqasm/src/v1/cqasm-parser.y"
+#line 348 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), BitwiseOr);       (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2491 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2475 "src/v1/cqasm-parser.cpp"
     break;
 
   case 50: /* BinaryOp: Expression LOGIC_AND Expression  */
-#line 349 "libqasm/src/v1/cqasm-parser.y"
+#line 349 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), LogicalAnd);      (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2497 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2481 "src/v1/cqasm-parser.cpp"
     break;
 
   case 51: /* BinaryOp: Expression LOGIC_XOR Expression  */
-#line 350 "libqasm/src/v1/cqasm-parser.y"
+#line 350 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), LogicalXor);      (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2503 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2487 "src/v1/cqasm-parser.cpp"
     break;
 
   case 52: /* BinaryOp: Expression LOGIC_OR Expression  */
-#line 351 "libqasm/src/v1/cqasm-parser.y"
+#line 351 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), LogicalOr);       (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2509 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2493 "src/v1/cqasm-parser.cpp"
     break;
 
   case 53: /* TernaryOp: Expression '?' Expression ':' Expression  */
-#line 354 "libqasm/src/v1/cqasm-parser.y"
+#line 354 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.tcnd), TernaryCond);     (yyval.tcnd)->cond.set_raw((yyvsp[-4].expr)); (yyval.tcnd)->if_true.set_raw((yyvsp[-2].expr)); (yyval.tcnd)->if_false.set_raw((yyvsp[0].expr)); }
-#line 2515 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2499 "src/v1/cqasm-parser.cpp"
     break;
 
   case 54: /* UnaryOpNP: '-' ExpressionNP  */
-#line 359 "libqasm/src/v1/cqasm-parser.y"
+#line 359 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.unop), Negate); (yyval.unop)->expr.set_raw((yyvsp[0].expr)); }
-#line 2521 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2505 "src/v1/cqasm-parser.cpp"
     break;
 
   case 55: /* UnaryOpNP: '~' ExpressionNP  */
-#line 360 "libqasm/src/v1/cqasm-parser.y"
+#line 360 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.unop), BitwiseNot); (yyval.unop)->expr.set_raw((yyvsp[0].expr)); }
-#line 2527 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2511 "src/v1/cqasm-parser.cpp"
     break;
 
   case 56: /* UnaryOpNP: '!' ExpressionNP  */
-#line 361 "libqasm/src/v1/cqasm-parser.y"
+#line 361 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.unop), LogicalNot); (yyval.unop)->expr.set_raw((yyvsp[0].expr)); }
-#line 2533 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2517 "src/v1/cqasm-parser.cpp"
     break;
 
   case 57: /* BinaryOpNP: ExpressionNP POWER ExpressionNP  */
-#line 364 "libqasm/src/v1/cqasm-parser.y"
+#line 364 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), Power);           (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2539 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2523 "src/v1/cqasm-parser.cpp"
     break;
 
   case 58: /* BinaryOpNP: ExpressionNP '*' ExpressionNP  */
-#line 365 "libqasm/src/v1/cqasm-parser.y"
+#line 365 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), Multiply);        (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2545 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2529 "src/v1/cqasm-parser.cpp"
     break;
 
   case 59: /* BinaryOpNP: ExpressionNP '/' ExpressionNP  */
-#line 366 "libqasm/src/v1/cqasm-parser.y"
+#line 366 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), Divide);          (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2551 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2535 "src/v1/cqasm-parser.cpp"
     break;
 
   case 60: /* BinaryOpNP: ExpressionNP INT_DIV ExpressionNP  */
-#line 367 "libqasm/src/v1/cqasm-parser.y"
+#line 367 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), IntDivide);       (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2557 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2541 "src/v1/cqasm-parser.cpp"
     break;
 
   case 61: /* BinaryOpNP: ExpressionNP '%' ExpressionNP  */
-#line 368 "libqasm/src/v1/cqasm-parser.y"
+#line 368 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), Modulo);          (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2563 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2547 "src/v1/cqasm-parser.cpp"
     break;
 
   case 62: /* BinaryOpNP: ExpressionNP '+' ExpressionNP  */
-#line 369 "libqasm/src/v1/cqasm-parser.y"
+#line 369 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), Add);             (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2569 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2553 "src/v1/cqasm-parser.cpp"
     break;
 
   case 63: /* BinaryOpNP: ExpressionNP '-' ExpressionNP  */
-#line 370 "libqasm/src/v1/cqasm-parser.y"
+#line 370 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), Subtract);        (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2575 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2559 "src/v1/cqasm-parser.cpp"
     break;
 
   case 64: /* BinaryOpNP: ExpressionNP SHL ExpressionNP  */
-#line 371 "libqasm/src/v1/cqasm-parser.y"
+#line 371 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), ShiftLeft);       (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2581 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2565 "src/v1/cqasm-parser.cpp"
     break;
 
   case 65: /* BinaryOpNP: ExpressionNP ARITH_SHR ExpressionNP  */
-#line 372 "libqasm/src/v1/cqasm-parser.y"
+#line 372 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), ShiftRightArith); (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2587 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2571 "src/v1/cqasm-parser.cpp"
     break;
 
   case 66: /* BinaryOpNP: ExpressionNP LOGIC_SHR ExpressionNP  */
-#line 373 "libqasm/src/v1/cqasm-parser.y"
+#line 373 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), ShiftRightLogic); (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2593 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2577 "src/v1/cqasm-parser.cpp"
     break;
 
   case 67: /* BinaryOpNP: ExpressionNP CMP_EQ ExpressionNP  */
-#line 374 "libqasm/src/v1/cqasm-parser.y"
+#line 374 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), CmpEq);           (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2599 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2583 "src/v1/cqasm-parser.cpp"
     break;
 
   case 68: /* BinaryOpNP: ExpressionNP CMP_NE ExpressionNP  */
-#line 375 "libqasm/src/v1/cqasm-parser.y"
+#line 375 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), CmpNe);           (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2605 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2589 "src/v1/cqasm-parser.cpp"
     break;
 
   case 69: /* BinaryOpNP: ExpressionNP '>' ExpressionNP  */
-#line 376 "libqasm/src/v1/cqasm-parser.y"
+#line 376 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), CmpGt);           (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2611 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2595 "src/v1/cqasm-parser.cpp"
     break;
 
   case 70: /* BinaryOpNP: ExpressionNP CMP_GE ExpressionNP  */
-#line 377 "libqasm/src/v1/cqasm-parser.y"
+#line 377 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), CmpGe);           (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2617 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2601 "src/v1/cqasm-parser.cpp"
     break;
 
   case 71: /* BinaryOpNP: ExpressionNP '<' ExpressionNP  */
-#line 378 "libqasm/src/v1/cqasm-parser.y"
+#line 378 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), CmpLt);           (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2623 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2607 "src/v1/cqasm-parser.cpp"
     break;
 
   case 72: /* BinaryOpNP: ExpressionNP CMP_LE ExpressionNP  */
-#line 379 "libqasm/src/v1/cqasm-parser.y"
+#line 379 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), CmpLe);           (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2629 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2613 "src/v1/cqasm-parser.cpp"
     break;
 
   case 73: /* BinaryOpNP: ExpressionNP '&' ExpressionNP  */
-#line 380 "libqasm/src/v1/cqasm-parser.y"
+#line 380 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), BitwiseAnd);      (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2635 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2619 "src/v1/cqasm-parser.cpp"
     break;
 
   case 74: /* BinaryOpNP: ExpressionNP '^' ExpressionNP  */
-#line 381 "libqasm/src/v1/cqasm-parser.y"
+#line 381 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), BitwiseXor);      (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2641 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2625 "src/v1/cqasm-parser.cpp"
     break;
 
   case 75: /* BinaryOpNP: ExpressionNP LOGIC_AND ExpressionNP  */
-#line 382 "libqasm/src/v1/cqasm-parser.y"
+#line 382 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), LogicalAnd);      (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2647 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2631 "src/v1/cqasm-parser.cpp"
     break;
 
   case 76: /* BinaryOpNP: ExpressionNP LOGIC_XOR ExpressionNP  */
-#line 383 "libqasm/src/v1/cqasm-parser.y"
+#line 383 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), LogicalXor);      (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2653 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2637 "src/v1/cqasm-parser.cpp"
     break;
 
   case 77: /* BinaryOpNP: ExpressionNP LOGIC_OR ExpressionNP  */
-#line 384 "libqasm/src/v1/cqasm-parser.y"
+#line 384 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.biop), LogicalOr);       (yyval.biop)->lhs.set_raw((yyvsp[-2].expr)); (yyval.biop)->rhs.set_raw((yyvsp[0].expr)); }
-#line 2659 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2643 "src/v1/cqasm-parser.cpp"
     break;
 
   case 78: /* TernaryOpNP: ExpressionNP '?' ExpressionNP ':' ExpressionNP  */
-#line 387 "libqasm/src/v1/cqasm-parser.y"
+#line 387 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.tcnd), TernaryCond);     (yyval.tcnd)->cond.set_raw((yyvsp[-4].expr)); (yyval.tcnd)->if_true.set_raw((yyvsp[-2].expr)); (yyval.tcnd)->if_false.set_raw((yyvsp[0].expr)); }
-#line 2665 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2649 "src/v1/cqasm-parser.cpp"
     break;
 
   case 79: /* Expression: IntegerLiteral  */
-#line 391 "libqasm/src/v1/cqasm-parser.y"
+#line 391 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.expr), (yyvsp[0].ilit)); }
-#line 2671 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2655 "src/v1/cqasm-parser.cpp"
     break;
 
   case 80: /* Expression: FloatLiteral  */
-#line 392 "libqasm/src/v1/cqasm-parser.y"
+#line 392 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.expr), (yyvsp[0].flit)); }
-#line 2677 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2661 "src/v1/cqasm-parser.cpp"
     break;
 
   case 81: /* Expression: MatrixLiteral  */
-#line 393 "libqasm/src/v1/cqasm-parser.y"
+#line 393 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.expr), (yyvsp[0].mat)); }
-#line 2683 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2667 "src/v1/cqasm-parser.cpp"
     break;
 
   case 82: /* Expression: StringLiteral  */
-#line 394 "libqasm/src/v1/cqasm-parser.y"
+#line 394 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.expr), (yyvsp[0].slit)); }
-#line 2689 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2673 "src/v1/cqasm-parser.cpp"
     break;
 
   case 83: /* Expression: JsonLiteral  */
-#line 395 "libqasm/src/v1/cqasm-parser.y"
+#line 395 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.expr), (yyvsp[0].jlit)); }
-#line 2695 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2679 "src/v1/cqasm-parser.cpp"
     break;
 
   case 84: /* Expression: Identifier  */
-#line 396 "libqasm/src/v1/cqasm-parser.y"
+#line 396 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.expr), (yyvsp[0].idnt)); }
-#line 2701 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2685 "src/v1/cqasm-parser.cpp"
     break;
 
   case 85: /* Expression: FunctionCall  */
-#line 397 "libqasm/src/v1/cqasm-parser.y"
+#line 397 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.expr), (yyvsp[0].func)); }
-#line 2707 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2691 "src/v1/cqasm-parser.cpp"
     break;
 
   case 86: /* Expression: Index  */
-#line 398 "libqasm/src/v1/cqasm-parser.y"
+#line 398 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.expr), (yyvsp[0].indx)); }
-#line 2713 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2697 "src/v1/cqasm-parser.cpp"
     break;
 
   case 87: /* Expression: UnaryOp  */
-#line 399 "libqasm/src/v1/cqasm-parser.y"
+#line 399 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.expr), (yyvsp[0].unop)); }
-#line 2719 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2703 "src/v1/cqasm-parser.cpp"
     break;
 
   case 88: /* Expression: BinaryOp  */
-#line 400 "libqasm/src/v1/cqasm-parser.y"
+#line 400 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.expr), (yyvsp[0].biop)); }
-#line 2725 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2709 "src/v1/cqasm-parser.cpp"
     break;
 
   case 89: /* Expression: TernaryOp  */
-#line 401 "libqasm/src/v1/cqasm-parser.y"
+#line 401 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.expr), (yyvsp[0].tcnd)); }
-#line 2731 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2715 "src/v1/cqasm-parser.cpp"
     break;
 
   case 90: /* Expression: '(' Expression ')'  */
-#line 402 "libqasm/src/v1/cqasm-parser.y"
+#line 402 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.expr), (yyvsp[-1].expr)); }
-#line 2737 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2721 "src/v1/cqasm-parser.cpp"
     break;
 
   case 91: /* Expression: error  */
-#line 403 "libqasm/src/v1/cqasm-parser.y"
+#line 403 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.expr), ErroneousExpression); }
-#line 2743 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2727 "src/v1/cqasm-parser.cpp"
     break;
 
   case 92: /* ExpressionNP: IntegerLiteral  */
-#line 406 "libqasm/src/v1/cqasm-parser.y"
+#line 406 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.expr), (yyvsp[0].ilit)); }
-#line 2749 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2733 "src/v1/cqasm-parser.cpp"
     break;
 
   case 93: /* ExpressionNP: FloatLiteral  */
-#line 407 "libqasm/src/v1/cqasm-parser.y"
+#line 407 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.expr), (yyvsp[0].flit)); }
-#line 2755 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2739 "src/v1/cqasm-parser.cpp"
     break;
 
   case 94: /* ExpressionNP: MatrixLiteral  */
-#line 408 "libqasm/src/v1/cqasm-parser.y"
+#line 408 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.expr), (yyvsp[0].mat)); }
-#line 2761 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2745 "src/v1/cqasm-parser.cpp"
     break;
 
   case 95: /* ExpressionNP: StringLiteral  */
-#line 409 "libqasm/src/v1/cqasm-parser.y"
+#line 409 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.expr), (yyvsp[0].slit)); }
-#line 2767 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2751 "src/v1/cqasm-parser.cpp"
     break;
 
   case 96: /* ExpressionNP: JsonLiteral  */
-#line 410 "libqasm/src/v1/cqasm-parser.y"
+#line 410 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.expr), (yyvsp[0].jlit)); }
-#line 2773 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2757 "src/v1/cqasm-parser.cpp"
     break;
 
   case 97: /* ExpressionNP: Identifier  */
-#line 411 "libqasm/src/v1/cqasm-parser.y"
+#line 411 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.expr), (yyvsp[0].idnt)); }
-#line 2779 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2763 "src/v1/cqasm-parser.cpp"
     break;
 
   case 98: /* ExpressionNP: FunctionCall  */
-#line 412 "libqasm/src/v1/cqasm-parser.y"
+#line 412 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.expr), (yyvsp[0].func)); }
-#line 2785 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2769 "src/v1/cqasm-parser.cpp"
     break;
 
   case 99: /* ExpressionNP: IndexNP  */
-#line 413 "libqasm/src/v1/cqasm-parser.y"
+#line 413 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.expr), (yyvsp[0].indx)); }
-#line 2791 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2775 "src/v1/cqasm-parser.cpp"
     break;
 
   case 100: /* ExpressionNP: UnaryOpNP  */
-#line 414 "libqasm/src/v1/cqasm-parser.y"
+#line 414 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.expr), (yyvsp[0].unop)); }
-#line 2797 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2781 "src/v1/cqasm-parser.cpp"
     break;
 
   case 101: /* ExpressionNP: BinaryOpNP  */
-#line 415 "libqasm/src/v1/cqasm-parser.y"
+#line 415 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.expr), (yyvsp[0].biop)); }
-#line 2803 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2787 "src/v1/cqasm-parser.cpp"
     break;
 
   case 102: /* ExpressionNP: TernaryOpNP  */
-#line 416 "libqasm/src/v1/cqasm-parser.y"
+#line 416 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.expr), (yyvsp[0].tcnd)); }
-#line 2809 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2793 "src/v1/cqasm-parser.cpp"
     break;
 
   case 103: /* ExpressionNP: '(' Expression ')'  */
-#line 417 "libqasm/src/v1/cqasm-parser.y"
+#line 417 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.expr), (yyvsp[-1].expr)); }
-#line 2815 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2799 "src/v1/cqasm-parser.cpp"
     break;
 
   case 104: /* ExpressionNP: error  */
-#line 418 "libqasm/src/v1/cqasm-parser.y"
+#line 418 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.expr), ErroneousExpression); }
-#line 2821 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2805 "src/v1/cqasm-parser.cpp"
     break;
 
   case 105: /* ExpressionList: ExpressionList ',' Expression  */
-#line 422 "libqasm/src/v1/cqasm-parser.y"
+#line 422 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.expl), (yyvsp[-2].expl)); (yyval.expl)->items.add_raw((yyvsp[0].expr)); }
-#line 2827 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2811 "src/v1/cqasm-parser.cpp"
     break;
 
   case 106: /* ExpressionList: Expression  */
-#line 423 "libqasm/src/v1/cqasm-parser.y"
+#line 423 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.expl), ExpressionList); (yyval.expl)->items.add_raw((yyvsp[0].expr)); }
-#line 2833 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2817 "src/v1/cqasm-parser.cpp"
     break;
 
   case 107: /* ExpressionListNP: ExpressionListNP ',' ExpressionNP  */
-#line 426 "libqasm/src/v1/cqasm-parser.y"
+#line 426 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.expl), (yyvsp[-2].expl)); (yyval.expl)->items.add_raw((yyvsp[0].expr)); }
-#line 2839 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2823 "src/v1/cqasm-parser.cpp"
     break;
 
   case 108: /* ExpressionListNP: ExpressionNP  */
-#line 427 "libqasm/src/v1/cqasm-parser.y"
+#line 427 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.expl), ExpressionList); (yyval.expl)->items.add_raw((yyvsp[0].expr)); }
-#line 2845 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2829 "src/v1/cqasm-parser.cpp"
     break;
 
   case 109: /* AnnotationName: Identifier '.' Identifier  */
-#line 431 "libqasm/src/v1/cqasm-parser.y"
+#line 431 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.adat), AnnotationData); (yyval.adat)->interface.set_raw((yyvsp[-2].idnt)); (yyval.adat)->operation.set_raw((yyvsp[0].idnt)); }
-#line 2851 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2835 "src/v1/cqasm-parser.cpp"
     break;
 
   case 110: /* AnnotationData: AnnotationName  */
-#line 434 "libqasm/src/v1/cqasm-parser.y"
+#line 434 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.adat), (yyvsp[0].adat)); (yyval.adat)->operands.set_raw(new ExpressionList()); }
-#line 2857 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2841 "src/v1/cqasm-parser.cpp"
     break;
 
   case 111: /* AnnotationData: AnnotationName '(' ')'  */
-#line 435 "libqasm/src/v1/cqasm-parser.y"
+#line 435 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.adat), (yyvsp[-2].adat)); (yyval.adat)->operands.set_raw(new ExpressionList()); }
-#line 2863 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2847 "src/v1/cqasm-parser.cpp"
     break;
 
   case 112: /* AnnotationData: AnnotationName '(' ExpressionList ')'  */
-#line 436 "libqasm/src/v1/cqasm-parser.y"
+#line 436 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.adat), (yyvsp[-3].adat)); (yyval.adat)->operands.set_raw((yyvsp[-1].expl)); }
-#line 2869 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2853 "src/v1/cqasm-parser.cpp"
     break;
 
   case 113: /* Instruction: Identifier  */
-#line 441 "libqasm/src/v1/cqasm-parser.y"
+#line 441 "src/v1/cqasm-parser.y"
                                                                                 {
                                                                                     NEW((yyval.inst), Instruction);
                                                                                     (yyval.inst)->name.set_raw((yyvsp[0].idnt));
                                                                                     (yyval.inst)->operands.set_raw(new ExpressionList());
                                                                                 }
-#line 2879 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2863 "src/v1/cqasm-parser.cpp"
     break;
 
   case 114: /* Instruction: Identifier ExpressionListNP  */
-#line 446 "libqasm/src/v1/cqasm-parser.y"
+#line 446 "src/v1/cqasm-parser.y"
                                                                                 {
                                                                                     NEW((yyval.inst), Instruction);
                                                                                     (yyval.inst)->name.set_raw((yyvsp[-1].idnt));
                                                                                     (yyval.inst)->operands.set_raw((yyvsp[0].expl));
                                                                                 }
-#line 2889 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2873 "src/v1/cqasm-parser.cpp"
     break;
 
   case 115: /* Instruction: SET ExpressionNP '=' ExpressionNP  */
-#line 451 "libqasm/src/v1/cqasm-parser.y"
+#line 451 "src/v1/cqasm-parser.y"
                                                                                 {
                                                                                     NEW((yyval.inst), Instruction);
                                                                                     (yyval.inst)->name.set_raw(new Identifier());
@@ -2898,174 +2882,174 @@ yyreduce:
                                                                                     (yyval.inst)->operands->items.add_raw((yyvsp[-2].expr));
                                                                                     (yyval.inst)->operands->items.add_raw((yyvsp[0].expr));
                                                                                 }
-#line 2902 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2886 "src/v1/cqasm-parser.cpp"
     break;
 
   case 116: /* Instruction: CDASH Identifier ExpressionNP  */
-#line 459 "libqasm/src/v1/cqasm-parser.y"
+#line 459 "src/v1/cqasm-parser.y"
                                                                                 {
                                                                                     NEW((yyval.inst), Instruction);
                                                                                     (yyval.inst)->name.set_raw((yyvsp[-1].idnt));
                                                                                     (yyval.inst)->condition.set_raw((yyvsp[0].expr));
                                                                                     (yyval.inst)->operands.set_raw(new ExpressionList());
                                                                                 }
-#line 2913 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2897 "src/v1/cqasm-parser.cpp"
     break;
 
   case 117: /* Instruction: CDASH Identifier ExpressionNP ',' ExpressionListNP  */
-#line 465 "libqasm/src/v1/cqasm-parser.y"
+#line 465 "src/v1/cqasm-parser.y"
                                                                                 {
                                                                                     NEW((yyval.inst), Instruction);
                                                                                     (yyval.inst)->name.set_raw((yyvsp[-3].idnt));
                                                                                     (yyval.inst)->condition.set_raw((yyvsp[-2].expr));
                                                                                     (yyval.inst)->operands.set_raw((yyvsp[0].expl));
                                                                                 }
-#line 2924 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2908 "src/v1/cqasm-parser.cpp"
     break;
 
   case 118: /* Instruction: COND '(' Expression ')' Identifier ExpressionListNP  */
-#line 471 "libqasm/src/v1/cqasm-parser.y"
+#line 471 "src/v1/cqasm-parser.y"
                                                                                 {
                                                                                     NEW((yyval.inst), Instruction);
                                                                                     (yyval.inst)->name.set_raw((yyvsp[-1].idnt));
                                                                                     (yyval.inst)->condition.set_raw((yyvsp[-3].expr));
                                                                                     (yyval.inst)->operands.set_raw((yyvsp[0].expl));
                                                                                 }
-#line 2935 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2919 "src/v1/cqasm-parser.cpp"
     break;
 
   case 119: /* AnnotInstr: AnnotInstr '@' AnnotationData  */
-#line 482 "libqasm/src/v1/cqasm-parser.y"
+#line 482 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.inst), (yyvsp[-2].inst)); (yyval.inst)->annotations.add_raw((yyvsp[0].adat)); }
-#line 2941 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2925 "src/v1/cqasm-parser.cpp"
     break;
 
   case 120: /* AnnotInstr: Instruction  */
-#line 483 "libqasm/src/v1/cqasm-parser.y"
+#line 483 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.inst), (yyvsp[0].inst)); }
-#line 2947 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2931 "src/v1/cqasm-parser.cpp"
     break;
 
   case 121: /* SLParInstrList: SLParInstrList '|' AnnotInstr  */
-#line 487 "libqasm/src/v1/cqasm-parser.y"
+#line 487 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.bun), (yyvsp[-2].bun)); (yyval.bun)->items.add_raw((yyvsp[0].inst)); }
-#line 2953 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2937 "src/v1/cqasm-parser.cpp"
     break;
 
   case 122: /* SLParInstrList: AnnotInstr  */
-#line 488 "libqasm/src/v1/cqasm-parser.y"
+#line 488 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.bun), Bundle); (yyval.bun)->items.add_raw((yyvsp[0].inst)); }
-#line 2959 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2943 "src/v1/cqasm-parser.cpp"
     break;
 
   case 123: /* CBParInstrList: CBParInstrList Newline SLParInstrList  */
-#line 492 "libqasm/src/v1/cqasm-parser.y"
+#line 492 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.bun), (yyvsp[-2].bun)); (yyval.bun)->items.extend((yyvsp[0].bun)->items); delete (yyvsp[0].bun); }
-#line 2965 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2949 "src/v1/cqasm-parser.cpp"
     break;
 
   case 124: /* CBParInstrList: SLParInstrList  */
-#line 493 "libqasm/src/v1/cqasm-parser.y"
+#line 493 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.bun), (yyvsp[0].bun)); }
-#line 2971 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2955 "src/v1/cqasm-parser.cpp"
     break;
 
   case 125: /* Mapping: MAP Expression ',' Identifier  */
-#line 497 "libqasm/src/v1/cqasm-parser.y"
+#line 497 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.map), Mapping); (yyval.map)->expr.set_raw((yyvsp[-2].expr)); (yyval.map)->alias.set_raw((yyvsp[0].idnt)); }
-#line 2977 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2961 "src/v1/cqasm-parser.cpp"
     break;
 
   case 126: /* Mapping: MAP Identifier '=' Expression  */
-#line 498 "libqasm/src/v1/cqasm-parser.y"
+#line 498 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.map), Mapping); (yyval.map)->alias.set_raw((yyvsp[-2].idnt)); (yyval.map)->expr.set_raw((yyvsp[0].expr)); }
-#line 2983 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2967 "src/v1/cqasm-parser.cpp"
     break;
 
   case 127: /* VariableBody: Identifier ':' Identifier  */
-#line 502 "libqasm/src/v1/cqasm-parser.y"
+#line 502 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.vars), Variables); (yyval.vars)->names.add_raw((yyvsp[-2].idnt)); (yyval.vars)->typ.set_raw((yyvsp[0].idnt)); }
-#line 2989 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2973 "src/v1/cqasm-parser.cpp"
     break;
 
   case 128: /* VariableBody: Identifier ',' VariableBody  */
-#line 503 "libqasm/src/v1/cqasm-parser.y"
+#line 503 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.vars), (yyvsp[0].vars)); (yyval.vars)->names.add_raw((yyvsp[-2].idnt)); }
-#line 2995 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2979 "src/v1/cqasm-parser.cpp"
     break;
 
   case 129: /* Variable: VAR VariableBody  */
-#line 506 "libqasm/src/v1/cqasm-parser.y"
+#line 506 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.vars), (yyvsp[0].vars)); }
-#line 3001 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2985 "src/v1/cqasm-parser.cpp"
     break;
 
   case 130: /* Subcircuit: '.' Identifier  */
-#line 510 "libqasm/src/v1/cqasm-parser.y"
+#line 510 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.sub), Subcircuit); (yyval.sub)->name.set_raw((yyvsp[0].idnt)); }
-#line 3007 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2991 "src/v1/cqasm-parser.cpp"
     break;
 
   case 131: /* Subcircuit: '.' Identifier '(' Expression ')'  */
-#line 511 "libqasm/src/v1/cqasm-parser.y"
+#line 511 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.sub), Subcircuit); (yyval.sub)->name.set_raw((yyvsp[-3].idnt)); (yyval.sub)->iterations.set_raw((yyvsp[-1].expr)); }
-#line 3013 "libqasm/src/v1/cqasm-parser.cpp"
+#line 2997 "src/v1/cqasm-parser.cpp"
     break;
 
   case 132: /* SubStatements: '{' OptNewline StatementList OptNewline '}'  */
-#line 515 "libqasm/src/v1/cqasm-parser.y"
+#line 515 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.stms), (yyvsp[-2].stms)); }
-#line 3019 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3003 "src/v1/cqasm-parser.cpp"
     break;
 
   case 133: /* SubStatements: '{' OptNewline '}'  */
-#line 516 "libqasm/src/v1/cqasm-parser.y"
+#line 516 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.stms), StatementList); }
-#line 3025 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3009 "src/v1/cqasm-parser.cpp"
     break;
 
   case 134: /* Assignment: Expression '=' Expression  */
-#line 519 "libqasm/src/v1/cqasm-parser.y"
+#line 519 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.asgn), Assignment); (yyval.asgn)->lhs.set_raw((yyvsp[-2].expr)); (yyval.asgn)->rhs.set_raw((yyvsp[0].expr)); }
-#line 3031 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3015 "src/v1/cqasm-parser.cpp"
     break;
 
   case 135: /* OptAssignment: Assignment  */
-#line 522 "libqasm/src/v1/cqasm-parser.y"
+#line 522 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.asgn), (yyvsp[0].asgn)); }
-#line 3037 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3021 "src/v1/cqasm-parser.cpp"
     break;
 
   case 136: /* OptAssignment: %empty  */
-#line 523 "libqasm/src/v1/cqasm-parser.y"
+#line 523 "src/v1/cqasm-parser.y"
                                                                                 { (yyval.asgn) = nullptr; }
-#line 3043 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3027 "src/v1/cqasm-parser.cpp"
     break;
 
   case 137: /* IfElse: IF '(' Expression ')' SubStatements  */
-#line 526 "libqasm/src/v1/cqasm-parser.y"
+#line 526 "src/v1/cqasm-parser.y"
                                                                                 {
                                                                                     NEW((yyval.ifel), IfElse);
                                                                                     (yyval.ifel)->branches.add_raw(new IfElseBranch());
                                                                                     (yyval.ifel)->branches[0]->condition.set_raw((yyvsp[-2].expr));
                                                                                     (yyval.ifel)->branches[0]->body.set_raw((yyvsp[0].stms));
                                                                                 }
-#line 3054 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3038 "src/v1/cqasm-parser.cpp"
     break;
 
   case 138: /* IfElse: IF '(' Expression ')' SubStatements ELSE IfElse  */
-#line 532 "libqasm/src/v1/cqasm-parser.y"
+#line 532 "src/v1/cqasm-parser.y"
                                                                                 {
                                                                                     FROM((yyval.ifel), (yyvsp[0].ifel));
                                                                                     (yyval.ifel)->branches.add_raw(new IfElseBranch(), 0);
                                                                                     (yyval.ifel)->branches[0]->condition.set_raw((yyvsp[-4].expr));
                                                                                     (yyval.ifel)->branches[0]->body.set_raw((yyvsp[-2].stms));
                                                                                 }
-#line 3065 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3049 "src/v1/cqasm-parser.cpp"
     break;
 
   case 139: /* IfElse: IF '(' Expression ')' SubStatements ELSE SubStatements  */
-#line 538 "libqasm/src/v1/cqasm-parser.y"
+#line 538 "src/v1/cqasm-parser.y"
                                                                                 {
                                                                                     NEW((yyval.ifel), IfElse);
                                                                                     (yyval.ifel)->branches.add_raw(new IfElseBranch());
@@ -3073,11 +3057,11 @@ yyreduce:
                                                                                     (yyval.ifel)->branches[0]->body.set_raw((yyvsp[-2].stms));
                                                                                     (yyval.ifel)->otherwise.set_raw((yyvsp[0].stms));
                                                                                 }
-#line 3077 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3061 "src/v1/cqasm-parser.cpp"
     break;
 
   case 140: /* ForLoop: FOR '(' OptAssignment NEWLINE Expression NEWLINE OptAssignment ')' SubStatements  */
-#line 548 "libqasm/src/v1/cqasm-parser.y"
+#line 548 "src/v1/cqasm-parser.y"
                                                                                 {
                                                                                     NEW((yyval.forl), ForLoop);
                                                                                     if ((yyvsp[-6].asgn)) (yyval.forl)->initialize.set_raw((yyvsp[-6].asgn));
@@ -3085,11 +3069,11 @@ yyreduce:
                                                                                     if ((yyvsp[-2].asgn)) (yyval.forl)->update.set_raw((yyvsp[-2].asgn));
                                                                                     (yyval.forl)->body.set_raw((yyvsp[0].stms));
                                                                                 }
-#line 3089 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3073 "src/v1/cqasm-parser.cpp"
     break;
 
   case 141: /* ForeachLoop: FOREACH '(' Expression '=' Expression ELLIPSIS Expression ')' SubStatements  */
-#line 558 "libqasm/src/v1/cqasm-parser.y"
+#line 558 "src/v1/cqasm-parser.y"
                                                                                 {
                                                                                     NEW((yyval.fore), ForeachLoop);
                                                                                     (yyval.fore)->lhs.set_raw((yyvsp[-6].expr));
@@ -3097,185 +3081,185 @@ yyreduce:
                                                                                     (yyval.fore)->to.set_raw((yyvsp[-2].expr));
                                                                                     (yyval.fore)->body.set_raw((yyvsp[0].stms));
                                                                                 }
-#line 3101 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3085 "src/v1/cqasm-parser.cpp"
     break;
 
   case 142: /* WhileLoop: WHILE '(' Expression ')' SubStatements  */
-#line 567 "libqasm/src/v1/cqasm-parser.y"
+#line 567 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.whil), WhileLoop); (yyval.whil)->condition.set_raw((yyvsp[-2].expr)); (yyval.whil)->body.set_raw((yyvsp[0].stms)); }
-#line 3107 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3091 "src/v1/cqasm-parser.cpp"
     break;
 
   case 143: /* RepeatUntilLoop: REPEAT SubStatements UNTIL '(' Expression ')'  */
-#line 570 "libqasm/src/v1/cqasm-parser.y"
+#line 570 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.repu), RepeatUntilLoop); (yyval.repu)->body.set_raw((yyvsp[-4].stms)); (yyval.repu)->condition.set_raw((yyvsp[-1].expr)); }
-#line 3113 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3097 "src/v1/cqasm-parser.cpp"
     break;
 
   case 144: /* Continue: CONTINUE  */
-#line 573 "libqasm/src/v1/cqasm-parser.y"
+#line 573 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.cont), ContinueStatement); }
-#line 3119 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3103 "src/v1/cqasm-parser.cpp"
     break;
 
   case 145: /* Break: BREAK  */
-#line 576 "libqasm/src/v1/cqasm-parser.y"
+#line 576 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.brk), BreakStatement); }
-#line 3125 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3109 "src/v1/cqasm-parser.cpp"
     break;
 
   case 146: /* Statement: Mapping  */
-#line 580 "libqasm/src/v1/cqasm-parser.y"
+#line 580 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.stmt), (yyvsp[0].map)); }
-#line 3131 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3115 "src/v1/cqasm-parser.cpp"
     break;
 
   case 147: /* Statement: Variable  */
-#line 581 "libqasm/src/v1/cqasm-parser.y"
+#line 581 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.stmt), (yyvsp[0].vars)); }
-#line 3137 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3121 "src/v1/cqasm-parser.cpp"
     break;
 
   case 148: /* Statement: Subcircuit  */
-#line 582 "libqasm/src/v1/cqasm-parser.y"
+#line 582 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.stmt), (yyvsp[0].sub)); }
-#line 3143 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3127 "src/v1/cqasm-parser.cpp"
     break;
 
   case 149: /* Statement: SLParInstrList  */
-#line 583 "libqasm/src/v1/cqasm-parser.y"
+#line 583 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.stmt), (yyvsp[0].bun)); }
-#line 3149 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3133 "src/v1/cqasm-parser.cpp"
     break;
 
   case 150: /* Statement: '{' OptNewline CBParInstrList OptNewline '}'  */
-#line 584 "libqasm/src/v1/cqasm-parser.y"
+#line 584 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.stmt), (yyvsp[-2].bun)); }
-#line 3155 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3139 "src/v1/cqasm-parser.cpp"
     break;
 
   case 151: /* Statement: IfElse  */
-#line 585 "libqasm/src/v1/cqasm-parser.y"
+#line 585 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.stmt), (yyvsp[0].ifel)); }
-#line 3161 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3145 "src/v1/cqasm-parser.cpp"
     break;
 
   case 152: /* Statement: ForLoop  */
-#line 586 "libqasm/src/v1/cqasm-parser.y"
+#line 586 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.stmt), (yyvsp[0].forl)); }
-#line 3167 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3151 "src/v1/cqasm-parser.cpp"
     break;
 
   case 153: /* Statement: ForeachLoop  */
-#line 587 "libqasm/src/v1/cqasm-parser.y"
+#line 587 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.stmt), (yyvsp[0].fore)); }
-#line 3173 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3157 "src/v1/cqasm-parser.cpp"
     break;
 
   case 154: /* Statement: WhileLoop  */
-#line 588 "libqasm/src/v1/cqasm-parser.y"
+#line 588 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.stmt), (yyvsp[0].whil)); }
-#line 3179 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3163 "src/v1/cqasm-parser.cpp"
     break;
 
   case 155: /* Statement: RepeatUntilLoop  */
-#line 589 "libqasm/src/v1/cqasm-parser.y"
+#line 589 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.stmt), (yyvsp[0].repu)); }
-#line 3185 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3169 "src/v1/cqasm-parser.cpp"
     break;
 
   case 156: /* Statement: Continue  */
-#line 590 "libqasm/src/v1/cqasm-parser.y"
+#line 590 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.stmt), (yyvsp[0].cont)); }
-#line 3191 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3175 "src/v1/cqasm-parser.cpp"
     break;
 
   case 157: /* Statement: Break  */
-#line 591 "libqasm/src/v1/cqasm-parser.y"
+#line 591 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.stmt), (yyvsp[0].brk)); }
-#line 3197 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3181 "src/v1/cqasm-parser.cpp"
     break;
 
   case 158: /* Statement: error  */
-#line 592 "libqasm/src/v1/cqasm-parser.y"
+#line 592 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.stmt), ErroneousStatement); }
-#line 3203 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3187 "src/v1/cqasm-parser.cpp"
     break;
 
   case 159: /* AnnotStatement: AnnotStatement '@' AnnotationData  */
-#line 599 "libqasm/src/v1/cqasm-parser.y"
+#line 599 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.stmt), (yyvsp[-2].stmt)); (yyval.stmt)->annotations.add_raw((yyvsp[0].adat)); }
-#line 3209 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3193 "src/v1/cqasm-parser.cpp"
     break;
 
   case 160: /* AnnotStatement: Statement  */
-#line 600 "libqasm/src/v1/cqasm-parser.y"
+#line 600 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.stmt), (yyvsp[0].stmt)); }
-#line 3215 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3199 "src/v1/cqasm-parser.cpp"
     break;
 
   case 161: /* StatementList: StatementList Newline AnnotStatement  */
-#line 604 "libqasm/src/v1/cqasm-parser.y"
+#line 604 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.stms), (yyvsp[-2].stms)); (yyval.stms)->items.add_raw((yyvsp[0].stmt)); }
-#line 3221 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3205 "src/v1/cqasm-parser.cpp"
     break;
 
   case 162: /* StatementList: AnnotStatement  */
-#line 605 "libqasm/src/v1/cqasm-parser.y"
+#line 605 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.stms), StatementList); (yyval.stms)->items.add_raw((yyvsp[0].stmt)); }
-#line 3227 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3211 "src/v1/cqasm-parser.cpp"
     break;
 
   case 163: /* Statements: Newline StatementList OptNewline  */
-#line 609 "libqasm/src/v1/cqasm-parser.y"
+#line 609 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.stms), (yyvsp[-1].stms)); }
-#line 3233 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3217 "src/v1/cqasm-parser.cpp"
     break;
 
   case 164: /* Statements: OptNewline  */
-#line 610 "libqasm/src/v1/cqasm-parser.y"
+#line 610 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.stms), StatementList); }
-#line 3239 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3223 "src/v1/cqasm-parser.cpp"
     break;
 
   case 165: /* Version: Version '.' IntegerLiteral  */
-#line 614 "libqasm/src/v1/cqasm-parser.y"
+#line 614 "src/v1/cqasm-parser.y"
                                                                                 { FROM((yyval.vers), (yyvsp[-2].vers)); (yyval.vers)->items.push_back((yyvsp[0].ilit)->value); delete (yyvsp[0].ilit); }
-#line 3245 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3229 "src/v1/cqasm-parser.cpp"
     break;
 
   case 166: /* Version: IntegerLiteral  */
-#line 615 "libqasm/src/v1/cqasm-parser.y"
+#line 615 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.vers), Version); (yyval.vers)->items.clear(); (yyval.vers)->items.push_back((yyvsp[0].ilit)->value); delete (yyvsp[0].ilit); }
-#line 3251 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3235 "src/v1/cqasm-parser.cpp"
     break;
 
   case 167: /* Program: OptNewline VERSION Version Newline QUBITS Expression Statements  */
-#line 621 "libqasm/src/v1/cqasm-parser.y"
+#line 621 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.prog), Program); (yyval.prog)->version.set_raw((yyvsp[-4].vers)); (yyval.prog)->num_qubits.set_raw((yyvsp[-1].expr)); (yyval.prog)->statements.set_raw((yyvsp[0].stms)); }
-#line 3257 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3241 "src/v1/cqasm-parser.cpp"
     break;
 
   case 168: /* Program: OptNewline VERSION Version Statements  */
-#line 623 "libqasm/src/v1/cqasm-parser.y"
+#line 623 "src/v1/cqasm-parser.y"
                                                                                 { NEW((yyval.prog), Program); (yyval.prog)->version.set_raw((yyvsp[-1].vers)); (yyval.prog)->statements.set_raw((yyvsp[0].stms)); }
-#line 3263 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3247 "src/v1/cqasm-parser.cpp"
     break;
 
   case 169: /* Root: Program  */
-#line 627 "libqasm/src/v1/cqasm-parser.y"
+#line 627 "src/v1/cqasm-parser.y"
                                                                                 { helper.result.root.set_raw((yyvsp[0].prog)); }
-#line 3269 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3253 "src/v1/cqasm-parser.cpp"
     break;
 
   case 170: /* Root: error  */
-#line 628 "libqasm/src/v1/cqasm-parser.y"
+#line 628 "src/v1/cqasm-parser.y"
                                                                                 { helper.result.root.set_raw(new ErroneousProgram()); }
-#line 3275 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3259 "src/v1/cqasm-parser.cpp"
     break;
 
 
-#line 3279 "libqasm/src/v1/cqasm-parser.cpp"
+#line 3263 "src/v1/cqasm-parser.cpp"
 
       default: break;
     }
@@ -3352,7 +3336,7 @@ yyerrlab:
           }
         yyerror (&yylloc, scanner, helper, yymsgp);
         if (yysyntax_error_status == YYENOMEM)
-          YYNOMEM;
+          goto yyexhaustedlab;
       }
     }
 
@@ -3389,7 +3373,6 @@ yyerrorlab:
      label yyerrorlab therefore never appears in user code.  */
   if (0)
     YYERROR;
-  ++yynerrs;
 
   /* Do not reclaim the symbols of the rule whose action triggered
      this YYERROR.  */
@@ -3453,7 +3436,7 @@ yyerrlab1:
 `-------------------------------------*/
 yyacceptlab:
   yyresult = 0;
-  goto yyreturnlab;
+  goto yyreturn;
 
 
 /*-----------------------------------.
@@ -3461,22 +3444,24 @@ yyacceptlab:
 `-----------------------------------*/
 yyabortlab:
   yyresult = 1;
-  goto yyreturnlab;
+  goto yyreturn;
 
 
-/*-----------------------------------------------------------.
-| yyexhaustedlab -- YYNOMEM (memory exhaustion) comes here.  |
-`-----------------------------------------------------------*/
+#if 1
+/*-------------------------------------------------.
+| yyexhaustedlab -- memory exhaustion comes here.  |
+`-------------------------------------------------*/
 yyexhaustedlab:
   yyerror (&yylloc, scanner, helper, YY_("memory exhausted"));
   yyresult = 2;
-  goto yyreturnlab;
+  goto yyreturn;
+#endif
 
 
-/*----------------------------------------------------------.
-| yyreturnlab -- parsing is finished, clean up and return.  |
-`----------------------------------------------------------*/
-yyreturnlab:
+/*-------------------------------------------------------.
+| yyreturn -- parsing is finished, clean up and return.  |
+`-------------------------------------------------------*/
+yyreturn:
   if (yychar != CQASM_V1_EMPTY)
     {
       /* Make sure we have latest lookahead translation.  See comments at
@@ -3504,7 +3489,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 631 "libqasm/src/v1/cqasm-parser.y"
+#line 631 "src/v1/cqasm-parser.y"
 
 
 void yyerror(YYLTYPE* yyllocp, yyscan_t unused, cqasm::v1::parser::ParseHelper &helper, const char* msg) {
