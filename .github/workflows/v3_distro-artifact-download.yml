@@ -1,0 +1,62 @@
+name: v3_distro artifact download
+
+on:
+  push:
+    branches:
+      - v3
+  pull_request:
+
+jobs:
+  v3_distro-artifact-download:
+    name: 'v3_distro artifact download'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for 'v3_distro artifact upload' workflow to succeed
+        uses: ArcticLampyrid/action-wait-for-workflow@v1.0.3
+        with:
+          sha: ${{ github.sha }}
+          workflow: v3_distro-artifact-upload.yml
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: v3_distro
+          fetch-depth: 0
+      - name: Download v3_distro-artifact
+        id: download-v3_distro-artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          branch: v3
+          name: v3_distro-artifact
+          path: artifact
+          workflow: v3_distro-artifact-upload.yml
+          workflow_conclusion: success
+      - name: Display structure of downloaded files
+        run: ls -R
+        working-directory: artifact
+      - name: Copy artifact files to destination
+        run: |
+          cp artifact/build/_deps/tree-gen-src/include/* include/tree-gen
+          cp artifact/build/_deps/tree-gen-src/src/tree-all.cpp src/tree-gen
+          cp artifact/build/include/cqasm-version-lexer.hpp include
+          cp artifact/build/include/cqasm-version-parser.hpp include
+          cp artifact/build/include/v1/cqasm-lexer.hpp include/v1
+          cp artifact/build/include/v1/cqasm-parser.hpp include/v1
+          cp artifact/build/src/cqasm-version-lexer.cpp src
+          cp artifact/build/src/cqasm-version-lexer.l src
+          cp artifact/build/src/cqasm-version-parser.cpp src
+          cp artifact/build/src/v1/cqasm-lexer.cpp src/v1
+          cp artifact/build/src/v1/cqasm-lexer.l src/v1
+          cp artifact/build/src/v1/cqasm-parser.cpp src/v1
+          cp artifact/build/py_gen/v1/*.py python/v1
+      - name: Update artifact files
+        run: |
+          ./scripts/update_artifact_files.py
+      - name: Commit files
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -a -m "Updating v3_distro with new generated files from v3"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          force_with_lease: true
