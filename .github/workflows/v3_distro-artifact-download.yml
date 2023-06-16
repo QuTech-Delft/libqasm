@@ -45,6 +45,25 @@ jobs:
           cp artifact/build/src/v1/*.{cpp,txt} src/v1
           cp artifact/src/*.{l,y} src
           cp artifact/src/v1/* src/v1
+      - name: Get latest CMake
+        uses: lukka/get-cmake@latest
+      - name: Configure
+        run: |
+          mkdir ${{ github.workspace }}/build 
+          cd ${{ github.workspace }}/build
+          cmake .. -B .
+      - name: Build C++
+        run: |
+          cd ${{ github.workspace }}/build
+          cmake --build . --parallel
+      - name: Build Python
+        env:
+          NPROCS: 100
+        run: python -m pip install --verbose .
+      - name: Run C++ tests
+        run: ctest -C Debug --output-on-failure
+      - name: Run Python tests
+        run: python -m pytest
       - name: Update artifact files
         run: |
           python scripts/update_artifact_files.py
@@ -56,4 +75,6 @@ jobs:
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: v3_distro
           force_with_lease: true
