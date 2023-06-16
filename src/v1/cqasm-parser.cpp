@@ -140,7 +140,7 @@
 #  endif
 # endif
 
-#include "cqasm-parser.hpp"
+#include "v1/cqasm-parser.hpp
 /* Symbol kind.  */
 enum yysymbol_kind_t
 {

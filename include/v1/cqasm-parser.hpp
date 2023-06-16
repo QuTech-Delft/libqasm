@@ -35,8 +35,8 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_CQASM_V1_HOME_RUNNER_WORK_LIBQASM_LIBQASM_BUILD_SRC_V1_CQASM_PARSER_HPP_INCLUDED
-# define YY_CQASM_V1_HOME_RUNNER_WORK_LIBQASM_LIBQASM_BUILD_SRC_V1_CQASM_PARSER_HPP_INCLUDED
+#ifndef YY_CQASM_V1_SRC_V1_CQASM_PARSER_HPP_INCLUDED
+# define YY_CQASM_V1_SRC_V1_CQASM_PARSER_HPP_INCLUDED
 /* Debug traces.  */
 #ifndef CQASM_V1_DEBUG
 # if defined YYDEBUG
@@ -206,4 +206,4 @@ struct CQASM_V1_LTYPE
 int cqasm_v1_parse (yyscan_t scanner, cqasm::v1::parser::ParseHelper &helper);
 
 
-#endif /* !YY_CQASM_V1_HOME_RUNNER_WORK_LIBQASM_LIBQASM_BUILD_SRC_V1_CQASM_PARSER_HPP_INCLUDED  */
+#endif /* !YY_CQASM_V1_SRC_V1_CQASM_PARSER_HPP_INCLUDED  */
