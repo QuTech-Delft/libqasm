@@ -36,6 +36,7 @@ jobs:
       - name: Copy artifact files to destination
         run: |
           cp artifact/build/_deps/tree-gen-src/include/* include/tree-gen
+          cp artifact/build/_deps/tree-gen-src/src/tree-all.cpp src/tree-gen
           cp artifact/build/include/v1/* include/v1
           cp artifact/build/py_gen/v1/* python/v1
           cp artifact/build/src/*.hpp include
