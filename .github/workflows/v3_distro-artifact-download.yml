@@ -37,17 +37,14 @@ jobs:
         run: |
           cp artifact/build/_deps/tree-gen-src/include/* include/tree-gen
           cp artifact/build/_deps/tree-gen-src/src/tree-all.cpp src/tree-gen
-          cp artifact/build/include/cqasm-version-lexer.hpp include
-          cp artifact/build/include/cqasm-version-parser.hpp include
-          cp artifact/build/include/v1/cqasm-lexer.hpp include/v1
-          cp artifact/build/include/v1/cqasm-parser.hpp include/v1
-          cp artifact/build/src/cqasm-version-lexer.cpp src
-          cp artifact/build/src/cqasm-version-lexer.l src
-          cp artifact/build/src/cqasm-version-parser.cpp src
-          cp artifact/build/src/v1/cqasm-lexer.cpp src/v1
-          cp artifact/build/src/v1/cqasm-lexer.l src/v1
-          cp artifact/build/src/v1/cqasm-parser.cpp src/v1
-          cp artifact/build/py_gen/v1/*.py python/v1
+          cp artifact/build/include/v1/* include/v1
+          cp artifact/build/py_gen/v1/* python/v1
+          cp artifact/build/src/*.hpp include
+          cp artifact/build/src/*.{cpp,txt} src
+          cp artifact/build/src/v1/*.hpp include/v1
+          cp artifact/build/src/v1/*.{cpp,txt} src/v1
+          cp artifact/build/src/* src
+          cp artifact/build/src/v1/* src/v1
       - name: Update artifact files
         run: |
           ./scripts/update_artifact_files.py
