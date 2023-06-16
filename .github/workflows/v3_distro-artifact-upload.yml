@@ -45,7 +45,6 @@ jobs:
           name: v3_distro-artifact
           path: |
             ${{ github.workspace }}/build/_deps/tree-gen-src/include/
-            ${{ github.workspace }}/build/_deps/tree-gen-src/src/tree-all.cpp
             ${{ github.workspace }}/build/include/v1/*.hpp          
             ${{ github.workspace }}/build/py_gen/v1/*.py
             ${{ github.workspace }}/build/src/cqasm-version-lexer.*
