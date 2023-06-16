@@ -35,8 +35,8 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_CQASM_VERSION_HOME_RUNNER_WORK_LIBQASM_LIBQASM_BUILD_SRC_CQASM_VERSION_PARSER_HPP_INCLUDED
-# define YY_CQASM_VERSION_HOME_RUNNER_WORK_LIBQASM_LIBQASM_BUILD_SRC_CQASM_VERSION_PARSER_HPP_INCLUDED
+#ifndef YY_CQASM_VERSION_SRC_CQASM_VERSION_PARSER_HPP_INCLUDED
+# define YY_CQASM_VERSION_SRC_CQASM_VERSION_PARSER_HPP_INCLUDED
 /* Debug traces.  */
 #ifndef CQASM_VERSION_DEBUG
 # if defined YYDEBUG
@@ -128,4 +128,4 @@ struct CQASM_VERSION_LTYPE
 int cqasm_version_parse (yyscan_t scanner, const std::string &filename, cqasm::version::Version &version);
 
 
-#endif /* !YY_CQASM_VERSION_HOME_RUNNER_WORK_LIBQASM_LIBQASM_BUILD_SRC_CQASM_VERSION_PARSER_HPP_INCLUDED  */
+#endif /* !YY_CQASM_VERSION_SRC_CQASM_VERSION_PARSER_HPP_INCLUDED  */
