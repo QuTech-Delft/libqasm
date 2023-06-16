@@ -46,7 +46,7 @@ def fix_v1_cqasm_parser_include_path():
     cqasm_parser_hpp_file_path = "src/v1/cqasm-parser.cpp"
     print("Fixing '{}'".format(cqasm_parser_hpp_file_path))
     regex = re.compile(r'#include "cqasm-parser.hpp"')
-    replacement = r'#include "v1/cqasm-parser.hpp'
+    replacement = r'#include "v1/cqasm-parser.hpp"'
     for line in fileinput.FileInput(cqasm_parser_hpp_file_path, inplace=True):
         print(regex.sub(replacement, line), end="")
 
