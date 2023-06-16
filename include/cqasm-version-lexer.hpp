@@ -2,9 +2,9 @@
 #define cqasm_version_HEADER_H 1
 #define cqasm_version_IN_HEADER 1
 
-#line 5 "src/cqasm-version-lexer.hpp"
+#line 6 "src/cqasm-version-lexer.hpp"
 
-#line 7 "src/cqasm-version-lexer.hpp"
+#line 8 "src/cqasm-version-lexer.hpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -734,8 +734,8 @@ extern int yylex \
 #undef yyTABLES_NAME
 #endif
 
-#line 85 "src/cqasm-version-lexer.l"
+#line 84 "src/cqasm-version-lexer.l"
 
-#line 734 "src/cqasm-version-lexer.hpp"
+#line 735 "src/cqasm-version-lexer.hpp"
 #undef cqasm_version_IN_HEADER
 #endif /* cqasm_version_HEADER_H */

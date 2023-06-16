@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.7.4.  */
+/* A Bison parser, made by GNU Bison 3.8.2.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2020 Free Software Foundation,
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
    Inc.
 
    This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -35,8 +35,8 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_CQASM_V1_MNT_C_PROJECTS_LIBQASM_BUILD_SRC_V1_CQASM_PARSER_HPP_INCLUDED
-# define YY_CQASM_V1_MNT_C_PROJECTS_LIBQASM_BUILD_SRC_V1_CQASM_PARSER_HPP_INCLUDED
+#ifndef YY_CQASM_V1_HOME_RUNNER_WORK_LIBQASM_LIBQASM_BUILD_SRC_V1_CQASM_PARSER_HPP_INCLUDED
+# define YY_CQASM_V1_HOME_RUNNER_WORK_LIBQASM_LIBQASM_BUILD_SRC_V1_CQASM_PARSER_HPP_INCLUDED
 /* Debug traces.  */
 #ifndef CQASM_V1_DEBUG
 # if defined YYDEBUG
@@ -202,6 +202,8 @@ struct CQASM_V1_LTYPE
 
 
 
+
 int cqasm_v1_parse (yyscan_t scanner, cqasm::v1::parser::ParseHelper &helper);
 
-#endif /* !YY_CQASM_V1_MNT_C_PROJECTS_LIBQASM_BUILD_SRC_V1_CQASM_PARSER_HPP_INCLUDED  */
+
+#endif /* !YY_CQASM_V1_HOME_RUNNER_WORK_LIBQASM_LIBQASM_BUILD_SRC_V1_CQASM_PARSER_HPP_INCLUDED  */
