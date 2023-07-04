@@ -82,6 +82,8 @@ if(ASAN_ENABLED)
     string(REGEX REPLACE "/RTC(su|[1su])" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
     message(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}\n")
     if(MSVC)
+        # /MTd is needed to link clang_rt.asan-i386.lib statically
+        # Otherwise the path to clang_rt.asan-i386.dll should be provided
         add_compile_options(/fsanitize=address /MTd)
     elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
         add_compile_options(-fsanitize=address,undefined -fno-omit-frame-pointer)
