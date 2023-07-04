@@ -99,6 +99,10 @@ jobs:
       - name: Update artifact files in destination
         run: |
           python scripts/update_artifact_files.py
+          git status
+      - name: git status
+        run: |
+          git status
       - name: Get latest CMake
         uses: lukka/get-cmake@latest
       - name: Configure
