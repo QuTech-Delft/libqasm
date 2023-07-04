@@ -24,7 +24,7 @@ TEST_CASE("Test for the example3.qasm file")
 
     compiler::QasmSemanticChecker sm(myfile);
 
-    auto qasm_representation = sm.getQasmRepresentation();
+    auto &qasm_representation = sm.getQasmRepresentation();
 
     int result = sm.parseResult();
 

@@ -24,7 +24,7 @@ TEST_CASE("Test for the testqc.qasm file")
 
     compiler::QasmSemanticChecker sm(myfile);
 
-    auto qasm_representation = sm.getQasmRepresentation();
+    auto &qasm_representation = sm.getQasmRepresentation();
 
     auto error_model_params = qasm_representation.getErrorModelParameters();
 

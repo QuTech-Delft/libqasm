@@ -21,13 +21,12 @@ TEST_CASE("Test for the wait.qasm file")
     extern int yydebug;
     yydebug = 1;
     #endif
-
     // open a file handle to a particular file:
-    FILE *myfile = fopen("wait.qasm", "r");
+    FILE* myfile = fopen("wait.qasm", "r");
 
     compiler::QasmSemanticChecker sm(myfile);
 
-    auto qasm_representation = sm.getQasmRepresentation();
+    auto &qasm_representation = sm.getQasmRepresentation();
 
     int result = sm.parseResult();
 

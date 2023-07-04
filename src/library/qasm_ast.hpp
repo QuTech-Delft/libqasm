@@ -445,6 +445,15 @@ namespace compiler
                 linenumber_ = linenumber;
             }
 
+            ~OperationsCluster()
+            {
+                for (Operation* op : operations_)
+                {
+                    delete op;
+                }
+                operations_.clear();
+            }
+
             Operation* lastOperation()
             {
                 return operations_.back();
@@ -522,6 +531,15 @@ namespace compiler
             {
             }
 
+            ~SubCircuit()
+            {
+                for (OperationsCluster* opclus : operations_cluster_)
+                {
+                    delete opclus;
+                }
+                operations_cluster_.clear();
+            }
+
             int numberIterations() const
             {
                 return number_iterations_;
@@ -586,11 +604,20 @@ namespace compiler
         public:
             SubCircuits()
             {
-                SubCircuit default_circuit("default", 0, 1);
+                SubCircuit *default_circuit = new SubCircuit("default", 0, 1);
                 subcircuits_.push_back ( default_circuit );
             }
 
-            void addSubCircuit(SubCircuit subcircuit)
+            ~SubCircuits()
+            {
+                for (SubCircuit* sc : subcircuits_)
+                {
+                    delete sc;
+                }
+                subcircuits_.clear();
+            }
+
+            void addSubCircuit(SubCircuit *subcircuit)
             {
                 subcircuits_.push_back(subcircuit);
             }
@@ -600,20 +627,28 @@ namespace compiler
                 return subcircuits_.size();
             }
 
-            SubCircuit& lastSubCircuit()
+            SubCircuit* lastSubCircuit()
             {
                 return subcircuits_.back();
             }
 
-            const std::vector<SubCircuit>& getAllSubCircuits() const
+            const std::vector<SubCircuit*>& getAllSubCircuits() const
             {
                 return subcircuits_;
             }
 
-            void clearSubCircuits() { subcircuits_.clear(); }
+            void clearSubCircuits()
+            {
+                for (SubCircuit* sc : subcircuits_)
+                {
+                    delete sc;
+                }
+
+                subcircuits_.clear();
+            }
 
         protected:
-            std::vector<SubCircuit> subcircuits_;
+            std::vector<SubCircuit*> subcircuits_;
     }; //class SubCircuits
 
     class QasmRepresentation

@@ -13,13 +13,18 @@ class libQasm
     public:
         libQasm()
         {
+            sm_ = nullptr;
+        }
+
+        ~libQasm()
+        {
+            delete sm_;
         }
 
         void parse_string(const char* qasm_str)
         {
+            delete sm_;
             sm_ = new compiler::QasmSemanticChecker(qasm_str);
-            qasm_rep_ = sm_->getQasmRepresentation();
-            parse_result_ = sm_->parseResult();
         }
 
         void parse_file(const char* qasm_file_path)
@@ -31,25 +36,22 @@ class libQasm
                     + std::string(" not found!\n");
                 throw std::runtime_error(file_not_found);
             }
+            delete sm_;
             sm_ = new compiler::QasmSemanticChecker(qasm_file);
-            qasm_rep_ = sm_->getQasmRepresentation();
-            parse_result_ = sm_->parseResult();
         }
 
         int getParseResult() const
         {
-            return parse_result_;
+            return sm_->parseResult();
         }
 
         const compiler::QasmRepresentation& getQasmRepresentation() const
         {
-            return qasm_rep_;
+            return sm_->getQasmRepresentation();
         }
 
     private:
         compiler::QasmSemanticChecker* sm_;
-        compiler::QasmRepresentation qasm_rep_;
-        int parse_result_;
 };
 
 #endif  // LIBQASM_HPP

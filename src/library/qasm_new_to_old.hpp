@@ -341,12 +341,12 @@ static void handle_parse_result(QasmRepresentation &qasm, cqasm::parser::ParseRe
             if (auto loc = subcircuit->get_annotation_ptr<cqasm::parser::SourceLocation>()) {
                 line_number = loc->first_line;
             }
-            SubCircuit sc {
+            SubCircuit *sc = new SubCircuit(
                 subcircuit->name.c_str(),
                 (int)scs.numberOfSubCircuits(),
                 line_number
-            };
-            sc.numberIterations(subcircuit->iterations);
+            );
+            sc->numberIterations(subcircuit->iterations);
             scs.addSubCircuit(sc);
         }
 
@@ -383,7 +383,7 @@ static void handle_parse_result(QasmRepresentation &qasm, cqasm::parser::ParseRe
             // Add the cluster to the last subcircuit if the bundle
             // was nonempty.
             if (opclus) {
-                scs.lastSubCircuit().addOperationsCluster(opclus);
+                scs.lastSubCircuit()->addOperationsCluster(opclus);
             }
         }
     }

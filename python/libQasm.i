@@ -46,7 +46,7 @@ namespace std {
 %include "cqasm-py.hpp"
 
 namespace std {
-    %template(subcircuit_vector) vector<compiler::SubCircuit>;
+    %template(subcircuit_vector) vector<compiler::SubCircuit*>;
     %template(operationscluster_vector) vector<compiler::OperationsCluster*>;
     %template(operation_vector) vector<compiler::Operation*>;
     %template(twoqubitgatequbits_pair) pair<compiler::Qubits, compiler::Qubits>;
