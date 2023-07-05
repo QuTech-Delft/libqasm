@@ -15,6 +15,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          path: v3
       - name: Get changed lexer or parser files
         id: changed-files-specific
         uses: tj-actions/changed-files@v36
@@ -26,13 +27,13 @@ jobs:
       - name: Configure
         if: steps.changed-files-specific.outputs.any_changed == 'true'
         run: |
-          mkdir ${{ github.workspace }}/build 
-          cd ${{ github.workspace }}/build
+          mkdir ${{ github.workspace }}/v3/build
+          cd ${{ github.workspace }}/v3/build
           cmake .. -B .
       - name: Build C++
         if: steps.changed-files-specific.outputs.any_changed == 'true'
         run: |
-          cd ${{ github.workspace }}/build
+          cd ${{ github.workspace }}/v3/build
           cmake --build . --parallel
       - name: Build Python
         env:
@@ -44,19 +45,19 @@ jobs:
         with:
           name: v3_distro-artifact
           path: |
-            ${{ github.workspace }}/build/_deps/tree-gen-src/include/
-            ${{ github.workspace }}/build/_deps/tree-gen-src/src/tree-all.cpp
-            ${{ github.workspace }}/build/include/v1/*.hpp          
-            ${{ github.workspace }}/build/py_gen/v1/*.py
-            ${{ github.workspace }}/build/src/cqasm-version-lexer.*
-            ${{ github.workspace }}/build/src/cqasm-version-parser.*
-            ${{ github.workspace }}/build/src/v1/cqasm-.*-gen.cpp
-            ${{ github.workspace }}/build/src/v1/cqasm-lexer.*
-            ${{ github.workspace }}/build/src/v1/cqasm-parser.*
-            ${{ github.workspace }}/src/cqasm-version-lexer.l
-            ${{ github.workspace }}/src/cqasm-version-parser.y
-            ${{ github.workspace }}/src/v1/cqasm-lexer.l
-            ${{ github.workspace }}/src/v1/cqasm-parser.y
+            ${{ github.workspace }}/v3/build/_deps/tree-gen-src/include/
+            ${{ github.workspace }}/v3/build/_deps/tree-gen-src/src/tree-all.cpp
+            ${{ github.workspace }}/v3/build/include/v1/*.hpp          
+            ${{ github.workspace }}/v3/build/py_gen/v1/*.py
+            ${{ github.workspace }}/v3/build/src/cqasm-version-lexer.*
+            ${{ github.workspace }}/v3/build/src/cqasm-version-parser.*
+            ${{ github.workspace }}/v3/build/src/v1/cqasm-.*-gen.cpp
+            ${{ github.workspace }}/v3/build/src/v1/cqasm-lexer.*
+            ${{ github.workspace }}/v3/build/src/v1/cqasm-parser.*
+            ${{ github.workspace }}/v3/src/cqasm-version-lexer.l
+            ${{ github.workspace }}/v3/src/cqasm-version-parser.y
+            ${{ github.workspace }}/v3/src/v1/cqasm-lexer.l
+            ${{ github.workspace }}/v3/src/v1/cqasm-parser.y
 
   v3_distro-artifact-download:
     name: 'v3_distro artifact download'
@@ -67,6 +68,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: v3_distro
+          path: v3_distro
           fetch-depth: 0
       - name: Download v3_distro-artifact
         id: download-v3_distro-artifact
@@ -82,50 +84,53 @@ jobs:
         working-directory: artifact
       - name: Copy artifact files to destination
         run: |
-          cp artifact/build/_deps/tree-gen-src/include/* include/tree-gen
-          cp artifact/build/_deps/tree-gen-src/src/tree-all.cpp src/tree-gen
-          cp artifact/build/include/v1/* include/v1
-          cp artifact/build/py_gen/v1/* python/v1
-          cp artifact/build/src/*.hpp include
-          cp artifact/build/src/*.{cpp,txt} src
-          cp artifact/build/src/v1/*.hpp include/v1
-          cp artifact/build/src/v1/*.{cpp,txt} src/v1
-          cp artifact/src/*.{l,y} src
-          cp artifact/src/v1/*.{l,y} src/v1
+          cp artifact/build/_deps/tree-gen-src/include/* ${{ github.workspace }}/v3_distro/include/tree-gen
+          cp artifact/build/_deps/tree-gen-src/src/tree-all.cpp ${{ github.workspace }}/v3_distro/src/tree-gen
+          cp artifact/build/include/v1/* ${{ github.workspace }}/v3_distro/include/v1
+          cp artifact/build/py_gen/v1/* ${{ github.workspace }}/v3_distro/python/v1
+          cp artifact/build/src/*.hpp ${{ github.workspace }}/v3_distro/include
+          cp artifact/build/src/*.{cpp,txt} ${{ github.workspace }}/v3_distro/src
+          cp artifact/build/src/v1/*.hpp ${{ github.workspace }}/v3_distro/include/v1
+          cp artifact/build/src/v1/*.{cpp,txt} ${{ github.workspace }}/v3_distro/src/v1
+          cp artifact/src/*.{l,y} ${{ github.workspace }}/v3_distro/src
+          cp artifact/src/v1/*.{l,y} ${{ github.workspace }}/v3_distro/src/v1
 #      - name: Delete artifact files
 #        uses: geekyeggo/delete-artifact@v2
 #        with:
 #          name: v3_distro-artifact
       - name: Update artifact files in destination
         run: |
+          cd ${{ github.workspace }}/v3_distro
           python scripts/update_artifact_files.py
-      - name: Get latest CMake
-        uses: lukka/get-cmake@latest
-      - name: Configure
-        run: |
-          mkdir ${{ github.workspace }}/build 
-          cd ${{ github.workspace }}/build
-          cmake .. -B . -DCMAKE_BUILD_TYPE=Debug -DLIBQASM_BUILD_TESTS=ON -DLIBQASM_COMPAT=ON
-      - name: Build C++
-        run: |
-          cd ${{ github.workspace }}/build
-          cmake --build . --parallel
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade pip setuptools wheel pytest numpy
-          echo "LIBQASM_BUILD_TYPE=Debug" >> $GITHUB_ENV
-      - name: Build Python
-        env:
-          NPROCS: 100
-        run: python -m pip install --verbose .
-      - name: Run C++ tests
-        run: ctest -C Debug --output-on-failure
-      - name: Run Python tests
-        run: python -m pytest
+#      - name: Get latest CMake
+#        uses: lukka/get-cmake@latest
+#      - name: Configure
+#        run: |
+#          mkdir ${{ github.workspace }}/build
+#          cd ${{ github.workspace }}/build
+#          cmake .. -B . -DCMAKE_BUILD_TYPE=Debug -DLIBQASM_BUILD_TESTS=ON -DLIBQASM_COMPAT=ON
+#      - name: Build C++
+#        run: |
+#          cd ${{ github.workspace }}/build
+#          cmake --build . --parallel
+#      - name: Install Python dependencies
+#        run: |
+#          python -m pip install --upgrade pip setuptools wheel pytest numpy
+#          echo "LIBQASM_BUILD_TYPE=Debug" >> $GITHUB_ENV
+#      - name: Build Python
+#        env:
+#          NPROCS: 100
+#        run: python -m pip install --verbose .
+#      - name: Run C++ tests
+#        run: ctest -C Debug --output-on-failure
+#      - name: Run Python tests
+#        run: python -m pytest
       - name: Commit files
         run: |
+          cd ${{ github.workspace }}/v3_distro
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
+          git status
           git commit -a -m "Updating v3_distro with new generated files from v3"
       - name: Push changes
         uses: ad-m/github-push-action@master
