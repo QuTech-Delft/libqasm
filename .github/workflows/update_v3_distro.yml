@@ -123,13 +123,16 @@ jobs:
 #        run: python -m pytest
       - name: Commit files
         run: |
+          eval $(ssh-agent -s)
+          echo "${{ secrets.DISTRO_DEPLOY_KEY }}" | ssh-add -
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git status
           git commit -a -m "Updating v3_distro with new generated files from v3"
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.PAT_TOKEN }}
-          branch: v3_distro
-          force_with_lease: true
+          git push
+#      - name: Push changes
+#        uses: ad-m/github-push-action@master
+#        with:
+#          github_token: ${{ secrets.PAT_TOKEN }}
+#          branch: v3_distro
+#          force_with_lease: true
