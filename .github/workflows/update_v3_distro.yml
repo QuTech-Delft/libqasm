@@ -63,11 +63,24 @@ jobs:
     runs-on: ubuntu-latest
     needs: v3_distro-artifact-upload
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          ref: v3_distro
-          fetch-depth: 0
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#        with:
+#          ref: v3_distro
+#          fetch-depth: 0
+      - name: Add SSH key
+        run: |
+          eval $(ssh-agent -s)
+          echo "${{ secrets.DISTRO_DEPLOY_KEY }}" | ssh-add -
+      - name: Global git config
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+      - name: Check out v3_distro
+        run: |
+          git clone --recurse-submodules https://github.com/QuTech-Delft/libqasm.git
+          cd libqasm
+          git checkout v3_distro
       - name: Download v3_distro-artifact
         id: download-v3_distro-artifact
         uses: dawidd6/action-download-artifact@v2
@@ -81,22 +94,23 @@ jobs:
         run: ls -R artifact
       - name: Copy artifact files to destination
         run: |
-          cp artifact/build/_deps/tree-gen-src/include/* include/tree-gen
-          cp artifact/build/_deps/tree-gen-src/src/tree-all.cpp src/tree-gen
-          cp artifact/build/include/v1/* include/v1
-          cp artifact/build/py_gen/v1/* python/v1
-          cp artifact/build/src/*.hpp include
-          cp artifact/build/src/*.{cpp,txt} src
-          cp artifact/build/src/v1/*.hpp include/v1
-          cp artifact/build/src/v1/*.{cpp,txt} src/v1
-          cp artifact/src/*.{l,y} src
-          cp artifact/src/v1/*.{l,y} src/v1
+          cp artifact/build/_deps/tree-gen-src/include/* libqasm/include/tree-gen
+          cp artifact/build/_deps/tree-gen-src/src/tree-all.cpp libqasm/src/tree-gen
+          cp artifact/build/include/v1/* libqasm/include/v1
+          cp artifact/build/py_gen/v1/* libqasm/python/v1
+          cp artifact/build/src/*.hpp libqasm/include
+          cp artifact/build/src/*.{cpp,txt} libqasm/src
+          cp artifact/build/src/v1/*.hpp libqasm/include/v1
+          cp artifact/build/src/v1/*.{cpp,txt} libqasm/src/v1
+          cp artifact/src/*.{l,y} libqasm/src
+          cp artifact/src/v1/*.{l,y} libqasm/src/v1
 #      - name: Delete artifact files
 #        uses: geekyeggo/delete-artifact@v2
 #        with:
 #          name: v3_distro-artifact
       - name: Update artifact files in destination
         run: |
+          cd libqasm
           python scripts/update_artifact_files.py
 #      - name: Get latest CMake
 #        uses: lukka/get-cmake@latest
@@ -123,10 +137,7 @@ jobs:
 #        run: python -m pytest
       - name: Commit files
         run: |
-          eval $(ssh-agent -s)
-          echo "${{ secrets.DISTRO_DEPLOY_KEY }}" | ssh-add -
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
+          cd libqasm
           git status
           git commit -a -m "Updating v3_distro with new generated files from v3"
           git push
