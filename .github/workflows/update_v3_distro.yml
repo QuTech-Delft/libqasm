@@ -92,17 +92,13 @@ jobs:
           cp artifact/build/src/v1/*.{cpp,txt} src/v1
           cp artifact/src/*.{l,y} src
           cp artifact/src/v1/*.{l,y} src/v1
-      - name: Delete artifact files
-        uses: geekyeggo/delete-artifact@v2
-        with:
-          name: v3_distro-artifact
+#      - name: Delete artifact files
+#        uses: geekyeggo/delete-artifact@v2
+#        with:
+#          name: v3_distro-artifact
       - name: Update artifact files in destination
         run: |
           python scripts/update_artifact_files.py
-          git status
-      - name: git status
-        run: |
-          git status
       - name: Get latest CMake
         uses: lukka/get-cmake@latest
       - name: Configure
@@ -134,6 +130,6 @@ jobs:
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.PAT_TOKEN }}
           branch: v3_distro
           force_with_lease: true
