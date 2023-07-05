@@ -66,7 +66,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: 0e471169363c5ff188cdb60edd431ea8002989b7
+          ref: v3_distro
           fetch-depth: 0
       - name: Download v3_distro-artifact
         id: download-v3_distro-artifact
