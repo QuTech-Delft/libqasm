@@ -3,7 +3,7 @@ name: Test
 on:
   push:
     branches:
-    - fix_issue_151
+    - develop
   pull_request:
 
 jobs:
