@@ -20,7 +20,7 @@ jobs:
         id: changed-files-specific
         uses: tj-actions/changed-files@v36
         with:
-          files: src{/v1,}/*.{l,y}
+          files: v3/src{/v1,}/*.{l,y}
       - name: Get latest CMake
         if: steps.changed-files-specific.outputs.any_changed == 'true'
         uses: lukka/get-cmake@latest
