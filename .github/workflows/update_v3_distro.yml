@@ -66,7 +66,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: v3_distro
+          ref: 0e471169363c5ff188cdb60edd431ea8002989b7
           path: v3_distro
           fetch-depth: 0
       - name: Download v3_distro-artifact
@@ -79,27 +79,26 @@ jobs:
           workflow: v3_distro-artifact-upload.yml
           workflow_conclusion: success
       - name: Display structure of downloaded files
-        run: ls -R
-        working-directory: artifact
+        run: ls -R artifact
       - name: Copy artifact files to destination
         run: |
-          cp artifact/build/_deps/tree-gen-src/include/* ${{ github.workspace }}/v3_distro/include/tree-gen
-          cp artifact/build/_deps/tree-gen-src/src/tree-all.cpp ${{ github.workspace }}/v3_distro/src/tree-gen
-          cp artifact/build/include/v1/* ${{ github.workspace }}/v3_distro/include/v1
-          cp artifact/build/py_gen/v1/* ${{ github.workspace }}/v3_distro/python/v1
-          cp artifact/build/src/*.hpp ${{ github.workspace }}/v3_distro/include
-          cp artifact/build/src/*.{cpp,txt} ${{ github.workspace }}/v3_distro/src
-          cp artifact/build/src/v1/*.hpp ${{ github.workspace }}/v3_distro/include/v1
-          cp artifact/build/src/v1/*.{cpp,txt} ${{ github.workspace }}/v3_distro/src/v1
-          cp artifact/src/*.{l,y} ${{ github.workspace }}/v3_distro/src
-          cp artifact/src/v1/*.{l,y} ${{ github.workspace }}/v3_distro/src/v1
+          cp artifact/build/_deps/tree-gen-src/include/* v3_distro/include/tree-gen
+          cp artifact/build/_deps/tree-gen-src/src/tree-all.cpp v3_distro/src/tree-gen
+          cp artifact/build/include/v1/* v3_distro/include/v1
+          cp artifact/build/py_gen/v1/* v3_distro/python/v1
+          cp artifact/build/src/*.hpp v3_distro/include
+          cp artifact/build/src/*.{cpp,txt} v3_distro/src
+          cp artifact/build/src/v1/*.hpp v3_distro/include/v1
+          cp artifact/build/src/v1/*.{cpp,txt} v3_distro/src/v1
+          cp artifact/src/*.{l,y} v3_distro/src
+          cp artifact/src/v1/*.{l,y} v3_distro/src/v1
 #      - name: Delete artifact files
 #        uses: geekyeggo/delete-artifact@v2
 #        with:
 #          name: v3_distro-artifact
       - name: Update artifact files in destination
         run: |
-          cd ${{ github.workspace }}/v3_distro
+          cd v3_distro
           python scripts/update_artifact_files.py
 #      - name: Get latest CMake
 #        uses: lukka/get-cmake@latest
@@ -126,9 +125,10 @@ jobs:
 #        run: python -m pytest
       - name: Commit files
         run: |
-          cd ${{ github.workspace }}/v3_distro
+          cd v3_distro
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
+          git rev-parse --abbrev-ref HEAD
           git status
           git commit -a -m "Updating v3_distro with new generated files from v3"
       - name: Push changes
