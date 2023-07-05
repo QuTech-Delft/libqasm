@@ -72,10 +72,6 @@ jobs:
         run: |
           eval $(ssh-agent -s)
           echo "${{ secrets.DISTRO_DEPLOY_KEY }}" | ssh-add -
-      - name: Global git config
-        run: |
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
       - name: Check out v3_distro
         run: |
           git clone --recurse-submodules https://github.com/QuTech-Delft/libqasm.git
