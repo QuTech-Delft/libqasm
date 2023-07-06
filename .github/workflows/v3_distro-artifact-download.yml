@@ -21,6 +21,8 @@ jobs:
         with:
           ref: v3_distro
           fetch-depth: 0
+          ssh-key: ${{ secrets.DISTRO_DEPLOY_KEY }}
+          persist-credentials: true
       - name: Download v3_distro-artifact
         id: download-v3_distro-artifact
         uses: dawidd6/action-download-artifact@v2
@@ -76,12 +78,9 @@ jobs:
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git status
-          eval $(ssh-agent -s)
-          echo "${{ secrets.DISTRO_DEPLOY_KEY }}" | ssh-add -
           git commit -a -m "Updating v3_distro with new generated files from v3"
-          git push
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
           branch: v3_distro
-          force_with_lease: true
+          ssh: true
