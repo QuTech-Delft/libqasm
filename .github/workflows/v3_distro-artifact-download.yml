@@ -8,7 +8,6 @@ on:
 
 jobs:
   v3_distro-artifact-download:
-    if: ${{ false }}
     name: 'v3_distro artifact download'
     runs-on: ubuntu-latest
     steps:
@@ -51,32 +50,36 @@ jobs:
           python scripts/update_artifact_files.py
       - name: Get latest CMake
         uses: lukka/get-cmake@latest
-      - name: Configure
-        run: |
-          mkdir ${{ github.workspace }}/build 
-          cd ${{ github.workspace }}/build
-          cmake .. -B . -DCMAKE_BUILD_TYPE=Debug -DLIBQASM_BUILD_TESTS=ON -DLIBQASM_COMPAT=ON
-      - name: Build C++
-        run: |
-          cd ${{ github.workspace }}/build
-          cmake --build . --parallel
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade pip setuptools wheel pytest numpy
-          echo "LIBQASM_BUILD_TYPE=Debug" >> $GITHUB_ENV
-      - name: Build Python
-        env:
-          NPROCS: 100
-        run: python -m pip install --verbose .
-      - name: Run C++ tests
-        run: ctest -C Debug --output-on-failure
-      - name: Run Python tests
-        run: python -m pytest
+#      - name: Configure
+#        run: |
+#          mkdir ${{ github.workspace }}/build 
+#          cd ${{ github.workspace }}/build
+#          cmake .. -B . -DCMAKE_BUILD_TYPE=Debug -DLIBQASM_BUILD_TESTS=ON -DLIBQASM_COMPAT=ON
+#      - name: Build C++
+#        run: |
+#          cd ${{ github.workspace }}/build
+#          cmake --build . --parallel
+#      - name: Install Python dependencies
+#        run: |
+#          python -m pip install --upgrade pip setuptools wheel pytest numpy
+#          echo "LIBQASM_BUILD_TYPE=Debug" >> $GITHUB_ENV
+#      - name: Build Python
+#        env:
+#          NPROCS: 100
+#        run: python -m pip install --verbose .
+#      - name: Run C++ tests
+#        run: ctest -C Debug --output-on-failure
+#      - name: Run Python tests
+#        run: python -m pytest
       - name: Commit files
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
+          git status
+          eval $(ssh-agent -s)
+          echo "${{ secrets.DISTRO_DEPLOY_KEY }}" | ssh-add -
           git commit -a -m "Updating v3_distro with new generated files from v3"
+          git push
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
