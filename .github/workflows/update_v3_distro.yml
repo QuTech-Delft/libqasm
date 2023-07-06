@@ -4,7 +4,6 @@ on:
   push:
     branches:
     - v3
-  pull_request:
 
 jobs:
   v3_distro-artifact-upload:

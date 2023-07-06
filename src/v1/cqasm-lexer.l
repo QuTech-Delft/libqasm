@@ -2,6 +2,7 @@
 %option prefix="cqasm_v1_"
 %option yylineno
 %option reentrant bison-bridge bison-locations
+%option never-interactive
 
 %{
     /**
@@ -34,6 +35,7 @@
         DEBUG("Pushing '%c' token starting at %d:%d\n", yytext[0], yylloc->first_line, yylloc->first_column); \
         return yytext[0]
     #define DELETE LOCATION_STEP
+    #define YY_NO_UNISTD_H 1
 %}
 
 %x MODE_MULTILINE_COMMENT
