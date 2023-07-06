@@ -32,8 +32,7 @@ jobs:
           workflow: v3_distro-artifact-upload.yml
           workflow_conclusion: success
       - name: Display structure of downloaded files
-        run: ls -R
-        working-directory: artifact
+        run: ls -R artifact
       - name: Copy artifact files to destination
         run: |
           cp artifact/build/_deps/tree-gen-src/include/* include/tree-gen
@@ -46,32 +45,9 @@ jobs:
           cp artifact/build/src/v1/*.{cpp,txt} src/v1
           cp artifact/src/*.{l,y} src
           cp artifact/src/v1/*.{l,y} src/v1
-      - name: Update artifact files
+      - name: Update artifact files in destination
         run: |
           python scripts/update_artifact_files.py
-      - name: Get latest CMake
-        uses: lukka/get-cmake@latest
-#      - name: Configure
-#        run: |
-#          mkdir ${{ github.workspace }}/build 
-#          cd ${{ github.workspace }}/build
-#          cmake .. -B . -DCMAKE_BUILD_TYPE=Debug -DLIBQASM_BUILD_TESTS=ON -DLIBQASM_COMPAT=ON
-#      - name: Build C++
-#        run: |
-#          cd ${{ github.workspace }}/build
-#          cmake --build . --parallel
-#      - name: Install Python dependencies
-#        run: |
-#          python -m pip install --upgrade pip setuptools wheel pytest numpy
-#          echo "LIBQASM_BUILD_TYPE=Debug" >> $GITHUB_ENV
-#      - name: Build Python
-#        env:
-#          NPROCS: 100
-#        run: python -m pip install --verbose .
-#      - name: Run C++ tests
-#        run: ctest -C Debug --output-on-failure
-#      - name: Run Python tests
-#        run: python -m pytest
       - name: Commit files
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
