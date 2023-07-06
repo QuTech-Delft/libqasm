@@ -1701,12 +1701,13 @@ YY_RULE_SETUP
 #line 241 "src/v1/cqasm-lexer.l"
 DELETE;
 	YY_BREAK
+
 case 71:
 YY_RULE_SETUP
-#line 242 "src/v1/cqasm-lexer.l"
+#line 243 "src/v1/cqasm-lexer.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 1706 "src/v1/cqasm-lexer.cpp"
+#line 1707 "src/v1/cqasm-lexer.cpp"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(MODE_VERSION):
 case YY_STATE_EOF(MODE_UNEXPECTED_EOF):
@@ -2870,4 +2871,4 @@ void yyfree (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-#line 242 "src/v1/cqasm-lexer.l"
+#line 243 "src/v1/cqasm-lexer.l"
