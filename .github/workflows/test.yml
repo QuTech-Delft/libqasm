@@ -4,7 +4,6 @@ on:
   push:
     branches:
     - v3_distro
-  pull_request:
 
 jobs:
   cpp_cmake:
