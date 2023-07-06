@@ -734,7 +734,7 @@ extern int yylex \
 #undef yyTABLES_NAME
 #endif
 
-#line 84 "src/cqasm-version-lexer.l"
+#line 86 "src/cqasm-version-lexer.l"
 
 #line 735 "src/cqasm-version-lexer.hpp"
 #undef cqasm_version_IN_HEADER
