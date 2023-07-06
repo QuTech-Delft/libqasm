@@ -47,12 +47,12 @@ protected:
 
     int doChecks() {
         int checkResult = 0;
-        for (auto subcircuit : qasm_.getSubCircuits().getAllSubCircuits()) {
-            if (subcircuit.numberIterations() < 1) {
+        for (const auto subcircuit : qasm_.getSubCircuits().getAllSubCircuits()) {
+            if (subcircuit->numberIterations() < 1) {
                 throw std::runtime_error(std::string("Iteration count invalid for subcircuit ") +
-                    subcircuit.nameSubCircuit() + " on Line: " + std::to_string(subcircuit.getLineNumber()));
+                    subcircuit->nameSubCircuit() + " on Line: " + std::to_string(subcircuit->getLineNumber()));
             }
-            for (auto ops_cluster : subcircuit.getOperationsCluster()) {
+            for (auto ops_cluster : subcircuit->getOperationsCluster()) {
                 int linenumber = ops_cluster->getLineNumber();
                 for (auto ops : ops_cluster->getOperations()) {
                     checkQubits(*ops, checkResult, linenumber);

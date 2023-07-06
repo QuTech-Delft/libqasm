@@ -325,7 +325,7 @@ static void handle_parse_result(QasmRepresentation &qasm, cqasm::parser::ParseRe
 
     // Copy subcircuits.
     auto &scs = qasm.getSubCircuits();
-    for (const auto &subcircuit : analysis_result.root->subcircuits) {
+    for (const auto subcircuit : analysis_result.root->subcircuits) {
 
         // The old API adds a default subcircuit automatically in
         // the QasmRepresentation constructor (so it always exists),
@@ -340,13 +340,13 @@ static void handle_parse_result(QasmRepresentation &qasm, cqasm::parser::ParseRe
             if (auto loc = subcircuit->get_annotation_ptr<cqasm::parser::SourceLocation>()) {
                 line_number = static_cast<int>(loc->first_line);
             }
-            SubCircuit sc {
+            auto subcircuit_sp{ std::make_shared<SubCircuit>(
                 subcircuit->name.c_str(),
                 static_cast<int>(scs.numberOfSubCircuits()),
                 line_number
-            };
-            sc.numberIterations(static_cast<int>(subcircuit->iterations));
-            scs.addSubCircuit(sc);
+            )};
+            subcircuit_sp->numberIterations(static_cast<int>(subcircuit->iterations));
+            scs.addSubCircuit(std::move(subcircuit_sp));
         }
 
         // Add bundles to the last subcircuit.
@@ -382,7 +382,7 @@ static void handle_parse_result(QasmRepresentation &qasm, cqasm::parser::ParseRe
             // Add the cluster to the last subcircuit if the bundle
             // was nonempty.
             if (opclus) {
-                scs.lastSubCircuit().addOperationsCluster(std::move(opclus));
+                scs.lastSubCircuit()->addOperationsCluster(std::move(opclus));
             }
         }
     }

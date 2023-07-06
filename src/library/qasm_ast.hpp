@@ -506,23 +506,23 @@ protected:
 class SubCircuits {
 public:
     SubCircuits() {
-        SubCircuit default_circuit("default", 0, 1);
-        subcircuits_.push_back(default_circuit);
+        auto default_circuit{ std::make_shared<SubCircuit>("default", 0, 1) };
+        subcircuits_.push_back(std::move(default_circuit));
     }
 
-    void addSubCircuit(SubCircuit subcircuit) {
-        subcircuits_.push_back(subcircuit);
+    void addSubCircuit(std::shared_ptr<SubCircuit> subcircuit) {
+        subcircuits_.push_back(std::move(subcircuit));
     }
 
     size_t numberOfSubCircuits() const {
         return subcircuits_.size();
     }
 
-    SubCircuit& lastSubCircuit() {
+    std::shared_ptr<SubCircuit> lastSubCircuit() {
         return subcircuits_.back();
     }
 
-    const std::vector<SubCircuit>& getAllSubCircuits() const {
+    const std::vector<std::shared_ptr<SubCircuit>>& getAllSubCircuits() const {
         return subcircuits_;
     }
 
@@ -531,7 +531,7 @@ public:
     }
 
 protected:
-    std::vector<SubCircuit> subcircuits_;
+    std::vector<std::shared_ptr<SubCircuit>> subcircuits_;
 }; //class SubCircuits
 
 
