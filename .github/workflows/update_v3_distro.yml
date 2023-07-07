@@ -7,7 +7,6 @@ on:
 
 jobs:
   v3_distro-artifact-upload:
-    if: ${{ false }}
     name: 'v3_distro artifact upload'
     runs-on: ubuntu-latest
     steps:
@@ -59,7 +58,6 @@ jobs:
             ${{ github.workspace }}/src/v1/cqasm-parser.y
 
   v3_distro-artifact-download:
-    if: ${{ false }}
     name: 'v3_distro artifact download'
     runs-on: ubuntu-latest
     needs: v3_distro-artifact-upload
