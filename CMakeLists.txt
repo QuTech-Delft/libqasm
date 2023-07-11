@@ -79,9 +79,10 @@ file(MAKE_DIRECTORY ${LIBQASM_GENERATED_PYTHON_FILES})
 
 # Address sanitizer
 if(ASAN_ENABLED)
-    string(REGEX REPLACE "/RTC(su|[1su])" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-    message(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}\n")
     if(MSVC)
+        string(REGEX REPLACE "/RTC(su|[1su])" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+        message(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}\n")
+
         # /MTd is needed to link clang_rt.asan-i386.lib statically
         # Otherwise the path to clang_rt.asan-i386.dll should be provided
         add_compile_options(/fsanitize=address /MTd)

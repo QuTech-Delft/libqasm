@@ -4,9 +4,7 @@
 
 /*  handy clean-up function */
 void free_string(char *s) {
-    if (s != NULL && strcmp(s, "") != 0) {
-        free(s);
-    }
+    if (s) { free(s); }
 }
 %}
 
