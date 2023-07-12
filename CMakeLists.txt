@@ -71,6 +71,21 @@ endif()
 set(LIBQASM_GENERATED_PYTHON_FILES ${CMAKE_CURRENT_BINARY_DIR}/py_gen)
 file(MAKE_DIRECTORY ${LIBQASM_GENERATED_PYTHON_FILES})
 
+# Address sanitizer
+if(ASAN_ENABLED)
+    if(MSVC)
+        string(REGEX REPLACE "/RTC(su|[1su])" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+        message(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}\n")
+
+        # /MTd is needed to link clang_rt.asan-i386.lib statically
+        # Otherwise the path to clang_rt.asan-i386.dll should be provided
+        add_compile_options(/fsanitize=address /MTd)
+    elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+        add_compile_options(-fsanitize=address,undefined -fno-omit-frame-pointer)
+        add_link_options(-fsanitize=address,undefined)
+    endif()
+endif()
+
 # Jump to where the new API and the core of libqasm lives.
 add_subdirectory(src)
 

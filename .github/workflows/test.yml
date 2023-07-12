@@ -3,7 +3,8 @@ name: Test
 on:
   push:
     branches:
-    - v3
+    - develop
+  pull_request:
 
 jobs:
   cpp_cmake:
@@ -13,9 +14,9 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
+        - ubuntu-latest
+        - macos-latest
+        - windows-latest
     steps:
       - uses: actions/checkout@v3
         with:
@@ -38,7 +39,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: choco install winflexbison3 --version 2.5.18.20190508
       - name: Configure
-        run: cmake . -DCMAKE_BUILD_TYPE=Debug -DLIBQASM_BUILD_TESTS=ON -DLIBQASM_COMPAT=ON
+        run: cmake . -DCMAKE_BUILD_TYPE=Debug -DLIBQASM_BUILD_TESTS=ON -DLIBQASM_COMPAT=ON  -DASAN_ENABLED=ON
       - name: Build
         run: cmake --build . --parallel
       - name: Test
