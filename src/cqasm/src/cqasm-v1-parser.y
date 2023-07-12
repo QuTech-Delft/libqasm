@@ -1,3 +1,13 @@
+%{
+#include <stdlib.h>
+#include <string.h>
+
+/*  handy clean-up function */
+void free_string(char *s) {
+    if (s) { free(s); }
+}
+%}
+
 %define api.pure full
 %define api.prefix {cqasm_v1}
 %locations
@@ -157,8 +167,43 @@
 %type <vers> Version
 %type <prog> Program
 
-/* FIXME: no %destructor for the new-allocated nodes above, so the parser may
-    leak, especially when it recovers from an error. */
+%destructor { free_string($$); } <str>
+%destructor { if($$) { delete($$); } } <ilit>
+%destructor { if($$) { delete($$); } } <flit>
+%destructor { if($$) { delete($$); } } <mat>
+%destructor { if($$) { delete($$); } } <strb>
+%destructor { if($$) { delete($$); } } <slit>
+%destructor { if($$) { delete($$); } } <jlit>
+%destructor { if($$) { delete($$); } } <idnt>
+%destructor { if($$) { delete($$); } } <func>
+%destructor { if($$) { delete($$); } } <indx>
+%destructor { if($$) { delete($$); } } <unop>
+%destructor { if($$) { delete($$); } } <biop>
+%destructor { if($$) { delete($$); } } <tcnd>
+%destructor { if($$) { delete($$); } } <expr>
+%destructor { if($$) { delete($$); } } <expl>
+%destructor { if($$) { delete($$); } } <idxi>
+%destructor { if($$) { delete($$); } } <idxr>
+%destructor { if($$) { delete($$); } } <idxe>
+%destructor { if($$) { delete($$); } } <idxl>
+%destructor { if($$) { delete($$); } } <adat>
+%destructor { if($$) { delete($$); } } <inst>
+%destructor { if($$) { delete($$); } } <bun>
+%destructor { if($$) { delete($$); } } <map>
+%destructor { if($$) { delete($$); } } <vars>
+%destructor { if($$) { delete($$); } } <sub>
+%destructor { if($$) { delete($$); } } <asgn>
+%destructor { if($$) { delete($$); } } <ifel>
+%destructor { if($$) { delete($$); } } <forl>
+%destructor { if($$) { delete($$); } } <fore>
+%destructor { if($$) { delete($$); } } <whil>
+%destructor { if($$) { delete($$); } } <repu>
+%destructor { if($$) { delete($$); } } <brk>
+%destructor { if($$) { delete($$); } } <cont>
+%destructor { if($$) { delete($$); } } <stmt>
+%destructor { if($$) { delete($$); } } <stms>
+%destructor { if($$) { delete($$); } } <vers>
+%destructor { if($$) { delete($$); } } <prog>
 
 /* Whitespace management */
 %token NEWLINE

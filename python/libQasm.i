@@ -13,12 +13,17 @@
 #include "cqasm-py.hpp"
 %}
 
-%include "std_vector.i"
-%include "std_string.i"
-%include "std_map.i"
+%include "exception.i"
 %include "std_except.i"
 %include "std_iostream.i"
-%include "exception.i"
+%include "std_map.i"
+%include "std_shared_ptr.i"
+%include "std_string.i"
+%include "std_vector.i"
+
+%shared_ptr(compiler::Operation)
+%shared_ptr(compiler::OperationsCluster)
+%shared_ptr(compiler::SubCircuit)
 
 namespace std {
     %template(vectori) vector<int>;
@@ -46,9 +51,9 @@ namespace std {
 %include "cqasm-py.hpp"
 
 namespace std {
-    %template(subcircuit_vector) vector<compiler::SubCircuit>;
-    %template(operationscluster_vector) vector<compiler::OperationsCluster*>;
-    %template(operation_vector) vector<compiler::Operation*>;
+    %template(subcircuit_vector) vector<shared_ptr<compiler::SubCircuit>>;
+    %template(operationscluster_vector) vector<shared_ptr<compiler::OperationsCluster>>;
+    %template(operation_vector) vector<shared_ptr<compiler::Operation>>;
     %template(twoqubitgatequbits_pair) pair<compiler::Qubits, compiler::Qubits>;
     %template(toffoliqubits_pair) pair<compiler::Qubits, pair<compiler::Qubits, compiler::Qubits> >;
 }
