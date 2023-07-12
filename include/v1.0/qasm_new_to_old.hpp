@@ -327,7 +327,7 @@ static void handle_parse_result(QasmRepresentation &qasm, cq1::parser::ParseResu
 
     // Copy subcircuits.
     auto &scs = qasm.getSubCircuits();
-    for (const auto subcircuit : analysis_result.root->subcircuits) {
+    for (const auto &subcircuit : analysis_result.root->subcircuits) {
 
         // The old API adds a default subcircuit automatically in
         // the QasmRepresentation constructor (so it always exists),
