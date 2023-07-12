@@ -23,6 +23,7 @@ class LibqasmConan(ConanFile):
     options = {
         "shared": [True, False],
         "fPIC": [True, False],
+        "asan_enabled": [True, False],
         "build_python": [True, False],
         "build_tests": [True, False],
         "compat": [True, False],
@@ -31,6 +32,7 @@ class LibqasmConan(ConanFile):
     default_options = {
         "shared": False,
         "fPIC": True,
+        "asan_enabled": False,
         "build_python": False,
         "build_tests": False,
         "compat": False,
@@ -72,6 +74,7 @@ class LibqasmConan(ConanFile):
         deps = CMakeDeps(self)
         deps.generate()
         tc = CMakeToolchain(self)
+        tc.variables["ASAN_ENABLED"] = self.options.asan_enabled
         tc.variables["LIBQASM_BUILD_PYTHON"] = self.options.build_python
         tc.variables["LIBQASM_BUILD_TESTS"] = self.options.build_tests
         tc.variables["LIBQASM_COMPAT"] = self.options.compat

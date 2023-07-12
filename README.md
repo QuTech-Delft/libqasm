@@ -8,8 +8,8 @@
 
 ## Dependencies
 * cmake (>= 3.12)
-* gcc and g++ capable of C++20 standard
-* Python3 (Tested on Python v3.6)
+* gcc and g++ capable of C++23 standard
+* Python3
 * conan: 2.0
 * Swig
     * Linux: 3.0.12
@@ -36,7 +36,6 @@ Notice the command below is building `libqasm` in Debug mode with tests.
 
 ```
 $ projects> git clone https://github.com/QuTech-Delft/libqasm.git
-$ projects/libqasm> git checkout v3
 $ projects/libqasm> conan build . -s:h compiler.cppstd=20 -s:h libqasm/*:build_type=Debug -o libqasm/*:build_tests=True -b missing
 ```
 
@@ -77,7 +76,7 @@ Invoke-BatchFile "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\
 ```
 
 ## Organization
-* The original paper and BNF specification for the cQASM v1.0 are located in the **./doc** directory. Please note however that the language has changed to some degree since then, and the qasm.bnf has never fully corresponded with the flex/bison grammar. New, up-to-date documentation is a work in progress.
+* The original paper and BNF specification for the cQASM v1.0 are located in the **./doc/v1.0** directory. Please note however that the language has changed to some degree since then, and the qasm.bnf has never fully corresponded with the flex/bison grammar. New, up-to-date documentation is a work in progress.
 * There are currently two C++ API versions contained in this repository, a new API still being worked on and the original soon-to-be deprecated API maintained for backward compatibility purposes. The new API is fully self-contained in the **./src/cqasm** directory. The older API is where it used to be, with its sources residing in **./src/library** and its tests in **./src/tests**.
 
 ## Installing/using the library
@@ -143,7 +142,6 @@ You may want to add one or more directives to the `cmake` command:
 
 ### Linux and MacOS
 ```
-git submodule update --init --recursive
 mkdir cbuild
 cd cbuild
 cmake .. -DLIBQASM_BUILD_TESTS=yes -DLIBQASM_COMPAT=yes
@@ -154,7 +152,6 @@ make test
 ### Windows + MinGW
 Same as the above, except we'll use the MinGW toolchain. You should first get [mingw-w64](https://sourceforge.net/projects/mingw-w64/) and install it.
 ```
-git submodule update --init --recursive
 mkdir cbuild
 cd cbuild
 cmake -G "MinGW Makefiles" .. -DLIBQASM_BUILD_TESTS=yes -DLIBQASM_COMPAT=yes
@@ -168,7 +165,6 @@ This will output `_libQasm.pyd`, `liblexgram.dll` and a static library `liblexgr
 Continuing from the Windows environment setup instructions (don't forget to run `vcvarsall.bat` first):
 
 ```
-git submodule update --init --recursive
 mkdir cbuild
 cd cbuild
 cmake .. -DLIBQASM_BUILD_TESTS=yes -DLIBQASM_COMPAT=yes
@@ -188,4 +184,3 @@ docker build .
 ```
 git clone --config core.autocrlf=input git@github.com:QuTech-Delft/libqasm.git
 ```
-

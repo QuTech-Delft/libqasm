@@ -12,13 +12,11 @@ if(LIBQASM_COMPAT)
     add_subdirectory(v1.0)
 endif()
 add_subdirectory(v1)
-add_subdirectory(v3)
 
 # Test sources
 set(test_sources
     ${v1_0_test_sources}
     ${v1_test_sources}
-    ${v3_test_sources}
 )
 set(app_sources
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-version.cpp"

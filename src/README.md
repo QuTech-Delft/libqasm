@@ -12,7 +12,7 @@ future.
 There are no Python bindings for the new API *yet*. These are however planned.
 There is also no proper (generated) documentation yet, but I tried to do a
 decent job providing a walkthrough for the API in tests/tutorial.cpp.
-
+[README.md](..%2FREADME.md)
 For now, especially since there are no Python bindings yet, the old API is
 still available through a compatibility layer on top of the new one. The files
 in there and the build system should be 100% binary and build-system compatible
