@@ -61,6 +61,9 @@ TEST(parse_file, no_version_and_instruction) {
 TEST(parse_file, version_1_0_and_instruction) {
     EXPECT_EQ(parse_file("res/cqasm_version/version_1_0_and_instruction.cq"), Version{ "1.0" });
 }
+TEST(parse_file, instruction_and_version_1_0) {
+    EXPECT_THROW(parse_file("res/cqasm_version/instruction_and_version_1_0.cq"), AnalysisError);
+}
 
 
 TEST(parse_file, fp_does_not_exist) {
@@ -148,6 +151,11 @@ TEST(parse_file, fp_version_1_0_and_instruction) {
     FILE *fp{ fopen(filename, "r") };
     EXPECT_EQ(parse_file(fp, filename), Version{ "1.0" });
 }
+TEST(parse_file, fp_instruction_and_version_1_0) {
+    const char *filename{ "res/cqasm_version/fp_instruction_and_version_1_0.cq" };
+    FILE *fp{ fopen(filename, "r") };
+    EXPECT_THROW(parse_file(fp, filename), AnalysisError);
+}
 
 
 TEST(parse_string, string_empty) {
@@ -213,6 +221,10 @@ TEST(parse_string, string_no_version_and_instruction) {
 TEST(parse_string, string_version_1_0_and_instruction) {
     const char *filename{ "res/cqasm_version/version_1_0_and_instruction.cq" };
     EXPECT_EQ(parse_string("version 1.0\n\nqubits 3\n\nx q[0]", filename), Version{ "1.0" });
+}
+TEST(parse_string, string_instruction_and_version_1_0) {
+    const char *filename{ "res/cqasm_version/instruction_and_version_1_0.cq" };
+    EXPECT_THROW(parse_string("qubits 3\n\nx q[0]\n\nversion 1.0", filename), AnalysisError);
 }
 
 
