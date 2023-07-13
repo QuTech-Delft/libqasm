@@ -39,6 +39,8 @@ class LibqasmConan(ConanFile):
         "tree_gen_build_tests": False
     }
 
+    exports_sources = "CMakeLists.txt", "cmake/*", "include/*", "src/*"
+
     def build_requirements(self):
         self.tool_requires("m4/1.4.19")
         if self.settings.os == "Windows":
@@ -66,9 +68,6 @@ class LibqasmConan(ConanFile):
 
         self.cpp.source.includedirs = ["include"]
         self.cpp.build.libdirs = ["."]
-
-    def source(self):
-        get(self, **self.conan_data["sources"][self.version], strip_root=True)
 
     def generate(self):
         deps = CMakeDeps(self)
