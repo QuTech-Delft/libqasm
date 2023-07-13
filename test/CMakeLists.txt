@@ -7,25 +7,22 @@ FetchContent_Declare(googletest
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+# Test executable
+add_executable(${PROJECT_NAME}_test)
+
 # Subdirectories
 if(LIBQASM_COMPAT)
     add_subdirectory(v1.0)
 endif()
 add_subdirectory(v1)
 
-# Test sources
-set(test_sources
-    ${v1_0_test_sources}
-    ${v1_test_sources}
-)
-set(app_sources
+# Sources
+target_sources(${PROJECT_NAME}_test PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-version.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
 )
-list(APPEND app_sources ${test_sources})
 
-# Test executable
-add_executable(${PROJECT_NAME}_test ${app_sources})
+# Compile and linkage options
 target_compile_features(${PROJECT_NAME}_test PRIVATE cxx_std_20)
 target_link_libraries(${PROJECT_NAME}_test PRIVATE
     cqasm
