@@ -70,7 +70,6 @@ set(CQASM_COMMON_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-string-builder.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-utils.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-version.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/test_libqasm_conan_package.cpp"
 )
 
 # Generate the version lexer.
