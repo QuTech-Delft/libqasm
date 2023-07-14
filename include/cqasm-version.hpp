@@ -121,20 +121,20 @@ Version parse_string(const std::string &data, const std::string &filename = "<un
  */
 class ParseHelper {
     /**
-     * Name of the file being parsed.
-     */
-    std::string filename;
-
-    /**
      * Scanner doing the actual parsing.
      */
     std::unique_ptr<ScannerAdaptor> scanner_up_;
+
+    /**
+     * Name of the file being parsed.
+     */
+    std::string filename;
 
 public:
     /**
      * Parse a file with flex/bison.
      */
-    ParseHelper(std::string filename, std::unique_ptr<ScannerAdaptor> scanner_up);
+    explicit ParseHelper(std::unique_ptr<ScannerAdaptor> scanner_up, std::string filename = "<unknown>");
 
     /**
      * Does the actual parsing.

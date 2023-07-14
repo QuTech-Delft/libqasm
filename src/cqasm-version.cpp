@@ -149,7 +149,7 @@ Version parse_file(const std::string &filename) {
             std::string("parse_file failed to open input file '") + filename + "': " + strerror(errno) + ".");
     }
     auto scanner_up = std::make_unique<ScannerFlexBisonFile>(fp);
-    auto version = ParseHelper(filename, std::move(scanner_up)).parse();
+    auto version = ParseHelper(std::move(scanner_up), filename).parse();
     fclose(fp);
     return version;
 }
@@ -161,7 +161,7 @@ Version parse_file(const std::string &filename) {
  */
 Version parse_file(FILE *fp, const std::string &filename) {
     auto scanner_up = std::make_unique<ScannerFlexBisonFile>(fp);
-    auto version = ParseHelper(filename, std::move(scanner_up)).parse();
+    auto version = ParseHelper(std::move(scanner_up), filename).parse();
     rewind(fp);
     return version;
 }
@@ -171,12 +171,12 @@ Version parse_file(FILE *fp, const std::string &filename) {
  */
 Version parse_string(const std::string &data, const std::string &filename) {
     auto scanner_up = std::make_unique<ScannerFlexBisonString>(data.c_str());
-    return ParseHelper(filename, std::move(scanner_up)).parse();
+    return ParseHelper(std::move(scanner_up), filename).parse();
 }
 
 
-ParseHelper::ParseHelper(std::string filename, std::unique_ptr<ScannerAdaptor> scanner_up
-) : filename(std::move(filename)), scanner_up_(std::move(scanner_up)) {}
+ParseHelper::ParseHelper(std::unique_ptr<ScannerAdaptor> scanner_up, std::string filename)
+: scanner_up_(std::move(scanner_up)), filename(std::move(filename)) {}
 
 /**
  * Does the actual parsing.
