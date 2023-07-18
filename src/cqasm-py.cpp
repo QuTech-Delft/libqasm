@@ -3,7 +3,7 @@
  */
 
 #include "cqasm-py.hpp"
-#include "v1.x/cqasm.hpp"
+#include "v1x/cqasm.hpp"
 
 namespace v1x = cqasm::v1x;
 
@@ -65,7 +65,7 @@ void V1xAnalyzer::register_error_model(
 /**
  * Only parses the given file. The file must be in 1.x syntax; no version
  * check or conversion is performed. Returns a vector of strings, of which the
- * first is always present and is the CBOR serialization of the v1.x AST. Any
+ * first is always present and is the CBOR serialization of the v1x AST. Any
  * additional strings represent error messages.
  */
 std::vector<std::string> V1xAnalyzer::parse_file(
@@ -102,7 +102,7 @@ std::vector<std::string> V1xAnalyzer::parse_string(
  * file version, this function may try to reduce it to the maximum 1.x API
  * version support advertised using this object's constructor. Returns a
  * vector of strings, of which the first is always present and is the CBOR
- * serialization of the v1.x semantic tree. Any additional strings represent
+ * serialization of the v1x semantic tree. Any additional strings represent
  * error messages.
  */
 std::vector<std::string> V1xAnalyzer::analyze_file(

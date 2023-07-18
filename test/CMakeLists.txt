@@ -12,9 +12,9 @@ add_executable(${PROJECT_NAME}_test)
 
 # Subdirectories
 if(LIBQASM_COMPAT)
-    add_subdirectory(v1.0)
+    add_subdirectory(v10)
 endif()
-add_subdirectory(v1.x)
+add_subdirectory(v1x)
 
 # Sources
 target_sources(${PROJECT_NAME}_test PRIVATE

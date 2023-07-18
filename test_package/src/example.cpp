@@ -99,10 +99,10 @@ void say_hello() {
 #endif
 }
 
-// The code in this file is taken directly from test/v1.x/tutorial.cpp
+// The code in this file is taken directly from test/v1x/tutorial.cpp
 // Comments have been removed
 // googletest EXPECTs have been substituted with asserts
-// And references to 'res/v1.x/grover.cq' to '../../res/grover.cq'
+// And references to 'res/v1x/grover.cq' to '../../res/grover.cq'
 int main() {
     auto result = cq1x::analyze("../../res/grover.cq");
 

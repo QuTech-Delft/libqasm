@@ -77,19 +77,19 @@ Invoke-BatchFile "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\
 ```
 
 ## Organization
-The original paper and BNF specification for the cQASM v1.0 are located in the **./doc/v1.0** directory.
+The original paper and BNF specification for the cQASM v1.0 are located in the **./doc/v10** directory.
 Please note however that the language has changed to some degree since then,
 and the qasm.bnf has never fully corresponded with the flex/bison grammar.
 
 There are currently two C++ API versions contained in this repository,
 a new API (v1.2) and the original API (v1.0) maintained for backward compatibility purposes.
-The new API is lives in **v1.x** directories, and the older API in **v1.0** directories.
+The new API is lives in **v1x** directories, and the older API in **v10** directories.
 
-- `src/v1.x`: sources of the new API, and the grammar files for flex/bison.
-- `include/v1.x`: headers of the new API.
-- `include/v1.0`: compatibility layer for the original API, now built on top of the new API instead of the original flex/bison parser.
-- `test/v1.x`: tests for the new API.
-- `test/v1.0`: tests for the original API, as well as its Python bindings.
+- `src/v1x`: sources of the new API, and the grammar files for flex/bison.
+- `include/v1x`: headers of the new API.
+- `include/v10`: compatibility layer for the original API, now built on top of the new API instead of the original flex/bison parser.
+- `test/v1x`: tests for the new API.
+- `test/v10`: tests for the original API, as well as its Python bindings.
 
 The following folders may be generated:
 

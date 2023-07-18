@@ -12,7 +12,7 @@ target_include_directories(
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}"
 )
 
-function(generate_funcs HDR SRC FOLDER_VER NAMESPACE_VER)
+function(generate_funcs HDR SRC VER)
 
     # Get the directory for the header file and make sure it exists.
     get_filename_component(HDR_DIR "${HDR}" PATH)
@@ -26,7 +26,7 @@ function(generate_funcs HDR SRC FOLDER_VER NAMESPACE_VER)
     # dependency; this makes cmake correctly recompile the generator and
     # regenerate the files with it if its source files change.
     add_custom_command(
-        COMMAND func-gen "${HDR}" "${SRC}" "${FOLDER_VER}" "${NAMESPACE_VER}"
+        COMMAND func-gen "${HDR}" "${SRC}" "${VER}"
         OUTPUT "${HDR}" "${SRC}"
         DEPENDS func-gen
     )
