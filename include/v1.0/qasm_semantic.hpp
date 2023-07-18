@@ -1,25 +1,26 @@
 #pragma once
 #ifndef AST_SEMANTIC_HPP
 
-#include <stdio.h>
-#include <string.h>
-#include <vector>
-#include <exception>
 #include "qasm_ast.hpp"
 #include "qasm_data.hpp"
 #ifndef SWIG
 #include "qasm_new_to_old.hpp"
 #endif
 
+#include <exception>
+#include <stdio.h>
+#include <string.h>
+#include <vector>
+
 namespace compiler {
 
-namespace cq1 = cqasm::v1;
+namespace cq1x = cqasm::v1x;
 
 class QasmSemanticChecker {
 public:
     QasmSemanticChecker(const std::string &qasm_str_input) {
         new_to_old::handle_parse_result(
-            qasm_, cq1::parser::parse_string(qasm_str_input));
+            qasm_, cq1x::parser::parse_string(qasm_str_input));
         maxNumQubit_ = qasm_.numQubits();
         parse_result_ = doChecks();
     }
@@ -29,7 +30,7 @@ public:
             throw std::invalid_argument("received null file pointer");
         }
         new_to_old::handle_parse_result(
-            qasm_, cq1::parser::parse_file(qasm_file));
+            qasm_, cq1x::parser::parse_file(qasm_file));
         maxNumQubit_ = qasm_.numQubits();
         parse_result_ = doChecks();
     }

@@ -6,32 +6,26 @@
 
 #pragma once
 
-// Don't include any libqasm headers! We don't want SWIG to generate Python
-// wrappers for the entire world. Those headers are only included in the source
-// file that provides the implementations.
-#include <string>
+// Don't include any libqasm headers!
+// We don't want SWIG to generate Python wrappers for the entire world.
+// Those headers are only included in the source file that provides the implementations.
 #include <memory>
+#include <string>
 #include <vector>
 
 // Forward declarations for internal types.
-namespace cqasm {
-namespace v1 {
-namespace analyzer {
-class Analyzer;
-} // namespace analyzer
-} // namespace v1
-} // namespace cqasm
+namespace cqasm::v1x::analyzer { class Analyzer; }
 
 /**
- * Main class for parsing and analyzing cQASM files with the v1 API.
+ * Main class for parsing and analyzing cQASM files with the v1.x API.
  */
-class V1Analyzer {
+class V1xAnalyzer {
 private:
 
     /**
      * Reference to the actual C++ analyzer that this wraps.
      */
-    std::unique_ptr<cqasm::v1::analyzer::Analyzer> a;
+    std::unique_ptr<cqasm::v1x::analyzer::Analyzer> a;
 
 public:
 
@@ -44,7 +38,7 @@ public:
      * version of the analyzer class, the initial mappings and functions are not
      * configurable at all; the defaults for these are always used.
      */
-    V1Analyzer(const std::string &max_version = "1.0", bool without_defaults=false);
+    V1xAnalyzer(const std::string &max_version = "1.0", bool without_defaults=false);
 
     /**
      * Registers an instruction type. The arguments are passed straight to

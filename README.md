@@ -83,12 +83,12 @@ and the qasm.bnf has never fully corresponded with the flex/bison grammar.
 
 There are currently two C++ API versions contained in this repository,
 a new API (v1.2) and the original API (v1.0) maintained for backward compatibility purposes.
-The new API is lives in **v1** directories, and the older API in **v1.0** directories.
+The new API is lives in **v1.x** directories, and the older API in **v1.0** directories.
 
-- `src/v1`: sources of the new API, and the grammar files for flex/bison.
-- `include/v1`: headers of the new API.
+- `src/v1.x`: sources of the new API, and the grammar files for flex/bison.
+- `include/v1.x`: headers of the new API.
 - `include/v1.0`: compatibility layer for the original API, now built on top of the new API instead of the original flex/bison parser.
-- `test/v1`: tests for the new API.
+- `test/v1.x`: tests for the new API.
 - `test/v1.0`: tests for the original API, as well as its Python bindings.
 
 The following folders may be generated:

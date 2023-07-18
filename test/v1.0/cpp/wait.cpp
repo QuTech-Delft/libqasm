@@ -1,7 +1,7 @@
 /** This test is for the wait qasm file.
  *
  * Note that this is not an example from the paper,
- * but one added specifically to check wait are working for cQASM v1. **/
+ * but one added specifically to check wait are working for cQASM v1.0. **/
 
 #include "qasm_semantic.hpp"
 

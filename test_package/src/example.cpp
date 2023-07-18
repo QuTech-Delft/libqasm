@@ -5,7 +5,7 @@
 #include <stdexcept>  // runtime_error
 #include <sstream>  // ostringstream
 
-namespace cq1 = cqasm::v1;
+namespace cq1x = cqasm::v1x;
 
 void say_hello() {
 #ifdef NDEBUG
@@ -99,14 +99,14 @@ void say_hello() {
 #endif
 }
 
-// The code in this file is taken directly from test/v1/tutorial.cpp
+// The code in this file is taken directly from test/v1.x/tutorial.cpp
 // Comments have been removed
 // googletest EXPECTs have been substituted with asserts
-// And references to 'res/v1/grover.cq' to '../../res/grover.cq'
+// And references to 'res/v1.x/grover.cq' to '../../res/grover.cq'
 int main() {
-    auto result = cq1::analyze("../../res/grover.cq");
+    auto result = cq1x::analyze("../../res/grover.cq");
 
-    cq1::analyze_string("version 1.0; qubits 1; h q[0]; measure q[0]; display");
+    cq1x::analyze_string("version 1.0; qubits 1; h q[0]; measure q[0]; display");
 
     assert(result->num_qubits == 9);
 
@@ -131,10 +131,10 @@ int main() {
     assert(qubit_refs->index.size() == 4);
     assert(qubit_refs->index[0]->value == 0);
     assert(hadamard_instruction->operands[0]->as_qubit_refs()->index.size() == 4);
-    qubit_refs->index.add(cqasm::tree::make<cq1::values::ConstInt>(6));
+    qubit_refs->index.add(cqasm::tree::make<cq1x::values::ConstInt>(6));
     assert(hadamard_instruction->operands[0]->as_qubit_refs()->index.size() == 5);
     auto clone = hadamard_instruction->operands[0]->clone();
-    qubit_refs->index.add(cqasm::tree::make<cq1::values::ConstInt>(7));
+    qubit_refs->index.add(cqasm::tree::make<cq1x::values::ConstInt>(7));
     assert(hadamard_instruction->operands[0]->as_qubit_refs()->index.size() == 6);
     assert(clone->as_qubit_refs()->index.size() == 5);
     auto clone2 = clone->clone();
@@ -142,7 +142,7 @@ int main() {
     assert(*clone2 != *clone);
     assert(clone2 != clone);
     assert(clone2.get_ptr() != clone.get_ptr());
-    clone2->as_qubit_refs()->index.add(cqasm::tree::make<cq1::values::ConstInt>(7));
+    clone2->as_qubit_refs()->index.add(cqasm::tree::make<cq1x::values::ConstInt>(7));
     assert(clone2 != clone);
     std::ostringstream ss;
     ss << clone;
@@ -166,7 +166,7 @@ int main() {
   ]
 )
 )");
-    assert(clone->get_annotation<cq1::parser::SourceLocation>().filename == "../../res/grover.cq");
+    assert(clone->get_annotation<cq1x::parser::SourceLocation>().filename == "../../res/grover.cq");
     struct MyAnnotationType {
         int number;
     };
@@ -181,7 +181,7 @@ int main() {
     assert(clone->has_annotation<MyAnnotationType>());
     assert(clone->get_annotation_ptr<MyAnnotationType>()->number == 42);
     assert(clone->get_annotation<MyAnnotationType>().number == 42);
-    assert(clone->get_annotation<cq1::parser::SourceLocation>().filename == "../../res/grover.cq");
+    assert(clone->get_annotation<cq1x::parser::SourceLocation>().filename == "../../res/grover.cq");
 
     say_hello();
 }

@@ -141,49 +141,49 @@ private:
     /**
      * Vector of all functions generated so far.
      */
-    std::vector<Function> funcs;
+    std::vector<Function> funcs_;
 
     /**
      * Output stream for the header file.
      */
-    std::ofstream header;
+    std::ofstream header_ofs_;
 
     /**
      * Output stream for the source file.
      */
-    std::ofstream source;
+    std::ofstream source_ofs_;
 
     /**
      * Version namespace name.
      */
-    std::string version;
+    std::string version_namespace_;
 
     /**
      * Generates the function that registers the functions in a FunctionTable.
      */
     void generate_register_function() {
-        header << R"(
+        header_ofs_ << R"(
 /**
  * Registers a bunch of functions usable during constant propagation into the
  * given function table.
  */
 void register_into(resolver::FunctionTable &table);
 )";
-        source << R"(
+        source_ofs_ << R"(
 /**
  * Registers a bunch of functions usable during constant propagation into the
  * given function table.
  */
 void register_into(resolver::FunctionTable &table) {
 )";
-        for (const auto &func : funcs) {
-            source << "    table.add(";
-            source << "\"" << func.cqasm_name << "\", ";
-            source << "types::from_spec(\"" << func.cqasm_args << "\"), ";
-            source << func.cpp_name;
-            source << ");" << std::endl;
+        for (const auto &func : funcs_) {
+            source_ofs_ << "    table.add(";
+            source_ofs_ << "\"" << func.cqasm_name << "\", ";
+            source_ofs_ << "types::from_spec(\"" << func.cqasm_args << "\"), ";
+            source_ofs_ << func.cpp_name;
+            source_ofs_ << ");" << std::endl;
         }
-        source << std::endl << "}" << std::endl;
+        source_ofs_ << std::endl << "}" << std::endl;
     }
 
     /**
@@ -193,9 +193,9 @@ void register_into(resolver::FunctionTable &table) {
      */
     void generate_impl_header(const Function &func) {
         auto proto = "values::Value " + func.cpp_name + "(const values::Values &v)";
-        header << proto << ";" << std::endl;
-        source << std::endl << proto << " {" << std::endl;
-        funcs.push_back(func);
+        header_ofs_ << proto << ";" << std::endl;
+        source_ofs_ << std::endl << proto << " {" << std::endl;
+        funcs_.push_back(func);
     }
 
     /**
@@ -207,23 +207,24 @@ void register_into(resolver::FunctionTable &table) {
      */
     void generate_const_impl_header(const Function &func) {
         generate_impl_header(func);
-        source << "    values::check_const(v);" << std::endl;
+        source_ofs_ << "    values::check_const(v);" << std::endl;
         size_t index = 0;
         for (auto arg_typ : func.cqasm_args) {
-            source << "    auto " << (char)('a' + index) << " = v[" << index << "]";
+            source_ofs_ << "    auto " << (char)('a' + index) << " = v[" << index << "]";
             switch (arg_typ) {
-                case 'b': source << "->as_const_bool()->value"; break;
-                case 'a': source << "->as_const_axis()->value"; break;
-                case 'i': source << "->as_const_int()->value"; break;
-                case 'r': source << "->as_const_real()->value"; break;
-                case 'c': source << "->as_const_complex()->value"; break;
-                case 'm': source << "->as_const_real_matrix()->value"; break;
+                case 'b': source_ofs_ << "->as_const_bool()->value"; break;
+                case 'a': source_ofs_ << "->as_const_axis()->value"; break;
+                case 'i': source_ofs_ << "->as_const_int()->value"; break;
+                case 'r': source_ofs_ << "->as_const_real()->value"; break;
+                case 'c': source_ofs_ << "->as_const_complex()->value"; break;
+                case 'm': source_ofs_ << "->as_const_real_matrix()->value"; break;
                 case 'u':
-                case 'n': source << "->as_const_complex_matrix()->value"; break;
-                case 's': source << "->as_const_string()->value"; break;
-                case 'j': source << "->as_const_json()->value"; break;
+                case 'n': source_ofs_ << "->as_const_complex_matrix()->value"; break;
+                case 's': source_ofs_ << "->as_const_string()->value"; break;
+                case 'j': source_ofs_ << "->as_const_json()->value"; break;
+                default: throw std::invalid_argument("unknown arg type");
             }
-            source << ";" << std::endl;
+            source_ofs_ << ";" << std::endl;
             index++;
         }
     }
@@ -245,23 +246,23 @@ void register_into(resolver::FunctionTable &table) {
      *  - 'B': returns a BitRefs, return_expr must be a Many<ConstInt>.
      */
     void generate_impl_footer(const std::string &return_expr, char return_type) {
-        source << "    return tree::make<values::";
+        source_ofs_ << "    return tree::make<values::";
         switch (return_type) {
-            case 'b': source << "ConstBool"; break;
-            case 'a': source << "ConstAxis"; break;
-            case 'i': source << "ConstInt"; break;
-            case 'r': source << "ConstReal"; break;
-            case 'c': source << "ConstComplex"; break;
-            case 'm': source << "ConstRealMatrix"; break;
-            case 'n': source << "ConstComplexMatrix"; break;
-            case 's': source << "ConstString"; break;
-            case 'j': source << "ConstJson"; break;
-            case 'Q': source << "QubitRefs"; break;
-            case 'B': source << "BitRefs"; break;
+            case 'b': source_ofs_ << "ConstBool"; break;
+            case 'a': source_ofs_ << "ConstAxis"; break;
+            case 'i': source_ofs_ << "ConstInt"; break;
+            case 'r': source_ofs_ << "ConstReal"; break;
+            case 'c': source_ofs_ << "ConstComplex"; break;
+            case 'm': source_ofs_ << "ConstRealMatrix"; break;
+            case 'n': source_ofs_ << "ConstComplexMatrix"; break;
+            case 's': source_ofs_ << "ConstString"; break;
+            case 'j': source_ofs_ << "ConstJson"; break;
+            case 'Q': source_ofs_ << "QubitRefs"; break;
+            case 'B': source_ofs_ << "BitRefs"; break;
             default: throw std::invalid_argument("unknown type code");
         }
-        source << ">(" << return_expr << ");" << std::endl;
-        source << "}" << std::endl;
+        source_ofs_ << ">(" << return_expr << ");" << std::endl;
+        source_ofs_ << "}" << std::endl;
     }
 
 public:
@@ -291,48 +292,48 @@ public:
     Generator(
         const std::string &header_filename,
         const std::string &source_filename,
-        const std::string version_namespace
+        const std::string &version_folder,
+        const std::string &version_namespace
     ) :
-        funcs(),
-        header(header_filename),
-        source(source_filename),
-        version(version_namespace)
+        funcs_(),
+        header_ofs_(header_filename),
+        source_ofs_(source_filename)
     {
         // Check that the files were opened properly.
-        if (!header.is_open()) {
+        if (!header_ofs_.is_open()) {
             throw std::runtime_error("failed to open header file");
         }
-        if (!source.is_open()) {
+        if (!source_ofs_.is_open()) {
             throw std::runtime_error("failed to open source file");
         }
 
         // Print the headers for the header and source files.
         auto pos = header_filename.rfind('/');
         auto header_name = (pos == header_filename.npos) ? header_filename : header_filename.substr(pos + 1);
-        header << R"(
+        header_ofs_ << R"(
 /** \file
  * Header file generated by \ref func-gen.
  */
 
 #pragma once
 
-#include ")" << version << R"(/cqasm-resolver.hpp"
+#include ")" << version_folder << R"(/cqasm-resolver.hpp"
 
 namespace cqasm {
-namespace )" << version << R"( {
+namespace )" << version_namespace << R"( {
 namespace functions {
 )";
-        source << R"(
+        source_ofs_ << R"(
 /** \file
  * Source file generated by \ref func-gen.
  */
 
 #include <cmath>
 #include <complex>
-#include ")" << version << R"(/)" << header_name << R"("
+#include ")" << version_folder << R"(/)" << header_name << R"("
 
 namespace cqasm {
-namespace )" << version << R"( {
+namespace )" << version_namespace << R"( {
 
 /**
  * Namespace for the functions generated by \ref func-gen.
@@ -373,11 +374,11 @@ static int64_t mod_floor(int64_t a, int64_t b) {
         generate_register_function();
         auto footer = R"(
 } // namespace functions
-} // namespace )" + version + R"(
+} // namespace )" + version_namespace_ + R"(
 } // namespace cqasm
 )";
-        source << footer;
-        header << footer;
+        source_ofs_ << footer;
+        header_ofs_ << footer;
     }
 
 };
@@ -390,13 +391,13 @@ static int64_t mod_floor(int64_t a, int64_t b) {
 int main(int argc, char *argv[]) {
 
     // Check command line.
-    if (argc != 4) {
-        std::cerr << "Usage: func-gen <header.hpp> <source.cpp> <version namespace>" << std::endl;
+    if (argc != 5) {
+        std::cerr << "Usage: func-gen <header.hpp> <source.cpp> <version folder> <version namespace>" << std::endl;
         return 1;
     }
 
     // Construct the generator.
-    func_gen::Generator generator{argv[1], argv[2], argv[3]};
+    func_gen::Generator generator{argv[1], argv[2], argv[3], argv[4]};
 
     // Basic scalar arithmetic operators.
     generator.generate_const_scalar_op("operator+", 'c', "cc", "a + b");

@@ -3,9 +3,9 @@
  */
 
 #include "cqasm-py.hpp"
-#include "v1/cqasm.hpp"
+#include "v1.x/cqasm.hpp"
 
-namespace v1 = cqasm::v1;
+namespace v1x = cqasm::v1x;
 
 /**
  * Creates a new 1.x semantic analyzer. When without_defaults is specified,
@@ -16,15 +16,15 @@ namespace v1 = cqasm::v1;
  * version of the analyzer class, the initial mappings and functions are not
  * configurable at all; the defaults for these are always used.
  */
-V1Analyzer::V1Analyzer(const std::string &max_version, bool without_defaults) {
+V1xAnalyzer::V1xAnalyzer(const std::string &max_version, bool without_defaults) {
     if (without_defaults) {
-        a = std::unique_ptr<v1::analyzer::Analyzer>(
-            new v1::analyzer::Analyzer(max_version)
+        a = std::unique_ptr<v1x::analyzer::Analyzer>(
+            new v1x::analyzer::Analyzer(max_version)
         );
         a->register_default_functions_and_mappings();
     } else {
-        a = std::unique_ptr<v1::analyzer::Analyzer>(
-            new v1::analyzer::Analyzer(v1::default_analyzer(max_version))
+        a = std::unique_ptr<v1x::analyzer::Analyzer>(
+            new v1x::analyzer::Analyzer(v1x::default_analyzer(max_version))
         );
     }
 }
@@ -33,7 +33,7 @@ V1Analyzer::V1Analyzer(const std::string &max_version, bool without_defaults) {
  * Registers an instruction type. The arguments are passed straight to
  * instruction::Instruction's constructor.
  */
-void V1Analyzer::register_instruction(
+void V1xAnalyzer::register_instruction(
     const std::string &name,
     const std::string &param_types,
     bool allow_conditional,
@@ -55,7 +55,7 @@ void V1Analyzer::register_instruction(
  * Registers an error model. The arguments are passed straight to
  * error_model::ErrorModel's constructor.
  */
-void V1Analyzer::register_error_model(
+void V1xAnalyzer::register_error_model(
     const std::string &name,
     const std::string &param_types
 ) {
@@ -68,10 +68,10 @@ void V1Analyzer::register_error_model(
  * first is always present and is the CBOR serialization of the v1.x AST. Any
  * additional strings represent error messages.
  */
-std::vector<std::string> V1Analyzer::parse_file(
+std::vector<std::string> V1xAnalyzer::parse_file(
     const std::string &filename
 ) {
-    auto result = v1::parser::parse_file(filename);
+    auto result = v1x::parser::parse_file(filename);
     std::vector<std::string> retval{""};
     if (result.errors.empty()) {
         retval[0] = ::tree::base::serialize(result.root);
@@ -84,11 +84,11 @@ std::vector<std::string> V1Analyzer::parse_file(
  * Same as parse_file(), but instead receives the file contents directly.
  * The filename, if specified, is only used when reporting errors.
  */
-std::vector<std::string> V1Analyzer::parse_string(
+std::vector<std::string> V1xAnalyzer::parse_string(
     const std::string &data,
     const std::string &filename
 ) {
-    auto result = v1::parser::parse_string(data, filename);
+    auto result = v1x::parser::parse_string(data, filename);
     std::vector<std::string> retval{""};
     if (result.errors.empty()) {
         retval[0] = ::tree::base::serialize(result.root);
@@ -105,7 +105,7 @@ std::vector<std::string> V1Analyzer::parse_string(
  * serialization of the v1.x semantic tree. Any additional strings represent
  * error messages.
  */
-std::vector<std::string> V1Analyzer::analyze_file(
+std::vector<std::string> V1xAnalyzer::analyze_file(
     const std::string &filename
 ) const {
     auto result = a->analyze(filename);
@@ -121,7 +121,7 @@ std::vector<std::string> V1Analyzer::analyze_file(
  * Same as analyze_file(), but instead receives the file contents directly.
  * The filename, if specified, is only used when reporting errors.
  */
-std::vector<std::string> V1Analyzer::analyze_string(
+std::vector<std::string> V1xAnalyzer::analyze_string(
     const std::string &data,
     const std::string &filename
 ) const {

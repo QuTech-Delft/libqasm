@@ -1,7 +1,7 @@
 /** This test is for the barriers qasm file.
  *
  * Note that this is not an example from the paper,
- * but one added specifically to check barriers are working for cQASM v1. **/
+ * but one added specifically to check barriers are working for cQASM v1.0. **/
 
 #include "qasm_semantic.hpp"
 

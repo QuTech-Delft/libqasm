@@ -14,7 +14,7 @@ add_executable(${PROJECT_NAME}_test)
 if(LIBQASM_COMPAT)
     add_subdirectory(v1.0)
 endif()
-add_subdirectory(v1)
+add_subdirectory(v1.x)
 
 # Sources
 target_sources(${PROJECT_NAME}_test PRIVATE
