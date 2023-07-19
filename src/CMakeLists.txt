@@ -58,6 +58,8 @@ FetchContent_MakeAvailable(tree-gen)
 # header and source file paths.
 add_subdirectory(func-gen)
 
+find_package(antlr4-runtime REQUIRED)
+
 #-------------------------------------------------------------------------------
 # cQASM common code generation and inclusion
 #-------------------------------------------------------------------------------
@@ -172,6 +174,25 @@ generate_funcs(
 list(APPEND CQASM_V1_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v1/cqasm-functions-gen.cpp")
 
 #-------------------------------------------------------------------------------
+# cQASM v3 parser generation and inclusion
+#-------------------------------------------------------------------------------
+add_subdirectory(v3)
+
+# Add generated source files.
+list(APPEND CQASM_V3_SOURCES
+    "${CMAKE_CURRENT_BINARY_DIR}/v3/cqasm_lexer.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3/cqasm_parser.cpp"
+)
+
+#[[
+AST classes
+Tree type classes
+Semantic values classes
+Semantic tree classes
+Default function set
+#]]
+
+#-------------------------------------------------------------------------------
 # Compilation instructions
 #-------------------------------------------------------------------------------
 
@@ -200,6 +221,7 @@ target_include_directories(
     # Instead, just its contents are copied.
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include/"
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include/"
+    PUBLIC ${antlr4-runtime_INCLUDE_DIR}
 )
 
 target_compile_features(cqasm-lib-obj PUBLIC cxx_std_20)
