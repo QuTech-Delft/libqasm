@@ -3,8 +3,7 @@ name: Test
 on:
   push:
     branches:
-    - develop
-  pull_request:
+    - v3_rename_v1_to_v1x
 
 jobs:
   cpp_cmake:
@@ -39,7 +38,23 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: choco install winflexbison3 --version 2.5.18.20190508
       - name: Configure
-        run: cmake . -DCMAKE_BUILD_TYPE=Debug -DLIBQASM_BUILD_TESTS=ON -DLIBQASM_COMPAT=ON  -DASAN_ENABLED=ON
+        run: cmake . -DCMAKE_BUILD_TYPE=Debug -DLIBQASM_BUILD_TESTS=ON -DLIBQASM_COMPAT=ON -DASAN_ENABLED=ON
+      - name: Build
+        run: cmake --build . --parallel
+      - name: Test
+        run: ctest -C Debug --output-on-failure
+
+  cpp_cmake_linux_clang:
+    name: 'C++ tests (CMake Linux Clang builds)'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Set Clang compiler
+        run: echo "CXX_COMPILER=clang++" >> $GITHUB_ENV
+      - name: Configure
+        run: cmake . -DCMAKE_BUILD_TYPE=Debug -DLIBQASM_BUILD_TESTS=ON -DLIBQASM_COMPAT=ON -DASAN_ENABLED=ON
       - name: Build
         run: cmake --build . --parallel
       - name: Test
