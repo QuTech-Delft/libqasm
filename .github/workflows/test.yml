@@ -3,7 +3,7 @@ name: Test
 on:
   push:
     branches:
-    - v3_rename_v1_to_v1x
+    - v3
 
 jobs:
   cpp_cmake:
