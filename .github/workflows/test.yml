@@ -25,6 +25,8 @@ jobs:
       - name: Create build directory
         run: mkdir -p build-${{ matrix.compiler }}-${{ matrix.build_type }}
       - name: Configure
+        env:
+          CXX: ${{ matrix.compiler }}
         working-directory: build-${{ matrix.compiler }}-${{ matrix.build_type }}
         run: cmake -S .. -B . -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DLIBQASM_BUILD_TESTS=ON -DLIBQASM_COMPAT=ON -DASAN_ENABLED=ON
       - name: Build

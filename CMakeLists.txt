@@ -73,7 +73,7 @@ file(MAKE_DIRECTORY ${LIBQASM_GENERATED_PYTHON_FILES})
 
 # Address sanitizer
 if(ASAN_ENABLED)
-    if(MSVC)
+    if(MSVC AND CMAKE_BUILD_TYPE STREQUAL "Debug")
         string(REGEX REPLACE "/RTC(su|[1su])" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
         message(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}\n")
 
