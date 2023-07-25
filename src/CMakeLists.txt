@@ -219,6 +219,7 @@ elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" OR ${CMAKE_CXX_COMPILER_ID} STR
         -Wall -Wextra -Werror
         -fPIC
         -Wno-error=sign-compare
+        -Wno-error=unused-but-set-variable
     )
 endif()
 

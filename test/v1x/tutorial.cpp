@@ -255,7 +255,7 @@ R"(QubitRefs( # res/v1x/grover.cq:10:9..15
     // ... and add it to the QubitRefs node.
     EXPECT_EQ(clone->has_annotation<MyAnnotationType>(), false);
     EXPECT_EQ(clone->get_annotation_ptr<MyAnnotationType>(), nullptr);
-    EXPECT_THROW(clone->get_annotation<MyAnnotationType>().number, std::runtime_error);
+    EXPECT_THROW(clone->get_annotation<MyAnnotationType>(), std::runtime_error);
     clone->set_annotation(MyAnnotationType {42});
     EXPECT_EQ(clone->has_annotation<MyAnnotationType>(), true);
     EXPECT_EQ(clone->get_annotation_ptr<MyAnnotationType>()->number, 42);

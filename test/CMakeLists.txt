@@ -41,7 +41,6 @@ if(MSVC)
 elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     target_compile_options(${PROJECT_NAME}_test PRIVATE
         -pedantic-errors -Werror -Wall -Wextra
-        -Wl,-z,defs
         -Wno-deprecated
         -Wconversion -Wsign-conversion -Wno-sign-conversion  # do not sort flags; order matters
     )
