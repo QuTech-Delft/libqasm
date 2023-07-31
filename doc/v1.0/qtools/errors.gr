@@ -1,0 +1,30 @@
+# errors.gr
+# grammar full of errors, trying to evoke as many error
+# messages as possible from one source file.
+
+# The first batch relates to to readg.c
+/ <reempty>
+/ <empty>
+/
+<reempty> ::= <anything
+>
+> <rehead>
+> <head>
+<head>
+<head> <tail>
+<head> ::=
+<head> ::= something else
+ 	|
+# the following errors relate to deebnf.c
+) ::= 'something'
+<tail> ::= [ ]
+<tail> ::= [ | <head> ]
+<tail> ::= <extra a> )
+	|  <extra b> ]
+	|  <extra c> }
+	|  ( <miss a>
+	|  { <miss c>
+	|  ( | <anything> )
+	|  [ <miss b>
+'something' ::= (
+

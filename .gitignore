@@ -44,15 +44,18 @@ doc/qtools/gstartfollow
 doc/qtools/gstats
 *.bak
 
-# Add bin directories
+# Bin
 bin
 */bin
 */bin/*
 
-# Add build directories
+# Build
 pybuild/
 build/
 cbuild/
+
+# Testing
+Testing
 
 # Distribution / packaging
 .Python
@@ -73,7 +76,7 @@ wheels/
 .installed.cfg
 *.egg
 
-# Add Flex and Bison generated sources
+# Flex and Bison generated sources
 *.tab.*
 *.yy.*
 log
@@ -81,7 +84,7 @@ log
 *.output
 *.png
 
-# Add swig generated sources
+# SWIG generated sources
 library/**/*_swig*
 
 .idea/
@@ -92,3 +95,12 @@ tags
 # IDE's
 .project
 .cproject
+
+# conan
+/test_package/build/
+/test_package/CMakeUserPresets.json
+CMakeUserPresets.json
+conan.lock
+conanbuildinfo.txt
+conaninfo.txt
+graph_info.json

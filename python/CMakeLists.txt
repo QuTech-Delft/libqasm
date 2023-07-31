@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
+
 if(POLICY CMP0078)
     cmake_policy(SET CMP0078 OLD)
 endif()
+
 if(POLICY CMP0086)
     cmake_policy(SET CMP0086 OLD)
 endif()
@@ -104,13 +106,13 @@ endif()
 # This sort of fixes that (https://stackoverflow.com/questions/1941443)
 SET(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-# Require C++11 compiler support.
+# Require C++23 compiler support
 if(CMAKE_VERSION VERSION_LESS "3.1")
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++23")
     endif()
 else()
-    set(CMAKE_CXX_STANDARD 11)
+    set(CMAKE_CXX_STANDARD 23)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     set(CMAKE_CXX_EXTENSIONS OFF)
 endif()
@@ -125,7 +127,7 @@ set(SWIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/libQasm.i")
 
 set_source_files_properties("${SWIG_FILE}" PROPERTIES
     CPLUSPLUS ON
-    INCLUDE_DIRECTORIES "$<TARGET_PROPERTY:cqasm_objlib,INTERFACE_INCLUDE_DIRECTORIES>;${PYTHON_INCLUDE_DIRS}"
+    INCLUDE_DIRECTORIES "$<TARGET_PROPERTY:cqasm-lib-obj,INTERFACE_INCLUDE_DIRECTORIES>;${PYTHON_INCLUDE_DIRS}"
     SWIG_FLAGS "-castmode"
 )
 
@@ -179,22 +181,22 @@ install(
     DESTINATION "${LIBQASM_PYTHON_DIR}"
 )
 install(
-    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/cqasm-v1-ast-gen.py"
-    DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v1"
+    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/v1x/cqasm-ast-gen.py"
+    DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v1x"
     RENAME "ast.py"
 )
 install(
-    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/cqasm-v1-semantic-gen.py"
-    DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v1"
+    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/v1x/cqasm-semantic-gen.py"
+    DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v1x"
     RENAME "semantic.py"
 )
 install(
-    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/cqasm-v1-types-gen.py"
-    DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v1"
+    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/v1x/cqasm-types-gen.py"
+    DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v1x"
     RENAME "types.py"
 )
 install(
-    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/cqasm-v1-values-gen.py"
-    DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v1"
+    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/v1x/cqasm-values-gen.py"
+    DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v1x"
     RENAME "values.py"
 )
