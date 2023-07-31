@@ -10,6 +10,10 @@ endif()
 
 project(cqasm C CXX)
 
+# If cqasm was already included elsewhere in the project, don't include it again.
+# There should be only one place for it and one version per project.
+if(NOT TARGET cqasm)
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -73,7 +77,7 @@ file(MAKE_DIRECTORY ${LIBQASM_GENERATED_PYTHON_FILES})
 
 # Address sanitizer
 if(ASAN_ENABLED)
-    if(MSVC)
+    if(MSVC AND CMAKE_BUILD_TYPE STREQUAL "Debug")
         string(REGEX REPLACE "/RTC(su|[1su])" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
         message(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}\n")
 
@@ -116,3 +120,5 @@ endif()
 if(LIBQASM_BUILD_PYTHON)
     add_subdirectory(python)
 endif()
+
+endif()  # NOT TARGET cqasm
