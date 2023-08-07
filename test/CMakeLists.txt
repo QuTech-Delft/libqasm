@@ -12,9 +12,9 @@ add_executable(${PROJECT_NAME}_test)
 
 # Subdirectories
 if(LIBQASM_COMPAT)
-    add_subdirectory(v1.0)
+    add_subdirectory(v10)
 endif()
-add_subdirectory(v1)
+add_subdirectory(v1x)
 
 # Sources
 target_sources(${PROJECT_NAME}_test PRIVATE
@@ -41,7 +41,6 @@ if(MSVC)
 elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     target_compile_options(${PROJECT_NAME}_test PRIVATE
         -pedantic-errors -Werror -Wall -Wextra
-        -Wl,-z,defs
         -Wno-deprecated
         -Wconversion -Wsign-conversion -Wno-sign-conversion  # do not sort flags; order matters
     )

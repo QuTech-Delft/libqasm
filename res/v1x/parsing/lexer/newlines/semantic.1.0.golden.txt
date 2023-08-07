@@ -1,0 +1,280 @@
+SUCCESS
+Program( # input.cq:1:1..38:1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: 10
+  error_model: -
+  subcircuits: [
+    Subcircuit( # input.cq:5:1..7
+      name: 
+      iterations: 1
+      bundles: [
+        Bundle( # input.cq:5:1..7
+          items: [
+            Instruction( # input.cq:5:1..7
+              instruction: x(qubit reference)
+              name: x
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:5:3..7
+                  index: [
+                    ConstInt( # input.cq:5:5..6
+                      value: 0
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:8:1..7
+          items: [
+            Instruction( # input.cq:8:1..7
+              instruction: x(qubit reference)
+              name: x
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:8:3..7
+                  index: [
+                    ConstInt( # input.cq:8:5..6
+                      value: 1
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:8:9..15
+          items: [
+            Instruction( # input.cq:8:9..15
+              instruction: x(qubit reference)
+              name: x
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:8:11..15
+                  index: [
+                    ConstInt( # input.cq:8:13..14
+                      value: 2
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:12:1..13:5
+          items: [
+            Instruction( # input.cq:12:1..13:5
+              instruction: x(qubit reference)
+              name: x
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:13:1..5
+                  index: [
+                    ConstInt( # input.cq:13:3..4
+                      value: 3
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:17:1..20:2
+          items: [
+            Instruction( # input.cq:17:1..20:2
+              instruction: u(qubit reference, complex 2-by-2 matrix)
+              name: u
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:17:3..7
+                  index: [
+                    ConstInt( # input.cq:17:5..6
+                      value: 4
+                    )
+                  ]
+                )
+                ConstComplexMatrix( # input.cq:17:5..20:9
+                  value: [(0,0), (1,0); (1,0), (0,0)]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:22:1..23:15
+          items: [
+            Instruction( # input.cq:22:1..23:15
+              instruction: u(qubit reference, complex 2-by-2 matrix)
+              name: u
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:22:3..7
+                  index: [
+                    ConstInt( # input.cq:22:5..6
+                      value: 5
+                    )
+                  ]
+                )
+                ConstComplexMatrix( # input.cq:22:9..23:15
+                  value: [(0,0), (1,0); (1,0), (0,0)]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:25:1..21
+          items: [
+            Instruction( # input.cq:25:1..21
+              instruction: u(qubit reference, complex 2-by-2 matrix)
+              name: u
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:25:3..7
+                  index: [
+                    ConstInt( # input.cq:25:5..6
+                      value: 6
+                    )
+                  ]
+                )
+                ConstComplexMatrix( # input.cq:25:9..21
+                  value: [(0,0), (1,0); (1,0), (0,0)]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:28:1..33
+          items: [
+            Instruction( # input.cq:28:1..33
+              instruction: u(qubit reference, complex 2-by-2 matrix)
+              name: u
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:28:3..7
+                  index: [
+                    ConstInt( # input.cq:28:5..6
+                      value: 7
+                    )
+                  ]
+                )
+                ConstComplexMatrix( # input.cq:28:9..33
+                  value: [(0,0), (1,0); (1,0), (0,0)]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:31:1..32:25
+          items: [
+            Instruction( # input.cq:31:1..32:25
+              instruction: load_state(string)
+              name: load_state
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                ConstString( # input.cq:31:12..32:25
+                  value: cqasm::v1x::primitives::Str<<
+                    Hello,
+                    I'm a multiline string.
+                  >>
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:35:1..37:4
+          items: [
+            Instruction( # input.cq:35:1..37:8
+              instruction: display()
+              name: display
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: []
+              annotations: [
+                AnnotationData( # input.cq:35:10..37:33
+                  interface: an_annotation
+                  operation: with_json
+                  operands: [
+                    ConstJson( # input.cq:35:34..37:3
+                      value: cqasm::v1x::primitives::Str<<
+                        
+                            "json": "object"
+                      >>
+                    )
+                  ]
+                )
+              ]
+            )
+          ]
+          annotations: []
+        )
+      ]
+      annotations: []
+      body: -
+    )
+  ]
+  mappings: []
+  variables: []
+  api_version: 1.0
+)
+

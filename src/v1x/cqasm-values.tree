@@ -1,0 +1,159 @@
+# Implementation for the various classes representing constants, references,
+# and dynamic expressions in cQASM.
+source
+
+# Header file for the various classes representing constants, references,
+# and dynamic expressions in cQASM.
+header "v1x/cqasm-values-gen.hpp"
+
+// Include tree base classes.
+include "cqasm-tree.hpp"
+tree_namespace cqasm::tree
+
+// Include primitive types.
+include "v1x/cqasm-primitives.hpp"
+include "v1x/cqasm-types.hpp"
+src_include "v1x/cqasm-semantic.hpp"
+import cqasm.v1x.primitives
+import cqasm.v1x.types
+import cqasm.v1x.semantic
+
+// Initialization function to use to construct default values for the tree base
+// classes and primitives.
+initialize_function cqasm::v1x::primitives::initialize
+serdes_functions cqasm::v1x::primitives::serialize cqasm::v1x::primitives::deserialize
+
+// Include SourceLocation annotation object for the debug dump generator.
+src_include "cqasm-annotations.hpp"
+location cqasm::annotations::SourceLocation
+
+# Namespace for the various classes representing constants, references,
+# and dynamic expressions in cQASM.
+namespace cqasm
+namespace v1x
+namespace values
+
+# Represents a constant value.
+constant {
+
+    # Represents a value of type bool.
+    const_bool {
+
+        # The contained value.
+        value: cqasm::v1x::primitives::Bool;
+
+    }
+
+    # Represents an axis value (x, y, or z).
+    const_axis {
+
+        # The contained value.
+        value: cqasm::v1x::primitives::Axis;
+
+    }
+
+    # Represents a value of type int.
+    const_int {
+
+        # The contained value.
+        value: cqasm::v1x::primitives::Int;
+
+    }
+
+    # Represents a value of type real.
+    const_real {
+
+        # The contained value.
+        value: cqasm::v1x::primitives::Real;
+
+    }
+
+    # Represents a value of type complex.
+    const_complex {
+
+        # The contained value.
+        value: cqasm::v1x::primitives::Complex;
+
+    }
+
+    # Represents a value of type real_matrix.
+    const_real_matrix {
+
+        # The contained value.
+        value: cqasm::v1x::primitives::RMatrix;
+
+    }
+
+    # Represents a value of type complex_matrix.
+    const_complex_matrix {
+
+        # The contained value.
+        value: cqasm::v1x::primitives::CMatrix;
+
+    }
+
+    # Represents a value of type string.
+    const_string {
+
+        # The contained value.
+        value: cqasm::v1x::primitives::Str;
+
+    }
+
+    # Represents a value of type json.
+    const_json {
+
+        # The contained value.
+        value: cqasm::v1x::primitives::Str;
+
+    }
+
+}
+
+# Represents a reference to some storage location.
+reference {
+
+    # Represents a qubit, or a set of qubits for single-gate-multiple-qubit
+    # notation. The indices must not repeat.
+    qubit_refs {
+
+        # Set of qubit indices referred to, starting at 0.
+        index: Many<const_int>;
+
+    }
+
+    # Represents a measurement bit, or a number of measurement bits for
+    # conditional gates with multiple conditions. When there are multiple,
+    # the conditions are all AND'ed together.
+    bit_refs {
+
+        # The qubit index that this is a measurement bit for, starting at 0.
+        index: Many<const_int>;
+
+    }
+
+    # Represents a variable reference.
+    variable_ref {
+
+        # The referenced variable.
+        variable: external Link<cqasm::v1x::semantic::Variable>;
+
+    }
+
+}
+
+# This can be returned by user-defined functions as a placeholder value for
+# something that needs to be evaluated at runtime rather than during constant
+# propagation. Annotations should be used to attach semantic information.
+function {
+
+    # Name of the function as it appears or should appear in the cQASM file.
+    name: cqasm::v1x::primitives::Str;
+
+    # Operands for the function.
+    operands: external Any<cqasm::v1x::values::Node>;
+
+    # Operands for the function.
+    return_type: external One<cqasm::v1x::types::Node>;
+
+}

@@ -10,6 +10,10 @@ endif()
 
 project(cqasm C CXX)
 
+# If cqasm was already included elsewhere in the project, don't include it again.
+# There should be only one place for it and one version per project.
+if(NOT TARGET cqasm)
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -73,7 +77,7 @@ file(MAKE_DIRECTORY ${LIBQASM_GENERATED_PYTHON_FILES})
 
 # Address sanitizer
 if(ASAN_ENABLED)
-    if(MSVC)
+    if(MSVC AND CMAKE_BUILD_TYPE STREQUAL "Debug")
         string(REGEX REPLACE "/RTC(su|[1su])" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
         message(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}\n")
 
@@ -101,12 +105,12 @@ endif()
 # Compatibility mode: provide/test the original API in addition to the new one.
 if(LIBQASM_COMPAT)
     # Add the compatibility headers to the include path.
-    target_include_directories(cqasm-lib-obj INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include/v1.0)
+    target_include_directories(cqasm-lib-obj INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include/v10)
 
     # Make sure to install the headers as well.
     include(GNUInstallDirs)
     install(
-        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/v1.0/
+        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/v10/
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         FILES_MATCHING PATTERN "*.hpp"
     )
@@ -116,3 +120,5 @@ endif()
 if(LIBQASM_BUILD_PYTHON)
     add_subdirectory(python)
 endif()
+
+endif()  # NOT TARGET cqasm
