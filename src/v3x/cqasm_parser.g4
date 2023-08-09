@@ -12,19 +12,23 @@ using namespace cqasm::v1x::ast;
 }
 
 // Actual grammar start.
+root: program;
+
 program: version statement*;
 
 version: VERSION INTEGER_LITERAL (DOT INTEGER_LITERAL)?;
 
-statement: qubit_statement | map_statement | var_statement | instruction;
+statement: qubits_statement | map_statement | var_statement | instruction;
 
-qubit_statement: QUBITS INTEGER_LITERAL;
+qubits_statement: QUBITS INTEGER_LITERAL;
 
 map_statement: MAP IDENTIFIER EQUAL expression;
 
 var_statement: VAR IDENTIFIER COLON IDENTIFIER;
 
-instruction: IDENTIFIER (COMMA expression)*;
+instruction: IDENTIFIER expression_list;
+
+expression_list: expression (COMMA expression)?;
 
 expression:
     INTEGER_LITERAL
@@ -34,7 +38,7 @@ expression:
 
 array_elements: IDENTIFIER OPEN_BRACKET array_indices CLOSE_BRACKET;
 array_indices: array_index (COMMA array_index)?;
-array_index : expression (COLON expression)?;
+array_index: expression (COLON expression)?;
 
 /*
 * Things we are leaving out at the moment:
