@@ -178,39 +178,90 @@ list(APPEND CQASM_V1X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-functions-g
 #-------------------------------------------------------------------------------
 add_subdirectory(v3x)
 
-# Add generated source files.
-list(APPEND CQASM_V3_SOURCES
-    "${CMAKE_CURRENT_BINARY_DIR}/v3/cqasm_lexer.cpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/v3/cqasm_parser.cpp"
+# Generate the lexer and the parser.
+add_custom_target(generate_antlr_parser
+    DEPENDS generate_antlr_parser_command
+)
+add_custom_command(
+    OUTPUT generate_antlr_parser_command
+    COMMAND "${PROJECT_SOURCE_DIR}/scripts/generate_antlr_parser.py ${CMAKE_CURRENT_SOURCE_DIR}/v3x ${CMAKE_CURRENT_BINARY_DIR}/v3x"
+)
+list(APPEND CQASM_V3X_SOURCES
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm_lexer.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm_parser.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm_parseBaseListener.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm_parseListener.cpp"
 )
 
-#[[
-AST classes
-Tree type classes
-Semantic values classes
-Semantic tree classes
-Default function set
-#]]
+# Generate the abstract syntax tree classes.
+generate_tree_py(
+    "${CMAKE_CURRENT_SOURCE_DIR}/v3x/cqasm-ast.tree"
+    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x/cqasm-ast-gen.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-ast-gen.cpp"
+    "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/cqasm-ast-gen.py"
+)
+list(APPEND CQASM_V3X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-ast-gen.cpp")
+
+# Generate the type tree classes.
+generate_tree_py(
+    "${CMAKE_CURRENT_SOURCE_DIR}/v3x/cqasm-types.tree"
+    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x/cqasm-types-gen.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-types-gen.cpp"
+    "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/cqasm-types-gen.py"
+)
+list(APPEND CQASM_V3X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-types-gen.cpp")
+
+# Generate the semantic value classes. Values can be either known at
+# compile-time or only at runtime, but their type is resolved to one of the
+# type tree nodes at compile-time.
+generate_tree_py(
+    "${CMAKE_CURRENT_SOURCE_DIR}/v3x/cqasm-values.tree"
+    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x/cqasm-values-gen.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-values-gen.cpp"
+    "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/cqasm-values-gen.py"
+)
+list(APPEND CQASM_V3X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-values-gen.cpp")
+
+# Generate the semantic tree classes.
+generate_tree_py(
+    "${CMAKE_CURRENT_SOURCE_DIR}/v3x/cqasm-semantic.tree"
+    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x/cqasm-semantic-gen.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-semantic-gen.cpp"
+    "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/cqasm-semantic-gen.py"
+)
+list(APPEND CQASM_V3X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-semantic-gen.cpp")
+
+# Generate the cQASM default function set.
+generate_funcs(
+    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x/cqasm-functions-gen.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-functions-gen.cpp"
+    "v3x"
+)
+list(APPEND CQASM_V3X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-functions-gen.cpp")
 
 #-------------------------------------------------------------------------------
 # Compilation instructions
 #-------------------------------------------------------------------------------
 
 # Main cQASM library as an object library.
-add_library(
-    cqasm-lib-obj OBJECT
+add_library(cqasm-lib-obj OBJECT
     ${CQASM_COMMON_SOURCES}
     ${CQASM_V1X_SOURCES}
+    ${CQASM_V3X_SOURCES}
+)
+add_dependencies(cqasm-lib-obj
+    antlr_target
 )
 
-target_compile_definitions(cqasm-lib-obj PRIVATE ${TREE_LIB_PRIVATE_DEFS})
+target_compile_definitions(cqasm-lib-obj
+    PRIVATE ${TREE_LIB_PRIVATE_DEFS}
+)
 
 # The src directory and binary directory (for generated header files) are private.
 # The include directory is public.
 # That is, the files in include must not try to include generated files and files from the src directory,
 # but the other direction is fine.
-target_include_directories(
-    cqasm-lib-obj
+target_include_directories(cqasm-lib-obj
     PRIVATE ${TREE_LIB_PRIVATE_INCLUDE}
     PUBLIC ${TREE_LIB_PUBLIC_INCLUDE}
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src"
@@ -223,9 +274,14 @@ target_include_directories(
     PUBLIC ${antlr4-runtime_INCLUDE_DIR}
 )
 
-target_compile_features(cqasm-lib-obj PUBLIC cxx_std_20)
+target_compile_features(cqasm-lib-obj PUBLIC
+    cxx_std_20
+)
 
-target_link_libraries(cqasm-lib-obj PUBLIC tree-lib-obj)
+target_link_libraries(cqasm-lib-obj PUBLIC
+    antlr4-runtime
+    tree-lib-obj
+)
 
 # fPIC: otherwise some weirdness happens with pthreads or something when linking statically.
 if(MSVC)
@@ -247,9 +303,15 @@ endif()
 
 # Main cQASM library in shared or static form as managed by cmake's
 # internal BUILD_SHARED_LIBS variable.
-add_library(cqasm $<TARGET_OBJECTS:cqasm-lib-obj>)
-target_include_directories(cqasm PUBLIC $<TARGET_PROPERTY:cqasm-lib-obj,INTERFACE_INCLUDE_DIRECTORIES>)
-target_link_libraries(cqasm PUBLIC $<TARGET_PROPERTY:cqasm-lib-obj,LINK_LIBRARIES>)
+add_library(cqasm
+    $<TARGET_OBJECTS:cqasm-lib-obj>
+)
+target_include_directories(cqasm PUBLIC
+    $<TARGET_PROPERTY:cqasm-lib-obj,INTERFACE_INCLUDE_DIRECTORIES>
+)
+target_link_libraries(cqasm PUBLIC
+    $<TARGET_PROPERTY:cqasm-lib-obj,LINK_LIBRARIES>
+)
 
 #-------------------------------------------------------------------------------
 # Install instructions
