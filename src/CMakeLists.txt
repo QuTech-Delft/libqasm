@@ -174,9 +174,9 @@ generate_funcs(
 list(APPEND CQASM_V1X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-functions-gen.cpp")
 
 #-------------------------------------------------------------------------------
-# cQASM v3 parser generation and inclusion
+# cQASM v3.x parser generation and inclusion
 #-------------------------------------------------------------------------------
-add_subdirectory(v3)
+add_subdirectory(v3x)
 
 # Add generated source files.
 list(APPEND CQASM_V3_SOURCES

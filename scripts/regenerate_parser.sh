@@ -6,7 +6,7 @@ if [[ $# -ne 2 ]]; then
     echo "    INPUT_FOLDER: folder containing the grammar files."
     echo "    OUTPUT_FOLDER: folder where generated files will be left."
     echo "Example:"
-    echo "    regenerate_parser.sh ../src/v3 ../build/Debug/src/v3"
+    echo "    regenerate_parser.sh ../src/v3x ../build/Debug/src/v3x"
 fi
 
 if ! command -v java &> /dev/null; then
