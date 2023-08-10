@@ -3,8 +3,8 @@
  */
 
 #include "v3x/cqasm-parse-helper.hpp"
-#include "v3x/cqasm-parser.hpp"
-#include "v3x/cqasm-lexer.hpp"
+#include "v3x/cqasm_parser.h"
+#include "v3x/cqasm_lexer.h"
 
 namespace cqasm {
 namespace v3x {
@@ -20,16 +20,16 @@ ParseResult parse_file(const std::string &filename) {
 /**
  * Parse using the given file pointer.
  */
-ParseResult parse_file(FILE *file, const std::string &filename) {
-    return ParseHelper(filename, file).result;
+ParseResult parse_file(FILE *, const std::string &) {
+    return {};
 }
 
 /**
  * Parse the given string. A filename may be given in addition for use within
  * error messages.
  */
-ParseResult parse_string(const std::string &data, const std::string &filename) {
-    return ParseHelper(filename, data, false).result;
+ParseResult parse_string(const std::string &, const std::string &) {
+    return {};
 }
 
 /**
@@ -40,32 +40,9 @@ ParseResult parse_string(const std::string &data, const std::string &filename) {
  */
 ParseHelper::ParseHelper(
     const std::string &filename,
-    const std::string &data,
-    bool use_file
-) : filename(filename) {
-
-    // Create the scanner.
-    if (!construct()) return;
-
-    // Open the file or pass the data buffer to flex.
-    if (use_file) {
-        fptr = fopen(filename.c_str(), "r");
-        if (!fptr) {
-            std::ostringstream sb;
-            sb << "Failed to open input file " << filename << ": "
-               << strerror(errno);
-            push_error(sb.str());
-            return;
-        }
-        cqasm_v3x_set_in(fptr, (yyscan_t)scanner);
-    } else {
-        buf = cqasm_v3x__scan_string(data.c_str(), (yyscan_t)scanner);
-    }
-
-    // Do the actual parsing.
-    parse();
-
-}
+    const std::string &,
+    bool
+) : filename(filename) {}
 
 /**
  * Construct the analyzer internals for the given filename, and analyze
@@ -73,78 +50,30 @@ ParseHelper::ParseHelper(
  */
 ParseHelper::ParseHelper(
     const std::string &filename,
-    FILE *fptr
-) : filename(filename) {
-
-    // Create the scanner.
-    if (!construct()) return;
-
-    // Open the file or pass the data buffer to flex.
-    cqasm_v3x_set_in(fptr, (yyscan_t)scanner);
-
-    // Do the actual parsing.
-    parse();
-
-}
+    FILE *
+) : filename(filename) {}
 
 /**
  * Initializes the scanner. Returns whether this was successful.
  */
 bool ParseHelper::construct() {
-    int retcode = cqasm_v3x_lex_init((yyscan_t*)&scanner);
-    if (retcode) {
-        std::ostringstream sb;
-        sb << "Failed to construct scanner: " << strerror(retcode);
-        push_error(sb.str());
-        return false;
-    } else {
-        return true;
-    }
+    return true;
 }
 
 /**
  * Does the actual parsing.
  */
-void ParseHelper::parse() {
-    int retcode = cqasm_v3x_parse((yyscan_t) scanner, *this);
-    if (retcode == 2) {
-        std::ostringstream sb;
-        sb << "Out of memory while parsing " << filename;
-        push_error(sb.str());
-        return;
-    } else if (retcode) {
-        std::ostringstream sb;
-        sb << "Failed to parse " << filename;
-        push_error(sb.str());
-        return;
-    }
-    if (result.errors.empty() && !result.root.is_well_formed()) {
-        std::cerr << *result.root;
-        throw std::runtime_error("internal error: no parse errors returned, but AST is incomplete. AST was dumped.");
-    }
-}
+void ParseHelper::parse() {}
 
 /**
  * Destroys the analyzer.
  */
-ParseHelper::~ParseHelper() {
-    if (fptr) {
-        fclose(fptr);
-    }
-    if (buf) {
-        cqasm_v3x__delete_buffer((YY_BUFFER_STATE)buf, (yyscan_t)scanner);
-    }
-    if (scanner) {
-        cqasm_v3x_lex_destroy((yyscan_t)scanner);
-    }
-}
+ParseHelper::~ParseHelper() {}
 
 /**
  * Pushes an error.
  */
-void ParseHelper::push_error(const std::string &error) {
-    result.errors.push_back(error);
-}
+void ParseHelper::push_error(const std::string &) {}
 
 } // namespace parser
 } // namespace v3x

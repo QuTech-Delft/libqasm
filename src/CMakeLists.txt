@@ -3,6 +3,12 @@ cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 project(libcqasm C CXX)
 
 #-------------------------------------------------------------------------------
+# Required package checks
+#-------------------------------------------------------------------------------
+
+find_package(PythonInterp REQUIRED)
+
+#-------------------------------------------------------------------------------
 # Configuration
 #-------------------------------------------------------------------------------
 
@@ -39,26 +45,29 @@ else()
     set(flex_win_compat)
 endif()
 
+# Require ANTLR; if not installed, this will try to build from source.
+find_package(antlr4-runtime QUIET)
+if(NOT antlr4-runtime_FOUND)
+    add_definitions(-DANTLR4CPP_STATIC)
+    set(ANTLR4_WITH_STATIC_CRT OFF)
+    include(../cmake/ExternalAntlr4Cpp.cmake)
+endif()
+
 # Packages
 include(FetchContent)
-# tree-gen, a custom utility to generate classes for typed tree-like
-# structures and enums with variants containing data. This exposes the
-# generate_tree() function.
+# tree-gen, a custom utility to generate classes for typed tree-like structures and enums with variants containing data.
+# This exposes the generate_tree() function.
 FetchContent_Declare(tree-gen
     GIT_REPOSITORY https://github.com/QuTech-Delft/tree-gen.git
     GIT_TAG "d708ea629bad014011d3f1efc352077414dd86f7"
 )
 FetchContent_MakeAvailable(tree-gen)
 
-# Include func-gen, a simple program that generates the function that registers
-# all default functions (operators, trigonometry, etc) with a
-# resolver::FunctionTable object. This file would otherwise be extremely
-# repetitive and annoying to maintain due to the amount of overloads. This
-# exposes the generate_funcs() function, which should be called once with the
-# header and source file paths.
+# Include func-gen, a simple program that generates the function that registers all default functions
+# (operators, trigonometry, etc) with a resolver::FunctionTable object.
+# This file would otherwise be extremely repetitive and annoying to maintain due to the amount of overloads.
+# This exposes the generate_funcs() function, which should be called once with the header and source file paths.
 add_subdirectory(func-gen)
-
-find_package(antlr4-runtime REQUIRED)
 
 #-------------------------------------------------------------------------------
 # cQASM common code generation and inclusion
@@ -179,19 +188,24 @@ list(APPEND CQASM_V1X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-functions-g
 add_subdirectory(v3x)
 
 # Generate the lexer and the parser.
-add_custom_target(generate_antlr_parser
-    DEPENDS generate_antlr_parser_command
-)
-add_custom_command(
-    OUTPUT generate_antlr_parser_command
-    COMMAND "${PROJECT_SOURCE_DIR}/scripts/generate_antlr_parser.py ${CMAKE_CURRENT_SOURCE_DIR}/v3x ${CMAKE_CURRENT_BINARY_DIR}/v3x"
-)
-list(APPEND CQASM_V3X_SOURCES
+set(ANTLR_OUTPUTS
     "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm_lexer.cpp"
     "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm_parser.cpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm_parseBaseListener.cpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm_parseListener.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm_parserBaseListener.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm_parserListener.cpp"
 )
+add_custom_command(
+    OUTPUT ${ANTLR_OUTPUTS}
+    COMMAND
+        "${PYTHON_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/scripts/generate_antlr_parser.py"
+        "${CMAKE_CURRENT_SOURCE_DIR}/v3x"  # Input dir (grammar files)
+        "${CMAKE_CURRENT_BINARY_DIR}/v3x"  # Output dir (lexer and parser cpp files)
+)
+add_custom_target(antlr_target ALL
+    DEPENDS ${ANTLR_OUTPUTS}
+)
+list(APPEND CQASM_V3X_SOURCES ${ANTLR_OUTPUTS})
 
 # Generate the abstract syntax tree classes.
 generate_tree_py(
@@ -249,9 +263,6 @@ add_library(cqasm-lib-obj OBJECT
     ${CQASM_V1X_SOURCES}
     ${CQASM_V3X_SOURCES}
 )
-add_dependencies(cqasm-lib-obj
-    antlr_target
-)
 
 target_compile_definitions(cqasm-lib-obj
     PRIVATE ${TREE_LIB_PRIVATE_DEFS}
@@ -265,6 +276,7 @@ target_include_directories(cqasm-lib-obj
     PRIVATE ${TREE_LIB_PRIVATE_INCLUDE}
     PUBLIC ${TREE_LIB_PUBLIC_INCLUDE}
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src"
+    PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/src"
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/"
     # Do not remove the ending '/' since
     # it avoids the whole 'include' directory to be copied to the installation folder.
@@ -279,7 +291,7 @@ target_compile_features(cqasm-lib-obj PUBLIC
 )
 
 target_link_libraries(cqasm-lib-obj PUBLIC
-    antlr4-runtime
+    antlr4_static
     tree-lib-obj
 )
 

@@ -4,16 +4,7 @@ options {
 	tokenVocab = cqasm_lexer;
 }
 
-@parser::preinclude {
-#include "v1x/cqasm-ast.hpp"
-#include "v1x/cqasm-parse-helper.hpp"
-using namespace cqasm::ast;
-using namespace cqasm::v1x::ast;
-}
-
 // Actual grammar start.
-root: program;
-
 program: version statement*;
 
 version: VERSION INTEGER_LITERAL (DOT INTEGER_LITERAL)?;
