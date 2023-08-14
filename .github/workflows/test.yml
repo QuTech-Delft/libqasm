@@ -133,28 +133,24 @@ jobs:
           - Linux
           - macOS
     steps:
-      - name: Install Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-      - name: Install antlr4-tools
-        run: python -m pip install --upgrade pip antlr4-tools
-      - name: Install JRE if needed
-        run: echo Y | antlr4 -v 4.9.3
       - if: matrix.os == 'Linux'
-        name: Install flex/bison, and gcc (Linux)
+        name: Install flex/bison, gcc, and python (Linux)
         run: |
           sudo apt-get -y update
           sudo apt-get -y upgrade
-          sudo apt-get -y install flex bison gcc
+          sudo apt-get -y install flex bison gcc python3 python3-pip
         shell: bash
       - if: matrix.os == 'macOS'
-        name: Install flex/bison, and gcc (MacOS)
+        name: Install flex/bison, gcc, and python (MacOS)
         run: |
-          brew install flex bison gcc
+          brew install flex bison gcc python
           echo "$(brew --prefix flex)/bin" >> $GITHUB_PATH
           echo "$(brew --prefix bison)/bin" >> $GITHUB_PATH
         shell: bash
+      - name: Install antlr4-tools
+        run: python3 -m pip install --upgrade pip antlr4-tools
+      - name: Install JRE if needed
+        run: echo Y | antlr4 -v 4.9.3
       - name: Install Conan
         id: conan
         uses: turtlebrowser/get-conan@main

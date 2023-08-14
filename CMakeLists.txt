@@ -6,9 +6,8 @@ endif()
 if(POLICY CMP0058)
     cmake_policy(SET CMP0058 NEW)
 endif()
-if(POLICY CMP0148)
-    cmake_policy(SET CMP0148 NEW)
-endif()
+cmake_policy(SET CMP0114 NEW)
+cmake_policy(SET CMP0148 NEW)
 
 project(cqasm C CXX)
 
