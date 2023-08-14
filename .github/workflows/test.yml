@@ -184,7 +184,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install Python dependencies and antlr4-tools
-        run: python -m pip install --upgrade pip setuptools wheel pytest numpy antlr4-tools
+        run: python -m pip install --upgrade pip setuptools wheel pytest numpy antlr4-tools antlr4-python3-runtime
       - name: Install JRE if needed
         run: echo Y | antlr4 -v 4.9.3
       - name: Install SWIG

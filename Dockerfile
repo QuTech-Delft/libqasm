@@ -3,7 +3,7 @@ FROM ubuntu:22.04
 RUN apt-get -qq update && \
     apt-get -qq upgrade && \
     apt-get -qq -y install flex bison m4 build-essential cmake git swig python3 python3-pip && \
-    python3 -m pip install --upgrade pip pytest antlr4-tools && \
+    python3 -m pip install --upgrade pip pytest antlr4-tools antlr4-python3-runtime && \
     echo Y | antlr4 -v 4.9.3
 
 ADD . /libqasm
