@@ -27,7 +27,7 @@ jobs:
       - name: Install antlr4-tools
         run: python -m pip install --upgrade pip antlr4-tools
       - name: Install JRE if needed
-        run: echo Y | antlr4
+        run: echo Y | antlr4 -v 4.9.3
       - name: Install Conan
         id: conan
         uses: turtlebrowser/get-conan@main
@@ -62,7 +62,7 @@ jobs:
       - name: Install antlr4-tools
         run: python -m pip install --upgrade pip antlr4-tools
       - name: Install JRE if needed
-        run: echo Y | antlr4
+        run: echo Y | antlr4 -v 4.9.3
       - name: Install flex/bison
         run: |
           brew install flex bison
@@ -102,7 +102,7 @@ jobs:
       - name: Install antlr4-tools
         run: python -m pip install --upgrade pip antlr4-tools
       - name: Install JRE if needed
-        run: echo Y | antlr4
+        run: echo Y | antlr4 -v 4.9.3
       - name: Install Winflexbison3
         shell: powershell
         run: choco install winflexbison3 --version 2.5.24.20210105
@@ -140,7 +140,7 @@ jobs:
       - name: Install antlr4-tools
         run: python -m pip install --upgrade pip antlr4-tools
       - name: Install JRE if needed
-        run: echo Y | antlr4
+        run: echo Y | antlr4 -v 4.9.3
       - if: matrix.os == 'Linux'
         name: Install flex/bison, and gcc (Linux)
         run: |
@@ -187,10 +187,10 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
-      - name: Install Python dependencies and antlr-tools
-        run: python -m pip install --upgrade pip setuptools wheel pytest numpy antlr-tools
+      - name: Install Python dependencies and antlr4-tools
+        run: python -m pip install --upgrade pip setuptools wheel pytest numpy antlr4-tools
       - name: Install JRE if needed
-        run: echo Y | antlr4
+        run: echo Y | antlr4 -v 4.9.3
       - name: Install SWIG
         if: matrix.os == 'ubuntu-latest'
         run: |
