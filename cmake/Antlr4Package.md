@@ -27,7 +27,7 @@ Argument# | Required  | Default | Use
 The `ANTLR4_JAR_LOCATION` CMake variable must be set to the location where the `antlr-4*-complete.jar` generator is located. You can download the file from [here](http://www.antlr.org/download.html).
 
 Additional options to the ANTLR4 generator can be passed in the `ANTLR4_GENERATED_OPTIONS` variable. Add the installation prefix of `antlr4-runtime` to `CMAKE_PREFIX_PATH` or set
- `antlr4-runtime_DIR` to a directory containing the files.
+`antlr4-runtime_DIR` to a directory containing the files.
 
 The following CMake variables are available following a call to `antlr4_generate`
 
@@ -96,7 +96,7 @@ target_link_libraries( Parsertest PRIVATE
  find_package(antlr4-generator REQUIRED)
 
  # Set path to generator
- set(ANTLR4_JAR_LOCATION ${PROJECT_SOURCE_DIR}/thirdparty/antlr/antlr-4.13.0-complete.jar)
+ set(ANTLR4_JAR_LOCATION ${PROJECT_SOURCE_DIR}/thirdparty/antlr/antlr-4.9.3-complete.jar)
 
  # generate lexer
  antlr4_generate(
@@ -133,4 +133,3 @@ target_link_libraries( Parsertest PRIVATE
                         antlr4_shared)
 
 ```
-

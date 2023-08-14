@@ -3,9 +3,11 @@ cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 if(POLICY CMP0048)
     cmake_policy(SET CMP0048 NEW)
 endif()
-
 if(POLICY CMP0058)
     cmake_policy(SET CMP0058 NEW)
+endif()
+if(POLICY CMP0148)
+    cmake_policy(SET CMP0148 NEW)
 endif()
 
 project(cqasm C CXX)
