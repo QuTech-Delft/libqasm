@@ -50,7 +50,7 @@ class LibqasmConan(ConanFile):
             self.tool_requires("bison/3.8.2")
 
     def requirements(self):
-        self.requires("antlr4-cppruntime/4.13.0")
+        self.requires("antlr4-cppruntime/4.9.13")
 
     def config_options(self):
         if self.settings.os == "Windows":
