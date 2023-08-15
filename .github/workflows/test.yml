@@ -137,7 +137,7 @@ jobs:
         run: |
           sudo apt-get -y update
           sudo apt-get -y upgrade
-          sudo apt-get -y install gcc python3 python3-pip jre-default
+          sudo apt-get -y install gcc python3 python3-pip default-jre
         shell: bash
       - if: matrix.os == 'macOS'
         name: Install gcc, python and JRE (MacOS)
@@ -183,7 +183,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install Python dependencies and antlr4-tools
-        run: python -m pip install --upgrade pip setuptools wheel pytest numpy antlr4-tools
+        run: python -m pip install --upgrade pip conan setuptools wheel pytest numpy antlr4-tools
       - name: Install JRE if needed
         run: echo Y | antlr4
       - name: Install SWIG, and set build type (Linux)
