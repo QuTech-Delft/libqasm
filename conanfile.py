@@ -55,6 +55,7 @@ class LibqasmConan(ConanFile):
         else:
             self.tool_requires("flex/2.6.4")
             self.tool_requires("bison/3.8.2")
+        self.tool_requires("openjdk/19.0.2")
 
     def requirements(self):
         self.requires("antlr4-cppruntime/4.13.0")
