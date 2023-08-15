@@ -254,7 +254,7 @@ target_include_directories(cqasm-lib-obj
     # Instead, just its contents are copied.
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include/"
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include/"
-    PUBLIC ${antlr4-runtime_INCLUDE_DIR}
+    PUBLIC ${ANTLR4_INCLUDE_DIR}
 )
 
 target_compile_features(cqasm-lib-obj PUBLIC
