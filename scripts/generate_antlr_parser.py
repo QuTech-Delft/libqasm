@@ -27,8 +27,6 @@ def generate_antlr_parser(input_folder, output_folder):
     print("Generating ANTLR lexer and parser files...")
     antlr4 = subprocess.run([
         "antlr4",
-        "-v",
-        "4.9.3",
         "-Xexact-output-dir",
         "-o",
         "{}".format(output_folder),

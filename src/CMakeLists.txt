@@ -3,12 +3,6 @@ cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 project(libcqasm C CXX)
 
 #-------------------------------------------------------------------------------
-# Required package checks
-#-------------------------------------------------------------------------------
-
-find_package(PythonInterp REQUIRED)
-
-#-------------------------------------------------------------------------------
 # Configuration
 #-------------------------------------------------------------------------------
 
@@ -25,33 +19,10 @@ option(
     OFF
 )
 
-# Windows weirdness: need a .lib file to link against a DLL at compile-time
-# (I think), but only the .dll is generated when there are no exported symbols.
+# Windows weirdness: need a .lib file to link against a DLL at compile-time (I think),
+# but only the .dll is generated when there are no exported symbols.
 # This sort of fixes that (https://stackoverflow.com/questions/1941443)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-
-#-------------------------------------------------------------------------------
-# Code generation tool inclusion and build
-#-------------------------------------------------------------------------------
-
-# Require flex/bison; if not installed, this will try to build from source.
-set(FLEX_VERSION_REQUIRED 2.6.4)
-set(BISON_VERSION_REQUIRED 3.0)
-set(BISON_VERSION_TO_BUILD 3.7.4)
-include(../cmake/flex-bison.cmake)
-if(WIN32)
-    set(flex_win_compat --wincompat)
-else()
-    set(flex_win_compat)
-endif()
-
-# Require ANTLR; if not installed, this will try to build from source.
-find_package(antlr4-runtime QUIET)
-if(NOT antlr4-runtime_FOUND)
-    add_definitions(-DANTLR4CPP_STATIC)
-    set(ANTLR4_WITH_STATIC_CRT OFF)
-    include(../cmake/ExternalAntlr4Cpp.cmake)
-endif()
 
 # Packages
 include(FetchContent)
