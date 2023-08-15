@@ -24,7 +24,10 @@ option(
 # This sort of fixes that (https://stackoverflow.com/questions/1941443)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
+#-------------------------------------------------------------------------------
 # Packages
+#-------------------------------------------------------------------------------
+
 include(FetchContent)
 # tree-gen, a custom utility to generate classes for typed tree-like structures and enums with variants containing data.
 # This exposes the generate_tree() function.
@@ -39,6 +42,8 @@ FetchContent_MakeAvailable(tree-gen)
 # This file would otherwise be extremely repetitive and annoying to maintain due to the amount of overloads.
 # This exposes the generate_funcs() function, which should be called once with the header and source file paths.
 add_subdirectory(func-gen)
+
+find_package(antlr4-runtime REQUIRED)
 
 #-------------------------------------------------------------------------------
 # cQASM common code generation and inclusion
@@ -254,7 +259,7 @@ target_include_directories(cqasm-lib-obj
     # Instead, just its contents are copied.
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include/"
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include/"
-    PUBLIC ${ANTLR4_INCLUDE_DIR}
+    PUBLIC "${antlr4-runtime_INCLUDE_DIR}"
 )
 
 target_compile_features(cqasm-lib-obj PUBLIC
