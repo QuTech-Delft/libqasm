@@ -133,6 +133,10 @@ jobs:
           echo "$(brew --prefix flex)/bin" >> $GITHUB_PATH
           echo "$(brew --prefix bison)/bin" >> $GITHUB_PATH
         shell: bash
+      - name: Create Python virtual environment
+        run: |
+          python3 -m venv venv
+          source venv/bin/activate
       - name: Install antlr4-tools
         run: python3 -m pip install --upgrade pip antlr4-tools
       - name: Install Conan
@@ -146,7 +150,6 @@ jobs:
         env:
           CXX: ${{ matrix.compiler }}
         run: |
-          conan profile detect
           conan build . -s:h compiler.cppstd=20 -s:h libqasm/*:build_type=${{ matrix.build_type }} -o libqasm/*:build_tests=True -o libqasm/*:compat=True -o libqasm/*:asan_enabled=True -b missing
       - name: Test
         working-directory: build
