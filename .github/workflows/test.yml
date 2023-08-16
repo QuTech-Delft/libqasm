@@ -135,6 +135,7 @@ jobs:
           python3 -m venv venv
           source venv/bin/activate
           python3 -m pip install --upgrade pip antlr4-tools conan
+          conan profile detect
           conan build . -s:h compiler.cppstd=20 -s:h libqasm/*:build_type=Release -o libqasm/*:build_tests=True -o libqasm/*:compat=True -o libqasm/*:asan_enabled=True -b missing
       - name: Test
         working-directory: build
