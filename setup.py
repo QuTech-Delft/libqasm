@@ -199,10 +199,9 @@ setup(
     packages=['libQasm', 'cqasm', 'cqasm.v1x'],
     package_dir={'': 'pybuild/module'},
 
-    # NOTE: the library build process is completely overridden to let CMake
-    # handle it; setuptools' implementation is horribly broken. This is here
-    # just to have the rest of setuptools understand that this is a Python
-    # module with an extension in it.
+    # NOTE: the library build process is completely overridden to let CMake handle it;
+    # setuptools' implementation is horribly broken.
+    # This is here just to have the rest of setuptools understand that this is a Python module with an extension in it.
     ext_modules=[
         Extension('libQasm._libQasm', [])
     ],
@@ -219,6 +218,8 @@ setup(
     },
 
     setup_requires=[
+        'antlr4-tools',
+        'conan',
         'plumbum',
         'delocate; platform_system == "Darwin"',
     ],
