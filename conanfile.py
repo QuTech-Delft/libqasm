@@ -54,7 +54,7 @@ class LibqasmConan(ConanFile):
         if self.settings.os == "Windows":
             self.tool_requires("winflexbison/2.5.24")
         else:
-            self.tool_requires("flex/2.6.4")
+            self.tool_requires("flex/2.6.3")
             self.tool_requires("bison/3.8.2")
         self.tool_requires("openjdk/19.0.2")
 
