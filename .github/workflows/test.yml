@@ -24,11 +24,8 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
-      - name: Install antlr4-tools
-        run: python -m pip install --upgrade pip antlr4-tools
-      - name: Install Conan
-        id: conan
-        uses: turtlebrowser/get-conan@main
+      - name: Install antlr4-tools and conan
+        run: python -m pip install --upgrade pip antlr4-tools conan
       - name: Get latest CMake
         uses: lukka/get-cmake@latest
       - name: Checkout
@@ -57,11 +54,8 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
-      - name: Install antlr4-tools
-        run: python -m pip install --upgrade pip antlr4-tools
-      - name: Install Conan
-        id: conan
-        uses: turtlebrowser/get-conan@main
+      - name: Install antlr4-tools and conan
+        run: python -m pip install --upgrade pip antlr4-tools conan
       - name: Get latest CMake
         uses: lukka/get-cmake@latest
       - name: Checkout
@@ -90,11 +84,8 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
-      - name: Install antlr4-tools
-        run: python -m pip install --upgrade pip antlr4-tools
-      - name: Install Conan
-        id: conan
-        uses: turtlebrowser/get-conan@main
+      - name: Install antlr4-tools and conan
+        run: python -m pip install --upgrade pip antlr4-tools conan
       - name: Get latest CMake
         uses: lukka/get-cmake@latest
       - name: Checkout
@@ -133,15 +124,6 @@ jobs:
           echo "$(brew --prefix flex)/bin" >> $GITHUB_PATH
           echo "$(brew --prefix bison)/bin" >> $GITHUB_PATH
         shell: bash
-      - name: Create Python virtual environment
-        run: |
-          python3 -m venv venv
-          source venv/bin/activate
-      - name: Install antlr4-tools
-        run: python3 -m pip install --upgrade pip antlr4-tools
-      - name: Install Conan
-        id: conan
-        uses: turtlebrowser/get-conan@main
       - name: Get latest CMake
         uses: lukka/get-cmake@latest
       - name: Checkout
@@ -150,6 +132,9 @@ jobs:
         env:
           CXX: ${{ matrix.compiler }}
         run: |
+          python3 -m venv venv
+          source venv/bin/activate
+          python3 -m pip install --upgrade pip antlr4-tools conan
           conan build . -s:h compiler.cppstd=20 -s:h libqasm/*:build_type=Release -o libqasm/*:build_tests=True -o libqasm/*:compat=True -o libqasm/*:asan_enabled=True -b missing
       - name: Test
         working-directory: build
@@ -171,7 +156,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install Python dependencies
-        run: python -m pip install --upgrade pip conan setuptools wheel pytest numpy antlr4-tools
+        run: python -m pip install --upgrade pip antlr4-tools conan numpy pytest setuptools wheel
       - name: Install SWIG, and set build type (Linux)
         if: matrix.os == 'ubuntu-latest'
         run: |

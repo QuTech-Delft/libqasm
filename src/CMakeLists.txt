@@ -24,6 +24,12 @@ option(
 # This sort of fixes that (https://stackoverflow.com/questions/1941443)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
+if(WIN32)
+    set(flex_win_compat --wincompat)
+else()
+    set(flex_win_compat)
+endif()
+
 #-------------------------------------------------------------------------------
 # Packages
 #-------------------------------------------------------------------------------
@@ -42,6 +48,17 @@ FetchContent_MakeAvailable(tree-gen)
 # This file would otherwise be extremely repetitive and annoying to maintain due to the amount of overloads.
 # This exposes the generate_funcs() function, which should be called once with the header and source file paths.
 add_subdirectory(func-gen)
+
+# Require flex/bison; if not installed, this will try to build from source.
+set(FLEX_VERSION_REQUIRED 2.6.4)
+set(BISON_VERSION_REQUIRED 3.0)
+set(BISON_VERSION_TO_BUILD 3.7.4)
+include(../cmake/flex-bison.cmake)
+if(WIN32)
+    set(flex_win_compat --wincompat)
+else()
+    set(flex_win_compat)
+endif()
 
 find_package(antlr4-runtime REQUIRED)
 
