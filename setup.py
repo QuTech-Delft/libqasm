@@ -80,11 +80,14 @@ class build_ext(_build_ext):
         if not os.path.exists(cbuild_dir):
             os.makedirs(cbuild_dir)
 
-            # Build type can be set using an environment variable.
+        # Build type can be set using an environment variable.
         build_type = os.environ.get('LIBQASM_BUILD_TYPE', 'Release')
 
         # Configure and build using Conan
         with local.cwd(root_dir):
+            cmd = local['conan']['profile']['detect']
+            cmd & FG
+
             cmd = (local['conan']['build']['.']
                 ['-of'][cbuild_dir]
 
