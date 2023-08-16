@@ -41,13 +41,13 @@ class LibqasmConan(ConanFile):
         "build_python": False,
         "build_tests": False,
         "compat": False,
-        "cqasm_python_dir": [None],
-        "python_dir": [None],
-        "python_ext": [None],
+        "cqasm_python_dir": None,
+        "python_dir": None,
+        "python_ext": None,
         "tree_gen_build_tests": False
     }
 
-    exports_sources = "CMakeLists.txt", "cmake/*", "include/*", "src/*"
+    exports_sources = "CMakeLists.txt", "include/*", "scripts/*", "src/*", "test/*"
 
     def build_requirements(self):
         self.tool_requires("m4/1.4.19")
@@ -92,7 +92,7 @@ class LibqasmConan(ConanFile):
         tc.variables["LIBQASM_CQASM_PYTHON_DIR"] = self.options.cqasm_python_dir
         tc.variables["LIBQASM_PYTHON_DIR"] = self.options.python_dir
         tc.variables["LIBQASM_PYTHON_EXT"] = self.options.python_ext
-        tc.variables["PYTHON_EXECUTABLE"] = re.escape(sys.executable)
+        tc.variables["PYTHON_EXECUTABLE"] = os.path.normpath(sys.executable)
         tc.variables["TREE_GEN_BUILD_TESTS"] = self.options.tree_gen_build_tests
         tc.generate()
 

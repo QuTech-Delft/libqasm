@@ -29,7 +29,24 @@ target_link_libraries(${PROJECT_NAME}_test PRIVATE
     gmock
     gtest
 )
-if(MSVC)
+
+if(CMAKE_COMPILER_IS_GNUCXX)
+    target_compile_options(${PROJECT_NAME}_test PRIVATE
+        -Wall -Wextra -Werror -Wfatal-errors
+        -fPIC
+        -Wno-error=deprecated-declarations
+        -Wno-error=restrict
+        -Wno-error=sign-compare
+    )
+elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    target_compile_options(${PROJECT_NAME}_test PRIVATE
+        -Wall -Wextra -Werror -Wfatal-errors
+        -fPIC
+        -Wno-error=sign-compare
+        -Wno-error=unused-private-field
+        -Wno-error=unused-but-set-variable
+    )
+elseif(MSVC)
     target_compile_options(${PROJECT_NAME}_test PRIVATE
         /W3 /WX /w34996
         /D_CONSOLE /DCONSOLE
@@ -38,12 +55,8 @@ if(MSVC)
         /D_UNICODE /DUNICODE
         /diagnostics:column /EHsc /FC /fp:precise /Gd /GS /MP /sdl /utf-8 /Zc:inline
     )
-elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-    target_compile_options(${PROJECT_NAME}_test PRIVATE
-        -pedantic-errors -Werror -Wall -Wextra
-        -Wno-deprecated
-        -Wconversion -Wsign-conversion -Wno-sign-conversion  # do not sort flags; order matters
-    )
+else()
+    message(SEND_ERROR "Unknown compiler!")
 endif()
 
 gtest_discover_tests(${PROJECT_NAME}_test

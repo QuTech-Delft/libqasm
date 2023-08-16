@@ -20,6 +20,8 @@ requirements:
     - bison # [not win]
     #- winflexbison # [win]
   host:
+    - antlr4-tools
+    - conan
     - python
     - plumbum
     - delocate # [osx]

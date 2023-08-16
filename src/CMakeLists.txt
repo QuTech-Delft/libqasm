@@ -281,21 +281,32 @@ target_link_libraries(cqasm-lib-obj PUBLIC
 )
 
 # fPIC: otherwise some weirdness happens with pthreads or something when linking statically.
-if(MSVC)
+if(CMAKE_COMPILER_IS_GNUCXX)
+    target_compile_options(cqasm-lib-obj PRIVATE
+        -Wall -Wextra -Werror -Wfatal-errors
+        -fPIC
+        -Wno-error=deprecated-declarations
+        -Wno-error=restrict
+        -Wno-error=sign-compare
+    )
+elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    target_compile_options(cqasm-lib-obj PRIVATE
+        -Wall -Wextra -Werror -Wfatal-errors
+        -fPIC
+        -Wno-error=sign-compare
+        -Wno-error=unused-private-field
+        -Wno-error=unused-but-set-variable
+    )
+elseif(MSVC)
     target_compile_options(cqasm-lib-obj PRIVATE
         /W3 /w34996  # not using /WX at the moment because the flex generated code has some warnings
         /D_CRT_NONSTDC_NO_DEPRECATE
         /D_CRT_SECURE_NO_WARNINGS
         /D_UNICODE /DUNICODE
         /diagnostics:column /EHsc /FC /fp:precise /Gd /GS /MP /sdl /utf-8 /Zc:inline
-   )
-elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-    target_compile_options(cqasm-lib-obj PRIVATE
-        -Wall -Wextra -Werror
-        -fPIC
-        -Wno-error=sign-compare
-        -Wno-error=unused-but-set-variable
     )
+else()
+    message(SEND_ERROR "Unknown compiler!")
 endif()
 
 # Main cQASM library in shared or static form as managed by cmake's

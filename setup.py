@@ -85,12 +85,11 @@ class build_ext(_build_ext):
 
         # Configure and build using Conan
         with local.cwd(root_dir):
-            cmd = local['conan']['profile']['detect']
+            cmd = local['conan']['profile']['detect']['--force']
             cmd & FG
 
-            cmd = (local['conan']['build']['.']
-                ['-of'][cbuild_dir]
-
+            cmd = (local['conan']['create']['.']
+                ['--version']['0.4.1']
                 ['-s:h']['compiler.cppstd=20']
                 ['-s:h']["libqasm/*:build_type=" + build_type]
 
@@ -101,26 +100,14 @@ class build_ext(_build_ext):
                 ['-o']["libqasm/*:compat=True"]
                 ['-o']['libqasm/*:build_tests=True']
                 ['-o']['libqasm/*:build_python=True']
-                ['-o']['libqasm/*:cqasm_python_dir=' + os.path.dirname(cqasm_target)]
-                ['-o']['libqasm/*:python_dir=' + os.path.dirname(target)]
-                ['-o']['libqasm/*:python_ext=' + os.path.basename(target)]
+                ['-o']['libqasm/*:cqasm_python_dir=' + os.path.normpath(os.path.dirname(cqasm_target))]
+                ['-o']['libqasm/*:python_dir=' + os.path.normpath(os.path.dirname(target))]
+                ['-o']['libqasm/*:python_ext=' + os.path.normpath(os.path.basename(target))]
 
                 ['-b']['missing']
+                ['-tf']['""']
             )
             cmd & FG
-
-        # Do the installation.
-        with local.cwd(cbuild_dir):
-            cmd = (local['cmake']['--build']['.']['--config'][build_type]
-                ['-DCMAKE_INSTALL_PREFIX=' + prefix_dir]
-            )
-            try:
-                cmd = cmd['--target']['install']
-                cmd & FG
-            except ProcessExecutionError:
-                # Install target for MSVC
-                cmd = cmd['--target']['INSTALL']
-                cmd & FG
 
 
 class build(_build):
