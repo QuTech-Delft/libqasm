@@ -124,7 +124,7 @@ jobs:
         run: |
           sudo apt-get -y update
           sudo apt-get -y upgrade
-          sudo apt-get -y install gcc python3 python3-pip
+          sudo apt-get -y install gcc python3 python3-pip python3-venv
         shell: bash
       - if: matrix.os == 'macOS'
         name: Install gcc and python (MacOS)
@@ -150,10 +150,10 @@ jobs:
         env:
           CXX: ${{ matrix.compiler }}
         run: |
-          conan build . -s:h compiler.cppstd=20 -s:h libqasm/*:build_type=${{ matrix.build_type }} -o libqasm/*:build_tests=True -o libqasm/*:compat=True -o libqasm/*:asan_enabled=True -b missing
+          conan build . -s:h compiler.cppstd=20 -s:h libqasm/*:build_type=Release -o libqasm/*:build_tests=True -o libqasm/*:compat=True -o libqasm/*:asan_enabled=True -b missing
       - name: Test
         working-directory: build
-        run: ctest -C ${{ matrix.build_type }} --output-on-failure
+        run: ctest -C Release --output-on-failure
 
   python:
     name: Python
