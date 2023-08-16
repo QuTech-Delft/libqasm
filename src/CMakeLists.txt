@@ -45,7 +45,7 @@ add_subdirectory(func-gen)
 
 # Require flex/bison; if not installed, this will try to build from source.
 find_package(BISON 3.0)
-find_package(FLEX 2.6.3)
+find_package(FLEX 2.6.4)
 if(WIN32)
     set(flex_win_compat --wincompat)
 else()
