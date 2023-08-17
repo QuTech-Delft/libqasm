@@ -56,10 +56,11 @@ class LibqasmConan(ConanFile):
         else:
             self.tool_requires("flex/2.6.4")
             self.tool_requires("bison/3.8.2")
-        self.tool_requires("zulu-openjdk/11.0.19")
+        if self.settings.arch != "armv8":
+            self.tool_requires("zulu-openjdk/11.0.19")
 
     def requirements(self):
-        self.requires("antlr4-cppruntime/4.9.3")
+        self.requires("antlr4-cppruntime/4.13.0")
 
     def config_options(self):
         if self.settings.os == "Windows":

@@ -17,7 +17,7 @@ def print_usage():
 def generate_antlr_parser(input_folder, output_folder):
     print("Generating ANTLR lexer and parser files")
     current_folder_path = os.path.dirname(os.path.abspath(__file__))
-    jar_file_path = os.path.join(current_folder_path, "..", "3rd_party", "antlr-4.9.3-complete.jar")
+    jar_file_path = os.path.join(current_folder_path, "..", "3rd_party", "antlr-4.13.0-complete.jar")
     java = subprocess.run([
         "java",
         "-jar",

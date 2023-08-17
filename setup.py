@@ -104,6 +104,7 @@ class build_ext(_build_ext):
                 ['-o']['libqasm/*:cqasm_python_dir=' + re.escape(os.path.dirname(cqasm_target))]
                 ['-o']['libqasm/*:python_dir=' + re.escape(os.path.dirname(target))]
                 ['-o']['libqasm/*:python_ext=' + re.escape(os.path.basename(target))]
+                ['-c']['tools.build:defines=["_LIBCPP_DISABLE_AVAILABILITY"]']
 
                 ['-b']['missing']
                 ['-tf']['']
