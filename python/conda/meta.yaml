@@ -20,7 +20,7 @@ requirements:
     - bison # [not win]
     #- winflexbison # [win]
   host:
-    - conan >= 2.0
+    - conan >=2.0
     - python
     - plumbum
     - delocate # [osx]
