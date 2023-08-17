@@ -105,7 +105,7 @@ class build_ext(_build_ext):
                 ['-o']['libqasm/*:python_ext=' + os.path.normpath(os.path.basename(target))]
 
                 ['-b']['missing']
-                ['-tf']['""']
+                ['-tf']['']
             )
             cmd & FG
 

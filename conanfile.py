@@ -47,7 +47,7 @@ class LibqasmConan(ConanFile):
         "tree_gen_build_tests": False
     }
 
-    exports_sources = "CMakeLists.txt", "include/*", "scripts/*", "src/*", "test/*"
+    exports_sources = "CMakeLists.txt", "include/*", "python/*", "res/*", "scripts/*", "src/*", "test/*"
 
     def build_requirements(self):
         self.tool_requires("m4/1.4.19")
