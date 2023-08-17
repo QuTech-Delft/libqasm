@@ -94,6 +94,7 @@ class LibqasmConan(ConanFile):
         tc.variables["LIBQASM_PYTHON_EXT"] = self.options.python_ext
         tc.variables["PYTHON_EXECUTABLE"] = re.escape(sys.executable)
         tc.variables["TREE_GEN_BUILD_TESTS"] = self.options.tree_gen_build_tests
+        tc.variables["_LIBCPP_DISABLE_AVAILABILITY"] = "ON"
         tc.generate()
 
     def build(self):
