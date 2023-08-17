@@ -59,7 +59,7 @@ class LibqasmConan(ConanFile):
         self.tool_requires("zulu-openjdk/11.0.19")
 
     def requirements(self):
-        self.requires("antlr4-cppruntime/4.11.1")
+        self.requires("antlr4-cppruntime/4.9.3")
 
     def config_options(self):
         if self.settings.os == "Windows":
