@@ -2,6 +2,7 @@
 
 import os
 import platform
+import re
 import shutil
 from distutils.dir_util import copy_tree
 from setuptools import setup, Extension
@@ -100,9 +101,9 @@ class build_ext(_build_ext):
                 ['-o']["libqasm/*:compat=True"]
                 ['-o']['libqasm/*:build_tests=True']
                 ['-o']['libqasm/*:build_python=True']
-                ['-o']['libqasm/*:cqasm_python_dir=' + os.path.normpath(os.path.dirname(cqasm_target))]
-                ['-o']['libqasm/*:python_dir=' + os.path.normpath(os.path.dirname(target))]
-                ['-o']['libqasm/*:python_ext=' + os.path.normpath(os.path.basename(target))]
+                ['-o']['libqasm/*:cqasm_python_dir=' + re.escape(os.path.dirname(cqasm_target))]
+                ['-o']['libqasm/*:python_dir=' + re.escape(os.path.dirname(target))]
+                ['-o']['libqasm/*:python_ext=' + re.escape(os.path.basename(target))]
 
                 ['-b']['missing']
                 ['-tf']['']

@@ -41,6 +41,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     target_compile_options(${PROJECT_NAME}_test PRIVATE
         -Wall -Wextra -Werror -Wfatal-errors
+        -D_LIBCPP_DISABLE_AVAILABILITY
         -fPIC
         -Wno-error=sign-compare
         -Wno-error=unused-private-field
