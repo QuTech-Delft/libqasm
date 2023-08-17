@@ -208,7 +208,6 @@ setup(
     },
 
     setup_requires=[
-        'antlr4-tools',
         'conan',
         'plumbum',
         'delocate; platform_system == "Darwin"',

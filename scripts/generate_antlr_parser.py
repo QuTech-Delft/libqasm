@@ -1,12 +1,8 @@
 #!/usr/bin/env python3
 
-import shutil
+import os
 import subprocess
 import sys
-
-
-def is_antlr4_installed():
-    return shutil.which("antlr4")
 
 
 def print_usage():
@@ -18,15 +14,14 @@ def print_usage():
     print("    generate_antlr_parser.py ../src/v3x ../build/Debug/src/v3x")
 
 
-def print_antlr4_tools_installation_instructions():
-    print("Please install ANTLR4 tools: ")
-    print("    pip install antlr4-tools")
-
-
 def generate_antlr_parser(input_folder, output_folder):
-    print("Generating ANTLR lexer and parser files...")
-    antlr4 = subprocess.run([
-        "antlr4",
+    print("Generating ANTLR lexer and parser files")
+    current_folder_path = os.path.dirname(os.path.abspath(__file__))
+    jar_file_path = os.path.join(current_folder_path, "..", "3rd_party", "antlr-4.13.0-complete.jar")
+    java = subprocess.run([
+        "java",
+        "-jar",
+        jar_file_path,
         "-Xexact-output-dir",
         "-o",
         "{}".format(output_folder),
@@ -34,17 +29,14 @@ def generate_antlr_parser(input_folder, output_folder):
         "{}/cqasm_lexer.g4".format(input_folder),
         "{}/cqasm_parser.g4".format(input_folder)
     ])
-    if antlr4.returncode != 0:
-        print("Error running antlr4: {}", antlr4.returncode)
+    if java.returncode != 0:
+        print("Error running java: {}", java.returncode)
         exit(3)
 
 
 def main(argv):
     if len(argv) != 3:
         print_usage()
-        exit(2)
-    if not is_antlr4_installed():
-        print_antlr4_tools_installation_instructions()
         exit(2)
     generate_antlr_parser(argv[1], argv[2])
 

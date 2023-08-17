@@ -3,7 +3,7 @@ FROM ubuntu:22.04
 RUN apt-get -qq update && \
     apt-get -qq upgrade && \
     apt-get -qq -y install build-essential cmake git python3 python3-pip swig && \
-    python3 -m pip install antlr4-tools conan pytest
+    python3 -m pip install conan pytest
 
 ADD . /libqasm
 

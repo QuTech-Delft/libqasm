@@ -47,7 +47,7 @@ class LibqasmConan(ConanFile):
         "tree_gen_build_tests": False
     }
 
-    exports_sources = "CMakeLists.txt", "include/*", "python/*", "res/*", "scripts/*", "src/*", "test/*"
+    exports_sources = "CMakeLists.txt", "3rd_party/*", "include/*", "python/*", "res/*", "scripts/*", "src/*", "test/*"
 
     def build_requirements(self):
         self.tool_requires("m4/1.4.19")
@@ -56,7 +56,7 @@ class LibqasmConan(ConanFile):
         else:
             self.tool_requires("flex/2.6.4")
             self.tool_requires("bison/3.8.2")
-        self.tool_requires("openjdk/19.0.2")
+        self.tool_requires("zulu-openjdk/11.0.19")
 
     def requirements(self):
         self.requires("antlr4-cppruntime/4.13.0")
