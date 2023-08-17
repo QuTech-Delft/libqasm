@@ -6,7 +6,7 @@ on:
     - v3_1
   pull_request:
 
-#jobs:
+jobs:
 #  cpp-linux:
 #    name: 'C++ tests (gcc-clang/Linux/x64)'
 #    runs-on: ubuntu-latest
@@ -99,7 +99,7 @@ on:
 #      - name: Test
 #        working-directory: build/${{ matrix.build_type }}
 #        run: ctest -C ${{ matrix.build_type }} --output-on-failure
-#
+
   cpp-arm64:
     name: 'C++ tests (gcc/Linux/ARM64, clang/MacOS/ARM64)'
     runs-on: [self-hosted, ARM64, "${{ matrix.os }}"]
@@ -139,7 +139,7 @@ on:
       - name: Test
         working-directory: build/Release
         run: ctest -C Release --output-on-failure
-#
+
 #  python:
 #    name: Python
 #    runs-on: ${{ matrix.os }}
