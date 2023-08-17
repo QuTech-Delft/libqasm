@@ -54,8 +54,9 @@ class LibqasmConan(ConanFile):
         if self.settings.os == "Windows":
             self.tool_requires("winflexbison/2.5.24")
         else:
-            self.tool_requires("flex/2.6.4")
-            self.tool_requires("bison/3.8.2")
+            if self.settings.arch != "armv8":
+                self.tool_requires("flex/2.6.4")
+                self.tool_requires("bison/3.8.2")
         if self.settings.arch != "armv8":
             self.tool_requires("zulu-openjdk/11.0.19")
 
@@ -95,7 +96,6 @@ class LibqasmConan(ConanFile):
         tc.variables["LIBQASM_PYTHON_EXT"] = self.options.python_ext
         tc.variables["PYTHON_EXECUTABLE"] = re.escape(sys.executable)
         tc.variables["TREE_GEN_BUILD_TESTS"] = self.options.tree_gen_build_tests
-        tc.variables["_LIBCPP_DISABLE_AVAILABILITY"] = "ON"
         tc.generate()
 
     def build(self):
