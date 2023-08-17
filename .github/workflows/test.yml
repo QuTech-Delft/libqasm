@@ -181,35 +181,37 @@ jobs:
       - name: Test
         run: python -m pytest
 
-#  conda:
-#    name: Conda
-#    runs-on: ${{ matrix.os }}
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        os:
-#          - ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v3
-#      - name: Set up conda
-#        uses: conda-incubator/setup-miniconda@v2
-#        with:
-#          auto-update-conda: true
-#          channels: conda-forge
-#          miniconda-version: "latest"
-#          show-channel-urls: true
-#          use-only-tar-bz2: true
-#      - name: Install conda dependencies
-#        run: conda install conda-build conda-verify -y
-#      - name: Install conan package
-#        run: conda install -c conda-forge conan>=2.0.0 plumbum -y
-#      - name: Build & test
-#        env:
-#          NPROCS: 100
-#        run: conda build python/conda
-#      - name: Install
-#        run: conda install libqasm --use-local
-#
+  conda:
+    name: Conda
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up conda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          channels: conda-forge
+          miniconda-version: "latest"
+          show-channel-urls: true
+          use-only-tar-bz2: true
+      - name: Install conda dependencies
+        run: conda install conda-build conda-verify -y
+      - name: Add conda-forge channel
+        run: conda config --add channels conda-forge
+      - name: Install conan and plumbum packages
+        run: conda install -c conda-forge conan>=2.0.0 plumbum -y
+      - name: Build & test
+        env:
+          NPROCS: 100
+        run: conda build python/conda
+      - name: Install
+        run: conda install libqasm --use-local
+
 #  docker:
 #    name: Docker
 #    runs-on: ubuntu-latest
