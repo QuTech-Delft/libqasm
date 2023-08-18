@@ -12,7 +12,6 @@ build:
 
 requirements:
   build:
-    - {{ compiler('cxx') }}
     - setuptools
     - swig
     - cmake
