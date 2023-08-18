@@ -8,6 +8,7 @@ RUN apt-get -qq update && \
 ADD . /libqasm
 
 WORKDIR /libqasm
+RUN conan profile detect
 RUN conan build . -s:h compiler.cppstd=20 -o libqasm/*:build_tests=True -o libqasm/*:compat=True -o libqasm/*:tree_gen_build_tests=True -o libqasm/*:asan_enabled=True -b missing
 
 WORKDIR /libqasm/build/Release
