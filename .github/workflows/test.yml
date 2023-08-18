@@ -201,10 +201,6 @@ jobs:
           show-channel-urls: true
       - name: Install conda dependencies
         run: conda install conda-build conda-verify -y
-      - name: Add conda-forge channel
-        run: conda config --add channels conda-forge
-      - name: Install conan and plumbum packages
-        run: conda install -c conda-forge conan>=2.0.0 plumbum -y
       - name: Build & test
         env:
           NPROCS: 100
