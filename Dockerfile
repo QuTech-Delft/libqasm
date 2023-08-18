@@ -8,8 +8,11 @@ RUN apt-get -qq update && \
 ADD . /libqasm
 
 WORKDIR /libqasm
+RUN conan build . -s:h compiler.cppstd=20 -o libqasm/*:build_tests=True -o libqasm/*:compat=True -o libqasm/*:tree_gen_build_tests=True -o libqasm/*:asan_enabled=True -b missing
+
+WORKDIR /libqasm/build/Release
+RUN ctest -C Release --output-on-failure
+
+WORKDIR /libqasm
 RUN python3 -m pip install .
 RUN python3 -m pytest
-
-WORKDIR /build/Release
-RUN ctest -C Release --output-on-failure
