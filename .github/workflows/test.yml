@@ -17,11 +17,11 @@ jobs:
         build_type: [Debug, Release]
         exclude:
           - os: ubuntu-latest
-            compiler: msvc
+            compiler: cl
           - os: macos-latest
             compiler: g++
           - os: macos-latest
-            compiler: msvc
+            compiler: cl
           - os: windows-latest
             compiler: g++
           - os: windows-latest
