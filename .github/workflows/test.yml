@@ -16,7 +16,7 @@ jobs:
         build_type: [Debug, Release]
         include:
           - os: ubuntu-latest
-            compiler: clang++
+            compiler: [g++, clang++]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Install Python
