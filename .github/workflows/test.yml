@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        compiler: [g++, clang++, msvc]
+        compiler: [g++, clang++, cl]
         build_type: [Debug, Release]
         exclude:
           - os: ubuntu-latest
