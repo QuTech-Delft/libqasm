@@ -6,7 +6,7 @@ import sys
 
 
 def print_usage():
-    print("Usage: regenerate_parser.sh <INPUT FOLDER> <OUTPUT FOLDER>")
+    print("Usage: generate_antlr_parser.py <INPUT FOLDER> <OUTPUT FOLDER>")
     print("Where:")
     print("    INPUT_FOLDER: folder containing the grammar files.")
     print("    OUTPUT_FOLDER: folder where generated files will be left.")
