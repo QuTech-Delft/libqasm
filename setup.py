@@ -37,7 +37,7 @@ copy_tree(srcmod_dir, module_dir)
 
 
 def get_version():
-    return '0.4.0'
+    return '0.4.1'
 
 
 def read(file_name):
@@ -72,8 +72,7 @@ class build_ext(_build_ext):
                             shutil.rmtree(cbuild_dir)
                         break
 
-        # Figure out how setuptools wants to name the extension file and where
-        # it wants to place it.
+        # Figure out how setuptools wants to name the extension file and where it wants to place it.
         cqasm_target = os.path.abspath(self.get_ext_fullpath('cqasm._cqasm'))
         target = os.path.abspath(self.get_ext_fullpath('libQasm._libQasm'))
 
