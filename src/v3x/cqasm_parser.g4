@@ -27,9 +27,8 @@ expression:
     | IDENTIFIER
     | array_elements;
 
-array_elements: IDENTIFIER OPEN_BRACKET array_indices CLOSE_BRACKET;
-array_indices: array_index (COMMA array_index)?;
-array_index: expression (COLON expression)?;
+array_elements: IDENTIFIER OPEN_BRACKET array_index CLOSE_BRACKET;
+array_index: expression;
 
 /*
 * Things we are leaving out at the moment:
@@ -38,4 +37,5 @@ array_index: expression (COLON expression)?;
 * - Multiple variable declarations in the same line.
 * - Operators: unary, binary, ternary.
 * - Semicolons don't start a new statement.
+* - Array elements cannot be neither a list of indices nor a range of indices.
 */
