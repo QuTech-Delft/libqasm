@@ -12,17 +12,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # Building for {g++, clang++}/Linux, clang++/MacOS, and msvc/Windows
+        # both in Debug and Release
         os: [ubuntu-latest, macos-latest, windows-latest]
+        compiler: [g++, clang++, msvc]
         build_type: [Debug, Release]
-        include:
+        exclude:
           - os: ubuntu-latest
-            compiler: g++
-          - os: ubuntu-latest
-            compiler: clang++
-          - os: macos-latest
-            compiler: clang++
-          - os: windows-latest
             compiler: msvc
+          - os: macos-latest
+            compiler: g++
+          - os: macos-latest
+            compiler: msvc
+          - os: windows-latest
+            compiler: g++
+          - os: windows-latest
+            compiler: clang++
     runs-on: ${{ matrix.os }}
     steps:
       - name: Install Python
@@ -60,10 +65,10 @@ jobs:
           sudo apt-get -y upgrade
           sudo apt-get -y install gcc python3 python3-pip python3-venv
         shell: bash
+      - if: matrix.os == 'macOS'
         # We are having problems when using the m4 and zulu-opendjk Conan packages on an armv8 architecture
         # m4 is required by flex/bison and zulu-openjdk provides the Java JRE required by the ANTLR generator
         # So, for the time being, we are installing flex/bison and java manually for this platform
-      - if: matrix.os == 'macOS'
         name: Install bison, flex, gcc, java and python (MacOS)
         run: |
           brew install bison flex gcc java python
