@@ -192,52 +192,6 @@ add_custom_target(antlr_target ALL
 )
 list(APPEND CQASM_V3X_SOURCES ${ANTLR_OUTPUTS})
 
-# Generate the abstract syntax tree classes.
-generate_tree_py(
-    "${CMAKE_CURRENT_SOURCE_DIR}/v3x/cqasm-ast.tree"
-    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x/cqasm-ast-gen.hpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-ast-gen.cpp"
-    "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/cqasm-ast-gen.py"
-)
-list(APPEND CQASM_V3X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-ast-gen.cpp")
-
-# Generate the type tree classes.
-generate_tree_py(
-    "${CMAKE_CURRENT_SOURCE_DIR}/v3x/cqasm-types.tree"
-    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x/cqasm-types-gen.hpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-types-gen.cpp"
-    "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/cqasm-types-gen.py"
-)
-list(APPEND CQASM_V3X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-types-gen.cpp")
-
-# Generate the semantic value classes. Values can be either known at
-# compile-time or only at runtime, but their type is resolved to one of the
-# type tree nodes at compile-time.
-generate_tree_py(
-    "${CMAKE_CURRENT_SOURCE_DIR}/v3x/cqasm-values.tree"
-    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x/cqasm-values-gen.hpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-values-gen.cpp"
-    "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/cqasm-values-gen.py"
-)
-list(APPEND CQASM_V3X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-values-gen.cpp")
-
-# Generate the semantic tree classes.
-generate_tree_py(
-    "${CMAKE_CURRENT_SOURCE_DIR}/v3x/cqasm-semantic.tree"
-    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x/cqasm-semantic-gen.hpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-semantic-gen.cpp"
-    "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/cqasm-semantic-gen.py"
-)
-list(APPEND CQASM_V3X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-semantic-gen.cpp")
-
-# Generate the cQASM default function set.
-generate_funcs(
-    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x/cqasm-functions-gen.hpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-functions-gen.cpp"
-    "v3x"
-)
-list(APPEND CQASM_V3X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-functions-gen.cpp")
-
 #-------------------------------------------------------------------------------
 # Compilation instructions
 #-------------------------------------------------------------------------------

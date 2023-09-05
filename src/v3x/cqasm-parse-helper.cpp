@@ -3,8 +3,7 @@
  */
 
 #include "v3x/cqasm-parse-helper.hpp"
-#include "v3x/cqasm_parser.h"
-#include "v3x/cqasm_lexer.h"
+
 
 namespace cqasm {
 namespace v3x {
