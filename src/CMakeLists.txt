@@ -19,44 +19,40 @@ option(
     OFF
 )
 
-# Windows weirdness: need a .lib file to link against a DLL at compile-time
-# (I think), but only the .dll is generated when there are no exported symbols.
+# Windows weirdness: need a .lib file to link against a DLL at compile-time (I think),
+# but only the .dll is generated when there are no exported symbols.
 # This sort of fixes that (https://stackoverflow.com/questions/1941443)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 #-------------------------------------------------------------------------------
-# Code generation tool inclusion and build
+# Packages
 #-------------------------------------------------------------------------------
 
-# Require flex/bison; if not installed, this will try to build from source.
-set(FLEX_VERSION_REQUIRED 2.6.4)
-set(BISON_VERSION_REQUIRED 3.0)
-set(BISON_VERSION_TO_BUILD 3.7.4)
-include(../cmake/flex-bison.cmake)
-if(WIN32)
-    set(flex_win_compat --wincompat)
-else()
-    set(flex_win_compat)
-endif()
-
-# Packages
 include(FetchContent)
-# tree-gen, a custom utility to generate classes for typed tree-like
-# structures and enums with variants containing data. This exposes the
-# generate_tree() function.
+# tree-gen, a custom utility to generate classes for typed tree-like structures and enums with variants containing data.
+# This exposes the generate_tree() function.
 FetchContent_Declare(tree-gen
     GIT_REPOSITORY https://github.com/QuTech-Delft/tree-gen.git
     GIT_TAG "d708ea629bad014011d3f1efc352077414dd86f7"
 )
 FetchContent_MakeAvailable(tree-gen)
 
-# Include func-gen, a simple program that generates the function that registers
-# all default functions (operators, trigonometry, etc) with a
-# resolver::FunctionTable object. This file would otherwise be extremely
-# repetitive and annoying to maintain due to the amount of overloads. This
-# exposes the generate_funcs() function, which should be called once with the
-# header and source file paths.
+# Include func-gen, a simple program that generates the function that registers all default functions
+# (operators, trigonometry, etc) with a resolver::FunctionTable object.
+# This file would otherwise be extremely repetitive and annoying to maintain due to the amount of overloads.
+# This exposes the generate_funcs() function, which should be called once with the header and source file paths.
 add_subdirectory(func-gen)
+
+# Require flex/bison; if not installed, this will try to build from source.
+find_package(BISON 3.0)
+find_package(FLEX 2.6.4)
+if(WIN32)
+    set(flex_win_compat --wincompat)
+else()
+    set(flex_win_compat)
+endif()
+
+find_package(antlr4-runtime REQUIRED)
 
 #-------------------------------------------------------------------------------
 # cQASM common code generation and inclusion
@@ -172,62 +168,112 @@ generate_funcs(
 list(APPEND CQASM_V1X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-functions-gen.cpp")
 
 #-------------------------------------------------------------------------------
+# cQASM v3.x parser generation and inclusion
+#-------------------------------------------------------------------------------
+add_subdirectory(v3x)
+
+# Generate the lexer and the parser.
+set(ANTLR_OUTPUTS
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm_lexer.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm_parser.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm_parserBaseListener.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm_parserListener.cpp"
+)
+add_custom_command(
+    OUTPUT ${ANTLR_OUTPUTS}
+    COMMAND
+        "${PYTHON_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/scripts/generate_antlr_parser.py"
+        "${CMAKE_CURRENT_SOURCE_DIR}/v3x"  # Input dir (grammar files)
+        "${CMAKE_CURRENT_BINARY_DIR}/v3x"  # Output dir (lexer and parser cpp files)
+)
+add_custom_target(antlr_target ALL
+    DEPENDS ${ANTLR_OUTPUTS}
+)
+list(APPEND CQASM_V3X_SOURCES ${ANTLR_OUTPUTS})
+
+#-------------------------------------------------------------------------------
 # Compilation instructions
 #-------------------------------------------------------------------------------
 
 # Main cQASM library as an object library.
-add_library(
-    cqasm-lib-obj OBJECT
+add_library(cqasm-lib-obj OBJECT
     ${CQASM_COMMON_SOURCES}
     ${CQASM_V1X_SOURCES}
+    ${CQASM_V3X_SOURCES}
 )
 
-target_compile_definitions(cqasm-lib-obj PRIVATE ${TREE_LIB_PRIVATE_DEFS})
+target_compile_definitions(cqasm-lib-obj
+    PRIVATE ${TREE_LIB_PRIVATE_DEFS}
+)
 
 # The src directory and binary directory (for generated header files) are private.
 # The include directory is public.
 # That is, the files in include must not try to include generated files and files from the src directory,
 # but the other direction is fine.
-target_include_directories(
-    cqasm-lib-obj
+target_include_directories(cqasm-lib-obj
     PRIVATE ${TREE_LIB_PRIVATE_INCLUDE}
     PUBLIC ${TREE_LIB_PUBLIC_INCLUDE}
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src"
+    PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/src"
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/"
     # Do not remove the ending '/' since
     # it avoids the whole 'include' directory to be copied to the installation folder.
     # Instead, just its contents are copied.
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include/"
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include/"
+    PUBLIC "${antlr4-runtime_INCLUDE_DIR}"
 )
 
-target_compile_features(cqasm-lib-obj PUBLIC cxx_std_20)
+target_compile_features(cqasm-lib-obj PUBLIC
+    cxx_std_20
+)
 
-target_link_libraries(cqasm-lib-obj PUBLIC tree-lib-obj)
+target_link_libraries(cqasm-lib-obj PUBLIC
+    antlr4_static
+    tree-lib-obj
+)
 
 # fPIC: otherwise some weirdness happens with pthreads or something when linking statically.
-if(MSVC)
+if(CMAKE_COMPILER_IS_GNUCXX)
+    target_compile_options(cqasm-lib-obj PRIVATE
+        -Wall -Wextra -Werror -Wfatal-errors
+        -fPIC
+        -Wno-error=deprecated-declarations
+        -Wno-error=restrict
+        -Wno-error=sign-compare
+    )
+elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    target_compile_options(cqasm-lib-obj PRIVATE
+        -Wall -Wextra -Werror -Wfatal-errors
+        -fPIC
+        -Wno-error=sign-compare
+        -Wno-error=unused-private-field
+        -Wno-error=unused-but-set-variable
+    )
+elseif(MSVC)
     target_compile_options(cqasm-lib-obj PRIVATE
         /W3 /w34996  # not using /WX at the moment because the flex generated code has some warnings
         /D_CRT_NONSTDC_NO_DEPRECATE
         /D_CRT_SECURE_NO_WARNINGS
         /D_UNICODE /DUNICODE
         /diagnostics:column /EHsc /FC /fp:precise /Gd /GS /MP /sdl /utf-8 /Zc:inline
-   )
-elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-    target_compile_options(cqasm-lib-obj PRIVATE
-        -Wall -Wextra -Werror
-        -fPIC
-        -Wno-error=sign-compare
-        -Wno-error=unused-but-set-variable
     )
+else()
+    message(SEND_ERROR "Unknown compiler!")
 endif()
 
 # Main cQASM library in shared or static form as managed by cmake's
 # internal BUILD_SHARED_LIBS variable.
-add_library(cqasm $<TARGET_OBJECTS:cqasm-lib-obj>)
-target_include_directories(cqasm PUBLIC $<TARGET_PROPERTY:cqasm-lib-obj,INTERFACE_INCLUDE_DIRECTORIES>)
-target_link_libraries(cqasm PUBLIC $<TARGET_PROPERTY:cqasm-lib-obj,LINK_LIBRARIES>)
+add_library(cqasm
+    $<TARGET_OBJECTS:cqasm-lib-obj>
+)
+target_include_directories(cqasm PUBLIC
+    $<TARGET_PROPERTY:cqasm-lib-obj,INTERFACE_INCLUDE_DIRECTORIES>
+)
+target_link_libraries(cqasm PUBLIC
+    $<TARGET_PROPERTY:cqasm-lib-obj,LINK_LIBRARIES>
+)
 
 #-------------------------------------------------------------------------------
 # Install instructions

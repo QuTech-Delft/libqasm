@@ -1,11 +1,4 @@
-# Packages
-include(FetchContent)
-FetchContent_Declare(googletest
-    GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG "60c3602aaa3f27e1dbd691549b1d8da88c14c947"
-)
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
+find_package(GTest REQUIRED)
 
 # Test executable
 add_executable(${PROJECT_NAME}_test)
@@ -26,10 +19,27 @@ target_sources(${PROJECT_NAME}_test PRIVATE
 target_compile_features(${PROJECT_NAME}_test PRIVATE cxx_std_20)
 target_link_libraries(${PROJECT_NAME}_test PRIVATE
     cqasm
-    gmock
-    gtest
+    GTest::gmock
+    GTest::gtest
 )
-if(MSVC)
+
+if(CMAKE_COMPILER_IS_GNUCXX)
+    target_compile_options(${PROJECT_NAME}_test PRIVATE
+        -Wall -Wextra -Werror -Wfatal-errors
+        -fPIC
+        -Wno-error=deprecated-declarations
+        -Wno-error=restrict
+        -Wno-error=sign-compare
+    )
+elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    target_compile_options(${PROJECT_NAME}_test PRIVATE
+        -Wall -Wextra -Werror -Wfatal-errors
+        -fPIC
+        -Wno-error=sign-compare
+        -Wno-error=unused-private-field
+        -Wno-error=unused-but-set-variable
+    )
+elseif(MSVC)
     target_compile_options(${PROJECT_NAME}_test PRIVATE
         /W3 /WX /w34996
         /D_CONSOLE /DCONSOLE
@@ -38,12 +48,8 @@ if(MSVC)
         /D_UNICODE /DUNICODE
         /diagnostics:column /EHsc /FC /fp:precise /Gd /GS /MP /sdl /utf-8 /Zc:inline
     )
-elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-    target_compile_options(${PROJECT_NAME}_test PRIVATE
-        -pedantic-errors -Werror -Wall -Wextra
-        -Wno-deprecated
-        -Wconversion -Wsign-conversion -Wno-sign-conversion  # do not sort flags; order matters
-    )
+else()
+    message(SEND_ERROR "Unknown compiler!")
 endif()
 
 gtest_discover_tests(${PROJECT_NAME}_test
