@@ -202,7 +202,6 @@ add_library(cqasm-lib-obj OBJECT
     ${CQASM_V1X_SOURCES}
     ${CQASM_V3X_SOURCES}
 )
-add_dependencies(cqasm-lib-obj antlr_target)
 
 target_compile_definitions(cqasm-lib-obj
     PRIVATE ${TREE_LIB_PRIVATE_DEFS}
