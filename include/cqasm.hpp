@@ -9,3 +9,4 @@
 #pragma once
 
 #include "v1x/cqasm.hpp"
+#include "v3x/cqasm.hpp"

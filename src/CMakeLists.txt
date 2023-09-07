@@ -183,7 +183,7 @@ add_custom_command(
     OUTPUT ${ANTLR_OUTPUTS}
     COMMAND
         "${PYTHON_EXECUTABLE}"
-        "${CMAKE_SOURCE_DIR}/scripts/generate_antlr_parser.py"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../scripts/generate_antlr_parser.py"
         "${CMAKE_CURRENT_SOURCE_DIR}/v3x"  # Input dir (grammar files)
         "${CMAKE_CURRENT_BINARY_DIR}/v3x"  # Output dir (lexer and parser cpp files)
 )
