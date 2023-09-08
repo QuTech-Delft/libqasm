@@ -53,6 +53,7 @@ else()
 endif()
 
 find_package(antlr4-runtime REQUIRED)
+find_package(Python3 REQUIRED)
 
 #-------------------------------------------------------------------------------
 # cQASM common code generation and inclusion
@@ -176,7 +177,7 @@ add_subdirectory(v3x)
 function(antlr_target SCRIPT INPUT_DIR OUTPUT_DIR ANTLR_OUTPUTS)
     add_custom_command(
         OUTPUT ${ANTLR_OUTPUTS}
-        COMMAND ${PYTHON_EXECUTABLE} ${SCRIPT} ${INPUT_DIR} ${OUTPUT_DIR}
+        COMMAND ${Python3_EXECUTABLE} ${SCRIPT} ${INPUT_DIR} ${OUTPUT_DIR}
     )
 endfunction()
 
