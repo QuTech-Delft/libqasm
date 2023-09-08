@@ -58,7 +58,7 @@ class build_ext(_build_ext):
 
         # If we were previously built in a different directory,
         # nuke the cbuild dir to prevent inane CMake errors.
-        # This happens when the user does 'pip install .' after building locally.
+        # This happens when the user does 'pip install .' after building locally
         if os.path.exists(cbuild_dir + os.sep + 'CMakeCache.txt'):
             with open(cbuild_dir + os.sep + 'CMakeCache.txt', 'r') as f:
                 for line in f.read().split('\n'):
@@ -72,19 +72,19 @@ class build_ext(_build_ext):
                             shutil.rmtree(cbuild_dir)
                         break
 
-        # Figure out how setuptools wants to name the extension file and where it wants to place it.
+        # Figure out how setuptools wants to name the extension file and where it wants to place it
         cqasm_target = os.path.abspath(self.get_ext_fullpath('cqasm._cqasm'))
         target = os.path.abspath(self.get_ext_fullpath('libQasm._libQasm'))
 
-        # Build the Python module and install it into module_dir.
+        # Build the Python extension and install it where setuptools expects it
         if not os.path.exists(cbuild_dir):
             os.makedirs(cbuild_dir)
 
-        # Build type can be set using an environment variable.
-        build_type = os.environ.get('LIBQASM_BUILD_TYPE', 'Release')
-
         # Configure and build using Conan
         with local.cwd(root_dir):
+            # Build type can be set using an environment variable
+            build_type = os.environ.get('LIBQASM_BUILD_TYPE', 'Release')
+
             cmd = local['conan']['profile']['detect']['--force']
             cmd & FG
 
@@ -93,23 +93,23 @@ class build_ext(_build_ext):
                 ['-s:h']['compiler.cppstd=20']
                 ['-s:h']["libqasm/*:build_type=" + build_type]
 
-                # (Ab)use static libs for the intermediate libraries
-                # to avoid dealing with R(UN)PATH nonsense on Linux/OSX as much as possible.
-                ['-o']["libqasm/*:shared=False"]
-                # The Python library needs the compatibility headers.
-                ['-o']["libqasm/*:compat=True"]
-                ['-o']['libqasm/*:build_tests=True']
                 ['-o']['libqasm/*:build_python=True']
+                ['-o']['libqasm/*:build_tests=True']
+                # The Python library needs the compatibility headers
+                ['-o']["libqasm/*:compat=True"]
                 ['-o']['libqasm/*:cqasm_python_dir=' + re.escape(os.path.dirname(cqasm_target))]
                 ['-o']['libqasm/*:python_dir=' + re.escape(os.path.dirname(target))]
                 ['-o']['libqasm/*:python_ext=' + re.escape(os.path.basename(target))]
+                # (Ab)use static libs for the intermediate libraries
+                # to avoid dealing with R(UN)PATH nonsense on Linux/OSX as much as possible
+                ['-o']["libqasm/*:shared=False"]
 
                 ['-b']['missing']
                 ['-tf']['']
             )
-        if platform.system() == "Darwin":
-            cmd = cmd['-c']['tools.build:defines=["_LIBCPP_DISABLE_AVAILABILITY"]']
-        cmd & FG
+            if platform.system() == "Darwin":
+                cmd = cmd['-c']['tools.build:defines=["_LIBCPP_DISABLE_AVAILABILITY"]']
+            cmd & FG
 
 
 class build(_build):
@@ -191,8 +191,8 @@ setup(
     packages=['libQasm', 'cqasm', 'cqasm.v1x'],
     package_dir={'': 'pybuild/module'},
 
-    # NOTE: the library build process is completely overridden to let CMake handle it;
-    # setuptools' implementation is horribly broken.
+    # NOTE: the library build process is completely overridden to let CMake handle it.
+    # setuptools implementation is horribly broken.
     # This is here just to have the rest of setuptools understand that this is a Python module with an extension in it.
     ext_modules=[
         Extension('libQasm._libQasm', [])

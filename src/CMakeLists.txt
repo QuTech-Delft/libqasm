@@ -53,6 +53,7 @@ else()
 endif()
 
 find_package(antlr4-runtime REQUIRED)
+find_package(Python3 REQUIRED)
 
 #-------------------------------------------------------------------------------
 # cQASM common code generation and inclusion
@@ -173,22 +174,24 @@ list(APPEND CQASM_V1X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-functions-g
 add_subdirectory(v3x)
 
 # Generate the lexer and the parser.
+function(antlr_target SCRIPT INPUT_DIR OUTPUT_DIR ANTLR_OUTPUTS)
+    add_custom_command(
+        OUTPUT ${ANTLR_OUTPUTS}
+        COMMAND ${Python3_EXECUTABLE} ${SCRIPT} ${INPUT_DIR} ${OUTPUT_DIR}
+    )
+endfunction()
+
 set(ANTLR_OUTPUTS
     "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm_lexer.cpp"
     "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm_parser.cpp"
     "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm_parserBaseListener.cpp"
     "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm_parserListener.cpp"
 )
-add_custom_command(
-    OUTPUT ${ANTLR_OUTPUTS}
-    COMMAND
-        "${PYTHON_EXECUTABLE}"
-        "${CMAKE_SOURCE_DIR}/scripts/generate_antlr_parser.py"
-        "${CMAKE_CURRENT_SOURCE_DIR}/v3x"  # Input dir (grammar files)
-        "${CMAKE_CURRENT_BINARY_DIR}/v3x"  # Output dir (lexer and parser cpp files)
-)
-add_custom_target(antlr_target ALL
-    DEPENDS ${ANTLR_OUTPUTS}
+antlr_target(
+    "${CMAKE_CURRENT_SOURCE_DIR}/../scripts/generate_antlr_parser.py"
+    "${CMAKE_CURRENT_SOURCE_DIR}/v3x"  # Input dir (grammar files)
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x"  # Output dir (lexer and parser cpp files)
+    "${ANTLR_OUTPUTS}"  # List of generated files
 )
 list(APPEND CQASM_V3X_SOURCES ${ANTLR_OUTPUTS})
 

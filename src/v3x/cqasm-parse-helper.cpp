@@ -4,6 +4,8 @@
 
 #include "v3x/cqasm-parse-helper.hpp"
 
+#include <stdexcept>  // runtime_error
+
 
 namespace cqasm {
 namespace v3x {
@@ -12,23 +14,23 @@ namespace parser {
 /**
  * Parse the given file.
  */
-ParseResult parse_file(const std::string &filename) {
-    return ParseHelper(filename, "", true).result;
+ParseResult parse_file(const std::string & /* filename */) {
+    throw std::runtime_error("Unimplemented");
 }
 
 /**
  * Parse using the given file pointer.
  */
-ParseResult parse_file(FILE *, const std::string &) {
-    return {};
+ParseResult parse_file(FILE * /* file */, const std::string & /* filename */) {
+    throw std::runtime_error("Unimplemented");
 }
 
 /**
  * Parse the given string. A filename may be given in addition for use within
  * error messages.
  */
-ParseResult parse_string(const std::string &, const std::string &) {
-    return {};
+ParseResult parse_string(const std::string & /* data */, const std::string & /* filename */) {
+    throw std::runtime_error("Unimplemented");
 }
 
 /**
