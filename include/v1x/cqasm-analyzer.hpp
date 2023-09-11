@@ -316,23 +316,6 @@ public:
         const std::function<parser::ParseResult()> &file_parser
     ) const;
 
-    /**
-     * Parses and analyzes the given file.
-     */
-    AnalysisResult analyze(const std::string &filename) const;
-
-    /**
-     * Parses and analyzes the given file pointer. The optional filename
-     * argument will be used only for error messages.
-     */
-    AnalysisResult analyze(FILE *file, const std::string &filename = "<unknown>") const;
-
-    /**
-     * Parses and analyzes the given string. The optional filename argument
-     * will be used only for error messages.
-     */
-    AnalysisResult analyze_string(const std::string &data, const std::string &filename = "<unknown>") const;
-
 };
 
 } // namespace analyzer

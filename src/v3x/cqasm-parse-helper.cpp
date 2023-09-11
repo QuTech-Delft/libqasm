@@ -2,6 +2,7 @@
  * Implementation for \ref include/v3x/cqasm-parse-helper.hpp "v3x/cqasm-parse-helper.hpp".
  */
 
+#include "v1x/cqasm-parse-result.hpp"
 #include "v3x/cqasm-parse-helper.hpp"
 
 #include <stdexcept>  // runtime_error
@@ -14,14 +15,14 @@ namespace parser {
 /**
  * Parse the given file.
  */
-ParseResult parse_file(const std::string & /* filename */) {
+cqasm::v1x::parser::ParseResult parse_file(const std::string & /* filename */) {
     throw std::runtime_error("Unimplemented");
 }
 
 /**
  * Parse using the given file pointer.
  */
-ParseResult parse_file(FILE * /* file */, const std::string & /* filename */) {
+cqasm::v1x::parser::ParseResult parse_file(FILE * /* file */, const std::string & /* filename */) {
     throw std::runtime_error("Unimplemented");
 }
 
@@ -29,7 +30,7 @@ ParseResult parse_file(FILE * /* file */, const std::string & /* filename */) {
  * Parse the given string. A filename may be given in addition for use within
  * error messages.
  */
-ParseResult parse_string(const std::string & /* data */, const std::string & /* filename */) {
+cqasm::v1x::parser::ParseResult parse_string(const std::string & /* data */, const std::string & /* filename */) {
     throw std::runtime_error("Unimplemented");
 }
 

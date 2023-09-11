@@ -2,8 +2,10 @@
  * Implementation for the internal Python-wrapped functions and classes.
  */
 
+#include "cqasm-version.hpp"
 #include "cqasm-py.hpp"
 #include "v1x/cqasm.hpp"
+#include "v1x/cqasm-parse-helper.hpp"
 
 namespace v1x = cqasm::v1x;
 
@@ -108,7 +110,10 @@ std::vector<std::string> V1xAnalyzer::parse_string(
 std::vector<std::string> V1xAnalyzer::analyze_file(
     const std::string &filename
 ) const {
-    auto result = a->analyze(filename);
+    auto result = a->analyze(
+        [=](){ return cqasm::version::parse_file(filename); },
+        [=](){ return v1x::parser::parse_file(filename); }
+    );
     std::vector<std::string> retval{""};
     if (result.errors.empty()) {
         retval[0] = ::tree::base::serialize(result.root);
@@ -125,7 +130,10 @@ std::vector<std::string> V1xAnalyzer::analyze_string(
     const std::string &data,
     const std::string &filename
 ) const {
-    auto result = a->analyze_string(data, filename);
+    auto result = a->analyze(
+        [=](){ return cqasm::version::parse_string(data, filename); },
+        [=](){ return v1x::parser::parse_string(data, filename); }
+    );
     std::vector<std::string> retval{""};
     if (result.errors.empty()) {
         retval[0] = ::tree::base::serialize(result.root);

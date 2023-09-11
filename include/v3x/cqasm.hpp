@@ -5,7 +5,9 @@
 
 #pragma once
 
-#include "cqasm-parse-helper.hpp"
+#include "cqasm-tree.hpp"
+#include "v1x/cqasm-analyzer.hpp"
+#include "v1x/cqasm-semantic.hpp"
 
 
 /**
@@ -23,9 +25,9 @@ namespace v3x {
  * Parses and analyzes the given file with the default analyzer, dumping error
  * messages to stderr and throwing an analyzer::AnalysisFailed on failure.
  */
-void analyze(
+tree::One<cqasm::v1x::semantic::Program> analyze(
     const std::string &filename,
-    const std::string &api_version = "3.0"
+    const std::string &api_version = "1.0"
 );
 
 /**
@@ -33,10 +35,10 @@ void analyze(
  * error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
  * The optional filename is only used for error messages.
  */
-void analyze(
+tree::One<cqasm::v1x::semantic::Program> analyze(
     FILE *file,
     const std::string &filename = "<unknown>",
-    const std::string &api_version = "3.0"
+    const std::string &api_version = "1.0"
 );
 
 /**
@@ -44,10 +46,18 @@ void analyze(
  * error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
  * The optional filename is only used for error messages.
  */
-void analyze_string(
+tree::One<cqasm::v1x::semantic::Program> analyze_string(
     const std::string &data,
     const std::string &filename = "<unknown>",
-    const std::string &api_version = "3.0"
+    const std::string &api_version = "1.0"
+);
+
+/**
+ * Constructs an Analyzer object with the defaults for cQASM 1.0 already loaded
+ * into it.
+ */
+cqasm::v1x::analyzer::Analyzer default_analyzer(
+    const std::string &api_version = "1.0"
 );
 
 } // namespace v3x

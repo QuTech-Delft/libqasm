@@ -6,25 +6,31 @@
  * Implementation for \ref include/v1x/cqasm.hpp "v1x/cqasm.hpp".
  */
 
+#include "cqasm-version.hpp"
 #include "v1x/cqasm.hpp"
+#include "v1x/cqasm-parse-helper.hpp"
+#include "v1x/cqasm-parse-result.hpp"
 
 namespace cqasm {
 namespace v1x {
 
 /**
- * Parses and analyzes the given file with the default analyzer, dumping error
- * messages to stderr and throwing an analyzer::AnalysisFailed on failure.
+ * Parses and analyzes the given file with the default analyzer,
+ * dumping error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
  */
 tree::One<semantic::Program> analyze(
     const std::string &filename,
     const std::string &api_version
 ) {
-    return default_analyzer(api_version).analyze(filename).unwrap();
+    return default_analyzer(api_version).analyze(
+            [=](){ return version::parse_file(filename); },
+            [=](){ return parser::parse_file(filename); }
+        ).unwrap();
 }
 
 /**
- * Parses and analyzes the given file pointer with the default analyzer, dumping
- * error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
+ * Parses and analyzes the given file pointer with the default analyzer,
+ * dumping error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
  * The optional filename is only used for error messages.
  */
 tree::One<semantic::Program> analyze(
@@ -32,12 +38,15 @@ tree::One<semantic::Program> analyze(
     const std::string &filename,
     const std::string &api_version
 ) {
-    return default_analyzer(api_version).analyze(file, filename).unwrap();
+    return default_analyzer(api_version).analyze(
+            [=](){ return version::parse_file(file, filename); },
+            [=](){ return parser::parse_file(file, filename); }
+        ).unwrap();
 }
 
 /**
- * Parses and analyzes the given string with the default analyzer, dumping
- * error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
+ * Parses and analyzes the given string with the default analyzer,
+ * dumping error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
  * The optional filename is only used for error messages.
  */
 tree::One<semantic::Program> analyze_string(
@@ -45,12 +54,14 @@ tree::One<semantic::Program> analyze_string(
     const std::string &filename,
     const std::string &api_version
 ) {
-    return default_analyzer(api_version).analyze_string(data, filename).unwrap();
+    return default_analyzer(api_version).analyze(
+            [=](){ return version::parse_string(data, filename); },
+            [=](){ return parser::parse_string(data, filename); }
+        ).unwrap();
 }
 
 /**
- * Constructs an Analyzer object with the defaults for cQASM 1.0 already loaded
- * into it.
+ * Constructs an Analyzer object with the defaults for cQASM 1.0 already loaded into it.
  */
 analyzer::Analyzer default_analyzer(const std::string &api_version) {
     analyzer::Analyzer analyzer{api_version};

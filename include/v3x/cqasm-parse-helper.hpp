@@ -6,7 +6,8 @@
 
 #pragma once
 
-#include "../cqasm-annotations.hpp"
+#include "cqasm-annotations.hpp"
+#include "v1x/cqasm-parse-result.hpp"
 
 #include <cstdio>
 
@@ -24,25 +25,20 @@ namespace parser {
 using SourceLocation = annotations::SourceLocation;
 
 /**
- * Parse result information.
- */
-class ParseResult{};
-
-/**
  * Parse the given file.
  */
-ParseResult parse_file(const std::string &filename);
+cqasm::v1x::parser::ParseResult parse_file(const std::string &filename);
 
 /**
  * Parse using the given file pointer.
  */
-ParseResult parse_file(FILE *file, const std::string &filename = "<unknown>");
+cqasm::v1x::parser::ParseResult parse_file(FILE *file, const std::string &filename = "<unknown>");
 
 /**
  * Parse the given string. A filename may be given in addition for use within
  * error messages.
  */
-ParseResult parse_string(const std::string &data, const std::string &filename="<unknown>");
+cqasm::v1x::parser::ParseResult parse_string(const std::string &data, const std::string &filename="<unknown>");
 
 /**
  * Internal helper class for parsing cQASM files.
@@ -73,12 +69,12 @@ public:
     /**
      * The parse result.
      */
-    ParseResult result;
+    cqasm::v1x::parser::ParseResult result;
 
 private:
-    friend ParseResult parse_file(const std::string &filename);
-    friend ParseResult parse_file(FILE *file, const std::string &filename);
-    friend ParseResult parse_string(const std::string &data, const std::string &filename);
+    friend cqasm::v1x::parser::ParseResult parse_file(const std::string &filename);
+    friend cqasm::v1x::parser::ParseResult parse_file(FILE *file, const std::string &filename);
+    friend cqasm::v1x::parser::ParseResult parse_string(const std::string &data, const std::string &filename);
 
     /**
      * Parse a string or file with flex/bison. If use_file is set, the file

@@ -141,8 +141,7 @@ public:
             analyzer.register_instruction("reset-averaging", "Q", false, false);
             analyzer.register_instruction("load_state", "s", false, false);
 
-            // Add a dynamic function in order to test the behavior of dynamic
-            // function nodes.
+            // Add a dynamic function in order to test the behavior of dynamic function nodes.
             if (api_version != "1.0") {
                 analyzer.register_function("or", "bb", [](const cq1x::values::Values &v) -> cq1x::values::Value {
                     auto lhs = v[0];
