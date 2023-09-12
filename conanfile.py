@@ -50,6 +50,7 @@ class LibqasmConan(ConanFile):
     exports_sources = "CMakeLists.txt", "include/*", "python/*", "res/*", "scripts/*", "src/*", "test/*"
 
     def build_requirements(self):
+        self.requires("fmt/10.1.1")
         self.tool_requires("m4/1.4.19")
         if self.settings.os == "Windows":
             self.tool_requires("winflexbison/2.5.24")

@@ -8,8 +8,13 @@
 
 #include "cqasm-annotations.hpp"
 #include "v1x/cqasm-parse-result.hpp"
+#include "v3x/cqasm_lexer.h"
 
-#include <cstdio>
+#include "antlr4-runtime/antlr4-runtime.h"
+
+#include <fstream>  // ifstream
+#include <memory>  // unique_ptr
+#include <string>
 
 
 namespace cqasm {
@@ -24,94 +29,74 @@ namespace parser {
 // Make sure it exists here for compatibility.
 using SourceLocation = annotations::SourceLocation;
 
-/**
- * Parse the given file.
- */
-cqasm::v1x::parser::ParseResult parse_file(const std::string &filename);
+
+struct ScannerAdaptor {
+    virtual ~ScannerAdaptor() = default;
+
+    virtual void parse(const std::string &file_name, cqasm::v1x::parser::ParseResult &result) = 0;
+};
+
+class ScannerAntlr : public ScannerAdaptor {
+protected:
+    void parse_(const std::string & /* file_name */, cqasm::v1x::parser::ParseResult & /* result */,
+                antlr4::ANTLRInputStream &is);
+public:
+    ScannerAntlr();
+    ~ScannerAntlr() override;
+    void parse(const std::string &file_name, cqasm::v1x::parser::ParseResult &result) = 0;
+};
+
+class ScannerAntlrFile : public ScannerAntlr {
+    std::ifstream ifs_;
+public:
+    explicit ScannerAntlrFile(const std::string &file_path);
+    ~ScannerAntlrFile() override;
+    void parse(const std::string &file_name, cqasm::v1x::parser::ParseResult &result) override;
+};
+
+class ScannerAntlrString : public ScannerAntlr {
+    std::string data_;
+public:
+    explicit ScannerAntlrString(const std::string &data);
+    ~ScannerAntlrString() override;
+    void parse(const std::string &file_name, cqasm::v1x::parser::ParseResult &result) override;
+};
+
 
 /**
- * Parse using the given file pointer.
+ * Parse using the given file path.
+ * Throws an AnalysisError if this fails.
  */
-cqasm::v1x::parser::ParseResult parse_file(FILE *file, const std::string &filename = "<unknown>");
+cqasm::v1x::parser::ParseResult parse_file(const std::string &file_path, const std::string &file_name = "<unknown>");
 
 /**
- * Parse the given string. A filename may be given in addition for use within
- * error messages.
+ * Parse the given string.
+ * A file_name may be given in addition for use within error messages.
  */
-cqasm::v1x::parser::ParseResult parse_string(const std::string &data, const std::string &filename="<unknown>");
+cqasm::v1x::parser::ParseResult parse_string(const std::string &data, const std::string &file_name="<unknown>");
+
 
 /**
  * Internal helper class for parsing cQASM files.
  */
 class ParseHelper {
-public:
-
     /**
-     * File pointer being scanned, if no data was specified.
+     * Scanner doing the actual parsing.
      */
-    FILE *fptr = nullptr;
-
-    /**
-     * Flex data buffer, if data was specified.
-     */
-    void *buf = nullptr;
-
-    /**
-     * Flex reentrant scanner data.
-     */
-    void *scanner = nullptr;
+    std::unique_ptr<ScannerAdaptor> scanner_up_;
 
     /**
      * Name of the file being parsed.
      */
-    std::string filename;
+    std::string file_name;
 
-    /**
-     * The parse result.
-     */
-    cqasm::v1x::parser::ParseResult result;
-
-private:
-    friend cqasm::v1x::parser::ParseResult parse_file(const std::string &filename);
-    friend cqasm::v1x::parser::ParseResult parse_file(FILE *file, const std::string &filename);
-    friend cqasm::v1x::parser::ParseResult parse_string(const std::string &data, const std::string &filename);
-
-    /**
-     * Parse a string or file with flex/bison. If use_file is set, the file
-     * specified by filename is read and data is ignored. Otherwise, filename
-     * is used only for error messages, and data is read instead. Don't use
-     * this directly, use parse().
-     */
-    ParseHelper(const std::string &filename, const std::string &data, bool use_file);
-
-    /**
-     * Construct the analyzer internals for the given filename, and analyze
-     * the file.
-     */
-    ParseHelper(const std::string &filename, FILE *fptr);
-
-    /**
-     * Initializes the scanner. Returns whether this was successful.
-     */
-    bool construct();
+public:
+    explicit ParseHelper(std::unique_ptr<ScannerAdaptor> scanner_up, std::string file_name = "<unknown>");
 
     /**
      * Does the actual parsing.
      */
-    void parse();
-
-public:
-
-    /**
-     * Destroys the parse helper.
-     */
-    virtual ~ParseHelper();
-
-    /**
-     * Pushes an error.
-     */
-    void push_error(const std::string &error);
-
+    cqasm::v1x::parser::ParseResult parse();
 };
 
 } // namespace parser

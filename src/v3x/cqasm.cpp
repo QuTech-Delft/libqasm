@@ -18,48 +18,32 @@ namespace cqasm {
 namespace v3x {
 
 /**
- * Parses and analyzes the given file with the default analyzer,
+ * Parses and analyzes the given file path with the default analyzer,
  * dumping error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
  */
 tree::One<cqasm::v1x::semantic::Program> analyze(
-    const std::string &filename,
+    const std::string &file_path,
     const std::string &api_version
 ) {
     return default_analyzer(api_version).analyze(
-            [=](){ return version::parse_file(filename); },
-            [=](){ return parser::parse_file(filename); }
-        ).unwrap();
-}
-
-/**
- * Parses and analyzes the given file pointer with the default analyzer,
- * dumping error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
- * The optional filename is only used for error messages.
- */
-tree::One<cqasm::v1x::semantic::Program> analyze(
-    FILE *file,
-    const std::string &filename,
-    const std::string &api_version
-) {
-    return default_analyzer(api_version).analyze(
-            [=](){ return version::parse_file(file, filename); },
-            [=](){ return parser::parse_file(file, filename); }
+            [=](){ return version::parse_file(file_path); },
+            [=](){ return parser::parse_file(file_path); }
         ).unwrap();
 }
 
 /**
  * Parses and analyzes the given string with the default analyzer,
  * dumping error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
- * The optional filename is only used for error messages.
+ * The optional file_name is only used for error messages.
  */
 tree::One<cqasm::v1x::semantic::Program> analyze_string(
     const std::string &data,
-    const std::string &filename,
+    const std::string &file_name,
     const std::string &api_version
 ) {
     return default_analyzer(api_version).analyze(
-            [=](){ return version::parse_string(data, filename); },
-            [=](){ return parser::parse_string(data, filename); }
+            [=](){ return version::parse_string(data, file_name); },
+            [=](){ return parser::parse_string(data, file_name); }
         ).unwrap();
 }
 

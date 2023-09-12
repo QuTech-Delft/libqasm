@@ -3,79 +3,92 @@
  */
 
 #include "v1x/cqasm-parse-result.hpp"
+#include "v3x/cqasm_lexer.h"
+#include "v3x/cqasm_parser.h"
 #include "v3x/cqasm-parse-helper.hpp"
 
+#include "antlr4-runtime/antlr4-runtime.h"
+
+#include <filesystem>
+#include <fmt/format.h>
+#include <fstream>  // ifstream
 #include <stdexcept>  // runtime_error
+
+namespace fs = std::filesystem;
 
 
 namespace cqasm {
 namespace v3x {
 namespace parser {
 
-/**
- * Parse the given file.
- */
-cqasm::v1x::parser::ParseResult parse_file(const std::string & /* filename */) {
-    throw std::runtime_error("Unimplemented");
+ScannerAntlr::ScannerAntlr() {}
+
+ScannerAntlr::~ScannerAntlr() {}
+
+void ScannerAntlr::parse_(const std::string & /* file_name */, cqasm::v1x::parser::ParseResult & /* result */,
+                          antlr4::ANTLRInputStream &is) {
+    cqasm_lexer lexer{ &is };
+    antlr4::CommonTokenStream tokens{ &lexer };
+    cqasm_parser parser{ &tokens };
+    // Transform parser.expr() into a ParseResult
+}
+
+ScannerAntlrFile::ScannerAntlrFile(const std::string &file_path)
+: ifs_{ file_path } {
+    if (!ifs_.is_open()) {
+        throw error::AnalysisError("ScannerAntlrFile couldn't access file.");
+    }
+}
+
+void ScannerAntlrFile::parse(const std::string &file_name, cqasm::v1x::parser::ParseResult &result) {
+    antlr4::ANTLRInputStream is{ ifs_ };
+    parse_(file_name, result, is);
+}
+
+ScannerAntlrString::ScannerAntlrString(const std::string &data)
+: data_{ data } {}
+
+void ScannerAntlrString::parse(const std::string &file_name, cqasm::v1x::parser::ParseResult &result) {
+    antlr4::ANTLRInputStream is{ data_ };
+    parse_(file_name, result, is);
 }
 
 /**
- * Parse using the given file pointer.
+ * Parse using the given file path.
+ * Throws an AnalysisError if the file does not exist.
+ * A file_name may be given in addition for use within error messages.
  */
-cqasm::v1x::parser::ParseResult parse_file(FILE * /* file */, const std::string & /* filename */) {
-    throw std::runtime_error("Unimplemented");
+cqasm::v1x::parser::ParseResult parse_file(const std::string &file_path, const std::string &file_name) {
+    auto scanner_up = std::make_unique<ScannerAntlrFile>(file_path);
+    return ParseHelper(std::move(scanner_up), file_name).parse();
 }
 
 /**
- * Parse the given string. A filename may be given in addition for use within
- * error messages.
+ * Parse the given string.
+ * A file_name may be given in addition for use within error messages.
  */
-cqasm::v1x::parser::ParseResult parse_string(const std::string & /* data */, const std::string & /* filename */) {
-    throw std::runtime_error("Unimplemented");
+cqasm::v1x::parser::ParseResult parse_string(const std::string &data, const std::string &file_name) {
+    auto scanner_up = std::make_unique<ScannerAntlrString>(data);
+    return ParseHelper(std::move(scanner_up), file_name).parse();
 }
 
-/**
- * Parse a string or file with flex/bison. If use_file is set, the file
- * specified by filename is read and data is ignored. Otherwise, filename
- * is used only for error messages, and data is read instead. Don't use
- * this directly, use parse().
- */
-ParseHelper::ParseHelper(
-    const std::string &filename,
-    const std::string &,
-    bool
-) : filename(filename) {}
 
-/**
- * Construct the analyzer internals for the given filename, and analyze
- * the file.
- */
-ParseHelper::ParseHelper(
-    const std::string &filename,
-    FILE *
-) : filename(filename) {}
-
-/**
- * Initializes the scanner. Returns whether this was successful.
- */
-bool ParseHelper::construct() {
-    return true;
-}
+ParseHelper::ParseHelper(std::unique_ptr<ScannerAdaptor> scanner_up, std::string file_name)
+: scanner_up_(std::move(scanner_up)), file_name(std::move(file_name)) {}
 
 /**
  * Does the actual parsing.
  */
-void ParseHelper::parse() {}
-
-/**
- * Destroys the analyzer.
- */
-ParseHelper::~ParseHelper() {}
-
-/**
- * Pushes an error.
- */
-void ParseHelper::push_error(const std::string &) {}
+cqasm::v1x::parser::ParseResult ParseHelper::parse() {
+    cqasm::v1x::parser::ParseResult result;
+    scanner_up_->parse(file_name, result);
+    if (result.errors.empty() && !result.root.is_well_formed()) {
+        std::cerr << *result.root;
+        throw error::AnalysisError(
+            "ParseHelper::parse: no parse errors returned, but AST is incomplete. AST was dumped.");
+    }
+    return result;
+}
 
 } // namespace parser
 } // namespace v3x

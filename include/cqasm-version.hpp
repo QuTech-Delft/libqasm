@@ -6,10 +6,10 @@
 
 #include "cqasm-error.hpp"
 
+#include <cstdio>  // FILE*
+#include <memory>  // unique_ptr
+#include <ostream>
 #include <string>
-#include <cstdint>
-#include <complex>
-#include <memory>
 #include <vector>
 
 /**
@@ -62,18 +62,18 @@ std::ostream &operator<<(std::ostream &os, const Version &object);
 struct ScannerAdaptor {
     virtual ~ScannerAdaptor() = default;
 
-    virtual void parse(const std::string &filename, Version &version) const = 0;
+    virtual void parse(const std::string &file_name, Version &version) const = 0;
 };
 
 
 class ScannerFlexBison : public ScannerAdaptor {
 protected:
     void *scanner_{ nullptr };
-    void parse_(const std::string &filename, Version &version) const;
+    void parse_(const std::string &file_name, Version &version) const;
 public:
     ScannerFlexBison();
     ~ScannerFlexBison() override;
-    void parse(const std::string &filename, Version &version) const override = 0;
+    void parse(const std::string &file_name, Version &version) const override = 0;
 };
 
 
@@ -82,7 +82,7 @@ class ScannerFlexBisonFile : public ScannerFlexBison {
 public:
     explicit ScannerFlexBisonFile(FILE *fp);
     ~ScannerFlexBisonFile() override = default;
-    void parse(const std::string &filename, Version &version) const override;
+    void parse(const std::string &file_name, Version &version) const override;
 };
 
 
@@ -91,29 +91,28 @@ class ScannerFlexBisonString : public ScannerFlexBison {
 public:
     explicit ScannerFlexBisonString(const char *data);
     ~ScannerFlexBisonString() override = default;
-    void parse(const std::string &filename, Version &version) const override;
+    void parse(const std::string &file_name, Version &version) const override;
 };
 
 
 /**
- * Parse the given file to get its version number.
+ * Parse the given file path to get its version number.
  * Throws an AnalysisError if this fails.
  */
-Version parse_file(const std::string &filename);
+Version parse_file(const std::string &file_path);
 
 /**
  * Parse using the given file pointer to get its version number.
  * Throws an AnalysisError if this fails.
- * The file is rewound back to the start when parsing completes.
- * A filename may be given in addition for use within the AnalysisError thrown when version parsing fails.
+ * A file_name may be given in addition for use within the AnalysisError thrown when version parsing fails.
  */
-Version parse_file(FILE *file, const std::string &filename = "<unknown>");
+Version parse_file(FILE* fp, const std::string &file_name = "<unknown>");
 
 /**
  * Parse the given string as a file to get its version number.
- * A filename may be given in addition for use within the AnalysisError thrown when version parsing fails.
+ * A file_name may be given in addition for use within the AnalysisError thrown when version parsing fails.
  */
-Version parse_string(const std::string &data, const std::string &filename = "<unknown>");
+Version parse_string(const std::string &data, const std::string &file_name = "<unknown>");
 
 
 /**
@@ -128,13 +127,10 @@ class ParseHelper {
     /**
      * Name of the file being parsed.
      */
-    std::string filename;
+    std::string file_name;
 
 public:
-    /**
-     * Parse a file with flex/bison.
-     */
-    explicit ParseHelper(std::unique_ptr<ScannerAdaptor> scanner_up, std::string filename = "<unknown>");
+    explicit ParseHelper(std::unique_ptr<ScannerAdaptor> scanner_up, std::string file_name = "<unknown>");
 
     /**
      * Does the actual parsing.

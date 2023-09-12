@@ -26,20 +26,20 @@ namespace parser {
 using SourceLocation = annotations::SourceLocation;
 
 /**
- * Parse the given file.
+ * Parse the given file path.
  */
-ParseResult parse_file(const std::string &filename);
+ParseResult parse_file(const std::string &file_path);
 
 /**
  * Parse using the given file pointer.
  */
-ParseResult parse_file(FILE *file, const std::string &filename = "<unknown>");
+ParseResult parse_file(FILE* fp, const std::string &file_name = "<unknown>");
 
 /**
- * Parse the given string. A filename may be given in addition for use within
- * error messages.
+ * Parse the given string.
+ * A file_name may be given in addition for use within error messages.
  */
-ParseResult parse_string(const std::string &data, const std::string &filename="<unknown>");
+ParseResult parse_string(const std::string &data, const std::string &file_name="<unknown>");
 
 /**
  * Internal helper class for parsing cQASM files.
@@ -65,7 +65,7 @@ public:
     /**
      * Name of the file being parsed.
      */
-    std::string filename;
+    std::string file_name;
 
     /**
      * The parse result.
@@ -73,23 +73,22 @@ public:
     ParseResult result;
 
 private:
-    friend ParseResult parse_file(const std::string &filename);
-    friend ParseResult parse_file(FILE *file, const std::string &filename);
-    friend ParseResult parse_string(const std::string &data, const std::string &filename);
+    friend ParseResult parse_file(const std::string &file_path);
+    friend ParseResult parse_file(FILE* fp, const std::string &file_name);
+    friend ParseResult parse_string(const std::string &data, const std::string &file_name);
 
     /**
-     * Parse a string or file with flex/bison. If use_file is set, the file
-     * specified by filename is read and data is ignored. Otherwise, filename
-     * is used only for error messages, and data is read instead. Don't use
-     * this directly, use parse().
+     * Parse a string or file with flex/bison.
+     * If use_file is set, the file specified by file_path is read and data is ignored.
+     * Otherwise, file_path is used only for error messages, and data is read instead.
+     * Don't use this directly, use parse().
      */
-    ParseHelper(const std::string &filename, const std::string &data, bool use_file);
+    ParseHelper(const std::string &file_path, const std::string &data, bool use_file);
 
     /**
-     * Construct the analyzer internals for the given filename, and analyze
-     * the file.
+     * Construct the analyzer internals for the given file_name, and analyze the file.
      */
-    ParseHelper(const std::string &filename, FILE *fptr);
+    ParseHelper(const std::string &file_name, FILE *fptr);
 
     /**
      * Initializes the scanner. Returns whether this was successful.

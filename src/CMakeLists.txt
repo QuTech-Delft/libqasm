@@ -53,6 +53,7 @@ else()
 endif()
 
 find_package(antlr4-runtime REQUIRED)
+find_package(fmt REQUIRED)
 find_package(Python3 REQUIRED)
 
 #-------------------------------------------------------------------------------
@@ -232,9 +233,10 @@ target_compile_features(cqasm-lib-obj PUBLIC
     cxx_std_20
 )
 
-target_link_libraries(cqasm-lib-obj PUBLIC
-    antlr4_static
-    tree-lib-obj
+target_link_libraries(cqasm-lib-obj
+    PRIVATE antlr4_static
+    PRIVATE fmt::fmt
+    PRIVATE tree-lib-obj
 )
 
 # fPIC: otherwise some weirdness happens with pthreads or something when linking statically.
