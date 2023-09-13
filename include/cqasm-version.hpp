@@ -6,6 +6,7 @@
 
 #include "cqasm-error.hpp"
 
+#include <cstdint>  // int64_t
 #include <cstdio>  // FILE*
 #include <memory>  // unique_ptr
 #include <ostream>

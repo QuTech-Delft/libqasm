@@ -183,10 +183,10 @@ function(antlr_target SCRIPT INPUT_DIR OUTPUT_DIR ANTLR_OUTPUTS)
 endfunction()
 
 set(ANTLR_OUTPUTS
-    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm_lexer.cpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm_parser.cpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm_parserBaseListener.cpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm_parserListener.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/CqasmLexer.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/CqasmParser.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/CqasmParserBaseVisitor.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/CqasmParserVisitor.cpp"
 )
 antlr_target(
     "${CMAKE_CURRENT_SOURCE_DIR}/../scripts/generate_antlr_parser.py"
@@ -218,12 +218,10 @@ target_compile_definitions(cqasm-lib-obj
 target_include_directories(cqasm-lib-obj
     PRIVATE ${TREE_LIB_PRIVATE_INCLUDE}
     PUBLIC ${TREE_LIB_PUBLIC_INCLUDE}
-    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src"
-    PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/src"
-    PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/"
     # Do not remove the ending '/' since
     # it avoids the whole 'include' directory to be copied to the installation folder.
     # Instead, just its contents are copied.
+    PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/"
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include/"
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include/"
     PUBLIC "${antlr4-runtime_INCLUDE_DIR}"

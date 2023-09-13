@@ -26,15 +26,15 @@ class ParseResult {
 public:
 
     /**
-     * Root node of the AST, if analysis was sufficiently successful. This may
-     * be set even if parsing was not ENTIRELY successful, in which case it
-     * will contain one or more error nodes.
+     * Root node of the AST, if analysis was sufficiently successful.
+     * This may be set even if parsing was not ENTIRELY successful,
+     * in which case it will contain one or more error nodes.
      */
     ast::One<ast::Root> root;
 
     /**
-     * List of accumulated errors. Analysis was successful if and only if
-     * `errors.empty()`.
+     * List of accumulated errors.
+     * Analysis was successful if and only if errors.empty().
      */
     std::vector<std::string> errors;
 

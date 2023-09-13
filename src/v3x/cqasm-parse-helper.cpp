@@ -2,9 +2,11 @@
  * Implementation for \ref include/v3x/cqasm-parse-helper.hpp "v3x/cqasm-parse-helper.hpp".
  */
 
+#include "v1x/cqasm-ast.hpp"
 #include "v1x/cqasm-parse-result.hpp"
-#include "v3x/cqasm_lexer.h"
-#include "v3x/cqasm_parser.h"
+#include "v3x/BuildTreeGenAstVisitor.h"
+#include "v3x/CqasmLexer.h"
+#include "v3x/CqasmParser.h"
 #include "v3x/cqasm-parse-helper.hpp"
 
 #include "antlr4-runtime/antlr4-runtime.h"
@@ -25,12 +27,23 @@ ScannerAntlr::ScannerAntlr() {}
 
 ScannerAntlr::~ScannerAntlr() {}
 
-void ScannerAntlr::parse_(const std::string & /* file_name */, cqasm::v1x::parser::ParseResult & /* result */,
+void ScannerAntlr::parse_(const std::string & /* file_name */, cqasm::v1x::parser::ParseResult &result,
                           antlr4::ANTLRInputStream &is) {
-    cqasm_lexer lexer{ &is };
+    CqasmLexer lexer{ &is };
     antlr4::CommonTokenStream tokens{ &lexer };
-    cqasm_parser parser{ &tokens };
-    // Transform parser.expr() into a ParseResult
+    CqasmParser parser{ &tokens };
+    // v1x/cqasm-parse-helper.cpp, through cqasm-parser.y, passes a v1x/ParseHelper to the Flex/Bison code
+    // That v1x/ParseHelper includes both the parse result and the file name used for logging purposes
+    // The Flex/Bison code:
+    //   1) builds AST nodes along the parsing, and, in the end,
+    //   2) sets helper.result.root to the Program AST node.
+    //
+    // We have to do something similar here with ANTLR
+    // This parse_ function should fill the parse result as a side effect of the ANTLR parsing
+    // And, in case of logging any errors, use the file name
+    auto ast = parser.program();
+    auto tree_gen_ast = BuildTreeGenAstVisitor{}.visitProgram(ast);
+    result.root = std::any_cast<cqasm::v1x::ast::One<cqasm::v1x::ast::Root>>(tree_gen_ast);
 }
 
 ScannerAntlrFile::ScannerAntlrFile(const std::string &file_path)

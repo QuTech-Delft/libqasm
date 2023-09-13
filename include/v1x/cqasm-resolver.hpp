@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "../cqasm-error.hpp"
+#include "cqasm-error.hpp"
 #include "cqasm-error-model.hpp"
 #include "cqasm-instruction.hpp"
 #include "cqasm-semantic.hpp"

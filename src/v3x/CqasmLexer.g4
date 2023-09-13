@@ -1,4 +1,4 @@
-lexer grammar cqasm_lexer;
+lexer grammar CqasmLexer;
 
 // Rules
 NEW_LINE: '\r'?'\n' -> skip;

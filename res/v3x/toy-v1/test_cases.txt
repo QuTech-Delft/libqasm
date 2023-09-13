@@ -1,0 +1,68 @@
+fail   empty program
+fail   something before version               blah; version 3
+
+fail   version without number                 version
+fail   bad version                            version blah
+fail   version not supported                  version 1.2
+OK     OK version, no newline                 version 3
+OK     OK version, semicolon                  version 3;
+OK     OK version, newline                    version 3\n
+fail   OK version, bad token                  version 3;123abc
+
+fail   OK version, empty qubits               version 3;qubits
+fail   OK version, wrong qubits               version 3;qubits 123abc
+OK     OK version, OK qubits                  version 3;qubits 3
+
+fail   empty map                              version 3;map
+fail   empty map id                           version 3;map v
+fail   empty map id =                         version 3;map v =
+OK     OK map integer                         version 3;map v = 1
+OK     OK map float                           version 3;map v = 3.14
+fail   bad map id                             version 3;map w = v                                Syntactically correct, not semantically
+OK     OK map id                              version 3;map v = 1;map w = v
+fail   bad map array, no qubits               version 3;map v = q[0]                             Syntactically correct, not semantically
+fail   bad map array, out of bounds qubit     version 3;qubits 3;map v = q[3]                    Syntactically correct, not semantically
+OK     OK map array                           version 3;qubits 3;map v = q[0]
+
+fail   empty var                              version 3;var
+fail   empty var id                            version 3;var v
+fail   empty var id :                         version 3;var v =
+fail   bad var id                             version 3;var w : v                                Syntactically correct, not semantically
+OK     OK var id                              version 3;map v : 1;var w : v
+
+fail   empty instruction                      version 3;x
+fail   bad id                                 version 3;v 1                                      Syntactically correct, not semantically
+fail   bad expression                         version 3;x 1                                      Syntactically correct, not semantically
+fail   bad instruction, no qubits             version 3;x q[0]                                   Syntactically correct, not semantically
+fail   bad instruction, out of bounds qubit   version 3;qubits 3;x q[3]                          Syntactically correct, not semantically
+OK     OK one qubit instruction               version 3;qubits 3;x q[0]
+OK     OK two qubit instruction               version 3;qubits 3;h q[0];h q[1];cnot q[0], q[3]
+
+fail   empty instruction expression           version 3;qubits 3;x
+fail   bad instruction expression             version 3;qubits 3;x 123abc
+fail   bad instruction expression integer     version 3;qubits 3;x 1                              Syntactically correct, not semantically
+fail   bad instruction expression float       version 3;qubits 3;x 3.14                           Syntactically correct, not semantically
+fail   bad instruction expression id          version 3;qubits 3;x v                              Syntactically correct, not semantically
+
+
+fail   bad expression list, no second part    version 3;qubits 3;h q[0];h q[1];cnot q[0],
+fail   bad expression list, bad first part    version 3;qubits 3;h q[0];h q[1];cnot 123abc, q[0]
+fail   bad expression list, bad second part   version 3;qubits 3;h q[0];h q[1];cnot q[0], 123abc
+
+Questions:
+- What instructions are supported for the toy version? x, y, z, h? measure?
+
+Test implementation:
+- Have a look at how it is done for v1x
+- For semantic issues we probably need to do the checks at the AST level, kind of integration test
+- However, I don't see why we cannot work with strings instead of files
+
+- We could just copy/paste, initially, test/v1x/parsing.cpp, simplifying it, removing instructions and functions
+- Even comparing files. But, as I said above, I'd rather compare data structures (e.g. the AST) than files
+
+- The important stuff for this task would be to implement v3x/cqasm-parse-helper.cpp,
+  first refactor it like src/cqasm-version.cpp,
+  then make it call ANTLR
+- All the AST stuff I would just copy/paste it from v1
+
+- For this task, I will need help from Hans, maybe more than from Pablo

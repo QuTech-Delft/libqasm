@@ -54,12 +54,15 @@ def generate_antlr_parser(input_folder, output_folder, antlr_jar_file_path):
             "java",
             "-jar",
             antlr_jar_file_path,
+            "-no-listener",
+            "-visitor",
             "-Xexact-output-dir",
             "-o",
             "{}".format(output_folder),
             "-Dlanguage=Cpp",
-            "{}/cqasm_lexer.g4".format(input_folder),
-            "{}/cqasm_parser.g4".format(input_folder)
+            "-Werror",
+            "{}/CqasmLexer.g4".format(input_folder),
+            "{}/CqasmParser.g4".format(input_folder)
         ])
         if completed_process.returncode != 0:
             print("Error generating ANTLR lexer and parser files: {}", completed_process.returncode)

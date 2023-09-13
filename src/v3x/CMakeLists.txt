@@ -2,5 +2,6 @@
 set(CQASM_V3X_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-parse-helper.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/BuildTreeGenAstVisitor.cpp"
     PARENT_SCOPE
 )

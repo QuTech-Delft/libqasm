@@ -5,5 +5,5 @@
 
 #pragma once
 
-#include "../cqasm-string-builder.hpp"
+#include "cqasm-string-builder.hpp"
 #include "v1x/cqasm-ast-gen.hpp"

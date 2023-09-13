@@ -8,7 +8,7 @@
 
 #include "cqasm-annotations.hpp"
 #include "v1x/cqasm-parse-result.hpp"
-#include "v3x/cqasm_lexer.h"
+#include "v3x/CqasmLexer.h"
 
 #include "antlr4-runtime/antlr4-runtime.h"
 
@@ -17,13 +17,7 @@
 #include <string>
 
 
-namespace cqasm {
-namespace v3x {
-
-/**
- * Namespace for the parser functions and classes.
- */
-namespace parser {
+namespace cqasm::v3x::parser {
 
 // SourceLocation used to live in this namespace, before the v3x namespace was a thing.
 // Make sure it exists here for compatibility.
@@ -99,6 +93,4 @@ public:
     cqasm::v1x::parser::ParseResult parse();
 };
 
-} // namespace parser
-} // namespace v3x
-} // namespace cqasm
+} // namespace cqasm::v3x::parser
