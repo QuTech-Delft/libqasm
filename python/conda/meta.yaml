@@ -23,6 +23,7 @@ requirements:
     - python
     - plumbum
     - delocate # [osx]
+    - numpy
   run:
     - python
 
@@ -34,6 +35,7 @@ test:
     - test
   requires:
     - pytest
+    - numpy
   commands:
     - pytest test
 
