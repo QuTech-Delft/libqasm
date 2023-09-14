@@ -9,11 +9,11 @@ program: version QUBITS expression statement*;
 
 version: VERSION INTEGER_LITERAL (DOT INTEGER_LITERAL)?;
 
-statement: mapStatement | varStatement | instruction;
+statement: mapping | variable | instruction;
 
-mapStatement: MAP IDENTIFIER EQUAL expression;
+mapping: MAP IDENTIFIER EQUAL expression;
 
-varStatement: VAR IDENTIFIER COLON IDENTIFIER;
+variable: VAR IDENTIFIER COLON IDENTIFIER;
 
 instruction: IDENTIFIER expressionList;
 
@@ -23,10 +23,9 @@ expression:
     INTEGER_LITERAL
     | FLOAT_LITERAL
     | IDENTIFIER
-    | arrayElements;
+    | index;
 
-arrayElements: IDENTIFIER OPEN_BRACKET arrayIndex CLOSE_BRACKET;
-arrayIndex: expression;
+index: IDENTIFIER OPEN_BRACKET expression CLOSE_BRACKET;
 
 /*
 * Things we are leaving out at the moment:
