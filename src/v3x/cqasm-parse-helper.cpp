@@ -23,31 +23,24 @@ namespace cqasm {
 namespace v3x {
 namespace parser {
 
-ScannerAntlr::ScannerAntlr() {}
+ScannerAntlr::ScannerAntlr(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up)
+: build_visitor_up_{ std::move(build_visitor_up) } {}
 
 ScannerAntlr::~ScannerAntlr() {}
 
-void ScannerAntlr::parse_(const std::string & /* file_name */, cqasm::v1x::parser::ParseResult &result,
-                          antlr4::ANTLRInputStream &is) {
+void ScannerAntlr::parse_(antlr4::ANTLRInputStream &is, const std::string & /* file_name */,
+    cqasm::v1x::parser::ParseResult &result) {
+
     CqasmLexer lexer{ &is };
     antlr4::CommonTokenStream tokens{ &lexer };
     CqasmParser parser{ &tokens };
-    // v1x/cqasm-parse-helper.cpp, through cqasm-parser.y, passes a v1x/ParseHelper to the Flex/Bison code
-    // That v1x/ParseHelper includes both the parse result and the file name used for logging purposes
-    // The Flex/Bison code:
-    //   1) builds AST nodes along the parsing, and, in the end,
-    //   2) sets helper.result.root to the Program AST node.
-    //
-    // We have to do something similar here with ANTLR
-    // This parse_ function should fill the parse result as a side effect of the ANTLR parsing
-    // And, in case of logging any errors, use the file name
     auto ast = parser.program();
-    auto tree_gen_ast = BuildTreeGenAstVisitor{}.visitProgram(ast);
-    result.root = std::any_cast<cqasm::v1x::ast::One<cqasm::v1x::ast::Root>>(tree_gen_ast);
+    auto custom_ast = build_visitor_up_->visitProgram(ast);
+    result.root = std::any_cast<cqasm::v1x::ast::One<cqasm::v1x::ast::Root>>(custom_ast);
 }
 
-ScannerAntlrFile::ScannerAntlrFile(const std::string &file_path)
-: ifs_{ file_path } {
+ScannerAntlrFile::ScannerAntlrFile(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up, const std::string &file_path)
+: ScannerAntlr{ std::move(build_visitor_up) }, ifs_{ file_path } {
     if (!ifs_.is_open()) {
         throw error::AnalysisError("ScannerAntlrFile couldn't access file.");
     }
@@ -55,15 +48,15 @@ ScannerAntlrFile::ScannerAntlrFile(const std::string &file_path)
 
 void ScannerAntlrFile::parse(const std::string &file_name, cqasm::v1x::parser::ParseResult &result) {
     antlr4::ANTLRInputStream is{ ifs_ };
-    parse_(file_name, result, is);
+    parse_(is, file_name, result);
 }
 
-ScannerAntlrString::ScannerAntlrString(const std::string &data)
-: data_{ data } {}
+ScannerAntlrString::ScannerAntlrString(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up, const std::string &data)
+: ScannerAntlr{ std::move(build_visitor_up) }, data_{ data } {}
 
 void ScannerAntlrString::parse(const std::string &file_name, cqasm::v1x::parser::ParseResult &result) {
     antlr4::ANTLRInputStream is{ data_ };
-    parse_(file_name, result, is);
+    parse_(is, file_name, result);
 }
 
 /**
@@ -72,7 +65,8 @@ void ScannerAntlrString::parse(const std::string &file_name, cqasm::v1x::parser:
  * A file_name may be given in addition for use within error messages.
  */
 cqasm::v1x::parser::ParseResult parse_file(const std::string &file_path, const std::string &file_name) {
-    auto scanner_up = std::make_unique<ScannerAntlrFile>(file_path);
+    auto builder_visitor_up = std::make_unique<BuildTreeGenAstVisitor>();
+    auto scanner_up = std::make_unique<ScannerAntlrFile>(std::move(builder_visitor_up), file_path);
     return ParseHelper(std::move(scanner_up), file_name).parse();
 }
 
@@ -81,7 +75,8 @@ cqasm::v1x::parser::ParseResult parse_file(const std::string &file_path, const s
  * A file_name may be given in addition for use within error messages.
  */
 cqasm::v1x::parser::ParseResult parse_string(const std::string &data, const std::string &file_name) {
-    auto scanner_up = std::make_unique<ScannerAntlrString>(data);
+    auto builder_visitor_up = std::make_unique<BuildTreeGenAstVisitor>();
+    auto scanner_up = std::make_unique<ScannerAntlrString>(std::move(builder_visitor_up), data);
     return ParseHelper(std::move(scanner_up), file_name).parse();
 }
 

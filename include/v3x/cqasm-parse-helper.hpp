@@ -9,6 +9,8 @@
 #include "cqasm-annotations.hpp"
 #include "v1x/cqasm-parse-result.hpp"
 #include "v3x/CqasmLexer.h"
+#include "v3x/BuildCustomAstVisitor.h"
+#include "v3x/BuildTreeGenAstVisitor.h"
 
 #include "antlr4-runtime/antlr4-runtime.h"
 
@@ -31,11 +33,11 @@ struct ScannerAdaptor {
 };
 
 class ScannerAntlr : public ScannerAdaptor {
+    std::unique_ptr<BuildCustomAstVisitor> build_visitor_up_;
 protected:
-    void parse_(const std::string & /* file_name */, cqasm::v1x::parser::ParseResult & /* result */,
-                antlr4::ANTLRInputStream &is);
+    void parse_(antlr4::ANTLRInputStream &is, const std::string &file_name, cqasm::v1x::parser::ParseResult &result);
 public:
-    ScannerAntlr();
+    explicit ScannerAntlr(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up);
     ~ScannerAntlr() override;
     void parse(const std::string &file_name, cqasm::v1x::parser::ParseResult &result) = 0;
 };
@@ -43,7 +45,7 @@ public:
 class ScannerAntlrFile : public ScannerAntlr {
     std::ifstream ifs_;
 public:
-    explicit ScannerAntlrFile(const std::string &file_path);
+    ScannerAntlrFile(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up, const std::string &file_path);
     ~ScannerAntlrFile() override;
     void parse(const std::string &file_name, cqasm::v1x::parser::ParseResult &result) override;
 };
@@ -51,7 +53,7 @@ public:
 class ScannerAntlrString : public ScannerAntlr {
     std::string data_;
 public:
-    explicit ScannerAntlrString(const std::string &data);
+    ScannerAntlrString(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up, const std::string &data);
     ~ScannerAntlrString() override;
     void parse(const std::string &file_name, cqasm::v1x::parser::ParseResult &result) override;
 };
