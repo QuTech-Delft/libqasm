@@ -75,7 +75,7 @@ public:
         if (parse_result.errors.empty()) {
             ast_actual_file_contents = fmt::format("SUCCESS\n{}\n", *parse_result.root);
         } else {
-            ast_actual_file_contents = fmt::format("ERROR\n{}", fmt::join(parse_result.errors, "\n"));
+            ast_actual_file_contents = fmt::format("ERROR\n{}\n", fmt::join(parse_result.errors, "\n"));
         }
 
         auto ast_actual_file_path = path_ / "ast.actual.txt";
@@ -263,7 +263,7 @@ void register_v1x_tests(const fs::path& subdir) {
                             suite_name.c_str(), test_name.c_str(),
                             nullptr, nullptr,
                             __FILE__, __LINE__,
-                            [=]() -> ParsingTest* { return new ParsingTest(test); });
+                            [=]() -> ParsingTest* { return new ParsingTest(test.path()); });
                     }
                 }
             }
