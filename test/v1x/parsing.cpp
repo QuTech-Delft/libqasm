@@ -253,9 +253,9 @@ void register_v1x_tests(const fs::path& subdir) {
     }
     for (const fs::directory_entry& suite: fs::directory_iterator(subdir_path)) {
         if (fs::is_directory(suite)) {
-            auto suite_name = suite.path().filename();
+            auto suite_name = suite.path().filename().string();
             for (const fs::directory_entry& test: fs::directory_iterator(suite.path())) {
-                auto test_name = test.path().filename();
+                auto test_name = test.path().filename().string();
                 if (fs::is_directory(test)) {
                     auto input_cq_path = test.path() / "input.cq";
                     if (fs::exists(input_cq_path)) {

@@ -38,7 +38,7 @@ protected:
 public:
     explicit ScannerAntlr(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up);
     ~ScannerAntlr() override;
-    void parse(const std::string &file_name, cqasm::v1x::parser::ParseResult &result) = 0;
+    void parse(const std::string &file_name, cqasm::v1x::parser::ParseResult &result) override = 0;
 };
 
 class ScannerAntlrFile : public ScannerAntlr {
