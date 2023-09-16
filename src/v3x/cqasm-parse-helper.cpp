@@ -19,9 +19,9 @@
 namespace fs = std::filesystem;
 
 
-namespace cqasm {
-namespace v3x {
-namespace parser {
+namespace cqasm::v3x::parser {
+
+ScannerAdaptor::~ScannerAdaptor() {}
 
 ScannerAntlr::ScannerAntlr(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up)
 : build_visitor_up_{ std::move(build_visitor_up) } {}
@@ -46,6 +46,8 @@ ScannerAntlrFile::ScannerAntlrFile(std::unique_ptr<BuildCustomAstVisitor> build_
     }
 }
 
+ScannerAntlrFile::~ScannerAntlrFile() {}
+
 void ScannerAntlrFile::parse(const std::string &file_name, cqasm::v1x::parser::ParseResult &result) {
     antlr4::ANTLRInputStream is{ ifs_ };
     parse_(is, file_name, result);
@@ -53,6 +55,8 @@ void ScannerAntlrFile::parse(const std::string &file_name, cqasm::v1x::parser::P
 
 ScannerAntlrString::ScannerAntlrString(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up, const std::string &data)
 : ScannerAntlr{ std::move(build_visitor_up) }, data_{ data } {}
+
+ScannerAntlrString::~ScannerAntlrString() {}
 
 void ScannerAntlrString::parse(const std::string &file_name, cqasm::v1x::parser::ParseResult &result) {
     antlr4::ANTLRInputStream is{ data_ };
@@ -98,6 +102,4 @@ cqasm::v1x::parser::ParseResult ParseHelper::parse() {
     return result;
 }
 
-} // namespace parser
-} // namespace v3x
-} // namespace cqasm
+} // namespace cqasm::v3x::parser

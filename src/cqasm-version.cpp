@@ -87,6 +87,9 @@ std::ostream &operator<<(std::ostream &os, const Version &object) {
 }
 
 
+ScannerAdaptor::~ScannerAdaptor() {}
+
+
 ScannerFlexBison::ScannerFlexBison() {
     int result = cqasm_version_lex_init(static_cast<yyscan_t*>(&scanner_));
     if (result != 0) {
@@ -119,6 +122,8 @@ ScannerFlexBisonFile::ScannerFlexBisonFile(FILE *fp
     }
 }
 
+ScannerFlexBisonFile::~ScannerFlexBisonFile() {}
+
 void ScannerFlexBisonFile::parse(const std::string &file_name, Version &version) const {
     cqasm_version_set_in(fp_, static_cast<yyscan_t>(scanner_));
     parse_(file_name, version);
@@ -127,6 +132,8 @@ void ScannerFlexBisonFile::parse(const std::string &file_name, Version &version)
 
 ScannerFlexBisonString::ScannerFlexBisonString(const char *data
 ) : data_{ data } {}
+
+ScannerFlexBisonString::~ScannerFlexBisonString() {}
 
 void ScannerFlexBisonString::parse(const std::string &file_name, Version &version) const {
     auto buffer = cqasm_version__scan_string(data_, static_cast<yyscan_t>(scanner_));

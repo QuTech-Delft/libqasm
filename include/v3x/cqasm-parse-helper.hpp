@@ -8,7 +8,6 @@
 
 #include "cqasm-annotations.hpp"
 #include "v1x/cqasm-parse-result.hpp"
-#include "v3x/CqasmLexer.h"
 #include "v3x/BuildCustomAstVisitor.h"
 #include "v3x/BuildTreeGenAstVisitor.h"
 
@@ -27,7 +26,7 @@ using SourceLocation = annotations::SourceLocation;
 
 
 struct ScannerAdaptor {
-    virtual ~ScannerAdaptor() = default;
+    virtual ~ScannerAdaptor();
 
     virtual void parse(const std::string &file_name, cqasm::v1x::parser::ParseResult &result) = 0;
 };

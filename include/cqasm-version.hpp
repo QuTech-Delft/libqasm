@@ -8,6 +8,7 @@
 
 #include <cstdint>  // int64_t
 #include <cstdio>  // FILE*
+#include <fmt/ostream.h>
 #include <memory>  // unique_ptr
 #include <ostream>
 #include <string>
@@ -61,7 +62,7 @@ std::ostream &operator<<(std::ostream &os, const Version &object);
 
 
 struct ScannerAdaptor {
-    virtual ~ScannerAdaptor() = default;
+    virtual ~ScannerAdaptor();
 
     virtual void parse(const std::string &file_name, Version &version) const = 0;
 };
@@ -82,7 +83,7 @@ class ScannerFlexBisonFile : public ScannerFlexBison {
     FILE *fp_{ nullptr };
 public:
     explicit ScannerFlexBisonFile(FILE *fp);
-    ~ScannerFlexBisonFile() override = default;
+    ~ScannerFlexBisonFile() override;
     void parse(const std::string &file_name, Version &version) const override;
 };
 
@@ -91,7 +92,7 @@ class ScannerFlexBisonString : public ScannerFlexBison {
     const char *data_{ nullptr };
 public:
     explicit ScannerFlexBisonString(const char *data);
-    ~ScannerFlexBisonString() override = default;
+    ~ScannerFlexBisonString() override;
     void parse(const std::string &file_name, Version &version) const override;
 };
 
@@ -139,5 +140,9 @@ public:
     Version parse();
 };
 
-
 } // namespace cqasm::version
+
+/**
+ * std::ostream support via fmt (uses operator<<).
+ */
+template <> struct fmt::formatter<cqasm::version::Version> : ostream_formatter {};

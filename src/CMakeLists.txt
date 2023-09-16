@@ -33,7 +33,7 @@ include(FetchContent)
 # This exposes the generate_tree() function.
 FetchContent_Declare(tree-gen
     GIT_REPOSITORY https://github.com/QuTech-Delft/tree-gen.git
-    GIT_TAG "d708ea629bad014011d3f1efc352077414dd86f7"
+    GIT_TAG "8a1f25dee6d5529398676ec83a18f89786049ae8"
 )
 FetchContent_MakeAvailable(tree-gen)
 
@@ -53,7 +53,6 @@ else()
 endif()
 
 find_package(antlr4-runtime REQUIRED)
-find_package(fmt REQUIRED)
 find_package(Python3 REQUIRED)
 
 #-------------------------------------------------------------------------------
@@ -211,20 +210,16 @@ target_compile_definitions(cqasm-lib-obj
     PRIVATE ${TREE_LIB_PRIVATE_DEFS}
 )
 
-# The src directory and binary directory (for generated header files) are private.
-# The include directory is public.
-# That is, the files in include must not try to include generated files and files from the src directory,
-# but the other direction is fine.
 target_include_directories(cqasm-lib-obj
     PRIVATE ${TREE_LIB_PRIVATE_INCLUDE}
     PUBLIC ${TREE_LIB_PUBLIC_INCLUDE}
     # Do not remove the ending '/' since
     # it avoids the whole 'include' directory to be copied to the installation folder.
     # Instead, just its contents are copied.
-    PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/"
+    PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/"
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include/"
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include/"
-    PUBLIC "${antlr4-runtime_INCLUDE_DIR}"
+    PRIVATE "${antlr4-runtime_INCLUDE_DIR}"
 )
 
 target_compile_features(cqasm-lib-obj PUBLIC

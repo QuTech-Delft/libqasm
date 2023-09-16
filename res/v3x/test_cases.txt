@@ -3,7 +3,7 @@ fail   something before version               blah; version 3
 
 fail   version without number                 version
 fail   bad version                            version blah
-fail   version not supported                  version 1.2
+fail   version not supported                  version 1.2                                       Syntactically correct, not semantically
 OK     OK version, no newline                 version 3
 OK     OK version, semicolon                  version 3;
 OK     OK version, newline                    version 3\n
@@ -25,7 +25,7 @@ fail   bad map array, out of bounds qubit     version 3;qubits 3;map v = q[3]   
 OK     OK map array                           version 3;qubits 3;map v = q[0]
 
 fail   empty var                              version 3;var
-fail   empty var id                            version 3;var v
+fail   empty var id                           version 3;var v
 fail   empty var id :                         version 3;var v =
 fail   bad var id                             version 3;var w : v                                Syntactically correct, not semantically
 OK     OK var id                              version 3;map v : 1;var w : v

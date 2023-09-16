@@ -1,37 +1,46 @@
-#include "dirent-compat.h"
 #include "parsing.hpp"
 #include "v1x/cqasm.hpp"
+#include "v1x/cqasm-parse-helper.hpp"
+#include "v3x/cqasm.hpp"
+#include "v3x/cqasm-parse-helper.hpp"
 
+#include <filesystem>
+#include <fmt/format.h>
+#include <fmt/ostream.h>
 #include <fstream>
-#include <gtest/gtest.h> // googletest header file
+#include <gtest/gtest.h>
 #include <sstream>
 #include <streambuf>
 #include <string>
 
+
 namespace cq1x = cqasm::v1x;
+namespace cq3x = cqasm::v3x;
+namespace fs = std::filesystem;
+
 
 /**
  * Reads the given file into the given string buffer and returns true if it
  * exists, otherwise do nothing with the buffer and return false.
  */
-bool read_file(const std::string &filename, std::string &output) {
-    std::ifstream stream(filename);
-    if (!stream.is_open()) {
+bool read_file(const fs::path &file_path, std::string &output) {
+    std::ifstream ifs(file_path);
+    if (!ifs.is_open()) {
         return false;
     }
     output.clear();
-    stream.seekg(0, std::ios::end);
-    output.reserve(stream.tellg());
-    stream.seekg(0, std::ios::beg);
-    output.assign(std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>());
+    ifs.seekg(0, std::ios::end);
+    output.reserve(ifs.tellg());
+    ifs.seekg(0, std::ios::beg);
+    output.assign(std::istreambuf_iterator<char>(ifs), std::istreambuf_iterator<char>());
     return true;
 }
 
 /**
  * Overwrites or creates the given file with the given string.
  */
-void write_file(const std::string &filename, const std::string &input) {
-    std::ofstream stream(filename, std::ios::binary | std::ios::out);  // always write LF, i.e., avoid CR+LF in Windows
+void write_file(const fs::path &file_path, const std::string &input) {
+    std::ofstream stream(file_path, std::ios::binary | std::ios::out);  // always write LF, i.e., avoid CR+LF in Windows
     stream << input;
 }
 
@@ -41,54 +50,51 @@ void write_file(const std::string &filename, const std::string &input) {
  */
 class ParsingTest : public ::testing::Test {
 private:
-    std::string path;
+    fs::path path_{};
 
 public:
-    explicit ParsingTest(const std::string &path) : path(path) {}
+    explicit ParsingTest(fs::path path) : path_{ std::move(path) } {}
 
     void TestBody() override {
-
         // Parse the test input file.
-        std::string input;
-        ASSERT_TRUE(read_file(path + "/input.cq", input));
-        cq1x::parser::ParseResult parse_result;
+        std::string input{};
+        ASSERT_TRUE(read_file(path_ / "input.cq", input));
+        cq1x::parser::ParseResult parse_result{};
         auto version = cqasm::version::parse_string(input, "input.cq");
-        if (version > cqasm::version::Version("1.2")) {
-            std::ostringstream ss;
-            ss << "detected version " << version;
-            parse_result.errors.push_back(ss.str());
-        } else {
+
+        if (version <= cqasm::version::Version("1.2")) {
             parse_result = cq1x::parser::parse_string(input, "input.cq");
-        }
-
-        // Check the parse result.
-        std::ostringstream ss;
-        if (parse_result.errors.empty()) {
-            ss << "SUCCESS" << std::endl;
-            ss << *parse_result.root << std::endl;
+        } else if (version == cqasm::version::Version("3.0")) {
+            parse_result = cq3x::parser::parse_string(input, "input.cq");
         } else {
-            ss << "ERROR" << std::endl;
-            for (const auto &error : parse_result.errors) {
-                ss << error << std::endl;
-            }
+            parse_result.errors.push_back(fmt::format("detected version ", version));
         }
-        std::string ast_result = ss.str();
-        write_file(path + "/ast.actual.txt", ast_result);
-        std::string ast_golden;
-        EXPECT_TRUE(read_file(path + "/ast.golden.txt", ast_golden));
-        EXPECT_TRUE(ast_result == ast_golden);
 
-        // Stop if parsing failed.
+        // Check the parse result
+        std::string ast_actual_file_contents{};
+        if (parse_result.errors.empty()) {
+            ast_actual_file_contents = fmt::format("SUCCESS\n{}\n", *parse_result.root);
+        } else {
+            ast_actual_file_contents = fmt::format("ERROR\n{}", fmt::join(parse_result.errors, "\n"));
+        }
+
+        auto ast_actual_file_path = path_ / "ast.actual.txt";
+        write_file(ast_actual_file_path, ast_actual_file_contents);
+        std::string ast_golden_file_contents{};
+        auto ast_golden_file_path = path_ / "ast.golden.txt";
+        EXPECT_TRUE(read_file(ast_golden_file_path, ast_golden_file_contents));
+        EXPECT_TRUE(ast_actual_file_contents == ast_golden_file_contents);
+
+        // Stop if parsing failed
         if (!parse_result.errors.empty()) {
             return;
         }
 
-        // Try different API levels.
+        // Try different API levels
         for (const auto &api_version : std::vector<std::string>({"1.0", "1.1", "1.2"})) {
-
-            // If there were no errors, try semantic analysis. We analyze using the
-            // functions, error models, and instruction set available in the
-            // compatibility layer, though this is copy-pasted in here.
+            // If there were no errors, try semantic analysis.
+            // We analyze using the functions, error models, and instruction set available in the compatibility layer,
+            // though this is copy-pasted in here
             auto analyzer = cq1x::analyzer::Analyzer{api_version};
             analyzer.register_default_functions_and_mappings();
             std::ostringstream args;
@@ -143,136 +149,129 @@ public:
 
             // Add a dynamic function in order to test the behavior of dynamic function nodes.
             if (api_version != "1.0") {
-                analyzer.register_function("or", "bb", [](const cq1x::values::Values &v) -> cq1x::values::Value {
-                    auto lhs = v[0];
-                    auto rhs = v[1];
-                    if (auto lhs_const = lhs->as_const_bool()) {
-                        if (lhs_const->value) {
-                            return cqasm::tree::make<cq1x::values::ConstBool>(true);
-                        } else {
-                            return rhs;
+                analyzer.register_function("or", "bb",
+                    [](const cq1x::values::Values &v) -> cq1x::values::Value {
+                        auto lhs = v[0];
+                        auto rhs = v[1];
+                        if (auto lhs_const = lhs->as_const_bool()) {
+                            if (lhs_const->value) {
+                                return cqasm::tree::make<cq1x::values::ConstBool>(true);
+                            } else {
+                                return rhs;
+                            }
                         }
-                    }
-                    if (auto rhs_const = lhs->as_const_bool()) {
-                        if (rhs_const->value) {
-                            return cqasm::tree::make<cq1x::values::ConstBool>(true);
-                        } else {
-                            return lhs;
+                        if (auto rhs_const = lhs->as_const_bool()) {
+                            if (rhs_const->value) {
+                                return cqasm::tree::make<cq1x::values::ConstBool>(true);
+                            } else {
+                                return lhs;
+                            }
                         }
+                        return cqasm::tree::make<cq1x::values::Function>(
+                            "operator||", v, cqasm::tree::make<cq1x::types::Bool>());
                     }
-                    return cqasm::tree::make<cq1x::values::Function>("operator||", v, cqasm::tree::make<cq1x::types::Bool>());
-                });
-                analyzer.register_function("operator<", "ii", [](const cq1x::values::Values &v) -> cq1x::values::Value {
-                    const auto& lhs = v[0];
-                    const auto& rhs = v[1];
-                    if (auto lhs_const = lhs->as_const_int()) {
-                        if (auto rhs_const = rhs->as_const_int()) {
-                            return cqasm::tree::make<cq1x::values::ConstBool>(
-                                lhs_const->value < rhs_const->value
-                            );
+                );
+                analyzer.register_function("operator<", "ii",
+                    [](const cq1x::values::Values &v) -> cq1x::values::Value {
+                        const auto& lhs = v[0];
+                        const auto& rhs = v[1];
+                        if (auto lhs_const = lhs->as_const_int()) {
+                            if (auto rhs_const = rhs->as_const_int()) {
+                                return cqasm::tree::make<cq1x::values::ConstBool>(
+                                    lhs_const->value < rhs_const->value
+                                );
+                            }
                         }
+                        return cqasm::tree::make<cq1x::values::Function>(
+                            "operator<", v, cqasm::tree::make<cq1x::types::Bool>());
                     }
-                    return cqasm::tree::make<cq1x::values::Function>("operator<", v, cqasm::tree::make<cq1x::types::Bool>());
-                });
-                analyzer.register_function("operator+", "ii", [](const cq1x::values::Values &v) -> cq1x::values::Value {
-                    const auto& lhs = v[0];
-                    const auto& rhs = v[1];
-                    if (auto lhs_const = lhs->as_const_int()) {
-                        if (auto rhs_const = rhs->as_const_int()) {
-                            return cqasm::tree::make<cq1x::values::ConstInt>(
-                                lhs_const->value + rhs_const->value
-                            );
+                );
+                analyzer.register_function("operator+", "ii",
+                    [](const cq1x::values::Values &v) -> cq1x::values::Value {
+                        const auto& lhs = v[0];
+                        const auto& rhs = v[1];
+                        if (auto lhs_const = lhs->as_const_int()) {
+                            if (auto rhs_const = rhs->as_const_int()) {
+                                return cqasm::tree::make<cq1x::values::ConstInt>(
+                                    lhs_const->value + rhs_const->value
+                                );
+                            }
                         }
+                        return cqasm::tree::make<cq1x::values::Function>(
+                            "operator+", v, cqasm::tree::make<cq1x::types::Int>());
                     }
-                    return cqasm::tree::make<cq1x::values::Function>("operator+", v, cqasm::tree::make<cq1x::types::Int>());
-                });
+                );
             }
 
-            // Run the actual semantic analysis.
+            // Run the actual semantic analysis
             auto analysis_result = analyzer.analyze(*parse_result.root->as_program());
 
-            // Check the analysis results.
-            ss.str("");
+            // Check the analysis results
+            std::string semantic_actual_file_contents{};
             if (analysis_result.errors.empty()) {
-                ss << "SUCCESS" << std::endl;
-                ss << *analysis_result.root << std::endl;
+                semantic_actual_file_contents = fmt::format("SUCCESS\n{}\n", *analysis_result.root);
             } else {
-                ss << "ERROR" << std::endl;
-                for (const auto &error : analysis_result.errors) {
-                    ss << error << std::endl;
-                }
+                semantic_actual_file_contents = fmt::format("ERROR\n{}\n", fmt::join(analysis_result.errors, "\n"));
             }
-            std::string semantic_result = ss.str();
-            write_file(path + "/semantic." + api_version + ".actual.txt", semantic_result);
-            std::string semantic_golden;
-            EXPECT_TRUE(read_file(path + "/semantic." + api_version + ".golden.txt", semantic_golden));
-            EXPECT_TRUE(semantic_result == semantic_golden);
+            auto semantic_actual_file_path = path_ / fmt::format("semantic.{}.actual.txt", api_version);
+            write_file(path_ / std::move(semantic_actual_file_path), semantic_actual_file_contents);
+            std::string semantic_golden_file_contents{};
+            auto semantic_golden_file_path = path_ / fmt::format("semantic.{}.golden.txt", api_version);
+            EXPECT_TRUE(read_file(semantic_golden_file_path, semantic_golden_file_contents));
+            EXPECT_TRUE(semantic_actual_file_contents == semantic_golden_file_contents);
 
             if (analysis_result.errors.empty()) {
                 ::tree::base::serialize(analysis_result.root);
             }
-
         }
-
     }
-
 };
 
-void register_v1x_parsing_tests() {
-
-    // Discover the tests. They should live in a directory tree with the
-    // following structure:
+void register_v1x_tests(const fs::path& subdir) {
+    // Discover the tests.
+    // They should live in a directory tree with the following structure:
     //
     // <CWD>
-    // |-  res/v1x/parsing
+    // |-  res/v1x/<subdir>
     //     |- <suite-name>                   test suite directory
     //     |   |- <test-name>                test case directory
     //     |   |   |- input.cq               the input file
     //     |   |   |- ast.golden             the golden AST or parse error dump
     //     |   |   |- [ast.actual.txt]       output file with the actual data
-    //     |   |   |- [semantic.golden.txt]  the golden semantic tree or
-    //     |   |   |                           analysis error dump, if parsing
-    //     |   |   |                           should succeed
-    //     |   |   '- [semantic.actual.txt]  output file with the actual data,
-    //     |   |                               if parsing actually succeeded
+    //     |   |   |- [semantic.golden.txt]  the golden semantic tree or analysis error dump,
+    //     |   |   |                         if parsing should succeed
+    //     |   |   '- [semantic.actual.txt]  output file with the actual data, if parsing actually succeeded
     //     |   |- ...                        other test case directories
     //     |   :
     //     |- ...                            other test suite directories
     //     :
-    DIR *parsing_dir = opendir("res/v1x/parsing");
-    if (!parsing_dir) {
-        throw std::runtime_error("failed to open dir for parsing tests");
+    auto subdir_path = fs::path{ "res" } / "v1x" / subdir;
+    if (!fs::exists(subdir_path)) {
+        throw std::runtime_error(fmt::format("failed to open v1x tests subdir '{}'", subdir_path.generic_string()));
+    } else if (!fs::is_directory(subdir_path)) {
+        throw std::runtime_error(fmt::format("'{}' is not a directory", subdir_path.generic_string()));
     }
-    while (dirent *parsing_dir_ent = readdir(parsing_dir)) {
-        if (parsing_dir_ent->d_name[0] == '.') {
-            continue;
-        }
-        auto suite_name = std::string(parsing_dir_ent->d_name);
-        auto suite_path = "res/v1x/parsing/" + suite_name;
-        DIR *suite_dir = opendir(suite_path.c_str());
-        if (!suite_dir) {
-            continue;
-        }
-        while (dirent *suite_dir_ent = readdir(suite_dir)) {
-            if (suite_dir_ent->d_name[0] == '.') {
-                continue;
-            }
-            auto test_name = std::string(suite_dir_ent->d_name);
-            auto test_path = suite_path + "/";
-            test_path += test_name;
-            {
-                std::ifstream stream(test_path + "/input.cq");
-                if (!stream.is_open()) {
-                    continue;
+    for (const fs::directory_entry& suite: fs::directory_iterator(subdir_path)) {
+        if (fs::is_directory(suite)) {
+            auto suite_name = suite.path().filename();
+            for (const fs::directory_entry& test: fs::directory_iterator(suite.path())) {
+                auto test_name = test.path().filename();
+                if (fs::is_directory(test)) {
+                    auto input_cq_path = test.path() / "input.cq";
+                    if (fs::exists(input_cq_path)) {
+                        ::testing::RegisterTest(
+                            suite_name.c_str(), test_name.c_str(),
+                            nullptr, nullptr,
+                            __FILE__, __LINE__,
+                            [=]() -> ParsingTest* { return new ParsingTest(test); });
+                    }
                 }
             }
-            ::testing::RegisterTest(
-                suite_name.c_str(), test_name.c_str(),
-                nullptr, nullptr,
-                __FILE__, __LINE__,
-                [=]() -> ParsingTest* { return new ParsingTest(test_path); });
         }
-        closedir(suite_dir);
     }
-    closedir(parsing_dir);
+}
+
+void register_v1x_tests() {
+    register_v1x_tests("parsing");
+    //register_v1x_tests("toy-v1x-parsing");
 }

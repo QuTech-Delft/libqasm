@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <gmock/gmock.h>
 #include <memory>
+#include <string>
 
 using namespace ::testing;
 using namespace cqasm::error;
@@ -171,71 +172,71 @@ TEST(parse_file, fp_empty_and_no_filename_argument) {
 
 
 TEST(parse_string, string_empty) {
-    const char *filename{ "res/cqasm_version/empty.cq" };
+    const std::string filename{ "res/cqasm_version/empty.cq" };
     EXPECT_THROW(parse_string("", filename), AnalysisError);
 }
 TEST(parse_string, string_version_no_number) {
-    const char *filename{ "res/cqasm_version/version_no_number.cq" };
+    const std::string filename{ "res/cqasm_version/version_no_number.cq" };
     EXPECT_THROW(parse_string("version", filename), AnalysisError);
 }
 TEST(parse_string, string_version_abc) {
-    const char *filename{ "res/cqasm_version/version_abc.cq" };
+    const std::string filename{ "res/cqasm_version/version_abc.cq" };
     EXPECT_THROW(parse_string("version abc", filename), AnalysisError);
 }
 TEST(parse_string, string_version_1_abc) {
-    const char *filename{ "res/cqasm_version/version_1_abc.cq" };
+    const std::string filename{ "res/cqasm_version/version_1_abc.cq" };
     EXPECT_THROW(parse_string("version 1.abc", filename), AnalysisError);
 }
 TEST(parse_string, string_version_1_1_abc) {
-    const char *filename{ "res/cqasm_version/version_1_1_abc.cq" };
+    const std::string filename{ "res/cqasm_version/version_1_1_abc.cq" };
     EXPECT_THROW(parse_string("version 1.1.abc", filename), AnalysisError);
 }
 TEST(parse_string, string_version_1_0) {
-    const char *filename{ "res/cqasm_version/version_1_0.cq" };
+    const std::string filename{ "res/cqasm_version/version_1_0.cq" };
     EXPECT_EQ(parse_string("version 1.0", filename), Version{ "1.0" });
 }
 TEST(parse_string, string_version_1_1) {
-    const char *filename{ "res/cqasm_version/version_1_1.cq" };
+    const std::string filename{ "res/cqasm_version/version_1_1.cq" };
     EXPECT_EQ(parse_string("version 1.1", filename), Version{ "1.1" });
 }
 TEST(parse_string, string_version_1_1_1) {
-    const char *filename{ "res/cqasm_version/version_1_1_1.cq" };
+    const std::string filename{ "res/cqasm_version/version_1_1_1.cq" };
     EXPECT_EQ(parse_string("version 1.1.1", filename), Version{ "1.1.1" });
 }
 TEST(parse_string, string_version_1_2) {
-    const char *filename{ "res/cqasm_version/version_1_2.cq" };
+    const std::string filename{ "res/cqasm_version/version_1_2.cq" };
     EXPECT_EQ(parse_string("version 1.2", filename), Version{ "1.2" });
 }
 TEST(parse_string, string_version_1_3) {
-    const char *filename{ "res/cqasm_version/version_1_3.cq" };
+    const std::string filename{ "res/cqasm_version/version_1_3.cq" };
     EXPECT_EQ(parse_string("version 1.3", filename), Version{ "1.3" });
 }
 TEST(parse_string, string_version_2_0) {
-    const char *filename{ "res/cqasm_version/version_2_0.cq" };
+    const std::string filename{ "res/cqasm_version/version_2_0.cq" };
     EXPECT_EQ(parse_string("version 2.0", filename), Version{ "2.0" });
 }
 TEST(parse_string, string_version_3_0) {
-    const char *filename{ "res/cqasm_version/version_3_0.cq" };
+    const std::string filename{ "res/cqasm_version/version_3_0.cq" };
     EXPECT_EQ(parse_string("version 3.0", filename), Version{ "3.0" });
 }
 TEST(parse_string, string_version_4_0) {
-    const char *filename{ "res/cqasm_version/version_4_0.cq" };
+    const std::string filename{ "res/cqasm_version/version_4_0.cq" };
     EXPECT_EQ(parse_string("version 4.0", filename), Version{ "4.0" });
 }
 TEST(parse_string, string_instruction_called_version) {
-    const char *filename{ "res/cqasm_version/instruction_called_version.cq" };
+    const std::string filename{ "res/cqasm_version/instruction_called_version.cq" };
     EXPECT_THROW(parse_string("version q[1:6], 3.14159\nmeasure_all", filename), AnalysisError);
 }
 TEST(parse_string, string_no_version_and_instruction) {
-    const char *filename{ "res/cqasm_version/no_version_and_instruction.cq" };
+    const std::string filename{ "res/cqasm_version/no_version_and_instruction.cq" };
     EXPECT_THROW(parse_string("qubits 3\n\nx q[0]", filename), AnalysisError);
 }
 TEST(parse_string, string_version_1_0_and_instruction) {
-    const char *filename{ "res/cqasm_version/version_1_0_and_instruction.cq" };
+    const std::string filename{ "res/cqasm_version/version_1_0_and_instruction.cq" };
     EXPECT_EQ(parse_string("version 1.0\n\nqubits 3\n\nx q[0]", filename), Version{ "1.0" });
 }
 TEST(parse_string, string_instruction_and_version_1_0) {
-    const char *filename{ "res/cqasm_version/instruction_and_version_1_0.cq" };
+    const std::string filename{ "res/cqasm_version/instruction_and_version_1_0.cq" };
     EXPECT_THROW(parse_string("qubits 3\n\nx q[0]\n\nversion 1.0", filename), AnalysisError);
 }
 TEST(parse_string, string_version_1_0_and_no_filename_argument) {
@@ -282,11 +283,8 @@ TEST(ParseHelper_parse, scanner_returns_empty_version) {
     const std::string filename = "file_no_version.cq";
     Version ret;
     EXPECT_CALL(scanner, parse(filename, _)).WillOnce(SetArgReferee<1>(ret));
-    try {
-        ParseHelper(std::move(scanner_up), filename).parse();
-    } catch (const AnalysisError &err) {
-        EXPECT_THAT(err.get_message(), HasSubstr("no version info nor error info was returned by version parser."));
-    }
+    EXPECT_THAT([&]() { ParseHelper(std::move(scanner_up), filename).parse(); },
+        ThrowsMessage<AnalysisError>(HasSubstr("no version info nor error info was returned by version parser.")));
 }
 TEST(ParseHelper_parse, scanner_returns_correct_version) {
     auto scanner_up = std::make_unique<ScannerMock>();
@@ -298,9 +296,6 @@ TEST(ParseHelper_parse, scanner_returns_correct_version) {
 }
 TEST(ParseHelper_parse, scanner_throws_and_no_filename_argument) {
     auto scanner_up = std::make_unique<ScannerFlexBisonString>("");
-    try {
-        ParseHelper(std::move(scanner_up)).parse();
-    } catch (const AnalysisError &err) {
-        EXPECT_THAT(err.get_message(), HasSubstr("<unknown>"));
-    }
+    EXPECT_THAT([&]() { ParseHelper(std::move(scanner_up)).parse(); },
+        ThrowsMessage<AnalysisError>(HasSubstr("<unknown>")));
 }
