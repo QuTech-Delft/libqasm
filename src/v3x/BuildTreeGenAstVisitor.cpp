@@ -6,6 +6,7 @@
 #include <cassert>  // assert
 #include <charconv>  // from_chars
 #include <stdexcept>  // runtime_error
+#include <string>  // stod, stoll
 #include <system_error>  // errc
 
 
@@ -14,15 +15,28 @@ namespace cqasm::v3x::parser {
 using namespace cqasm::v1x::ast;
 using namespace cqasm::error;
 
-template <typename T>
-T get_terminal_node_value(antlr4::tree::TerminalNode *node) {
+std::int64_t get_integer_literal_value(antlr4::tree::TerminalNode *node) {
     auto text = node->getText();
-    T ret{};
-    auto [ptr, ec] = std::from_chars(text.c_str(), text.c_str() + text.size(), ret);
-    if (ec == std::errc::invalid_argument) {
-        throw AnalysisError{ "terminal node is not of the expected type." };
-    } else if (ec == std::errc::result_out_of_range) {
-        throw AnalysisError{ "terminal node is out of range" };
+    std::int64_t ret{};
+    try {
+        ret = std::stoll(text);
+    } catch (std::invalid_argument&) {
+        throw AnalysisError{ "terminal node is not of the expected INTEGER_LITERAL type." };
+    } catch (std::out_of_range&) {
+        throw AnalysisError{ "terminal node is out of the INTEGER_LITERAL range" };
+    }
+    return ret;
+}
+
+double get_float_literal_value(antlr4::tree::TerminalNode *node) {
+    auto text = node->getText();
+    double ret{};
+    try {
+        ret = std::stod(text);
+    } catch (std::invalid_argument&) {
+        throw AnalysisError{ "terminal node is not of the expected FLOAT_LITERAL type." };
+    } catch (std::out_of_range&) {
+        throw AnalysisError{ "terminal node is out of the FLOAT_LITERAL range" };
     }
     return ret;
 }
@@ -42,7 +56,7 @@ std::any BuildTreeGenAstVisitor::visitProgram(CqasmParser::ProgramContext *conte
 std::any BuildTreeGenAstVisitor::visitVersion(CqasmParser::VersionContext *context) {
     auto ret = One<Version>{};
     for (size_t i{ 0 }; i < context->INTEGER_LITERAL().size(); ++i) {
-        auto number = get_terminal_node_value<std::int64_t>(context->INTEGER_LITERAL(i));
+        auto number = get_integer_literal_value(context->INTEGER_LITERAL(i));
         ret->items.push_back(number);
     }
     return ret;
@@ -94,10 +108,10 @@ std::any BuildTreeGenAstVisitor::visitExpressionList(CqasmParser::ExpressionList
 
 std::any BuildTreeGenAstVisitor::visitExpression(CqasmParser::ExpressionContext *context) {
     if (auto integer_literal_ast = context->INTEGER_LITERAL()) {
-        auto integer_literal = get_terminal_node_value<std::int64_t>(integer_literal_ast);
+        auto integer_literal = get_integer_literal_value(integer_literal_ast);
         return cqasm::tree::make<IntegerLiteral>(integer_literal);
     } else if (auto float_literal_ast = context->FLOAT_LITERAL()) {
-        auto float_literal = get_terminal_node_value<double>(float_literal_ast);
+        auto float_literal = get_float_literal_value(float_literal_ast);
         return cqasm::tree::make<FloatLiteral>(float_literal);
     } else if (auto id_ast = context->IDENTIFIER()) {
         auto id = id_ast->getText();
