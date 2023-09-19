@@ -28,12 +28,22 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 # Packages
 #-------------------------------------------------------------------------------
 
+find_package(antlr4-runtime)
+find_package(BISON 3.0)
+find_package(FLEX 2.6.4)
+if(WIN32)
+    set(flex_win_compat --wincompat)
+else()
+    set(flex_win_compat)
+endif()
+find_package(Python3 REQUIRED)
+
 include(FetchContent)
 # tree-gen, a custom utility to generate classes for typed tree-like structures and enums with variants containing data.
 # This exposes the generate_tree() function.
 FetchContent_Declare(tree-gen
     GIT_REPOSITORY https://github.com/QuTech-Delft/tree-gen.git
-    GIT_TAG "8a1f25dee6d5529398676ec83a18f89786049ae8"
+    GIT_TAG "71e5acdf6fd67d6800042aac848e710f99cc79f7"
 )
 FetchContent_MakeAvailable(tree-gen)
 
@@ -42,18 +52,6 @@ FetchContent_MakeAvailable(tree-gen)
 # This file would otherwise be extremely repetitive and annoying to maintain due to the amount of overloads.
 # This exposes the generate_funcs() function, which should be called once with the header and source file paths.
 add_subdirectory(func-gen)
-
-# Require flex/bison; if not installed, this will try to build from source.
-find_package(BISON 3.0)
-find_package(FLEX 2.6.4)
-if(WIN32)
-    set(flex_win_compat --wincompat)
-else()
-    set(flex_win_compat)
-endif()
-
-find_package(antlr4-runtime REQUIRED)
-find_package(Python3 REQUIRED)
 
 #-------------------------------------------------------------------------------
 # cQASM common code generation and inclusion
@@ -219,7 +217,7 @@ target_include_directories(cqasm-lib-obj
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/"
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include/"
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include/"
-    PRIVATE "${antlr4-runtime_INCLUDE_DIR}"
+    PUBLIC "${antlr4-runtime_INCLUDE_DIRS}"
 )
 
 target_compile_features(cqasm-lib-obj PUBLIC
@@ -271,6 +269,20 @@ target_include_directories(cqasm PUBLIC
 )
 target_link_libraries(cqasm PUBLIC
     $<TARGET_PROPERTY:cqasm-lib-obj,LINK_LIBRARIES>
+)
+
+#-------------------------------------------------------------------------------
+# Debug info
+#-------------------------------------------------------------------------------
+
+message(STATUS
+    "[${PROJECT_NAME}] Target include directories:\n"
+    "      TREE_LIB_PRIVATE_INCLUDE: ${TREE_LIB_PRIVATE_INCLUDE}\n"
+    "      TREE_LIB_PUBLIC_INCLUDE: ${TREE_LIB_PUBLIC_INCLUDE}\n"
+    "      CMAKE_CURRENT_BINARY_DIR: ${CMAKE_CURRENT_BINARY_DIR}\n"
+    "      CMAKE_CURRENT_SOURCE_DIR/../include/: ${CMAKE_CURRENT_SOURCE_DIR}/../include/\n"
+    "      CMAKE_CURRENT_BINARY_DIR/../include/: ${CMAKE_CURRENT_BINARY_DIR}/../include/\n"
+    "      antlr4-runtime_INCLUDE_DIRS: ${antlr4-runtime_INCLUDE_DIRS}\n"
 )
 
 #-------------------------------------------------------------------------------

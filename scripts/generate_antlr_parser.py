@@ -54,7 +54,6 @@ def generate_antlr_parser(input_folder, output_folder, antlr_jar_file_path):
             "java",
             "-jar",
             antlr_jar_file_path,
-            "-no-listener",
             "-visitor",
             "-Xexact-output-dir",
             "-o",

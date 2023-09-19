@@ -7,6 +7,7 @@
 #include "cqasm-version-parser.hpp"
 #include "cqasm-version-lexer.hpp"
 
+#include <fmt/format.h>
 #include <memory>
 
 namespace cqasm::version {
@@ -74,16 +75,7 @@ int Version::compare(const std::string &other) const {
  * Stream << overload for version nodes.
  */
 std::ostream &operator<<(std::ostream &os, const Version &object) {
-    bool first = true;
-    for (auto item : object) {
-        if (first) {
-            first = false;
-        } else {
-            os << ".";
-        }
-        os << item;
-    }
-    return os;
+    return os << fmt::format("{}", fmt::join(object, "."));
 }
 
 

@@ -45,7 +45,6 @@ ScannerAntlrFile::ScannerAntlrFile(std::unique_ptr<BuildCustomAstVisitor> build_
         throw error::AnalysisError("ScannerAntlrFile couldn't access file.");
     }
 }
-
 ScannerAntlrFile::~ScannerAntlrFile() {}
 
 void ScannerAntlrFile::parse(const std::string &file_name, cqasm::v1x::parser::ParseResult &result) {

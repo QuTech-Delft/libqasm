@@ -62,12 +62,12 @@ public:
         cq1x::parser::ParseResult parse_result{};
         auto version = cqasm::version::parse_string(input, "input.cq");
 
-        if (version <= cqasm::version::Version("1.2")) {
+        if (auto compare_result = version.compare("1.2"); compare_result <= 0) {
             parse_result = cq1x::parser::parse_string(input, "input.cq");
-        } else if (version == cqasm::version::Version("3.0")) {
+        } else if (auto compare_result = version.compare("3.0"); compare_result == 0) {
             parse_result = cq3x::parser::parse_string(input, "input.cq");
         } else {
-            parse_result.errors.push_back(fmt::format("detected version ", version));
+            parse_result.errors.push_back(fmt::format("detected version {}", version));
         }
 
         // Check the parse result
@@ -272,6 +272,6 @@ void register_v1x_tests(const fs::path& subdir) {
 }
 
 void register_v1x_tests() {
-    register_v1x_tests("parsing");
-    //register_v1x_tests("toy-v1x-parsing");
+    //register_v1x_tests("parsing");
+    register_v1x_tests("toy-v1x-parsing");
 }
