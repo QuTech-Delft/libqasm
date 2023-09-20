@@ -25,8 +25,25 @@ Program(
               operands: <
                 ExpressionList(
                   items: [
-                    IntegerLiteral(
-                      value: 1
+                    Index(
+                      expr: <
+                        Identifier(
+                          name: q
+                        )
+                      >
+                      indices: <
+                        IndexList(
+                          items: [
+                            IndexItem(
+                              index: <
+                                IntegerLiteral(
+                                  value: 3
+                                )
+                              >
+                            )
+                          ]
+                        )
+                      >
                     )
                   ]
                 )

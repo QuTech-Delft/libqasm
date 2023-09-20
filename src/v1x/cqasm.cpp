@@ -9,7 +9,7 @@
 #include "cqasm-version.hpp"
 #include "v1x/cqasm.hpp"
 #include "v1x/cqasm-parse-helper.hpp"
-#include "v1x/cqasm-parse-result.hpp"
+
 
 namespace cqasm {
 namespace v1x {

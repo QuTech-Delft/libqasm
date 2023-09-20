@@ -1,2 +1,2 @@
 ERROR
-input.cq:4:0: mismatched input '<EOF>' expecting ':'
+input.cq:2:5: mismatched input '<EOF>' expecting ':'

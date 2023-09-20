@@ -4,7 +4,6 @@ on:
   push:
     branches:
     - develop
-    - toy-v1-use_case_circuit_for_parser_verification
   pull_request:
 
 jobs:

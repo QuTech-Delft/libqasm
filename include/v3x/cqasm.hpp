@@ -41,12 +41,5 @@ tree::One<cqasm::v1x::semantic::Program> analyze_string(
     const std::string &api_version = "1.0"
 );
 
-/**
- * Constructs an Analyzer object with the defaults for cQASM 1.0 already loaded into it.
- */
-cqasm::v1x::analyzer::Analyzer default_analyzer(
-    const std::string &api_version = "1.0"
-);
-
 } // namespace v3x
 } // namespace cqasm
