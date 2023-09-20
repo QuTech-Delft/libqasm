@@ -7,6 +7,8 @@
 #include "v1x/cqasm.hpp"
 #include "v1x/cqasm-parse-helper.hpp"
 
+#include <memory>
+
 namespace v1x = cqasm::v1x;
 
 /**
@@ -20,14 +22,10 @@ namespace v1x = cqasm::v1x;
  */
 V1xAnalyzer::V1xAnalyzer(const std::string &max_version, bool without_defaults) {
     if (without_defaults) {
-        a = std::unique_ptr<v1x::analyzer::Analyzer>(
-            new v1x::analyzer::Analyzer(max_version)
-        );
+        a = std::make_unique<v1x::analyzer::Analyzer>(max_version);
         a->register_default_functions_and_mappings();
     } else {
-        a = std::unique_ptr<v1x::analyzer::Analyzer>(
-            new v1x::analyzer::Analyzer(v1x::default_analyzer(max_version))
-        );
+        a = std::make_unique<v1x::analyzer::Analyzer>(v1x::default_analyzer(max_version));
     }
 }
 
