@@ -5,7 +5,11 @@ Program(
       items: 3
     )
   >
-  num_qubits: -
+  num_qubits: <
+    IntegerLiteral(
+      value: 3
+    )
+  >
   statements: <
     StatementList(
       items: [
@@ -21,8 +25,8 @@ Program(
               operands: <
                 ExpressionList(
                   items: [
-                    IntegerLiteral(
-                      value: 1
+                    Identifier(
+                      name: v
                     )
                   ]
                 )

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "v3x/BuildCustomAstVisitor.h"
+#include "v3x/BuildCustomAstVisitor.hpp"
 #include "v3x/CqasmParser.h"
 #include "v3x/CqasmParserVisitor.h"
 
@@ -13,6 +13,7 @@ class  BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
 public:
     std::any visitProgram(CqasmParser::ProgramContext *context) override;
     std::any visitVersion(CqasmParser::VersionContext *context) override;
+    std::any visitQubits(CqasmParser::QubitsContext *context) override;
     std::any visitStatement(CqasmParser::StatementContext *context) override;
     std::any visitMapping(CqasmParser::MappingContext *context) override;
     std::any visitVariable(CqasmParser::VariableContext *context) override;

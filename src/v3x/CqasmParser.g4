@@ -5,9 +5,11 @@ options {
 }
 
 // Actual grammar start.
-program: version QUBITS expression statement*;
+program: version qubits? statement* EOF;
 
 version: VERSION INTEGER_LITERAL (DOT INTEGER_LITERAL)?;
+
+qubits: QUBITS expression;
 
 statement: mapping | variable | instruction;
 

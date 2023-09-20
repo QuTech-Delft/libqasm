@@ -8,11 +8,10 @@
 
 #include "cqasm-annotations.hpp"
 #include "v1x/cqasm-parse-result.hpp"
-#include "v3x/BuildCustomAstVisitor.h"
-#include "v3x/BuildTreeGenAstVisitor.h"
+#include "v3x/BuildCustomAstVisitor.hpp"
+#include "v3x/CustomErrorListener.hpp"
 
-#include "antlr4-runtime/antlr4-runtime.h"
-
+#include <antlr4-runtime.h>
 #include <fstream>  // ifstream
 #include <memory>  // unique_ptr
 #include <string>
@@ -28,33 +27,37 @@ using SourceLocation = annotations::SourceLocation;
 struct ScannerAdaptor {
     virtual ~ScannerAdaptor();
 
-    virtual void parse(const std::string &file_name, cqasm::v1x::parser::ParseResult &result) = 0;
+    virtual cqasm::v1x::parser::ParseResult parse() = 0;
 };
 
 class ScannerAntlr : public ScannerAdaptor {
     std::unique_ptr<BuildCustomAstVisitor> build_visitor_up_;
+    std::unique_ptr<CustomErrorListener> error_listener_up_;
 protected:
-    void parse_(antlr4::ANTLRInputStream &is, const std::string &file_name, cqasm::v1x::parser::ParseResult &result);
+    cqasm::v1x::parser::ParseResult parse_(antlr4::ANTLRInputStream &is);
 public:
-    explicit ScannerAntlr(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up);
+    explicit ScannerAntlr(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up,
+        std::unique_ptr<CustomErrorListener> error_listener_up);
     ~ScannerAntlr() override;
-    void parse(const std::string &file_name, cqasm::v1x::parser::ParseResult &result) override = 0;
+    cqasm::v1x::parser::ParseResult parse() override = 0;
 };
 
 class ScannerAntlrFile : public ScannerAntlr {
-    std::ifstream ifs_;
+    std::string file_path_;
 public:
-    ScannerAntlrFile(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up, const std::string &file_path);
+    ScannerAntlrFile(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up,
+        std::unique_ptr<CustomErrorListener> error_listener_up, const std::string &file_path);
     ~ScannerAntlrFile() override;
-    void parse(const std::string &file_name, cqasm::v1x::parser::ParseResult &result) override;
+    cqasm::v1x::parser::ParseResult parse() override;
 };
 
 class ScannerAntlrString : public ScannerAntlr {
     std::string data_;
 public:
-    ScannerAntlrString(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up, const std::string &data);
+    ScannerAntlrString(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up,
+        std::unique_ptr<CustomErrorListener> error_listener_up, const std::string &data);
     ~ScannerAntlrString() override;
-    void parse(const std::string &file_name, cqasm::v1x::parser::ParseResult &result) override;
+    cqasm::v1x::parser::ParseResult parse() override;
 };
 
 
@@ -83,7 +86,7 @@ class ParseHelper {
     /**
      * Name of the file being parsed.
      */
-    std::string file_name;
+    std::string file_name_;
 
 public:
     explicit ParseHelper(std::unique_ptr<ScannerAdaptor> scanner_up, std::string file_name = "<unknown>");

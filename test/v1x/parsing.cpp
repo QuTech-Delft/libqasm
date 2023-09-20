@@ -90,6 +90,7 @@ public:
             return;
         }
 
+        /*
         // Try different API levels
         for (const auto &api_version : std::vector<std::string>({"1.0", "1.1", "1.2"})) {
             // If there were no errors, try semantic analysis.
@@ -224,6 +225,7 @@ public:
                 ::tree::base::serialize(analysis_result.root);
             }
         }
+        */
     }
 };
 

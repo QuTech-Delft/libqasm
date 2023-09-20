@@ -10,8 +10,9 @@ namespace cqasm::v3x::parser {
 
 class BuildCustomAstVisitor : public CqasmParserVisitor {
 public:
-    std::any visitProgram(CqasmParser::ProgramContext *context) = 0;
+    virtual std::any visitProgram(CqasmParser::ProgramContext *context) = 0;
     std::any visitVersion(CqasmParser::VersionContext *context) = 0;
+    std::any visitQubits(CqasmParser::QubitsContext *context) = 0;
     std::any visitStatement(CqasmParser::StatementContext *context) = 0;
     std::any visitMapping(CqasmParser::MappingContext *context) = 0;
     std::any visitVariable(CqasmParser::VariableContext *context) = 0;

@@ -1,0 +1,19 @@
+SUCCESS
+Program(
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  num_qubits: <
+    Identifier(
+      name: abc
+    )
+  >
+  statements: <
+    StatementList(
+      items: []
+    )
+  >
+)
+

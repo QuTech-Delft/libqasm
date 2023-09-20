@@ -1,0 +1,2 @@
+ERROR
+input.cq:4:0: missing IDENTIFIER at '<EOF>'

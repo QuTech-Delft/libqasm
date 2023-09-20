@@ -36,6 +36,7 @@ if(WIN32)
 else()
     set(flex_win_compat)
 endif()
+find_package(fmt 10.1.1)
 find_package(Python3 REQUIRED)
 
 include(FetchContent)
@@ -43,7 +44,7 @@ include(FetchContent)
 # This exposes the generate_tree() function.
 FetchContent_Declare(tree-gen
     GIT_REPOSITORY https://github.com/QuTech-Delft/tree-gen.git
-    GIT_TAG "71e5acdf6fd67d6800042aac848e710f99cc79f7"
+    GIT_TAG "42b91f0b641cde8e8e162a0574aa0ce20a9e25d2"
 )
 FetchContent_MakeAvailable(tree-gen)
 

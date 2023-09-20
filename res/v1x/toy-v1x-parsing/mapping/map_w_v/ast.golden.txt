@@ -1,0 +1,29 @@
+SUCCESS
+Program(
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  num_qubits: -
+  statements: <
+    StatementList(
+      items: [
+        Mapping(
+          alias: <
+            Identifier(
+              name: w
+            )
+          >
+          expr: <
+            Identifier(
+              name: v
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

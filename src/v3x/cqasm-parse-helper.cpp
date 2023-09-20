@@ -4,62 +4,67 @@
 
 #include "v1x/cqasm-ast.hpp"
 #include "v1x/cqasm-parse-result.hpp"
-#include "v3x/BuildTreeGenAstVisitor.h"
+#include "v3x/BuildTreeGenAstVisitor.hpp"
+#include "v3x/cqasm-parse-helper.hpp"
 #include "v3x/CqasmLexer.h"
 #include "v3x/CqasmParser.h"
-#include "v3x/cqasm-parse-helper.hpp"
 
-#include "antlr4-runtime/antlr4-runtime.h"
-
-#include <filesystem>
 #include <fmt/format.h>
-#include <fstream>  // ifstream
-#include <stdexcept>  // runtime_error
+#include <filesystem>
 
 namespace fs = std::filesystem;
 
 
 namespace cqasm::v3x::parser {
 
+using namespace cqasm::v1x::ast;
+
 ScannerAdaptor::~ScannerAdaptor() {}
 
-ScannerAntlr::ScannerAntlr(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up)
-: build_visitor_up_{ std::move(build_visitor_up) } {}
+ScannerAntlr::ScannerAntlr(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up,
+    std::unique_ptr<CustomErrorListener> error_listener_up)
+: build_visitor_up_{ std::move(build_visitor_up) }
+, error_listener_up_{ std::move(error_listener_up) } {}
 
 ScannerAntlr::~ScannerAntlr() {}
 
-void ScannerAntlr::parse_(antlr4::ANTLRInputStream &is, const std::string & /* file_name */,
-    cqasm::v1x::parser::ParseResult &result) {
-
+cqasm::v1x::parser::ParseResult ScannerAntlr::parse_(antlr4::ANTLRInputStream &is) {
     CqasmLexer lexer{ &is };
+    lexer.removeErrorListeners();
+    lexer.addErrorListener(error_listener_up_.get());
     antlr4::CommonTokenStream tokens{ &lexer };
     CqasmParser parser{ &tokens };
+    parser.removeErrorListeners();
+    parser.addErrorListener(error_listener_up_.get());
     auto ast = parser.program();
     auto custom_ast = build_visitor_up_->visitProgram(ast);
-    result.root = std::any_cast<cqasm::v1x::ast::One<cqasm::v1x::ast::Root>>(custom_ast);
+    return cqasm::v1x::parser::ParseResult{ std::any_cast<One<Program>>(custom_ast), {} };
 }
 
-ScannerAntlrFile::ScannerAntlrFile(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up, const std::string &file_path)
-: ScannerAntlr{ std::move(build_visitor_up) }, ifs_{ file_path } {
-    if (!ifs_.is_open()) {
-        throw error::AnalysisError("ScannerAntlrFile couldn't access file.");
+ScannerAntlrFile::ScannerAntlrFile(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up,
+    std::unique_ptr<CustomErrorListener> error_listener_up, const std::string &file_path)
+: ScannerAntlr{ std::move(build_visitor_up), std::move(error_listener_up) }, file_path_{ file_path } {
+    if (!fs::exists(file_path_) || !fs::is_regular_file(file_path_)) {
+        throw error::AnalysisError{ fmt::format("ScannerAntlrFile couldn't access file '{}'.", file_path_) };
     }
 }
 ScannerAntlrFile::~ScannerAntlrFile() {}
 
-void ScannerAntlrFile::parse(const std::string &file_name, cqasm::v1x::parser::ParseResult &result) {
-    antlr4::ANTLRInputStream is{ ifs_ };
-    parse_(is, file_name, result);
+cqasm::v1x::parser::ParseResult ScannerAntlrFile::parse() {
+    antlr4::ANTLRFileStream ifs{};
+    ifs.loadFromFile(file_path_);
+    return parse_(ifs);
 }
 
-ScannerAntlrString::ScannerAntlrString(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up, const std::string &data)
-: ScannerAntlr{ std::move(build_visitor_up) }, data_{ data } {}
+ScannerAntlrString::ScannerAntlrString(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up,
+    std::unique_ptr<CustomErrorListener> error_listener_up, const std::string &data)
+: ScannerAntlr{ std::move(build_visitor_up), std::move(error_listener_up) }, data_{ data } {}
 
 ScannerAntlrString::~ScannerAntlrString() {}
 
-void ScannerAntlrString::parse(const std::string &file_name, cqasm::v1x::parser::ParseResult &result) {
+cqasm::v1x::parser::ParseResult ScannerAntlrString::parse() {
     antlr4::ANTLRInputStream is{ data_ };
-    parse_(is, file_name, result);
+    return parse_(is);
 }
 
 /**
@@ -69,7 +74,9 @@ void ScannerAntlrString::parse(const std::string &file_name, cqasm::v1x::parser:
  */
 cqasm::v1x::parser::ParseResult parse_file(const std::string &file_path, const std::string &file_name) {
     auto builder_visitor_up = std::make_unique<BuildTreeGenAstVisitor>();
-    auto scanner_up = std::make_unique<ScannerAntlrFile>(std::move(builder_visitor_up), file_path);
+    auto error_listener_up = std::make_unique<CustomErrorListener>(file_name);
+    auto scanner_up = std::make_unique<ScannerAntlrFile>(
+            std::move(builder_visitor_up), std::move(error_listener_up), file_path);
     return ParseHelper(std::move(scanner_up), file_name).parse();
 }
 
@@ -79,23 +86,29 @@ cqasm::v1x::parser::ParseResult parse_file(const std::string &file_path, const s
  */
 cqasm::v1x::parser::ParseResult parse_string(const std::string &data, const std::string &file_name) {
     auto builder_visitor_up = std::make_unique<BuildTreeGenAstVisitor>();
-    auto scanner_up = std::make_unique<ScannerAntlrString>(std::move(builder_visitor_up), data);
+    auto error_listener_up = std::make_unique<CustomErrorListener>(file_name);
+    auto scanner_up = std::make_unique<ScannerAntlrString>(
+            std::move(builder_visitor_up), std::move(error_listener_up), data);
     return ParseHelper(std::move(scanner_up), file_name).parse();
 }
 
 
 ParseHelper::ParseHelper(std::unique_ptr<ScannerAdaptor> scanner_up, std::string file_name)
-: scanner_up_(std::move(scanner_up)), file_name(std::move(file_name)) {}
+: scanner_up_(std::move(scanner_up)), file_name_(std::move(file_name)) {}
 
 /**
  * Does the actual parsing.
  */
 cqasm::v1x::parser::ParseResult ParseHelper::parse() {
     cqasm::v1x::parser::ParseResult result;
-    scanner_up_->parse(file_name, result);
+    try {
+        result = scanner_up_->parse();
+    } catch (const std::runtime_error &err) {
+        result.errors.emplace_back(err.what());
+    }
     if (result.errors.empty() && !result.root.is_well_formed()) {
         std::cerr << *result.root;
-        throw error::AnalysisError(
+        throw cqasm::error::AnalysisError(
             "ParseHelper::parse: no parse errors returned, but AST is incomplete. AST was dumped.");
     }
     return result;

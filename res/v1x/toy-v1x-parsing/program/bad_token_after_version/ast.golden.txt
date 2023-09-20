@@ -1,0 +1,2 @@
+ERROR
+input.cq:2:0: extraneous input '123' expecting {<EOF>, 'qubits', 'map', 'var', IDENTIFIER}
