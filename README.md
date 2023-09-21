@@ -28,13 +28,17 @@ The following folders may be generated:
 
 ## Dependencies
 
-* CMake >= 3.12
+* C++ compiler with C++20 support (gcc 11, clang 14, msvc 17)
+* `CMake` >= 3.12
 * conan 2.0
-* gcc and g++ capable of C++20 standard
 * git
-* Python3
+* Python3 plus pip
   
-### ARM specific dependencies
+### ARM-specific dependencies
+
+We are having problems when using the `m4` and `zulu-opendjk` Conan packages on an ARMv8 architecture.
+`m4` is required by Flex/Bison and `zulu-openjdk` provides the Java JRE required by the ANTLR generator.
+So, for the time being, we are installing Flex/Bison and Java manually for this platform.
 
 * Flex >= 2.6.4
 * Bison >= 3.0
@@ -42,28 +46,24 @@ The following folders may be generated:
 
 ## Build
 
-This version of libqasm can only be compiled via `conan`.
+This version of `libqasm` can only be compiled via the `conan` package manager.
+You'll need to create a default profile before using it for the first time.
 
-`conan` is a package manager that is very convenient for managing dependencies. It is installed via `pip`.
-
-```
-pip install conan
-```
-
-You'll need to create a default profile before using it:
-
-```
-conan profile detect
-```
-
-The installation of `libqasm` dependencies, as well as the compilation, can be done in one go.<br/>
-Notice the command below is building `libqasm` in Debug mode with tests.
+The installation of dependencies, as well as the compilation, can be done in one go. Notice:
+- the `conan profile` command only has to be run once.
+- the `conan build` command is building `libqasm` in Debug mode with tests.
 
 ```
 git clone https://github.com/QuTech-Delft/libqasm.git
 cd libqasm
+conan profile detect
 conan build . -s:h compiler.cppstd=20 -s:h libqasm/*:build_type=Debug -o libqasm/*:build_tests=True -b missing
 ```
+
+You may want to add one or more options to the `conan` command:
+
+- <code><nobr>-o libqasm/*:compat=True</nobr></code>: enables installation of the headers for the original API, on top of the ones for the new API.
+- <code><nobr>-o libqasm/*:shared=True</nobr></code>: builds a shared object library instead of a static library, if applicable.
 
 ## Install
 
@@ -72,7 +72,7 @@ conan build . -s:h compiler.cppstd=20 -s:h libqasm/*:build_type=Debug -o libqasm
 Install from the project root directory as follows:
 
 ```
-python -m pip install --verbose .
+python3 -m pip install --verbose .
 ```
 
 or if you'd rather use conda:
@@ -85,7 +85,7 @@ conda install libqasm --use-local
 You can test if it works by running:
 
 ```
-python -m pytest
+python3 -m pytest
 ```
 
 ### From C++
@@ -95,12 +95,6 @@ The `CMakeLists.txt` file in the root directory includes install targets:
 ```
 conan create --version 0.4.1 . -s:h compiler.cppstd=20 -s:h libqasm/*:build_type=Debug -o libqasm/*:build_tests=True -b missing
 ```
-
-You may want to add one or more options to the `conan` command:
-
- - <code><nobr>-o libqasm/*:compat=True</nobr></code>: enables installation of the headers for the original API, on top of the ones for the new API.
- - <code><nobr>-o libqasm/*:shared=True</nobr></code>: builds a shared object library instead of a static library, if applicable.
-
 
 You can test if it works by doing:
 
@@ -119,8 +113,6 @@ The new API doesn't have Python bindings yet.
 ### From C++
 
 The easiest way to use libqasm in a CMake project is to fetch the library and then link against it.
-
-Note that the Java JRE is required for libqasm to build:
 
 ```
 include(FetchContent)
