@@ -38,7 +38,7 @@ std::any BuildTreeGenAstVisitor::visitProgram(CqasmParser::ProgramContext *conte
 std::any BuildTreeGenAstVisitor::visitVersion(CqasmParser::VersionContext *context) {
     auto ret = cqasm::tree::make<Version>();
     const auto& integer_literals = context->INTEGER_LITERAL();
-    std::for_each(integer_literals.begin(), integer_literals.end(), [this, &ret](auto *integer_literal_node) {
+    std::for_each(integer_literals.begin(), integer_literals.end(), [&ret](auto *integer_literal_node) {
         auto number = get_integer_literal_value(integer_literal_node);
         ret->items.push_back(number);
     });
