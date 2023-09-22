@@ -8,58 +8,14 @@
 
 #include "cqasm-annotations.hpp"
 #include "v1x/cqasm-parse-result.hpp"
-#include "v3x/BuildCustomAstVisitor.hpp"
-#include "v3x/CustomErrorListener.hpp"
+#include "v3x/ScannerAntlr.hpp"
 
 #include <antlr4-runtime.h>
-#include <fstream>  // ifstream
 #include <memory>  // unique_ptr
 #include <string>
 
 
 namespace cqasm::v3x::parser {
-
-// SourceLocation used to live in this namespace, before the v3x namespace was a thing.
-// Make sure it exists here for compatibility.
-using SourceLocation = annotations::SourceLocation;
-
-
-struct ScannerAdaptor {
-    virtual ~ScannerAdaptor();
-
-    virtual cqasm::v1x::parser::ParseResult parse() = 0;
-};
-
-class ScannerAntlr : public ScannerAdaptor {
-    std::unique_ptr<BuildCustomAstVisitor> build_visitor_up_;
-    std::unique_ptr<CustomErrorListener> error_listener_up_;
-protected:
-    cqasm::v1x::parser::ParseResult parse_(antlr4::ANTLRInputStream &is);
-public:
-    explicit ScannerAntlr(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up,
-        std::unique_ptr<CustomErrorListener> error_listener_up);
-    ~ScannerAntlr() override;
-    cqasm::v1x::parser::ParseResult parse() override = 0;
-};
-
-class ScannerAntlrFile : public ScannerAntlr {
-    std::string file_path_;
-public:
-    ScannerAntlrFile(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up,
-        std::unique_ptr<CustomErrorListener> error_listener_up, const std::string &file_path);
-    ~ScannerAntlrFile() override;
-    cqasm::v1x::parser::ParseResult parse() override;
-};
-
-class ScannerAntlrString : public ScannerAntlr {
-    std::string data_;
-public:
-    ScannerAntlrString(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up,
-        std::unique_ptr<CustomErrorListener> error_listener_up, const std::string &data);
-    ~ScannerAntlrString() override;
-    cqasm::v1x::parser::ParseResult parse() override;
-};
-
 
 /**
  * Parse using the given file path.

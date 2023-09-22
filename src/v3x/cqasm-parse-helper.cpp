@@ -2,70 +2,13 @@
  * Implementation for \ref include/v3x/cqasm-parse-helper.hpp "v3x/cqasm-parse-helper.hpp".
  */
 
-#include "v1x/cqasm-ast.hpp"
 #include "v1x/cqasm-parse-result.hpp"
 #include "v3x/BuildTreeGenAstVisitor.hpp"
 #include "v3x/cqasm-parse-helper.hpp"
-#include "v3x/CqasmLexer.h"
-#include "v3x/CqasmParser.h"
-
-#include <fmt/format.h>
-#include <filesystem>
-
-namespace fs = std::filesystem;
+#include "v3x/ScannerAntlr.hpp"
 
 
 namespace cqasm::v3x::parser {
-
-using namespace cqasm::v1x::ast;
-
-ScannerAdaptor::~ScannerAdaptor() {}
-
-ScannerAntlr::ScannerAntlr(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up,
-    std::unique_ptr<CustomErrorListener> error_listener_up)
-: build_visitor_up_{ std::move(build_visitor_up) }
-, error_listener_up_{ std::move(error_listener_up) } {}
-
-ScannerAntlr::~ScannerAntlr() {}
-
-cqasm::v1x::parser::ParseResult ScannerAntlr::parse_(antlr4::ANTLRInputStream &is) {
-    CqasmLexer lexer{ &is };
-    lexer.removeErrorListeners();
-    lexer.addErrorListener(error_listener_up_.get());
-    antlr4::CommonTokenStream tokens{ &lexer };
-    CqasmParser parser{ &tokens };
-    parser.removeErrorListeners();
-    parser.addErrorListener(error_listener_up_.get());
-    auto ast = parser.program();
-    auto custom_ast = build_visitor_up_->visitProgram(ast);
-    return cqasm::v1x::parser::ParseResult{ std::any_cast<One<Program>>(custom_ast), {} };
-}
-
-ScannerAntlrFile::ScannerAntlrFile(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up,
-    std::unique_ptr<CustomErrorListener> error_listener_up, const std::string &file_path)
-: ScannerAntlr{ std::move(build_visitor_up), std::move(error_listener_up) }, file_path_{ file_path } {
-    if (!fs::exists(file_path_) || !fs::is_regular_file(file_path_)) {
-        throw error::AnalysisError{ fmt::format("ScannerAntlrFile couldn't access file '{}'.", file_path_) };
-    }
-}
-ScannerAntlrFile::~ScannerAntlrFile() {}
-
-cqasm::v1x::parser::ParseResult ScannerAntlrFile::parse() {
-    antlr4::ANTLRFileStream ifs{};
-    ifs.loadFromFile(file_path_);
-    return parse_(ifs);
-}
-
-ScannerAntlrString::ScannerAntlrString(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up,
-    std::unique_ptr<CustomErrorListener> error_listener_up, const std::string &data)
-: ScannerAntlr{ std::move(build_visitor_up), std::move(error_listener_up) }, data_{ data } {}
-
-ScannerAntlrString::~ScannerAntlrString() {}
-
-cqasm::v1x::parser::ParseResult ScannerAntlrString::parse() {
-    antlr4::ANTLRInputStream is{ data_ };
-    return parse_(is);
-}
 
 /**
  * Parse using the given file path.

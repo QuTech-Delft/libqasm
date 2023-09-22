@@ -25,8 +25,8 @@ tree::One<cqasm::v1x::semantic::Program> analyze(
     const std::string &api_version
 ) {
     return cqasm::v1x::default_analyzer(api_version).analyze(
-            [=](){ return version::parse_file(file_path); },
-            [=](){ return cqasm::v3x::parser::parse_file(file_path); }
+            [&file_path]() { return version::parse_file(file_path); },
+            [&file_path]() { return cqasm::v3x::parser::parse_file(file_path); }
         ).unwrap();
 }
 
@@ -41,8 +41,8 @@ tree::One<cqasm::v1x::semantic::Program> analyze_string(
     const std::string &api_version
 ) {
     return cqasm::v1x::default_analyzer(api_version).analyze(
-            [=](){ return version::parse_string(data, file_name); },
-            [=](){ return cqasm::v3x::parser::parse_string(data, file_name); }
+            [&data, &file_name]() { return version::parse_string(data, file_name); },
+            [&data, &file_name]() { return cqasm::v3x::parser::parse_string(data, file_name); }
         ).unwrap();
 }
 
