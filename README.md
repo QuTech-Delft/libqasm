@@ -57,13 +57,42 @@ conan profile detect
 ```
 
 The installation of `libqasm` dependencies, as well as the compilation, can be done in one go.<br/>
-Notice the command below is building `libqasm` in Debug mode with tests.
 
 ```
 git clone https://github.com/QuTech-Delft/libqasm.git
 cd libqasm
-conan build . -s:h compiler.cppstd=20 -s:h libqasm/*:build_type=Debug -o libqasm/*:build_tests=True -b missing
+conan build . -pr=conan/profiles/tests-debug -b missing
 ```
+
+### Build profiles
+
+The command above is building `libqasm` in debug mode with tests using the `debug-tests` profile.
+
+libqasm provides a set of predefined profiles under the `conan/profiles` folder.
+
+All these files follow the `{tests,}-{debug,release}-{compat,}` naming convention. For example:
+  - `release` sets  `build_tests=False`, `build_type=Release` and `libqasm_compat=False`, and
+  - `test-debug-compat` sets `build_tests=True`, `build_type=Debug` and `libqasm_compat=True`.
+
+All the profiles set `compiler.cppstd=20`.
+
+All the `tests` profiles set `asan_enabled=True`.
+
+### Build options
+
+Profiles are a shorthand for command line options. The command above could be written as well as: 
+
+```
+conan build . -s:h compiler.cppstd=20 -s:h libqasm/*:build_type=Debug -o libqasm/*:asan_enabled=True -o libqasm/*:build_tests=True -o libqasm/*:compat=False -b missing
+```
+
+These are the list of options that could be specified whether in a profile or in the command line:
+
+- `libqasm/*:build_tests={True,False}`: build tests or not.
+- `libqasm/*:build_type={Debug,Release}`: builds in debug or release mode.
+- `libqasm/*:asan_enabled={True,False}`: enables Address Sanitizer.
+- `libqasm/*:compat={True,False}`: enables the compatibility layer.
+- `libqasm/*:shared={True,False}`: builds libqasm as a shared library.
 
 ## Install
 
@@ -72,7 +101,7 @@ conan build . -s:h compiler.cppstd=20 -s:h libqasm/*:build_type=Debug -o libqasm
 Install from the project root directory as follows:
 
 ```
-python -m pip install --verbose .
+python3 -m pip install --verbose .
 ```
 
 or if you'd rather use conda:
@@ -85,7 +114,7 @@ conda install libqasm --use-local
 You can test if it works by running:
 
 ```
-python -m pytest
+python3 -m pytest
 ```
 
 ### From C++
