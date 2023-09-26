@@ -16,7 +16,7 @@ namespace cqasm::v3x::parser {
  * A file_name may be given in addition for use within error messages.
  */
 cqasm::v1x::parser::ParseResult parse_file(const std::string &file_path, const std::string &file_name) {
-    auto builder_visitor_up = std::make_unique<BuildTreeGenAstVisitor>();
+    auto builder_visitor_up = std::make_unique<BuildTreeGenAstVisitor>(file_name);
     auto error_listener_up = std::make_unique<CustomErrorListener>(file_name);
     auto scanner_up = std::make_unique<ScannerAntlrFile>(
             std::move(builder_visitor_up), std::move(error_listener_up), file_path);
@@ -28,7 +28,7 @@ cqasm::v1x::parser::ParseResult parse_file(const std::string &file_path, const s
  * A file_name may be given in addition for use within error messages.
  */
 cqasm::v1x::parser::ParseResult parse_string(const std::string &data, const std::string &file_name) {
-    auto builder_visitor_up = std::make_unique<BuildTreeGenAstVisitor>();
+    auto builder_visitor_up = std::make_unique<BuildTreeGenAstVisitor>(file_name);
     auto error_listener_up = std::make_unique<CustomErrorListener>(file_name);
     auto scanner_up = std::make_unique<ScannerAntlrString>(
             std::move(builder_visitor_up), std::move(error_listener_up), data);

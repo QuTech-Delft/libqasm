@@ -3,7 +3,7 @@
 #include "v3x/BuildTreeGenAstVisitor.hpp"
 
 #include <algorithm>  // for_each
-#include <cassert>  // assert
+#include <antlr4-runtime.h>
 #include <stdexcept>  // runtime_error
 #include <string>  // stod, stoll
 
@@ -13,12 +13,40 @@ namespace cqasm::v3x::parser {
 using namespace cqasm::v1x::ast;
 using namespace cqasm::error;
 
-std::int64_t get_integer_literal_value(antlr4::tree::TerminalNode *node) {
-    return std::stoll(node->getText());
+std::int64_t BuildTreeGenAstVisitor::get_integer_literal_value(antlr4::tree::TerminalNode *node) {
+    auto text = node->getText();
+    std::int64_t ret{};
+    try {
+        ret = std::stoll(text);
+    } catch (std::out_of_range&) {
+        const auto &token = node->getSymbol();
+        throw std::runtime_error{
+            fmt::format("{}:{}:{}: value '{}' is out of the INTEGER_LITERAL range",
+                file_name_,
+                token->getLine(),
+                token->getCharPositionInLine(),
+                text
+        )};
+    }
+    return ret;
 }
 
-double get_float_literal_value(antlr4::tree::TerminalNode *node) {
-    return std::stod(node->getText());
+double BuildTreeGenAstVisitor::get_float_literal_value(antlr4::tree::TerminalNode *node) {
+    auto text = node->getText();
+    double ret{};
+    try {
+        ret = std::stod(text);
+    } catch (std::out_of_range&) {
+        const auto &token = node->getSymbol();
+        throw std::runtime_error{
+            fmt::format("{}:{}:{}: value '{}' is out of the FLOATING_LITERAL range",
+                file_name_,
+                token->getLine(),
+                token->getCharPositionInLine(),
+                text
+        )};
+    }
+    return ret;
 }
 
 std::any BuildTreeGenAstVisitor::visitProgram(CqasmParser::ProgramContext *context) {
@@ -38,7 +66,7 @@ std::any BuildTreeGenAstVisitor::visitProgram(CqasmParser::ProgramContext *conte
 std::any BuildTreeGenAstVisitor::visitVersion(CqasmParser::VersionContext *context) {
     auto ret = cqasm::tree::make<Version>();
     const auto& integer_literals = context->INTEGER_LITERAL();
-    std::for_each(integer_literals.begin(), integer_literals.end(), [&ret](auto *integer_literal_node) {
+    std::for_each(integer_literals.begin(), integer_literals.end(), [this, &ret](auto *integer_literal_node) {
         auto number = get_integer_literal_value(integer_literal_node);
         ret->items.push_back(number);
     });

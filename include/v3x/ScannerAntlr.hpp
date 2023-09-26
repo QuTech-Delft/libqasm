@@ -22,8 +22,8 @@ protected:
     cqasm::v1x::parser::ParseResult parse_(antlr4::ANTLRInputStream &is);
 
 public:
-    explicit ScannerAntlr(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up,
-                          std::unique_ptr<CustomErrorListener> error_listener_up);
+    ScannerAntlr(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up,
+        std::unique_ptr<CustomErrorListener> error_listener_up);
 
     ~ScannerAntlr() override;
 
@@ -34,8 +34,8 @@ class ScannerAntlrFile : public ScannerAntlr {
     std::string file_path_;
 public:
     ScannerAntlrFile(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up,
-                     std::unique_ptr<CustomErrorListener> error_listener_up,
-                     const std::string &file_path);
+        std::unique_ptr<CustomErrorListener> error_listener_up,
+        const std::string &file_path);
 
     ~ScannerAntlrFile() override;
 
@@ -46,8 +46,8 @@ class ScannerAntlrString : public ScannerAntlr {
     std::string data_;
 public:
     ScannerAntlrString(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up,
-                       std::unique_ptr<CustomErrorListener> error_listener_up,
-                       const std::string &data);
+        std::unique_ptr<CustomErrorListener> error_listener_up,
+        const std::string &data);
 
     ~ScannerAntlrString() override;
 

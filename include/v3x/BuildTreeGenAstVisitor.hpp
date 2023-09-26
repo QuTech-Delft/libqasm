@@ -10,6 +10,13 @@
 namespace cqasm::v3x::parser {
 
 class  BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
+    /**
+     * Name of the file being parsed.
+     */
+    std::string file_name_;
+
+    std::int64_t get_integer_literal_value(antlr4::tree::TerminalNode *node);
+    double get_float_literal_value(antlr4::tree::TerminalNode *node);
 public:
     std::any visitProgram(CqasmParser::ProgramContext *context) override;
     std::any visitVersion(CqasmParser::VersionContext *context) override;
@@ -21,6 +28,9 @@ public:
     std::any visitExpressionList(CqasmParser::ExpressionListContext *context) override;
     std::any visitExpression(CqasmParser::ExpressionContext *context) override;
     std::any visitIndex(CqasmParser::IndexContext *context) override;
+
+    explicit BuildTreeGenAstVisitor(const std::string &file_name = "<unknown>")
+    : file_name_{ file_name } {}
 };
 
 }  // namespace cqasm::v3x::parser
