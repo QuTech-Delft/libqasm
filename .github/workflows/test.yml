@@ -44,8 +44,8 @@ jobs:
         run: |
           conan profile detect
           build_type=${{ matrix.build_type }}
-          build_type=${build_type@L}
-          conan build . -pr=conan/profiles/tests-${build_type}-compat -b missing
+          lowercase_build_type=${build_type,,}
+          conan build . -pr=conan/profiles/tests-${lowercase_build_type}-compat -b missing
         shell: bash
       - name: Test
         working-directory: build/${{ matrix.build_type }}
