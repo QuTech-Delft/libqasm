@@ -3,7 +3,7 @@ name: Test
 on:
   push:
     branches:
-    - add_conan_profiles
+    - develop
   pull_request:
 
 jobs:
