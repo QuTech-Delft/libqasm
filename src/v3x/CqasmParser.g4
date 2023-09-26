@@ -11,23 +11,20 @@ version: VERSION INTEGER_LITERAL (DOT INTEGER_LITERAL)?;
 
 qubits: QUBITS expression;
 
-statement: mapping | variable | instruction;
-
-mapping: MAP IDENTIFIER EQUAL expression;
-
-variable: VAR IDENTIFIER COLON IDENTIFIER;
-
-instruction: IDENTIFIER expressionList;
+statement:
+    MAP IDENTIFIER EQUAL expression  # mapping
+    | VAR IDENTIFIER COLON IDENTIFIER  # variable
+    | IDENTIFIER expressionList  # instruction
+    ;
 
 expressionList: expression (COMMA expression)?;
 
 expression:
-    INTEGER_LITERAL
-    | FLOAT_LITERAL
-    | IDENTIFIER
-    | index;
-
-index: IDENTIFIER OPEN_BRACKET expression CLOSE_BRACKET;
+    INTEGER_LITERAL  # integerLiteral
+    | FLOAT_LITERAL  # floatLiteral
+    | IDENTIFIER  # identifier
+    | IDENTIFIER OPEN_BRACKET expression CLOSE_BRACKET  # index
+    ;
 
 /*
 * Things we are leaving out at the moment:
