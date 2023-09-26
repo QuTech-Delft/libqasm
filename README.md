@@ -66,17 +66,13 @@ conan build . -pr=conan/profiles/tests-debug -b missing
 
 ### Build profiles
 
-The command above is building `libqasm` in debug mode with tests using the `debug-tests` profile.
+The command above is building `libqasm` in Debug mode with tests using the `tests-debug` profile.
+A group of predefined profiles is provided under the `conan/profiles` folder.
+They follow the `[tests-](debug|release)[-compat]` naming convention. For example:
+  - `release` is a Release build without tests and compatibility with the original API.
+  - `tests-debug-compat` is a Debug build with tests and compatibility enabled.
 
-libqasm provides a set of predefined profiles under the `conan/profiles` folder.
-
-All these files follow the `{tests,}-{debug,release}-{compat,}` naming convention. For example:
-  - `release` sets  `build_tests=False`, `build_type=Release` and `libqasm_compat=False`, and
-  - `test-debug-compat` sets `build_tests=True`, `build_type=Debug` and `libqasm_compat=True`.
-
-All the profiles set `compiler.cppstd=20`.
-
-All the `tests` profiles set `asan_enabled=True`.
+All the profiles set the C++ standard to 20. All the `tests` profiles enable Address Sanitizer.
 
 ### Build options
 
@@ -88,11 +84,12 @@ conan build . -s:h compiler.cppstd=20 -s:h libqasm/*:build_type=Debug -o libqasm
 
 These are the list of options that could be specified whether in a profile or in the command line:
 
-- `libqasm/*:build_tests={True,False}`: build tests or not.
+- `libqasm/*:build_tests={True,False}`: builds tests or not.
 - `libqasm/*:build_type={Debug,Release}`: builds in debug or release mode.
 - `libqasm/*:asan_enabled={True,False}`: enables Address Sanitizer.
-- `libqasm/*:compat={True,False}`: enables the compatibility layer.
-- `libqasm/*:shared={True,False}`: builds libqasm as a shared library.
+- `libqasm/*:compat={True,False}`: enables installation of the headers for the original API,
+on top of the ones for the new API.
+- `libqasm/*:shared={True,False}`: builds a shared object library instead of a static library, if applicable.
 
 ## Install
 

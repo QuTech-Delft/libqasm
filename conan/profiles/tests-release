@@ -5,6 +5,6 @@ compiler.cppstd=20
 libqasm/*:build_type=Release
 
 [options]
-libqasm/*:asan_enabled=False
+libqasm/*:asan_enabled=True
 libqasm/*:build_tests=True
 libqasm/*:compat=False
