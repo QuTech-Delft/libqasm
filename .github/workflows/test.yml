@@ -44,7 +44,7 @@ jobs:
         run: |
           conan profile detect
           build_type=${{ matrix.build_type }}
-          lowercase_build_type=${build_type,,}
+          lowercase_build_type=$(echo ${build_type} | tr '[:upper:]' '[:lower:]')
           conan build . -pr=conan/profiles/tests-${lowercase_build_type}-compat -b missing
         shell: bash
       - name: Test
