@@ -4,6 +4,7 @@
 
 #include <algorithm>  // for_each
 #include <antlr4-runtime.h>
+#include <cassert> // assert
 #include <stdexcept>  // runtime_error
 #include <string>  // stod, stoll
 
@@ -14,33 +15,31 @@ using namespace cqasm::v1x::ast;
 using namespace cqasm::error;
 
 std::int64_t BuildTreeGenAstVisitor::get_integer_literal_value(antlr4::tree::TerminalNode *node) {
-    auto text = node->getText();
-    std::int64_t ret{};
+    const auto &token = node->getSymbol();
+    const auto &text = node->getText();
+    assert(token->getType() == CqasmParser::INTEGER_LITERAL);
     try {
-        ret = std::stoll(text);
+        return std::stoll(text);
     } catch (std::out_of_range&) {
-        const auto &token = node->getSymbol();
         throw std::runtime_error{
             fmt::format("{}:{}:{}: value '{}' is out of the INTEGER_LITERAL range",
                 file_name_, token->getLine(), token->getCharPositionInLine(), text
         )};
     }
-    return ret;
 }
 
 double BuildTreeGenAstVisitor::get_float_literal_value(antlr4::tree::TerminalNode *node) {
-    auto text = node->getText();
-    double ret{};
+    const auto &token = node->getSymbol();
+    const auto &text = node->getText();
+    assert(token->getType() == CqasmParser::FLOAT_LITERAL);
     try {
-        ret = std::stod(text);
+        return std::stod(text);
     } catch (std::out_of_range&) {
-        const auto &token = node->getSymbol();
         throw std::runtime_error{
             fmt::format("{}:{}:{}: value '{}' is out of the FLOATING_LITERAL range",
                 file_name_, token->getLine(), token->getCharPositionInLine(), text
         )};
     }
-    return ret;
 }
 
 std::any BuildTreeGenAstVisitor::visitProgram(CqasmParser::ProgramContext *context) {
