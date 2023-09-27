@@ -5,7 +5,7 @@ Besides the intended usage from C++, libqasm also has a (comparatively
 simplistic) Python interface, installable via the
 `libqasm <https://pypi.org/project/libqasm/>`_ PyPI package or using
 ``pip3 install -v -e .`` (or equivalent) from the root directory of the
-repository. This exposes two modules, ``libQasm`` and ``cqasm.v1``. The
+repository. This exposes two modules, ``libQasm`` and ``cqasm.v1x``. The
 former exists for backward compatibility with the original Python API,
 and supports only cQASM 1.0 and the default instruction set. The latter
 supports up to cQASM 1.2, mirroring the C++ API.
@@ -16,8 +16,8 @@ however. This should hopefully get you started:
 
 .. code-block:: python
 
-    import cqasm.v1
-    analyzer = cqasm.v1.Analyzer('1.2')
+    import cqasm.v1x
+    analyzer = cqasm.v1x.Analyzer('1.2')
     result = a.analyze_string('version 1.2; qubits 3; x q[0]')
 
 The argument passed to the ``Analyzer()`` constructor specifies the API version
