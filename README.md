@@ -64,9 +64,14 @@ cd libqasm
 conan build . -pr=conan/profiles/tests-debug -b missing
 ```
 
+The command above is building `libqasm` in Debug mode with tests using the `tests-debug` profile.
+
+The `-b missing` parameter asks `conan` to build packages from sources
+in case it cannot find the binary packages for the current configuration (platform, OS, compiler, build type...). 
+
 ### Build profiles
 
-The command above is building `libqasm` in Debug mode with tests using the `tests-debug` profile.
+
 A group of predefined profiles is provided under the `conan/profiles` folder.
 They follow the `[tests-](debug|release)[-compat]` naming convention. For example:
   - `release` is a Release build without tests and compatibility with the original API.
