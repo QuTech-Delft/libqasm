@@ -57,13 +57,44 @@ conan profile detect
 ```
 
 The installation of `libqasm` dependencies, as well as the compilation, can be done in one go.<br/>
-Notice the command below is building `libqasm` in Debug mode with tests.
 
 ```
 git clone https://github.com/QuTech-Delft/libqasm.git
 cd libqasm
-conan build . -s:h compiler.cppstd=20 -s:h libqasm/*:build_type=Debug -o libqasm/*:build_tests=True -b missing
+conan build . -pr=conan/profiles/tests-debug -b missing
 ```
+
+The command above is building `libqasm` in Debug mode with tests using the `tests-debug` profile.
+
+The `-b missing` parameter asks `conan` to build packages from sources
+in case it cannot find the binary packages for the current configuration (platform, OS, compiler, build type...). 
+
+### Build profiles
+
+
+A group of predefined profiles is provided under the `conan/profiles` folder.
+They follow the `[tests-](debug|release)[-compat]` naming convention. For example:
+  - `release` is a Release build without tests and compatibility with the original API.
+  - `tests-debug-compat` is a Debug build with tests and compatibility enabled.
+
+All the profiles set the C++ standard to 20. All the `tests` profiles enable Address Sanitizer.
+
+### Build options
+
+Profiles are a shorthand for command line options. The command above could be written as well as: 
+
+```
+conan build . -s:h compiler.cppstd=20 -s:h libqasm/*:build_type=Debug -o libqasm/*:asan_enabled=True -o libqasm/*:build_tests=True -o libqasm/*:compat=False -b missing
+```
+
+These are the list of options that could be specified whether in a profile or in the command line:
+
+- `libqasm/*:build_tests={True,False}`: builds tests or not.
+- `libqasm/*:build_type={Debug,Release}`: builds in debug or release mode.
+- `libqasm/*:asan_enabled={True,False}`: enables Address Sanitizer.
+- `libqasm/*:compat={True,False}`: enables installation of the headers for the original API,
+on top of the ones for the new API.
+- `libqasm/*:shared={True,False}`: builds a shared object library instead of a static library, if applicable.
 
 ## Install
 
@@ -72,7 +103,7 @@ conan build . -s:h compiler.cppstd=20 -s:h libqasm/*:build_type=Debug -o libqasm
 Install from the project root directory as follows:
 
 ```
-python -m pip install --verbose .
+python3 -m pip install --verbose .
 ```
 
 or if you'd rather use conda:
@@ -85,7 +116,7 @@ conda install libqasm --use-local
 You can test if it works by running:
 
 ```
-python -m pytest
+python3 -m pytest
 ```
 
 ### From C++
