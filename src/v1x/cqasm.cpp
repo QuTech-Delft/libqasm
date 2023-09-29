@@ -8,7 +8,6 @@
 
 #include "cqasm-version.hpp"
 #include "v1x/cqasm.hpp"
-#include "v1x/cqasm-parse-helper.hpp"
 
 
 namespace cqasm {
@@ -22,10 +21,7 @@ tree::One<semantic::Program> analyze(
     const std::string &file_path,
     const std::string &api_version
 ) {
-    return default_analyzer(api_version).analyze(
-            [=](){ return version::parse_file(file_path); },
-            [=](){ return parser::parse_file(file_path); }
-        ).unwrap();
+    return default_analyzer(api_version).analyze(file_path).unwrap();
 }
 
 /**
@@ -38,10 +34,7 @@ tree::One<semantic::Program> analyze(
     const std::string &file_name,
     const std::string &api_version
 ) {
-    return default_analyzer(api_version).analyze(
-            [=](){ return version::parse_file(fp, file_name); },
-            [=](){ return parser::parse_file(fp, file_name); }
-        ).unwrap();
+    return default_analyzer(api_version).analyze(fp, file_name).unwrap();
 }
 
 /**
@@ -54,10 +47,7 @@ tree::One<semantic::Program> analyze_string(
     const std::string &file_name,
     const std::string &api_version
 ) {
-    return default_analyzer(api_version).analyze(
-            [=](){ return version::parse_string(data, file_name); },
-            [=](){ return parser::parse_string(data, file_name); }
-        ).unwrap();
+    return default_analyzer(api_version).analyze_string(data, file_name).unwrap();
 }
 
 /**

@@ -536,6 +536,38 @@ AnalysisResult Analyzer::analyze(
 }
 
 /**
+ * Parses and analyzes the given file.
+ */
+AnalysisResult Analyzer::analyze(const std::string &filename) const {
+    return analyze(
+        [=](){ return version::parse_file(filename); },
+        [=](){ return parser::parse_file(filename); }
+    );
+}
+
+/**
+ * Parses and analyzes the given file pointer. The optional filename
+ * argument will be used only for error messages.
+ */
+AnalysisResult Analyzer::analyze(FILE *file, const std::string &filename) const {
+    return analyze(
+        [=](){ return version::parse_file(file, filename); },
+        [=](){ return parser::parse_file(file, filename); }
+    );
+}
+
+/**
+ * Parses and analyzes the given string. The optional filename argument
+ * will be used only for error messages.
+ */
+AnalysisResult Analyzer::analyze_string(const std::string &data, const std::string &filename) const {
+    return analyze(
+        [=](){ return version::parse_string(data, filename); },
+        [=](){ return parser::parse_string(data, filename); }
+    );
+}
+
+/**
  * Analyzes the given AST using the given analyzer.
  */
 AnalyzerHelper::AnalyzerHelper(

@@ -1,12 +1,10 @@
 #include "parsing.hpp"
 #include "v1x/cqasm.hpp"
 #include "v1x/cqasm-parse-helper.hpp"
-#include "v3x/cqasm.hpp"
 #include "v3x/cqasm-parse-helper.hpp"
 
 #include <filesystem>
 #include <fmt/format.h>
-#include <fmt/ostream.h>
 #include <fstream>
 #include <gtest/gtest.h>
 #include <sstream>
@@ -64,7 +62,7 @@ public:
 
         if (auto compare_result = version.compare("1.2"); compare_result <= 0) {
             parse_result = cq1x::parser::parse_string(input, "input.cq");
-        } else if (auto compare_result = version.compare("3.0"); compare_result == 0) {
+        } else if (compare_result = version.compare("3.0"); compare_result == 0) {
             parse_result = cq3x::parser::parse_string(input, "input.cq");
         } else {
             parse_result.errors.push_back(fmt::format("detected version {}", version));
@@ -90,7 +88,6 @@ public:
             return;
         }
 
-        /*
         // Try different API levels
         for (const auto &api_version : std::vector<std::string>({"1.0", "1.1", "1.2"})) {
             // If there were no errors, try semantic analysis.
@@ -215,7 +212,7 @@ public:
                 semantic_actual_file_contents = fmt::format("ERROR\n{}\n", fmt::join(analysis_result.errors, "\n"));
             }
             auto semantic_actual_file_path = path_ / fmt::format("semantic.{}.actual.txt", api_version);
-            write_file(path_ / std::move(semantic_actual_file_path), semantic_actual_file_contents);
+            write_file(semantic_actual_file_path, semantic_actual_file_contents);
             std::string semantic_golden_file_contents{};
             auto semantic_golden_file_path = path_ / fmt::format("semantic.{}.golden.txt", api_version);
             EXPECT_TRUE(read_file(semantic_golden_file_path, semantic_golden_file_contents));
@@ -225,7 +222,6 @@ public:
                 ::tree::base::serialize(analysis_result.root);
             }
         }
-        */
     }
 };
 
@@ -274,6 +270,6 @@ void register_v1x_tests(const fs::path& subdir) {
 }
 
 void register_v1x_tests() {
-    //register_v1x_tests("parsing");
-    register_v1x_tests("toy-v1x-parsing");
+    register_v1x_tests("parsing");
+    //register_v1x_tests("toy-v1x-parsing");
 }
