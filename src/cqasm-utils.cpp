@@ -2,34 +2,32 @@
  * Implementation for \ref include/cqasm-utils.hpp "cqasm-utils.hpp".
  */
 
-#include <algorithm>
-#include <cctype>
-#include "../include/cqasm-utils.hpp"
+#include "cqasm-utils.hpp"
 
-namespace cqasm {
-namespace utils {
+#include <cctype>  // tolower, toupper
+#include <range/v3/algorithm/equal.hpp>
+#include <range/v3/range/conversion.hpp>  // to
+#include <range/v3/view/transform.hpp>
+
+
+namespace cqasm::utils {
 
 /**
 * Makes a string lowercase.
 */
 std::string lowercase(const std::string &name) {
-    std::string name_lower = name;
-    std::for_each(name_lower.begin(), name_lower.end(), [](char &c){
-        c = std::tolower(c);
-    });
-    return name_lower;
+    return name
+        | ranges::views::transform([](unsigned char c) { return std::tolower(c); })
+        | ranges::to<std::string>();
 }
 
 /**
  * Case-insensitive string compare.
  */
 bool case_insensitive_equals(const std::string &lhs, const std::string &rhs) {
-    if (lhs.size() != rhs.size()) return false;
-    for (size_t i = 0; i < lhs.size(); i++) {
-        if (std::tolower(lhs[i]) != std::tolower(rhs[i])) return false;
-    }
-    return true;
+    return ranges::equal(lhs, rhs, [](unsigned char l, unsigned char r) {
+        return std::tolower(l) == std::tolower(r);
+    });
 }
 
-} // namespace utils
-} // namespace cqasm
+} // namespace cqasm::utils
