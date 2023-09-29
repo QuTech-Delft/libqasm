@@ -12,6 +12,7 @@ add_subdirectory(v1x)
 
 # Sources
 target_sources(${PROJECT_NAME}_test PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-utils.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-version.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
 )
