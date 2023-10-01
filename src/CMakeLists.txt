@@ -40,6 +40,29 @@ find_package(fmt 10.1.1)
 find_package(Python3 REQUIRED)
 
 include(FetchContent)
+
+# fmt
+set(fmt_VERSION_REQUIRED 10.1.1)
+find_package(fmt ${fmt_VERSION_REQUIRED})
+if(NOT fmt_FOUND)
+    # fmt 10.1.1
+    FetchContent_Declare(fmt
+            GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+            GIT_TAG "f5e54359df4c26b6230fc61d38aa294581393084"
+    )
+    FetchContent_MakeAvailable(fmt)
+endif()
+
+# range-v3
+find_package(range-v3)
+if(NOT range-v3_FOUND)
+    FetchContent_Declare(range-v3
+            GIT_REPOSITORY https://github.com/ericniebler/range-v3
+            GIT_TAG "a81477931a8aa2ad025c6bda0609f38e09e4d7ec"
+    )
+    FetchContent_MakeAvailable(range-v3)
+endif()
+
 # tree-gen, a custom utility to generate classes for typed tree-like structures and enums with variants containing data.
 # This exposes the generate_tree() function.
 FetchContent_Declare(tree-gen
@@ -228,6 +251,7 @@ target_compile_features(cqasm-lib-obj PUBLIC
 target_link_libraries(cqasm-lib-obj
     PRIVATE antlr4_static
     PRIVATE fmt::fmt
+    PRIVATE range-v3::range-v3
     PRIVATE tree-lib-obj
 )
 
