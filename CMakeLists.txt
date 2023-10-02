@@ -13,7 +13,7 @@ if(POLICY CMP0148)
     cmake_policy(SET CMP0148 NEW)
 endif()
 
-project(cqasm C CXX)
+project(cqasm LANGUAGES C CXX)
 
 # If cqasm was already included elsewhere in the project, don't include it again.
 # There should be only one place for it and one version per project.

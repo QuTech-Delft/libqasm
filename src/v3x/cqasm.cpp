@@ -6,50 +6,44 @@
  * Implementation for \ref include/v3x/cqasm.hpp "v3x/cqasm.hpp".
  */
 
+#include "cqasm-version.hpp"
+#include "v1x/cqasm.hpp"
 #include "v3x/cqasm.hpp"
+#include "v3x/cqasm-parse-helper.hpp"
 
 #include <stdexcept>  // runtime_error
 
 
-namespace cqasm {
-namespace v3x {
+namespace cqasm::v3x {
 
 /**
- * Parses and analyzes the given file with the default analyzer, dumping error
- * messages to stderr and throwing an analyzer::AnalysisFailed on failure.
+ * Parses and analyzes the given file path with the default analyzer,
+ * dumping error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
  */
-void analyze(
-    const std::string & /* filename */,
-    const std::string & /* api_version */
+tree::One<cqasm::v1x::semantic::Program> analyze(
+    const std::string &file_path,
+    const std::string &api_version
 ) {
-    throw std::runtime_error("Unimplemented");
+    return cqasm::v1x::default_analyzer(api_version).analyze(
+            [&file_path]() { return version::parse_file(file_path); },
+            [&file_path]() { return cqasm::v3x::parser::parse_file(file_path); }
+        ).unwrap();
 }
 
 /**
- * Parses and analyzes the given file pointer with the default analyzer, dumping
- * error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
- * The optional filename is only used for error messages.
+ * Parses and analyzes the given string with the default analyzer,
+ * dumping error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
+ * The optional file_name is only used for error messages.
  */
-void analyze(
-    FILE * /* file */,
-    const std::string & /* filename */,
-    const std::string & /* api_version */
+tree::One<cqasm::v1x::semantic::Program> analyze_string(
+    const std::string &data,
+    const std::string &file_name,
+    const std::string &api_version
 ) {
-    throw std::runtime_error("Unimplemented");
+    return cqasm::v1x::default_analyzer(api_version).analyze(
+            [&data, &file_name]() { return version::parse_string(data, file_name); },
+            [&data, &file_name]() { return cqasm::v3x::parser::parse_string(data, file_name); }
+        ).unwrap();
 }
 
-/**
- * Parses and analyzes the given string with the default analyzer, dumping
- * error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
- * The optional filename is only used for error messages.
- */
-void analyze_string(
-    const std::string & /* data */,
-    const std::string & /* filename */,
-    const std::string & /* api_version */
-) {
-    throw std::runtime_error("Unimplemented");
-}
-
-} // namespace v3x
-} // namespace cqasm
+} // namespace cqasm::v3x

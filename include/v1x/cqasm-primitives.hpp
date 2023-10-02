@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../cqasm-version.hpp"
+#include "cqasm-version.hpp"
 #include "tree-cbor.hpp"
 
 #include <cstdint>

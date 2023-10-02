@@ -28,12 +28,23 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 # Packages
 #-------------------------------------------------------------------------------
 
+find_package(antlr4-runtime)
+find_package(BISON 3.0)
+find_package(FLEX 2.6.4)
+if(WIN32)
+    set(flex_win_compat --wincompat)
+else()
+    set(flex_win_compat)
+endif()
+find_package(fmt 10.1.1)
+find_package(Python3 REQUIRED)
+
 include(FetchContent)
 # tree-gen, a custom utility to generate classes for typed tree-like structures and enums with variants containing data.
 # This exposes the generate_tree() function.
 FetchContent_Declare(tree-gen
     GIT_REPOSITORY https://github.com/QuTech-Delft/tree-gen.git
-    GIT_TAG "d708ea629bad014011d3f1efc352077414dd86f7"
+    GIT_TAG "9f54878240f6ae5df9c35cbf273cfbfb6f76679f"
 )
 FetchContent_MakeAvailable(tree-gen)
 
@@ -42,18 +53,6 @@ FetchContent_MakeAvailable(tree-gen)
 # This file would otherwise be extremely repetitive and annoying to maintain due to the amount of overloads.
 # This exposes the generate_funcs() function, which should be called once with the header and source file paths.
 add_subdirectory(func-gen)
-
-# Require flex/bison; if not installed, this will try to build from source.
-find_package(BISON 3.0)
-find_package(FLEX 2.6.4)
-if(WIN32)
-    set(flex_win_compat --wincompat)
-else()
-    set(flex_win_compat)
-endif()
-
-find_package(antlr4-runtime REQUIRED)
-find_package(Python3 REQUIRED)
 
 #-------------------------------------------------------------------------------
 # cQASM common code generation and inclusion
@@ -182,10 +181,10 @@ function(antlr_target SCRIPT INPUT_DIR OUTPUT_DIR ANTLR_OUTPUTS)
 endfunction()
 
 set(ANTLR_OUTPUTS
-    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm_lexer.cpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm_parser.cpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm_parserBaseListener.cpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm_parserListener.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/CqasmLexer.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/CqasmParser.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/CqasmParserBaseVisitor.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/CqasmParserVisitor.cpp"
 )
 antlr_target(
     "${CMAKE_CURRENT_SOURCE_DIR}/../scripts/generate_antlr_parser.py"
@@ -210,31 +209,26 @@ target_compile_definitions(cqasm-lib-obj
     PRIVATE ${TREE_LIB_PRIVATE_DEFS}
 )
 
-# The src directory and binary directory (for generated header files) are private.
-# The include directory is public.
-# That is, the files in include must not try to include generated files and files from the src directory,
-# but the other direction is fine.
 target_include_directories(cqasm-lib-obj
     PRIVATE ${TREE_LIB_PRIVATE_INCLUDE}
     PUBLIC ${TREE_LIB_PUBLIC_INCLUDE}
-    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src"
-    PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/src"
-    PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/"
     # Do not remove the ending '/' since
     # it avoids the whole 'include' directory to be copied to the installation folder.
     # Instead, just its contents are copied.
+    PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/"
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include/"
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include/"
-    PUBLIC "${antlr4-runtime_INCLUDE_DIR}"
+    PUBLIC "${antlr4-runtime_INCLUDE_DIRS}"
 )
 
 target_compile_features(cqasm-lib-obj PUBLIC
     cxx_std_20
 )
 
-target_link_libraries(cqasm-lib-obj PUBLIC
-    antlr4_static
-    tree-lib-obj
+target_link_libraries(cqasm-lib-obj
+    PRIVATE antlr4_static
+    PRIVATE fmt::fmt
+    PRIVATE tree-lib-obj
 )
 
 # fPIC: otherwise some weirdness happens with pthreads or something when linking statically.
@@ -276,6 +270,20 @@ target_include_directories(cqasm PUBLIC
 )
 target_link_libraries(cqasm PUBLIC
     $<TARGET_PROPERTY:cqasm-lib-obj,LINK_LIBRARIES>
+)
+
+#-------------------------------------------------------------------------------
+# Debug info
+#-------------------------------------------------------------------------------
+
+message(STATUS
+    "[${PROJECT_NAME}] Target include directories:\n"
+    "      TREE_LIB_PRIVATE_INCLUDE: ${TREE_LIB_PRIVATE_INCLUDE}\n"
+    "      TREE_LIB_PUBLIC_INCLUDE: ${TREE_LIB_PUBLIC_INCLUDE}\n"
+    "      CMAKE_CURRENT_BINARY_DIR: ${CMAKE_CURRENT_BINARY_DIR}\n"
+    "      CMAKE_CURRENT_SOURCE_DIR/../include/: ${CMAKE_CURRENT_SOURCE_DIR}/../include/\n"
+    "      CMAKE_CURRENT_BINARY_DIR/../include/: ${CMAKE_CURRENT_BINARY_DIR}/../include/\n"
+    "      antlr4-runtime_INCLUDE_DIRS: ${antlr4-runtime_INCLUDE_DIRS}\n"
 )
 
 #-------------------------------------------------------------------------------

@@ -8,6 +8,7 @@ if(LIBQASM_COMPAT)
     add_subdirectory(v10)
 endif()
 add_subdirectory(v1x)
+#add_subdirectory(v3x)
 
 # Sources
 target_sources(${PROJECT_NAME}_test PRIVATE

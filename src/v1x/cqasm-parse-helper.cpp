@@ -11,48 +11,48 @@ namespace v1x {
 namespace parser {
 
 /**
- * Parse the given file.
+ * Parse the given file path.
  */
-ParseResult parse_file(const std::string &filename) {
-    return ParseHelper(filename, "", true).result;
+ParseResult parse_file(const std::string &file_path) {
+    return ParseHelper(file_path, "", true).result;
 }
 
 /**
  * Parse using the given file pointer.
  */
-ParseResult parse_file(FILE *file, const std::string &filename) {
-    return ParseHelper(filename, file).result;
+ParseResult parse_file(FILE *file, const std::string &file_name) {
+    return ParseHelper(file_name, file).result;
 }
 
 /**
- * Parse the given string. A filename may be given in addition for use within
- * error messages.
+ * Parse the given string.
+ * A file_name may be given in addition for use within error messages.
  */
-ParseResult parse_string(const std::string &data, const std::string &filename) {
-    return ParseHelper(filename, data, false).result;
+ParseResult parse_string(const std::string &data, const std::string &file_name) {
+    return ParseHelper(file_name, data, false).result;
 }
 
 /**
- * Parse a string or file with flex/bison. If use_file is set, the file
- * specified by filename is read and data is ignored. Otherwise, filename
- * is used only for error messages, and data is read instead. Don't use
- * this directly, use parse().
+ * Parse a string or file with flex/bison.
+ * If use_file is set, the file specified by file_path is read and data is ignored.
+ * Otherwise, file_path is used only for error messages, and data is read instead.
+ * Don't use this directly, use parse().
  */
 ParseHelper::ParseHelper(
-    const std::string &filename,
+    const std::string &file_path,
     const std::string &data,
     bool use_file
-) : filename(filename) {
+) : file_name(file_path) {
 
     // Create the scanner.
     if (!construct()) return;
 
     // Open the file or pass the data buffer to flex.
     if (use_file) {
-        fptr = fopen(filename.c_str(), "r");
+        fptr = fopen(file_path.c_str(), "r");
         if (!fptr) {
             std::ostringstream sb;
-            sb << "Failed to open input file " << filename << ": "
+            sb << "Failed to open input file " << file_path << ": "
                << strerror(errno);
             push_error(sb.str());
             return;
@@ -68,13 +68,12 @@ ParseHelper::ParseHelper(
 }
 
 /**
- * Construct the analyzer internals for the given filename, and analyze
- * the file.
+ * Construct the analyzer internals for the given file_name, and analyze the file.
  */
 ParseHelper::ParseHelper(
-    const std::string &filename,
+    const std::string &file_name,
     FILE *fptr
-) : filename(filename) {
+) : file_name(file_name) {
 
     // Create the scanner.
     if (!construct()) return;
@@ -88,7 +87,8 @@ ParseHelper::ParseHelper(
 }
 
 /**
- * Initializes the scanner. Returns whether this was successful.
+ * Initializes the scanner.
+ * Returns whether this was successful.
  */
 bool ParseHelper::construct() {
     int retcode = cqasm_v1x_lex_init((yyscan_t*)&scanner);
@@ -109,12 +109,12 @@ void ParseHelper::parse() {
     int retcode = cqasm_v1x_parse((yyscan_t) scanner, *this);
     if (retcode == 2) {
         std::ostringstream sb;
-        sb << "Out of memory while parsing " << filename;
+        sb << "Out of memory while parsing " << file_name;
         push_error(sb.str());
         return;
     } else if (retcode) {
         std::ostringstream sb;
-        sb << "Failed to parse " << filename;
+        sb << "Failed to parse " << file_name;
         push_error(sb.str());
         return;
     }

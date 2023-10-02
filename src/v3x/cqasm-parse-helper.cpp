@@ -2,80 +2,59 @@
  * Implementation for \ref include/v3x/cqasm-parse-helper.hpp "v3x/cqasm-parse-helper.hpp".
  */
 
+#include "v1x/cqasm-parse-result.hpp"
+#include "v3x/BuildTreeGenAstVisitor.hpp"
 #include "v3x/cqasm-parse-helper.hpp"
+#include "v3x/ScannerAntlr.hpp"
 
-#include <stdexcept>  // runtime_error
 
-
-namespace cqasm {
-namespace v3x {
-namespace parser {
+namespace cqasm::v3x::parser {
 
 /**
- * Parse the given file.
+ * Parse using the given file path.
+ * Throws an AnalysisError if the file does not exist.
+ * A file_name may be given in addition for use within error messages.
  */
-ParseResult parse_file(const std::string & /* filename */) {
-    throw std::runtime_error("Unimplemented");
+cqasm::v1x::parser::ParseResult parse_file(const std::string &file_path, const std::string &file_name) {
+    auto builder_visitor_up = std::make_unique<BuildTreeGenAstVisitor>(file_name);
+    auto error_listener_up = std::make_unique<CustomErrorListener>(file_name);
+    auto scanner_up = std::make_unique<ScannerAntlrFile>(
+            std::move(builder_visitor_up), std::move(error_listener_up), file_path);
+    return ParseHelper(std::move(scanner_up), file_name).parse();
 }
 
 /**
- * Parse using the given file pointer.
+ * Parse the given string.
+ * A file_name may be given in addition for use within error messages.
  */
-ParseResult parse_file(FILE * /* file */, const std::string & /* filename */) {
-    throw std::runtime_error("Unimplemented");
+cqasm::v1x::parser::ParseResult parse_string(const std::string &data, const std::string &file_name) {
+    auto builder_visitor_up = std::make_unique<BuildTreeGenAstVisitor>(file_name);
+    auto error_listener_up = std::make_unique<CustomErrorListener>(file_name);
+    auto scanner_up = std::make_unique<ScannerAntlrString>(
+            std::move(builder_visitor_up), std::move(error_listener_up), data);
+    return ParseHelper(std::move(scanner_up), file_name).parse();
 }
 
-/**
- * Parse the given string. A filename may be given in addition for use within
- * error messages.
- */
-ParseResult parse_string(const std::string & /* data */, const std::string & /* filename */) {
-    throw std::runtime_error("Unimplemented");
-}
 
-/**
- * Parse a string or file with flex/bison. If use_file is set, the file
- * specified by filename is read and data is ignored. Otherwise, filename
- * is used only for error messages, and data is read instead. Don't use
- * this directly, use parse().
- */
-ParseHelper::ParseHelper(
-    const std::string &filename,
-    const std::string &,
-    bool
-) : filename(filename) {}
-
-/**
- * Construct the analyzer internals for the given filename, and analyze
- * the file.
- */
-ParseHelper::ParseHelper(
-    const std::string &filename,
-    FILE *
-) : filename(filename) {}
-
-/**
- * Initializes the scanner. Returns whether this was successful.
- */
-bool ParseHelper::construct() {
-    return true;
-}
+ParseHelper::ParseHelper(std::unique_ptr<ScannerAdaptor> scanner_up, std::string file_name)
+: scanner_up_(std::move(scanner_up)), file_name_(std::move(file_name)) {}
 
 /**
  * Does the actual parsing.
  */
-void ParseHelper::parse() {}
+cqasm::v1x::parser::ParseResult ParseHelper::parse() {
+    cqasm::v1x::parser::ParseResult result;
+    try {
+        result = scanner_up_->parse();
+    } catch (const std::runtime_error &err) {
+        result.errors.emplace_back(err.what());
+    }
+    if (result.errors.empty() && !result.root.is_well_formed()) {
+        std::cerr << *result.root;
+        throw cqasm::error::AnalysisError(
+            "ParseHelper::parse: no parse errors returned, but AST is incomplete. AST was dumped.");
+    }
+    return result;
+}
 
-/**
- * Destroys the analyzer.
- */
-ParseHelper::~ParseHelper() {}
-
-/**
- * Pushes an error.
- */
-void ParseHelper::push_error(const std::string &) {}
-
-} // namespace parser
-} // namespace v3x
-} // namespace cqasm
+} // namespace cqasm::v3x::parser

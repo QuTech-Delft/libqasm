@@ -6,51 +6,52 @@
  * Implementation for \ref include/v1x/cqasm.hpp "v1x/cqasm.hpp".
  */
 
+#include "cqasm-version.hpp"
 #include "v1x/cqasm.hpp"
+
 
 namespace cqasm {
 namespace v1x {
 
 /**
- * Parses and analyzes the given file with the default analyzer, dumping error
- * messages to stderr and throwing an analyzer::AnalysisFailed on failure.
+ * Parses and analyzes the given file path with the default analyzer,
+ * dumping error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
  */
 tree::One<semantic::Program> analyze(
-    const std::string &filename,
+    const std::string &file_path,
     const std::string &api_version
 ) {
-    return default_analyzer(api_version).analyze(filename).unwrap();
+    return default_analyzer(api_version).analyze(file_path).unwrap();
 }
 
 /**
- * Parses and analyzes the given file pointer with the default analyzer, dumping
- * error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
- * The optional filename is only used for error messages.
+ * Parses and analyzes the given file pointer with the default analyzer,
+ * dumping error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
+ * The optional file_name is only used for error messages.
  */
 tree::One<semantic::Program> analyze(
-    FILE *file,
-    const std::string &filename,
+    FILE *fp,
+    const std::string &file_name,
     const std::string &api_version
 ) {
-    return default_analyzer(api_version).analyze(file, filename).unwrap();
+    return default_analyzer(api_version).analyze(fp, file_name).unwrap();
 }
 
 /**
- * Parses and analyzes the given string with the default analyzer, dumping
- * error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
- * The optional filename is only used for error messages.
+ * Parses and analyzes the given string with the default analyzer,
+ * dumping error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
+ * The optional file_name is only used for error messages.
  */
 tree::One<semantic::Program> analyze_string(
     const std::string &data,
-    const std::string &filename,
+    const std::string &file_name,
     const std::string &api_version
 ) {
-    return default_analyzer(api_version).analyze_string(data, filename).unwrap();
+    return default_analyzer(api_version).analyze_string(data, file_name).unwrap();
 }
 
 /**
- * Constructs an Analyzer object with the defaults for cQASM 1.0 already loaded
- * into it.
+ * Constructs an Analyzer object with the defaults for cQASM 1.0 already loaded into it.
  */
 analyzer::Analyzer default_analyzer(const std::string &api_version) {
     analyzer::Analyzer analyzer{api_version};

@@ -45,7 +45,7 @@ void free_string(char *s) {
      */
     #define ADD_SOURCE_LOCATION(v)                              \
         v->set_annotation(cqasm::annotations::SourceLocation(   \
-            helper.filename,                                    \
+            helper.file_name,                                   \
             yyloc.first_line,                                   \
             yyloc.first_column,                                 \
             yyloc.last_line,                                    \
@@ -678,7 +678,7 @@ Root            : Program                                                       
 void yyerror(YYLTYPE* yyllocp, yyscan_t unused, cqasm::v1x::parser::ParseHelper &helper, const char* msg) {
     (void)unused;
     std::ostringstream sb;
-    sb << helper.filename
+    sb << helper.file_name
        << ":"  << yyllocp->first_line
        << ":"  << yyllocp->first_column
        << ": " << msg;

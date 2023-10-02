@@ -4,6 +4,10 @@
 %option reentrant bison-bridge bison-locations
 %option never-interactive
 
+%top{
+  #include <stdint.h>
+}
+
 %{
     /**
      * \file

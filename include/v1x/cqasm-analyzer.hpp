@@ -332,7 +332,6 @@ public:
      * will be used only for error messages.
      */
     AnalysisResult analyze_string(const std::string &data, const std::string &filename = "<unknown>") const;
-
 };
 
 } // namespace analyzer

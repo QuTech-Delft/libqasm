@@ -5,8 +5,10 @@
 
 #pragma once
 
-#include "cqasm-parse-helper.hpp"
+#include "cqasm-tree.hpp"
 #include "cqasm-analyzer.hpp"
+#include "cqasm-semantic.hpp"
+
 
 /**
  * Toplevel namespace with entry points for the new API.
@@ -20,33 +22,33 @@ namespace cqasm {
 namespace v1x {
 
 /**
- * Parses and analyzes the given file with the default analyzer, dumping error
+ * Parses and analyzes the given file path with the default analyzer, dumping error
  * messages to stderr and throwing an analyzer::AnalysisFailed on failure.
  */
 tree::One<semantic::Program> analyze(
-    const std::string &filename,
+    const std::string &file_path,
     const std::string &api_version = "1.0"
 );
 
 /**
  * Parses and analyzes the given file pointer with the default analyzer, dumping
  * error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
- * The optional filename is only used for error messages.
+ * The optional file_name is only used for error messages.
  */
 tree::One<semantic::Program> analyze(
-    FILE *file,
-    const std::string &filename = "<unknown>",
+    FILE *fp,
+    const std::string &file_name = "<unknown>",
     const std::string &api_version = "1.0"
 );
 
 /**
  * Parses and analyzes the given string with the default analyzer, dumping
  * error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
- * The optional filename is only used for error messages.
+ * The optional file_name is only used for error messages.
  */
 tree::One<semantic::Program> analyze_string(
     const std::string &data,
-    const std::string &filename = "<unknown>",
+    const std::string &file_name = "<unknown>",
     const std::string &api_version = "1.0"
 );
 

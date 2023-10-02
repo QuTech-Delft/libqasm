@@ -1,0 +1,38 @@
+Syntactic   Semantic   Error explanation                          Suite            Description                 Code
+fail        -          Unexpected token                           program          Bad token after version     version 3;123abc
+
+fail        -          Unexpected token (EOF)                     qubits           qubits no number            version 3;qubits
+fail        -          Unexpected token                           qubits           qubits abc                  version 3;qubits 123abc
+OK          OK                                                    qubits           qubits 3                    version 3;qubits 3
+
+fail        -          Unexpected token (EOF)                     map               map                        version 3;map
+fail        -          Unexpected token (EOF)                     map               map v                      version 3;map v
+fail        -          Unexpected token (EOF)                     map               map v =                    version 3;map v =
+OK          OK                                                    map               Map to integer literal     version 3;map v = 1
+OK          OK                                                    map               Map to float literal       version 3;map v = 3.14
+OK          fail       'v' doesn't exist                          map               Map to inexistent var      version 3;map w = v
+OK          OK                                                    map               Map to existing var        version 3;map v = 1;map w = v
+OK          fail       q[0] doesn't exist                         map               Map to inexistent qubit    version 3;map v = q[0]
+OK          OK                                                    map               Map to existing qubit      version 3;qubits 3;map v = q[0]
+
+fail        -          Unexpected token (EOF)                     var               var                        version 3;var
+fail        -          Unexpected token (EOF)                     var               var v                      version 3;var v
+fail        -          Unexpected token (EOF)                     var               var v :                    version 3;var v :
+OK          fail       'v' doesn't exist                          var               Var to inexistent var      version 3;var w : v
+OK          OK                                                    var               Var to existing var        version 3;map v = 1;var w : v
+
+fail        -          'x' gate should accept a qubit parameter   instruction       x                          version 3;x
+OK          fail       'v' is not a gate                          instruction       v 1                        version 3;v 1
+OK          fail       'x' gate should accept a qubit parameter   instruction       x 1                        version 3;x 1
+OK          fail       'x' gate should accept a qubit parameter   instruction       x 3.14                     version 3;x 3.14
+OK          fail       'x' gate should accept a qubit parameter   instruction       x v                        version 3;x v
+fail        -          Unexpected token                           instruction       x 123abc                   version 3;x 123abc
+OK          fail       q[0] doesn't exist                         instruction       x with inexistent qubit    version 3;x q[0]
+OK          OK                                                    instruction       x with existing qubit      version 3;qubits 3;x q[0]
+OK          OK                                                    instruction       cnot with existing qubit   version 3;qubits 3;h q[0];h q[1];cnot q[0], q[3]
+
+OK          fail       q[3] is out of bounds                      expression        Out of bounds index        version 3;qubits 3;x q[3]
+
+fail        -          Unexpected token                           expression_list   Bad first part             version 3;qubits 3;h q[0];h q[1];cnot 123abc, q[0]
+fail        -          Unexpected token                           expression_list   Bad second part            version 3;qubits 3;h q[0];h q[1];cnot q[0], 123abc
+fail        -          Unexpected token (EOF)                     expression_list   No second part             version 3;qubits 3;h q[0];h q[1];cnot q[0],

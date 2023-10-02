@@ -2,8 +2,12 @@
  * Implementation for the internal Python-wrapped functions and classes.
  */
 
+#include "cqasm-version.hpp"
 #include "cqasm-py.hpp"
 #include "v1x/cqasm.hpp"
+#include "v1x/cqasm-parse-helper.hpp"
+
+#include <memory>
 
 namespace v1x = cqasm::v1x;
 
@@ -18,14 +22,10 @@ namespace v1x = cqasm::v1x;
  */
 V1xAnalyzer::V1xAnalyzer(const std::string &max_version, bool without_defaults) {
     if (without_defaults) {
-        a = std::unique_ptr<v1x::analyzer::Analyzer>(
-            new v1x::analyzer::Analyzer(max_version)
-        );
+        a = std::make_unique<v1x::analyzer::Analyzer>(max_version);
         a->register_default_functions_and_mappings();
     } else {
-        a = std::unique_ptr<v1x::analyzer::Analyzer>(
-            new v1x::analyzer::Analyzer(v1x::default_analyzer(max_version))
-        );
+        a = std::make_unique<v1x::analyzer::Analyzer>(v1x::default_analyzer(max_version));
     }
 }
 
@@ -108,7 +108,10 @@ std::vector<std::string> V1xAnalyzer::parse_string(
 std::vector<std::string> V1xAnalyzer::analyze_file(
     const std::string &filename
 ) const {
-    auto result = a->analyze(filename);
+    auto result = a->analyze(
+        [=](){ return cqasm::version::parse_file(filename); },
+        [=](){ return v1x::parser::parse_file(filename); }
+    );
     std::vector<std::string> retval{""};
     if (result.errors.empty()) {
         retval[0] = ::tree::base::serialize(result.root);
@@ -125,7 +128,10 @@ std::vector<std::string> V1xAnalyzer::analyze_string(
     const std::string &data,
     const std::string &filename
 ) const {
-    auto result = a->analyze_string(data, filename);
+    auto result = a->analyze(
+        [=](){ return cqasm::version::parse_string(data, filename); },
+        [=](){ return v1x::parser::parse_string(data, filename); }
+    );
     std::vector<std::string> retval{""};
     if (result.errors.empty()) {
         retval[0] = ::tree::base::serialize(result.root);
