@@ -25,25 +25,24 @@ void MappingTable::add(
     const values::Value &value,
     const tree::Maybe<ast::Mapping> &node
 ) {
-    auto lname = utils::lowercase(name);
-    auto it = table.find(lname);
+    auto it = table.find(name);
     if (it != table.end()) {
         table.erase(it);
     }
     table.insert(
         std::make_pair(
-            lname,
+            name,
             std::pair<const values::Value, tree::Maybe<ast::Mapping>>(value, node)
         )
     );
 }
 
 /**
- * Resolves a mapping. Throws NameResolutionFailure if no mapping by the
- * given name exists.
+ * Resolves a mapping.
+ * Throws NameResolutionFailure if no mapping by the given name exists.
  */
 Value MappingTable::resolve(const std::string &name) const {
-    auto entry = table.find(utils::lowercase(name));
+    auto entry = table.find(name);
     if (entry == table.end()) {
         throw NameResolutionFailure("failed to resolve " + name);
     } else {
@@ -59,8 +58,8 @@ const std::unordered_map<std::string, std::pair<const values::Value, tree::Maybe
 }
 
 /**
- * Represents a possible overload for the parameter types of a function, gate,
- * or error model. T is some tag type identifying the overload.
+ * Represents a possible overload for the parameter types of a function, gate, or error model.
+ * T is some tag type identifying the overload.
  */
 template <class T>
 class Overload {
@@ -163,38 +162,35 @@ private:
     std::unordered_map<std::string, OverloadResolver<T>> table;
 public:
     /**
-     * Registers a callable. The name should be lowercase; matching will be done
-     * case-insensitively. The param_types variadic specifies the amount and
-     * types of the parameters that (this particular overload of) the function
-     * expects. The C++ implementation of the function can assume that the
-     * value list it gets is of the right size and the values are of the right
-     * types. Note that ambiguous overloads are silently resolved by using the
-     * last applicable overload, so more specific overloads should always be
-     * added last.
+     * Registers a callable.
+     * Matching will be done case-sensitively.
+     * The param_types variadic specifies the amount and types of the parameters that
+     * (this particular overload of) the function expects.
+     * The C++ implementation of the function can assume that
+     * the value list it gets is of the right size and the values are of the right types.
+     * Note that ambiguous overloads are silently resolved by using the last applicable overload,
+     * so more specific overloads should always be added last.
      */
     void add_overload(const std::string &name, const T &tag, const Types &param_types) {
-        std::string name_lower = utils::lowercase(name);
-        auto entry = table.find(name_lower);
+        auto entry = table.find(name);
         if (entry == table.end()) {
             auto resolver = OverloadResolver<T>();
             resolver.add_overload(tag, param_types);
-            table.insert(std::pair<std::string, OverloadResolver<T>>(name_lower, std::move(resolver)));
+            table.insert(std::pair<std::string, OverloadResolver<T>>(name, std::move(resolver)));
         } else {
             entry->second.add_overload(tag, param_types);
         }
     }
 
     /**
-     * Resolves the particular overload for the callable with the given
-     * case-insensitively matched name. Raises NameResolutionFailure if no
-     * callable with the requested name is found, raises an
-     * OverloadResolutionFailure if overload resolution fails, or otherwise
-     * returns the tag of the first applicable callable/overload pair and the
-     * appropriately promoted vector of value pointers.
+     * Resolves the particular overload for the callable with the given case-sensitively matched name.
+     * Raises NameResolutionFailure if no callable with the requested name is found,
+     * raises an OverloadResolutionFailure if overload resolution fails, or otherwise
+     * returns the tag of the first applicable callable/overload pair and
+     * the appropriately promoted vector of value pointers.
      */
     std::pair<T, Values> resolve(const std::string &name, const Values &args) {
-        std::string name_lower = utils::lowercase(name);
-        auto entry = table.find(name_lower);
+        auto entry = table.find(name);
         if (entry == table.end()) {
             throw NameResolutionFailure("failed to resolve " + name);
         } else {
@@ -227,17 +223,16 @@ FunctionTable& FunctionTable::operator=(FunctionTable&& t) {
 }
 
 /**
- * Registers a function. The name should be lowercase; matching will be done
- * case-insensitively. The param_types variadic specifies the amount and
- * types of the parameters that (this particular overload of) the function
- * expects. The C++ implementation of the function can assume that the
- * value list it gets is of the right size and the values are of the right
- * types.
+ * Registers a function.
+ * Matching will be done case-sensitively.
+ * The param_types variadic specifies the amount and types of the parameters that
+ * (this particular overload of) the function expects.
+ * The C++ implementation of the function can assume that
+ * the value list it gets is of the right size and the values are of the right types.
  *
- * This method does not contain any intelligence to override previously
- * added overloads. However, the overload resolution engine will always use
- * the last applicable overload it finds, so adding does have the effect of
- * overriding.
+ * This method does not contain any intelligence to override previously added overloads.
+ * However, the overload resolution engine will always use the last applicable overload it finds,
+ * so adding does have the effect of overriding.
  */
 void FunctionTable::add(const std::string &name, const Types &param_types, const FunctionImpl &impl) {
     resolver->add_overload(name, impl, param_types);

@@ -2,12 +2,11 @@
  * Implementation for \ref include/v1x/cqasm-instruction.hpp "v1x/cqasm-instruction.hpp".
  */
 
-#include "../../include/cqasm-utils.hpp"
 #include "v1x/cqasm-instruction.hpp"
 #include "v1x/cqasm-semantic.hpp"
 
-namespace cqasm {
-namespace v1x {
+namespace cqasm::v1x {
+
 namespace instruction {
 
 /**
@@ -43,11 +42,11 @@ Instruction::Instruction(
  * Equality operator.
  */
 bool Instruction::operator==(const Instruction& rhs) const {
-    return utils::case_insensitive_equals(name, rhs.name)
-            && param_types == rhs.param_types
-            && allow_conditional == rhs.allow_conditional
-            && allow_parallel == rhs.allow_parallel
-            && allow_reused_qubits == rhs.allow_reused_qubits;
+    return name == rhs.name
+        && param_types == rhs.param_types
+        && allow_conditional == rhs.allow_conditional
+        && allow_parallel == rhs.allow_parallel
+        && allow_reused_qubits == rhs.allow_reused_qubits;
 }
 
 /**
@@ -70,7 +69,8 @@ std::ostream &operator<<(std::ostream &os, const InstructionRef &insn) {
     return os;
 }
 
-} // namespace instruction
+}  // namespace instruction
+
 
 namespace primitives {
 
@@ -111,6 +111,6 @@ instruction::InstructionRef deserialize(const ::tree::cbor::MapReader &map) {
     return insn;
 }
 
-} // namespace primitives
-} // namespace v1x
-} // namespace cqasm
+}  // namespace primitives
+
+}  // namespace cqasm::v1x

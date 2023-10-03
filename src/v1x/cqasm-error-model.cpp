@@ -2,12 +2,11 @@
  * Implementation for \ref include/v1x/cqasm-error-model.hpp "v1x/cqasm-error-model.hpp".
  */
 
-#include "../../include/cqasm-utils.hpp"
 #include "v1x/cqasm-error-model.hpp"
 #include "v1x/cqasm-semantic.hpp"
 
-namespace cqasm {
-namespace v1x {
+namespace cqasm::v1x {
+
 namespace error_model {
 
 /**
@@ -27,7 +26,7 @@ ErrorModel::ErrorModel(
  * Equality operator.
  */
 bool ErrorModel::operator==(const ErrorModel &rhs) const {
-    return utils::case_insensitive_equals(name, rhs.name) && param_types == rhs.param_types;
+    return (name == rhs.name) && (param_types == rhs.param_types);
 }
 
 /**
@@ -50,36 +49,37 @@ std::ostream &operator<<(std::ostream &os, const ErrorModelRef &model) {
     return os;
 }
 
-} // namespace error_model
+}  // namespace error_model
+
 
 namespace primitives {
 
-template <>
+template<>
 void serialize(const error_model::ErrorModelRef &obj, ::tree::cbor::MapWriter &map) {
     if (obj.empty()) {
         return;
     }
     map.append_string("n", obj->name);
     auto aw = map.append_array("t");
-    for (const auto &t : obj->param_types) {
+    for (const auto &t: obj->param_types) {
         aw.append_binary(::tree::base::serialize(t));
     }
     aw.close();
 }
 
-template <>
+template<>
 error_model::ErrorModelRef deserialize(const ::tree::cbor::MapReader &map) {
     if (!map.count("n")) {
         return {};
     }
     auto model = tree::make<error_model::ErrorModel>(map.at("n").as_string(), "");
     auto ar = map.at("t").as_array();
-    for (const auto &element : ar) {
+    for (const auto &element: ar) {
         model->param_types.add(::tree::base::deserialize<types::Node>(element.as_binary()));
     }
     return model;
 }
 
-} // namespace primitives
-} // namespace v1x
-} // namespace cqasm
+}  // namespace primitives
+
+}  // namespace cqasm::v1x

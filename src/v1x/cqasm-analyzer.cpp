@@ -4,7 +4,6 @@
 
 #define _USE_MATH_DEFINES
 
-#include "cqasm-utils.hpp"
 #include "v1x/cqasm-analyzer.hpp"
 #include "v1x/cqasm-parse-helper.hpp"
 #include "v1x/cqasm-functions-gen.hpp"
@@ -16,9 +15,7 @@
 #include <unordered_set>
 #include <utility>
 
-namespace cqasm {
-namespace v1x {
-namespace analyzer {
+namespace cqasm::v1x::analyzer {
 
 /**
  * "Unwraps" the result (as you would in Rust) to get the program node or
@@ -42,9 +39,12 @@ ast::One<semantic::Program> AnalysisResult::unwrap(std::ostream &out) const {
 Analyzer::Analyzer(const std::string &api_version)
     : api_version(api_version), resolve_instructions(false), resolve_error_model(false)
 {
+    // V3-MVP: temporarily removed this check
+    /*
     if (api_version.compare("1.2") > 0) {
         throw std::invalid_argument("this analyzer only supports up to cQASM 1.2");
     }
+    */
 }
 
 /**
@@ -53,9 +53,12 @@ Analyzer::Analyzer(const std::string &api_version)
 Analyzer::Analyzer(const primitives::Version &api_version)
     : api_version(api_version), resolve_instructions(false), resolve_error_model(false)
 {
+    // V3-MVP: temporarily removed this check
+    /*
     if (api_version.compare("1.2") > 0) {
         throw std::invalid_argument("this analyzer only supports up to cQASM 1.2");
     }
+    */
 }
 
 
@@ -912,7 +915,7 @@ void AnalyzerHelper::analyze_bundle(const ast::Bundle &bundle) {
         // to special-case it here. Technically we could also have made it a
         // keyword, but the less random keywords there are, the better.
         if (bundle.items.size() == 1) {
-            if (utils::case_insensitive_equals(bundle.items[0]->name->name, "error_model")) {
+            if (bundle.items[0]->name->name == "error_model") {
                 analyze_error_model(*bundle.items[0]);
                 return;
             }
@@ -985,7 +988,7 @@ void AnalyzerHelper::analyze_bundle_ext(const ast::Bundle &bundle) {
         // to special-case it here. Technically we could also have made it a
         // keyword, but the less random keywords there are, the better.
         if (bundle.items.size() == 1) {
-            if (utils::case_insensitive_equals(bundle.items[0]->name->name, "error_model")) {
+            if (bundle.items[0]->name->name == "error_model") {
                 analyze_error_model(*bundle.items[0]);
                 return;
             }
@@ -994,9 +997,9 @@ void AnalyzerHelper::analyze_bundle_ext(const ast::Bundle &bundle) {
         // Analyze and add the instructions.
         auto node = tree::make<semantic::BundleExt>();
         for (const auto &insn : bundle.items) {
-            if (utils::case_insensitive_equals(insn->name->name, "set")) {
+            if (insn->name->name == "set") {
                 node->items.add(analyze_set_instruction(*insn));
-            } else if (utils::case_insensitive_equals(insn->name->name, "goto")) {
+            } else if (insn->name->name == "goto") {
                 node->items.add(analyze_goto_instruction(*insn));
             } else {
                 node->items.add(analyze_instruction(*insn));
@@ -1408,9 +1411,9 @@ void AnalyzerHelper::analyze_mapping(const ast::Mapping &mapping) {
 }
 
 /**
- * Analyzes the given declaration of one or more variables and, if valid,
- * adds them to the current scope. If an error occurs, the message is added
- * to the result error vector, and nothing is added to the scope.
+ * Analyzes the given declaration of one or more variables and,
+ * if valid, adds them to the current scope.
+ * If an error occurs, the message is added to the result error vector, and nothing is added to the scope.
  */
 void AnalyzerHelper::analyze_variables(const ast::Variables &variables) {
     try {
@@ -1421,7 +1424,7 @@ void AnalyzerHelper::analyze_variables(const ast::Variables &variables) {
         }
 
         // Figure out what type the variables should have.
-        auto type_name = utils::lowercase(variables.typ->name);
+        auto type_name = variables.typ->name;
         types::Type type{};
         if (type_name == "qubit") {
             type = tree::make<types::Qubit>();
@@ -2121,6 +2124,4 @@ values::Value AnalyzerHelper::analyze_operator(
     return analyze_function(identifier, args);
 }
 
-} // namespace analyzer
-} // namespace v1x
-} // namespace cqasm
+} // namespace cqasm::v1x::analyzer
