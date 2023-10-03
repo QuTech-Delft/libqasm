@@ -5,33 +5,25 @@ options {
 }
 
 // Actual grammar start.
-program: version qubits? statement* EOF;
+program: version qubitDefinition? statement* EOF;
 
-version: VERSION INTEGER_LITERAL (DOT INTEGER_LITERAL)?;
+version: VERSION VERSION_NUMBER;
 
-qubits: QUBITS expression;
+qubitDefinition: QUBIT OPEN_BRACKET expression CLOSE_BRACKET ID;
 
 statement:
-    MAP IDENTIFIER EQUAL expression  # mapping
-    | VAR IDENTIFIER COLON IDENTIFIER  # variable
-    | IDENTIFIER expressionList  # instruction
+    MAP ID EQUAL expression  # mapping
+    | VAR ID COLON ID  # variable
+    | ID expressionList  # instruction
     ;
 
 expressionList: expression (COMMA expression)?;
 
-expression:
-    INTEGER_LITERAL  # integerLiteral
-    | FLOAT_LITERAL  # floatLiteral
-    | IDENTIFIER  # identifier
-    | IDENTIFIER OPEN_BRACKET expression CLOSE_BRACKET  # index
-    ;
+indexList: expression (COMMA expression)?;
 
-/*
-* Things we are leaving out at the moment:
-* - Function calls.
-* - Matrix literals, string literals.
-* - Multiple variable declarations in the same line.
-* - Operators: unary, binary, ternary.
-* - Semicolons don't start a new statement.
-* - Array elements cannot be neither a list of indices nor a range of indices.
-*/
+expression:
+    INT  # int
+    | FLOAT  # float
+    | ID  # id
+    | ID OPEN_BRACKET indexList CLOSE_BRACKET  # index
+    ;

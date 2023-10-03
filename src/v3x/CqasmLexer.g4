@@ -1,15 +1,13 @@
 lexer grammar CqasmLexer;
 
 // Rules
+WS: [ \t]+ -> skip;
 NEW_LINE: '\r'?'\n' -> skip;
-END_OF_LINE: (NEW_LINE | EOF) -> skip;
-SINGLE_LINE_WHITE_SPACE: [ \t]+ -> skip;
-MULTI_LINE_WHITE_SPACE: (SINGLE_LINE_WHITE_SPACE | NEW_LINE)+;
-SINGLE_LINE_COMMENT: '#' ~[\r\n]* END_OF_LINE -> skip;
-MULTI_LINE_COMMENT_START: '/*' -> pushMode(MULTI_LINE_COMMENT);
+COMMENT: '//' ~[\r\n]* -> skip;
+MULTI_LINE_COMMENT: '/*' .*? '*/' -> skip;
 
 // Operators
-VERSION: 'version';
+VERSION: 'version' -> pushMode(VERSION_STATEMENT);
 COLON: ':';
 COMMA: ',';
 DOT: '.';
@@ -18,33 +16,19 @@ OPEN_BRACKET: '[';
 CLOSE_BRACKET: ']';
 
 // Keywords
-QUBITS: 'qubits';
+QUBIT: 'qubit';
 MAP: 'map';
 VAR: 'var';
 
 // Numeric literals
 fragment Digit: [0-9];
-INTEGER_LITERAL: Digit+;
-FLOAT_LITERAL: Digit* '.' Digit+([eE][-+]Digit+)?;
+INT: Digit+;
+FLOAT: Digit* '.' Digit+([eE][-+]Digit+)?;
 
 // Identifiers
 fragment Letter : [a-zA-Z_];
-IDENTIFIER: Letter (Letter | Digit)*;
+ID: Letter (Letter | Digit)*;
 
-// Modes
-mode MULTI_LINE_COMMENT;
-MULTI_LINE_COMMENT_END: '*/' -> popMode;
-ANY: . -> skip;
-
-/*
-* Things we are leaving out at the moment:
-* - Annotations.
-* - Bundles.
-* - JSON literals.
-* - String literals.
-* - Multi-line strings.
-* - Statements:
-*   - c-dash, cond.
-*   - cQasm v1.2: if, else, for, foreach, while, repeat, until, continue, break, set, reset-averaging.
-* - Subcircuits.
-*/
+mode VERSION_STATEMENT;
+VS_WS: [ \t]+ -> skip;
+VERSION_NUMBER: Digit '.' Digit -> popMode;
