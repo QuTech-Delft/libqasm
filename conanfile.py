@@ -58,6 +58,7 @@ class LibqasmConan(ConanFile):
             if self.settings.arch != "armv8":
                 self.tool_requires("flex/2.6.4")
                 self.tool_requires("bison/3.8.2")
+        self.requires("range-v3/0.12.0")
         if self.settings.arch != "armv8":
             self.tool_requires("zulu-openjdk/11.0.19")
         if self.options.build_tests:
