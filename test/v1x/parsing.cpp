@@ -89,11 +89,11 @@ public:
         }
 
         // Try different API levels
-        for (const auto &api_version : std::vector<std::string>({"1.0", "1.1", "1.2"})) {
+        for (const auto &api_version : std::vector<std::string>( { "3.0" } )) {
             // If there were no errors, try semantic analysis.
             // We analyze using the functions, error models, and instruction set available in the compatibility layer,
             // though this is copy-pasted in here
-            auto analyzer = cq1x::analyzer::Analyzer{api_version};
+            auto analyzer = cq1x::analyzer::Analyzer{ api_version };
             analyzer.register_default_functions_and_mappings();
             std::ostringstream args;
             for (int i = 0; i <= 50; i++) {
@@ -107,7 +107,7 @@ public:
             analyzer.register_instruction("z", "Q");
             analyzer.register_instruction("i", "Q");
             analyzer.register_instruction("h", "Q");
-            analyzer.register_instruction("x90", "Q");
+            analyzer.register_instruction("X90", "Q");  // V3-MVP: changed to uppercase for res/v1x/v3x-mvp/program tests
             analyzer.register_instruction("y90", "Q");
             analyzer.register_instruction("mx90", "Q");
             analyzer.register_instruction("my90", "Q");
@@ -127,7 +127,7 @@ public:
             analyzer.register_instruction("rx", "Qr");
             analyzer.register_instruction("ry", "Qr");
             analyzer.register_instruction("rz", "Qr");
-            analyzer.register_instruction("cnot", "QQ");
+            analyzer.register_instruction("CNOT", "QQ");  // V3-MVP: changed to uppercase for res/v1x/v3x-mvp/program tests
             analyzer.register_instruction("cz", "QQ");
             analyzer.register_instruction("swap", "QQ");
             analyzer.register_instruction("cr", "QQr");
@@ -272,5 +272,5 @@ void register_v1x_tests(const fs::path& subdir) {
 void register_v1x_tests() {
     //register_v1x_tests("parsing");
     //register_v1x_tests("toy-v1x-parsing");
-    register_v1x_tests("v3x-mvp")
+    register_v1x_tests("v3x-mvp");
 }
