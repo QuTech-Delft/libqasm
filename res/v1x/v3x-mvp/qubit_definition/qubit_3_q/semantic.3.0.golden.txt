@@ -1,0 +1,15 @@
+SUCCESS
+Program(
+  version: <
+    Version(
+      items: 3.0
+    )
+  >
+  num_qubits: 3
+  error_model: -
+  subcircuits: []
+  mappings: []
+  variables: []
+  api_version: 3.0
+)
+

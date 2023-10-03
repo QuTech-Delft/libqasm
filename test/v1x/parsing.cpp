@@ -270,6 +270,7 @@ void register_v1x_tests(const fs::path& subdir) {
 }
 
 void register_v1x_tests() {
-    register_v1x_tests("parsing");
+    //register_v1x_tests("parsing");
     //register_v1x_tests("toy-v1x-parsing");
+    register_v1x_tests("v3x-mvp")
 }

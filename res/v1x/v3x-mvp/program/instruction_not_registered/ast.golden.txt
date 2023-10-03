@@ -1,0 +1,127 @@
+SUCCESS
+Program(
+  version: <
+    Version(
+      items: 3.0
+    )
+  >
+  num_qubits: <
+    IntegerLiteral(
+      value: 3
+    )
+  >
+  statements: <
+    StatementList(
+      items: [
+        Bundle(
+          items: [
+            Instruction(
+              name: <
+                Identifier(
+                  name: x90
+                )
+              >
+              condition: -
+              operands: <
+                ExpressionList(
+                  items: [
+                    Index(
+                      expr: <
+                        Identifier(
+                          name: q
+                        )
+                      >
+                      indices: <
+                        IndexList(
+                          items: [
+                            IndexItem(
+                              index: <
+                                IntegerLiteral(
+                                  value: 1
+                                )
+                              >
+                            )
+                            IndexItem(
+                              index: <
+                                IntegerLiteral(
+                                  value: 2
+                                )
+                              >
+                            )
+                          ]
+                        )
+                      >
+                    )
+                  ]
+                )
+              >
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle(
+          items: [
+            Instruction(
+              name: <
+                Identifier(
+                  name: cnot
+                )
+              >
+              condition: -
+              operands: <
+                ExpressionList(
+                  items: [
+                    Index(
+                      expr: <
+                        Identifier(
+                          name: q
+                        )
+                      >
+                      indices: <
+                        IndexList(
+                          items: [
+                            IndexItem(
+                              index: <
+                                IntegerLiteral(
+                                  value: 1
+                                )
+                              >
+                            )
+                          ]
+                        )
+                      >
+                    )
+                    Index(
+                      expr: <
+                        Identifier(
+                          name: q
+                        )
+                      >
+                      indices: <
+                        IndexList(
+                          items: [
+                            IndexItem(
+                              index: <
+                                IntegerLiteral(
+                                  value: 0
+                                )
+                              >
+                            )
+                          ]
+                        )
+                      >
+                    )
+                  ]
+                )
+              >
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+
