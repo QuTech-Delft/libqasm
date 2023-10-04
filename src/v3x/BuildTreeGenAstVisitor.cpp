@@ -53,9 +53,11 @@ double BuildTreeGenAstVisitor::get_float_value(antlr4::tree::TerminalNode *node)
 std::any BuildTreeGenAstVisitor::visitProgram(CqasmParser::ProgramContext *context) {
     auto ret = cqasm::tree::make<Program>();
     ret->version = std::any_cast<One<Version>>(visitVersion(context->version()));
+    /*
     if (auto qubit_definition_ctx = context->qubitDefinition()) {
         ret->num_qubits = std::any_cast<Maybe<Expression>>(visitQubitDefinition(qubit_definition_ctx));
     }
+    */
     ret->statements = cqasm::tree::make<StatementList>();
     const auto &statements = context->statement();
     std::for_each(statements.begin(), statements.end(), [this, &ret](auto &statement_ctx) {
@@ -77,6 +79,7 @@ std::any BuildTreeGenAstVisitor::visitVersion(CqasmParser::VersionContext *conte
     return ret;
 }
 
+/*
 std::any BuildTreeGenAstVisitor::visitQubitDefinition(CqasmParser::QubitDefinitionContext *context) {
     return Maybe<Expression>{
         std::any_cast<One<Expression>>(context->expression()->accept(this)).get_ptr()
@@ -95,6 +98,20 @@ std::any BuildTreeGenAstVisitor::visitVariable(CqasmParser::VariableContext *con
     ret->names = Many<Identifier>{ cqasm::tree::make<Identifier>(context->ID(0)->getText()) };
     ret->typ = cqasm::tree::make<Identifier>(context->ID(1)->getText());
     return One<Statement>{ ret };
+}
+*/
+
+std::any BuildTreeGenAstVisitor::visitTypeDefinition(CqasmParser::TypeDefinitionContext *context) {
+    (void) context;
+    // New QubitRegister node (size, name)
+    // new BitRegister node (size, name)
+    throw std::runtime_error{ "Unimplemented" };
+}
+
+std::any BuildTreeGenAstVisitor::visitMeasureInstruction(CqasmParser::MeasureInstructionContext *context) {
+    (void) context;
+    // New MeasureInstruction node (list of qubits, list of bits)
+    throw std::runtime_error{ "Unimplemented" };
 }
 
 std::any BuildTreeGenAstVisitor::visitInstruction(CqasmParser::InstructionContext *context) {
@@ -116,13 +133,19 @@ std::any BuildTreeGenAstVisitor::visitExpressionList(CqasmParser::ExpressionList
 }
 
 std::any BuildTreeGenAstVisitor::visitIndexList(CqasmParser::IndexListContext *context) {
+    // TODO: rewrite
     auto ret = cqasm::tree::make<IndexList>();
-    const auto &expressions = context->expression();
-    std::for_each(expressions.begin(), expressions.end(), [this, &ret](auto &expression_ctx) {
-        auto index_item = cqasm::tree::make<IndexItem>(std::any_cast<One<Expression>>(expression_ctx->accept(this)));
+    const auto &index_entries = context->indexEntry();
+    std::for_each(index_entries.begin(), index_entries.end(), [this, &ret](auto &index_entry_ctx) {
+        auto index_item = cqasm::tree::make<IndexItem>(std::any_cast<One<Expression>>(index_entry_ctx->accept(this)));
         ret->items.add(index_item);
     });
     return ret;
+}
+
+std::any BuildTreeGenAstVisitor::visitIndexEntry(CqasmParser::IndexEntryContext *context) {
+    (void) context;
+    throw std::runtime_error{ "Unimplemented" };
 }
 
 std::any BuildTreeGenAstVisitor::visitInt(CqasmParser::IntContext *context) {

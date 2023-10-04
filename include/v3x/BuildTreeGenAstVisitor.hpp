@@ -22,12 +22,12 @@ class  BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
 public:
     std::any visitProgram(CqasmParser::ProgramContext *context) override;
     std::any visitVersion(CqasmParser::VersionContext *context) override;
-    std::any visitQubitDefinition(CqasmParser::QubitDefinitionContext *context) override;
-    std::any visitMapping(CqasmParser::MappingContext *context) override;
-    std::any visitVariable(CqasmParser::VariableContext *context) override;
+    std::any visitTypeDefinition(CqasmParser::TypeDefinitionContext *context) override;
+    std::any visitMeasureInstruction(CqasmParser::MeasureInstructionContext *context) override;
     std::any visitInstruction(CqasmParser::InstructionContext *context) override;
     std::any visitExpressionList(CqasmParser::ExpressionListContext *context) override;
     std::any visitIndexList(CqasmParser::IndexListContext *context) override;
+    std::any visitIndexEntry(CqasmParser::IndexEntryContext *context) override;
     std::any visitInt(CqasmParser::IntContext *context) override;
     std::any visitFloat(CqasmParser::FloatContext *context) override;
     std::any visitId(CqasmParser::IdContext *context) override;

@@ -4,22 +4,25 @@ options {
 	tokenVocab = CqasmLexer;
 }
 
-// Actual grammar start.
-program: version qubitDefinition? statement* EOF;
+// Actual grammar start
+program:
+    version (NEW_LINE | SEMICOLON | EOF)
+    (statement (NEW_LINE | SEMICOLON | EOF))*
+    ;
 
 version: VERSION VERSION_NUMBER;
 
-qubitDefinition: QUBIT OPEN_BRACKET expression CLOSE_BRACKET ID;
-
 statement:
-    MAP ID EQUAL expression  # mapping
-    | VAR ID COLON ID  # variable
+    (QUBIT_TYPE | BIT_TYPE) (OPEN_BRACKET indexList CLOSE_BRACKET)? ID  # typeDefinition
+    | expressionList EQUAL MEASURE expressionList  # measureInstruction
     | ID expressionList  # instruction
     ;
 
-expressionList: expression (COMMA expression)?;
+expressionList: expression (COMMA expression)*;
 
-indexList: expression (COMMA expression)?;
+indexList: indexEntry (COMMA indexEntry)*;
+
+indexEntry: expression (COLON expression)?;
 
 expression:
     INT  # int
