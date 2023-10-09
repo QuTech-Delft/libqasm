@@ -13,7 +13,8 @@ program:
 version: VERSION VERSION_NUMBER;
 
 statement:
-    (QUBIT_TYPE | BIT_TYPE) (OPEN_BRACKET indexList CLOSE_BRACKET)? ID  # typeDefinition
+    QUBIT_TYPE (OPEN_BRACKET indexList CLOSE_BRACKET)? ID  # qubitTypeDefinition
+    | BIT_TYPE (OPEN_BRACKET indexList CLOSE_BRACKET)? ID  # bitTypeDefinition
     | expressionList EQUAL MEASURE expressionList  # measureInstruction
     | ID expressionList  # instruction
     ;

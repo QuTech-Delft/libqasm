@@ -1,0 +1,2 @@
+ERROR
+input.cq:4:4: mismatched input '<EOF>' expecting {INT, FLOAT, ID}

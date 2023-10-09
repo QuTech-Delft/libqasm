@@ -1,0 +1,15 @@
+SUCCESS
+Program(
+  version: <
+    Version(
+      items: 3.0
+    )
+  >
+  num_qubits: -
+  statements: <
+    StatementList(
+      items: []
+    )
+  >
+)
+

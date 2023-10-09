@@ -101,7 +101,13 @@ std::any BuildTreeGenAstVisitor::visitVariable(CqasmParser::VariableContext *con
 }
 */
 
-std::any BuildTreeGenAstVisitor::visitTypeDefinition(CqasmParser::TypeDefinitionContext *context) {
+std::any BuildTreeGenAstVisitor::visitQubitTypeDefinition(CqasmParser::QubitTypeDefinitionContext *context) {
+        (void) context;
+        // New QubitRegister node (size, name)
+        throw std::runtime_error{ "Unimplemented" };
+}
+
+std::any BuildTreeGenAstVisitor::visitBitTypeDefinition(CqasmParser::BitTypeDefinitionContext *context) {
     (void) context;
     // New QubitRegister node (size, name)
     // new BitRegister node (size, name)

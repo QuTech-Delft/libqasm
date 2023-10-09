@@ -1,0 +1,89 @@
+# Implementation for the abstract syntax tree node classes.
+source
+
+# Header file for the abstract syntax tree node classes.
+header "v3x/cqasm-ast-gen.hpp"
+
+// Include tree base classes.
+include "cqasm-tree.hpp"
+tree_namespace cqasm::tree
+
+// Include primitive types.
+include "v1x/cqasm-primitives.hpp"
+import cqasm.v1x.primitives
+
+# Namespace for the abstract syntax tree node classes.
+namespace cqasm
+namespace v3x
+namespace ast
+
+version {
+    items: cqasm::v1x::primitives::Version;
+}
+
+index_entry {
+    index_item {
+        index: One<expression>;
+    }
+
+    index_range {
+        first: One<expression>;
+        last: One<expression>;
+    }
+}
+
+index_list {
+    items: Many<index_entry>;
+}
+
+expression {
+    integer_literal {
+        value: cqasm::v1x::primitives::Int;
+    }
+
+    float_literal {
+        value: cqasm::v1x::primitives::Real;
+    }
+
+    identifier {
+        name: cqasm::v1x::primitives::Str;
+    }
+
+    index {
+        expr: One<expression>;
+        indices: One<index_list>;
+    }
+}
+
+expression_list {
+    items: Any<expression>;
+}
+
+statement {
+    variable {
+        name: One<identifier>;
+        type: One<identifier>;
+        size: Maybe<expression>;
+    }
+
+    instruction {
+        name: One<identifier>;
+        operands: One<expression_list>;
+
+        measurement_instruction {
+            bit_registers: One<expression_list>;
+            qubit_registers: One<expression_list>;
+        }
+    }
+}
+
+statement_list {
+    items: Any<statement>;
+}
+
+root {
+    program {
+        version: One<version>;
+        statements: One<statement_list>;
+    }
+}
