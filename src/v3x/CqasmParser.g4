@@ -6,8 +6,9 @@ options {
 
 // Actual grammar start
 program:
-    version (NEW_LINE | SEMICOLON | EOF)
-    (statement (NEW_LINE | SEMICOLON | EOF))*
+    version (NEW_LINE | SEMICOLON)
+    (statement (NEW_LINE | SEMICOLON))*
+    EOF
     ;
 
 version: VERSION VERSION_NUMBER;
@@ -15,7 +16,7 @@ version: VERSION VERSION_NUMBER;
 statement:
     QUBIT_TYPE (OPEN_BRACKET indexList CLOSE_BRACKET)? ID  # qubitTypeDefinition
     | BIT_TYPE (OPEN_BRACKET indexList CLOSE_BRACKET)? ID  # bitTypeDefinition
-    | expressionList EQUAL MEASURE expressionList  # measureInstruction
+    | expression EQUAL MEASURE expression  # measureInstruction
     | ID expressionList  # instruction
     ;
 
