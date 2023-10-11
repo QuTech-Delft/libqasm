@@ -162,9 +162,9 @@ generate_tree_py(
 )
 list(APPEND CQASM_V1X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-types-gen.cpp")
 
-# Generate the semantic value classes. Values can be either known at
-# compile-time or only at runtime, but their type is resolved to one of the
-# type tree nodes at compile-time.
+# Generate the semantic value classes.
+# Values can be either known at compile-time or only at runtime,
+# but their type is resolved to one of the type tree nodes at compile-time.
 generate_tree_py(
     "${CMAKE_CURRENT_SOURCE_DIR}/v1x/cqasm-values.tree"
     "${CMAKE_CURRENT_BINARY_DIR}/../include/v1x/cqasm-values-gen.hpp"
@@ -216,6 +216,44 @@ antlr_target(
     "${ANTLR_OUTPUTS}"  # List of generated files
 )
 list(APPEND CQASM_V3X_SOURCES ${ANTLR_OUTPUTS})
+
+# Generate the abstract syntax tree classes.
+generate_tree_py(
+    "${CMAKE_CURRENT_SOURCE_DIR}/v3x/cqasm-ast.tree"
+    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x/cqasm-ast-gen.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-ast-gen.cpp"
+    "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/cqasm-ast-gen.py"
+)
+list(APPEND CQASM_V1X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-ast-gen.cpp")
+
+# Generate the type tree classes.
+generate_tree_py(
+    "${CMAKE_CURRENT_SOURCE_DIR}/v3x/cqasm-types.tree"
+    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x/cqasm-types-gen.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-types-gen.cpp"
+    "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/cqasm-types-gen.py"
+)
+list(APPEND CQASM_V1X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-types-gen.cpp")
+
+# Generate the semantic value classes.
+# Values can be either known at compile-time or only at runtime,
+# but their type is resolved to one of the type tree nodes at compile-time.
+generate_tree_py(
+    "${CMAKE_CURRENT_SOURCE_DIR}/v3x/cqasm-values.tree"
+    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x/cqasm-values-gen.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-values-gen.cpp"
+    "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/cqasm-values-gen.py"
+)
+list(APPEND CQASM_V1X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-values-gen.cpp")
+
+# Generate the semantic tree classes.
+generate_tree_py(
+    "${CMAKE_CURRENT_SOURCE_DIR}/v3x/cqasm-semantic.tree"
+    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x/cqasm-semantic-gen.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-semantic-gen.cpp"
+    "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/cqasm-semantic-gen.py"
+)
+list(APPEND CQASM_V1X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-semantic-gen.cpp")
 
 #-------------------------------------------------------------------------------
 # Compilation instructions
