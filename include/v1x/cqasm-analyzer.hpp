@@ -17,14 +17,11 @@
 #include <cstdio>
 #include <functional>
 
-namespace cqasm {
-namespace v1x {
-
 /**
  * Namespace for the \ref cqasm::analyzer::Analyzer "Analyzer" class and
  * support classes.
  */
-namespace analyzer {
+namespace cqasm::v1x::analyzer {
 
 /**
  * Exception thrown by AnalysisResult::unwrap() when the cQASM file fails to
@@ -302,18 +299,18 @@ public:
     AnalysisResult analyze(const ast::Program &program) const;
 
     /**
-     * Analyzes the given parse result. If there are parse errors, they are
-     * copied into the AnalysisResult error list, and the root node will be
-     * empty.
+     * Analyzes the given parse result.
+     * If there are parse errors, they are copied into the AnalysisResult error list, and
+     * the root node will be empty.
      */
     AnalysisResult analyze(const parser::ParseResult &parse_result) const;
 
     /**
-     * Parses and analyzes using the given version and file parser closures.
+     * Parses and analyzes using the given version and parser closures.
      */
     AnalysisResult analyze(
         const std::function<version::Version()> &version_parser,
-        const std::function<parser::ParseResult()> &file_parser
+        const std::function<parser::ParseResult()> &parser
     ) const;
 
     /**
@@ -322,18 +319,16 @@ public:
     AnalysisResult analyze(const std::string &filename) const;
 
     /**
-     * Parses and analyzes the given file pointer. The optional filename
-     * argument will be used only for error messages.
+     * Parses and analyzes the given file pointer.
+     * The optional filename argument will be used only for error messages.
      */
     AnalysisResult analyze(FILE *file, const std::string &filename = "<unknown>") const;
 
     /**
-     * Parses and analyzes the given string. The optional filename argument
-     * will be used only for error messages.
+     * Parses and analyzes the given string.
+     * The optional filename argument will be used only for error messages.
      */
     AnalysisResult analyze_string(const std::string &data, const std::string &filename = "<unknown>") const;
 };
 
-} // namespace analyzer
-} // namespace v1x
-} // namespace cqasm
+} // namespace cqasm::v1x::analyzer

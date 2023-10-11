@@ -515,18 +515,18 @@ AnalysisResult Analyzer::analyze(const parser::ParseResult &parse_result) const 
 }
 
 /**
- * Parses and analyzes using the given version and file parser closures.
+ * Parses and analyzes using the given version and parser closures.
  */
 AnalysisResult Analyzer::analyze(
     const std::function<version::Version()> &version_parser,
-    const std::function<parser::ParseResult()> &file_parser
+    const std::function<parser::ParseResult()> &parser
 ) const {
     AnalysisResult result;
     try {
-        auto file_version = version_parser();
-        if (file_version > api_version) {
+        auto version = version_parser();
+        if (version > api_version) {
             std::ostringstream ss;
-            ss << "cQASM file version is " << file_version << ", but at most ";
+            ss << "cQASM file version is " << version << ", but at most ";
             ss << api_version << " is supported here";
             result.errors.push_back(ss.str());
             return result;
@@ -535,7 +535,7 @@ AnalysisResult Analyzer::analyze(
         result.errors.push_back(e.get_message());
         return result;
     }
-    return analyze(file_parser());
+    return analyze(parser());
 }
 
 /**
@@ -927,8 +927,7 @@ void AnalyzerHelper::analyze_bundle(const ast::Bundle &bundle) {
             node->items.add(analyze_instruction(*insn));
         }
 
-        // If we have more than two instructions, ensure that all instructions
-        // are parallelizable.
+        // If we have more than two instructions, ensure that all instructions are parallelizable.
         if (node->items.size() > 1) {
             for (const auto &insn : node->items) {
                 try {
@@ -1067,7 +1066,7 @@ tree::Maybe<semantic::Instruction> AnalyzerHelper::analyze_instruction(const ast
 
         // Figure out the operand list.
         auto operands = values::Values();
-        for (auto operand_expr : insn.operands->items) {
+        for (const auto &operand_expr : insn.operands->items) {
             operands.add(analyze_expression(*operand_expr));
         }
 
@@ -1098,7 +1097,7 @@ tree::Maybe<semantic::Instruction> AnalyzerHelper::analyze_instruction(const ast
             // away.
             if (auto x = node->condition->as_const_bool()) {
                 if (!x->value) {
-                    return tree::Maybe<semantic::Instruction>();
+                    return {};
                 }
             }
 
@@ -1132,10 +1131,10 @@ tree::Maybe<semantic::Instruction> AnalyzerHelper::analyze_instruction(const ast
             const parser::SourceLocation *num_refs_loc = nullptr;
             for (const auto &operand : operands) {
                 const tree::Many<values::ConstInt> *indices = nullptr;
-                if (auto x = operand->as_qubit_refs()) {
-                    indices = &x->index;
-                } else if (auto x = operand->as_bit_refs()) {
-                    indices = &x->index;
+                if (auto qr = operand->as_qubit_refs()) {
+                    indices = &qr->index;
+                } else if (auto br = operand->as_bit_refs()) {
+                    indices = &br->index;
                 }
                 if (indices) {
                     if (!num_refs) {
@@ -1166,7 +1165,7 @@ tree::Maybe<semantic::Instruction> AnalyzerHelper::analyze_instruction(const ast
         e.context(insn);
         result.errors.push_back(e.get_message());
     }
-    return tree::Maybe<semantic::Instruction>();
+    return {};
 }
 
 /**
@@ -2097,7 +2096,7 @@ tree::Many<values::ConstInt> AnalyzerHelper::analyze_index_list(const ast::Index
  */
 values::Value AnalyzerHelper::analyze_function(const ast::Identifier &name, const ast::ExpressionList &args) {
     auto arg_values = values::Values();
-    for (auto arg : args.items) {
+    for (const auto &arg : args.items) {
         arg_values.add(analyze_expression(*arg));
     }
     auto retval = get_current_scope().functions.call(name.name, arg_values);
