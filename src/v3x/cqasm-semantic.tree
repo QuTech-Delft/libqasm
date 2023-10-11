@@ -1,0 +1,73 @@
+# Implementation for the semantic tree node classes
+source
+
+# Header file for the semantic tree node classes
+header "v3x/cqasm-semantic-gen.hpp"
+
+// Include tree base classes
+include "cqasm-tree.hpp"
+tree_namespace cqasm::tree
+
+// Include primitive types
+include "v3x/cqasm-instruction.hpp"
+include "v3x/cqasm-primitives.hpp"
+include "v3x/cqasm-types.hpp"
+include "v3x/cqasm-values.hpp"
+import cqasm.v3x.instruction
+import cqasm.v3x.primitives
+import cqasm.v3x.types
+import cqasm.v3x.values
+
+// Initialization function to use to construct default values for the tree base classes and primitives
+initialize_function cqasm::v3x::primitives::initialize
+serdes_functions cqasm::v3x::primitives::serialize cqasm::v3x::primitives::deserialize
+
+
+# Namespace for the semantic tree node classes.
+namespace cqasm
+namespace v3x
+namespace semantic
+
+statement {
+    variable {
+        name: cqasm::v3x::primitives::Str;
+        type: external One<cqasm::v3x::types::Node>;
+    }
+
+    instruction_base {
+        # A regular instruction (gate)
+        instruction {
+            # Instruction type as registered through the API
+            instruction: cqasm::v3x::instruction::InstructionRef;
+
+            # Name as it appears in the cQASM file
+            name: cqasm::v3x::primitives::Str;
+
+            # Operands for the instruction
+            operands: external Any<cqasm::v3x::values::Node>;
+        }
+
+        measure_instruction {
+            bits: external One<cqasm::v3x::values::Variable>;
+            qubits: external One<cqasm::v3x::values::Variable>;
+        }
+    }
+}
+
+version {
+    items: cqasm::v3x::primitives::Version;
+}
+
+program {
+    # File version
+    version: One<version>;
+
+
+    variables: Any<variable>;
+
+    # API version.
+    # This may be greater than or equal to the file version.
+    # This controls which fields of the tree are used, where such usage depends on the version.
+    api_version: cqasm::v3x::primitives::Version;
+
+}

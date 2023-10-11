@@ -1,7 +1,7 @@
-# Implementation for the various classes representing the types of values available in cQASM 3.0.
+# Implementation for the various classes representing the types of values available in cQASM 3.0
 source
 
-# Header file for the various classes representing the types of values available in cQASM 3.0.
+# Header file for the various classes representing the types of values available in cQASM 3.0
 header "v3x/cqasm-types-gen.hpp"
 
 // Include tree base classes.
@@ -9,28 +9,26 @@ include "cqasm-tree.hpp"
 tree_namespace cqasm::tree
 
 // Include primitive types.
-include "v1x/cqasm-primitives.hpp"
-import cqasm.v1x.primitives
+include "v3x/cqasm-primitives.hpp"
+import cqasm.v3x.primitives
 
-# Namespace for the various classes representing the types of values available in cQASM 3.0.
+// Initialization function to use to construct default values for the tree base classes and primitives
+initialize_function cqasm::v3x::primitives::initialize
+serdes_functions cqasm::v3x::primitives::serialize cqasm::v3x::primitives::deserialize
+
+
+# Namespace for the various classes representing the types of values available in cQASM 3.0
 namespace cqasm
 namespace v3x
 namespace types
 
-# Base for all types, with a member indicating whether values of this type are
-# assignable (references) or not (constants, expression results).
 type_base {
-    assignable: cqasm::v1x::primitives::Bool;
+    qubit {}
 
-    int {}
+    bit {}
 
-    real {}
-
-    qubit {
-        size: cqasm::v1x::primitives::Int;
-    }
-
-    bit {
-        size: cqasm::v1x::primitives::Int;
+    array {
+        type: type_base;
+        size: cqasm::v3x::primitives::Int;
     }
 }

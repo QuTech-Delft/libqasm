@@ -1,7 +1,7 @@
-# Implementation for the various classes representing constants, references, and dynamic expressions in cQASM 3.0.
+# Implementation for the various classes representing constants, references, and dynamic expressions in cQASM 3.0
 source
 
-# Header file for the various classes representing constants, references, and dynamic expressions in cQASM 3.0.
+# Header file for the various classes representing constants, references, and dynamic expressions in cQASM 3.0
 header "v3x/cqasm-values-gen.hpp"
 
 // Include tree base classes.
@@ -9,38 +9,36 @@ include "cqasm-tree.hpp"
 tree_namespace cqasm::tree
 
 // Include primitive types.
-include "v1x/cqasm-primitives.hpp"
-include "v3x/cqasm-types.hpp"
-import cqasm.v1x.primitives
-import cqasm.v3x.types
+include "v3x/cqasm-primitives.hpp"
+include "v3x/cqasm-semantic-helper.hpp"
+src_include "v3x/cqasm-semantic.hpp"
+import cqasm.v3x.primitives
+import cqasm.v3x.semantic
 
-# Namespace for the various classes representing constants, references, and dynamic expressions in cQASM 3.0.
+// Initialization function to use to construct default values for the tree base classes and primitives
+initialize_function cqasm::v3x::primitives::initialize
+serdes_functions cqasm::v3x::primitives::serialize cqasm::v3x::primitives::deserialize
+
+
+# Namespace for the various classes representing constants, references, and dynamic expressions in cQASM 3.0
 namespace cqasm
 namespace v3x
 namespace values
 
-# Represents a constant value.
+# Constant value
 constant {
     const_int {
-        value: cqasm::v1x::primitives::Int;
+        value: cqasm::v3x::primitives::Int;
     }
 
     const_real {
-        value: cqasm::v1x::primitives::Real;
+        value: cqasm::v3x::primitives::Real;
     }
 }
 
-# Represents a reference to some storage location.
+# Reference to some storage location
 reference {
-    qubit_refs {
-        index: Many<const_int>;
-    }
-
-    bit_refs {
-        index: Many<const_int>;
-    }
-
     variable_ref {
-        variable: external Link<cqasm::v1x::semantic::Variable>;
+        variable: external Link<cqasm::v3x::semantic::Variable>;
     }
 }
