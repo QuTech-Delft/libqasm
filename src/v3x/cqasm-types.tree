@@ -24,11 +24,12 @@ namespace types
 
 type_base {
     qubit {}
-
     bit {}
 
     array {
-        type: type_base;
         size: cqasm::v3x::primitives::Int;
+
+        qubit_array {}
+        bit_array {}
     }
 }

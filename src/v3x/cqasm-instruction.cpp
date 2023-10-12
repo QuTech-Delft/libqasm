@@ -6,7 +6,9 @@
 #include "v3x/cqasm-semantic.hpp"
 
 
-namespace cqasm::v3x::instruction {
+namespace cqasm::v3x {
+
+namespace instruction {
 
 /**
  * Creates a new instruction.
@@ -73,4 +75,6 @@ instruction::InstructionRef deserialize(const ::tree::cbor::MapReader &map) {
     return insn;
 }
 
-}  // namespace cqasm::v1x::instruction
+}  // namespace primitives
+
+}  // namespace cqasm::v3x

@@ -65,7 +65,7 @@ expression_list {
 statement {
     variable {
         name: One<identifier>;
-        type: One<identifier>;
+        typ: One<identifier>;
     }
 
     instruction {

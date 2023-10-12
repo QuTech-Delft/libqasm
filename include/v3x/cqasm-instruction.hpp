@@ -10,7 +10,9 @@
 #include "cqasm-values.hpp"
 
 
-namespace cqasm::v3x::instruction {
+namespace cqasm::v3x {
+
+namespace instruction {
 
 /**
  * Representation of an available instruction (also known as gate) in the instruction set,
@@ -66,6 +68,7 @@ std::ostream &operator<<(std::ostream &os, const InstructionRef &insn);
 
 } // namespace instruction
 
+
 namespace primitives {
 
 template <>
@@ -73,4 +76,6 @@ void serialize(const instruction::InstructionRef &obj, ::tree::cbor::MapWriter &
 template <>
 instruction::InstructionRef deserialize(const ::tree::cbor::MapReader &map);
 
-} // namespace cqasm::v3x::instruction
+} // namespace primitives
+
+} // namespace cqasm::v3x

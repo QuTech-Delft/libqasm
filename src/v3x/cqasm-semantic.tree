@@ -31,7 +31,7 @@ namespace semantic
 statement {
     variable {
         name: cqasm::v3x::primitives::Str;
-        type: external One<cqasm::v3x::types::Node>;
+        typ: external One<cqasm::v3x::types::Node>;
     }
 
     instruction_base {
@@ -48,8 +48,8 @@ statement {
         }
 
         measure_instruction {
-            bits: external One<cqasm::v3x::values::Variable>;
-            qubits: external One<cqasm::v3x::values::Variable>;
+            bits: One<variable>;
+            qubits: One<variable>;
         }
     }
 }
