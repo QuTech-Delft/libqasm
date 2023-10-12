@@ -9,8 +9,7 @@
 #include "cqasm-types.hpp"
 #include "cqasm-values.hpp"
 
-namespace cqasm {
-namespace v1x {
+namespace cqasm::v1x {
 
 /**
  * Namespace for the \ref instruction::Instruction "Instruction" class and
@@ -135,6 +134,7 @@ std::ostream &operator<<(std::ostream &os, const InstructionRef &insn);
 
 } // namespace instruction
 
+
 namespace primitives {
 
 template <>
@@ -143,5 +143,5 @@ template <>
 instruction::InstructionRef deserialize(const ::tree::cbor::MapReader &map);
 
 } // namespace primitives
-} // namespace v1x
-} // namespace cqasm
+
+} // namespace cqasm::v1x

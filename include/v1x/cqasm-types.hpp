@@ -7,13 +7,11 @@
 
 #include "v1x/cqasm-types-gen.hpp"
 
-namespace cqasm {
-namespace v1x {
 
 /**
  * Namespace for the classes representing the types available within cQASM.
  */
-namespace types {
+namespace cqasm::v1x::types {
 
 /**
  * A cQASM type.
@@ -66,6 +64,4 @@ std::ostream &operator<<(std::ostream &os, const Type &type);
  */
 std::ostream &operator<<(std::ostream &os, const Types &types);
 
-} // namespace types
-} // namespace v1x
-} // namespace cqasm
+} // namespace cqasm::v1x::types
