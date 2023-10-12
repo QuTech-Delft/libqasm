@@ -26,10 +26,10 @@ type_base {
     qubit {}
     bit {}
 
-    array {
+    qubit_array {
         size: cqasm::v3x::primitives::Int;
-
-        qubit_array {}
-        bit_array {}
+    }
+    bit_array {
+        size: cqasm::v3x::primitives::Int;
     }
 }
