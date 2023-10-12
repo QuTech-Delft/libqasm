@@ -5,8 +5,9 @@
 #include "v1x/cqasm-instruction.hpp"
 #include "v1x/cqasm-semantic.hpp"
 
+namespace cqasm::v1x {
 
-namespace cqasm::v1x::instruction {
+namespace instruction {
 
 /**
  * Creates a new instruction. param_types is a shorthand type specification
@@ -110,4 +111,6 @@ instruction::InstructionRef deserialize(const ::tree::cbor::MapReader &map) {
     return insn;
 }
 
-}  // namespace cqasm::v1x::instruction
+}  // namespace primitives
+
+}  // namespace cqasm::v1x

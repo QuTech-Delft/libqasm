@@ -9,11 +9,14 @@
 #include "cqasm-types.hpp"
 #include "cqasm-values.hpp"
 
+namespace cqasm {
+namespace v1x {
+
 /**
  * Namespace for the \ref instruction::Instruction "Instruction" class and
  * helper types.
  */
-namespace cqasm::v1x::instruction {
+namespace instruction {
 
 /**
  * Representation of an available instruction (also known as gate) in the
@@ -139,4 +142,6 @@ void serialize(const instruction::InstructionRef &obj, ::tree::cbor::MapWriter &
 template <>
 instruction::InstructionRef deserialize(const ::tree::cbor::MapReader &map);
 
-} // namespace cqasm::v1x::instruction
+} // namespace primitives
+} // namespace v1x
+} // namespace cqasm
