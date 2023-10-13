@@ -11,7 +11,7 @@
 
 
 /**
- * Toplevel namespace with entry points for the new API.
+ * Top level namespace with entry points for the new API.
  */
 namespace cqasm {
 
@@ -22,8 +22,8 @@ namespace cqasm {
 namespace v1x {
 
 /**
- * Parses and analyzes the given file path with the default analyzer, dumping error
- * messages to stderr and throwing an analyzer::AnalysisFailed on failure.
+ * Parses and analyzes the given file path with the default analyzer,
+ * dumping error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
  */
 tree::One<semantic::Program> analyze(
     const std::string &file_path,
@@ -42,8 +42,8 @@ tree::One<semantic::Program> analyze(
 );
 
 /**
- * Parses and analyzes the given string with the default analyzer, dumping
- * error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
+ * Parses and analyzes the given string with the default analyzer,
+ * dumping error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
  * The optional file_name is only used for error messages.
  */
 tree::One<semantic::Program> analyze_string(
@@ -53,8 +53,7 @@ tree::One<semantic::Program> analyze_string(
 );
 
 /**
- * Constructs an Analyzer object with the defaults for cQASM 1.0 already loaded
- * into it.
+ * Constructs an Analyzer object with the defaults for cQASM 1.0 already loaded into it.
  */
 analyzer::Analyzer default_analyzer(
     const std::string &api_version = "1.0"
