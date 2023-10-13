@@ -1,7 +1,6 @@
 /** \file
- * This file contains the \ref cqasm::v1x::instruction::Instruction "Instruction"
- * class and support types, each instance representing an instruction
- * (also known as gate) supported by the user.
+ * This file contains the \ref cqasm::v3x::instruction::Instruction "Instruction" class and support types,
+ * each instance representing an instruction (also known as gate) supported by the user.
  */
 
 #pragma once

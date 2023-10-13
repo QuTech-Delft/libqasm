@@ -66,16 +66,17 @@ statement {
     variable {
         name: One<identifier>;
         typ: One<identifier>;
+        size: Maybe<integer_literal>;
     }
 
     instruction {
         name: One<identifier>;
         operands: One<expression_list>;
+    }
 
-        measurement_instruction {
-            bits: One<expression>;
-            qubits: One<expression>;
-        }
+    measurement_instruction {
+        bits: One<expression>;
+        qubits: One<expression>;
     }
 }
 

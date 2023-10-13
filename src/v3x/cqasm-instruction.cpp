@@ -1,5 +1,5 @@
 /** \file
- * Implementation for \ref include/v1x/cqasm-instruction.hpp "v1x/cqasm-instruction.hpp".
+ * Implementation for \ref include/v3x/cqasm-instruction.hpp "v3x/cqasm-instruction.hpp".
  */
 
 #include "v3x/cqasm-instruction.hpp"
@@ -41,7 +41,9 @@ std::ostream &operator<<(std::ostream &os, const Instruction &insn) {
  * Stream << overload for instruction references.
  */
 std::ostream &operator<<(std::ostream &os, const InstructionRef &insn) {
-    return os << (insn.empty() ? "unresolved" : *insn);
+    return insn.empty()
+        ? os << "unresolved"
+        : os << *insn;
 }
 
 }  // namespace instruction

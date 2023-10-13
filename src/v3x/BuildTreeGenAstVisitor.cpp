@@ -1,5 +1,5 @@
 #include "cqasm-tree.hpp"
-#include "v1x/cqasm-ast.hpp"
+#include "v3x/cqasm-ast.hpp"
 #include "v3x/BuildTreeGenAstVisitor.hpp"
 
 #include <algorithm>  // for_each
@@ -12,7 +12,7 @@
 
 namespace cqasm::v3x::parser {
 
-using namespace cqasm::v1x::ast;
+using namespace cqasm::v3x::ast;
 using namespace cqasm::error;
 
 std::int64_t BuildTreeGenAstVisitor::get_int_value(size_t line, size_t char_position_in_line, const std::string &text) {
@@ -102,30 +102,33 @@ std::any BuildTreeGenAstVisitor::visitVariable(CqasmParser::VariableContext *con
 */
 
 std::any BuildTreeGenAstVisitor::visitQubitTypeDefinition(CqasmParser::QubitTypeDefinitionContext *context) {
-        (void) context;
-        // New QubitRegister node (size, name)
-        throw std::runtime_error{ "Unimplemented" };
+    return cqasm::tree::make<Variable>(
+        cqasm::tree::make<Identifier>(context->ID()->getText()),
+        cqasm::tree::make<Identifier>(context->QUBIT_TYPE()->getText()),
+        cqasm::tree::make<IntegerLiteral>(get_int_value(context->INT()))
+    );
 }
 
 std::any BuildTreeGenAstVisitor::visitBitTypeDefinition(CqasmParser::BitTypeDefinitionContext *context) {
-    (void) context;
-    // New QubitRegister node (size, name)
-    // new BitRegister node (size, name)
-    throw std::runtime_error{ "Unimplemented" };
+    return cqasm::tree::make<Variable>(
+        cqasm::tree::make<Identifier>(context->ID()->getText()),
+        cqasm::tree::make<Identifier>(context->BIT_TYPE()->getText()),
+        cqasm::tree::make<IntegerLiteral>(get_int_value(context->INT()))
+    );
 }
 
 std::any BuildTreeGenAstVisitor::visitMeasureInstruction(CqasmParser::MeasureInstructionContext *context) {
-    (void) context;
-    // New MeasureInstruction node (list of qubits, list of bits)
-    throw std::runtime_error{ "Unimplemented" };
+    auto ret = cqasm::tree::make<MeasurementInstruction>();
+    ret->bits = std::any_cast<One<Expression>>(context->expression(0)->accept(this));
+    ret->qubits = std::any_cast<One<Expression>>(context->expression(1)->accept(this));
+    return ret;
 }
 
 std::any BuildTreeGenAstVisitor::visitInstruction(CqasmParser::InstructionContext *context) {
-    auto ret = cqasm::tree::make<Bundle>();
-    auto instruction = cqasm::tree::make<Instruction>();
-    instruction->name = cqasm::tree::make<Identifier>(context->ID()->getText());
-    instruction->operands = std::any_cast<One<ExpressionList>>(visitExpressionList(context->expressionList()));
-    ret->items.add(instruction);
+    auto ret = cqasm::tree::make<Instruction>(
+        cqasm::tree::make<Identifier>(context->ID()->getText()),
+        std::any_cast<One<ExpressionList>>(visitExpressionList(context->expressionList()))
+    );
     return One<Statement>{ ret };
 }
 
@@ -139,19 +142,26 @@ std::any BuildTreeGenAstVisitor::visitExpressionList(CqasmParser::ExpressionList
 }
 
 std::any BuildTreeGenAstVisitor::visitIndexList(CqasmParser::IndexListContext *context) {
-    // TODO: rewrite
     auto ret = cqasm::tree::make<IndexList>();
     const auto &index_entries = context->indexEntry();
     std::for_each(index_entries.begin(), index_entries.end(), [this, &ret](auto &index_entry_ctx) {
-        auto index_item = cqasm::tree::make<IndexItem>(std::any_cast<One<Expression>>(index_entry_ctx->accept(this)));
-        ret->items.add(index_item);
+        auto index_entry = std::any_cast<One<IndexEntry>>(index_entry_ctx->accept(this));
+        ret->items.add(index_entry);
     });
     return ret;
 }
 
-std::any BuildTreeGenAstVisitor::visitIndexEntry(CqasmParser::IndexEntryContext *context) {
-    (void) context;
-    throw std::runtime_error{ "Unimplemented" };
+std::any BuildTreeGenAstVisitor::visitIndexItem(CqasmParser::IndexItemContext *context) {
+    return One<IndexEntry>{ cqasm::tree::make<IndexItem>(
+        std::any_cast<One<Expression>>(context->expression()->accept(this))
+    )};
+}
+
+std::any BuildTreeGenAstVisitor::visitIndexRange(CqasmParser::IndexRangeContext *context) {
+    return One<IndexEntry>{ cqasm::tree::make<IndexRange>(
+        std::any_cast<One<Expression>>(context->expression(0)->accept(this)),
+        std::any_cast<One<Expression>>(context->expression(1)->accept(this))
+    )};
 }
 
 std::any BuildTreeGenAstVisitor::visitInt(CqasmParser::IntContext *context) {

@@ -14,8 +14,8 @@ program:
 version: VERSION VERSION_NUMBER;
 
 statement:
-    QUBIT_TYPE (OPEN_BRACKET indexList CLOSE_BRACKET)? ID  # qubitTypeDefinition
-    | BIT_TYPE (OPEN_BRACKET indexList CLOSE_BRACKET)? ID  # bitTypeDefinition
+    QUBIT_TYPE (OPEN_BRACKET INT CLOSE_BRACKET)? ID  # qubitTypeDefinition
+    | BIT_TYPE (OPEN_BRACKET INT CLOSE_BRACKET)? ID  # bitTypeDefinition
     | expression EQUAL MEASURE expression  # measureInstruction
     | ID expressionList  # instruction
     ;
@@ -24,7 +24,10 @@ expressionList: expression (COMMA expression)*;
 
 indexList: indexEntry (COMMA indexEntry)*;
 
-indexEntry: expression (COLON expression)?;
+indexEntry:
+    expression  # indexItem
+    | expression COLON expression  # indexRange
+    ;
 
 expression:
     INT  # int

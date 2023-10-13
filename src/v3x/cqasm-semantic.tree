@@ -32,6 +32,7 @@ statement {
     variable {
         name: cqasm::v3x::primitives::Str;
         typ: external One<cqasm::v3x::types::Node>;
+        size: external Maybe<cqasm::v3x::values::ConstInt>;
     }
 
     instruction_base {
@@ -61,7 +62,6 @@ version {
 program {
     # File version
     version: One<version>;
-
 
     variables: Any<variable>;
 

@@ -28,7 +28,8 @@ public:
     std::any visitInstruction(CqasmParser::InstructionContext *context) override;
     std::any visitExpressionList(CqasmParser::ExpressionListContext *context) override;
     std::any visitIndexList(CqasmParser::IndexListContext *context) override;
-    std::any visitIndexEntry(CqasmParser::IndexEntryContext *context) override;
+    std::any visitIndexItem(CqasmParser::IndexItemContext *context) override;
+    std::any visitIndexRange(CqasmParser::IndexRangeContext *context) override;
     std::any visitInt(CqasmParser::IntContext *context) override;
     std::any visitFloat(CqasmParser::FloatContext *context) override;
     std::any visitId(CqasmParser::IdContext *context) override;

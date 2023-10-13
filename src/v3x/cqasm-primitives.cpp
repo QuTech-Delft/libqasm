@@ -1,5 +1,5 @@
 /** \file
- * Implementation for \ref include/v1x/cqasm-primitives.hpp "v1x/cqasm-primitives.hpp".
+ * Implementation for \ref include/v3x/cqasm-primitives.hpp "v3x/cqasm-primitives.hpp".
  */
 
 #include "v3x/cqasm-primitives.hpp"
