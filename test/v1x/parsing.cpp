@@ -1,4 +1,6 @@
 #include "parsing.hpp"
+#include "test-register.hpp"
+#include "utils.hpp"
 #include "v1x/cqasm.hpp"
 #include "v1x/cqasm-parse-helper.hpp"
 #include "v3x/cqasm-parse-helper.hpp"
@@ -12,35 +14,11 @@
 #include <string>
 
 
+namespace cqasm::test {
+
 namespace cq1x = cqasm::v1x;
 namespace cq3x = cqasm::v3x;
 namespace fs = std::filesystem;
-
-
-/**
- * Reads the given file into the given string buffer and returns true if it
- * exists, otherwise do nothing with the buffer and return false.
- */
-bool read_file(const fs::path &file_path, std::string &output) {
-    std::ifstream ifs(file_path);
-    if (!ifs.is_open()) {
-        return false;
-    }
-    output.clear();
-    ifs.seekg(0, std::ios::end);
-    output.reserve(ifs.tellg());
-    ifs.seekg(0, std::ios::beg);
-    output.assign(std::istreambuf_iterator<char>(ifs), std::istreambuf_iterator<char>());
-    return true;
-}
-
-/**
- * Overwrites or creates the given file with the given string.
- */
-void write_file(const fs::path &file_path, const std::string &input) {
-    std::ofstream stream(file_path, std::ios::binary | std::ios::out);  // always write LF, i.e., avoid CR+LF in Windows
-    stream << input;
-}
 
 /**
  * Tests the default parsing pipeline, varying only the input files, and
@@ -62,8 +40,6 @@ public:
 
         if (auto compare_result = version.compare("1.2"); compare_result <= 0) {
             parse_result = cq1x::parser::parse_string(input, "input.cq");
-        } else if (compare_result = version.compare("3.0"); compare_result == 0) {
-            parse_result = cq3x::parser::parse_string(input, "input.cq");
         } else {
             parse_result.errors.push_back(fmt::format("detected version {}", version));
         }
@@ -89,7 +65,7 @@ public:
         }
 
         // Try different API levels
-        for (const auto &api_version : std::vector<std::string>( { "3.0" } )) {
+        for (const auto &api_version : std::vector<std::string>( { "1.0", "1.1", "1.2" } )) {
             // If there were no errors, try semantic analysis.
             // We analyze using the functions, error models, and instruction set available in the compatibility layer,
             // though this is copy-pasted in here
@@ -107,7 +83,7 @@ public:
             analyzer.register_instruction("z", "Q");
             analyzer.register_instruction("i", "Q");
             analyzer.register_instruction("h", "Q");
-            analyzer.register_instruction("X90", "Q");  // V3-MVP: changed to uppercase for res/v1x/v3x-mvp/program tests
+            analyzer.register_instruction("x90", "Q");  // V3-MVP: changed to uppercase for res/v1x/v3x-mvp/program tests
             analyzer.register_instruction("y90", "Q");
             analyzer.register_instruction("mx90", "Q");
             analyzer.register_instruction("my90", "Q");
@@ -127,7 +103,7 @@ public:
             analyzer.register_instruction("rx", "Qr");
             analyzer.register_instruction("ry", "Qr");
             analyzer.register_instruction("rz", "Qr");
-            analyzer.register_instruction("CNOT", "QQ");  // V3-MVP: changed to uppercase for res/v1x/v3x-mvp/program tests
+            analyzer.register_instruction("cnot", "QQ");  // V3-MVP: changed to uppercase for res/v1x/v3x-mvp/program tests
             analyzer.register_instruction("cz", "QQ");
             analyzer.register_instruction("swap", "QQ");
             analyzer.register_instruction("cr", "QQr");
@@ -225,52 +201,12 @@ public:
     }
 };
 
-void register_v1x_tests(const fs::path& subdir) {
-    // Discover the tests.
-    // They should live in a directory tree with the following structure:
-    //
-    // <CWD>
-    // |-  res/v1x/<subdir>
-    //     |- <suite-name>                   test suite directory
-    //     |   |- <test-name>                test case directory
-    //     |   |   |- input.cq               the input file
-    //     |   |   |- ast.golden             the golden AST or parse error dump
-    //     |   |   |- [ast.actual.txt]       output file with the actual data
-    //     |   |   |- [semantic.golden.txt]  the golden semantic tree or analysis error dump,
-    //     |   |   |                         if parsing should succeed
-    //     |   |   '- [semantic.actual.txt]  output file with the actual data, if parsing actually succeeded
-    //     |   |- ...                        other test case directories
-    //     |   :
-    //     |- ...                            other test suite directories
-    //     :
-    auto subdir_path = fs::path{ "res" } / "v1x" / subdir;
-    if (!fs::exists(subdir_path)) {
-        throw std::runtime_error(fmt::format("failed to open v1x tests subdir '{}'", subdir_path.generic_string()));
-    } else if (!fs::is_directory(subdir_path)) {
-        throw std::runtime_error(fmt::format("'{}' is not a directory", subdir_path.generic_string()));
-    }
-    for (const fs::directory_entry& suite: fs::directory_iterator(subdir_path)) {
-        if (fs::is_directory(suite)) {
-            auto suite_name = suite.path().filename().string();
-            for (const fs::directory_entry& test: fs::directory_iterator(suite.path())) {
-                auto test_name = test.path().filename().string();
-                if (fs::is_directory(test)) {
-                    auto input_cq_path = test.path() / "input.cq";
-                    if (fs::exists(input_cq_path)) {
-                        ::testing::RegisterTest(
-                            suite_name.c_str(), test_name.c_str(),
-                            nullptr, nullptr,
-                            __FILE__, __LINE__,
-                            [=]() -> ParsingTest* { return new ParsingTest(test.path()); });
-                    }
-                }
-            }
-        }
-    }
-}
 
 void register_v1x_tests() {
-    //register_v1x_tests("parsing");
-    //register_v1x_tests("toy-v1x-parsing");
-    register_v1x_tests("v3x-mvp");
+    register_tests(
+        fs::path{ "res" } / "v1x" / "parsing",
+        [=](fs::path test_path) -> ParsingTest* { return new ParsingTest(std::move(test_path)); }
+    );
 }
+
+}  // namespace cqasm::test
