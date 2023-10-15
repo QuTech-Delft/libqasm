@@ -1,2 +1,0 @@
-ERROR
-input.cq:2:5: mismatched input '<EOF>' expecting '='

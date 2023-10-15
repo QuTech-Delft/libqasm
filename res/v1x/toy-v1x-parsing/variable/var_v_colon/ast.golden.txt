@@ -1,2 +1,0 @@
-ERROR
-input.cq:2:7: missing IDENTIFIER at '<EOF>'

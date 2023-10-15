@@ -1,2 +1,0 @@
-ERROR
-input.cq:2:8: mismatched input '<EOF>' expecting {INTEGER_LITERAL, FLOAT_LITERAL, IDENTIFIER}

@@ -1,2 +1,0 @@
-ERROR
-input.cq:5:11: extraneous input ',' expecting {INTEGER_LITERAL, FLOAT_LITERAL, IDENTIFIER}
