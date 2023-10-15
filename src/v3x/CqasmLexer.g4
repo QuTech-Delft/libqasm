@@ -75,4 +75,4 @@ fragment Letter: [a-zA-Z_];
 
 mode VERSION_STATEMENT;
 VS_WS: [ \t]+ -> skip;
-VERSION_NUMBER: Digit '.' Digit -> popMode;
+VERSION_NUMBER: Digit ('.' Digit)? -> popMode;

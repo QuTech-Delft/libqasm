@@ -3,7 +3,6 @@
 #include "utils.hpp"
 #include "v1x/cqasm.hpp"
 #include "v1x/cqasm-parse-helper.hpp"
-#include "v3x/cqasm-parse-helper.hpp"
 
 #include <filesystem>
 #include <fmt/format.h>
@@ -17,7 +16,6 @@
 namespace cqasm::test {
 
 namespace cq1x = cqasm::v1x;
-namespace cq3x = cqasm::v3x;
 namespace fs = std::filesystem;
 
 /**

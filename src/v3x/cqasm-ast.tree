@@ -74,7 +74,7 @@ statement {
         operands: One<expression_list>;
     }
 
-    measurement_instruction {
+    measure_statement {
         bits: One<expression>;
         qubits: One<expression>;
     }

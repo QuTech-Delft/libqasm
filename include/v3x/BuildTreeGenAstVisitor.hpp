@@ -24,7 +24,7 @@ public:
     std::any visitVersion(CqasmParser::VersionContext *context) override;
     std::any visitQubitTypeDefinition(CqasmParser::QubitTypeDefinitionContext *context) override;
     std::any visitBitTypeDefinition(CqasmParser::BitTypeDefinitionContext *context) override;
-    std::any visitMeasureInstruction(CqasmParser::MeasureInstructionContext *context) override;
+    std::any visitMeasureStatement(CqasmParser::MeasureStatementContext *context) override;
     std::any visitInstruction(CqasmParser::InstructionContext *context) override;
     std::any visitExpressionList(CqasmParser::ExpressionListContext *context) override;
     std::any visitIndexList(CqasmParser::IndexListContext *context) override;

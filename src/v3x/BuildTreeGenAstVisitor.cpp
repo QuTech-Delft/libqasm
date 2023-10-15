@@ -79,28 +79,6 @@ std::any BuildTreeGenAstVisitor::visitVersion(CqasmParser::VersionContext *conte
     return ret;
 }
 
-/*
-std::any BuildTreeGenAstVisitor::visitQubitDefinition(CqasmParser::QubitDefinitionContext *context) {
-    return Maybe<Expression>{
-        std::any_cast<One<Expression>>(context->expression()->accept(this)).get_ptr()
-    };
-}
-
-std::any BuildTreeGenAstVisitor::visitMapping(CqasmParser::MappingContext *context) {
-    auto ret = cqasm::tree::make<Mapping>();
-    ret->alias = cqasm::tree::make<Identifier>(context->ID()->getText());
-    ret->expr = std::any_cast<One<Expression>>(context->expression()->accept(this));
-    return One<Statement>{ ret };
-}
-
-std::any BuildTreeGenAstVisitor::visitVariable(CqasmParser::VariableContext *context) {
-    auto ret = cqasm::tree::make<Variables>();
-    ret->names = Many<Identifier>{ cqasm::tree::make<Identifier>(context->ID(0)->getText()) };
-    ret->typ = cqasm::tree::make<Identifier>(context->ID(1)->getText());
-    return One<Statement>{ ret };
-}
-*/
-
 std::any BuildTreeGenAstVisitor::visitQubitTypeDefinition(CqasmParser::QubitTypeDefinitionContext *context) {
     return cqasm::tree::make<Variable>(
         cqasm::tree::make<Identifier>(context->ID()->getText()),
@@ -117,8 +95,8 @@ std::any BuildTreeGenAstVisitor::visitBitTypeDefinition(CqasmParser::BitTypeDefi
     );
 }
 
-std::any BuildTreeGenAstVisitor::visitMeasureInstruction(CqasmParser::MeasureInstructionContext *context) {
-    auto ret = cqasm::tree::make<MeasurementInstruction>();
+std::any BuildTreeGenAstVisitor::visitMeasureStatement(CqasmParser::MeasureStatementContext *context) {
+    auto ret = cqasm::tree::make<MeasureStatement>();
     ret->bits = std::any_cast<One<Expression>>(context->expression(0)->accept(this));
     ret->qubits = std::any_cast<One<Expression>>(context->expression(1)->accept(this));
     return ret;

@@ -23,13 +23,21 @@ namespace v3x
 namespace types
 
 type_base {
-    qubit {}
+    # Type of an integer (signed 64-bit)
+    int {}
+
+    # Type of a real number (IEEE double)
+    real {}
+
     bit {}
 
-    qubit_array {
+    bit_array {
         size: cqasm::v3x::primitives::Int;
     }
-    bit_array {
+
+    qubit {}
+
+    qubit_array {
         size: cqasm::v3x::primitives::Int;
     }
 }

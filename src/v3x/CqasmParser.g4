@@ -16,7 +16,7 @@ version: VERSION VERSION_NUMBER;
 statement:
     QUBIT_TYPE (OPEN_BRACKET INT CLOSE_BRACKET)? ID  # qubitTypeDefinition
     | BIT_TYPE (OPEN_BRACKET INT CLOSE_BRACKET)? ID  # bitTypeDefinition
-    | expression EQUAL MEASURE expression  # measureInstruction
+    | expression EQUAL MEASURE expression  # measureStatement
     | ID expressionList  # instruction
     ;
 
