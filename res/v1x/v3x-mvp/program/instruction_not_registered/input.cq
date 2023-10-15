@@ -1,5 +1,0 @@
-version 3.0
-
-qubit[3] q
-
-x90 q[1,2]

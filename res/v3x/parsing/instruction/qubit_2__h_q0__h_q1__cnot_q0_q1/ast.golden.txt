@@ -1,0 +1,160 @@
+SUCCESS
+Program(
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  num_qubits: <
+    IntegerLiteral(
+      value: 3
+    )
+  >
+  statements: <
+    StatementList(
+      items: [
+        Bundle(
+          items: [
+            Instruction(
+              name: <
+                Identifier(
+                  name: h
+                )
+              >
+              condition: -
+              operands: <
+                ExpressionList(
+                  items: [
+                    Index(
+                      expr: <
+                        Identifier(
+                          name: q
+                        )
+                      >
+                      indices: <
+                        IndexList(
+                          items: [
+                            IndexItem(
+                              index: <
+                                IntegerLiteral(
+                                  value: 0
+                                )
+                              >
+                            )
+                          ]
+                        )
+                      >
+                    )
+                  ]
+                )
+              >
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle(
+          items: [
+            Instruction(
+              name: <
+                Identifier(
+                  name: h
+                )
+              >
+              condition: -
+              operands: <
+                ExpressionList(
+                  items: [
+                    Index(
+                      expr: <
+                        Identifier(
+                          name: q
+                        )
+                      >
+                      indices: <
+                        IndexList(
+                          items: [
+                            IndexItem(
+                              index: <
+                                IntegerLiteral(
+                                  value: 1
+                                )
+                              >
+                            )
+                          ]
+                        )
+                      >
+                    )
+                  ]
+                )
+              >
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle(
+          items: [
+            Instruction(
+              name: <
+                Identifier(
+                  name: cnot
+                )
+              >
+              condition: -
+              operands: <
+                ExpressionList(
+                  items: [
+                    Index(
+                      expr: <
+                        Identifier(
+                          name: q
+                        )
+                      >
+                      indices: <
+                        IndexList(
+                          items: [
+                            IndexItem(
+                              index: <
+                                IntegerLiteral(
+                                  value: 0
+                                )
+                              >
+                            )
+                          ]
+                        )
+                      >
+                    )
+                    Index(
+                      expr: <
+                        Identifier(
+                          name: q
+                        )
+                      >
+                      indices: <
+                        IndexList(
+                          items: [
+                            IndexItem(
+                              index: <
+                                IntegerLiteral(
+                                  value: 1
+                                )
+                              >
+                            )
+                          ]
+                        )
+                      >
+                    )
+                  ]
+                )
+              >
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

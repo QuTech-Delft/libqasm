@@ -1,0 +1,39 @@
+SUCCESS
+Program(
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  num_qubits: -
+  statements: <
+    StatementList(
+      items: [
+        Bundle(
+          items: [
+            Instruction(
+              name: <
+                Identifier(
+                  name: v
+                )
+              >
+              condition: -
+              operands: <
+                ExpressionList(
+                  items: [
+                    IntegerLiteral(
+                      value: 1
+                    )
+                  ]
+                )
+              >
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+
