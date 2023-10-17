@@ -53,16 +53,7 @@ double BuildTreeGenAstVisitor::get_float_value(antlr4::tree::TerminalNode *node)
 std::any BuildTreeGenAstVisitor::visitProgram(CqasmParser::ProgramContext *context) {
     auto ret = cqasm::tree::make<Program>();
     ret->version = std::any_cast<One<Version>>(visitVersion(context->version()));
-    /*
-    if (auto qubit_definition_ctx = context->qubitDefinition()) {
-        ret->num_qubits = std::any_cast<Maybe<Expression>>(visitQubitDefinition(qubit_definition_ctx));
-    }
-    */
-    ret->statements = cqasm::tree::make<StatementList>();
-    const auto &statements = context->statement();
-    std::for_each(statements.begin(), statements.end(), [this, &ret](auto &statement_ctx) {
-        ret->statements->items.add(std::any_cast<One<Statement>>(statement_ctx->accept(this)));
-    });
+    ret->statements = std::any_cast<One<StatementList>>(visitStatements(context->statements()));
     return ret;
 }
 
@@ -70,36 +61,61 @@ std::any BuildTreeGenAstVisitor::visitVersion(CqasmParser::VersionContext *conte
     auto ret = cqasm::tree::make<Version>();
     const auto &token = context->VERSION_NUMBER()->getSymbol();
     const auto &text = context->VERSION_NUMBER()->getText();
-    const std::regex pattern{ "([0-9]+)\\.([0-9]+)" };
+    const std::regex pattern{ "([0-9]+)(?:\\.([0-9]+))?" };
     std::smatch matches{};
     std::regex_match(text, matches, pattern);
     ret->items.push_back(get_int_value(token->getLine(), token->getCharPositionInLine(), matches[1]));
-    ret->items.push_back(get_int_value(token->getLine(), token->getCharPositionInLine() + matches.position(2),
-        matches[2]));
+    if (matches[2].matched) {
+        ret->items.push_back(get_int_value(token->getLine(), token->getCharPositionInLine() + matches.position(2),
+            matches[2]));
+    }
     return ret;
 }
 
+std::any BuildTreeGenAstVisitor::visitStatements(CqasmParser::StatementsContext *context) {
+    auto ret = cqasm::tree::make<StatementList>();
+    const auto &statements = context->statement();
+    std::for_each(statements.begin(), statements.end(), [this, &ret](auto &statement_ctx) {
+        ret->items.add(std::any_cast<One<Statement>>(statement_ctx->accept(this)));
+    });
+    return ret;
+}
+
+std::any BuildTreeGenAstVisitor::visitStatementSeparator(CqasmParser::StatementSeparatorContext *) {
+    return {};
+}
+
 std::any BuildTreeGenAstVisitor::visitQubitTypeDefinition(CqasmParser::QubitTypeDefinitionContext *context) {
-    return cqasm::tree::make<Variable>(
+    auto int_ctx = context->INT();
+    auto size = (int_ctx)
+        ? get_int_value(int_ctx)
+        : std::int64_t{};
+    auto ret = cqasm::tree::make<Variable>(
         cqasm::tree::make<Identifier>(context->ID()->getText()),
         cqasm::tree::make<Identifier>(context->QUBIT_TYPE()->getText()),
-        cqasm::tree::make<IntegerLiteral>(get_int_value(context->INT()))
+        cqasm::tree::make<IntegerLiteral>(size)
     );
+    return One<Statement>{ ret };
 }
 
 std::any BuildTreeGenAstVisitor::visitBitTypeDefinition(CqasmParser::BitTypeDefinitionContext *context) {
-    return cqasm::tree::make<Variable>(
+    auto int_ctx = context->INT();
+    auto size = (int_ctx)
+        ? get_int_value(int_ctx)
+        : std::int64_t{};
+    auto ret = cqasm::tree::make<Variable>(
         cqasm::tree::make<Identifier>(context->ID()->getText()),
         cqasm::tree::make<Identifier>(context->BIT_TYPE()->getText()),
-        cqasm::tree::make<IntegerLiteral>(get_int_value(context->INT()))
+        cqasm::tree::make<IntegerLiteral>(size)
     );
+    return One<Statement>{ ret };
 }
 
 std::any BuildTreeGenAstVisitor::visitMeasureStatement(CqasmParser::MeasureStatementContext *context) {
     auto ret = cqasm::tree::make<MeasureStatement>();
     ret->bits = std::any_cast<One<Expression>>(context->expression(0)->accept(this));
     ret->qubits = std::any_cast<One<Expression>>(context->expression(1)->accept(this));
-    return ret;
+    return One<Statement>{ ret };
 }
 
 std::any BuildTreeGenAstVisitor::visitInstruction(CqasmParser::InstructionContext *context) {

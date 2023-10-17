@@ -5,13 +5,13 @@ options {
 }
 
 // Actual grammar start
-program:
-    version (NEW_LINE | SEMICOLON)
-    (statement (NEW_LINE | SEMICOLON))*
-    EOF
-    ;
+program: statementSeparator* version statements statementSeparator* EOF;
 
 version: VERSION VERSION_NUMBER;
+
+statements: (statementSeparator+ statement)*;
+
+statementSeparator: NEW_LINE | SEMICOLON;
 
 statement:
     QUBIT_TYPE (OPEN_BRACKET INT CLOSE_BRACKET)? ID  # qubitTypeDefinition
