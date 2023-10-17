@@ -1,2 +1,2 @@
 ERROR
-input.cq:5:10: mismatched input '<EOF>' expecting {INTEGER_LITERAL, FLOAT_LITERAL, IDENTIFIER}
+input.cq:7:10: mismatched input '\n' expecting {INT, FLOAT, ID}

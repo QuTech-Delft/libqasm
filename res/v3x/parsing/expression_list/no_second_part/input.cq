@@ -1,5 +1,7 @@
 version 3
+
 qubits 3
+
 h q[0]
 h q[1]
 cnot q[0],

@@ -1,2 +1,2 @@
 ERROR
-input.cq:5:17: mismatched input '<EOF>' expecting {INTEGER_LITERAL, FLOAT_LITERAL, IDENTIFIER}
+input.cq:7:14: extraneous input 'abc' expecting {<EOF>, NEW_LINE, ';'}

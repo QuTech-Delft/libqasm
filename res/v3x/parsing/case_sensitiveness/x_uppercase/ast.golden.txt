@@ -1,0 +1,48 @@
+SUCCESS
+Program(
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  statements: <
+    StatementList(
+      items: [
+        Variable(
+          name: <
+            Identifier(
+              name: q
+            )
+          >
+          typ: <
+            Identifier(
+              name: qubit
+            )
+          >
+          size: <
+            IntegerLiteral(
+              value: 0
+            )
+          >
+        )
+        Instruction(
+          name: <
+            Identifier(
+              name: X
+            )
+          >
+          operands: <
+            ExpressionList(
+              items: [
+                Identifier(
+                  name: q
+                )
+              ]
+            )
+          >
+        )
+      ]
+    )
+  >
+)
+

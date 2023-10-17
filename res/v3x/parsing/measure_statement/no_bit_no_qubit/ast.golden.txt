@@ -1,0 +1,2 @@
+ERROR
+input.cq:4:0: extraneous input 'measure' expecting {<EOF>, NEW_LINE, ';'}

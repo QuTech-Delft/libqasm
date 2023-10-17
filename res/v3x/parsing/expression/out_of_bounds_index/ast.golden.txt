@@ -5,53 +5,58 @@ Program(
       items: 3
     )
   >
-  num_qubits: <
-    IntegerLiteral(
-      value: 3
-    )
-  >
   statements: <
     StatementList(
       items: [
-        Bundle(
-          items: [
-            Instruction(
-              name: <
-                Identifier(
-                  name: x
-                )
-              >
-              condition: -
-              operands: <
-                ExpressionList(
-                  items: [
-                    Index(
-                      expr: <
-                        Identifier(
-                          name: q
-                        )
-                      >
-                      indices: <
-                        IndexList(
-                          items: [
-                            IndexItem(
-                              index: <
-                                IntegerLiteral(
-                                  value: 3
-                                )
-                              >
-                            )
-                          ]
-                        )
-                      >
-                    )
-                  ]
-                )
-              >
-              annotations: []
+        Variable(
+          name: <
+            Identifier(
+              name: q
             )
-          ]
-          annotations: []
+          >
+          typ: <
+            Identifier(
+              name: qubit
+            )
+          >
+          size: <
+            IntegerLiteral(
+              value: 3
+            )
+          >
+        )
+        Instruction(
+          name: <
+            Identifier(
+              name: x
+            )
+          >
+          operands: <
+            ExpressionList(
+              items: [
+                Index(
+                  expr: <
+                    Identifier(
+                      name: q
+                    )
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexItem(
+                          index: <
+                            IntegerLiteral(
+                              value: 3
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
+                )
+              ]
+            )
+          >
         )
       ]
     )

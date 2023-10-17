@@ -1,0 +1,61 @@
+SUCCESS
+Program(
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  statements: <
+    StatementList(
+      items: [
+        Variable(
+          name: <
+            Identifier(
+              name: q
+            )
+          >
+          typ: <
+            Identifier(
+              name: qubit
+            )
+          >
+          size: <
+            IntegerLiteral(
+              value: 0
+            )
+          >
+        )
+        Variable(
+          name: <
+            Identifier(
+              name: b
+            )
+          >
+          typ: <
+            Identifier(
+              name: bit
+            )
+          >
+          size: <
+            IntegerLiteral(
+              value: 0
+            )
+          >
+        )
+        MeasureStatement(
+          bits: <
+            Identifier(
+              name: b
+            )
+          >
+          qubits: <
+            Identifier(
+              name: q
+            )
+          >
+        )
+      ]
+    )
+  >
+)
+

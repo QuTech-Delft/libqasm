@@ -1,2 +1,2 @@
 ERROR
-input.cq:5:11: extraneous input ',' expecting {INTEGER_LITERAL, FLOAT_LITERAL, IDENTIFIER}
+input.cq:7:8: mismatched input 'abc' expecting {<EOF>, NEW_LINE, ';'}

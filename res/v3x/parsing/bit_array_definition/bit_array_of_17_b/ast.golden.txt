@@ -1,0 +1,32 @@
+SUCCESS
+Program(
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  statements: <
+    StatementList(
+      items: [
+        Variable(
+          name: <
+            Identifier(
+              name: b
+            )
+          >
+          typ: <
+            Identifier(
+              name: bit
+            )
+          >
+          size: <
+            IntegerLiteral(
+              value: 17
+            )
+          >
+        )
+      ]
+    )
+  >
+)
+

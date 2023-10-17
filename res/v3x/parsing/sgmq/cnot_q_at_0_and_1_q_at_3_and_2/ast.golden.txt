@@ -1,0 +1,99 @@
+SUCCESS
+Program(
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  statements: <
+    StatementList(
+      items: [
+        Variable(
+          name: <
+            Identifier(
+              name: q
+            )
+          >
+          typ: <
+            Identifier(
+              name: qubit
+            )
+          >
+          size: <
+            IntegerLiteral(
+              value: 4
+            )
+          >
+        )
+        Instruction(
+          name: <
+            Identifier(
+              name: cnot
+            )
+          >
+          operands: <
+            ExpressionList(
+              items: [
+                Index(
+                  expr: <
+                    Identifier(
+                      name: q
+                    )
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexItem(
+                          index: <
+                            IntegerLiteral(
+                              value: 0
+                            )
+                          >
+                        )
+                        IndexItem(
+                          index: <
+                            IntegerLiteral(
+                              value: 1
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
+                )
+                Index(
+                  expr: <
+                    Identifier(
+                      name: q
+                    )
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexItem(
+                          index: <
+                            IntegerLiteral(
+                              value: 3
+                            )
+                          >
+                        )
+                        IndexItem(
+                          index: <
+                            IntegerLiteral(
+                              value: 2
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
+                )
+              ]
+            )
+          >
+        )
+      ]
+    )
+  >
+)
+
