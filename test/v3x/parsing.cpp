@@ -34,13 +34,7 @@ public:
         std::string input{};
         ASSERT_TRUE(read_file(path_ / "input.cq", input));
         cq3x::parser::ParseResult parse_result{};
-        auto version = cqasm::version::parse_string(input, "input.cq");
-
-        if (auto compare_result = version.compare("3.0"); compare_result == 0) {
-            parse_result = cq3x::parser::parse_string(input, "input.cq");
-        } else {
-            parse_result.errors.push_back(fmt::format("detected version {}", version));
-        }
+        parse_result = cq3x::parser::parse_string(input, "input.cq");
 
         // Check the parse result
         std::string ast_actual_file_contents{};
