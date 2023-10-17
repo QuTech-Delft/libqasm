@@ -1,0 +1,2 @@
+ERROR
+input.cq:1:9: extraneous input '.' expecting {<EOF>, NEW_LINE, ';'}

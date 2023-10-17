@@ -1,2 +1,2 @@
 ERROR
-input.cq:2:1: mismatched input '<EOF>' expecting {INTEGER_LITERAL, FLOAT_LITERAL, IDENTIFIER}
+input.cq:3:1: no viable alternative at input 'x\n'

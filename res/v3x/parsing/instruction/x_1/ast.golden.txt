@@ -5,32 +5,24 @@ Program(
       items: 3
     )
   >
-  num_qubits: -
   statements: <
     StatementList(
       items: [
-        Bundle(
-          items: [
-            Instruction(
-              name: <
-                Identifier(
-                  name: x
-                )
-              >
-              condition: -
-              operands: <
-                ExpressionList(
-                  items: [
-                    IntegerLiteral(
-                      value: 1
-                    )
-                  ]
-                )
-              >
-              annotations: []
+        Instruction(
+          name: <
+            Identifier(
+              name: x
             )
-          ]
-          annotations: []
+          >
+          operands: <
+            ExpressionList(
+              items: [
+                IntegerLiteral(
+                  value: 1
+                )
+              ]
+            )
+          >
         )
       ]
     )

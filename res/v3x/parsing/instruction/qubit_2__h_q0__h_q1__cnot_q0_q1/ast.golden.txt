@@ -5,153 +5,144 @@ Program(
       items: 3
     )
   >
-  num_qubits: <
-    IntegerLiteral(
-      value: 3
-    )
-  >
   statements: <
     StatementList(
       items: [
-        Bundle(
-          items: [
-            Instruction(
-              name: <
-                Identifier(
-                  name: h
-                )
-              >
-              condition: -
-              operands: <
-                ExpressionList(
-                  items: [
-                    Index(
-                      expr: <
-                        Identifier(
-                          name: q
-                        )
-                      >
-                      indices: <
-                        IndexList(
-                          items: [
-                            IndexItem(
-                              index: <
-                                IntegerLiteral(
-                                  value: 0
-                                )
-                              >
-                            )
-                          ]
-                        )
-                      >
-                    )
-                  ]
-                )
-              >
-              annotations: []
+        Variable(
+          name: <
+            Identifier(
+              name: q
             )
-          ]
-          annotations: []
+          >
+          typ: <
+            Identifier(
+              name: qubit
+            )
+          >
+          size: <
+            IntegerLiteral(
+              value: 2
+            )
+          >
         )
-        Bundle(
-          items: [
-            Instruction(
-              name: <
-                Identifier(
-                  name: h
-                )
-              >
-              condition: -
-              operands: <
-                ExpressionList(
-                  items: [
-                    Index(
-                      expr: <
-                        Identifier(
-                          name: q
-                        )
-                      >
-                      indices: <
-                        IndexList(
-                          items: [
-                            IndexItem(
-                              index: <
-                                IntegerLiteral(
-                                  value: 1
-                                )
-                              >
-                            )
-                          ]
-                        )
-                      >
-                    )
-                  ]
-                )
-              >
-              annotations: []
+        Instruction(
+          name: <
+            Identifier(
+              name: h
             )
-          ]
-          annotations: []
+          >
+          operands: <
+            ExpressionList(
+              items: [
+                Index(
+                  expr: <
+                    Identifier(
+                      name: q
+                    )
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexItem(
+                          index: <
+                            IntegerLiteral(
+                              value: 0
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
+                )
+              ]
+            )
+          >
         )
-        Bundle(
-          items: [
-            Instruction(
-              name: <
-                Identifier(
-                  name: cnot
-                )
-              >
-              condition: -
-              operands: <
-                ExpressionList(
-                  items: [
-                    Index(
-                      expr: <
-                        Identifier(
-                          name: q
-                        )
-                      >
-                      indices: <
-                        IndexList(
-                          items: [
-                            IndexItem(
-                              index: <
-                                IntegerLiteral(
-                                  value: 0
-                                )
-                              >
-                            )
-                          ]
-                        )
-                      >
-                    )
-                    Index(
-                      expr: <
-                        Identifier(
-                          name: q
-                        )
-                      >
-                      indices: <
-                        IndexList(
-                          items: [
-                            IndexItem(
-                              index: <
-                                IntegerLiteral(
-                                  value: 1
-                                )
-                              >
-                            )
-                          ]
-                        )
-                      >
-                    )
-                  ]
-                )
-              >
-              annotations: []
+        Instruction(
+          name: <
+            Identifier(
+              name: h
             )
-          ]
-          annotations: []
+          >
+          operands: <
+            ExpressionList(
+              items: [
+                Index(
+                  expr: <
+                    Identifier(
+                      name: q
+                    )
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexItem(
+                          index: <
+                            IntegerLiteral(
+                              value: 1
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
+                )
+              ]
+            )
+          >
+        )
+        Instruction(
+          name: <
+            Identifier(
+              name: cnot
+            )
+          >
+          operands: <
+            ExpressionList(
+              items: [
+                Index(
+                  expr: <
+                    Identifier(
+                      name: q
+                    )
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexItem(
+                          index: <
+                            IntegerLiteral(
+                              value: 0
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
+                )
+                Index(
+                  expr: <
+                    Identifier(
+                      name: q
+                    )
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexItem(
+                          index: <
+                            IntegerLiteral(
+                              value: 1
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
+                )
+              ]
+            )
+          >
         )
       ]
     )
