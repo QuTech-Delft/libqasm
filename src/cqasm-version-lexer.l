@@ -55,6 +55,7 @@
 (@@NEXT_LINE=[0-9]+\n|\r\n?)                        LOCATION_OVERRIDE_LINE; DELETE;
 (@@NEXT_LINE=[0-9]+\\\n|\r\n?)                      LOCATION_OVERRIDE_LINE; DELETE;
 #.*                                                 DELETE;
+"//".*                                              DELETE;
 "/*"                                                BEGIN(MODE_MULTILINE_COMMENT); DELETE;
 [ \t]+                                              DELETE;
 (?i:version)                                        BEGIN(MODE_VERSION); WITHOUT_STR(VERSION);
