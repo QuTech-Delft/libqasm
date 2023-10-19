@@ -1,2 +1,2 @@
 ERROR
-input.cq:4:11: mismatched input '\n' expecting {INT, FLOAT, ID}
+input.cq:4:11: mismatched input '\n' expecting {INTEGER_LITERAL, FLOAT_LITERAL, IDENTIFIER}

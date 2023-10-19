@@ -43,18 +43,18 @@
 
 lexer grammar CqasmLexer;
 
-// Rules
-WS: [ \t]+ -> skip;
-COMMENT: '//' ~[\r\n]* -> skip;
+// White spaces and comments are skipped, i.e. not passed to the parser
+WHITE_SPACE: [ \t]+ -> skip;
+SINGLE_LINE_COMMENT: '//' ~[\r\n]* -> skip;
 MULTI_LINE_COMMENT: '/*' .*? '*/' -> skip;
 
-// Operators
+// Punctuation signs
 NEW_LINE: '\r'?'\n';
 SEMICOLON: ';';
 COLON: ':';
 COMMA: ',';
 DOT: '.';
-EQUAL: '=';
+EQUALS: '=';
 OPEN_BRACKET: '[';
 CLOSE_BRACKET: ']';
 
@@ -65,14 +65,18 @@ QUBIT_TYPE: 'qubit';
 BIT_TYPE: 'bit';
 
 // Numeric literals
-INT: Digit+;
-FLOAT: Digit* '.' Digit+([eE][-+]Digit+)?;
+INTEGER_LITERAL : Digit+;
+FLOAT_LITERAL: Digit* '.' Digit+([eE][-+]Digit+)?;
 fragment Digit: [0-9];
 
-// Identifiers
-ID: Letter (Letter | Digit)*;
+// Identifier
+IDENTIFIER: Letter (Letter | Digit)*;
 fragment Letter: [a-zA-Z_];
 
+// Version mode
+//
+// Whenever we encounter a 'version' token, we enter the Version mode
+// Within the version mode, a sequence such as '3.0' will be treated as a version number, and not as a float literal
 mode VERSION_STATEMENT;
-VS_WS: [ \t]+ -> skip;
+VERSION_WHITESPACE: [ \t]+ -> skip;
 VERSION_NUMBER: Digit+ ('.' Digit+)? -> popMode;

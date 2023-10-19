@@ -1,2 +1,2 @@
 ERROR
-input.cq:3:2: value '18446744073709551616' is out of the INT range
+input.cq:3:2: value '18446744073709551616' is out of the INTEGER_LITERAL range

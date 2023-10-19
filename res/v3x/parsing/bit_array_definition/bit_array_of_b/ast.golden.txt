@@ -1,2 +1,2 @@
 ERROR
-input.cq:3:4: mismatched input 'b' expecting INT
+input.cq:3:4: mismatched input 'b' expecting INTEGER_LITERAL

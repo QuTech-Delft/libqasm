@@ -20,7 +20,7 @@ std::int64_t BuildTreeGenAstVisitor::get_int_value(size_t line, size_t char_posi
         return std::stoll(text);
     } catch (std::out_of_range&) {
         throw std::runtime_error{
-            fmt::format("{}:{}:{}: value '{}' is out of the INT range",
+            fmt::format("{}:{}:{}: value '{}' is out of the INTEGER_LITERAL range",
                 file_name_, line, char_position_in_line, text
         )};
     }
@@ -28,7 +28,7 @@ std::int64_t BuildTreeGenAstVisitor::get_int_value(size_t line, size_t char_posi
 
 std::int64_t BuildTreeGenAstVisitor::get_int_value(antlr4::tree::TerminalNode *node) {
     const auto &token = node->getSymbol();
-    assert(token->getType() == CqasmParser::INT);
+    assert(token->getType() == CqasmParser::INTEGER_LITERAL);
     return get_int_value(token->getLine(), token->getCharPositionInLine(), node->getText());
 }
 
@@ -37,7 +37,7 @@ double BuildTreeGenAstVisitor::get_float_value(size_t line, size_t char_position
         return std::stod(text);
     } catch (std::out_of_range&) {
         throw std::runtime_error{
-            fmt::format("{}:{}:{}: value '{}' is out of the FLOAT range",
+            fmt::format("{}:{}:{}: value '{}' is out of the FLOAT_LITERAL range",
                 file_name_, line, char_position_in_line, text
             )};
     }
@@ -46,7 +46,7 @@ double BuildTreeGenAstVisitor::get_float_value(size_t line, size_t char_position
 double BuildTreeGenAstVisitor::get_float_value(antlr4::tree::TerminalNode *node) {
     const auto &token = node->getSymbol();
     const auto &text = node->getText();
-    assert(token->getType() == CqasmParser::FLOAT);
+    assert(token->getType() == CqasmParser::FLOAT_LITERAL);
     return get_float_value(token->getLine(), token->getCharPositionInLine(), node->getText());
 }
 
@@ -86,12 +86,12 @@ std::any BuildTreeGenAstVisitor::visitStatementSeparator(CqasmParser::StatementS
 }
 
 std::any BuildTreeGenAstVisitor::visitQubitTypeDefinition(CqasmParser::QubitTypeDefinitionContext *context) {
-    auto int_ctx = context->INT();
+    auto int_ctx = context->INTEGER_LITERAL();
     auto size = (int_ctx)
         ? get_int_value(int_ctx)
         : std::int64_t{};
     auto ret = cqasm::tree::make<Variable>(
-        cqasm::tree::make<Identifier>(context->ID()->getText()),
+        cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()),
         cqasm::tree::make<Identifier>(context->QUBIT_TYPE()->getText()),
         cqasm::tree::make<IntegerLiteral>(size)
     );
@@ -99,12 +99,12 @@ std::any BuildTreeGenAstVisitor::visitQubitTypeDefinition(CqasmParser::QubitType
 }
 
 std::any BuildTreeGenAstVisitor::visitBitTypeDefinition(CqasmParser::BitTypeDefinitionContext *context) {
-    auto int_ctx = context->INT();
+    auto int_ctx = context->INTEGER_LITERAL();
     auto size = (int_ctx)
         ? get_int_value(int_ctx)
         : std::int64_t{};
     auto ret = cqasm::tree::make<Variable>(
-        cqasm::tree::make<Identifier>(context->ID()->getText()),
+        cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()),
         cqasm::tree::make<Identifier>(context->BIT_TYPE()->getText()),
         cqasm::tree::make<IntegerLiteral>(size)
     );
@@ -120,7 +120,7 @@ std::any BuildTreeGenAstVisitor::visitMeasureStatement(CqasmParser::MeasureState
 
 std::any BuildTreeGenAstVisitor::visitInstruction(CqasmParser::InstructionContext *context) {
     auto ret = cqasm::tree::make<Instruction>(
-        cqasm::tree::make<Identifier>(context->ID()->getText()),
+        cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()),
         std::any_cast<One<ExpressionList>>(visitExpressionList(context->expressionList()))
     );
     return One<Statement>{ ret };
@@ -158,26 +158,26 @@ std::any BuildTreeGenAstVisitor::visitIndexRange(CqasmParser::IndexRangeContext 
     )};
 }
 
-std::any BuildTreeGenAstVisitor::visitInt(CqasmParser::IntContext *context) {
-    auto value = get_int_value(context->INT());
+std::any BuildTreeGenAstVisitor::visitIntegerLiteral(CqasmParser::IntegerLiteralContext *context) {
+    auto value = get_int_value(context->INTEGER_LITERAL());
     auto ret = cqasm::tree::make<IntegerLiteral>(value);
     return One<Expression>{ ret };
 }
 
-std::any BuildTreeGenAstVisitor::visitFloat(CqasmParser::FloatContext *context) {
-    auto value = get_float_value(context->FLOAT());
+std::any BuildTreeGenAstVisitor::visitFloatLiteral(CqasmParser::FloatLiteralContext *context) {
+    auto value = get_float_value(context->FLOAT_LITERAL());
     auto ret = cqasm::tree::make<FloatLiteral>(value);
     return One<Expression>{ ret };
 }
 
-std::any BuildTreeGenAstVisitor::visitId(CqasmParser::IdContext *context) {
-    auto ret = cqasm::tree::make<Identifier>(context->ID()->getText());
+std::any BuildTreeGenAstVisitor::visitIdentifier(CqasmParser::IdentifierContext *context) {
+    auto ret = cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText());
     return One<Expression>{ ret };
 }
 
 std::any BuildTreeGenAstVisitor::visitIndex(CqasmParser::IndexContext *context) {
     auto ret = cqasm::tree::make<Index>();
-    ret->expr = cqasm::tree::make<Identifier>(context->ID()->getText());
+    ret->expr = cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText());
     ret->indices = std::any_cast<One<IndexList>>(visitIndexList(context->indexList()));
     return One<Expression>{ ret };
 }

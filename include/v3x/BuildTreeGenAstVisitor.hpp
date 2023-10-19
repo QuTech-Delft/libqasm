@@ -32,9 +32,9 @@ public:
     std::any visitIndexList(CqasmParser::IndexListContext *context) override;
     std::any visitIndexItem(CqasmParser::IndexItemContext *context) override;
     std::any visitIndexRange(CqasmParser::IndexRangeContext *context) override;
-    std::any visitInt(CqasmParser::IntContext *context) override;
-    std::any visitFloat(CqasmParser::FloatContext *context) override;
-    std::any visitId(CqasmParser::IdContext *context) override;
+    std::any visitIntegerLiteral(CqasmParser::IntegerLiteralContext *context) override;
+    std::any visitFloatLiteral(CqasmParser::FloatLiteralContext *context) override;
+    std::any visitIdentifier(CqasmParser::IdentifierContext *context) override;
     std::any visitIndex(CqasmParser::IndexContext *context) override;
 
     explicit BuildTreeGenAstVisitor(const std::string &file_name = "<unknown>")

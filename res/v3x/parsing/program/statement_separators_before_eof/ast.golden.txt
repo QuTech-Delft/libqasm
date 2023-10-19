@@ -1,0 +1,14 @@
+SUCCESS
+Program(
+  version: <
+    Version(
+      items: 3.0
+    )
+  >
+  statements: <
+    StatementList(
+      items: []
+    )
+  >
+)
+

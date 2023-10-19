@@ -1,2 +1,2 @@
 ERROR
-input.cq:3:8: mismatched input '3.14' expecting ID
+input.cq:3:8: mismatched input '3.14' expecting IDENTIFIER
