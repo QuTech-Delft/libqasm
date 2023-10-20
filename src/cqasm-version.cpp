@@ -13,7 +13,7 @@
 namespace cqasm::version {
 
 /**
- * Constructs a version object from a string, defaulting to 1.0.
+ * Constructs a version object from a string.
  */
 Version::Version(const std::string &version) {
     if (version.empty()) {
@@ -32,6 +32,13 @@ Version::Version(const std::string &version) {
         }
     }
 }
+
+
+/**
+ * Constructs a version object from an array of chars.
+ */
+Version::Version(const char *version)
+: Version(std::string{ version }) {}
 
 /**
  * Compares this version against the other version.
@@ -57,18 +64,6 @@ int Version::compare(const Version &other) const {
         }
     }
     return 0;
-}
-
-/**
- * Compares this version against the other version.
- * Returns:
- *   1 if this version is newer than the other,
- *   -1 if this version is older than the other, or
- *   0 if both versions are the same.
- * When there is a mismatch in the number of components between the versions, missing components are interpreted as 0.
- */
-int Version::compare(const std::string &other) const {
-    return compare(Version(other));
 }
 
 /**

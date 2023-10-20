@@ -30,19 +30,9 @@ ast::One<semantic::Program> AnalysisResult::unwrap(std::ostream &out) const {
 /**
  * Creates a new semantic analyzer.
  */
-Analyzer::Analyzer(const std::string &api_version)
-: api_version(api_version) {
-    if (api_version.compare("3.0") != 0) {
-        throw std::invalid_argument("this analyzer only supports cQASM 3.0");
-    }
-}
-
-/**
- * Creates a new semantic analyzer.
- */
 Analyzer::Analyzer(const primitives::Version &api_version)
 : api_version(api_version) {
-    if (api_version.compare("3.0") != 0) {
+    if (!api_version.equal("3.0")) {
         throw std::invalid_argument("this analyzer only supports cQASM 3.0");
     }
 }

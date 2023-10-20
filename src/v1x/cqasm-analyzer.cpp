@@ -37,29 +37,12 @@ ast::One<semantic::Program> AnalysisResult::unwrap(std::ostream &out) const {
 /**
  * Creates a new semantic analyzer.
  */
-Analyzer::Analyzer(const std::string &api_version)
-    : api_version(api_version), resolve_instructions(false), resolve_error_model(false)
-{
-    // V3-MVP: temporarily removed this check
-    /*
-    if (api_version.compare("1.2") > 0) {
-        throw std::invalid_argument("this analyzer only supports up to cQASM 1.2");
-    }
-    */
-}
-
-/**
- * Creates a new semantic analyzer.
- */
 Analyzer::Analyzer(const primitives::Version &api_version)
     : api_version(api_version), resolve_instructions(false), resolve_error_model(false)
 {
-    // V3-MVP: temporarily removed this check
-    /*
-    if (api_version.compare("1.2") > 0) {
+    if (api_version.more_than("1.2")) {
         throw std::invalid_argument("this analyzer only supports up to cQASM 1.2");
     }
-    */
 }
 
 
@@ -597,7 +580,7 @@ AnalyzerHelper::AnalyzerHelper(
         // that it's not being used.
         if (!ast.num_qubits.empty()) {
             analyze_qubits(*ast.num_qubits);
-        } else if (ast.version->items.compare("1.1") < 0) {
+        } else if (ast.version->items.less_than("1.1")) {
             throw error::AnalysisError("missing qubits statement (required until version 1.1)");
         } else {
             result.root->num_qubits = 0;
@@ -607,7 +590,7 @@ AnalyzerHelper::AnalyzerHelper(
         analyze_statements(*ast.statements);
 
         // Resolve goto targets.
-        if (ast.version->items.compare("1.2") >= 0) {
+        if (ast.version->items.more_than_or_equal("1.2")) {
 
             // Figure out all the subcircuit names and check for duplicates.
             std::map<std::string, tree::Maybe<semantic::Subcircuit>> subcircuits;
@@ -709,7 +692,7 @@ void AnalyzerHelper::analyze_version(const ast::Version &ast) {
                 throw error::AnalysisError("invalid version component");
             }
         }
-        if (ast.items.compare(analyzer.api_version) > 0) {
+        if (ast.items.more_than(analyzer.api_version)) {
             std::ostringstream ss{};
             ss << "the maximum cQASM version supported is " << analyzer.api_version;
             ss << ", but the cQASM file is version " << ast.items;
@@ -776,7 +759,7 @@ tree::Maybe<semantic::Subcircuit> AnalyzerHelper::get_current_subcircuit(
     if (result.root->subcircuits.empty()) {
         auto subcircuit_node = tree::make<semantic::Subcircuit>("", 1);
         subcircuit_node->copy_annotation<parser::SourceLocation>(source);
-        if (analyzer.api_version.compare("1.2") >= 0) {
+        if (analyzer.api_version.more_than_or_equal("1.2")) {
             subcircuit_node->body = tree::make<semantic::Block>();
         }
         result.root->subcircuits.add(subcircuit_node);
@@ -848,7 +831,7 @@ void AnalyzerHelper::analyze_statements(const ast::StatementList &statements) {
     for (const auto &stmt : statements.items) {
         try {
             if (auto bundle = stmt->as_bundle()) {
-                if (analyzer.api_version.compare("1.2") >= 0) {
+                if (analyzer.api_version.more_than_or_equal("1.2")) {
                     analyze_bundle_ext(*bundle);
                 } else {
                     analyze_bundle(*bundle);
@@ -860,7 +843,7 @@ void AnalyzerHelper::analyze_statements(const ast::StatementList &statements) {
             } else if (auto subcircuit = stmt->as_subcircuit()) {
                 analyze_subcircuit(*subcircuit);
             } else if (auto structured = stmt->as_structured()) {
-                if (result.root->version->items.compare("1.2") < 0) {
+                if (result.root->version->items.less_than("1.2")) {
                     throw error::AnalysisError("structured control-flow is not supported (need version 1.2+)");
                 }
                 analyze_structured(*structured);
@@ -1419,7 +1402,7 @@ void AnalyzerHelper::analyze_variables(const ast::Variables &variables) {
     try {
 
         // Check version compatibility.
-        if (result.root->version->items.compare("1.1") < 0) {
+        if (result.root->version->items.less_than("1.1")) {
             throw error::AnalysisError("variables are only supported from cQASM 1.1 onwards");
         }
 
@@ -1490,7 +1473,7 @@ void AnalyzerHelper::analyze_subcircuit(const ast::Subcircuit &subcircuit) {
             tree::Any<semantic::Bundle>(),
             analyze_annotations(subcircuit.annotations));
         node->copy_annotation<parser::SourceLocation>(subcircuit);
-        if (analyzer.api_version.compare("1.2") >= 0) {
+        if (analyzer.api_version.more_than_or_equal("1.2")) {
             node->body = tree::make<semantic::Block>();
             node->body->copy_annotation<parser::SourceLocation>(subcircuit);
         }
@@ -1883,7 +1866,7 @@ values::Value AnalyzerHelper::analyze_expression(const ast::Expression &expressi
             throw std::runtime_error("unexpected expression node");
         }
         if (!retval.empty() && (retval->as_function() || retval->as_variable_ref())) {
-            if (analyzer.api_version.compare("1.1") < 0) {
+            if (analyzer.api_version.less_than("1.1")) {
                 throw error::AnalysisError("dynamic expressions are only supported from cQASM 1.1 onwards");
             }
         }

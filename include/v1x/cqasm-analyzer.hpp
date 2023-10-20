@@ -158,16 +158,10 @@ private:
     bool resolve_error_model;
 
 public:
-
     /**
      * Creates a new semantic analyzer.
      */
-    Analyzer(const std::string &api_version = "1.0");
-
-    /**
-     * Creates a new semantic analyzer.
-     */
-    Analyzer(const primitives::Version &api_version);
+    explicit Analyzer(const primitives::Version &api_version = "1.0");
 
     /**
      * Registers an initial mapping from the given name to the given value.

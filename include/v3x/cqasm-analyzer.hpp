@@ -103,12 +103,7 @@ public:
     /**
      * Creates a new semantic analyzer.
      */
-    explicit Analyzer(const std::string &api_version = "3.0");
-
-    /**
-     * Creates a new semantic analyzer.
-     */
-    explicit Analyzer(const primitives::Version &api_version);
+    explicit Analyzer(const primitives::Version &api_version = "3.0");
 
     /**
      * Analyzes the given program AST node.
