@@ -7,6 +7,7 @@ set(CQASM_V3X_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-primitives.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-types.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-values.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/AnalyzeTreeGenAstVisitor.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/BuildTreeGenAstVisitor.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/CustomErrorListener.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/ScannerAntlr.cpp"

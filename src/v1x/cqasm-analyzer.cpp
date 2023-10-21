@@ -8,7 +8,6 @@
 #include "v1x/cqasm-parse-helper.hpp"
 #include "v1x/cqasm-functions-gen.hpp"
 
-#include <cctype>
 #include <cmath>
 #include <list>
 #include <map>

@@ -10,18 +10,19 @@
 #include "cqasm-error.hpp"
 #include "cqasm-error-model.hpp"
 #include "cqasm-instruction.hpp"
+#include "cqasm-overload.hpp"
 #include "cqasm-semantic.hpp"
 
-#include <functional>
 #include <algorithm>
+#include <fmt/format.h>
+#include <functional>
+#include <memory>
 
-namespace cqasm {
-namespace v1x {
 
 /**
  * Namespace for everything to do with name and overload resolution in cQASM.
  */
-namespace resolver {
+namespace cqasm::v1x::resolver {
 
 /**
  * Exception for failed name resolutions.
@@ -33,14 +34,34 @@ CQASM_ANALYSIS_ERROR(NameResolutionFailure);
  */
 CQASM_ANALYSIS_ERROR(OverloadResolutionFailure);
 
+template <class T>
+struct OverloadedNameResolver : public cqasm::overload::OverloadedNameResolver<T, types::TypeBase, values::Node> {
+    virtual ~OverloadedNameResolver() = default;
+
+    void add_overload(const std::string &name, const T &tag, const types::Types &param_types) override {
+        cqasm::overload::OverloadedNameResolver<T, types::TypeBase, values::Node>::add_overload(name, tag, param_types);
+    }
+
+    [[nodiscard]] std::pair<T, values::Values> resolve(const std::string &name, const values::Values &args) override {
+        try {
+            return cqasm::overload::OverloadedNameResolver<T, types::TypeBase, values::Node>::resolve(name, args);
+        } catch (const cqasm::overload::NameResolutionFailure &) {
+            throw NameResolutionFailure{ "failed to resolve " + name };
+        } catch (const cqasm::overload::OverloadResolutionFailure &) {
+            throw OverloadResolutionFailure{
+                fmt::format("failed to resolve overload for {} with argument pack {}",
+                    name, values::types_of(args)) };
+        }
+    }
+};
+
 /**
  * Table of all mappings within a certain scope.
  */
 class MappingTable {
-private:
     std::unordered_map<std::string, std::pair<const values::Value, tree::Maybe<ast::Mapping>>> table;
-public:
 
+public:
     /**
      * Adds a mapping.
      */
@@ -51,26 +72,18 @@ public:
     );
 
     /**
-     * Resolves a mapping. Throws NameResolutionFailure if no mapping by the
-     * given name exists.
+     * Resolves a mapping. Throws NameResolutionFailure if no mapping by the given name exists.
      */
-    values::Value resolve(const std::string &name) const;
+    [[nodiscard]] values::Value resolve(const std::string &name) const;
 
     /**
      * Grants read access to the underlying map.
      */
     const std::unordered_map<std::string, std::pair<const values::Value, tree::Maybe<ast::Mapping>>> &get_table() const;
-
 };
 
-// Forward declaration for the name resolver template class. This class is
-// defined entirely in the C++ file to cut back on compile time.
-template <class T>
-class OverloadedNameResolver;
-
 /**
- * C++ function representing (one of the overloads of) a function usable in
- * cQASM constant expressions.
+ * C++ function representing (one of the overloads of) a function usable in cQASM constant expressions.
  */
 using FunctionImpl = std::function<values::Value(const values::Values&)>;
 
@@ -78,18 +91,15 @@ using FunctionImpl = std::function<values::Value(const values::Values&)>;
  * Table of all overloads of all constant propagation functions.
  */
 class FunctionTable {
-private:
     std::unique_ptr<OverloadedNameResolver<FunctionImpl>> resolver;
-public:
 
-    // The following things *are all default*. Unfortunately, the compiler
-    // can't infer them because OverloadedNameResolver is incomplete.
+public:
     FunctionTable();
     ~FunctionTable();
     FunctionTable(const FunctionTable& t);
-    explicit FunctionTable(FunctionTable&& t);
+    FunctionTable(FunctionTable&& t) noexcept;
     FunctionTable& operator=(const FunctionTable& t);
-    FunctionTable& operator=(FunctionTable&& t);
+    FunctionTable& operator=(FunctionTable&& t) noexcept;
 
     /**
      * Registers a function.
@@ -111,26 +121,22 @@ public:
      * function exists for the given arguments, or otherwise returns the value
      * returned by the function.
      */
-    values::Value call(const std::string &name, const values::Values &args) const;
-
+    [[nodiscard]] values::Value call(const std::string &name, const values::Values &args) const;
 };
 
 /**
  * Table of the supported instructions and their overloads.
  */
 class ErrorModelTable {
-private:
     std::unique_ptr<OverloadedNameResolver<error_model::ErrorModel>> resolver;
-public:
 
-    // The following things *are all default*. Unfortunately, the compiler
-    // can't infer them because OverloadedNameResolver is incomplete.
+public:
     ErrorModelTable();
     ~ErrorModelTable();
     ErrorModelTable(const ErrorModelTable& t);
-    explicit ErrorModelTable(ErrorModelTable&& t);
+    ErrorModelTable(ErrorModelTable&& t) noexcept;
     ErrorModelTable& operator=(const ErrorModelTable& t);
-    ErrorModelTable& operator=(ErrorModelTable&& t);
+    ErrorModelTable& operator=(ErrorModelTable&& t) noexcept;
 
     /**
      * Registers an error model.
@@ -138,35 +144,31 @@ public:
     void add(const error_model::ErrorModel &type);
 
     /**
-     * Resolves an error model. Throws NameResolutionFailure if no error model
-     * by the given name exists, OverloadResolutionFailure if no overload
-     * exists for the given arguments, or otherwise returns the resolved error
-     * model node. Annotation data and line number information still needs to
-     * be set by the caller.
+     * Resolves an error model.
+     * Throws NameResolutionFailure if no error model by the given name exists,
+     * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
+     * returns the resolved error model node.
+     * Annotation data and line number information still needs to be set by the caller.
      */
-    tree::One<semantic::ErrorModel> resolve(
+    [[nodiscard]] tree::One<semantic::ErrorModel> resolve(
         const std::string &name,
         const values::Values &args
     ) const;
-
 };
 
 /**
  * Table of the supported instructions and their overloads.
  */
 class InstructionTable {
-private:
     std::unique_ptr<OverloadedNameResolver<instruction::Instruction>> resolver;
-public:
 
-    // The following things *are all default*. Unfortunately, the compiler
-    // can't infer them because OverloadedNameResolver is incomplete.
+public:
     InstructionTable();
     ~InstructionTable();
     InstructionTable(const InstructionTable& t);
-    InstructionTable(InstructionTable&& t);
+    InstructionTable(InstructionTable&& t) noexcept;
     InstructionTable& operator=(const InstructionTable& t);
-    InstructionTable& operator=(InstructionTable&& t);
+    InstructionTable& operator=(InstructionTable&& t) noexcept;
 
     /**
      * Registers an instruction type.
@@ -174,19 +176,15 @@ public:
     void add(const instruction::Instruction &type);
 
     /**
-     * Resolves an instruction. Throws NameResolutionFailure if no instruction
-     * by the given name exists, OverloadResolutionFailure if no overload
-     * exists for the given arguments, or otherwise returns the resolved
-     * instruction node. Annotation data, line number information, and the
-     * condition still need to be set by the caller.
+     * Resolves an instruction. Throws NameResolutionFailure if no instruction by the given name exists,
+     * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
+     * returns the resolved instruction node.
+     * Annotation data, line number information, and the condition still need to be set by the caller.
      */
-    tree::One<semantic::Instruction> resolve(
+    [[nodiscard]] tree::One<semantic::Instruction> resolve(
         const std::string &name,
         const values::Values &args
     ) const;
-
 };
 
-} // namespace resolver
-} // namespace v1x
-} // namespace cqasm
+} // namespace cqasm::v1x::resolver

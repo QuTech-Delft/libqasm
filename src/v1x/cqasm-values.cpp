@@ -8,12 +8,10 @@
 #include "v1x/cqasm-types.hpp"
 #include "v1x/cqasm-semantic.hpp"
 
-namespace cqasm {
-namespace v1x {
-namespace values {
+#include <iostream>
 
-using TypeEnum = types::NodeType;
-using ValueEnum = values::NodeType;
+
+namespace cqasm::v1x::values {
 
 /**
  * Type-checks and (if necessary) promotes the given value to the given type.
@@ -35,14 +33,14 @@ Value promote(const Value &value, const types::Type &type) {
 
     // Integers promote to real.
     if (type->as_real()) {
-        if (auto const_int = value->as_const_int()) {
+        if (const auto &const_int = value->as_const_int()) {
             retval = tree::make<values::ConstReal>(static_cast<ConstReal>(const_int->value));
         }
     }
 
     // Integers and reals promote to complex.
     if (type->as_complex()) {
-        if (auto const_int = value->as_const_int()) {
+        if (const auto &const_int = value->as_const_int()) {
             retval = tree::make<values::ConstComplex>(static_cast<ConstComplex>(const_int->value));
         } else if (auto const_real = value->as_const_real()) {
             retval = tree::make<values::ConstComplex>(static_cast<ConstComplex>(const_real->value));
@@ -148,7 +146,7 @@ types::Type type_of(const Value &value) {
  */
 types::Types types_of(const Values &values) {
     types::Types types;
-    for (auto value : values) {
+    for (const auto &value : values) {
         types.add(type_of(value));
     }
     return types;
@@ -169,7 +167,7 @@ void check_const(const Value &value) {
  * if it doesn't have a known value at this time.
  */
 void check_const(const Values &values) {
-    for (auto value : values) {
+    for (const auto &value : values) {
         check_const(value);
     }
 }
@@ -178,36 +176,17 @@ void check_const(const Values &values) {
  * Stream << overload for a single value.
  */
 std::ostream &operator<<(std::ostream &os, const Value &value) {
-    if (value.empty()) {
-        os << "NULL";
-    } else {
-        os << *value;
-    }
-    return os;
+    return (value.empty())
+        ? os << "NULL"
+        : os << *value;
 }
 
 /**
  * Stream << overload for zero or more values.
  */
 std::ostream &operator<<(std::ostream &os, const Values &values) {
-    os << "[";
-    bool first = true;
-    for (const auto &value : values) {
-        if (first) {
-            first = false;
-        } else {
-            os << ", ";
-        }
-        if (value.empty()) {
-            os << "NULL";
-        } else {
-            os << *value;
-        }
-    }
-    os << "]";
+    fmt::print(os, "[{}]", fmt::join(values, ", "));
     return os;
 }
 
-} // namespace values
-} // namespace v1x
-} // namespace cqasm
+} // namespace cqasm::v1x::values

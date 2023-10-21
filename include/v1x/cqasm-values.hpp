@@ -10,6 +10,9 @@
 #include "cqasm-types.hpp"
 #include "v1x/cqasm-values-gen.hpp"
 
+#include <fmt/format.h>
+#include <fmt/ostream.h>
+
 
 /**
  * Namespace for the classes representing the values
@@ -69,3 +72,7 @@ std::ostream &operator<<(std::ostream &os, const Value &value);
 std::ostream &operator<<(std::ostream &os, const Values &values);
 
 } // namespace cqasm::v1x::values
+
+
+template <> struct fmt::formatter<cqasm::v1x::values::Value> : fmt::ostream_formatter {};
+template <> struct fmt::formatter<cqasm::v1x::values::Values> : fmt::ostream_formatter {};

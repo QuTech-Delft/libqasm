@@ -7,6 +7,9 @@
 
 #include "v1x/cqasm-types-gen.hpp"
 
+#include <fmt/format.h>
+#include <fmt/ostream.h>
+
 
 /**
  * Namespace for the classes representing the types available within cQASM.
@@ -65,3 +68,7 @@ std::ostream &operator<<(std::ostream &os, const Type &type);
 std::ostream &operator<<(std::ostream &os, const Types &types);
 
 } // namespace cqasm::v1x::types
+
+
+template <> struct fmt::formatter<cqasm::v1x::types::Type> : fmt::ostream_formatter {};
+template <> struct fmt::formatter<cqasm::v1x::types::Types> : fmt::ostream_formatter {};

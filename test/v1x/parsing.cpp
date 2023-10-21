@@ -81,7 +81,7 @@ public:
             analyzer.register_instruction("z", "Q");
             analyzer.register_instruction("i", "Q");
             analyzer.register_instruction("h", "Q");
-            analyzer.register_instruction("x90", "Q");  // V3-MVP: changed to uppercase for res/v1x/v3x-mvp/program tests
+            analyzer.register_instruction("x90", "Q");
             analyzer.register_instruction("y90", "Q");
             analyzer.register_instruction("mx90", "Q");
             analyzer.register_instruction("my90", "Q");
@@ -101,7 +101,7 @@ public:
             analyzer.register_instruction("rx", "Qr");
             analyzer.register_instruction("ry", "Qr");
             analyzer.register_instruction("rz", "Qr");
-            analyzer.register_instruction("cnot", "QQ");  // V3-MVP: changed to uppercase for res/v1x/v3x-mvp/program tests
+            analyzer.register_instruction("cnot", "QQ");
             analyzer.register_instruction("cz", "QQ");
             analyzer.register_instruction("swap", "QQ");
             analyzer.register_instruction("cr", "QQr");

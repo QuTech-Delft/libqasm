@@ -6,10 +6,7 @@
 
 #include <filesystem>
 #include <fmt/format.h>
-#include <fstream>
 #include <gtest/gtest.h>
-#include <sstream>
-#include <streambuf>
 #include <string>
 
 
@@ -57,7 +54,6 @@ public:
         }
 
         // If there were no errors, try semantic analysis
-        // Try different API levels
         for (const auto &api_version : std::vector<std::string>( { "3.0" } )) {
             auto analyzer = cq3x::analyzer::Analyzer{ api_version };
 
