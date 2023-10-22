@@ -176,7 +176,8 @@ public:
     void add(const instruction::Instruction &type);
 
     /**
-     * Resolves an instruction. Throws NameResolutionFailure if no instruction by the given name exists,
+     * Resolves an instruction.
+     * Throws NameResolutionFailure if no instruction by the given name exists,
      * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
      * returns the resolved instruction node.
      * Annotation data, line number information, and the condition still need to be set by the caller.

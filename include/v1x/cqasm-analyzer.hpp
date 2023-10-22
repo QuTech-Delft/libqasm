@@ -10,9 +10,9 @@
 #pragma once
 
 #include "cqasm-ast.hpp"
-#include "cqasm-semantic.hpp"
-#include "cqasm-resolver.hpp"
 #include "cqasm-parse-helper.hpp"
+#include "cqasm-resolver.hpp"
+#include "cqasm-semantic.hpp"
 
 #include <cstdio>
 #include <functional>

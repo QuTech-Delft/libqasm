@@ -38,6 +38,21 @@ Analyzer::Analyzer(const primitives::Version &api_version)
 }
 
 /**
+ * Registers an instruction type.
+ */
+void Analyzer::register_instruction(const instruction::Instruction &instruction) {
+    instruction_set.add(instruction);
+}
+
+/**
+ * Convenience method for registering an instruction type. The arguments
+ * are passed straight to instruction::Instruction's constructor.
+ */
+void Analyzer::register_instruction(const std::string &name, const std::string &param_types) {
+    register_instruction(instruction::Instruction(name, param_types));
+}
+
+/**
  * Helper class for analyzing a single AST.
  * This contains the stateful information that Analyzer can't have (to allow Analyzer to be reused).
  */

@@ -57,6 +57,27 @@ public:
         for (const auto &api_version : std::vector<std::string>( { "3.0" } )) {
             auto analyzer = cq3x::analyzer::Analyzer{ api_version };
 
+            analyzer.register_instruction("cnot", "QQ");
+            analyzer.register_instruction("cr", "QQr");
+            analyzer.register_instruction("crk", "QQi");
+            analyzer.register_instruction("cz", "QQ");
+            analyzer.register_instruction("h", "Q");
+            analyzer.register_instruction("i", "Q");
+            analyzer.register_instruction("measure", "Q");
+            analyzer.register_instruction("mx90", "Q");
+            analyzer.register_instruction("my90", "Q");
+            analyzer.register_instruction("rx", "Qr");
+            analyzer.register_instruction("ry", "Qr");
+            analyzer.register_instruction("rz", "Qr");
+            analyzer.register_instruction("s", "Q");
+            analyzer.register_instruction("sdag", "Q");
+            analyzer.register_instruction("u", "Qu");
+            analyzer.register_instruction("x", "Q");
+            analyzer.register_instruction("x90", "Q");
+            analyzer.register_instruction("y", "Q");
+            analyzer.register_instruction("y90", "Q");
+            analyzer.register_instruction("z", "Q");
+
             // Run the actual semantic analysis
             auto analysis_result = analyzer.analyze(*parse_result.root->as_program());
 

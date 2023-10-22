@@ -9,8 +9,9 @@
 #pragma once
 
 #include "cqasm-ast.hpp"
-#include "cqasm-semantic.hpp"
 #include "cqasm-parse-helper.hpp"
+#include "cqasm-resolver.hpp"
+#include "cqasm-semantic.hpp"
 
 #include <cstdio>
 #include <functional>
@@ -99,11 +100,33 @@ private:
      */
     primitives::Version api_version;
 
+    /**
+     * The supported set of quantum/classical/mixed instructions,
+     * appearing in the cQASM file as assembly-like commands.
+     * Instructions have a case-sensitively matched name, and
+     * a signature for the types of parameters it expects.
+     */
+    resolver::InstructionTable instruction_set;
+
 public:
     /**
      * Creates a new semantic analyzer.
      */
     explicit Analyzer(const primitives::Version &api_version = "3.0");
+
+    /**
+     * Registers an instruction type.
+     */
+    void register_instruction(const instruction::Instruction &instruction);
+
+    /**
+     * Convenience method for registering an instruction type.
+     * The arguments are passed straight to instruction::Instruction's constructor.
+     */
+    void register_instruction(
+        const std::string &name,
+        const std::string &param_types = ""
+    );
 
     /**
      * Analyzes the given program AST node.
