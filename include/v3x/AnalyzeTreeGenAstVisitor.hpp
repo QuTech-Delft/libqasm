@@ -1,28 +1,33 @@
 #pragma once
 
-#include "v3x/CqasmParserVisitor.h"
+#include "v3x/cqasm-analyzer.hpp"
+#include "v3x/cqasm-ast-gen.hpp"
+#include "v3x/cqasm-semantic-gen.hpp"
 
 
 namespace cqasm::v3x::analyzer {
 
 class AnalyzeTreeGenAstVisitor {
+    const Analyzer &analyzer_;
+    AnalysisResult result_;
+
 public:
-    std::any visitProgram(CqasmParser::ProgramContext *context);
-    std::any visitVersion(CqasmParser::VersionContext *context);
-    std::any visitStatements(CqasmParser::StatementsContext *context);
-    std::any visitStatementSeparator(CqasmParser::StatementSeparatorContext *context);
-    std::any visitQubitTypeDefinition(CqasmParser::QubitTypeDefinitionContext *context);
-    std::any visitBitTypeDefinition(CqasmParser::BitTypeDefinitionContext *context);
-    std::any visitMeasureStatement(CqasmParser::MeasureStatementContext *context);
-    std::any visitInstruction(CqasmParser::InstructionContext *context);
-    std::any visitExpressionList(CqasmParser::ExpressionListContext *context);
-    std::any visitIndexList(CqasmParser::IndexListContext *context);
-    std::any visitIndexItem(CqasmParser::IndexItemContext *context);
-    std::any visitIndexRange(CqasmParser::IndexRangeContext *context);
-    std::any visitIntegerLiteral(CqasmParser::IntegerLiteralContext *context);
-    std::any visitFloatLiteral(CqasmParser::FloatLiteralContext *context);
-    std::any visitIdentifier(CqasmParser::IdentifierContext *context);
-    std::any visitIndex(CqasmParser::IndexContext *context);
+    AnalysisResult visitProgram(const ast::Program &ast);
+    void visitVersion(const ast::Version &ast);
+    void visitStatementList(const ast::StatementList &ast);
+    void visitVariables(const ast::Variables &ast);
+    void visitMeasureStatement(const ast::MeasureStatement &ast);
+    tree::Maybe<semantic::Instruction> visitInstruction(const ast::Instruction &ast);
+    tree::Maybe<values::Value> visitExpressionList(const ast::ExpressionList &ast);
+    tree::Many<values::ConstInt> visitIndexList(const ast::IndexList &ast);
+    values::ConstInt visitIndexItem(const ast::IndexItem &ast);
+    tree::Many<values::ConstInt> visitIndexRange(const ast::IndexRange &ast);
+    values::ConstInt visitIntegerLiteral(const ast::IntegerLiteral &ast);
+    values::ConstReal visitFloatLiteral(const ast::FloatLiteral &ast);
+    values::Value visitIdentifier(const ast::Identifier &ast);
+    values::Value visitIndex(const ast::Index &ast);
+
+    explicit AnalyzeTreeGenAstVisitor(const Analyzer &analyzer);
 };
 
 }  // namespace cqasm::v3x::analyzer

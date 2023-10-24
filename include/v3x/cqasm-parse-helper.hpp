@@ -17,6 +17,8 @@
 
 namespace cqasm::v3x::parser {
 
+using SourceLocation = annotations::SourceLocation;
+
 /**
  * Parse using the given file path.
  * Throws an AnalysisError if this fails.

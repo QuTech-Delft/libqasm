@@ -19,8 +19,7 @@ import cqasm.v1x.types
 import cqasm.v1x.error_model
 import cqasm.v1x.instruction
 
-// Initialization function to use to construct default values for the tree base
-// classes and primitives.
+// Initialization function to use to construct default values for the tree base classes and primitives.
 initialize_function cqasm::v1x::primitives::initialize
 serdes_functions cqasm::v1x::primitives::serialize cqasm::v1x::primitives::deserialize
 
@@ -36,13 +35,12 @@ namespace semantic
 # Represents an annotation.
 annotation_data {
 
-    # The interface this annotation is intended for. If a target doesn't
-    # support an interface, it should silently ignore the annotation.
+    # The interface this annotation is intended for.
+    # If a target doesn't support an interface, it should silently ignore the annotation.
     interface: cqasm::v1x::primitives::Str;
 
     # The operation within the interface that this annotation is intended for.
-    # If a supports the corresponding interface but not the operation, it
-    # should throw an error.
+    # If a target supports the corresponding interface but not the operation, it should throw an error.
     operation: cqasm::v1x::primitives::Str;
 
     # Any operands attached to the annotation.
@@ -50,7 +48,8 @@ annotation_data {
 
 }
 
-# A block of statements. Only used for API level 1.2+.
+# A block of statements.
+# Only used for API level 1.2+.
 block {
 
     # The statements contained by the block.
@@ -92,12 +91,12 @@ annotated {
     # An instruction (a.k.a. gate).
     instruction_base {
 
-        # Condition (c- notation). When there is no condition, this is a
-        # constant boolean set to true.
+        # Condition (C- notation).
+        # When there is no condition, this is a constant boolean set to true.
         condition: external One<cqasm::v1x::values::Node>;
 
-        # A regular instruction. Until 1.2, this is the only type of instruction
-        # that exists.
+        # A regular instruction.
+        # Until 1.2, this is the only type of instruction that exists.
         instruction {
 
             # Instruction type as registered through the API.
@@ -135,8 +134,8 @@ annotated {
 
     }
 
-    # A bundle of instructions, to be executed in parallel. Only used for API
-    # level 1.0 and 1.1; 1.2+ uses bundle_ext.
+    # A bundle of instructions, to be executed in parallel.
+    # Only used for API level 1.0 and 1.1; 1.2+ uses bundle_ext.
     bundle {
 
         # The list of parallel instructions.
@@ -144,11 +143,12 @@ annotated {
 
     }
 
-    # A statement. Unused before 1.2, as only bundles existed before then.
+    # A statement.
+    # Unused before 1.2, as only bundles existed before then.
     statement {
 
-        # A bundle of instructions, to be executed in parallel. Only used for API
-        # level 1.2+.
+        # A bundle of instructions, to be executed in parallel.
+        # Only used for API level 1.2+.
         bundle_ext {
 
             # The list of parallel instructions.
@@ -188,9 +188,9 @@ annotated {
 
             }
 
-            # A foreach loop. Note that this is rather dumbed-down in cQASM 1.2
-            # compared to the cQASM 2.0 syntax it was inspired from, and is only
-            # usable as a range-based loop.
+            # A foreach loop.
+            # Note that this is rather dumbed-down in cQASM 1.2 compared to the cQASM 2.0 syntax it was inspired from,
+            # and is only usable as a range-based loop.
             foreach_loop {
 
                 # Reference to the variable used for looping.
@@ -239,25 +239,24 @@ annotated {
 
     }
 
-    # A subcircuit. That is, a named collection of bundles, possibly repeated a
-    # number of times.
+    # A subcircuit.
+    # That is, a named collection of bundles, possibly repeated a number of times.
     subcircuit {
 
-        # The name of the subcircuit. If the file doesn't start with a subcircuit
-        # definition, this is empty for the first subcircuit.
+        # The name of the subcircuit.
+        # If the file doesn't start with a subcircuit definition, this is empty for the first subcircuit.
         name: cqasm::v1x::primitives::Str;
 
-        # An optional integer expression representing the number of
-        # iterations for this subcircuit. This is 1 when the iteration count is
-        # not specified.
+        # An optional integer expression representing the number of iterations for this subcircuit.
+        # This is 1 when the iteration count is not specified.
         iterations: cqasm::v1x::primitives::Int;
 
-        # The instruction bundles contained by this subcircuit. Only used for
-        # API level 1.0 and 1.1; use body for 1.2+.
+        # The instruction bundles contained by this subcircuit.
+        # Only used for API level 1.0 and 1.1; use body for 1.2+.
         bundles: Any<bundle>;
 
-        # The statements contained by this subcircuit. Only used for API level
-        # 1.2+; use bundles for 1.0 and 1.1.
+        # The statements contained by this subcircuit.
+        # Only used for API level 1.2+; use bundles for 1.0 and 1.1.
         body: Maybe<block>;
 
         # Maintain 1.0/1.1 field order.
@@ -265,7 +264,8 @@ annotated {
 
     }
 
-    # A mapping. That is, a user-defined identifier mapping to some value.
+    # A mapping.
+    # That is, a user-defined identifier mapping to some value.
     mapping {
 
         # The name of the mapping.
@@ -300,6 +300,11 @@ version {
 # A complete program.
 program {
 
+    # API version.
+    # This may be greater than or equal to the file version.
+    # This controls which fields of the tree are used, where such usage depends on the version.
+    api_version: cqasm::v1x::primitives::Version;
+
     # File version.
     version: One<version>;
 
@@ -315,13 +320,8 @@ program {
     # The list of all user-defined mappings after parsing.
     mappings: Any<mapping>;
 
-    # This list of all user-defined variables at any point in the code. Only
-    # used for API level 1.1+.
+    # This list of all user-defined variables at any point in the code.
+    # Only used for API level 1.1+.
     variables: Any<variable>;
-
-    # API version. This may be greater than or equal to the file version. This
-    # controls which fields of the tree are used, where such usage depends on
-    # the version.
-    api_version: cqasm::v1x::primitives::Version;
 
 }

@@ -28,14 +28,34 @@ namespace cqasm
 namespace v3x
 namespace semantic
 
-statement {
-    variable {
-        name: cqasm::v3x::primitives::Str;
-        typ: external One<cqasm::v3x::types::Node>;
-        size: external Maybe<cqasm::v3x::values::ConstInt>;
-    }
+# Represents an annotation
+annotation_data {
+    # The interface this annotation is intended for.
+    # If a target doesn't support an interface, it should silently ignore the annotation
+    interface: cqasm::v3x::primitives::Str;
+
+    # The operation within the interface that this annotation is intended for.
+    # If a target supports the corresponding interface but not the operation, it should throw an error
+    operation: cqasm::v3x::primitives::Str;
+
+    # Any operands attached to the annotation
+    operands: external Any<cqasm::v3x::values::Node>;
+}
+
+# A block of statements
+block {
+    statements: Any<statement>;
+}
+
+# Represents a node that carries annotation data
+annotated {
+    annotations: Any<annotation_data>;
 
     instruction_base {
+        # Condition (C- notation).
+        # When there is no condition, this is a constant boolean set to true
+        condition: external One<cqasm::v3x::values::Node>;
+
         # A regular instruction (gate)
         instruction {
             # Instruction type as registered through the API
@@ -47,11 +67,32 @@ statement {
             # Operands for the instruction
             operands: external Any<cqasm::v3x::values::Node>;
         }
+    }
 
-        measure_instruction {
+    statement {
+        measure_statement {
             bits: One<variable>;
             qubits: One<variable>;
         }
+    }
+
+    # A subcircuit
+    subcircuit {
+        # The name of the subcircuit
+        name: cqasm::v3x::primitives::Str;
+
+        # An optional integer expression representing the number of iterations for this subcircuit.
+        # This is 1 when the iteration count is not specified
+        iterations: cqasm::v3x::primitives::Int;
+
+        # The statements contained by this subcircuit
+        body: Maybe<block>;
+    }
+
+    variable {
+        name: cqasm::v3x::primitives::Str;
+        typ: external One<cqasm::v3x::types::Node>;
+        size: external Maybe<cqasm::v3x::values::ConstInt>;
     }
 }
 
@@ -60,14 +101,17 @@ version {
 }
 
 program {
+    # API version.
+    # This may be greater than or equal to the file version.
+    # This controls which fields of the tree are used, where such usage depends on the version
+    api_version: cqasm::v3x::primitives::Version;
+
     # File version
     version: One<version>;
 
+    # The list of subcircuits
+    subcircuits: Any<subcircuit>;
+
+    # This list of all user-defined variables at any point in the code
     variables: Any<variable>;
-
-    # API version.
-    # This may be greater than or equal to the file version.
-    # This controls which fields of the tree are used, where such usage depends on the version.
-    api_version: cqasm::v3x::primitives::Version;
-
 }

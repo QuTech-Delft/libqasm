@@ -16,6 +16,10 @@ import cqasm.v3x.primitives
 initialize_function cqasm::v3x::primitives::initialize
 serdes_functions cqasm::v3x::primitives::serialize cqasm::v3x::primitives::deserialize
 
+// Include SourceLocation annotation object for the debug dump generator
+src_include "cqasm-annotations.hpp"
+location cqasm::annotations::SourceLocation
+
 
 # Namespace for the abstract syntax tree node classes
 namespace cqasm
@@ -23,12 +27,12 @@ namespace v3x
 namespace ast
 
 index_entry {
-    # Zero based
+    # Zero based.
     index_item {
         index: One<expression>;
     }
 
-    # Inclusive
+    # Inclusive.
     index_range {
         first: One<expression>;
         last: One<expression>;
@@ -62,21 +66,59 @@ expression_list {
     items: Any<expression>;
 }
 
-statement {
-    variable {
-        name: One<identifier>;
-        typ: One<identifier>;
-        size: Maybe<integer_literal>;
-    }
+annotation_data {
+    # The interface this annotation is intended for.
+    # If a target doesn't support an interface, it should silently ignore the annotation.
+    interface: One<identifier>;
 
+    # The operation within the interface that this annotation is intended for.
+    # If a target supports the corresponding interface but not the operation, it should throw an error.
+    operation: One<identifier>;
+
+    # Any operands attached to the annotation.
+    operands: One<expression_list>;
+}
+
+# Represents a node that carries annotation data
+annotated {
+    # Zero or more annotations attached to this object.
+    annotations: Any<annotation_data>;
+
+    # Any kind of instruction.
+    # Note that this is NOT a statement.
+    # Instructions are always considered part of a parallel bundle, even if they're on their own.
     instruction {
         name: One<identifier>;
+        condition: Maybe<expression>;
         operands: One<expression_list>;
     }
 
-    measure_statement {
-        bits: One<expression>;
-        qubits: One<expression>;
+    statement {
+        # A list of parallel instructions.
+        bundle {
+            items: Many<instruction>;
+        }
+
+        # One or more variable declaration for some type.
+        variables {
+            names: Many<identifier>;
+            typ: One<identifier>;
+            size: Maybe<integer_literal>;
+        }
+
+        # A subcircuit header.
+        subcircuit {
+            # The name of the subcircuit
+            name: One<identifier>;
+
+            # An optional integer expression representing the number of iterations for this subcircuit.
+            iterations: Maybe<expression>;
+        }
+
+        measure_statement {
+            bits: One<expression>;
+            qubits: One<expression>;
+        }
     }
 }
 

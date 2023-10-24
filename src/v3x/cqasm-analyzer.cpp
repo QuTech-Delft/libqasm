@@ -4,9 +4,11 @@
 
 #define _USE_MATH_DEFINES
 
+#include "v3x/AnalyzeTreeGenAstVisitor.hpp"
 #include "v3x/cqasm-analyzer.hpp"
 #include "v3x/cqasm-parse-helper.hpp"
 
+#include <memory>  // make_unique
 #include <stdexcept>  // runtime_error
 
 
@@ -31,7 +33,8 @@ ast::One<semantic::Program> AnalysisResult::unwrap(std::ostream &out) const {
  * Creates a new semantic analyzer.
  */
 Analyzer::Analyzer(const primitives::Version &api_version)
-: api_version(api_version) {
+: api_version{ api_version }
+, instruction_set{} {
     if (!api_version.equal("3.0")) {
         throw std::invalid_argument("this analyzer only supports cQASM 3.0");
     }
@@ -53,32 +56,11 @@ void Analyzer::register_instruction(const std::string &name, const std::string &
 }
 
 /**
- * Helper class for analyzing a single AST.
- * This contains the stateful information that Analyzer can't have (to allow Analyzer to be reused).
- */
-class AnalyzerHelper {
-public:
-    /**
-     * The analyzer associated with this helper.
-     */
-    const Analyzer &analyzer;
-
-    /**
-     * The analysis result being constructed.
-     */
-    AnalysisResult result;
-
-    /**
-     * Analyzes the given AST using the given analyzer.
-     */
-    AnalyzerHelper(const Analyzer &analyzer, const ast::Program &ast);
-};
-
-/**
  * Analyzes the given AST.
  */
 AnalysisResult Analyzer::analyze(const ast::Program &ast) const {
-    auto result = AnalyzerHelper(*this, ast).result;
+    auto analyze_visitor_up = std::make_unique<AnalyzeTreeGenAstVisitor>(*this);
+    auto result =  analyze_visitor_up->visitProgram(ast);
     if (result.errors.empty() && !result.root.is_well_formed()) {
         std::cerr << *result.root;
         throw std::runtime_error("internal error: no semantic errors returned, but semantic tree is incomplete."
@@ -147,14 +129,8 @@ AnalysisResult Analyzer::analyze_string(const std::string &data, const std::stri
     );
 }
 
-/**
- * Analyzes the given AST using the given analyzer.
- */
-AnalyzerHelper::AnalyzerHelper(const Analyzer &analyzer, const ast::Program &ast)
-: analyzer(analyzer)
-, result() {
-    (void) ast;
-    throw std::runtime_error{ "Unimplemented" };
+[[nodiscard]] primitives::Version Analyzer::get_api_version() const {
+    return api_version;
 }
 
 } // namespace cqasm::v3x::analyzer

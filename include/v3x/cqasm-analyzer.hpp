@@ -92,9 +92,6 @@ public:
  * (hence they are const).
  */
 class Analyzer {
-private:
-    friend class AnalyzerHelper;
-
     /**
      * The maximum cQASM version that this analyzer supports.
      */
@@ -158,6 +155,11 @@ public:
      * The optional filename argument will be used only for error messages.
      */
     [[nodiscard]] AnalysisResult analyze_string(const std::string &data, const std::string &filename = "<unknown>") const;
+
+    /**
+     * Returns the API version.
+     */
+    [[nodiscard]] primitives::Version get_api_version() const;
 };
 
 } // namespace cqasm::v3x::analyzer

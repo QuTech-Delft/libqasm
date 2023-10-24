@@ -3,6 +3,7 @@
 #include "v3x/BuildCustomAstVisitor.hpp"
 #include "v3x/CqasmParser.h"
 #include "v3x/CqasmParserVisitor.h"
+#include "v3x/CustomErrorListener.hpp"
 
 #include <any>
 
@@ -15,10 +16,16 @@ class  BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
      */
     std::string file_name_;
 
+    /**
+     * Error listener.
+     */
+    CustomErrorListener* error_listener_p_;
+
     std::int64_t get_int_value(size_t line, size_t char_position_in_line, const std::string &text);
     std::int64_t get_int_value(antlr4::tree::TerminalNode *node);
     double get_float_value(size_t line, size_t char_position_in_line, const std::string &text);
     double get_float_value(antlr4::tree::TerminalNode *node);
+
 public:
     std::any visitProgram(CqasmParser::ProgramContext *context) override;
     std::any visitVersion(CqasmParser::VersionContext *context) override;
@@ -37,8 +44,10 @@ public:
     std::any visitIdentifier(CqasmParser::IdentifierContext *context) override;
     std::any visitIndex(CqasmParser::IndexContext *context) override;
 
-    explicit BuildTreeGenAstVisitor(const std::string &file_name = "<unknown>")
-    : file_name_{ file_name } {}
+    explicit BuildTreeGenAstVisitor(const std::string &file_name = "<unknown>");
+    void addErrorListener(CustomErrorListener *errorListener) override;
+    void syntaxError(size_t line, size_t char_position_in_line, const std::string &text) override;
+    void setNodeAnnotation(ast::One<ast::Node> node, antlr4::Token *token) override;
 };
 
 }  // namespace cqasm::v3x::parser

@@ -71,7 +71,6 @@ public:
             analyzer.register_instruction("rz", "Qr");
             analyzer.register_instruction("s", "Q");
             analyzer.register_instruction("sdag", "Q");
-            analyzer.register_instruction("u", "Qu");
             analyzer.register_instruction("x", "Q");
             analyzer.register_instruction("x90", "Q");
             analyzer.register_instruction("y", "Q");

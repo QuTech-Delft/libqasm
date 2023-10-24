@@ -18,7 +18,7 @@ ScannerAdaptor::~ScannerAdaptor() {}
 ScannerAntlr::ScannerAntlr(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up,
     std::unique_ptr<CustomErrorListener> error_listener_up)
 : build_visitor_up_{ std::move(build_visitor_up) }
-, error_listener_up_{std::move(error_listener_up)} {}
+, error_listener_up_{ std::move(error_listener_up) } {}
 
 ScannerAntlr::~ScannerAntlr() {}
 
@@ -26,14 +26,14 @@ cqasm::v3x::parser::ParseResult ScannerAntlr::parse_(antlr4::ANTLRInputStream &i
     CqasmLexer lexer{ &is };
     lexer.removeErrorListeners();
     lexer.addErrorListener(error_listener_up_.get());
-
     antlr4::CommonTokenStream tokens{ &lexer };
 
     CqasmParser parser{ &tokens };
     parser.removeErrorListeners();
     parser.addErrorListener(error_listener_up_.get());
-
     auto ast = parser.program();
+
+    build_visitor_up_->addErrorListener(error_listener_up_.get());
     auto custom_ast = build_visitor_up_->visitProgram(ast);
     return cqasm::v3x::parser::ParseResult{
         std::any_cast<cqasm::v3x::ast::One<cqasm::v3x::ast::Program>>(custom_ast),  // root

@@ -1,3 +1,4 @@
+#include "cqasm-annotations.hpp"
 #include "cqasm-tree.hpp"
 #include "v3x/cqasm-ast.hpp"
 #include "v3x/BuildTreeGenAstVisitor.hpp"
@@ -15,15 +16,38 @@ namespace cqasm::v3x::parser {
 using namespace cqasm::v3x::ast;
 using namespace cqasm::error;
 
+BuildTreeGenAstVisitor::BuildTreeGenAstVisitor(const std::string &file_name)
+: file_name_{ file_name }
+, error_listener_p_{ nullptr } {}
+
+void BuildTreeGenAstVisitor::addErrorListener(CustomErrorListener *errorListener) {
+    error_listener_p_ = errorListener;
+}
+
+void BuildTreeGenAstVisitor::syntaxError(size_t line, size_t char_position_in_line, const std::string &text) {
+    assert(error_listener_p_);
+    error_listener_p_->syntaxError(line, char_position_in_line, text);
+}
+
+void BuildTreeGenAstVisitor::setNodeAnnotation(ast::One<ast::Node> node, antlr4::Token *token) {
+    // ANTLR provides a zero-based character position in line
+    // We change it here to a one-based index, which is the more human-readable, and the common option in text editors
+    node->set_annotation(cqasm::annotations::SourceLocation{
+        file_name_,
+        static_cast<uint32_t>(token->getLine()),
+        static_cast<uint32_t>(token->getCharPositionInLine() + 1),
+        static_cast<uint32_t>(token->getLine()),
+        static_cast<uint32_t>(token->getStopIndex() + 1)
+    });
+}
+
 std::int64_t BuildTreeGenAstVisitor::get_int_value(size_t line, size_t char_position_in_line, const std::string &text) {
     try {
         return std::stoll(text);
     } catch (std::out_of_range&) {
-        throw std::runtime_error{
-            fmt::format("{}:{}:{}: value '{}' is out of the INTEGER_LITERAL range",
-                file_name_, line, char_position_in_line, text
-        )};
+        syntaxError(line, char_position_in_line, fmt::format("value '{}' is out of the INTEGER_LITERAL range", text));
     }
+    return {};
 }
 
 std::int64_t BuildTreeGenAstVisitor::get_int_value(antlr4::tree::TerminalNode *node) {
@@ -36,11 +60,9 @@ double BuildTreeGenAstVisitor::get_float_value(size_t line, size_t char_position
     try {
         return std::stod(text);
     } catch (std::out_of_range&) {
-        throw std::runtime_error{
-            fmt::format("{}:{}:{}: value '{}' is out of the FLOAT_LITERAL range",
-                file_name_, line, char_position_in_line, text
-            )};
+        syntaxError(line, char_position_in_line, fmt::format("value '{}' is out of the FLOAT_LITERAL range", text));
     }
+    return {};
 }
 
 double BuildTreeGenAstVisitor::get_float_value(antlr4::tree::TerminalNode *node) {
@@ -69,6 +91,7 @@ std::any BuildTreeGenAstVisitor::visitVersion(CqasmParser::VersionContext *conte
         ret->items.push_back(get_int_value(token->getLine(), token->getCharPositionInLine() + matches.position(2),
             matches[2]));
     }
+    setNodeAnnotation(ret, token);
     return ret;
 }
 
@@ -90,8 +113,8 @@ std::any BuildTreeGenAstVisitor::visitQubitTypeDefinition(CqasmParser::QubitType
     auto size = (int_ctx)
         ? get_int_value(int_ctx)
         : std::int64_t{};
-    auto ret = cqasm::tree::make<Variable>(
-        cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()),
+    auto ret = cqasm::tree::make<Variables>(
+        Many<Identifier>{ cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()) },
         cqasm::tree::make<Identifier>(context->QUBIT_TYPE()->getText()),
         cqasm::tree::make<IntegerLiteral>(size)
     );
@@ -103,8 +126,8 @@ std::any BuildTreeGenAstVisitor::visitBitTypeDefinition(CqasmParser::BitTypeDefi
     auto size = (int_ctx)
         ? get_int_value(int_ctx)
         : std::int64_t{};
-    auto ret = cqasm::tree::make<Variable>(
-        cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()),
+    auto ret = cqasm::tree::make<Variables>(
+        Many<Identifier>{ cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()) },
         cqasm::tree::make<Identifier>(context->BIT_TYPE()->getText()),
         cqasm::tree::make<IntegerLiteral>(size)
     );
@@ -119,11 +142,11 @@ std::any BuildTreeGenAstVisitor::visitMeasureStatement(CqasmParser::MeasureState
 }
 
 std::any BuildTreeGenAstVisitor::visitInstruction(CqasmParser::InstructionContext *context) {
-    auto ret = cqasm::tree::make<Instruction>(
+    return cqasm::tree::make<Instruction>(
         cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()),
+        cqasm::tree::Maybe<Expression>{},
         std::any_cast<One<ExpressionList>>(visitExpressionList(context->expressionList()))
     );
-    return One<Statement>{ ret };
 }
 
 std::any BuildTreeGenAstVisitor::visitExpressionList(CqasmParser::ExpressionListContext *context) {
