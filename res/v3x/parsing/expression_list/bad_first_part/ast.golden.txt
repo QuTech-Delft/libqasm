@@ -1,2 +1,2 @@
 ERROR
-input.cq:7:8: mismatched input 'abc' expecting {<EOF>, NEW_LINE, ';'}
+input.cq:7:9: mismatched input 'abc' expecting {<EOF>, NEW_LINE, ';'}

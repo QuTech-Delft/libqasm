@@ -1,2 +1,2 @@
 ERROR
-input.cq:2:0: extraneous input 'version' expecting {<EOF>, NEW_LINE, ';'}
+input.cq:2:1: extraneous input 'version' expecting {<EOF>, NEW_LINE, ';'}

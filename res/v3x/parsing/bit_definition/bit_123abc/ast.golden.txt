@@ -1,2 +1,2 @@
 ERROR
-input.cq:3:4: extraneous input '123' expecting {'[', IDENTIFIER}
+input.cq:3:5: extraneous input '123' expecting {'[', IDENTIFIER}

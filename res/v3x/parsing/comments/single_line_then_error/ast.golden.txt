@@ -1,2 +1,2 @@
 ERROR
-input.cq:4:4: no viable alternative at input 'blah'
+input.cq:4:5: no viable alternative at input 'blah'

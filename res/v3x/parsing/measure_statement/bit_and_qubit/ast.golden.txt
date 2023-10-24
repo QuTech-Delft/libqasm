@@ -1,19 +1,19 @@
 SUCCESS
 Program(
   version: <
-    Version(
+    Version( # input.cq:1:9
       items: 3
     )
   >
   statements: <
     StatementList(
       items: [
-        Variable(
-          name: <
+        Variables(
+          names: [
             Identifier(
               name: q
             )
-          >
+          ]
           typ: <
             Identifier(
               name: qubit
@@ -24,13 +24,14 @@ Program(
               value: 0
             )
           >
+          annotations: []
         )
-        Variable(
-          name: <
+        Variables(
+          names: [
             Identifier(
               name: b
             )
-          >
+          ]
           typ: <
             Identifier(
               name: bit
@@ -41,6 +42,7 @@ Program(
               value: 0
             )
           >
+          annotations: []
         )
         MeasureStatement(
           bits: <
@@ -53,6 +55,7 @@ Program(
               name: q
             )
           >
+          annotations: []
         )
       ]
     )

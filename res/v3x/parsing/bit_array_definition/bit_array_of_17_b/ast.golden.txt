@@ -1,19 +1,19 @@
 SUCCESS
 Program(
   version: <
-    Version(
+    Version( # input.cq:1:9
       items: 3
     )
   >
   statements: <
     StatementList(
       items: [
-        Variable(
-          name: <
+        Variables(
+          names: [
             Identifier(
               name: b
             )
-          >
+          ]
           typ: <
             Identifier(
               name: bit
@@ -24,6 +24,7 @@ Program(
               value: 17
             )
           >
+          annotations: []
         )
       ]
     )

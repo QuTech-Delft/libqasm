@@ -1,2 +1,2 @@
 ERROR
-input.cq:7:14: extraneous input 'abc' expecting {<EOF>, NEW_LINE, ';'}
+input.cq:7:15: extraneous input 'abc' expecting {<EOF>, NEW_LINE, ';'}

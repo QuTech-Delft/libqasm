@@ -1,7 +1,7 @@
 SUCCESS
 Program(
   version: <
-    Version(
+    Version( # input.cq:1:9..11
       items: 3.0
     )
   >
