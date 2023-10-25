@@ -1,0 +1,22 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  subcircuits: []
+  variables: [
+    Variable(
+      name: q
+      typ: <
+        Qubit(
+)
+      >
+      size: -
+      annotations: []
+    )
+  ]
+)
+
