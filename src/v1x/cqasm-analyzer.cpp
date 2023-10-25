@@ -1425,9 +1425,8 @@ void AnalyzerHelper::analyze_variables(const ast::Variables &variables) {
 
         // Construct the variables and add mappings for them.
         for (const auto &identifier : variables.names) {
-
-            // Construct variable. Use the location tag of the identifier to
-            // record where the variable was defined.
+            // Construct variable.
+            // Use the location tag of the identifier to record where the variable was defined.
             auto var = tree::make<semantic::Variable>(identifier->name, type.clone());
             var->copy_annotation<parser::SourceLocation>(*identifier);
             var->annotations = analyze_annotations(variables.annotations);
@@ -1763,12 +1762,12 @@ tree::Any<semantic::AnnotationData> AnalyzerHelper::analyze_annotations(
     const tree::Any<ast::AnnotationData> &annotations
 ) {
     auto retval = tree::Any<semantic::AnnotationData>();
-    for (auto annotation_ast : annotations) {
+    for (const auto &annotation_ast : annotations) {
         try {
             auto annotation = tree::make<semantic::AnnotationData>();
             annotation->interface = annotation_ast->interface->name;
             annotation->operation = annotation_ast->operation->name;
-            for (auto expression_ast : annotation_ast->operands->items) {
+            for (const auto &expression_ast : annotation_ast->operands->items) {
                 try {
                     annotation->operands.add(analyze_expression(*expression_ast));
                 } catch (error::AnalysisError &e) {

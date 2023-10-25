@@ -30,6 +30,7 @@ void BuildTreeGenAstVisitor::syntaxError(size_t line, size_t char_position_in_li
 }
 
 void BuildTreeGenAstVisitor::setNodeAnnotation(ast::One<ast::Node> node, antlr4::Token *token) {
+    auto token_size = token->getStopIndex() - token->getStartIndex() + 1;
     // ANTLR provides a zero-based character position in line
     // We change it here to a one-based index, which is the more human-readable, and the common option in text editors
     node->set_annotation(cqasm::annotations::SourceLocation{
@@ -37,7 +38,7 @@ void BuildTreeGenAstVisitor::setNodeAnnotation(ast::One<ast::Node> node, antlr4:
         static_cast<uint32_t>(token->getLine()),
         static_cast<uint32_t>(token->getCharPositionInLine() + 1),
         static_cast<uint32_t>(token->getLine()),
-        static_cast<uint32_t>(token->getStopIndex() + 1)
+        static_cast<uint32_t>(token->getCharPositionInLine() + 1 + token_size)
     });
 }
 
@@ -111,26 +112,34 @@ std::any BuildTreeGenAstVisitor::visitStatementSeparator(CqasmParser::StatementS
 std::any BuildTreeGenAstVisitor::visitQubitTypeDefinition(CqasmParser::QubitTypeDefinitionContext *context) {
     auto int_ctx = context->INTEGER_LITERAL();
     auto size = (int_ctx)
-        ? get_int_value(int_ctx)
-        : std::int64_t{};
+        ? tree::Maybe<IntegerLiteral>{ cqasm::tree::make<IntegerLiteral>(get_int_value(int_ctx)) }
+        : tree::Maybe<IntegerLiteral>{};
+    // tree-gen AST has support for many variable declarations on the same line,
+    // but parser grammar only allows one variable declaration per line at the moment
     auto ret = cqasm::tree::make<Variables>(
         Many<Identifier>{ cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()) },
         cqasm::tree::make<Identifier>(context->QUBIT_TYPE()->getText()),
-        cqasm::tree::make<IntegerLiteral>(size)
+        size
     );
+    const auto &token = context->IDENTIFIER()->getSymbol();
+    setNodeAnnotation(ret, token);
     return One<Statement>{ ret };
 }
 
 std::any BuildTreeGenAstVisitor::visitBitTypeDefinition(CqasmParser::BitTypeDefinitionContext *context) {
     auto int_ctx = context->INTEGER_LITERAL();
     auto size = (int_ctx)
-        ? get_int_value(int_ctx)
-        : std::int64_t{};
+        ? tree::Maybe<IntegerLiteral>{ cqasm::tree::make<IntegerLiteral>(get_int_value(int_ctx)) }
+        : tree::Maybe<IntegerLiteral>{};
+    // tree-gen AST has support for many variable declarations on the same line,
+    // but parser grammar only allows one variable declaration per line at the moment
     auto ret = cqasm::tree::make<Variables>(
         Many<Identifier>{ cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()) },
         cqasm::tree::make<Identifier>(context->BIT_TYPE()->getText()),
-        cqasm::tree::make<IntegerLiteral>(size)
+        size
     );
+    const auto &token = context->IDENTIFIER()->getSymbol();
+    setNodeAnnotation(ret, token);
     return One<Statement>{ ret };
 }
 

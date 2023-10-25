@@ -367,7 +367,7 @@ annotated {
 
         }
 
-        # One or more variable declaration for some type.
+        # One or more variable declarations of some type.
         variables {
 
             # Name of the variables. Multiple can be declared on one line.

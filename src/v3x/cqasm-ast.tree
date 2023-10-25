@@ -84,40 +84,25 @@ annotated {
     # Zero or more annotations attached to this object.
     annotations: Any<annotation_data>;
 
-    # Any kind of instruction.
-    # Note that this is NOT a statement.
-    # Instructions are always considered part of a parallel bundle, even if they're on their own.
-    instruction {
-        name: One<identifier>;
-        condition: Maybe<expression>;
-        operands: One<expression_list>;
-    }
-
     statement {
-        # A list of parallel instructions.
-        bundle {
-            items: Many<instruction>;
-        }
-
-        # One or more variable declaration for some type.
+        # One or more variable declarations of some type.
         variables {
             names: Many<identifier>;
             typ: One<identifier>;
             size: Maybe<integer_literal>;
         }
 
-        # A subcircuit header.
-        subcircuit {
-            # The name of the subcircuit
-            name: One<identifier>;
-
-            # An optional integer expression representing the number of iterations for this subcircuit.
-            iterations: Maybe<expression>;
-        }
-
+        # A measure statement.
         measure_statement {
             bits: One<expression>;
             qubits: One<expression>;
+        }
+
+        # A gate.
+        instruction {
+            name: One<identifier>;
+            condition: Maybe<expression>;
+            operands: One<expression_list>;
         }
     }
 }
