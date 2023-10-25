@@ -1,14 +1,14 @@
 SUCCESS
 Program(
   version: <
-    Version( # input.cq:1:9
+    Version( # input.cq:1:9..10
       items: 3
     )
   >
   statements: <
     StatementList(
       items: [
-        Variables(
+        Variables( # input.cq:3:5..6
           names: [
             Identifier(
               name: b
@@ -19,11 +19,7 @@ Program(
               name: bit
             )
           >
-          size: <
-            IntegerLiteral(
-              value: 0
-            )
-          >
+          size: -
           annotations: []
         )
       ]
