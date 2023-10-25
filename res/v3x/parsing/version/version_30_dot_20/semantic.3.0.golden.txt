@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:1:9..13: the maximum cQASM version supported is 3.0, but the cQASM file is version 30.20
+Error at input.cq:1:9..14: the maximum cQASM version supported is 3.0, but the cQASM file is version 30.20

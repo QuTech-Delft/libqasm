@@ -1,14 +1,14 @@
 SUCCESS
 Program(
   version: <
-    Version( # input.cq:1:9
+    Version( # input.cq:1:9..10
       items: 3
     )
   >
   statements: <
     StatementList(
       items: [
-        Variables(
+        Variables( # input.cq:3:11..12
           names: [
             Identifier(
               name: q
@@ -26,7 +26,7 @@ Program(
           >
           annotations: []
         )
-        Variables(
+        Variables( # input.cq:4:11..12
           names: [
             Identifier(
               name: q
