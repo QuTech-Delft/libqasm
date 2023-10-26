@@ -1,45 +1,44 @@
 SUCCESS
 Program(
   version: <
-    Version(
+    Version( # input.cq:1:9..12
       items: 3.0
     )
   >
   statements: <
     StatementList(
       items: [
-        Variable(
-          name: <
+        Variables( # input.cq:2:7..8
+          names: [
             Identifier(
               name: q
             )
-          >
+          ]
           typ: <
             Identifier(
               name: qubit
             )
           >
-          size: <
-            IntegerLiteral(
-              value: 0
-            )
-          >
+          size: -
+          annotations: []
         )
-        Instruction(
+        Gate( # input.cq:4:1..2
           name: <
             Identifier(
               name: x
             )
           >
+          condition: -
           operands: <
             ExpressionList(
               items: [
-                Identifier(
+                Identifier( # input.cq:4:3..4
                   name: q
                 )
               ]
             )
           >
+          annotations: []
         )
       ]
     )

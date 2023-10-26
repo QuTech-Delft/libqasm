@@ -1,28 +1,30 @@
 SUCCESS
 Program(
   version: <
-    Version(
+    Version( # input.cq:1:9..10
       items: 3
     )
   >
   statements: <
     StatementList(
       items: [
-        Instruction(
+        Gate( # input.cq:3:1..2
           name: <
             Identifier(
               name: x
             )
           >
+          condition: -
           operands: <
             ExpressionList(
               items: [
-                Identifier(
+                Identifier( # input.cq:3:3..4
                   name: v
                 )
               ]
             )
           >
+          annotations: []
         )
       ]
     )

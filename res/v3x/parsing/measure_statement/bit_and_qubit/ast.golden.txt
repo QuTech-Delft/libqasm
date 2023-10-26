@@ -36,15 +36,29 @@ Program(
           size: -
           annotations: []
         )
-        MeasureStatement(
-          bits: <
-            Identifier(
-              name: b
+        MeasureInstruction( # input.cq:5:5..12
+          output_operands: <
+            ExpressionList(
+              items: [
+                Identifier( # input.cq:5:1..2
+                  name: b
+                )
+              ]
             )
           >
-          qubits: <
+          name: <
             Identifier(
-              name: q
+              name: measure
+            )
+          >
+          condition: -
+          operands: <
+            ExpressionList(
+              items: [
+                Identifier( # input.cq:5:13..14
+                  name: q
+                )
+              ]
             )
           >
           annotations: []
