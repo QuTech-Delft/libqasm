@@ -98,6 +98,11 @@ class Analyzer {
     primitives::Version api_version;
 
     /**
+     * The set of "mappings" that the parser starts out with.
+     */
+    resolver::MappingTable mappings;
+
+    /**
      * The supported set of quantum/classical/mixed instructions,
      * appearing in the cQASM file as assembly-like commands.
      * Instructions have a case-sensitively matched name, and
@@ -112,6 +117,16 @@ public:
     explicit Analyzer(const primitives::Version &api_version = "3.0");
 
     /**
+     * Registers an initial mapping from the given name to the given value.
+     */
+    void register_mapping(const std::string &name, const values::Value &value);
+
+    /**
+     * Registers mappings for pi, eu (aka e, 2.718...), tau and im (imaginary unit).
+     */
+    void register_default_mappings();
+
+    /**
      * Registers an instruction type.
      */
     void register_instruction(const instruction::Instruction &instruction);
@@ -120,10 +135,7 @@ public:
      * Convenience method for registering an instruction type.
      * The arguments are passed straight to instruction::Instruction's constructor.
      */
-    void register_instruction(
-        const std::string &name,
-        const std::string &param_types = ""
-    );
+    void register_instruction(const std::string &name, const std::string &param_types = "");
 
     /**
      * Analyzes the given program AST node.
@@ -154,12 +166,28 @@ public:
      * Parses and analyzes the given string.
      * The optional filename argument will be used only for error messages.
      */
-    [[nodiscard]] AnalysisResult analyze_string(const std::string &data, const std::string &filename = "<unknown>") const;
+    [[nodiscard]] AnalysisResult analyze_string(
+        const std::string &data, const std::string &filename = "<unknown>") const;
 
     /**
      * Returns the API version.
      */
     [[nodiscard]] primitives::Version get_api_version() const;
+
+    /**
+     * Resolves a mapping.
+     * Throws NameResolutionFailure if no mapping by the given name exists.
+     */
+    [[nodiscard]] values::Value resolve(const std::string &name) const;
+
+    /**
+     * Resolves an instruction.
+     * Throws NameResolutionFailure if no instruction by the given name exists,
+     * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
+     * returns the resolved instruction node.
+     * Annotation data, line number information, and the condition still need to be set by the caller.
+     */
+    [[nodiscard]] tree::One<semantic::Instruction> resolve(const std::string &name, const values::Values &args) const;
 };
 
 } // namespace cqasm::v3x::analyzer

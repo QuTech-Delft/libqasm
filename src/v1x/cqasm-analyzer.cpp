@@ -44,7 +44,6 @@ Analyzer::Analyzer(const primitives::Version &api_version)
     }
 }
 
-
 /**
  * Registers an initial mapping from the given name to the given value.
  */
@@ -686,7 +685,7 @@ void AnalyzerHelper::analyze_version(const ast::Version &ast) {
         result.root->version->items = analyzer.api_version;
 
         // Check API version.
-        for (auto item : ast.items) {
+        for (const auto &item : ast.items) {
             if (item < 0) {
                 throw error::AnalysisError("invalid version component");
             }
@@ -1093,7 +1092,7 @@ tree::Maybe<semantic::Instruction> AnalyzerHelper::analyze_instruction(const ast
             std::unordered_set<primitives::Int> qubits_used;
             for (const auto &operand : operands) {
                 if (auto x = operand->as_qubit_refs()) {
-                    for (auto index : x->index) {
+                    for (const auto &index : x->index) {
                         if (!qubits_used.insert(index->value).second) {
                             throw error::AnalysisError(
                                 "qubit with index " + std::to_string(index->value)
@@ -1920,7 +1919,7 @@ values::Value AnalyzerHelper::analyze_matrix(const ast::MatrixLiteral &matrix_li
     // the ncols line is well-behaved.
     size_t nrows = matrix_lit.rows.size();
     size_t ncols = matrix_lit.rows[0]->items.size();
-    for (auto row : matrix_lit.rows) {
+    for (const auto &row : matrix_lit.rows) {
         if (row->items.size() != ncols) {
             throw error::AnalysisError("matrix is not rectangular");
         }
@@ -1995,7 +1994,7 @@ values::Value AnalyzerHelper::analyze_index(const ast::Index &index) {
 
         // Qubit refs.
         auto indices = analyze_index_list(*index.indices, qubit_refs->index.size());
-        for (auto idx : indices) {
+        for (const auto &idx : indices) {
             idx->value = qubit_refs->index[idx->value]->value;
         }
         return tree::make<values::QubitRefs>(indices);
@@ -2004,7 +2003,7 @@ values::Value AnalyzerHelper::analyze_index(const ast::Index &index) {
 
         // Measurement bit refs.
         auto indices = analyze_index_list(*index.indices, bit_refs->index.size());
-        for (auto idx : indices) {
+        for (const auto &idx : indices) {
             idx->value = bit_refs->index[idx->value]->value;
         }
         return tree::make<values::BitRefs>(indices);
@@ -2025,7 +2024,7 @@ values::Value AnalyzerHelper::analyze_index(const ast::Index &index) {
  */
 tree::Many<values::ConstInt> AnalyzerHelper::analyze_index_list(const ast::IndexList &index_list, size_t size) {
     tree::Many<values::ConstInt> retval;
-    for (auto entry : index_list.items) {
+    for (const auto &entry : index_list.items) {
         if (auto item = entry->as_index_item()) {
 
             // Single index.
@@ -2060,7 +2059,7 @@ tree::Many<values::ConstInt> AnalyzerHelper::analyze_index_list(const ast::Index
             if (first > last) {
                 throw error::AnalysisError("last index is lower than first index", range);
             }
-            for (auto index = (size_t)first; index <= (size_t)last; index++) {
+            for (auto index = first; index <= last; index++) {
                 auto index_val = tree::make<values::ConstInt>(index);
                 index_val->copy_annotation<parser::SourceLocation>(*range);
                 retval.add(index_val);

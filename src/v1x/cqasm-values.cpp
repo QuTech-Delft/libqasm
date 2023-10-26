@@ -9,6 +9,7 @@
 #include "v1x/cqasm-semantic.hpp"
 
 #include <iostream>
+#include <fmt/format.h>
 
 
 namespace cqasm::v1x::values {

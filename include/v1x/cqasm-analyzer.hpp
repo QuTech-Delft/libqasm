@@ -164,11 +164,6 @@ public:
     explicit Analyzer(const primitives::Version &api_version = "1.0");
 
     /**
-     * Registers an initial mapping from the given name to the given value.
-     */
-    void register_mapping(const std::string &name, const values::Value &value);
-
-    /**
      * Registers a function, usable within expressions.
      *
      * values::check_const() can be used in the function implementation to
@@ -195,6 +190,11 @@ public:
         const std::string &param_types,
         const resolver::FunctionImpl &impl
     );
+
+    /**
+     * Registers an initial mapping from the given name to the given value.
+     */
+    void register_mapping(const std::string &name, const values::Value &value);
 
     /**
      * Registers a number of default functions and mappings, such as the

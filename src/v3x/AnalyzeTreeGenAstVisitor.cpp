@@ -52,12 +52,10 @@ void AnalyzeTreeGenAstVisitor::visitStatementList(const ast::StatementList &stat
         try {
             if (auto variables = statement->as_variables()) {
                 visitVariables(*variables);
-            } else if (auto measure_statement = statement->as_measure_statement()) {
-                (void) measure_statement;
-                throw std::runtime_error{ "Unimplemented"};
+            } else if (auto measure_instruction = statement->as_measure_instruction()) {
+                visitMeasureInstruction(*measure_instruction);
             } else if (auto instruction = statement->as_instruction()) {
-                (void) instruction;
-                throw std::runtime_error{ "Unimplemented"};
+                visitInstruction(*instruction);
             } else {
                 throw std::runtime_error("unexpected statement node");
             }
@@ -75,16 +73,26 @@ void AnalyzeTreeGenAstVisitor::visitVariables(const ast::Variables &variables_as
         if (type_name == "qubit") {
             if (variables_ast.size.empty()) {
                 type = tree::make<types::Qubit>();
+                // TODO: add mapping
+                //       Associate this qubit variable with the next free qubit index
+                //       Or fail if there are no qubit indices free
+                // analyzer_->add_mapping(variables_ast.names[0], tree::make<values::QubitRefs>());
             } else if (variables_ast.size->value > 0) {
                 type = tree::make<types::QubitArray>(variables_ast.size->value);
+                // TODO: allocate variables_ast.size->value qubits
+                // analyzer_->add_mapping(variables_ast.names, tree::make<values::QubitRefs>());
             } else {
                 throw error::AnalysisError("declaring qubit array of size <= 0");
             }
         } else if (type_name == "bit") {
             if (variables_ast.size.empty()) {
                 type = tree::make<types::Bit>();
+                // TODO: same for bits
+                // analyzer_->add_mapping(variables_ast.names, tree::make<values::BitRefs>());
             } else if (variables_ast.size->value > 0) {
                 type = tree::make<types::BitArray>(variables_ast.size->value);
+                // TODO: and for bit arrays
+                // analyzer_->add_mapping(variables_ast.names, tree::make<values::BitRefs>());
             } else {
                 throw error::AnalysisError("declaring bit array of size <= 0");
             }
@@ -107,59 +115,136 @@ void AnalyzeTreeGenAstVisitor::visitVariables(const ast::Variables &variables_as
     }
 }
 
-void AnalyzeTreeGenAstVisitor::visitMeasureStatement(const ast::MeasureStatement &ast) {
+tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(const ast::Instruction &instruction_ast) {
+    tree::Maybe<semantic::Instruction> node;
+    try {
+        // Figure out the operand list
+        auto operands = values::Values();
+        for (const auto &operand_expr : instruction_ast.operands->items) {
+            operands.add(visitExpression(*operand_expr));
+        }
+
+        // Resolve the instruction
+        node.set(analyzer_.resolve(instruction_ast.name->name, operands));
+
+        // Copy annotation data
+        node->annotations = visitAnnotations(instruction_ast.annotations);
+        node->copy_annotation<parser::SourceLocation>(instruction_ast);
+    } catch (error::AnalysisError &err) {
+        err.context(instruction_ast);
+        result_.errors.push_back(err.get_message());
+    }
+    return node;
+}
+
+tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitMeasureInstruction(const ast::MeasureInstruction &ast) {
     (void) ast;
     throw std::runtime_error{ "Unimplemented"};
 }
 
-tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(const ast::Instruction &ast) {
-    (void) ast;
-    throw std::runtime_error{ "Unimplemented"};
+values::Value AnalyzeTreeGenAstVisitor::visitExpression(const ast::Expression &expression_ast) {
+    values::Value retval;
+    try {
+        if (auto integer_literal = expression_ast.as_integer_literal()) {
+            retval.set(tree::make<values::ConstInt>(integer_literal->value));
+        } else if (auto float_literal = expression_ast.as_float_literal()) {
+            retval.set(tree::make<values::ConstReal>(float_literal->value));
+        } else if (auto identifier = expression_ast.as_identifier()) {
+            retval.set(analyzer_.resolve(identifier->name));
+        } else if (auto index = expression_ast.as_index()) {
+            retval.set(visitIndex(*index));
+        } else {
+            throw std::runtime_error("unexpected expression node");
+        }
+        if (!retval.empty() && retval->as_variable_ref()) {
+            throw error::AnalysisError("dynamic expressions are not supported");
+        }
+    } catch (error::AnalysisError &err) {
+        err.context(expression_ast);
+        throw;
+    }
+    if (retval.empty()) {
+        throw std::runtime_error{ "visitExpression returned an empty value" };
+    }
+    retval->copy_annotation<parser::SourceLocation>(expression_ast);
+    return retval;
 }
 
-tree::Maybe<values::Value> AnalyzeTreeGenAstVisitor::visitExpressionList(const ast::ExpressionList &ast) {
-    (void) ast;
-    throw std::runtime_error{ "Unimplemented"};
+values::Value AnalyzeTreeGenAstVisitor::visitIndex(const ast::Index &index_ast) {
+    auto expression = visitExpression(*index_ast.expr);
+    if (auto qubit_refs = expression->as_qubit_refs()) {
+        auto indices = visitIndexList(*index_ast.indices, qubit_refs->indices.size());
+        for (const auto &index : indices) {
+            index->value = qubit_refs->indices[index->value]->value;
+        }
+        return tree::make<values::QubitRefs>(indices);
+    } else if (auto bit_refs = expression->as_bit_refs()) {
+        auto indices = visitIndexList(*index_ast.indices, bit_refs->indices.size());
+        for (const auto &index : indices) {
+            index->value = bit_refs->indices[index->value]->value;
+        }
+        return tree::make<values::BitRefs>(indices);
+    } else {
+        throw error::AnalysisError(fmt::format(
+            "indexation is not supported for value of type '{}'", values::type_of(expression)));
+    }
 }
 
-values::Value AnalyzeTreeGenAstVisitor::visitExpression(const ast::Expression &ast) {
-    (void) ast;
-    throw std::runtime_error{ "Unimplemented"};
+tree::Many<values::ConstInt> AnalyzeTreeGenAstVisitor::visitIndexList(
+    const ast::IndexList &index_list_ast, size_t size) {
+
+    tree::Many<values::ConstInt> ret;
+    for (const auto &index_entry : index_list_ast.items) {
+        if (auto index_item = index_entry->as_index_item()) {
+            // Single index
+            auto index_item_value_sp = visitIndexItem(*index_item, size);
+            ret.add(index_item_value_sp);
+        } else if (auto index_range = index_entry->as_index_range()) {
+            // Range notation
+            ret = visitIndexRange(*index_range, size);
+        } else {
+            throw std::runtime_error("unknown IndexEntry AST node");
+        }
+    }
+    return ret;
 }
 
-tree::Many<values::ConstInt> AnalyzeTreeGenAstVisitor::visitIndexList(const ast::IndexList &ast) {
-    (void) ast;
-    throw std::runtime_error{ "Unimplemented"};
+tree::One<values::ConstInt> AnalyzeTreeGenAstVisitor::visitIndexItem(
+    const ast::IndexItem &index_item_ast, size_t size) {
+
+    auto index_item = visitConstInt(*index_item_ast.index);
+    if (index_item < 0 || static_cast<unsigned long>(index_item) >= size) {
+        throw error::AnalysisError{
+            fmt::format("index {} out of range (size {})", index_item, size), &index_item_ast };
+    }
+    auto index_value_sp = tree::make<values::ConstInt>(index_item);
+    index_value_sp->copy_annotation<parser::SourceLocation>(index_item_ast);
+    return index_value_sp;
 }
 
-values::ConstInt AnalyzeTreeGenAstVisitor::visitIndexItem(const ast::IndexItem &ast) {
-    (void) ast;
-    throw std::runtime_error{ "Unimplemented"};
-}
+tree::Many<values::ConstInt> AnalyzeTreeGenAstVisitor::visitIndexRange(
+    const ast::IndexRange &index_range_ast, size_t size) {
 
-tree::Many<values::ConstInt> AnalyzeTreeGenAstVisitor::visitIndexRange(const ast::IndexRange &ast) {
-    (void) ast;
-    throw std::runtime_error{ "Unimplemented"};
-}
-
-values::ConstInt AnalyzeTreeGenAstVisitor::visitIntegerLiteral(const ast::IntegerLiteral &ast) {
-    (void) ast;
-    throw std::runtime_error{ "Unimplemented"};
-}
-
-values::ConstReal AnalyzeTreeGenAstVisitor::visitFloatLiteral(const ast::FloatLiteral &ast) {
-    (void) ast;
-    throw std::runtime_error{ "Unimplemented"};
-}
-
-values::Value AnalyzeTreeGenAstVisitor::visitIdentifier(const ast::Identifier &ast) {
-    (void) ast;
-    throw std::runtime_error{ "Unimplemented"};
-}
-
-values::Value AnalyzeTreeGenAstVisitor::visitIndex(const ast::Index &ast) {
-    (void) ast;
-    throw std::runtime_error{ "Unimplemented"};
+    auto first = visitConstInt(*index_range_ast.first);
+    if (first < 0 || static_cast<unsigned long>(first) >= size) {
+        throw error::AnalysisError{
+            fmt::format("index {} out of range (size {})", first, size), &*index_range_ast.first };
+    }
+    auto last = visitConstInt(*index_range_ast.last);
+    if (last < 0 || static_cast<unsigned long>(last) >= size) {
+        throw error::AnalysisError{
+            fmt::format("index {} out of range (size {})", last, size), &*index_range_ast.last };
+    }
+    if (first > last) {
+        throw error::AnalysisError("last index is lower than first index", &index_range_ast);
+    }
+    tree::Many<values::ConstInt> ret{};
+    for (auto index = first; index <= last; index++) {
+        auto index_value_sp = tree::make<values::ConstInt>(index);
+        index_value_sp->copy_annotation<parser::SourceLocation>(index_range_ast);
+        ret.add(index_value_sp);
+    }
+    return ret;
 }
 
 tree::Any<semantic::AnnotationData> AnalyzeTreeGenAstVisitor::visitAnnotations(
@@ -187,6 +272,36 @@ tree::Any<semantic::AnnotationData> AnalyzeTreeGenAstVisitor::visitAnnotations(
         }
     }
     return ret;
+}
+
+/**
+ * Shorthand for parsing an expression and promoting it to the given type,
+ * constructed in-place with the type_args parameter pack.
+ * Returns empty when the cast fails.
+ */
+template <class Type, class... TypeArgs>
+values::Value AnalyzeTreeGenAstVisitor::analyze_as(const ast::Expression &expression, TypeArgs... type_args) {
+    return values::promote(visitExpression(expression), tree::make<Type>(type_args...));
+}
+
+/**
+ * Shorthand for parsing an expression to a constant integer.
+ */
+primitives::Int AnalyzeTreeGenAstVisitor::visitConstInt(const ast::Expression &expression) {
+    try {
+        auto value = analyze_as<types::Int>(expression);
+        if (value.empty()) {
+            throw error::AnalysisError("expected an integer");
+        }
+        if (auto int_value = value->as_const_int()) {
+            return int_value->value;
+        } else {
+            throw error::AnalysisError("integer must be constant");
+        }
+    } catch (error::AnalysisError &e) {
+        e.context(expression);
+        throw;
+    }
 }
 
 }  // namespace cqasm::v3x::analyzer

@@ -20,7 +20,7 @@ statementSeparator: NEW_LINE | SEMICOLON;
 statement:
     QUBIT_TYPE (OPEN_BRACKET INTEGER_LITERAL CLOSE_BRACKET)? IDENTIFIER  # qubitTypeDefinition
     | BIT_TYPE (OPEN_BRACKET INTEGER_LITERAL CLOSE_BRACKET)? IDENTIFIER  # bitTypeDefinition
-    | expression EQUALS MEASURE expression  # measureStatement
+    | expressionList EQUALS MEASURE expressionList  # measureInstruction
     | IDENTIFIER expressionList  # instruction
     ;
 

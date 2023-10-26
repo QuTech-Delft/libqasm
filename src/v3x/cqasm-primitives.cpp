@@ -47,6 +47,17 @@ Real deserialize(const ::tree::cbor::MapReader &map) {
 }
 
 template <>
+void serialize(const Complex &obj, ::tree::cbor::MapWriter &map) {
+    map.append_float("r", obj.real());
+    map.append_float("i", obj.imag());
+}
+
+template <>
+Complex deserialize(const ::tree::cbor::MapReader &map) {
+    return {map.at("r").as_float(), map.at("i").as_float()};
+}
+
+template <>
 void serialize(const Version &obj, ::tree::cbor::MapWriter &map) {
     auto aw = map.append_array("x");
     for (auto x : obj) {

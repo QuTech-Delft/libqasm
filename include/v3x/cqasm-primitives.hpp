@@ -71,6 +71,15 @@ template <>
 Real deserialize(const ::tree::cbor::MapReader &map);
 
 /**
+ * Complex number primitive used within the semantic trees.
+ */
+using Complex = std::complex<double>;
+template <>
+void serialize(const Complex &obj, ::tree::cbor::MapWriter &map);
+template <>
+Complex deserialize(const ::tree::cbor::MapReader &map);
+
+/**
  * Version number primitive used within the AST and semantic trees.
  */
 using Version = version::Version;

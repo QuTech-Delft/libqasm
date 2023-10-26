@@ -16,18 +16,27 @@ public:
     void visitVersion(const ast::Version &version_ast);
     void visitStatementList(const ast::StatementList &statement_list_ast);
     void visitVariables(const ast::Variables &variables_ast);
-    void visitMeasureStatement(const ast::MeasureStatement &ast);
     tree::Maybe<semantic::Instruction> visitInstruction(const ast::Instruction &ast);
-    tree::Maybe<values::Value> visitExpressionList(const ast::ExpressionList &ast);
+    tree::Maybe<semantic::Instruction> visitMeasureInstruction(const ast::MeasureInstruction &ast);
     values::Value visitExpression(const ast::Expression &ast);
-    tree::Many<values::ConstInt> visitIndexList(const ast::IndexList &ast);
-    values::ConstInt visitIndexItem(const ast::IndexItem &ast);
-    tree::Many<values::ConstInt> visitIndexRange(const ast::IndexRange &ast);
-    values::ConstInt visitIntegerLiteral(const ast::IntegerLiteral &ast);
-    values::ConstReal visitFloatLiteral(const ast::FloatLiteral &ast);
-    values::Value visitIdentifier(const ast::Identifier &ast);
     values::Value visitIndex(const ast::Index &ast);
+    tree::Many<values::ConstInt> visitIndexList(const ast::IndexList &ast, size_t size);
+    tree::One<values::ConstInt> visitIndexItem(const ast::IndexItem &ast, size_t size);
+    tree::Many<values::ConstInt> visitIndexRange(const ast::IndexRange &ast, size_t size);
     tree::Any<semantic::AnnotationData> visitAnnotations(const tree::Any<ast::AnnotationData> &annotations_ast);
+
+    /**
+     * Shorthand for parsing an expression and promoting it to the given type,
+     * constructed in-place with the type_args parameter pack.
+     * Returns empty when the cast fails.
+     */
+    template<class Type, class... TypeArgs>
+    values::Value analyze_as(const ast::Expression &expression, TypeArgs... type_args);
+
+    /**
+     * Shorthand for parsing an expression to a constant integer.
+     */
+    primitives::Int visitConstInt(const ast::Expression &expression);
 
     explicit AnalyzeTreeGenAstVisitor(const Analyzer &analyzer);
 };

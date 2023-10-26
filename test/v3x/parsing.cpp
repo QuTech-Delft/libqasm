@@ -63,7 +63,7 @@ public:
             analyzer.register_instruction("cz", "QQ");
             analyzer.register_instruction("h", "Q");
             analyzer.register_instruction("i", "Q");
-            analyzer.register_instruction("measure", "Q");
+            analyzer.register_instruction("measure", "VW");  // from qubit array to bit array
             analyzer.register_instruction("mx90", "Q");
             analyzer.register_instruction("my90", "Q");
             analyzer.register_instruction("rx", "Qr");

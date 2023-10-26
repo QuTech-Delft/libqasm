@@ -85,6 +85,12 @@ annotated {
     annotations: Any<annotation_data>;
 
     statement {
+        # A mapping (alias) for an expression.
+        mapping {
+            alias: One<identifier>;
+            expr: One<expression>;
+        }
+
         # One or more variable declarations of some type.
         variables {
             names: Many<identifier>;
@@ -92,17 +98,17 @@ annotated {
             size: Maybe<integer_literal>;
         }
 
-        # A measure statement.
-        measure_statement {
-            bits: One<expression>;
-            qubits: One<expression>;
-        }
-
-        # A gate.
+        # A gate, or a measurement instruction.
         instruction {
             name: One<identifier>;
             condition: Maybe<expression>;
             operands: One<expression_list>;
+
+            gate {}
+
+            measure_instruction {
+                output_operands: One<expression_list>;
+            }
         }
     }
 }

@@ -2,13 +2,12 @@
  * Implementation for \ref include/v3x/cqasm-analyzer.hpp "v3x/cqasm-analyzer.hpp".
  */
 
-#define _USE_MATH_DEFINES
-
 #include "v3x/AnalyzeTreeGenAstVisitor.hpp"
 #include "v3x/cqasm-analyzer.hpp"
 #include "v3x/cqasm-parse-helper.hpp"
 
 #include <memory>  // make_unique
+#include <numbers>
 #include <stdexcept>  // runtime_error
 
 
@@ -38,6 +37,24 @@ Analyzer::Analyzer(const primitives::Version &api_version)
     if (!api_version.equal("3.0")) {
         throw std::invalid_argument("this analyzer only supports cQASM 3.0");
     }
+}
+
+/**
+ * Registers mappings for pi, eu (aka e, 2.718...), tau and im (imaginary unit).
+ */
+void Analyzer::register_default_mappings() {
+    static constexpr double tau = 2 * std::numbers::pi;
+    register_mapping("pi", tree::make<values::ConstReal>(std::numbers::pi));
+    register_mapping("eu", tree::make<values::ConstReal>(std::numbers::e));
+    register_mapping("tau", tree::make<values::ConstReal>(tau));
+    register_mapping("im", tree::make<values::ConstComplex>(primitives::Complex(0.0, 1.0)));
+}
+
+/**
+ * Registers an initial mapping from the given name to the given value.
+ */
+void Analyzer::register_mapping(const std::string &name, const values::Value &value) {
+    mappings.add(name, value);
 }
 
 /**
@@ -129,8 +146,32 @@ AnalysisResult Analyzer::analyze_string(const std::string &data, const std::stri
     );
 }
 
+/**
+ * Returns the API version.
+ */
 [[nodiscard]] primitives::Version Analyzer::get_api_version() const {
     return api_version;
+}
+
+/**
+ * Resolves a mapping.
+ * Throws NameResolutionFailure if no mapping by the given name exists.
+ */
+values::Value Analyzer::resolve(const std::string &name) const {
+    return mappings.resolve(name);
+}
+
+/**
+ * Resolves an instruction.
+ * Throws NameResolutionFailure if no instruction by the given name exists,
+ * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
+ * returns the resolved instruction node.
+ * Annotation data, line number information, and the condition still need to be set by the caller.
+ */
+[[nodiscard]] tree::One<semantic::Instruction> Analyzer::resolve(
+    const std::string &name, const values::Values &args) const {
+
+    return instruction_set.resolve(name,  args);
 }
 
 } // namespace cqasm::v3x::analyzer

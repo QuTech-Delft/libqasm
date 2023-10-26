@@ -16,6 +16,7 @@
 #include <fmt/format.h>
 #include <functional>
 #include <memory>
+#include <unordered_map>
 
 
 /**
@@ -45,13 +46,41 @@ struct OverloadedNameResolver : public cqasm::overload::OverloadedNameResolver<T
         try {
             return cqasm::overload::OverloadedNameResolver<T, types::TypeBase, values::Node>::resolve(name, args);
         } catch (const cqasm::overload::NameResolutionFailure &) {
-            throw NameResolutionFailure{ "failed to resolve " + name };
+            throw NameResolutionFailure{ fmt::format("failed to resolve instruction '{}'", name) };
         } catch (const cqasm::overload::OverloadResolutionFailure &) {
             throw OverloadResolutionFailure{
                 fmt::format("failed to resolve overload for {} with argument pack {}",
                     name, values::types_of(args)) };
         }
     }
+};
+
+/**
+ * Table of all mappings within a certain scope.
+ */
+class MappingTable {
+    std::unordered_map<std::string, std::pair<const values::Value, tree::Maybe<ast::Mapping>>> table;
+
+public:
+    /**
+     * Adds a mapping.
+     */
+    void add(
+        const std::string &name,
+        const values::Value &value,
+        const tree::Maybe<ast::Mapping> &node = tree::Maybe<ast::Mapping>()
+    );
+
+    /**
+     * Resolves a mapping.
+     * Throws NameResolutionFailure if no mapping by the given name exists.
+     */
+    values::Value resolve(const std::string &name) const;
+
+    /**
+     * Grants read access to the underlying map.
+     */
+    const std::unordered_map<std::string, std::pair<const values::Value, tree::Maybe<ast::Mapping>>> &get_table() const;
 };
 
 /**

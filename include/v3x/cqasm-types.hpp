@@ -32,6 +32,11 @@ using Types = tree::Any<TypeBase>;
  *
  *  - Q = qubit
  *  - B = bit (measurement register)
+ *  - V = qubit array
+ *  - W = bit array
+ *  - i = integer
+ *  - r = real
+ *  - c = complex
  */
 Types from_spec(const std::string &spec);
 

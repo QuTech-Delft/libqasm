@@ -6,6 +6,7 @@
 #include "cqasm-utils.hpp"
 #include "v3x/cqasm-resolver.hpp"
 
+#include <fmt/format.h>
 #include <memory>
 #include <unordered_map>
 
@@ -16,6 +17,45 @@ using Type = types::Type;
 using Types = types::Types;
 using Value = values::Value;
 using Values = values::Values;
+
+/**
+ * Adds a mapping.
+ */
+void MappingTable::add(
+    const std::string &name,
+    const values::Value &value,
+    const tree::Maybe<ast::Mapping> &node
+) {
+    auto it = table.find(name);
+    if (it != table.end()) {
+        table.erase(it);
+    }
+    table.insert(
+        std::make_pair(
+            name,
+            std::pair<const values::Value, tree::Maybe<ast::Mapping>>(value, node)
+        )
+    );
+}
+
+/**
+ * Resolves a mapping.
+ * Throws NameResolutionFailure if no mapping by the given name exists.
+ */
+Value MappingTable::resolve(const std::string &name) const {
+    if (auto entry = table.find(name); entry == table.end()) {
+        throw NameResolutionFailure{ fmt::format("failed to resolve mapping '{}'", name) };
+    } else {
+        return Value(entry->second.first->clone());
+    }
+}
+
+/**
+ * Grants read access to the underlying map.
+ */
+const std::unordered_map<std::string, std::pair<const values::Value, tree::Maybe<ast::Mapping>>> &MappingTable::get_table() const {
+    return table;
+}
 
 InstructionTable::InstructionTable()
 : resolver(std::make_unique<OverloadedNameResolver<instruction::Instruction>>()) {}

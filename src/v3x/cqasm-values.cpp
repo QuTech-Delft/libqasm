@@ -8,6 +8,8 @@
 #include "v3x/cqasm-types.hpp"
 #include "v3x/cqasm-semantic.hpp"
 
+#include  <fmt/format.h>
+
 
 namespace cqasm::v3x::values {
 
@@ -27,7 +29,25 @@ Value promote(const Value &value, const types::Type &type) {
         return value;
     }
 
-    return {};
+    Value ret{};
+
+    // Integers promote to real
+    if (type->as_real()) {
+        if (const auto &const_int = value->as_const_int()) {
+            ret = tree::make<values::ConstReal>(static_cast<ConstReal>(const_int->value));
+        }
+    }
+
+    // Integers and reals promote to complex
+    if (type->as_complex()) {
+        if (const auto &const_int = value->as_const_int()) {
+            ret = tree::make<values::ConstComplex>(static_cast<ConstComplex>(const_int->value));
+        } else if (const auto &const_real = value->as_const_real()) {
+            ret = tree::make<values::ConstComplex>(static_cast<ConstComplex>(const_real->value));
+        }
+    }
+
+    return ret;
 }
 
 /**
@@ -50,7 +70,7 @@ types::Type type_of(const Value &value) {
  */
 types::Types types_of(const Values &values) {
     types::Types types;
-    for (auto value : values) {
+    for (const auto &value : values) {
         types.add(type_of(value));
     }
     return types;
@@ -71,7 +91,7 @@ void check_const(const Value &value) {
  * i.e. if it doesn't have a known value at this time.
  */
 void check_const(const Values &values) {
-    for (auto value : values) {
+    for (const auto &value : values) {
         check_const(value);
     }
 }
@@ -89,22 +109,7 @@ std::ostream &operator<<(std::ostream &os, const Value &value) {
  * Stream << overload for zero or more values.
  */
 std::ostream &operator<<(std::ostream &os, const Values &values) {
-    os << "[";
-    bool first = true;
-    for (const auto &value : values) {
-        if (first) {
-            first = false;
-        } else {
-            os << ", ";
-        }
-        if (value.empty()) {
-            os << "NULL";
-        } else {
-            os << *value;
-        }
-    }
-    os << "]";
-    return os;
+    return os << fmt::format("[{}]", fmt::join(values, ", "));
 }
 
 } // namespace cqasm::v3x::values

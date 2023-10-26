@@ -4,8 +4,8 @@
 
 #include "cqasm-error.hpp"
 
-namespace cqasm {
-namespace error {
+
+namespace cqasm::error {
 
 /**
  * Constructs a new error. If node is a non-null annotatable with a
@@ -29,7 +29,7 @@ AnalysisError::AnalysisError(
 void AnalysisError::context(const tree::Annotatable &node) {
     if (!location) {
         if (auto loc = node.get_annotation_ptr<annotations::SourceLocation>()) {
-            location = std::unique_ptr<annotations::SourceLocation>(new annotations::SourceLocation(*loc));
+            location = std::make_unique<annotations::SourceLocation>(*loc);
         }
     }
 }
@@ -58,5 +58,4 @@ const char *AnalysisError::what() const noexcept {
     return get_message().c_str();
 }
 
-} // namespace error
-} // namespace cqasm
+} // namespace cqasm::error
