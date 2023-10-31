@@ -1862,10 +1862,10 @@ values::Value AnalyzerHelper::analyze_expression(const ast::Expression &expressi
         } else {
             throw std::runtime_error("unexpected expression node");
         }
-        if (!retval.empty() && (retval->as_function() || retval->as_variable_ref())) {
-            if (analyzer.api_version.less_than("1.1")) {
-                throw error::AnalysisError("dynamic expressions are only supported from cQASM 1.1 onwards");
-            }
+        if (analyzer.api_version.less_than("1.1") &&
+            !retval.empty() &&
+            (retval->as_function() || retval->as_variable_ref())) {
+            throw error::AnalysisError("dynamic expressions are only supported from cQASM 1.1 onwards");
         }
     } catch (error::AnalysisError &e) {
         e.context(expression);

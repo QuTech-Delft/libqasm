@@ -320,7 +320,7 @@ program {
     # The list of all user-defined mappings after parsing.
     mappings: Any<mapping>;
 
-    # This list of all user-defined variables at any point in the code.
+    # The list of all user-defined variables at any point in the code.
     # Only used for API level 1.1+.
     variables: Any<variable>;
 
