@@ -21,6 +21,19 @@ Str deserialize(const ::tree::cbor::MapReader &map) {
 }
 
 template <>
+Bool initialize<Bool>() { return false; }
+
+template <>
+void serialize(const Bool &obj, ::tree::cbor::MapWriter &map) {
+    map.append_bool("x", obj);
+}
+
+template <>
+Bool deserialize(const ::tree::cbor::MapReader &map) {
+    return map.at("x").as_bool();
+}
+
+template <>
 Int initialize<Int>() { return 0; }
 
 template <>

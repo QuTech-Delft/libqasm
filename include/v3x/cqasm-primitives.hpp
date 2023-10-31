@@ -49,6 +49,17 @@ template <>
 Str deserialize(const ::tree::cbor::MapReader &map);
 
 /**
+ * Boolean primitive used within the semantic trees. Defaults to false.
+ */
+using Bool = bool;
+template <>
+Bool initialize<Bool>();
+template <>
+void serialize(const Bool &obj, ::tree::cbor::MapWriter &map);
+template <>
+Bool deserialize(const ::tree::cbor::MapReader &map);
+
+/**
  * Integer primitive used within the AST and semantic trees.
  */
 using Int = std::int64_t;

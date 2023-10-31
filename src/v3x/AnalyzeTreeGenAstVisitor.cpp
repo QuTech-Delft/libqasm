@@ -6,7 +6,7 @@
 namespace cqasm::v3x::analyzer {
 
 
-AnalyzeTreeGenAstVisitor::AnalyzeTreeGenAstVisitor(const Analyzer &analyzer)
+AnalyzeTreeGenAstVisitor::AnalyzeTreeGenAstVisitor(Analyzer &analyzer)
 : analyzer_{ analyzer }
 , result_{} {}
 
@@ -14,7 +14,7 @@ AnalysisResult AnalyzeTreeGenAstVisitor::visitProgram(const ast::Program &progra
     result_.root = tree::make<semantic::Program>();
     result_.root->api_version = analyzer_.get_api_version();
     visitVersion(*program_ast.version);
-    visitStatementList(*program_ast.statements);
+    visitStatements(*program_ast.statements);
     return result_;
 }
 
@@ -47,7 +47,7 @@ void AnalyzeTreeGenAstVisitor::visitVersion(const ast::Version &version_ast) {
     result_.root->version->copy_annotation<parser::SourceLocation>(version_ast);
 }
 
-void AnalyzeTreeGenAstVisitor::visitStatementList(const ast::StatementList &statement_list_ast) {
+void AnalyzeTreeGenAstVisitor::visitStatements(const ast::StatementList &statement_list_ast) {
     for (const auto &statement : statement_list_ast.items) {
         try {
             if (auto variables = statement->as_variables()) {
@@ -55,7 +55,7 @@ void AnalyzeTreeGenAstVisitor::visitStatementList(const ast::StatementList &stat
             } else if (auto measure_instruction = statement->as_measure_instruction()) {
                 visitMeasureInstruction(*measure_instruction);
             } else if (auto instruction = statement->as_instruction()) {
-                visitInstruction(*instruction);
+                result_.root->statements.add(visitInstruction(*instruction));
             } else {
                 throw std::runtime_error("unexpected statement node");
             }
@@ -73,26 +73,16 @@ void AnalyzeTreeGenAstVisitor::visitVariables(const ast::Variables &variables_as
         if (type_name == "qubit") {
             if (variables_ast.size.empty()) {
                 type = tree::make<types::Qubit>();
-                // TODO: add mapping
-                //       Associate this qubit variable with the next free qubit index
-                //       Or fail if there are no qubit indices free
-                // analyzer_->add_mapping(variables_ast.names[0], tree::make<values::QubitRefs>());
             } else if (variables_ast.size->value > 0) {
                 type = tree::make<types::QubitArray>(variables_ast.size->value);
-                // TODO: allocate variables_ast.size->value qubits
-                // analyzer_->add_mapping(variables_ast.names, tree::make<values::QubitRefs>());
             } else {
                 throw error::AnalysisError("declaring qubit array of size <= 0");
             }
         } else if (type_name == "bit") {
             if (variables_ast.size.empty()) {
                 type = tree::make<types::Bit>();
-                // TODO: same for bits
-                // analyzer_->add_mapping(variables_ast.names, tree::make<values::BitRefs>());
             } else if (variables_ast.size->value > 0) {
                 type = tree::make<types::BitArray>(variables_ast.size->value);
-                // TODO: and for bit arrays
-                // analyzer_->add_mapping(variables_ast.names, tree::make<values::BitRefs>());
             } else {
                 throw error::AnalysisError("declaring bit array of size <= 0");
             }
@@ -108,6 +98,12 @@ void AnalyzeTreeGenAstVisitor::visitVariables(const ast::Variables &variables_as
             variable->copy_annotation<parser::SourceLocation>(*identifier);
             variable->annotations = visitAnnotations(variables_ast.annotations);
             result_.root->variables.add(variable);
+
+            analyzer_.add_mapping(
+                identifier->name,
+                tree::make<values::VariableRef>(variable),
+                tree::Maybe<ast::Mapping>()
+            );
         }
     } catch (error::AnalysisError &err) {
         err.context(variables_ast);
@@ -125,7 +121,10 @@ tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(co
         }
 
         // Resolve the instruction
-        node.set(analyzer_.resolve(instruction_ast.name->name, operands));
+        node.set(analyzer_.resolve_instruction(instruction_ast.name->name, operands));
+
+        // Resolve the condition code
+        node->condition.set(tree::make<values::ConstBool>(true));
 
         // Copy annotation data
         node->annotations = visitAnnotations(instruction_ast.annotations);
@@ -150,14 +149,11 @@ values::Value AnalyzeTreeGenAstVisitor::visitExpression(const ast::Expression &e
         } else if (auto float_literal = expression_ast.as_float_literal()) {
             retval.set(tree::make<values::ConstReal>(float_literal->value));
         } else if (auto identifier = expression_ast.as_identifier()) {
-            retval.set(analyzer_.resolve(identifier->name));
+            retval.set(analyzer_.resolve_mapping(identifier->name));
         } else if (auto index = expression_ast.as_index()) {
             retval.set(visitIndex(*index));
         } else {
             throw std::runtime_error("unexpected expression node");
-        }
-        if (!retval.empty() && retval->as_variable_ref()) {
-            throw error::AnalysisError("dynamic expressions are not supported");
         }
     } catch (error::AnalysisError &err) {
         err.context(expression_ast);
@@ -172,18 +168,15 @@ values::Value AnalyzeTreeGenAstVisitor::visitExpression(const ast::Expression &e
 
 values::Value AnalyzeTreeGenAstVisitor::visitIndex(const ast::Index &index_ast) {
     auto expression = visitExpression(*index_ast.expr);
-    if (auto qubit_refs = expression->as_qubit_refs()) {
-        auto indices = visitIndexList(*index_ast.indices, qubit_refs->indices.size());
-        for (const auto &index : indices) {
-            index->value = qubit_refs->indices[index->value]->value;
-        }
-        return tree::make<values::QubitRefs>(indices);
-    } else if (auto bit_refs = expression->as_bit_refs()) {
-        auto indices = visitIndexList(*index_ast.indices, bit_refs->indices.size());
-        for (const auto &index : indices) {
-            index->value = bit_refs->indices[index->value]->value;
-        }
-        return tree::make<values::BitRefs>(indices);
+    auto variable_ref_ptr = expression->as_variable_ref();
+    const auto &variable_link = variable_ref_ptr->variable;
+    const auto &variable = *variable_link;
+    if (auto qubit_array = variable.typ->as_qubit_array()) {
+        auto indices = visitIndexList(*index_ast.indices, qubit_array->size);
+        return tree::make<values::IndexRef>(variable_link, indices);
+    } else if (auto bit_array = variable.typ->as_bit_array()) {
+        auto indices = visitIndexList(*index_ast.indices, bit_array->size);
+        return tree::make<values::IndexRef>(variable_link, indices);
     } else {
         throw error::AnalysisError(fmt::format(
             "indexation is not supported for value of type '{}'", values::type_of(expression)));

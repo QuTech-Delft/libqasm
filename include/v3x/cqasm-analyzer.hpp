@@ -140,14 +140,14 @@ public:
     /**
      * Analyzes the given program AST node.
      */
-    [[nodiscard]] AnalysisResult analyze(const ast::Program &program) const;
+    [[nodiscard]] AnalysisResult analyze(const ast::Program &program);
 
     /**
      * Analyzes the given parse result.
      * If there are parse errors, they are copied into the AnalysisResult error list, and
      * the root node will be empty.
      */
-    [[nodiscard]] AnalysisResult analyze(const parser::ParseResult &parse_result) const;
+    [[nodiscard]] AnalysisResult analyze(const parser::ParseResult &parse_result);
 
     /**
      * Parses and analyzes using the given version and parser closures.
@@ -155,19 +155,19 @@ public:
     [[nodiscard]] AnalysisResult analyze(
         const std::function<version::Version()> &version_parser,
         const std::function<parser::ParseResult()> &parser
-    ) const;
+    );
 
     /**
      * Parses and analyzes the given file.
      */
-    [[nodiscard]] AnalysisResult analyze(const std::string &filename) const;
+    [[nodiscard]] AnalysisResult analyze(const std::string &filename);
 
     /**
      * Parses and analyzes the given string.
      * The optional filename argument will be used only for error messages.
      */
     [[nodiscard]] AnalysisResult analyze_string(
-        const std::string &data, const std::string &filename = "<unknown>") const;
+        const std::string &data, const std::string &filename = "<unknown>");
 
     /**
      * Returns the API version.
@@ -178,16 +178,22 @@ public:
      * Resolves a mapping.
      * Throws NameResolutionFailure if no mapping by the given name exists.
      */
-    [[nodiscard]] values::Value resolve(const std::string &name) const;
+    [[nodiscard]] values::Value resolve_mapping(const std::string &name) const;
 
     /**
-     * Resolves an instruction.
-     * Throws NameResolutionFailure if no instruction by the given name exists,
-     * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
-     * returns the resolved instruction node.
-     * Annotation data, line number information, and the condition still need to be set by the caller.
+     * Adds a mapping.
      */
-    [[nodiscard]] tree::One<semantic::Instruction> resolve(const std::string &name, const values::Values &args) const;
+    void add_mapping(const std::string &name, const values::Value &value, const tree::Maybe<ast::Mapping> &node);
+
+        /**
+         * Resolves an instruction.
+         * Throws NameResolutionFailure if no instruction by the given name exists,
+         * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
+         * returns the resolved instruction node.
+         * Annotation data, line number information, and the condition still need to be set by the caller.
+         */
+    [[nodiscard]] tree::One<semantic::Instruction> resolve_instruction(
+        const std::string &name, const values::Values &args) const;
 };
 
 } // namespace cqasm::v3x::analyzer

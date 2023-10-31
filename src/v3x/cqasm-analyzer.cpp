@@ -35,7 +35,7 @@ Analyzer::Analyzer(const primitives::Version &api_version)
 : api_version{ api_version }
 , instruction_set{} {
     if (!api_version.equal("3.0")) {
-        throw std::invalid_argument("this analyzer only supports cQASM 3.0");
+        throw std::invalid_argument{ "this analyzer only supports cQASM 3.0" };
     }
 }
 
@@ -75,13 +75,13 @@ void Analyzer::register_instruction(const std::string &name, const std::string &
 /**
  * Analyzes the given AST.
  */
-AnalysisResult Analyzer::analyze(const ast::Program &ast) const {
+AnalysisResult Analyzer::analyze(const ast::Program &ast) {
     auto analyze_visitor_up = std::make_unique<AnalyzeTreeGenAstVisitor>(*this);
     auto result =  analyze_visitor_up->visitProgram(ast);
     if (result.errors.empty() && !result.root.is_well_formed()) {
         std::cerr << *result.root;
-        throw std::runtime_error("internal error: no semantic errors returned, but semantic tree is incomplete."
-            " Tree was dumped.");
+        throw std::runtime_error{ "internal error: no semantic errors returned, but semantic tree is incomplete."
+            " Tree was dumped." };
     }
     return result;
 }
@@ -91,7 +91,7 @@ AnalysisResult Analyzer::analyze(const ast::Program &ast) const {
  * If there are parse errors, they are copied into the AnalysisResult error list,
  * and the root node will be empty.
  */
-AnalysisResult Analyzer::analyze(const parser::ParseResult &parse_result) const {
+AnalysisResult Analyzer::analyze(const parser::ParseResult &parse_result) {
     if (!parse_result.errors.empty()) {
         AnalysisResult result;
         result.errors = parse_result.errors;
@@ -106,8 +106,8 @@ AnalysisResult Analyzer::analyze(const parser::ParseResult &parse_result) const 
  */
 AnalysisResult Analyzer::analyze(
     const std::function<version::Version()> &version_parser,
-    const std::function<parser::ParseResult()> &parser
-) const {
+    const std::function<parser::ParseResult()> &parser) {
+
     AnalysisResult result;
     try {
         auto version = version_parser();
@@ -128,7 +128,7 @@ AnalysisResult Analyzer::analyze(
 /**
  * Parses and analyzes the given file.
  */
-AnalysisResult Analyzer::analyze(const std::string &filename) const {
+AnalysisResult Analyzer::analyze(const std::string &filename) {
     return analyze(
         [=](){ return version::parse_file(filename); },
         [=](){ return parser::parse_file(filename); }
@@ -139,7 +139,7 @@ AnalysisResult Analyzer::analyze(const std::string &filename) const {
  * Parses and analyzes the given string.
  * The optional filename argument will be used only for error messages.
  */
-AnalysisResult Analyzer::analyze_string(const std::string &data, const std::string &filename) const {
+AnalysisResult Analyzer::analyze_string(const std::string &data, const std::string &filename) {
     return analyze(
         [=](){ return version::parse_string(data, filename); },
         [=](){ return parser::parse_string(data, filename); }
@@ -157,8 +157,15 @@ AnalysisResult Analyzer::analyze_string(const std::string &data, const std::stri
  * Resolves a mapping.
  * Throws NameResolutionFailure if no mapping by the given name exists.
  */
-values::Value Analyzer::resolve(const std::string &name) const {
+values::Value Analyzer::resolve_mapping(const std::string &name) const {
     return mappings.resolve(name);
+}
+
+/**
+ * Adds a mapping.
+ */
+void Analyzer::add_mapping(const std::string &name, const values::Value &value, const tree::Maybe<ast::Mapping> &node) {
+    mappings.add(name, value, node);
 }
 
 /**
@@ -168,7 +175,7 @@ values::Value Analyzer::resolve(const std::string &name) const {
  * returns the resolved instruction node.
  * Annotation data, line number information, and the condition still need to be set by the caller.
  */
-[[nodiscard]] tree::One<semantic::Instruction> Analyzer::resolve(
+[[nodiscard]] tree::One<semantic::Instruction> Analyzer::resolve_instruction(
     const std::string &name, const values::Values &args) const {
 
     return instruction_set.resolve(name,  args);

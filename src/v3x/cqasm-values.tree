@@ -27,6 +27,10 @@ namespace values
 
 # Constant value
 constant {
+    const_bool {
+        value: cqasm::v3x::primitives::Bool;
+    }
+
     const_int {
         value: cqasm::v3x::primitives::Int;
     }
@@ -42,20 +46,11 @@ constant {
 
 # Reference to some storage location
 reference {
-    # Represents a qubit, or a set of qubits for single-gate-multiple-qubit notation.
+    # Represents an index for single-gate-multiple-qubit notation.
     # The indices must not repeat.
-    qubit_refs {
-        # Set of qubit indices referred to, starting at 0.
+    index_ref {
+        variable: external Link<cqasm::v3x::semantic::Variable>;
         indices: Many<const_int>;
-
-    }
-
-    # Represents a measurement bit, or a number of measurement bits for conditional gates with multiple conditions.
-    # When there are multiple, the conditions are all and'ed together.
-    bit_refs {
-        # Set of qubit indices for which these are measurement bits, starting at 0.
-        indices: Many<const_int>;
-
     }
 
     variable_ref {

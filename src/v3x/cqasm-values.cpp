@@ -13,9 +13,6 @@
 
 namespace cqasm::v3x::values {
 
-using TypeEnum = types::NodeType;
-using ValueEnum = values::NodeType;
-
 /**
  * Type-checks and (if necessary) promotes the given value to the given type.
  * Also checks assignability of the value if the type says the value must be assignable.
@@ -58,6 +55,8 @@ types::Type type_of(const Value &value) {
         return tree::make<types::Int>();
     } else if (value->as_const_real()) {
         return tree::make<types::Real>();
+    } else if (auto index = value->as_index_ref()) {
+        return index->variable->typ;
     } else if (auto var = value->as_variable_ref()) {
         return var->variable->typ;
     } else {

@@ -8,13 +8,13 @@
 namespace cqasm::v3x::analyzer {
 
 class AnalyzeTreeGenAstVisitor {
-    const Analyzer &analyzer_;
+    Analyzer &analyzer_;
     AnalysisResult result_;
 
 public:
     AnalysisResult visitProgram(const ast::Program &program_ast);
     void visitVersion(const ast::Version &version_ast);
-    void visitStatementList(const ast::StatementList &statement_list_ast);
+    void visitStatements(const ast::StatementList &statement_list_ast);
     void visitVariables(const ast::Variables &variables_ast);
     tree::Maybe<semantic::Instruction> visitInstruction(const ast::Instruction &ast);
     tree::Maybe<semantic::Instruction> visitMeasureInstruction(const ast::MeasureInstruction &ast);
@@ -38,7 +38,7 @@ public:
      */
     primitives::Int visitConstInt(const ast::Expression &expression);
 
-    explicit AnalyzeTreeGenAstVisitor(const Analyzer &analyzer);
+    explicit AnalyzeTreeGenAstVisitor(Analyzer &analyzer);
 };
 
 }  // namespace cqasm::v3x::analyzer

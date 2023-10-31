@@ -94,8 +94,7 @@ tree::One<semantic::Instruction> InstructionTable::resolve(
 ) const {
     auto resolved = resolver->resolve(name, args);
     return tree::make<semantic::Instruction>(
-        tree::make<instruction::Instruction>(resolved.first),
-        name);
+        tree::make<instruction::Instruction>(resolved.first), name, resolved.second);
 }
 
 } // namespace cqasm::v3x::resolver
