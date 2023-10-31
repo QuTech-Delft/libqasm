@@ -57,11 +57,15 @@ public:
         for (const auto &api_version : std::vector<std::string>( { "3.0" } )) {
             auto analyzer = cq3x::analyzer::Analyzer{ api_version };
 
+            analyzer.register_default_mappings();
+
             analyzer.register_instruction("cnot", "QQ");
+            analyzer.register_instruction("cnot", "VV");
             analyzer.register_instruction("cr", "QQr");
             analyzer.register_instruction("crk", "QQi");
             analyzer.register_instruction("cz", "QQ");
             analyzer.register_instruction("h", "Q");
+            analyzer.register_instruction("h", "V");
             analyzer.register_instruction("i", "Q");
             analyzer.register_instruction("measure", "VW");  // from qubit array to bit array
             analyzer.register_instruction("mx90", "Q");
