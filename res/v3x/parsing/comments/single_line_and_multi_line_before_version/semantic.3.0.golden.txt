@@ -6,7 +6,7 @@ Program(
       items: 3.0
     )
   >
-  subcircuits: []
+  statements: []
   variables: []
 )
 

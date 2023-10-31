@@ -9,9 +9,18 @@ Program(
   statements: []
   variables: [
     Variable(
-      name: q
+      name: b
       typ: <
-        Qubit(
+        Bit(
+)
+      >
+      size: -
+      annotations: []
+    )
+    Variable(
+      name: b
+      typ: <
+        Bit(
 )
       >
       size: -

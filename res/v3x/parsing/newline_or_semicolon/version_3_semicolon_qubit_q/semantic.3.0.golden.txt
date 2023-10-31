@@ -6,7 +6,7 @@ Program(
       items: 3
     )
   >
-  subcircuits: []
+  statements: []
   variables: [
     Variable(
       name: q

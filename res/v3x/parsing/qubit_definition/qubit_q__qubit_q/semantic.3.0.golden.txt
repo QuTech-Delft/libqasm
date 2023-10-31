@@ -17,6 +17,15 @@ Program(
       size: -
       annotations: []
     )
+    Variable(
+      name: q
+      typ: <
+        Qubit(
+)
+      >
+      size: -
+      annotations: []
+    )
   ]
 )
 

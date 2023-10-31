@@ -11,8 +11,9 @@ Program(
     Variable(
       name: q
       typ: <
-        Qubit(
-)
+        QubitArray(
+          size: 17
+        )
       >
       size: -
       annotations: []

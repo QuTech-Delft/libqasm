@@ -1,0 +1,48 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  statements: [
+    Instruction(
+      instruction: x(qubit)
+      name: x
+      operands: [
+        VariableRef(
+          variable --> <
+            Variable(
+              name: q
+              typ: <
+                Qubit(
+)
+              >
+              size: -
+              annotations: []
+            )
+          >
+        )
+      ]
+      condition: <
+        ConstBool(
+          value: 1
+        )
+      >
+      annotations: []
+    )
+  ]
+  variables: [
+    Variable(
+      name: q
+      typ: <
+        Qubit(
+)
+      >
+      size: -
+      annotations: []
+    )
+  ]
+)
+
