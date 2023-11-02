@@ -144,7 +144,7 @@ std::any BuildTreeGenAstVisitor::visitBitTypeDefinition(CqasmParser::BitTypeDefi
 }
 
 std::any BuildTreeGenAstVisitor::visitMeasureInstruction(CqasmParser::MeasureInstructionContext *context) {
-    auto ret = cqasm::tree::make<MeasureInstruction>();
+    auto ret = cqasm::tree::make<Instruction>();
     ret->name = cqasm::tree::make<Identifier>(context->MEASURE()->getText());
     ret->condition = cqasm::tree::Maybe<Expression>{};
     ret->operands = std::any_cast<One<ExpressionList>>(visitExpressionList(context->expressionList(1)));
@@ -155,7 +155,7 @@ std::any BuildTreeGenAstVisitor::visitMeasureInstruction(CqasmParser::MeasureIns
 }
 
 std::any BuildTreeGenAstVisitor::visitInstruction(CqasmParser::InstructionContext *context) {
-    auto ret = cqasm::tree::make<Gate>();
+    auto ret = cqasm::tree::make<Instruction>();
     ret->name = cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText());
     ret->condition = cqasm::tree::Maybe<Expression>{};
     ret->operands = std::any_cast<One<ExpressionList>>(visitExpressionList(context->expressionList()));

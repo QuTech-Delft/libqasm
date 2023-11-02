@@ -88,10 +88,7 @@ void InstructionTable::add(const instruction::Instruction &type) {
  * returns the resolved instruction node.
  * Annotation data, line number information, and the condition still need to be set by the caller.
  */
-tree::One<semantic::Instruction> InstructionTable::resolve(
-    const std::string &name,
-    const Values &args
-) const {
+tree::One<semantic::Instruction> InstructionTable::resolve(const std::string &name, const Values &args) const {
     auto resolved = resolver->resolve(name, args);
     return tree::make<semantic::Instruction>(
         tree::make<instruction::Instruction>(resolved.first), name, resolved.second);

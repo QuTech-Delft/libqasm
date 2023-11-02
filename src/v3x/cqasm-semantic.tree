@@ -62,11 +62,11 @@ annotated {
 
                 # Operands for the instruction.
                 operands: external Any<cqasm::v3x::values::Node>;
-            }
 
-            measure_instruction {
-                bits: One<variable>;
-                qubits: One<variable>;
+                # At semantic level, we join the operands and output operands into the same operand list
+                # (like if they were input and output parameters in a function signature).
+                # We keep a zero-based index to the first output operand in the operand list.
+                first_output_operand_index: external Maybe<cqasm::v3x::values::ConstInt>;
             }
         }
     }
@@ -74,7 +74,6 @@ annotated {
     variable {
         name: cqasm::v3x::primitives::Str;
         typ: external One<cqasm::v3x::types::Node>;
-        size: external Maybe<cqasm::v3x::values::ConstInt>;
     }
 }
 

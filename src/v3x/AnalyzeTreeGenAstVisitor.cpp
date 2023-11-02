@@ -52,8 +52,6 @@ void AnalyzeTreeGenAstVisitor::visitStatements(const ast::StatementList &stateme
         try {
             if (auto variables = statement->as_variables()) {
                 visitVariables(*variables);
-            } else if (auto measure_instruction = statement->as_measure_instruction()) {
-                visitMeasureInstruction(*measure_instruction);
             } else if (auto instruction = statement->as_instruction()) {
                 result_.root->statements.add(visitInstruction(*instruction));
             } else {
@@ -111,7 +109,9 @@ void AnalyzeTreeGenAstVisitor::visitVariables(const ast::Variables &variables_as
     }
 }
 
-tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(const ast::Instruction &instruction_ast) {
+tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(
+    const ast::Instruction &instruction_ast) {
+
     tree::Maybe<semantic::Instruction> node;
     try {
         // Figure out the operand list
@@ -119,11 +119,22 @@ tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(co
         for (const auto &operand_expr : instruction_ast.operands->items) {
             operands.add(visitExpression(*operand_expr));
         }
+        // Figure out the output operand list
+        if (!instruction_ast.output_operands.empty()) {
+            for (const auto &output_operand_expr : instruction_ast.output_operands->items) {
+                operands.add(visitExpression(*output_operand_expr));
+            }
+        }
 
         // Resolve the instruction
         node.set(analyzer_.resolve_instruction(instruction_ast.name->name, operands));
 
-        // Resolve the condition code
+        // Set index to first output operand
+        if (!instruction_ast.output_operands.empty()) {
+            node->first_output_operand_index = tree::make<values::ConstInt>(instruction_ast.operands->items.size());
+        }
+
+        // Set condition code
         node->condition.set(tree::make<values::ConstBool>(true));
 
         // Copy annotation data
@@ -134,11 +145,6 @@ tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(co
         result_.errors.push_back(err.get_message());
     }
     return node;
-}
-
-tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitMeasureInstruction(const ast::MeasureInstruction &ast) {
-    (void) ast;
-    throw std::runtime_error{ "Unimplemented"};
 }
 
 values::Value AnalyzeTreeGenAstVisitor::visitExpression(const ast::Expression &expression_ast) {

@@ -104,11 +104,9 @@ annotated {
             condition: Maybe<expression>;
             operands: One<expression_list>;
 
-            gate {}
-
-            measure_instruction {
-                output_operands: One<expression_list>;
-            }
+            # Some instructions, like the measure instruction, will contain output operands.
+            # For a measure instruction, 'operands' correspond to qubits, and 'output_operands' to bits.
+            output_operands: Maybe<expression_list>;
         }
     }
 }
