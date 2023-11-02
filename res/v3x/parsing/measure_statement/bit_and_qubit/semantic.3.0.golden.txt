@@ -6,7 +6,66 @@ Program(
       items: 3
     )
   >
-  subcircuits: []
-  variables: []
+  statements: [
+    Instruction(
+      instruction: measure(qubit, bit)
+      name: measure
+      operands: [
+        VariableRef(
+          variable --> <
+            Variable(
+              name: q
+              typ: <
+                Qubit(
+)
+              >
+              annotations: []
+            )
+          >
+        )
+        VariableRef(
+          variable --> <
+            Variable(
+              name: b
+              typ: <
+                Bit(
+)
+              >
+              annotations: []
+            )
+          >
+        )
+      ]
+      first_output_operand_index: <
+        ConstInt(
+          value: 1
+        )
+      >
+      condition: <
+        ConstBool(
+          value: 1
+        )
+      >
+      annotations: []
+    )
+  ]
+  variables: [
+    Variable(
+      name: q
+      typ: <
+        Qubit(
+)
+      >
+      annotations: []
+    )
+    Variable(
+      name: b
+      typ: <
+        Bit(
+)
+      >
+      annotations: []
+    )
+  ]
 )
 

@@ -26,7 +26,7 @@ Program(
           >
           annotations: []
         )
-        Gate( # input.cq:5:1..5
+        Instruction( # input.cq:5:1..5
           name: <
             Identifier(
               name: cnot
@@ -93,6 +93,7 @@ Program(
               ]
             )
           >
+          output_operands: -
           annotations: []
         )
       ]

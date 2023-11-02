@@ -8,7 +8,7 @@ Program(
   statements: <
     StatementList(
       items: [
-        Gate( # input.cq:3:1..2
+        Instruction( # input.cq:3:1..2
           name: <
             Identifier(
               name: v
@@ -24,6 +24,7 @@ Program(
               ]
             )
           >
+          output_operands: -
           annotations: []
         )
       ]

@@ -14,7 +14,6 @@ Program(
         Qubit(
 )
       >
-      size: -
       annotations: []
     )
     Variable(
@@ -23,7 +22,6 @@ Program(
         Qubit(
 )
       >
-      size: -
       annotations: []
     )
   ]

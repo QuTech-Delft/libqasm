@@ -15,7 +15,6 @@ Program(
           size: 17
         )
       >
-      size: -
       annotations: []
     )
     Variable(
@@ -25,7 +24,6 @@ Program(
           size: 17
         )
       >
-      size: -
       annotations: []
     )
   ]

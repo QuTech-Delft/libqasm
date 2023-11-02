@@ -15,7 +15,6 @@ Program(
           size: 17
         )
       >
-      size: -
       annotations: []
     )
   ]

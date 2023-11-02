@@ -36,16 +36,7 @@ Program(
           size: -
           annotations: []
         )
-        MeasureInstruction( # input.cq:5:5..12
-          output_operands: <
-            ExpressionList(
-              items: [
-                Identifier( # input.cq:5:1..2
-                  name: b
-                )
-              ]
-            )
-          >
+        Instruction( # input.cq:5:5..12
           name: <
             Identifier(
               name: measure
@@ -57,6 +48,15 @@ Program(
               items: [
                 Identifier( # input.cq:5:13..14
                   name: q
+                )
+              ]
+            )
+          >
+          output_operands: <
+            ExpressionList(
+              items: [
+                Identifier( # input.cq:5:1..2
+                  name: b
                 )
               ]
             )

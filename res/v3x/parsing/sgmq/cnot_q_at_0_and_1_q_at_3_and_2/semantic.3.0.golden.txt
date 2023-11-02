@@ -20,7 +20,6 @@ Program(
                   size: 4
                 )
               >
-              size: -
               annotations: []
             )
           >
@@ -42,7 +41,6 @@ Program(
                   size: 4
                 )
               >
-              size: -
               annotations: []
             )
           >
@@ -56,6 +54,7 @@ Program(
           ]
         )
       ]
+      first_output_operand_index: -
       condition: <
         ConstBool(
           value: 1
@@ -72,7 +71,6 @@ Program(
           size: 4
         )
       >
-      size: -
       annotations: []
     )
   ]

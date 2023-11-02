@@ -19,12 +19,12 @@ Program(
                 Qubit(
 )
               >
-              size: -
               annotations: []
             )
           >
         )
       ]
+      first_output_operand_index: -
       condition: <
         ConstBool(
           value: 1
@@ -40,7 +40,6 @@ Program(
         Qubit(
 )
       >
-      size: -
       annotations: []
     )
   ]

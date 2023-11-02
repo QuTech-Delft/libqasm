@@ -22,7 +22,7 @@ Program(
           size: -
           annotations: []
         )
-        Gate( # input.cq:3:1..2
+        Instruction( # input.cq:3:1..2
           name: <
             Identifier(
               name: x
@@ -38,6 +38,7 @@ Program(
               ]
             )
           >
+          output_operands: -
           annotations: []
         )
       ]

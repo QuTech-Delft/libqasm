@@ -20,7 +20,6 @@ Program(
                   size: 2
                 )
               >
-              size: -
               annotations: []
             )
           >
@@ -31,6 +30,7 @@ Program(
           ]
         )
       ]
+      first_output_operand_index: -
       condition: <
         ConstBool(
           value: 1
@@ -51,7 +51,6 @@ Program(
                   size: 2
                 )
               >
-              size: -
               annotations: []
             )
           >
@@ -62,6 +61,7 @@ Program(
           ]
         )
       ]
+      first_output_operand_index: -
       condition: <
         ConstBool(
           value: 1
@@ -82,7 +82,6 @@ Program(
                   size: 2
                 )
               >
-              size: -
               annotations: []
             )
           >
@@ -101,7 +100,6 @@ Program(
                   size: 2
                 )
               >
-              size: -
               annotations: []
             )
           >
@@ -112,6 +110,7 @@ Program(
           ]
         )
       ]
+      first_output_operand_index: -
       condition: <
         ConstBool(
           value: 1
@@ -128,7 +127,6 @@ Program(
           size: 2
         )
       >
-      size: -
       annotations: []
     )
   ]
