@@ -1,0 +1,6 @@
+version 3
+
+qubit q[2]
+bit b0, b1, b2
+
+b0, b1, b2 = measure q

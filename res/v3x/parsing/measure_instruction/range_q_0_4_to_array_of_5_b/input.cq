@@ -1,0 +1,6 @@
+version 3
+
+qubit q[9]
+bit b[5]
+
+b = measure q[0:4]
