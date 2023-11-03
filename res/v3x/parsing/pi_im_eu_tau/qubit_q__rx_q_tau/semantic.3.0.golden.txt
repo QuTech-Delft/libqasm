@@ -1,0 +1,50 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  statements: [
+    Instruction(
+      instruction: rx(qubit, real)
+      name: rx
+      operands: [
+        VariableRef(
+          variable --> <
+            Variable(
+              name: q
+              typ: <
+                Qubit(
+)
+              >
+              annotations: []
+            )
+          >
+        )
+        ConstReal(
+          value: 6.28319
+        )
+      ]
+      first_output_operand_index: -
+      condition: <
+        ConstBool(
+          value: 1
+        )
+      >
+      annotations: []
+    )
+  ]
+  variables: [
+    Variable(
+      name: q
+      typ: <
+        Qubit(
+)
+      >
+      annotations: []
+    )
+  ]
+)
+
