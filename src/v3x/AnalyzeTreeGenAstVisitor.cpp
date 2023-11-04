@@ -2,6 +2,8 @@
 #include "v3x/cqasm-ast-gen.hpp"
 #include "v3x/cqasm-analyzer.hpp"
 
+#include <span>
+
 
 namespace cqasm::v3x::analyzer {
 
@@ -109,19 +111,69 @@ void AnalyzeTreeGenAstVisitor::visitVariables(const ast::Variables &variables_as
     }
 }
 
+bool check_input_indices_equals_output_indices(std::span<values::Value> input_operands, std::span<values::Value> output_operands) {
+    size_t number_of_input_indices{};
+    for (const auto &operand : input_operands) {
+        if (auto variable_ref = operand->as_variable_ref()) {
+            const auto &variable = *variable_ref->variable;
+            if (variable.typ->as_qubit()) {
+                number_of_input_indices += 1;
+            } else if (auto arr = variable.typ->as_qubit_array()) {
+                number_of_input_indices += arr->size;
+            } else {
+                throw std::runtime_error{ "variable is neither a qubit nor a qubit array" };
+            }
+        } else if (auto index_ref = operand->as_index_ref()) {
+            const auto &variable = *index_ref->variable;
+            if (variable.typ->as_qubit() || variable.typ->as_qubit_array()) {
+                number_of_input_indices += index_ref->indices.size();
+            } else {
+                throw std::runtime_error{ "index refers to a variable that is neither a qubit nor a qubit array" };
+            }
+        } else {
+            throw std::runtime_error{ "input operand is neither a variable nor an index" };
+        }
+    }
+
+    size_t number_of_output_indices{};
+    for (const auto &operand : output_operands) {
+        if (auto variable_ref = operand->as_variable_ref()) {
+            const auto &variable = *variable_ref->variable;
+            if (variable.typ->as_bit()) {
+                number_of_output_indices += 1;
+            } else if (auto arr = variable.typ->as_bit_array()) {
+                number_of_output_indices += arr->size;
+            } else {
+                throw std::runtime_error{ "variable is neither a bit nor a bit array" };
+            }
+        } else if (auto index_ref = operand->as_index_ref()) {
+            const auto &variable = *index_ref->variable;
+            if (variable.typ->as_bit() || variable.typ->as_bit_array()) {
+                number_of_output_indices += index_ref->indices.size();
+            } else {
+                throw std::runtime_error{ "index refers to a variable that is neither a qubit nor a qubit array" };
+            }
+        } else {
+            throw std::runtime_error{ "input operand is neither a variable nor an index" };
+        }
+    }
+
+    return number_of_input_indices == number_of_output_indices;
+}
+
 tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(
     const ast::Instruction &instruction_ast) {
 
     tree::Maybe<semantic::Instruction> node;
     try {
-        // Figure out the operand list
+        // Set operand list
         auto operands = values::Values();
         for (const auto &operand_expr : instruction_ast.operands->items) {
             operands.add(visitExpression(*operand_expr));
         }
-        // Figure out the output operand list
+        // Append output operand list
         if (!instruction_ast.output_operands.empty()) {
-            for (const auto &output_operand_expr : instruction_ast.output_operands->items) {
+            for (const auto &output_operand_expr: instruction_ast.output_operands->items) {
                 operands.add(visitExpression(*output_operand_expr));
             }
         }
@@ -134,6 +186,18 @@ tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(
             node->first_output_operand_index = tree::make<values::ConstInt>(instruction_ast.operands->items.size());
         }
 
+        // Check number of input indices equals number of output indices
+        if (!instruction_ast.output_operands.empty()) {
+            auto number_of_input_operands_st{ static_cast<size_t>(node->first_output_operand_index->value) };
+            auto number_of_input_operands_l{ static_cast<long>(node->first_output_operand_index->value) };
+            if (!check_input_indices_equals_output_indices(
+                std::span{ operands.begin(), number_of_input_operands_st },
+                std::span{ operands.begin() + number_of_input_operands_l, operands.size() - number_of_input_operands_st })) {
+                throw error::AnalysisError{ "number of input indices is different than number of output indices",
+                    &instruction_ast };
+            }
+        }
+
         // Set condition code
         node->condition.set(tree::make<values::ConstBool>(true));
 
@@ -142,7 +206,7 @@ tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(
         node->copy_annotation<parser::SourceLocation>(instruction_ast);
     } catch (error::AnalysisError &err) {
         err.context(instruction_ast);
-        result_.errors.push_back(err.get_message());
+        throw;
     }
     return node;
 }
@@ -159,7 +223,7 @@ values::Value AnalyzeTreeGenAstVisitor::visitExpression(const ast::Expression &e
         } else if (auto index = expression_ast.as_index()) {
             retval.set(visitIndex(*index));
         } else {
-            throw std::runtime_error("unexpected expression node");
+            throw std::runtime_error{ "unexpected expression node" };
         }
     } catch (error::AnalysisError &err) {
         err.context(expression_ast);
@@ -184,8 +248,8 @@ values::Value AnalyzeTreeGenAstVisitor::visitIndex(const ast::Index &index_ast) 
         auto indices = visitIndexList(*index_ast.indices, bit_array->size);
         return tree::make<values::IndexRef>(variable_link, indices);
     } else {
-        throw error::AnalysisError(fmt::format(
-            "indexation is not supported for value of type '{}'", values::type_of(expression)));
+        throw error::AnalysisError{ fmt::format(
+            "indexation is not supported for value of type '{}'", values::type_of(expression)), &index_ast };
     }
 }
 
@@ -202,7 +266,7 @@ tree::Many<values::ConstInt> AnalyzeTreeGenAstVisitor::visitIndexList(
             // Range notation
             ret = visitIndexRange(*index_range, size);
         } else {
-            throw std::runtime_error("unknown IndexEntry AST node");
+            throw std::runtime_error{ "unknown IndexEntry AST node" };
         }
     }
     return ret;
