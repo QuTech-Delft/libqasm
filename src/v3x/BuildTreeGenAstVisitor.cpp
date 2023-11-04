@@ -16,8 +16,8 @@ namespace cqasm::v3x::parser {
 using namespace cqasm::v3x::ast;
 using namespace cqasm::error;
 
-BuildTreeGenAstVisitor::BuildTreeGenAstVisitor(const std::string &file_name)
-: file_name_{ file_name }
+BuildTreeGenAstVisitor::BuildTreeGenAstVisitor(std::string file_name)
+: file_name_{ std::move(file_name) }
 , error_listener_p_{ nullptr } {}
 
 void BuildTreeGenAstVisitor::addErrorListener(CustomErrorListener *errorListener) {
@@ -70,7 +70,7 @@ double BuildTreeGenAstVisitor::get_float_value(antlr4::tree::TerminalNode *node)
     const auto &token = node->getSymbol();
     const auto &text = node->getText();
     assert(token->getType() == CqasmParser::FLOAT_LITERAL);
-    return get_float_value(token->getLine(), token->getCharPositionInLine(), node->getText());
+    return get_float_value(token->getLine(), token->getCharPositionInLine(), text);
 }
 
 std::any BuildTreeGenAstVisitor::visitProgram(CqasmParser::ProgramContext *context) {
@@ -149,7 +149,7 @@ std::any BuildTreeGenAstVisitor::visitMeasureInstruction(CqasmParser::MeasureIns
     ret->condition = cqasm::tree::Maybe<Expression>{};
     ret->operands = cqasm::tree::make<ExpressionList>();
     ret->operands->items.add(std::any_cast<One<Expression>>(context->expression(1)->accept(this)));
-    ret->output_operands = std::any_cast<One<Expression>>(context->expression(0)->accept(this));
+    ret->output_operands.set(std::any_cast<One<Expression>>(context->expression(0)->accept(this)));
     const auto &token = context->MEASURE()->getSymbol();
     setNodeAnnotation(ret, token);
     return One<Statement>{ ret };

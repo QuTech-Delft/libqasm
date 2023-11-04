@@ -44,7 +44,7 @@ public:
     std::any visitIdentifier(CqasmParser::IdentifierContext *context) override;
     std::any visitIndex(CqasmParser::IndexContext *context) override;
 
-    explicit BuildTreeGenAstVisitor(const std::string &file_name = "<unknown>");
+    explicit BuildTreeGenAstVisitor(std::string file_name = "<unknown>");
     void addErrorListener(CustomErrorListener *errorListener) override;
     void syntaxError(size_t line, size_t char_position_in_line, const std::string &text) override;
     void setNodeAnnotation(ast::One<ast::Node> node, antlr4::Token *token) override;
