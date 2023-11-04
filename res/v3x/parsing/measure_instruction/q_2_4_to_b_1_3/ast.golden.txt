@@ -1,0 +1,122 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  statements: <
+    StatementList(
+      items: [
+        Variables( # input.cq:3:10..11
+          names: [
+            Identifier(
+              name: q
+            )
+          ]
+          typ: <
+            Identifier(
+              name: qubit
+            )
+          >
+          size: <
+            IntegerLiteral(
+              value: 5
+            )
+          >
+          annotations: []
+        )
+        Variables( # input.cq:4:8..9
+          names: [
+            Identifier(
+              name: b
+            )
+          ]
+          typ: <
+            Identifier(
+              name: bit
+            )
+          >
+          size: <
+            IntegerLiteral(
+              value: 5
+            )
+          >
+          annotations: []
+        )
+        Instruction( # input.cq:6:11..18
+          name: <
+            Identifier(
+              name: measure
+            )
+          >
+          condition: -
+          operands: <
+            ExpressionList(
+              items: [
+                Index( # input.cq:6:19..20
+                  expr: <
+                    Identifier(
+                      name: q
+                    )
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexItem(
+                          index: <
+                            IntegerLiteral( # input.cq:6:21..22
+                              value: 2
+                            )
+                          >
+                        )
+                        IndexItem(
+                          index: <
+                            IntegerLiteral( # input.cq:6:24..25
+                              value: 4
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
+                )
+              ]
+            )
+          >
+          output_operands: <
+            Index( # input.cq:6:1..2
+              expr: <
+                Identifier(
+                  name: b
+                )
+              >
+              indices: <
+                IndexList(
+                  items: [
+                    IndexItem(
+                      index: <
+                        IntegerLiteral( # input.cq:6:3..4
+                          value: 1
+                        )
+                      >
+                    )
+                    IndexItem(
+                      index: <
+                        IntegerLiteral( # input.cq:6:6..7
+                          value: 3
+                        )
+                      >
+                    )
+                  ]
+                )
+              >
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

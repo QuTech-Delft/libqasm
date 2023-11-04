@@ -8,7 +8,7 @@ Program(
   statements: <
     StatementList(
       items: [
-        Variables( # input.cq:3:7..8
+        Variables( # input.cq:3:10..11
           names: [
             Identifier(
               name: q
@@ -19,13 +19,17 @@ Program(
               name: qubit
             )
           >
-          size: -
+          size: <
+            IntegerLiteral(
+              value: 3
+            )
+          >
           annotations: []
         )
-        Variables( # input.cq:4:5..6
+        Variables( # input.cq:4:5..7
           names: [
             Identifier(
-              name: b
+              name: b0
             )
           ]
           typ: <
@@ -36,7 +40,7 @@ Program(
           size: -
           annotations: []
         )
-        Instruction( # input.cq:6:5..12
+        Instruction( # input.cq:6:6..13
           name: <
             Identifier(
               name: measure
@@ -46,15 +50,32 @@ Program(
           operands: <
             ExpressionList(
               items: [
-                Identifier( # input.cq:6:13..14
-                  name: q
+                Index( # input.cq:6:14..15
+                  expr: <
+                    Identifier(
+                      name: q
+                    )
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexItem(
+                          index: <
+                            IntegerLiteral( # input.cq:6:16..17
+                              value: 0
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
                 )
               ]
             )
           >
           output_operands: <
-            Identifier( # input.cq:6:1..2
-              name: b
+            Identifier( # input.cq:6:1..3
+              name: b0
             )
           >
           annotations: []

@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:6:5..12: number of input indices is different from number of output indices

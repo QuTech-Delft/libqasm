@@ -1,8 +1,0 @@
-version 3
-
-qubit q0
-qubit q1
-qubit q2
-bit[2] b
-
-b = measure q0, q1, q2
