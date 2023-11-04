@@ -21,7 +21,7 @@ namespace cqasm::v3x::values {
  * If the type was an exact match, this may return the given value without modification or a clone thereof.
  */
 Value promote(const Value &value, const types::Type &type) {
-    // If the types match exactly, just return the original value.
+    // If the types match exactly, just return the original value
     if (types::type_check(type, type_of(value))) {
         return value;
     }

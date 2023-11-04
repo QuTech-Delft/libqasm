@@ -8,7 +8,6 @@
 #include "v1x/cqasm-types.hpp"
 #include "v1x/cqasm-semantic.hpp"
 
-#include <iostream>
 #include <fmt/format.h>
 
 
@@ -22,24 +21,22 @@ namespace cqasm::v1x::values {
  * this may return the given value without modification or a clone thereof.
  */
 Value promote(const Value &value, const types::Type &type) {
-
-    // If the types match exactly, just return the original value.
+    // If the types match exactly, just return the original value
     if (types::type_check(type, type_of(value))) {
         return value;
     }
 
-    // Handle promotion rules. If a promotion succeeds, the promoted value is
-    // put in retval.
+    // Handle promotion rules. If a promotion succeeds, the promoted value is put in retval
     Value retval{};
 
-    // Integers promote to real.
+    // Integers promote to real
     if (type->as_real()) {
         if (const auto &const_int = value->as_const_int()) {
             retval = tree::make<values::ConstReal>(static_cast<ConstReal>(const_int->value));
         }
     }
 
-    // Integers and reals promote to complex.
+    // Integers and reals promote to complex
     if (type->as_complex()) {
         if (const auto &const_int = value->as_const_int()) {
             retval = tree::make<values::ConstComplex>(static_cast<ConstComplex>(const_int->value));
@@ -48,13 +45,13 @@ Value promote(const Value &value, const types::Type &type) {
         }
     }
 
-    // Real matrix promotes to complex matrix.
+    // Real matrix promotes to complex matrix
     if (auto mat_type = type->as_complex_matrix()) {
         if (auto const_real_matrix = value->as_const_real_matrix()) {
-            // Match matrix size. Negative sizes in the type mean unconstrained.
+            // Match matrix size. Negative sizes in the type mean unconstrained
             if ((tree::signed_size_t) const_real_matrix->value.size_rows() == mat_type->num_rows || mat_type->num_rows < 0) {
                 if ((tree::signed_size_t) const_real_matrix->value.size_cols() == mat_type->num_cols || mat_type->num_cols < 0) {
-                    // Convert double to complex.
+                    // Convert double to complex
                     const size_t rows = const_real_matrix->value.size_rows();
                     const size_t cols = const_real_matrix->value.size_cols();
                     primitives::CMatrix complex_mat_value(rows, cols);
@@ -69,10 +66,9 @@ Value promote(const Value &value, const types::Type &type) {
 
             // NOTE: DEPRECATED BEHAVIOR, FOR BACKWARDS COMPATIBILITY ONLY
             // If the expected matrix has a defined size and is square, and
-            // the real matrix is a vector with the 2 * 4**n entries, we
-            // interpret it as an old-style cqasm unitary matrix, from
-            // before cqasm knew what complex numbers (or multidimensional
-            // matrices) were.
+            // the real matrix is a vector with the 2 * 4**n entries,
+            // we interpret it as an old-style cqasm unitary matrix,
+            // from before cqasm knew what complex numbers (or multidimensional matrices) were.
             if (retval.empty() && mat_type->num_rows == mat_type->num_cols && mat_type->num_rows > 0) {
                 const size_t size = mat_type->num_rows;
                 const size_t num_elements = 2 * size * size;
@@ -92,8 +88,7 @@ Value promote(const Value &value, const types::Type &type) {
         }
     }
 
-    // If a promotion rule was successful, copy the source location annotation
-    // from the old value to the new one.
+    // If a promotion rule was successful, copy the source location annotation from the old value to the new one
     if (!retval.empty()) {
         retval->copy_annotation<parser::SourceLocation>(*value);
     }
@@ -186,8 +181,7 @@ std::ostream &operator<<(std::ostream &os, const Value &value) {
  * Stream << overload for zero or more values.
  */
 std::ostream &operator<<(std::ostream &os, const Values &values) {
-    fmt::print(os, "[{}]", fmt::join(values, ", "));
-    return os;
+    return os << fmt::format("[{}]", fmt::join(values, ", "));
 }
 
 } // namespace cqasm::v1x::values
