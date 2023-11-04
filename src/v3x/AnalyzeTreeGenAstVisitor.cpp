@@ -173,9 +173,7 @@ tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(
         }
         // Append output operand list
         if (!instruction_ast.output_operands.empty()) {
-            for (const auto &output_operand_expr: instruction_ast.output_operands->items) {
-                operands.add(visitExpression(*output_operand_expr));
-            }
+            operands.add(visitExpression(*instruction_ast.output_operands));
         }
 
         // Resolve the instruction
@@ -193,7 +191,7 @@ tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(
             if (!check_input_indices_equals_output_indices(
                 std::span{ operands.begin(), number_of_input_operands_st },
                 std::span{ operands.begin() + number_of_input_operands_l, operands.size() - number_of_input_operands_st })) {
-                throw error::AnalysisError{ "number of input indices is different than number of output indices",
+                throw error::AnalysisError{ "number of input indices is different from number of output indices",
                     &instruction_ast };
             }
         }

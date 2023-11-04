@@ -147,8 +147,9 @@ std::any BuildTreeGenAstVisitor::visitMeasureInstruction(CqasmParser::MeasureIns
     auto ret = cqasm::tree::make<Instruction>();
     ret->name = cqasm::tree::make<Identifier>(context->MEASURE()->getText());
     ret->condition = cqasm::tree::Maybe<Expression>{};
-    ret->operands = std::any_cast<One<ExpressionList>>(visitExpressionList(context->expressionList(1)));
-    ret->output_operands = std::any_cast<One<ExpressionList>>(visitExpressionList(context->expressionList(0)));
+    ret->operands = cqasm::tree::make<ExpressionList>();
+    ret->operands->items.add(std::any_cast<One<Expression>>(context->expression(1)->accept(this)));
+    ret->output_operands = std::any_cast<One<Expression>>(context->expression(0)->accept(this));
     const auto &token = context->MEASURE()->getSymbol();
     setNodeAnnotation(ret, token);
     return One<Statement>{ ret };

@@ -14,13 +14,11 @@
 //
 // REQ005: cQASM shall support the following types: qubit, bit.
 //
-// REQ013: cQASM shall support the optional assignment of the measurement outcome(s) of the measurement instruction
-//         to (a) bit variable(s).
+// REQ013: cQASM shall support the assignment of a measurement outcome to a bit variable.
 //         Examples:
-//             b[0], b[1] = measure q[0], q[1]  The measurement outcome of q[0] is stored in b[0], and of q[1] in b[1]
-//             b2, b3 = measure q[3], q[4]      The measurement outcome of q[3] is stored in b2, and of q[4] in b3
-//             b[2:4] = measure q[3:5]          The measurement outcome of q[3:5] is stored in b[2:4]
-//             b0, b1, b2 = measure q[0:1]      Warning: no value is assigned to b2
+//             b[0] = measure q[0]      The measurement outcome of q[0] is stored in b[0]
+//             b2 = measure q[3]        The measurement outcome of q[3] is stored in b2
+//             b[2:4] = measure q[3:5]  The measurement outcome of q[3:5] is stored in b[2:4]
 //
 // REQ014: cQASM shall support the explicit declaration of qubit registers through a declaration statement.
 //         Examples:
