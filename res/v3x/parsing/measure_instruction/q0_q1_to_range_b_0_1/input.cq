@@ -1,6 +1,8 @@
 version 3
 
-qubit q0, q1, q2
-bit b[3]
+qubit q0
+qubit q1
+qubit q2
+bit[3] b
 
 b[0:1] = measure q0, q1

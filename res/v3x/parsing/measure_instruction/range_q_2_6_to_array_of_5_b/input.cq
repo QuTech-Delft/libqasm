@@ -1,6 +1,6 @@
 version 3
 
-qubit q[9]
-bit b[5]
+qubit[9] q
+bit[5] b
 
 b = measure q[2:6]
