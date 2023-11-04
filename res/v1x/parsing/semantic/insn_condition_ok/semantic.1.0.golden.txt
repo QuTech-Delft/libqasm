@@ -1,0 +1,64 @@
+SUCCESS
+Program( # input.cq:1:1..6:1
+  api_version: 1.0
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: 10
+  error_model: -
+  subcircuits: [
+    Subcircuit( # input.cq:5:1..19
+      name: 
+      iterations: 1
+      bundles: [
+        Bundle( # input.cq:5:1..19
+          items: [
+            Instruction( # input.cq:5:1..19
+              instruction: x(qubit reference)
+              name: x
+              condition: <
+                BitRefs( # input.cq:5:5..11
+                  index: [
+                    ConstInt( # input.cq:5:7..10
+                      value: 0
+                    )
+                    ConstInt( # input.cq:5:7..10
+                      value: 1
+                    )
+                    ConstInt( # input.cq:5:7..10
+                      value: 2
+                    )
+                    ConstInt( # input.cq:5:7..10
+                      value: 3
+                    )
+                  ]
+                )
+              >
+              operands: [
+                QubitRefs( # input.cq:5:13..19
+                  index: [
+                    ConstInt( # input.cq:5:15..18
+                      value: 4
+                    )
+                    ConstInt( # input.cq:5:15..18
+                      value: 5
+                    )
+                  ]
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+      ]
+      annotations: []
+      body: -
+    )
+  ]
+  mappings: []
+  variables: []
+)
+

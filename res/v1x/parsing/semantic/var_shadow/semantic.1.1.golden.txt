@@ -1,0 +1,103 @@
+SUCCESS
+Program( # input.cq:1:1..8:1
+  api_version: 1.1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.1
+    )
+  >
+  num_qubits: 0
+  error_model: -
+  subcircuits: [
+    Subcircuit( # input.cq:4:1..6
+      name: 
+      iterations: 1
+      bundles: [
+        Bundle( # input.cq:4:1..6
+          items: [
+            Instruction( # input.cq:4:1..6
+              instruction: not(bool/bit reference)
+              name: not
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                VariableRef( # input.cq:4:5..6
+                  variable --> <
+                    Variable( # input.cq:3:5..6
+                      name: v
+                      typ: <
+                        Bool(
+                          assignable: 1
+                        )
+                      >
+                      annotations: []
+                    )
+                  >
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+        Bundle( # input.cq:7:1..4
+          items: [
+            Instruction( # input.cq:7:1..4
+              instruction: x(qubit reference)
+              name: x
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                VariableRef( # input.cq:7:3..4
+                  variable --> <
+                    Variable( # input.cq:6:5..6
+                      name: v
+                      typ: <
+                        Qubit(
+                          assignable: 1
+                        )
+                      >
+                      annotations: []
+                    )
+                  >
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+      ]
+      annotations: []
+      body: -
+    )
+  ]
+  mappings: []
+  variables: [
+    Variable( # input.cq:3:5..6
+      name: v
+      typ: <
+        Bool(
+          assignable: 1
+        )
+      >
+      annotations: []
+    )
+    Variable( # input.cq:6:5..6
+      name: v
+      typ: <
+        Qubit(
+          assignable: 1
+        )
+      >
+      annotations: []
+    )
+  ]
+)
+

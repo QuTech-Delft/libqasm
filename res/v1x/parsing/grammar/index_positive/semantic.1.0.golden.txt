@@ -1,0 +1,99 @@
+SUCCESS
+Program( # input.cq:1:1..5:1
+  api_version: 1.0
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: 10
+  error_model: -
+  subcircuits: [
+    Subcircuit( # input.cq:4:1..59
+      name: 
+      iterations: 1
+      bundles: [
+        Bundle( # input.cq:4:1..59
+          items: [
+            Instruction( # input.cq:4:1..59
+              instruction: display()
+              name: display
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: []
+              annotations: [
+                AnnotationData( # input.cq:4:10..59
+                  interface: test
+                  operation: test
+                  operands: [
+                    QubitRefs( # input.cq:4:20..24
+                      index: [
+                        ConstInt( # input.cq:4:22..23
+                          value: 0
+                        )
+                      ]
+                    )
+                    QubitRefs( # input.cq:4:26..32
+                      index: [
+                        ConstInt( # input.cq:4:28..31
+                          value: 0
+                        )
+                        ConstInt( # input.cq:4:28..31
+                          value: 1
+                        )
+                      ]
+                    )
+                    QubitRefs( # input.cq:4:34..42
+                      index: [
+                        ConstInt( # input.cq:4:36..37
+                          value: 0
+                        )
+                        ConstInt( # input.cq:4:38..39
+                          value: 2
+                        )
+                        ConstInt( # input.cq:4:40..41
+                          value: 4
+                        )
+                      ]
+                    )
+                    QubitRefs( # input.cq:4:44..58
+                      index: [
+                        ConstInt( # input.cq:4:46..47
+                          value: 0
+                        )
+                        ConstInt( # input.cq:4:48..51
+                          value: 2
+                        )
+                        ConstInt( # input.cq:4:48..51
+                          value: 3
+                        )
+                        ConstInt( # input.cq:4:52..53
+                          value: 5
+                        )
+                        ConstInt( # input.cq:4:54..57
+                          value: 7
+                        )
+                        ConstInt( # input.cq:4:54..57
+                          value: 8
+                        )
+                      ]
+                    )
+                  ]
+                )
+              ]
+            )
+          ]
+          annotations: []
+        )
+      ]
+      annotations: []
+      body: -
+    )
+  ]
+  mappings: []
+  variables: []
+)
+

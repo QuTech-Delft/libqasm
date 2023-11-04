@@ -1,0 +1,86 @@
+SUCCESS
+Program( # input.cq:1:1..6:1
+  api_version: 1.1
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.1
+    )
+  >
+  num_qubits: 0
+  error_model: -
+  subcircuits: [
+    Subcircuit( # input.cq:5:1..19
+      name: 
+      iterations: 1
+      bundles: [
+        Bundle( # input.cq:5:1..19
+          items: [
+            Instruction( # input.cq:5:1..19
+              instruction: cnot(qubit reference, qubit reference)
+              name: cnot
+              condition: <
+                ConstBool(
+                  value: 1
+                )
+              >
+              operands: [
+                VariableRef( # input.cq:5:6..10
+                  variable --> <
+                    Variable( # input.cq:3:5..9
+                      name: data
+                      typ: <
+                        Qubit(
+                          assignable: 1
+                        )
+                      >
+                      annotations: []
+                    )
+                  >
+                )
+                VariableRef( # input.cq:5:12..19
+                  variable --> <
+                    Variable( # input.cq:3:11..18
+                      name: ancilla
+                      typ: <
+                        Qubit(
+                          assignable: 1
+                        )
+                      >
+                      annotations: []
+                    )
+                  >
+                )
+              ]
+              annotations: []
+            )
+          ]
+          annotations: []
+        )
+      ]
+      annotations: []
+      body: -
+    )
+  ]
+  mappings: []
+  variables: [
+    Variable( # input.cq:3:11..18
+      name: ancilla
+      typ: <
+        Qubit(
+          assignable: 1
+        )
+      >
+      annotations: []
+    )
+    Variable( # input.cq:3:5..9
+      name: data
+      typ: <
+        Qubit(
+          assignable: 1
+        )
+      >
+      annotations: []
+    )
+  ]
+)
+
