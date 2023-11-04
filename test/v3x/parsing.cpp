@@ -10,7 +10,7 @@
 #include <string>
 
 
-namespace cqasm::test {
+namespace cqasm::v3x::test {
 
 namespace cq3x = cqasm::v3x;
 namespace fs = std::filesystem;
@@ -20,16 +20,15 @@ namespace fs = std::filesystem;
  * matching debug dumps of the output against golden versions.
  */
 class ParsingTest : public ::testing::Test {
-private:
     fs::path path_{};
 
 public:
     explicit ParsingTest(fs::path path) : path_{ std::move(path) } {}
 
     void TestBody() override {
-        // Parse the test input file.
+        // Parse the test input file
         std::string input{};
-        ASSERT_TRUE(read_file(path_ / "input.cq", input));
+        ASSERT_TRUE(cqasm::test::read_file(path_ / "input.cq", input));
         cq3x::parser::ParseResult parse_result{};
         parse_result = cq3x::parser::parse_string(input, "input.cq");
 
@@ -42,10 +41,10 @@ public:
         }
 
         auto ast_actual_file_path = path_ / "ast.actual.txt";
-        write_file(ast_actual_file_path, ast_actual_file_contents);
+        cqasm::test::write_file(ast_actual_file_path, ast_actual_file_contents);
         std::string ast_golden_file_contents{};
         auto ast_golden_file_path = path_ / "ast.golden.txt";
-        EXPECT_TRUE(read_file(ast_golden_file_path, ast_golden_file_contents));
+        EXPECT_TRUE(cqasm::test::read_file(ast_golden_file_path, ast_golden_file_contents));
         EXPECT_TRUE(ast_actual_file_contents == ast_golden_file_contents);
 
         // Stop if parsing failed
@@ -93,10 +92,10 @@ public:
                 semantic_actual_file_contents = fmt::format("ERROR\n{}\n", fmt::join(analysis_result.errors, "\n"));
             }
             auto semantic_actual_file_path = path_ / fmt::format("semantic.{}.actual.txt", api_version);
-            write_file(semantic_actual_file_path, semantic_actual_file_contents);
+            cqasm::test::write_file(semantic_actual_file_path, semantic_actual_file_contents);
             std::string semantic_golden_file_contents{};
             auto semantic_golden_file_path = path_ / fmt::format("semantic.{}.golden.txt", api_version);
-            EXPECT_TRUE(read_file(semantic_golden_file_path, semantic_golden_file_contents));
+            EXPECT_TRUE(cqasm::test::read_file(semantic_golden_file_path, semantic_golden_file_contents));
             EXPECT_TRUE(semantic_actual_file_contents == semantic_golden_file_contents);
 
             if (analysis_result.errors.empty()) {
@@ -107,11 +106,11 @@ public:
 };
 
 
-void register_v3x_tests() {
-    register_tests(
+void register_tests() {
+    cqasm::test::register_tests(
         fs::path{ "res" } / "v3x" / "parsing",
         [=](fs::path test_path) -> ParsingTest* { return new ParsingTest(std::move(test_path)); }
     );
 }
 
-}  // namespace cqasm::test
+}  // namespace cqasm::v3x::test

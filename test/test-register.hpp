@@ -13,7 +13,7 @@ void register_tests(const fs::path& tests_root_path, TestFactory test_factory) {
     // They should live in a directory tree with the following structure:
     //
     // <CWD>
-    // |-  tests_root_path
+    // '-  tests_root_path
     //     |- <suite-name>                   test suite directory
     //     |   |- <test-name>                test case directory
     //     |   |   |- input.cq               the input file

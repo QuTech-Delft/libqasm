@@ -1,7 +1,7 @@
 #pragma once
 
-namespace cqasm::test {
+namespace cqasm::v1x::test {
 
-void register_v1x_tests();
+void register_tests();
 
-}  // namespace cqasm::test
+}  // namespace cqasm::v1x::test
