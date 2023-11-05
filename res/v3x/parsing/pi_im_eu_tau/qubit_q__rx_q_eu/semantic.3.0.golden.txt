@@ -27,7 +27,6 @@ Program(
           value: 2.71828
         )
       ]
-      first_output_operand_index: -
       condition: <
         ConstBool(
           value: 1

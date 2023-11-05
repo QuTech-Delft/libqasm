@@ -38,11 +38,6 @@ Program(
           >
         )
       ]
-      first_output_operand_index: <
-        ConstInt(
-          value: 1
-        )
-      >
       condition: <
         ConstBool(
           value: 1

@@ -30,7 +30,6 @@ Program(
           ]
         )
       ]
-      first_output_operand_index: -
       condition: <
         ConstBool(
           value: 1
@@ -61,7 +60,6 @@ Program(
           ]
         )
       ]
-      first_output_operand_index: -
       condition: <
         ConstBool(
           value: 1
@@ -110,7 +108,6 @@ Program(
           ]
         )
       ]
-      first_output_operand_index: -
       condition: <
         ConstBool(
           value: 1
