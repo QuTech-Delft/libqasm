@@ -2,8 +2,6 @@
 #include "v3x/cqasm-ast-gen.hpp"
 #include "v3x/cqasm-analyzer.hpp"
 
-#include <span>
-
 
 namespace cqasm::v3x::analyzer {
 
@@ -111,53 +109,30 @@ void AnalyzeTreeGenAstVisitor::visitVariables(const ast::Variables &variables_as
     }
 }
 
-bool check_input_indices_equals_output_indices(std::span<values::Value> input_operands, std::span<values::Value> output_operands) {
+bool check_same_size_input_output_indices(const values::Values &operands) {
     size_t number_of_input_indices{};
-    for (const auto &operand : input_operands) {
+    size_t number_of_output_indices{};
+    for (const auto &operand : operands) {
         if (auto variable_ref = operand->as_variable_ref()) {
             const auto &variable = *variable_ref->variable;
             if (variable.typ->as_qubit()) {
                 number_of_input_indices += 1;
-            } else if (auto arr = variable.typ->as_qubit_array()) {
-                number_of_input_indices += arr->size;
-            } else {
-                throw std::runtime_error{ "variable is neither a qubit nor a qubit array" };
+            } else if (auto qubit_array = variable.typ->as_qubit_array()) {
+                number_of_input_indices += qubit_array->size;
+            } else if (variable.typ->as_bit()) {
+                number_of_output_indices += 1;
+            } else if (auto bit_array = variable.typ->as_bit_array()) {
+                number_of_output_indices += bit_array->size;
             }
         } else if (auto index_ref = operand->as_index_ref()) {
             const auto &variable = *index_ref->variable;
             if (variable.typ->as_qubit() || variable.typ->as_qubit_array()) {
                 number_of_input_indices += index_ref->indices.size();
-            } else {
-                throw std::runtime_error{ "index refers to a variable that is neither a qubit nor a qubit array" };
-            }
-        } else {
-            throw std::runtime_error{ "input operand is neither a variable nor an index" };
-        }
-    }
-
-    size_t number_of_output_indices{};
-    for (const auto &operand : output_operands) {
-        if (auto variable_ref = operand->as_variable_ref()) {
-            const auto &variable = *variable_ref->variable;
-            if (variable.typ->as_bit()) {
-                number_of_output_indices += 1;
-            } else if (auto arr = variable.typ->as_bit_array()) {
-                number_of_output_indices += arr->size;
-            } else {
-                throw std::runtime_error{ "variable is neither a bit nor a bit array" };
-            }
-        } else if (auto index_ref = operand->as_index_ref()) {
-            const auto &variable = *index_ref->variable;
-            if (variable.typ->as_bit() || variable.typ->as_bit_array()) {
+            } else if (variable.typ->as_bit() || variable.typ->as_bit_array()) {
                 number_of_output_indices += index_ref->indices.size();
-            } else {
-                throw std::runtime_error{ "index refers to a variable that is neither a qubit nor a qubit array" };
             }
-        } else {
-            throw std::runtime_error{ "input operand is neither a variable nor an index" };
         }
     }
-
     return number_of_input_indices == number_of_output_indices;
 }
 
@@ -179,20 +154,11 @@ tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(
         // Resolve the instruction
         node.set(analyzer_.resolve_instruction(instruction_ast.name->name, operands));
 
-        // Set index to first output operand
-        if (!instruction_ast.output_operands.empty()) {
-            node->first_output_operand_index = tree::make<values::ConstInt>(instruction_ast.operands->items.size());
-        }
-
-        // Check number of input indices equals number of output indices
-        if (!instruction_ast.output_operands.empty()) {
-            auto number_of_input_operands_st{ static_cast<size_t>(node->first_output_operand_index->value) };
-            auto number_of_input_operands_l{ static_cast<long>(node->first_output_operand_index->value) };
-            if (!check_input_indices_equals_output_indices(
-                std::span{ operands.begin(), number_of_input_operands_st },
-                std::span{ operands.begin() + number_of_input_operands_l, operands.size() - number_of_input_operands_st })) {
-                throw error::AnalysisError{ "number of input indices is different from number of output indices",
-                    &instruction_ast };
+        // Check number of input/qubit indices equals number of output/bit indices
+        if (!node->instruction.empty() && node->instruction->request_same_size_input_output_indices) {
+            if (!check_same_size_input_output_indices(operands)) {
+                throw error::AnalysisError{
+                    "number of input/qubit indices is different from number of output/bit indices", &instruction_ast };
             }
         }
 

@@ -33,15 +33,30 @@ namespace instruction {
  */
 class Instruction : public tree::Base {
 public:
+    /**
+     * The name of the instruction. Names are matched case sensitively.
+     */
     std::string name;
+
+    /**
+     * The vector of parameter types that this instruction expects.
+     */
     types::Types param_types;
+
+    /**
+     * Whether input/qubit and output/bit index sizes have to be equal (e.g. for a measure instruction).
+     */
+    bool request_same_size_input_output_indices;
 
     /**
      * Creates a new instruction.
      * param_types is a shorthand type specification string as parsed by cqasm::types::from_spec().
      * If you need more control, you can also manipulate param_types directly.
      */
-    explicit Instruction(const std::string &name, const std::string &param_types = "");
+    explicit Instruction(
+        const std::string &name,
+        const std::string &param_types = "",
+        bool request_same_size_input_output_indices = false);
 
     bool operator==(const Instruction& rhs) const;
     inline bool operator!=(const Instruction& rhs) const {

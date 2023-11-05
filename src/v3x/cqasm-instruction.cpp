@@ -17,10 +17,11 @@ namespace instruction {
  */
 Instruction::Instruction(
     const std::string &name,
-    const std::string &param_types
-) :
-    name(name),
-    param_types(types::from_spec(param_types))
+    const std::string &param_types,
+    bool request_same_size_input_output_indices)
+: name{ name }
+, param_types{ types::from_spec(param_types) }
+, request_same_size_input_output_indices{ request_same_size_input_output_indices }
 {}
 
 /**
@@ -57,6 +58,7 @@ void serialize(const instruction::InstructionRef &obj, ::tree::cbor::MapWriter &
         return;
     }
     map.append_string("n", obj->name);
+    map.append_bool("f", obj->request_same_size_input_output_indices);
     auto aw = map.append_array("t");
     for (const auto &t : obj->param_types) {
         aw.append_binary(::tree::base::serialize(t));
@@ -69,7 +71,11 @@ instruction::InstructionRef deserialize(const ::tree::cbor::MapReader &map) {
     if (!map.count("n")) {
         return {};
     }
-    auto insn = tree::make<instruction::Instruction>(map.at("n").as_string(), "");
+    auto insn = tree::make<instruction::Instruction>(
+        map.at("n").as_string(),
+        "",
+        map.at("f").as_bool()
+    );
     auto ar = map.at("t").as_array();
     for (const auto &element : ar) {
         insn->param_types.add(::tree::base::deserialize<types::Node>(element.as_binary()));
