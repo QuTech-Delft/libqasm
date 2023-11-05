@@ -188,7 +188,7 @@ tree::One<semantic::Instruction> InstructionTable::resolve(
     const std::string &name,
     const Values &args
 ) const {
-    auto resolved = resolver->resolve(name, args);
+    auto resolved = resolver->resolve(utils::to_lowercase(name), args);
     return tree::make<semantic::Instruction>(
         tree::make<instruction::Instruction>(resolved.first),
         utils::to_lowercase(name),
