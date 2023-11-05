@@ -91,7 +91,7 @@ annotated {
     # An instruction (a.k.a. gate).
     instruction_base {
 
-        # Condition (C- notation).
+        # Condition (c- notation).
         # When there is no condition, this is a constant boolean set to true.
         condition: external One<cqasm::v1x::values::Node>;
 

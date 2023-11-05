@@ -4,6 +4,7 @@
 
 #define _USE_MATH_DEFINES
 
+#include "cqasm-utils.hpp"
 #include "v1x/cqasm-analyzer.hpp"
 #include "v1x/cqasm-parse-helper.hpp"
 #include "v1x/cqasm-functions-gen.hpp"
@@ -897,7 +898,7 @@ void AnalyzerHelper::analyze_bundle(const ast::Bundle &bundle) {
         // to special-case it here. Technically we could also have made it a
         // keyword, but the less random keywords there are, the better.
         if (bundle.items.size() == 1) {
-            if (bundle.items[0]->name->name == "error_model") {
+            if (utils::equal_case_insensitive(bundle.items[0]->name->name, "error_model")) {
                 analyze_error_model(*bundle.items[0]);
                 return;
             }
@@ -969,26 +970,25 @@ void AnalyzerHelper::analyze_bundle_ext(const ast::Bundle &bundle) {
         // to special-case it here. Technically we could also have made it a
         // keyword, but the less random keywords there are, the better.
         if (bundle.items.size() == 1) {
-            if (bundle.items[0]->name->name == "error_model") {
+            if (utils::equal_case_insensitive(bundle.items[0]->name->name, "error_model")) {
                 analyze_error_model(*bundle.items[0]);
                 return;
             }
         }
 
-        // Analyze and add the instructions.
+        // Analyze and add the instructions
         auto node = tree::make<semantic::BundleExt>();
         for (const auto &insn : bundle.items) {
-            if (insn->name->name == "set") {
+            if (utils::equal_case_insensitive(insn->name->name, "set")) {
                 node->items.add(analyze_set_instruction(*insn));
-            } else if (insn->name->name == "goto") {
+            } else if (utils::equal_case_insensitive(insn->name->name, "goto")) {
                 node->items.add(analyze_goto_instruction(*insn));
             } else {
                 node->items.add(analyze_instruction(*insn));
             }
         }
 
-        // If we have more than two instructions, ensure that all instructions
-        // are parallelizable.
+        // If we have more than two instructions, ensure that all instructions can be executed in parallel
         if (node->items.size() > 1) {
             for (const auto &insn_base : node->items) {
                 try {
@@ -1183,7 +1183,7 @@ tree::Maybe<semantic::SetInstruction> AnalyzerHelper::analyze_set_instruction(
             // away.
             if (auto x = node->condition->as_const_bool()) {
                 if (!x->value) {
-                    return tree::Maybe<semantic::SetInstruction>();
+                    return {};
                 }
             }
         } else {
@@ -1199,7 +1199,7 @@ tree::Maybe<semantic::SetInstruction> AnalyzerHelper::analyze_set_instruction(
         e.context(insn);
         result.errors.push_back(e.get_message());
     }
-    return tree::Maybe<semantic::SetInstruction>();
+    return {};
 }
 
 /**
@@ -1290,7 +1290,7 @@ tree::Maybe<semantic::GotoInstruction> AnalyzerHelper::analyze_goto_instruction(
             // away.
             if (auto x = node->condition->as_const_bool()) {
                 if (!x->value) {
-                    return tree::Maybe<semantic::GotoInstruction>();
+                    return {};
                 }
             }
         } else {
@@ -1306,7 +1306,7 @@ tree::Maybe<semantic::GotoInstruction> AnalyzerHelper::analyze_goto_instruction(
         e.context(insn);
         result.errors.push_back(e.get_message());
     }
-    return tree::Maybe<semantic::GotoInstruction>();
+    return {};
 }
 
 /**
@@ -1405,7 +1405,7 @@ void AnalyzerHelper::analyze_variables(const ast::Variables &variables) {
         }
 
         // Figure out what type the variables should have.
-        auto type_name = variables.typ->name;
+        auto type_name = utils::to_lowercase(variables.typ->name);
         types::Type type{};
         if (type_name == "qubit") {
             type = tree::make<types::Qubit>();
@@ -1588,12 +1588,14 @@ tree::Maybe<semantic::IfElse> AnalyzerHelper::analyze_if_else(
                 // Constant true: optimize away all subsequent branches and
                 // replace the otherwise block with this one.
                 node->otherwise = node->branches[idx]->body;
-                while (node->branches.size() > idx) node->branches.remove();
+                while (node->branches.size() > idx) {
+                    node->branches.remove();
+                }
 
             } else {
 
                 // Constant false: remove this condition/block.
-                node->branches.remove(idx);
+                node->branches.remove(static_cast<ssize_t>(idx));
 
             }
         } else {
@@ -1971,11 +1973,11 @@ values::Value AnalyzerHelper::analyze_matrix_helper(
         for (size_t col = 0; col < ncols; col++) {
             auto val = values::promote(vals[row * ncols + col], tree::make<ElType>());
             if (val.empty()) {
-                return values::Value();
+                return {};
             } else {
                 auto val_real = val.template as<ElVal>();
                 if (val_real.empty()) {
-                    return values::Value();
+                    return {};
                 } else {
                     matrix.at(row + 1, col + 1) = val_real->value;
                 }

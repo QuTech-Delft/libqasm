@@ -15,7 +15,7 @@ namespace cqasm::utils {
 /**
 * Makes a string lowercase.
 */
-std::string lowercase(const std::string &name) {
+std::string to_lowercase(const std::string &name) {
     return name
         | ranges::views::transform([](unsigned char c) { return std::tolower(c); })
         | ranges::to<std::string>();
@@ -24,7 +24,7 @@ std::string lowercase(const std::string &name) {
 /**
  * Case-insensitive string compare.
  */
-bool case_insensitive_equals(const std::string &lhs, const std::string &rhs) {
+bool equal_case_insensitive(const std::string &lhs, const std::string &rhs) {
     return ranges::equal(lhs, rhs, [](unsigned char l, unsigned char r) {
         return std::tolower(l) == std::tolower(r);
     });

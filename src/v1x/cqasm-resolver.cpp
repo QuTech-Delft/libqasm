@@ -20,19 +20,21 @@ using Values = values::Values;
 
 /**
  * Adds a mapping.
+ * For v1, mappings are added and resolved case-insensitively.
  */
 void MappingTable::add(
     const std::string &name,
     const values::Value &value,
     const tree::Maybe<ast::Mapping> &node
 ) {
-    auto it = table.find(name);
+    auto lowercase_name = utils::to_lowercase(name);
+    auto it = table.find(lowercase_name);
     if (it != table.end()) {
         table.erase(it);
     }
     table.insert(
         std::make_pair(
-            name,
+            lowercase_name,
             std::pair<const values::Value, tree::Maybe<ast::Mapping>>(value, node)
         )
     );
@@ -40,10 +42,11 @@ void MappingTable::add(
 
 /**
  * Resolves a mapping.
+ * For v1, mappings are added and resolved case-insensitively.
  * Throws NameResolutionFailure if no mapping by the given name exists.
  */
 Value MappingTable::resolve(const std::string &name) const {
-    auto entry = table.find(name);
+    auto entry = table.find(utils::to_lowercase(name));
     if (entry == table.end()) {
         throw NameResolutionFailure("failed to resolve " + name);
     } else {
@@ -77,7 +80,7 @@ FunctionTable& FunctionTable::operator=(FunctionTable&& t) noexcept {
 
 /**
  * Registers a function.
- * Matching will be done case-sensitively.
+ * For v1, overload names are added and resolved case-insensitively.
  * The param_types variadic specifies the amount and types of the parameters that
  * (this particular overload of) the function expects.
  * The C++ implementation of the function can assume that
@@ -88,18 +91,19 @@ FunctionTable& FunctionTable::operator=(FunctionTable&& t) noexcept {
  * so adding does have the effect of overriding.
  */
 void FunctionTable::add(const std::string &name, const Types &param_types, const FunctionImpl &impl) {
-    resolver->add_overload(name, impl, param_types);
+    resolver->add_overload(utils::to_lowercase(name), impl, param_types);
 }
 
 /**
  * Calls a function.
+ * For v1, overload names are added and resolved case-insensitively.
  * Throws NameResolutionFailure if no function by the given name exists,
  * OverloadResolutionFailure if no overload of the function exists for the given arguments, or otherwise
  * returns the value returned by the function.
  */
 Value FunctionTable::call(const std::string &name, const Values &args) const {
     // Resolve the function and type-check/promote the argument list.
-    auto resolution = resolver->resolve(name, args);
+    auto resolution = resolver->resolve(utils::to_lowercase(name), args);
 
     // Call the function with the type-checked/promoted argument list, and return its result.
     return resolution.first(resolution.second);
@@ -124,13 +128,15 @@ ErrorModelTable& ErrorModelTable::operator=(ErrorModelTable&& t) noexcept {
 
 /**
  * Registers an error model.
+ * For v1, overload names are added and resolved case-insensitively.
  */
 void ErrorModelTable::add(const error_model::ErrorModel &type) {
-    resolver->add_overload(type.name, type, type.param_types);
+    resolver->add_overload(utils::to_lowercase(type.name), type, type.param_types);
 }
 
 /**
  * Resolves an error model.
+ * For v1, overload names are added and resolved case-insensitively.
  * Throws NameResolutionFailure if no error model by the given name exists,
  * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
  * returns the resolved error model node.
@@ -140,7 +146,7 @@ tree::One<semantic::ErrorModel> ErrorModelTable::resolve(const std::string &name
     auto resolved = resolver->resolve(name, args);
     return tree::make<semantic::ErrorModel>(
         tree::make<error_model::ErrorModel>(resolved.first),
-        name,
+        utils::to_lowercase(name),
         resolved.second,
         tree::Any<semantic::AnnotationData>());
 }
@@ -164,13 +170,15 @@ InstructionTable& InstructionTable::operator=(InstructionTable&& t) noexcept {
 
 /**
  * Registers an instruction type.
+ * For v1, overload names are added and resolved case-insensitively.
  */
 void InstructionTable::add(const instruction::Instruction &type) {
-    resolver->add_overload(type.name, type, type.param_types);
+    resolver->add_overload(utils::to_lowercase(type.name), type, type.param_types);
 }
 
 /**
  * Resolves an instruction.
+ * For v1, overload names are added and resolved case-insensitively.
  * Throws NameResolutionFailure if no instruction by the given name exists,
  * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
  * returns the resolved instruction node.
@@ -183,7 +191,7 @@ tree::One<semantic::Instruction> InstructionTable::resolve(
     auto resolved = resolver->resolve(name, args);
     return tree::make<semantic::Instruction>(
         tree::make<instruction::Instruction>(resolved.first),
-        name,
+        utils::to_lowercase(name),
         values::Value(),
         resolved.second,
         tree::Any<semantic::AnnotationData>());

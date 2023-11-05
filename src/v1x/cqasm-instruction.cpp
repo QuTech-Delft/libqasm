@@ -2,6 +2,7 @@
  * Implementation for \ref include/v1x/cqasm-instruction.hpp "v1x/cqasm-instruction.hpp".
  */
 
+#include "cqasm-utils.hpp"
 #include "v1x/cqasm-instruction.hpp"
 #include "v1x/cqasm-semantic.hpp"
 
@@ -42,7 +43,7 @@ Instruction::Instruction(
  * Equality operator.
  */
 bool Instruction::operator==(const Instruction& rhs) const {
-    return name == rhs.name
+    return utils::equal_case_insensitive(name, rhs.name)
         && param_types == rhs.param_types
         && allow_conditional == rhs.allow_conditional
         && allow_parallel == rhs.allow_parallel
@@ -86,7 +87,7 @@ void serialize(const instruction::InstructionRef &obj, ::tree::cbor::MapWriter &
     map.append_bool("d", obj->allow_different_index_sizes);
     auto aw = map.append_array("t");
     for (const auto &t : obj->param_types) {
-        aw.append_binary(::tree::base::serialize(t));
+        aw.append_binary(::tree::base::serialize(tree::Maybe<types::TypeBase>{ t.get_ptr() }));
     }
     aw.close();
 }

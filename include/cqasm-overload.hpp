@@ -10,6 +10,10 @@
 #include <vector>
 
 
+/**
+ * Overload templates are case-sensitive.
+ * The code using them can be case-insensitive by converting to lowercase before adding and resolving an overload.
+ */
 namespace cqasm::overload {
 
 struct NameResolutionFailure : public std::exception {};
@@ -113,8 +117,8 @@ public:
 };
 
 /**
- * Table of overloaded callables with case-insensitive identifier matching. T
- * is the tag type of the callable/overload pair.
+ * Table of overloaded callables with case-sensitive identifier matching.
+ * T is the tag type of the callable/overload pair.
  */
 template <class T, class TypeBase, class Node>
 class OverloadedNameResolver {
