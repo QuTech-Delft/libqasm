@@ -4,6 +4,7 @@
 
 #define _USE_MATH_DEFINES
 
+#include "cqasm-tree.hpp"  // signed_size_t
 #include "cqasm-utils.hpp"
 #include "v1x/cqasm-analyzer.hpp"
 #include "v1x/cqasm-parse-helper.hpp"
@@ -1551,14 +1552,12 @@ void AnalyzerHelper::analyze_structured(const ast::Structured &structured) {
 tree::Maybe<semantic::IfElse> AnalyzerHelper::analyze_if_else(
     const ast::IfElse &if_else
 ) {
-
     // Create the if-else node.
     tree::Maybe<semantic::IfElse> node;
     node.emplace();
 
     // Analyze the branches.
     for (const auto &branch : if_else.branches) {
-
         // Analyze the condition.
         auto condition = analyze_expression(*branch->condition);
         condition = values::promote(condition, tree::make<types::Bool>());
@@ -1571,7 +1570,6 @@ tree::Maybe<semantic::IfElse> AnalyzerHelper::analyze_if_else(
 
         // Add the branch.
         node->branches.emplace(condition, body);
-
     }
 
     // Analyze the otherwise block, if any.
@@ -1591,12 +1589,9 @@ tree::Maybe<semantic::IfElse> AnalyzerHelper::analyze_if_else(
                 while (node->branches.size() > idx) {
                     node->branches.remove();
                 }
-
             } else {
-
                 // Constant false: remove this condition/block.
-                node->branches.remove(static_cast<ssize_t>(idx));
-
+                node->branches.remove(static_cast<tree::signed_size_t>(idx));
             }
         } else {
             idx++;
