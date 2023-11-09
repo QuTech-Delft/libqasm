@@ -12,7 +12,7 @@ AnalyzeTreeGenAstVisitor::AnalyzeTreeGenAstVisitor(Analyzer &analyzer)
 
 AnalysisResult AnalyzeTreeGenAstVisitor::visitProgram(const ast::Program &program_ast) {
     result_.root = tree::make<semantic::Program>();
-    result_.root->api_version = analyzer_.get_api_version();
+    result_.root->api_version = analyzer_.api_version;
     visitVersion(*program_ast.version);
     visitStatements(*program_ast.statements);
     return result_;
@@ -22,7 +22,7 @@ void AnalyzeTreeGenAstVisitor::visitVersion(const ast::Version &version_ast) {
     try {
         // Default to API version in case the version in the AST is broken
         result_.root->version = tree::make<semantic::Version>();
-        result_.root->version->items = analyzer_.get_api_version();
+        result_.root->version->items = analyzer_.api_version;
 
         // Check API version
         for (auto item : version_ast.items) {
@@ -30,10 +30,10 @@ void AnalyzeTreeGenAstVisitor::visitVersion(const ast::Version &version_ast) {
                 throw error::AnalysisError("invalid version component");
             }
         }
-        if (version_ast.items > analyzer_.get_api_version()) {
+        if (version_ast.items > analyzer_.api_version) {
             throw error::AnalysisError(fmt::format(
                 "the maximum cQASM version supported is {}, but the cQASM file is version {}",
-                analyzer_.get_api_version(),
+                analyzer_.api_version,
                 version_ast.items
             ));
         }
@@ -97,11 +97,7 @@ void AnalyzeTreeGenAstVisitor::visitVariables(const ast::Variables &variables_as
             variable->annotations = visitAnnotations(variables_ast.annotations);
             result_.root->variables.add(variable);
 
-            analyzer_.add_mapping(
-                identifier->name,
-                tree::make<values::VariableRef>(variable),
-                tree::Maybe<ast::Mapping>()
-            );
+            analyzer_.add_mapping(identifier->name, tree::make<values::VariableRef>(variable));
         }
     } catch (error::AnalysisError &err) {
         err.context(variables_ast);

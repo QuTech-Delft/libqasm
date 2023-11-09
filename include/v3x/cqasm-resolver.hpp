@@ -59,17 +59,13 @@ struct OverloadedNameResolver : public cqasm::overload::OverloadedNameResolver<T
  * Table of all mappings within a certain scope.
  */
 class MappingTable {
-    std::unordered_map<std::string, std::pair<const values::Value, tree::Maybe<ast::Mapping>>> table;
+    std::unordered_map<std::string, values::Value> table;
 
 public:
     /**
      * Adds a mapping.
      */
-    void add(
-        const std::string &name,
-        const values::Value &value,
-        const tree::Maybe<ast::Mapping> &node = tree::Maybe<ast::Mapping>()
-    );
+    void add(const std::string &name, const values::Value &value);
 
     /**
      * Resolves a mapping.
@@ -80,7 +76,7 @@ public:
     /**
      * Grants read access to the underlying map.
      */
-    const std::unordered_map<std::string, std::pair<const values::Value, tree::Maybe<ast::Mapping>>> &get_table() const;
+    const std::unordered_map<std::string, values::Value> &get_table() const;
 };
 
 /**

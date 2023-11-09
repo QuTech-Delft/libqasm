@@ -149,13 +149,6 @@ AnalysisResult Analyzer::analyze_string(const std::string &data, const std::stri
 }
 
 /**
- * Returns the API version.
- */
-[[nodiscard]] primitives::Version Analyzer::get_api_version() const {
-    return api_version;
-}
-
-/**
  * Resolves a mapping.
  * Throws NameResolutionFailure if no mapping by the given name exists.
  */
@@ -166,8 +159,8 @@ values::Value Analyzer::resolve_mapping(const std::string &name) const {
 /**
  * Adds a mapping.
  */
-void Analyzer::add_mapping(const std::string &name, const values::Value &value, const tree::Maybe<ast::Mapping> &node) {
-    mappings.add(name, value, node);
+void Analyzer::add_mapping(const std::string &name, const values::Value &value) {
+    mappings.add(name, value);
 }
 
 /**

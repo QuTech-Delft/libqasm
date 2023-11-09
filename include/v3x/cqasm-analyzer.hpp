@@ -92,11 +92,13 @@ public:
  * (hence they are const).
  */
 class Analyzer {
+public:
     /**
      * The maximum cQASM version that this analyzer supports.
      */
     primitives::Version api_version;
 
+private:
     /**
      * The set of "mappings" that the parser starts out with.
      */
@@ -171,11 +173,6 @@ public:
         const std::string &data, const std::string &filename = "<unknown>");
 
     /**
-     * Returns the API version.
-     */
-    [[nodiscard]] primitives::Version get_api_version() const;
-
-    /**
      * Resolves a mapping.
      * Throws NameResolutionFailure if no mapping by the given name exists.
      */
@@ -184,7 +181,7 @@ public:
     /**
      * Adds a mapping.
      */
-    void add_mapping(const std::string &name, const values::Value &value, const tree::Maybe<ast::Mapping> &node);
+    void add_mapping(const std::string &name, const values::Value &value);
 
         /**
          * Resolves an instruction.

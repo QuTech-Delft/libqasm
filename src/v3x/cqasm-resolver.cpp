@@ -21,21 +21,11 @@ using Values = values::Values;
 /**
  * Adds a mapping.
  */
-void MappingTable::add(
-    const std::string &name,
-    const values::Value &value,
-    const tree::Maybe<ast::Mapping> &node
-) {
-    auto it = table.find(name);
-    if (it != table.end()) {
+void MappingTable::add(const std::string &name, const Value &value) {
+    if (auto it = table.find(name); it != table.end()) {
         table.erase(it);
     }
-    table.insert(
-        std::make_pair(
-            name,
-            std::pair<const values::Value, tree::Maybe<ast::Mapping>>(value, node)
-        )
-    );
+    table.insert(std::make_pair(name, value));
 }
 
 /**
@@ -46,14 +36,14 @@ Value MappingTable::resolve(const std::string &name) const {
     if (auto entry = table.find(name); entry == table.end()) {
         throw NameResolutionFailure{ fmt::format("failed to resolve mapping '{}'", name) };
     } else {
-        return Value(entry->second.first->clone());
+        return Value(entry->second->clone());
     }
 }
 
 /**
  * Grants read access to the underlying map.
  */
-const std::unordered_map<std::string, std::pair<const values::Value, tree::Maybe<ast::Mapping>>> &MappingTable::get_table() const {
+const std::unordered_map<std::string, Value> &MappingTable::get_table() const {
     return table;
 }
 
