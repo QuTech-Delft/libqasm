@@ -30,7 +30,7 @@ void AnalyzeTreeGenAstVisitor::visitVersion(const ast::Version &version_ast) {
                 throw error::AnalysisError("invalid version component");
             }
         }
-        if (version_ast.items.more_than(analyzer_.get_api_version())) {
+        if (version_ast.items > analyzer_.get_api_version()) {
             throw error::AnalysisError(fmt::format(
                 "the maximum cQASM version supported is {}, but the cQASM file is version {}",
                 analyzer_.get_api_version(),
@@ -145,10 +145,6 @@ tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(
         auto operands = values::Values();
         for (const auto &operand_expr : instruction_ast.operands->items) {
             operands.add(visitExpression(*operand_expr));
-        }
-        // Append output operand list
-        if (!instruction_ast.output_operands.empty()) {
-            operands.add(visitExpression(*instruction_ast.output_operands));
         }
 
         // Resolve the instruction

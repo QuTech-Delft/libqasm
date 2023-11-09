@@ -99,15 +99,10 @@ annotated {
         }
 
         # A gate.
-        # For the v3 MVP we limit 'output_operands' to a single expression.
         instruction {
             name: One<identifier>;
             condition: Maybe<expression>;
             operands: One<expression_list>;
-
-            # Some instructions, like the measure instruction, will contain output operands.
-            # For a measure instruction, 'operands' correspond to qubits, and 'output_operands' to bits.
-            output_operands: Maybe<expression>;
         }
     }
 }

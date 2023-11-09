@@ -34,7 +34,7 @@ ast::One<semantic::Program> AnalysisResult::unwrap(std::ostream &out) const {
 Analyzer::Analyzer(const primitives::Version &api_version)
 : api_version{ api_version }
 , instruction_set{} {
-    if (!api_version.equal("3.0")) {
+    if (api_version != "3.0") {
         throw std::invalid_argument{ "this analyzer only supports cQASM 3.0" };
     }
 }

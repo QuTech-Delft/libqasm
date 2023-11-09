@@ -50,20 +50,11 @@ public:
      */
     Version(const char *version);
 
-    [[nodiscard]] bool equal(const Version &rhs) const {
+    [[nodiscard]] auto operator==(const Version &rhs) const {
         return compare(rhs) == 0;
     }
-    [[nodiscard]] bool less_than(const Version &rhs) const {
-        return compare(rhs) < 0;
-    }
-    [[nodiscard]] bool more_than(const Version &rhs) const {
-        return compare(rhs) > 0;
-    }
-    [[nodiscard]] bool less_than_or_equal(const Version &rhs) const {
-        return !more_than(rhs);
-    }
-    [[nodiscard]] bool more_than_or_equal(const Version &rhs) const {
-        return !less_than(rhs);
+    [[nodiscard]] auto operator<=>(const Version &rhs) const {
+        return compare(rhs) <=> 0;
     }
 };
 

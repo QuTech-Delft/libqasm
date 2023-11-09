@@ -28,35 +28,35 @@ class Overload {
     using Type = tree::One<TypeBase>;
     using Types = tree::Any<TypeBase>;
 
-    T tag_;
-    Types param_types_;
+    T tag;
+    Types param_types;
 
 public:
-    Overload(const T &tag, const Types &param_types) : tag_{ tag }, param_types_{ param_types} {}
-    Overload(const Overload &other) : tag_{ other.tag_ }, param_types_{ other.param_types_ } {}
-    Overload(Overload &&other) noexcept : tag_{ std::move(other.tag_) }, param_types_{ other.param_types_ } {}
-    Overload& operator=(const Overload &other) { tag_ = other.tag_; param_types_ = other.param_types_; return *this; }
-    Overload& operator=(Overload &&other) noexcept { tag_ = std::move(other.tag_); param_types_ = other.param_types_; return *this; }
+    Overload(const T &tag, const Types &param_types) : tag{ tag }, param_types{ param_types} {}
+    Overload(const Overload &other) : tag{ other.tag }, param_types{ other.param_types } {}
+    Overload(Overload &&other) noexcept : tag{ std::move(other.tag) }, param_types{ other.param_types } {}
+    Overload& operator=(const Overload &other) { tag = other.tag; param_types = other.param_types; return *this; }
+    Overload& operator=(Overload &&other) noexcept { tag = std::move(other.tag); param_types = other.param_types; return *this; }
 
     /**
      * Returns the tag for this overload.
      */
     [[nodiscard]] const T &get_tag() const {
-        return tag_;
+        return tag;
     }
 
     /**
      * Returns the number of parameters for this overload.
      */
     [[nodiscard]] std::size_t num_params() const {
-        return param_types_.size();
+        return param_types.size();
     }
 
     /**
      * Returns the parameter type object for the parameter at the specified index.
      */
     [[nodiscard]] const Type &param_type_at(std::size_t index) const {
-        return param_types_.at(index);
+        return param_types.at(index);
     }
 };
 

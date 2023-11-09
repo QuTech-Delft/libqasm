@@ -33,7 +33,7 @@ public:
         cq1x::parser::ParseResult parse_result{};
         auto version = cqasm::version::parse_string(input, "input.cq");
 
-        if (version.less_than_or_equal("1.2")) {
+        if (version <= "1.2") {
             parse_result = cq1x::parser::parse_string(input, "input.cq");
         } else {
             parse_result.errors.push_back(fmt::format("detected version {}", version));
