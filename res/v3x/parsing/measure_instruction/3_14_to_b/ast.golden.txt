@@ -35,12 +35,10 @@ Program(
                 FloatLiteral( # input.cq:5:13..17
                   value: 3.14
                 )
+                Identifier( # input.cq:5:1..2
+                  name: b
+                )
               ]
-            )
-          >
-          output_operands: <
-            Identifier( # input.cq:5:1..2
-              name: b
             )
           >
           annotations: []

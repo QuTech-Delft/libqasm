@@ -59,7 +59,6 @@ Program(
               ]
             )
           >
-          output_operands: -
           annotations: []
         )
       ]

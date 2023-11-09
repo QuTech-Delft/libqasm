@@ -35,12 +35,10 @@ Program(
                 Identifier( # input.cq:5:13..14
                   name: q
                 )
+                IntegerLiteral( # input.cq:5:1..2
+                  value: 5
+                )
               ]
-            )
-          >
-          output_operands: <
-            IntegerLiteral( # input.cq:5:1..2
-              value: 5
             )
           >
           annotations: []

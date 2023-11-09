@@ -53,29 +53,27 @@ Program(
                 Identifier( # input.cq:6:16..18
                   name: q0
                 )
-              ]
-            )
-          >
-          output_operands: <
-            Index( # input.cq:6:1..2
-              expr: <
-                Identifier(
-                  name: b
-                )
-              >
-              indices: <
-                IndexList(
-                  items: [
-                    IndexItem(
-                      index: <
-                        IntegerLiteral( # input.cq:6:3..4
-                          value: 0
-                        )
-                      >
+                Index( # input.cq:6:1..2
+                  expr: <
+                    Identifier(
+                      name: b
                     )
-                  ]
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexItem(
+                          index: <
+                            IntegerLiteral( # input.cq:6:3..4
+                              value: 0
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
                 )
-              >
+              ]
             )
           >
           annotations: []

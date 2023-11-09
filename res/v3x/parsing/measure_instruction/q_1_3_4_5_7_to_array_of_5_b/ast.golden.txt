@@ -102,12 +102,10 @@ Program(
                     )
                   >
                 )
+                Identifier( # input.cq:6:1..2
+                  name: b
+                )
               ]
-            )
-          >
-          output_operands: <
-            Identifier( # input.cq:6:1..2
-              name: b
             )
           >
           annotations: []

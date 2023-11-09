@@ -81,34 +81,32 @@ Program(
                     )
                   >
                 )
-              ]
-            )
-          >
-          output_operands: <
-            Index( # input.cq:6:1..2
-              expr: <
-                Identifier(
-                  name: b
-                )
-              >
-              indices: <
-                IndexList(
-                  items: [
-                    IndexRange(
-                      first: <
-                        IntegerLiteral( # input.cq:6:3..4
-                          value: 1
-                        )
-                      >
-                      last: <
-                        IntegerLiteral( # input.cq:6:5..6
-                          value: 2
-                        )
-                      >
+                Index( # input.cq:6:1..2
+                  expr: <
+                    Identifier(
+                      name: b
                     )
-                  ]
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexRange(
+                          first: <
+                            IntegerLiteral( # input.cq:6:3..4
+                              value: 1
+                            )
+                          >
+                          last: <
+                            IntegerLiteral( # input.cq:6:5..6
+                              value: 2
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
                 )
-              >
+              ]
             )
           >
           annotations: []

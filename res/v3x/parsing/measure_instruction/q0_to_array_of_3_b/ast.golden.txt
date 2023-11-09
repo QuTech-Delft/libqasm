@@ -53,12 +53,10 @@ Program(
                 Identifier( # input.cq:6:13..15
                   name: q0
                 )
+                Identifier( # input.cq:6:1..2
+                  name: b
+                )
               ]
-            )
-          >
-          output_operands: <
-            Identifier( # input.cq:6:1..2
-              name: b
             )
           >
           annotations: []
