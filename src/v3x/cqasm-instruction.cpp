@@ -18,10 +18,10 @@ namespace instruction {
 Instruction::Instruction(
     const std::string &name,
     const std::string &param_types,
-    bool request_same_size_input_output_indices)
+    bool request_qubit_and_bit_indices_have_same_size)
 : name{ name }
 , param_types{ types::from_spec(param_types) }
-, request_same_size_input_output_indices{ request_same_size_input_output_indices }
+, request_qubit_and_bit_indices_have_same_size{ request_qubit_and_bit_indices_have_same_size }
 {}
 
 /**
@@ -58,7 +58,7 @@ void serialize(const instruction::InstructionRef &obj, ::tree::cbor::MapWriter &
         return;
     }
     map.append_string("n", obj->name);
-    map.append_bool("f", obj->request_same_size_input_output_indices);
+    map.append_bool("i", obj->request_qubit_and_bit_indices_have_same_size);
     auto aw = map.append_array("t");
     for (const auto &t : obj->param_types) {
         aw.append_binary(::tree::base::serialize(t));

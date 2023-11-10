@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:6:5..12: number of input/qubit indices is different from number of output/bit indices
+Error at input.cq:6:5..12: qubit and bit indices have different sizes

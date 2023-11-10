@@ -69,9 +69,9 @@ void Analyzer::register_instruction(const instruction::Instruction &instruction)
  * are passed straight to instruction::Instruction's constructor.
  */
 void Analyzer::register_instruction(const std::string &name, const std::string &param_types,
-    bool request_same_size_input_output_indices) {
+    bool request_qubit_and_bit_indices_have_same_size) {
 
-    register_instruction(instruction::Instruction(name, param_types, request_same_size_input_output_indices));
+    register_instruction(instruction::Instruction(name, param_types, request_qubit_and_bit_indices_have_same_size));
 }
 
 /**

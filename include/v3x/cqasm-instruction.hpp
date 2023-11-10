@@ -44,9 +44,9 @@ public:
     types::Types param_types;
 
     /**
-     * Whether input/qubit and output/bit index sizes have to be equal (e.g. for a measure instruction).
+     * Whether qubit and bit indices have the same size (e.g. for a measure instruction).
      */
-    bool request_same_size_input_output_indices;
+    bool request_qubit_and_bit_indices_have_same_size;
 
     /**
      * Creates a new instruction.
@@ -56,7 +56,7 @@ public:
     explicit Instruction(
         const std::string &name,
         const std::string &param_types = "",
-        bool request_same_size_input_output_indices = false);
+        bool request_qubit_and_bit_indices_have_same_size = false);
 
     bool operator==(const Instruction& rhs) const;
     inline bool operator!=(const Instruction& rhs) const {

@@ -105,31 +105,31 @@ void AnalyzeTreeGenAstVisitor::visitVariables(const ast::Variables &variables_as
     }
 }
 
-bool check_same_size_input_output_indices(const values::Values &operands) {
-    size_t number_of_input_indices{};
-    size_t number_of_output_indices{};
+bool check_qubit_and_bit_indices_have_same_size(const values::Values &operands) {
+    size_t qubit_indices_size{};
+    size_t bit_indices_size{};
     for (const auto &operand : operands) {
         if (auto variable_ref = operand->as_variable_ref()) {
             const auto &variable = *variable_ref->variable;
             if (variable.typ->as_qubit()) {
-                number_of_input_indices += 1;
+                qubit_indices_size += 1;
             } else if (auto qubit_array = variable.typ->as_qubit_array()) {
-                number_of_input_indices += qubit_array->size;
+                qubit_indices_size += qubit_array->size;
             } else if (variable.typ->as_bit()) {
-                number_of_output_indices += 1;
+                bit_indices_size += 1;
             } else if (auto bit_array = variable.typ->as_bit_array()) {
-                number_of_output_indices += bit_array->size;
+                bit_indices_size += bit_array->size;
             }
         } else if (auto index_ref = operand->as_index_ref()) {
             const auto &variable = *index_ref->variable;
             if (variable.typ->as_qubit() || variable.typ->as_qubit_array()) {
-                number_of_input_indices += index_ref->indices.size();
+                qubit_indices_size += index_ref->indices.size();
             } else if (variable.typ->as_bit() || variable.typ->as_bit_array()) {
-                number_of_output_indices += index_ref->indices.size();
+                bit_indices_size += index_ref->indices.size();
             }
         }
     }
-    return number_of_input_indices == number_of_output_indices;
+    return qubit_indices_size == bit_indices_size;
 }
 
 tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(
@@ -146,11 +146,10 @@ tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(
         // Resolve the instruction
         node.set(analyzer_.resolve_instruction(instruction_ast.name->name, operands));
 
-        // Check number of input/qubit indices equals number of output/bit indices
-        if (!node->instruction.empty() && node->instruction->request_same_size_input_output_indices) {
-            if (!check_same_size_input_output_indices(operands)) {
-                throw error::AnalysisError{
-                    "number of input/qubit indices is different from number of output/bit indices", &instruction_ast };
+        // Check qubit and bit indices have the same size
+        if (!node->instruction.empty() && node->instruction->request_qubit_and_bit_indices_have_same_size) {
+            if (!check_qubit_and_bit_indices_have_same_size(operands)) {
+                throw error::AnalysisError{ "qubit and bit indices have different sizes", &instruction_ast };
             }
         }
 
