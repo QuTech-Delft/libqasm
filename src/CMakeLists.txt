@@ -85,7 +85,6 @@ add_subdirectory(func-gen)
 set(CQASM_COMMON_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-annotations.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-error.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-py.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-string-builder.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-utils.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-version.cpp"
