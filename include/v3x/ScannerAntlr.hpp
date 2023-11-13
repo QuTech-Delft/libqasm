@@ -12,14 +12,14 @@ namespace cqasm::v3x::parser {
 struct ScannerAdaptor {
     virtual ~ScannerAdaptor();
 
-    virtual cqasm::v1x::parser::ParseResult parse() = 0;
+    virtual cqasm::v3x::parser::ParseResult parse() = 0;
 };
 
 class ScannerAntlr : public ScannerAdaptor {
     std::unique_ptr<BuildCustomAstVisitor> build_visitor_up_;
     std::unique_ptr<CustomErrorListener> error_listener_up_;
 protected:
-    cqasm::v1x::parser::ParseResult parse_(antlr4::ANTLRInputStream &is);
+    cqasm::v3x::parser::ParseResult parse_(antlr4::ANTLRInputStream &is);
 
 public:
     ScannerAntlr(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up,
@@ -27,7 +27,7 @@ public:
 
     ~ScannerAntlr() override;
 
-    cqasm::v1x::parser::ParseResult parse() override = 0;
+    cqasm::v3x::parser::ParseResult parse() override = 0;
 };
 
 class ScannerAntlrFile : public ScannerAntlr {
@@ -39,7 +39,7 @@ public:
 
     ~ScannerAntlrFile() override;
 
-    cqasm::v1x::parser::ParseResult parse() override;
+    cqasm::v3x::parser::ParseResult parse() override;
 };
 
 class ScannerAntlrString : public ScannerAntlr {
@@ -51,7 +51,7 @@ public:
 
     ~ScannerAntlrString() override;
 
-    cqasm::v1x::parser::ParseResult parse() override;
+    cqasm::v3x::parser::ParseResult parse() override;
 };
 
 }  // namespace cqasm::v3x::parser

@@ -1,0 +1,2 @@
+ERROR
+input.cq:3:10: missing IDENTIFIER at '\n'

@@ -1,0 +1,21 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  statements: []
+  variables: [
+    Variable(
+      name: q
+      typ: <
+        Qubit(
+)
+      >
+      annotations: []
+    )
+  ]
+)
+

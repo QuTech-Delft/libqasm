@@ -2,7 +2,7 @@
  * Implementation for \ref include/v3x/cqasm-parse-helper.hpp "v3x/cqasm-parse-helper.hpp".
  */
 
-#include "v1x/cqasm-parse-result.hpp"
+#include "v3x/cqasm-parse-result.hpp"
 #include "v3x/BuildTreeGenAstVisitor.hpp"
 #include "v3x/cqasm-parse-helper.hpp"
 #include "v3x/ScannerAntlr.hpp"
@@ -15,7 +15,7 @@ namespace cqasm::v3x::parser {
  * Throws an AnalysisError if the file does not exist.
  * A file_name may be given in addition for use within error messages.
  */
-cqasm::v1x::parser::ParseResult parse_file(const std::string &file_path, const std::string &file_name) {
+cqasm::v3x::parser::ParseResult parse_file(const std::string &file_path, const std::string &file_name) {
     auto builder_visitor_up = std::make_unique<BuildTreeGenAstVisitor>(file_name);
     auto error_listener_up = std::make_unique<CustomErrorListener>(file_name);
     auto scanner_up = std::make_unique<ScannerAntlrFile>(
@@ -27,7 +27,7 @@ cqasm::v1x::parser::ParseResult parse_file(const std::string &file_path, const s
  * Parse the given string.
  * A file_name may be given in addition for use within error messages.
  */
-cqasm::v1x::parser::ParseResult parse_string(const std::string &data, const std::string &file_name) {
+cqasm::v3x::parser::ParseResult parse_string(const std::string &data, const std::string &file_name) {
     auto builder_visitor_up = std::make_unique<BuildTreeGenAstVisitor>(file_name);
     auto error_listener_up = std::make_unique<CustomErrorListener>(file_name);
     auto scanner_up = std::make_unique<ScannerAntlrString>(
@@ -42,8 +42,8 @@ ParseHelper::ParseHelper(std::unique_ptr<ScannerAdaptor> scanner_up, std::string
 /**
  * Does the actual parsing.
  */
-cqasm::v1x::parser::ParseResult ParseHelper::parse() {
-    cqasm::v1x::parser::ParseResult result;
+cqasm::v3x::parser::ParseResult ParseHelper::parse() {
+    cqasm::v3x::parser::ParseResult result;
     try {
         result = scanner_up_->parse();
     } catch (const std::runtime_error &err) {

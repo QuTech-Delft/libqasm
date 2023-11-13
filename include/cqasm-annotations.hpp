@@ -6,12 +6,8 @@
 
 #include <string>
 
-namespace cqasm {
 
-/**
- * Namespace for tree annotation objects used by libqasm.
- */
-namespace annotations {
+namespace cqasm::annotations {
 
 /**
  * Source location annotation object, containing source file line numbers etc.
@@ -68,5 +64,4 @@ public:
  */
 std::ostream &operator<<(std::ostream &os, const SourceLocation &object);
 
-} // namespace annotations
-} // namespace cqasm
+} // namespace cqasm::annotations

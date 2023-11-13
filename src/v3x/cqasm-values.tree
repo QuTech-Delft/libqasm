@@ -1,0 +1,59 @@
+# Implementation for the various classes representing constants, references, and dynamic expressions in cQASM 3.0
+source
+
+# Header file for the various classes representing constants, references, and dynamic expressions in cQASM 3.0
+header "v3x/cqasm-values-gen.hpp"
+
+// Include tree base classes.
+include "cqasm-tree.hpp"
+tree_namespace cqasm::tree
+
+// Include primitive types.
+include "v3x/cqasm-primitives.hpp"
+include "v3x/cqasm-semantic-helper.hpp"
+src_include "v3x/cqasm-semantic.hpp"
+import cqasm.v3x.primitives
+import cqasm.v3x.semantic
+
+// Initialization function to use to construct default values for the tree base classes and primitives
+initialize_function cqasm::v3x::primitives::initialize
+serdes_functions cqasm::v3x::primitives::serialize cqasm::v3x::primitives::deserialize
+
+
+# Namespace for the various classes representing constants, references, and dynamic expressions in cQASM 3.0
+namespace cqasm
+namespace v3x
+namespace values
+
+# Constant value
+constant {
+    const_bool {
+        value: cqasm::v3x::primitives::Bool;
+    }
+
+    const_int {
+        value: cqasm::v3x::primitives::Int;
+    }
+
+    const_real {
+        value: cqasm::v3x::primitives::Real;
+    }
+
+    const_complex {
+        value: cqasm::v3x::primitives::Complex;
+    }
+}
+
+# Reference to some storage location
+reference {
+    # Represents an index for single-gate-multiple-qubit notation.
+    # The indices must not repeat.
+    index_ref {
+        variable: external Link<cqasm::v3x::semantic::Variable>;
+        indices: Many<const_int>;
+    }
+
+    variable_ref {
+        variable: external Link<cqasm::v3x::semantic::Variable>;
+    }
+}

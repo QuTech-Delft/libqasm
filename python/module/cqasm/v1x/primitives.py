@@ -10,10 +10,12 @@ Int = int
 Real = float
 Complex = complex
 
+
 class Axis(Enum):
     X = 0
     Y = 1
     Z = 2
+
 
 class _Matrix(object):
     """Matrix adapter."""
@@ -28,7 +30,7 @@ class _Matrix(object):
             self._ncols = self._data.shape[0]
             self._nrows = self._data.shape[1]
         else:
-            raise TypeError('expecting a real-valued vector or matrix, got ' + repr(mat))
+            raise TypeError('expecting a real-valued vector or matrix, got ' + repr(data))
 
     def size_rows(self):
         return self._nrows
@@ -47,13 +49,15 @@ class RMatrix(_Matrix):
     """Real-valued matrix adapter."""
 
     def __init__(self, data):
-        super().__init__(np.array(mat, float))
+        super().__init__(np.array(data, float))
+
 
 class CMatrix(_Matrix):
     """Complex-valued matrix adapter."""
 
     def __init__(self, data):
-        super().__init__(np.array(mat, complex))
+        super().__init__(np.array(data, complex))
+
 
 class Version(tuple):
     """cQASM file version number."""
@@ -62,6 +66,7 @@ class Version(tuple):
         if isinstance(elements, str):
             elements = elements.split('.')
         return super(Version, cls).__new__(cls, tuple(map(int, elements)))
+
 
 def serialize(typ, val):
     if isinstance(typ, str):
@@ -117,6 +122,7 @@ def serialize(typ, val):
             }
     else:
         assert False
+
 
 def deserialize(typ, val):
     if isinstance(typ, str):

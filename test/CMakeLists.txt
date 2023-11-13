@@ -8,16 +8,23 @@ if(LIBQASM_COMPAT)
     add_subdirectory(v10)
 endif()
 add_subdirectory(v1x)
-#add_subdirectory(v3x)
+add_subdirectory(v3x)
 
-# Sources
 target_sources(${PROJECT_NAME}_test PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-utils.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-version.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils.cpp"
 )
 
-# Compile and linkage options
-target_compile_features(${PROJECT_NAME}_test PRIVATE cxx_std_20)
+target_include_directories(${PROJECT_NAME}_test PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+)
+
+target_compile_features(${PROJECT_NAME}_test PRIVATE
+    cxx_std_20
+)
+
 target_link_libraries(${PROJECT_NAME}_test PRIVATE
     cqasm
     GTest::gmock

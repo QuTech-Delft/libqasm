@@ -1,0 +1,68 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  statements: <
+    StatementList(
+      items: [
+        Variables( # input.cq:3:10..11
+          names: [
+            Identifier(
+              name: q
+            )
+          ]
+          typ: <
+            Identifier(
+              name: qubit
+            )
+          >
+          size: <
+            IntegerLiteral(
+              value: 3
+            )
+          >
+          annotations: []
+        )
+        Instruction( # input.cq:4:1..2
+          name: <
+            Identifier(
+              name: x
+            )
+          >
+          condition: -
+          operands: <
+            ExpressionList(
+              items: [
+                Index( # input.cq:4:3..4
+                  expr: <
+                    Identifier(
+                      name: q
+                    )
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexItem(
+                          index: <
+                            IntegerLiteral( # input.cq:4:5..6
+                              value: 3
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
+                )
+              ]
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

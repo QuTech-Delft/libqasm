@@ -1,12 +1,15 @@
 #include "v1x/parsing.hpp"
+#include "v3x/parsing.hpp"
 
 #include <gmock/gmock.h>
 #include <iostream>
 
+
 int main_impl(int argc, char** argv, std::ostream&) {
     ::testing::InitGoogleMock(&argc, argv);
 
-    register_v1x_tests();
+    cqasm::v1x::test::register_tests();
+    cqasm::v3x::test::register_tests();
 
     return RUN_ALL_TESTS();
 }

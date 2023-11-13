@@ -1,0 +1,51 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  statements: <
+    StatementList(
+      items: [
+        Variables( # input.cq:3:11..12
+          names: [
+            Identifier(
+              name: q
+            )
+          ]
+          typ: <
+            Identifier(
+              name: qubit
+            )
+          >
+          size: <
+            IntegerLiteral(
+              value: 17
+            )
+          >
+          annotations: []
+        )
+        Variables( # input.cq:4:11..12
+          names: [
+            Identifier(
+              name: q
+            )
+          ]
+          typ: <
+            Identifier(
+              name: qubit
+            )
+          >
+          size: <
+            IntegerLiteral(
+              value: 17
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

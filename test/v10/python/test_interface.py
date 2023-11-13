@@ -69,8 +69,8 @@ class TestInterface(LibQasmTest):
                 })
 
                 for ops in ops_cluster.getOperations():
-                    selectedQubitsVector = ops.getQubitsInvolved().getSelectedQubits().getIndices()
-                    if len(selectedQubitsVector) > 1:
+                    selected_qubits_vector = ops.getQubitsInvolved().getSelectedQubits().getIndices()
+                    if len(selected_qubits_vector) > 1:
                         number_of_parallel_operations += 1
 
         self.assertEqual(number_of_parallel_operations, 1)
@@ -97,12 +97,12 @@ class TestInterface(LibQasmTest):
         for subCircuit in qasm_representation.getSubCircuits().getAllSubCircuits():
             for ops_cluster in subCircuit.getOperationsCluster():
                 for ops in ops_cluster.getOperations():
-                    controlBitsVector = ops.getControlBits().getSelectedBits().getIndices()
-                    if len(controlBitsVector) > 0:
+                    control_bits_vector = ops.getControlBits().getSelectedBits().getIndices()
+                    if len(control_bits_vector) > 0:
                         actual.append({
                             'qubit': ops.getQubitsInvolved().getSelectedQubits().getIndices()[0],
                             'ops': ops.getType(),
-                            'bit': controlBitsVector[0]
+                            'bit': control_bits_vector[0]
                         })
 
         self.assertListEqual(expected, actual)

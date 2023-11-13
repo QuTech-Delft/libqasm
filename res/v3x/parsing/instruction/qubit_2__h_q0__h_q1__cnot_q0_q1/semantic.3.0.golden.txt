@@ -1,0 +1,131 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  statements: [
+    Instruction(
+      instruction: h(qubit array)
+      name: h
+      operands: [
+        IndexRef(
+          variable --> <
+            Variable(
+              name: q
+              typ: <
+                QubitArray(
+                  size: 2
+                )
+              >
+              annotations: []
+            )
+          >
+          indices: [
+            ConstInt(
+              value: 0
+            )
+          ]
+        )
+      ]
+      condition: <
+        ConstBool(
+          value: 1
+        )
+      >
+      annotations: []
+    )
+    Instruction(
+      instruction: h(qubit array)
+      name: h
+      operands: [
+        IndexRef(
+          variable --> <
+            Variable(
+              name: q
+              typ: <
+                QubitArray(
+                  size: 2
+                )
+              >
+              annotations: []
+            )
+          >
+          indices: [
+            ConstInt(
+              value: 1
+            )
+          ]
+        )
+      ]
+      condition: <
+        ConstBool(
+          value: 1
+        )
+      >
+      annotations: []
+    )
+    Instruction(
+      instruction: cnot(qubit array, qubit array)
+      name: cnot
+      operands: [
+        IndexRef(
+          variable --> <
+            Variable(
+              name: q
+              typ: <
+                QubitArray(
+                  size: 2
+                )
+              >
+              annotations: []
+            )
+          >
+          indices: [
+            ConstInt(
+              value: 0
+            )
+          ]
+        )
+        IndexRef(
+          variable --> <
+            Variable(
+              name: q
+              typ: <
+                QubitArray(
+                  size: 2
+                )
+              >
+              annotations: []
+            )
+          >
+          indices: [
+            ConstInt(
+              value: 1
+            )
+          ]
+        )
+      ]
+      condition: <
+        ConstBool(
+          value: 1
+        )
+      >
+      annotations: []
+    )
+  ]
+  variables: [
+    Variable(
+      name: q
+      typ: <
+        QubitArray(
+          size: 2
+        )
+      >
+      annotations: []
+    )
+  ]
+)
+

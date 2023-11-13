@@ -11,13 +11,11 @@
 
 #include <cstdio>
 
-namespace cqasm {
-namespace v1x {
 
 /**
  * Namespace for the parser functions and classes.
  */
-namespace parser {
+namespace cqasm::v1x::parser {
 
 /**
  * Parse result information.
@@ -40,6 +38,4 @@ public:
 
 };
 
-} // namespace parser
-} // namespace v1x
-} // namespace cqasm
+} // namespace cqasm::v1x::parser

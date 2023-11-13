@@ -9,8 +9,7 @@
 #include "cqasm-types.hpp"
 #include "cqasm-values.hpp"
 
-namespace cqasm {
-namespace v1x {
+namespace cqasm::v1x {
 
 /**
  * Namespace for the \ref error_model::ErrorModel "ErrorModel" class and helper
@@ -87,7 +86,8 @@ std::ostream &operator<<(std::ostream &os, const ErrorModel &model);
  */
 std::ostream &operator<<(std::ostream &os, const ErrorModelRef &model);
 
-} // namespace error_model
+}  // namespace error_model
+
 
 namespace primitives {
 
@@ -96,6 +96,7 @@ void serialize(const error_model::ErrorModelRef &obj, ::tree::cbor::MapWriter &m
 template <>
 error_model::ErrorModelRef deserialize(const ::tree::cbor::MapReader &map);
 
-} // namespace primitives
-} // namespace v1x
-} // namespace cqasm
+}  // namespace primitives
+
+}  // namespace cqasm::v1x
+

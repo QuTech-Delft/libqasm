@@ -1,0 +1,43 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  statements: <
+    StatementList(
+      items: [
+        Variables( # input.cq:3:5..6
+          names: [
+            Identifier(
+              name: b
+            )
+          ]
+          typ: <
+            Identifier(
+              name: bit
+            )
+          >
+          size: -
+          annotations: []
+        )
+        Variables( # input.cq:4:5..6
+          names: [
+            Identifier(
+              name: b
+            )
+          ]
+          typ: <
+            Identifier(
+              name: bit
+            )
+          >
+          size: -
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

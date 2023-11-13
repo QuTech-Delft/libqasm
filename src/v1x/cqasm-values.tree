@@ -13,6 +13,7 @@ tree_namespace cqasm::tree
 // Include primitive types.
 include "v1x/cqasm-primitives.hpp"
 include "v1x/cqasm-types.hpp"
+include "v1x/cqasm-semantic-helper.hpp"
 src_include "v1x/cqasm-semantic.hpp"
 import cqasm.v1x.primitives
 import cqasm.v1x.types
@@ -113,8 +114,8 @@ constant {
 # Represents a reference to some storage location.
 reference {
 
-    # Represents a qubit, or a set of qubits for single-gate-multiple-qubit
-    # notation. The indices must not repeat.
+    # Represents a qubit, or a set of qubits for single-gate-multiple-qubit notation.
+    # The indices must not repeat.
     qubit_refs {
 
         # Set of qubit indices referred to, starting at 0.
@@ -122,12 +123,11 @@ reference {
 
     }
 
-    # Represents a measurement bit, or a number of measurement bits for
-    # conditional gates with multiple conditions. When there are multiple,
-    # the conditions are all AND'ed together.
+    # Represents a measurement bit, or a number of measurement bits for conditional gates with multiple conditions.
+    # When there are multiple, the conditions are all and'ed together.
     bit_refs {
 
-        # The qubit index that this is a measurement bit for, starting at 0.
+        # Set of qubit indices for which these are measurement bits, starting at 0.
         index: Many<const_int>;
 
     }

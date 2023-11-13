@@ -1,5 +1,6 @@
 SUCCESS
 Program( # input.cq:1:1..18:1
+  api_version: 1.0
   version: <
     Version( # input.cq:1:9..12
       items: 1.0
@@ -226,6 +227,5 @@ Program( # input.cq:1:1..18:1
   ]
   mappings: []
   variables: []
-  api_version: 1.0
 )
 

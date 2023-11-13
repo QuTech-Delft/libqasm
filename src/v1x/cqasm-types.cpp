@@ -2,12 +2,13 @@
  * Implementation for \ref include/v1x/cqasm-types.hpp "v1x/cqasm-types.hpp".
  */
 
-#include <cctype>
 #include "v1x/cqasm-types.hpp"
 
-namespace cqasm {
-namespace v1x {
-namespace types {
+#include <cctype>
+#include <fmt/format.h>
+
+
+namespace cqasm::v1x::types {
 
 /**
  * Constructs a set of types from a shorthand string representation. In it,
@@ -201,20 +202,7 @@ std::ostream &operator<<(std::ostream &os, const Type &type) {
  * Stream << overload for zero or more types.
  */
 std::ostream &operator<<(std::ostream &os, const Types &types) {
-    os << "(";
-    bool first = true;
-    for (const auto &type : types) {
-        if (first) {
-            first = false;
-        } else {
-            os << ", ";
-        }
-        os << type;
-    }
-    os << ")";
-    return os;
+    return os << fmt::format("({})", fmt::join(types, ", "));
 }
 
-} // namespace types
-} // namespace v1x
-} // namespace cqasm
+} // namespace cqasm::v1x::types

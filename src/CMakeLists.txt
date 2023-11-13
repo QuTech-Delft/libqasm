@@ -40,6 +40,29 @@ find_package(fmt 10.1.1)
 find_package(Python3 REQUIRED)
 
 include(FetchContent)
+
+# fmt
+set(fmt_VERSION_REQUIRED 10.1.1)
+find_package(fmt ${fmt_VERSION_REQUIRED})
+if(NOT fmt_FOUND)
+    # fmt 10.1.1
+    FetchContent_Declare(fmt
+        GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+        GIT_TAG "f5e54359df4c26b6230fc61d38aa294581393084"
+    )
+    FetchContent_MakeAvailable(fmt)
+endif()
+
+# range-v3
+find_package(range-v3)
+if(NOT range-v3_FOUND)
+    FetchContent_Declare(range-v3
+        GIT_REPOSITORY https://github.com/ericniebler/range-v3
+        GIT_TAG "a81477931a8aa2ad025c6bda0609f38e09e4d7ec"
+    )
+    FetchContent_MakeAvailable(range-v3)
+endif()
+
 # tree-gen, a custom utility to generate classes for typed tree-like structures and enums with variants containing data.
 # This exposes the generate_tree() function.
 FetchContent_Declare(tree-gen
@@ -62,7 +85,6 @@ add_subdirectory(func-gen)
 set(CQASM_COMMON_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-annotations.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-error.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-py.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-string-builder.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-utils.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-version.cpp"
@@ -139,9 +161,9 @@ generate_tree_py(
 )
 list(APPEND CQASM_V1X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-types-gen.cpp")
 
-# Generate the semantic value classes. Values can be either known at
-# compile-time or only at runtime, but their type is resolved to one of the
-# type tree nodes at compile-time.
+# Generate the semantic value classes.
+# Values can be either known at compile-time or only at runtime,
+# but their type is resolved to one of the type tree nodes at compile-time.
 generate_tree_py(
     "${CMAKE_CURRENT_SOURCE_DIR}/v1x/cqasm-values.tree"
     "${CMAKE_CURRENT_BINARY_DIR}/../include/v1x/cqasm-values-gen.hpp"
@@ -194,6 +216,44 @@ antlr_target(
 )
 list(APPEND CQASM_V3X_SOURCES ${ANTLR_OUTPUTS})
 
+# Generate the abstract syntax tree classes.
+generate_tree_py(
+    "${CMAKE_CURRENT_SOURCE_DIR}/v3x/cqasm-ast.tree"
+    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x/cqasm-ast-gen.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-ast-gen.cpp"
+    "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/cqasm-ast-gen.py"
+)
+list(APPEND CQASM_V3X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-ast-gen.cpp")
+
+# Generate the type tree classes.
+generate_tree_py(
+    "${CMAKE_CURRENT_SOURCE_DIR}/v3x/cqasm-types.tree"
+    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x/cqasm-types-gen.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-types-gen.cpp"
+    "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/cqasm-types-gen.py"
+)
+list(APPEND CQASM_V3X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-types-gen.cpp")
+
+# Generate the semantic value classes.
+# Values can be either known at compile-time or only at runtime,
+# but their type is resolved to one of the type tree nodes at compile-time.
+generate_tree_py(
+    "${CMAKE_CURRENT_SOURCE_DIR}/v3x/cqasm-values.tree"
+    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x/cqasm-values-gen.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-values-gen.cpp"
+    "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/cqasm-values-gen.py"
+)
+list(APPEND CQASM_V3X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-values-gen.cpp")
+
+# Generate the semantic tree classes.
+generate_tree_py(
+    "${CMAKE_CURRENT_SOURCE_DIR}/v3x/cqasm-semantic.tree"
+    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x/cqasm-semantic-gen.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-semantic-gen.cpp"
+    "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/cqasm-semantic-gen.py"
+)
+list(APPEND CQASM_V3X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-semantic-gen.cpp")
+
 #-------------------------------------------------------------------------------
 # Compilation instructions
 #-------------------------------------------------------------------------------
@@ -228,6 +288,7 @@ target_compile_features(cqasm-lib-obj PUBLIC
 target_link_libraries(cqasm-lib-obj
     PRIVATE antlr4_static
     PRIVATE fmt::fmt
+    PRIVATE range-v3::range-v3
     PRIVATE tree-lib-obj
 )
 

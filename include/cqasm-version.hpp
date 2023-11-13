@@ -23,17 +23,7 @@ namespace cqasm::version {
  * Version number primitive used within the AST and semantic trees.
  */
 class Version : public std::vector<std::int64_t> {
-public:
-    /**
-     * Default constructor.
-     */
-    Version() = default;
-
-    /**
-     * Constructs a version object from a string.
-     */
-    explicit Version(const std::string &version);
-
+private:
     /**
      * Compares this version against the other version.
      * Returns:
@@ -44,15 +34,28 @@ public:
      */
     [[nodiscard]] int compare(const Version &other) const;
 
+public:
     /**
-     * Compares this version against the other version.
-     * Returns:
-     *   1 if this version is newer than the other,
-     *   -1 if this version is older than the other, or
-     *   0 if both versions are the same.
-     * When there is a mismatch in the number of components between the versions, missing components are interpreted as 0.
+     * Default constructor.
      */
-    [[nodiscard]] int compare(const std::string &other) const;
+    Version() = default;
+
+    /**
+     * Constructs a version object from a string.
+     */
+    Version(const std::string &version);
+
+    /**
+     * Constructs a version object from an array of chars.
+     */
+    Version(const char *version);
+
+    [[nodiscard]] auto operator==(const Version &rhs) const {
+        return compare(rhs) == 0;
+    }
+    [[nodiscard]] auto operator<=>(const Version &rhs) const {
+        return compare(rhs) <=> 0;
+    }
 };
 
 /**

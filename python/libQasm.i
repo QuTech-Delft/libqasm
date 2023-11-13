@@ -10,7 +10,7 @@
 %{
 #include "v10/qasm_ast.hpp"
 #include "v10/libQasm.hpp"
-#include "cqasm-py.hpp"
+#include "v1x/cqasm-py.hpp"
 %}
 
 %include "exception.i"
@@ -48,12 +48,12 @@ namespace std {
 
 %include "v10/qasm_ast.hpp"
 %include "v10/libQasm.hpp"
-%include "cqasm-py.hpp"
+%include "v1x/cqasm-py.hpp"
 
 namespace std {
     %template(subcircuit_vector) vector<shared_ptr<compiler::SubCircuit>>;
     %template(operationscluster_vector) vector<shared_ptr<compiler::OperationsCluster>>;
     %template(operation_vector) vector<shared_ptr<compiler::Operation>>;
     %template(twoqubitgatequbits_pair) pair<compiler::Qubits, compiler::Qubits>;
-    %template(toffoliqubits_pair) pair<compiler::Qubits, pair<compiler::Qubits, compiler::Qubits> >;
+    %template(toffoliqubits_pair) pair<compiler::Qubits, pair<compiler::Qubits, compiler::Qubits>>;
 }

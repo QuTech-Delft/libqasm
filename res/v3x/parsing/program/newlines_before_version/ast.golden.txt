@@ -1,0 +1,14 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:3:9..12
+      items: 3.0
+    )
+  >
+  statements: <
+    StatementList(
+      items: []
+    )
+  >
+)
+

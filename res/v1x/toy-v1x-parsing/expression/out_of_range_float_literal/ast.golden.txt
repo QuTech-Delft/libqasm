@@ -1,2 +1,0 @@
-ERROR
-input.cq:2:2: value '1.79769313486231570e+309' is out of the FLOATING_LITERAL range

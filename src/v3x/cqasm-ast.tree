@@ -1,0 +1,123 @@
+# Implementation for the abstract syntax tree node classes
+source
+
+# Header file for the abstract syntax tree node classes
+header "v3x/cqasm-ast-gen.hpp"
+
+// Include tree base classes.
+include "cqasm-tree.hpp"
+tree_namespace cqasm::tree
+
+// Include primitive types.
+include "v3x/cqasm-primitives.hpp"
+import cqasm.v3x.primitives
+
+// Initialization function to use to construct default values for the tree base classes and primitives
+initialize_function cqasm::v3x::primitives::initialize
+serdes_functions cqasm::v3x::primitives::serialize cqasm::v3x::primitives::deserialize
+
+// Include SourceLocation annotation object for the debug dump generator
+src_include "cqasm-annotations.hpp"
+location cqasm::annotations::SourceLocation
+
+
+# Namespace for the abstract syntax tree node classes
+namespace cqasm
+namespace v3x
+namespace ast
+
+index_entry {
+    # Zero based.
+    index_item {
+        index: One<expression>;
+    }
+
+    # Inclusive.
+    index_range {
+        first: One<expression>;
+        last: One<expression>;
+    }
+}
+
+index_list {
+    items: Many<index_entry>;
+}
+
+expression {
+    integer_literal {
+        value: cqasm::v3x::primitives::Int;
+    }
+
+    float_literal {
+        value: cqasm::v3x::primitives::Real;
+    }
+
+    identifier {
+        name: cqasm::v3x::primitives::Str;
+    }
+
+    index {
+        expr: One<expression>;
+        indices: One<index_list>;
+    }
+}
+
+expression_list {
+    items: Any<expression>;
+}
+
+annotation_data {
+    # The interface this annotation is intended for.
+    # If a target doesn't support an interface, it should silently ignore the annotation.
+    interface: One<identifier>;
+
+    # The operation within the interface that this annotation is intended for.
+    # If a target supports the corresponding interface but not the operation, it should throw an error.
+    operation: One<identifier>;
+
+    # Any operands attached to the annotation.
+    operands: One<expression_list>;
+}
+
+# Represents a node that carries annotation data
+annotated {
+    # Zero or more annotations attached to this object.
+    annotations: Any<annotation_data>;
+
+    statement {
+        # A mapping (alias) for an expression.
+        mapping {
+            alias: One<identifier>;
+            expr: One<expression>;
+        }
+
+        # One or more variable declarations of some type.
+        variables {
+            names: Many<identifier>;
+            typ: One<identifier>;
+            size: Maybe<integer_literal>;
+        }
+
+        # A gate.
+        instruction {
+            name: One<identifier>;
+            condition: Maybe<expression>;
+            operands: One<expression_list>;
+        }
+    }
+}
+
+statement_list {
+    items: Any<statement>;
+}
+
+version {
+    items: cqasm::v3x::primitives::Version;
+}
+
+root {
+    program {
+        version: One<version>;
+        statements: One<statement_list>;
+    }
+}

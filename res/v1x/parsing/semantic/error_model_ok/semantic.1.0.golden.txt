@@ -1,0 +1,38 @@
+SUCCESS
+Program( # input.cq:1:1..5:1
+  api_version: 1.0
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: 10
+  error_model: <
+    ErrorModel( # input.cq:4:1..55
+      model: depolarizing_channel(real, real, real)
+      name: depolarizing_channel
+      parameters: [
+        ConstReal( # input.cq:4:35..36
+          value: 1
+        )
+        ConstReal( # input.cq:4:38..39
+          value: 2
+        )
+        ConstReal( # input.cq:4:41..42
+          value: 3
+        )
+      ]
+      annotations: [
+        AnnotationData( # input.cq:4:44..55
+          interface: annot
+          operation: first
+          operands: []
+        )
+      ]
+    )
+  >
+  subcircuits: []
+  mappings: []
+  variables: []
+)
+

@@ -35,17 +35,16 @@ option(LIBQASM_BUILD_TESTS
     OFF
 )
 
-# Compatibility mode. When enabled, the legacy API headers in src/library are
-# added to the public headers of the cqasm target. To enable this in your CMake
-# project, add `option(LIBQASM_COMPAT "" ON)` before the `add_subdirectory`
-# command.
+# Compatibility mode.
+# When enabled, the legacy API headers in src/library are added to the public headers of the cqasm target.
+# To enable this in your CMake project, add `option(LIBQASM_COMPAT "" ON)` before the `add_subdirectory` command.
 option(LIBQASM_COMPAT
     "whether the legacy API headers should be added to the cqasm library"
     OFF
 )
 
-# Whether the Python module should be built. This should only be enabled for
-# setup.py's builds.
+# Whether the Python module should be built.
+# This should only be enabled for setup.py's builds.
 option(LIBQASM_BUILD_PYTHON
     "Whether the Python module should be built"
     OFF
@@ -70,8 +69,7 @@ set(LIBQASM_PYTHON_EXT ""
 )
 mark_as_advanced(LIBQASM_PYTHON_EXT)
 
-# The Python library requires the compatibility headers, so make sure those are
-# enabled.
+# The Python library requires the compatibility headers, so make sure those are enabled.
 if(LIBQASM_BUILD_PYTHON AND NOT LIBQASM_COMPAT)
     message(SEND_ERROR "The Python library requires the compatibility headers! Please add -DLIBQASM_COMPAT=ON")
 endif()

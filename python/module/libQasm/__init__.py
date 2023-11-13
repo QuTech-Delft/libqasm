@@ -17,8 +17,9 @@ if version_info[0] == 3:
 elif version_info[0] == 2:
     PY3 = False
 else:
-    raise EnvironmentError("sys.version_info refers to a version of "
-        "Python neither 2 nor 3. This is not permitted. "
+    raise EnvironmentError(
+        "sys.version_info refers to a version of Python neither 2 nor 3. "
+        "This is not permitted. "
         "sys.version_info = {}".format(version_info))
 del version_info
 

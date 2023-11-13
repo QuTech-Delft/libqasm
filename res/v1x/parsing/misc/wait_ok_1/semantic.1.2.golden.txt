@@ -1,0 +1,192 @@
+SUCCESS
+Program( # input.cq:1:1..11:1
+  api_version: 1.2
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  num_qubits: 4
+  error_model: -
+  subcircuits: [
+    Subcircuit( # input.cq:6:1..13
+      name: 
+      iterations: 1
+      bundles: []
+      annotations: []
+      body: <
+        Block( # input.cq:6:1..10:20
+          statements: [
+            BundleExt( # input.cq:6:1..13
+              items: [
+                Instruction( # input.cq:6:1..13
+                  instruction: wait(qubit reference, int)
+                  name: wait
+                  condition: <
+                    ConstBool(
+                      value: 1
+                    )
+                  >
+                  operands: [
+                    QubitRefs( # input.cq:6:6..10
+                      index: [
+                        ConstInt( # input.cq:6:8..9
+                          value: 0
+                        )
+                      ]
+                    )
+                    ConstInt( # input.cq:6:12..13
+                      value: 1
+                    )
+                  ]
+                  annotations: []
+                )
+              ]
+              annotations: []
+            )
+            BundleExt( # input.cq:7:1..12
+              items: [
+                Instruction( # input.cq:7:1..12
+                  instruction: wait(qubit reference, int)
+                  name: wait
+                  condition: <
+                    ConstBool(
+                      value: 1
+                    )
+                  >
+                  operands: [
+                    QubitRefs( # input.cq:7:6..8
+                      index: [
+                        ConstInt( # input.cq:4:7..8
+                          value: 2
+                        )
+                      ]
+                    )
+                    ConstInt( # input.cq:7:10..12
+                      value: 10
+                    )
+                  ]
+                  annotations: []
+                )
+              ]
+              annotations: []
+            )
+            BundleExt( # input.cq:8:1..17
+              items: [
+                Instruction( # input.cq:8:1..17
+                  instruction: wait(qubit reference, int)
+                  name: wait
+                  condition: <
+                    ConstBool(
+                      value: 1
+                    )
+                  >
+                  operands: [
+                    QubitRefs( # input.cq:8:6..12
+                      index: [
+                        ConstInt( # input.cq:8:8..11
+                          value: 1
+                        )
+                        ConstInt( # input.cq:8:8..11
+                          value: 2
+                        )
+                      ]
+                    )
+                    ConstInt( # input.cq:8:14..17
+                      value: 100
+                    )
+                  ]
+                  annotations: []
+                )
+              ]
+              annotations: []
+            )
+            BundleExt( # input.cq:9:1..15
+              items: [
+                Instruction( # input.cq:9:1..15
+                  instruction: wait(qubit reference, int)
+                  name: wait
+                  condition: <
+                    ConstBool(
+                      value: 1
+                    )
+                  >
+                  operands: [
+                    QubitRefs( # input.cq:9:6..12
+                      index: [
+                        ConstInt( # input.cq:9:8..11
+                          value: 0
+                        )
+                        ConstInt( # input.cq:9:8..11
+                          value: 1
+                        )
+                        ConstInt( # input.cq:9:8..11
+                          value: 2
+                        )
+                      ]
+                    )
+                    ConstInt( # input.cq:9:14..15
+                      value: 0
+                    )
+                  ]
+                  annotations: []
+                )
+              ]
+              annotations: []
+            )
+            BundleExt( # input.cq:10:1..20
+              items: [
+                Instruction( # input.cq:10:1..20
+                  instruction: wait(qubit reference, int)
+                  name: wait
+                  condition: <
+                    ConstBool(
+                      value: 1
+                    )
+                  >
+                  operands: [
+                    QubitRefs( # input.cq:10:6..14
+                      index: [
+                        ConstInt( # input.cq:10:8..9
+                          value: 0
+                        )
+                        ConstInt( # input.cq:10:10..11
+                          value: 2
+                        )
+                        ConstInt( # input.cq:10:12..13
+                          value: 3
+                        )
+                      ]
+                    )
+                    ConstInt( # input.cq:10:16..20
+                      value: 1000
+                    )
+                  ]
+                  annotations: []
+                )
+              ]
+              annotations: []
+            )
+          ]
+        )
+      >
+    )
+  ]
+  mappings: [
+    Mapping( # input.cq:4:1..14
+      name: q2
+      value: <
+        QubitRefs( # input.cq:4:5..9
+          index: [
+            ConstInt( # input.cq:4:7..8
+              value: 2
+            )
+          ]
+        )
+      >
+      annotations: []
+    )
+  ]
+  variables: []
+)
+

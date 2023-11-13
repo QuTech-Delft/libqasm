@@ -4,34 +4,38 @@ options {
 	tokenVocab = CqasmLexer;
 }
 
-// Actual grammar start.
-program: version qubits? statement* EOF;
+// Actual grammar start
+//
+// Note that texts such as '# integerLiteral' are not comments but alternative labels
+// The use of alternative labels simplifies the visitor classes by removing the need to implement some methods,
+// that would otherwise contain boilerplate code (e.g. 'statement' and 'expression')
+program: statementSeparator* version statements statementSeparator* EOF;
 
-version: VERSION INTEGER_LITERAL (DOT INTEGER_LITERAL)?;
+version: VERSION VERSION_NUMBER;
 
-qubits: QUBITS expression;
+statements: (statementSeparator+ statement)*;
+
+statementSeparator: NEW_LINE | SEMICOLON;
 
 statement:
-    MAP IDENTIFIER EQUAL expression  # mapping
-    | VAR IDENTIFIER COLON IDENTIFIER  # variable
+    QUBIT_TYPE (OPEN_BRACKET INTEGER_LITERAL CLOSE_BRACKET)? IDENTIFIER  # qubitTypeDefinition
+    | BIT_TYPE (OPEN_BRACKET INTEGER_LITERAL CLOSE_BRACKET)? IDENTIFIER  # bitTypeDefinition
+    | expression EQUALS MEASURE expression  # measureInstruction
     | IDENTIFIER expressionList  # instruction
     ;
 
-expressionList: expression (COMMA expression)?;
+expressionList: expression (COMMA expression)*;
+
+indexList: indexEntry (COMMA indexEntry)*;
+
+indexEntry:
+    expression  # indexItem
+    | expression COLON expression  # indexRange
+    ;
 
 expression:
     INTEGER_LITERAL  # integerLiteral
     | FLOAT_LITERAL  # floatLiteral
     | IDENTIFIER  # identifier
-    | IDENTIFIER OPEN_BRACKET expression CLOSE_BRACKET  # index
+    | IDENTIFIER OPEN_BRACKET indexList CLOSE_BRACKET  # index
     ;
-
-/*
-* Things we are leaving out at the moment:
-* - Function calls.
-* - Matrix literals, string literals.
-* - Multiple variable declarations in the same line.
-* - Operators: unary, binary, ternary.
-* - Semicolons don't start a new statement.
-* - Array elements cannot be neither a list of indices nor a range of indices.
-*/

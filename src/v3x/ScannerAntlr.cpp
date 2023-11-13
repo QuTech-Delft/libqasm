@@ -1,5 +1,5 @@
-#include "v1x/cqasm-ast.hpp"
-#include "v1x/cqasm-parse-result.hpp"
+#include "v3x/cqasm-ast.hpp"
+#include "v3x/cqasm-parse-result.hpp"
 #include "v3x/BuildTreeGenAstVisitor.hpp"
 #include "v3x/CqasmLexer.h"
 #include "v3x/CqasmParser.h"
@@ -18,25 +18,25 @@ ScannerAdaptor::~ScannerAdaptor() {}
 ScannerAntlr::ScannerAntlr(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up,
     std::unique_ptr<CustomErrorListener> error_listener_up)
 : build_visitor_up_{ std::move(build_visitor_up) }
-, error_listener_up_{std::move(error_listener_up)} {}
+, error_listener_up_{ std::move(error_listener_up) } {}
 
 ScannerAntlr::~ScannerAntlr() {}
 
-cqasm::v1x::parser::ParseResult ScannerAntlr::parse_(antlr4::ANTLRInputStream &is) {
+cqasm::v3x::parser::ParseResult ScannerAntlr::parse_(antlr4::ANTLRInputStream &is) {
     CqasmLexer lexer{ &is };
     lexer.removeErrorListeners();
     lexer.addErrorListener(error_listener_up_.get());
-
     antlr4::CommonTokenStream tokens{ &lexer };
 
     CqasmParser parser{ &tokens };
     parser.removeErrorListeners();
     parser.addErrorListener(error_listener_up_.get());
-
     auto ast = parser.program();
+
+    build_visitor_up_->addErrorListener(error_listener_up_.get());
     auto custom_ast = build_visitor_up_->visitProgram(ast);
-    return cqasm::v1x::parser::ParseResult{
-        std::any_cast<cqasm::v1x::ast::One<cqasm::v1x::ast::Program>>(custom_ast),  // root
+    return cqasm::v3x::parser::ParseResult{
+        std::any_cast<cqasm::v3x::ast::One<cqasm::v3x::ast::Program>>(custom_ast),  // root
         {}  // error
     };
 }
@@ -53,7 +53,7 @@ ScannerAntlrFile::ScannerAntlrFile(std::unique_ptr<BuildCustomAstVisitor> build_
 
 ScannerAntlrFile::~ScannerAntlrFile() {}
 
-cqasm::v1x::parser::ParseResult ScannerAntlrFile::parse() {
+cqasm::v3x::parser::ParseResult ScannerAntlrFile::parse() {
     antlr4::ANTLRFileStream ifs{};
     ifs.loadFromFile(file_path_);
     return parse_(ifs);
@@ -67,7 +67,7 @@ ScannerAntlrString::ScannerAntlrString(std::unique_ptr<BuildCustomAstVisitor> bu
 
 ScannerAntlrString::~ScannerAntlrString() {}
 
-cqasm::v1x::parser::ParseResult ScannerAntlrString::parse() {
+cqasm::v3x::parser::ParseResult ScannerAntlrString::parse() {
     antlr4::ANTLRInputStream is{ data_ };
     return parse_(is);
 }

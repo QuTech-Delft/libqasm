@@ -7,7 +7,7 @@
 #pragma once
 #ifndef QASM_NEW_TO_OLD_HPP
 
-#include "cqasm.hpp"
+#include "v1x/cqasm.hpp"
 #include "qasm_ast.hpp"
 
 namespace compiler {

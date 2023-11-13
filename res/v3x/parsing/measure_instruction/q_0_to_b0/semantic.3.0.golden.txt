@@ -1,0 +1,73 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  statements: [
+    Instruction(
+      instruction: measure(qubit array, bit)
+      name: measure
+      operands: [
+        IndexRef(
+          variable --> <
+            Variable(
+              name: q
+              typ: <
+                QubitArray(
+                  size: 3
+                )
+              >
+              annotations: []
+            )
+          >
+          indices: [
+            ConstInt(
+              value: 0
+            )
+          ]
+        )
+        VariableRef(
+          variable --> <
+            Variable(
+              name: b0
+              typ: <
+                Bit(
+)
+              >
+              annotations: []
+            )
+          >
+        )
+      ]
+      condition: <
+        ConstBool(
+          value: 1
+        )
+      >
+      annotations: []
+    )
+  ]
+  variables: [
+    Variable(
+      name: q
+      typ: <
+        QubitArray(
+          size: 3
+        )
+      >
+      annotations: []
+    )
+    Variable(
+      name: b0
+      typ: <
+        Bit(
+)
+      >
+      annotations: []
+    )
+  ]
+)
+

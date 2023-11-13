@@ -1,0 +1,2 @@
+ERROR
+input.cq:3:3: value '1.79769313486231570e+309' is out of the FLOAT_LITERAL range

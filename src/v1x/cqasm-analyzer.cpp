@@ -4,21 +4,20 @@
 
 #define _USE_MATH_DEFINES
 
+#include "cqasm-tree.hpp"  // signed_size_t
 #include "cqasm-utils.hpp"
 #include "v1x/cqasm-analyzer.hpp"
 #include "v1x/cqasm-parse-helper.hpp"
 #include "v1x/cqasm-functions-gen.hpp"
 
-#include <cctype>
 #include <cmath>
 #include <list>
 #include <map>
 #include <unordered_set>
 #include <utility>
 
-namespace cqasm {
-namespace v1x {
-namespace analyzer {
+
+namespace cqasm::v1x::analyzer {
 
 /**
  * "Unwraps" the result (as you would in Rust) to get the program node or
@@ -39,25 +38,13 @@ ast::One<semantic::Program> AnalysisResult::unwrap(std::ostream &out) const {
 /**
  * Creates a new semantic analyzer.
  */
-Analyzer::Analyzer(const std::string &api_version)
-    : api_version(api_version), resolve_instructions(false), resolve_error_model(false)
-{
-    if (api_version.compare("1.2") > 0) {
-        throw std::invalid_argument("this analyzer only supports up to cQASM 1.2");
-    }
-}
-
-/**
- * Creates a new semantic analyzer.
- */
 Analyzer::Analyzer(const primitives::Version &api_version)
     : api_version(api_version), resolve_instructions(false), resolve_error_model(false)
 {
-    if (api_version.compare("1.2") > 0) {
+    if (api_version > "1.2") {
         throw std::invalid_argument("this analyzer only supports up to cQASM 1.2");
     }
 }
-
 
 /**
  * Registers an initial mapping from the given name to the given value.
@@ -512,18 +499,18 @@ AnalysisResult Analyzer::analyze(const parser::ParseResult &parse_result) const 
 }
 
 /**
- * Parses and analyzes using the given version and file parser closures.
+ * Parses and analyzes using the given version and parser closures.
  */
 AnalysisResult Analyzer::analyze(
     const std::function<version::Version()> &version_parser,
-    const std::function<parser::ParseResult()> &file_parser
+    const std::function<parser::ParseResult()> &parser
 ) const {
     AnalysisResult result;
     try {
-        auto file_version = version_parser();
-        if (file_version > api_version) {
+        auto version = version_parser();
+        if (version > api_version) {
             std::ostringstream ss;
-            ss << "cQASM file version is " << file_version << ", but at most ";
+            ss << "cQASM file version is " << version << ", but at most ";
             ss << api_version << " is supported here";
             result.errors.push_back(ss.str());
             return result;
@@ -532,7 +519,7 @@ AnalysisResult Analyzer::analyze(
         result.errors.push_back(e.get_message());
         return result;
     }
-    return analyze(file_parser());
+    return analyze(parser());
 }
 
 /**
@@ -593,7 +580,7 @@ AnalyzerHelper::AnalyzerHelper(
         // that it's not being used.
         if (!ast.num_qubits.empty()) {
             analyze_qubits(*ast.num_qubits);
-        } else if (ast.version->items.compare("1.1") < 0) {
+        } else if (ast.version->items < "1.1") {
             throw error::AnalysisError("missing qubits statement (required until version 1.1)");
         } else {
             result.root->num_qubits = 0;
@@ -603,7 +590,7 @@ AnalyzerHelper::AnalyzerHelper(
         analyze_statements(*ast.statements);
 
         // Resolve goto targets.
-        if (ast.version->items.compare("1.2") >= 0) {
+        if (ast.version->items >= "1.2") {
 
             // Figure out all the subcircuit names and check for duplicates.
             std::map<std::string, tree::Maybe<semantic::Subcircuit>> subcircuits;
@@ -700,12 +687,12 @@ void AnalyzerHelper::analyze_version(const ast::Version &ast) {
         result.root->version->items = analyzer.api_version;
 
         // Check API version.
-        for (auto item : ast.items) {
+        for (const auto &item : ast.items) {
             if (item < 0) {
                 throw error::AnalysisError("invalid version component");
             }
         }
-        if (ast.items.compare(analyzer.api_version) > 0) {
+        if (ast.items > analyzer.api_version) {
             std::ostringstream ss{};
             ss << "the maximum cQASM version supported is " << analyzer.api_version;
             ss << ", but the cQASM file is version " << ast.items;
@@ -772,7 +759,7 @@ tree::Maybe<semantic::Subcircuit> AnalyzerHelper::get_current_subcircuit(
     if (result.root->subcircuits.empty()) {
         auto subcircuit_node = tree::make<semantic::Subcircuit>("", 1);
         subcircuit_node->copy_annotation<parser::SourceLocation>(source);
-        if (analyzer.api_version.compare("1.2") >= 0) {
+        if (analyzer.api_version >= "1.2") {
             subcircuit_node->body = tree::make<semantic::Block>();
         }
         result.root->subcircuits.add(subcircuit_node);
@@ -844,7 +831,7 @@ void AnalyzerHelper::analyze_statements(const ast::StatementList &statements) {
     for (const auto &stmt : statements.items) {
         try {
             if (auto bundle = stmt->as_bundle()) {
-                if (analyzer.api_version.compare("1.2") >= 0) {
+                if (analyzer.api_version >= "1.2") {
                     analyze_bundle_ext(*bundle);
                 } else {
                     analyze_bundle(*bundle);
@@ -856,7 +843,7 @@ void AnalyzerHelper::analyze_statements(const ast::StatementList &statements) {
             } else if (auto subcircuit = stmt->as_subcircuit()) {
                 analyze_subcircuit(*subcircuit);
             } else if (auto structured = stmt->as_structured()) {
-                if (result.root->version->items.compare("1.2") < 0) {
+                if (result.root->version->items < "1.2") {
                     throw error::AnalysisError("structured control-flow is not supported (need version 1.2+)");
                 }
                 analyze_structured(*structured);
@@ -912,7 +899,7 @@ void AnalyzerHelper::analyze_bundle(const ast::Bundle &bundle) {
         // to special-case it here. Technically we could also have made it a
         // keyword, but the less random keywords there are, the better.
         if (bundle.items.size() == 1) {
-            if (utils::case_insensitive_equals(bundle.items[0]->name->name, "error_model")) {
+            if (utils::equal_case_insensitive(bundle.items[0]->name->name, "error_model")) {
                 analyze_error_model(*bundle.items[0]);
                 return;
             }
@@ -924,8 +911,7 @@ void AnalyzerHelper::analyze_bundle(const ast::Bundle &bundle) {
             node->items.add(analyze_instruction(*insn));
         }
 
-        // If we have more than two instructions, ensure that all instructions
-        // are parallelizable.
+        // If we have more than two instructions, ensure that all instructions are parallelizable.
         if (node->items.size() > 1) {
             for (const auto &insn : node->items) {
                 try {
@@ -985,26 +971,25 @@ void AnalyzerHelper::analyze_bundle_ext(const ast::Bundle &bundle) {
         // to special-case it here. Technically we could also have made it a
         // keyword, but the less random keywords there are, the better.
         if (bundle.items.size() == 1) {
-            if (utils::case_insensitive_equals(bundle.items[0]->name->name, "error_model")) {
+            if (utils::equal_case_insensitive(bundle.items[0]->name->name, "error_model")) {
                 analyze_error_model(*bundle.items[0]);
                 return;
             }
         }
 
-        // Analyze and add the instructions.
+        // Analyze and add the instructions
         auto node = tree::make<semantic::BundleExt>();
         for (const auto &insn : bundle.items) {
-            if (utils::case_insensitive_equals(insn->name->name, "set")) {
+            if (utils::equal_case_insensitive(insn->name->name, "set")) {
                 node->items.add(analyze_set_instruction(*insn));
-            } else if (utils::case_insensitive_equals(insn->name->name, "goto")) {
+            } else if (utils::equal_case_insensitive(insn->name->name, "goto")) {
                 node->items.add(analyze_goto_instruction(*insn));
             } else {
                 node->items.add(analyze_instruction(*insn));
             }
         }
 
-        // If we have more than two instructions, ensure that all instructions
-        // are parallelizable.
+        // If we have more than two instructions, ensure that all instructions can be executed in parallel
         if (node->items.size() > 1) {
             for (const auto &insn_base : node->items) {
                 try {
@@ -1064,7 +1049,7 @@ tree::Maybe<semantic::Instruction> AnalyzerHelper::analyze_instruction(const ast
 
         // Figure out the operand list.
         auto operands = values::Values();
-        for (auto operand_expr : insn.operands->items) {
+        for (const auto &operand_expr : insn.operands->items) {
             operands.add(analyze_expression(*operand_expr));
         }
 
@@ -1095,7 +1080,7 @@ tree::Maybe<semantic::Instruction> AnalyzerHelper::analyze_instruction(const ast
             // away.
             if (auto x = node->condition->as_const_bool()) {
                 if (!x->value) {
-                    return tree::Maybe<semantic::Instruction>();
+                    return {};
                 }
             }
 
@@ -1108,7 +1093,7 @@ tree::Maybe<semantic::Instruction> AnalyzerHelper::analyze_instruction(const ast
             std::unordered_set<primitives::Int> qubits_used;
             for (const auto &operand : operands) {
                 if (auto x = operand->as_qubit_refs()) {
-                    for (auto index : x->index) {
+                    for (const auto &index : x->index) {
                         if (!qubits_used.insert(index->value).second) {
                             throw error::AnalysisError(
                                 "qubit with index " + std::to_string(index->value)
@@ -1129,10 +1114,10 @@ tree::Maybe<semantic::Instruction> AnalyzerHelper::analyze_instruction(const ast
             const parser::SourceLocation *num_refs_loc = nullptr;
             for (const auto &operand : operands) {
                 const tree::Many<values::ConstInt> *indices = nullptr;
-                if (auto x = operand->as_qubit_refs()) {
-                    indices = &x->index;
-                } else if (auto x = operand->as_bit_refs()) {
-                    indices = &x->index;
+                if (auto qr = operand->as_qubit_refs()) {
+                    indices = &qr->index;
+                } else if (auto br = operand->as_bit_refs()) {
+                    indices = &br->index;
                 }
                 if (indices) {
                     if (!num_refs) {
@@ -1163,7 +1148,7 @@ tree::Maybe<semantic::Instruction> AnalyzerHelper::analyze_instruction(const ast
         e.context(insn);
         result.errors.push_back(e.get_message());
     }
-    return tree::Maybe<semantic::Instruction>();
+    return {};
 }
 
 /**
@@ -1199,7 +1184,7 @@ tree::Maybe<semantic::SetInstruction> AnalyzerHelper::analyze_set_instruction(
             // away.
             if (auto x = node->condition->as_const_bool()) {
                 if (!x->value) {
-                    return tree::Maybe<semantic::SetInstruction>();
+                    return {};
                 }
             }
         } else {
@@ -1215,7 +1200,7 @@ tree::Maybe<semantic::SetInstruction> AnalyzerHelper::analyze_set_instruction(
         e.context(insn);
         result.errors.push_back(e.get_message());
     }
-    return tree::Maybe<semantic::SetInstruction>();
+    return {};
 }
 
 /**
@@ -1306,7 +1291,7 @@ tree::Maybe<semantic::GotoInstruction> AnalyzerHelper::analyze_goto_instruction(
             // away.
             if (auto x = node->condition->as_const_bool()) {
                 if (!x->value) {
-                    return tree::Maybe<semantic::GotoInstruction>();
+                    return {};
                 }
             }
         } else {
@@ -1322,7 +1307,7 @@ tree::Maybe<semantic::GotoInstruction> AnalyzerHelper::analyze_goto_instruction(
         e.context(insn);
         result.errors.push_back(e.get_message());
     }
-    return tree::Maybe<semantic::GotoInstruction>();
+    return {};
 }
 
 /**
@@ -1408,20 +1393,20 @@ void AnalyzerHelper::analyze_mapping(const ast::Mapping &mapping) {
 }
 
 /**
- * Analyzes the given declaration of one or more variables and, if valid,
- * adds them to the current scope. If an error occurs, the message is added
- * to the result error vector, and nothing is added to the scope.
+ * Analyzes the given declaration of one or more variables and,
+ * if valid, adds them to the current scope.
+ * If an error occurs, the message is added to the result error vector, and nothing is added to the scope.
  */
 void AnalyzerHelper::analyze_variables(const ast::Variables &variables) {
     try {
 
         // Check version compatibility.
-        if (result.root->version->items.compare("1.1") < 0) {
+        if (result.root->version->items < "1.1") {
             throw error::AnalysisError("variables are only supported from cQASM 1.1 onwards");
         }
 
         // Figure out what type the variables should have.
-        auto type_name = utils::lowercase(variables.typ->name);
+        auto type_name = utils::to_lowercase(variables.typ->name);
         types::Type type{};
         if (type_name == "qubit") {
             type = tree::make<types::Qubit>();
@@ -1440,9 +1425,8 @@ void AnalyzerHelper::analyze_variables(const ast::Variables &variables) {
 
         // Construct the variables and add mappings for them.
         for (const auto &identifier : variables.names) {
-
-            // Construct variable. Use the location tag of the identifier to
-            // record where the variable was defined.
+            // Construct variable.
+            // Use the location tag of the identifier to record where the variable was defined.
             auto var = tree::make<semantic::Variable>(identifier->name, type.clone());
             var->copy_annotation<parser::SourceLocation>(*identifier);
             var->annotations = analyze_annotations(variables.annotations);
@@ -1487,7 +1471,7 @@ void AnalyzerHelper::analyze_subcircuit(const ast::Subcircuit &subcircuit) {
             tree::Any<semantic::Bundle>(),
             analyze_annotations(subcircuit.annotations));
         node->copy_annotation<parser::SourceLocation>(subcircuit);
-        if (analyzer.api_version.compare("1.2") >= 0) {
+        if (analyzer.api_version >= "1.2") {
             node->body = tree::make<semantic::Block>();
             node->body->copy_annotation<parser::SourceLocation>(subcircuit);
         }
@@ -1568,14 +1552,12 @@ void AnalyzerHelper::analyze_structured(const ast::Structured &structured) {
 tree::Maybe<semantic::IfElse> AnalyzerHelper::analyze_if_else(
     const ast::IfElse &if_else
 ) {
-
     // Create the if-else node.
     tree::Maybe<semantic::IfElse> node;
     node.emplace();
 
     // Analyze the branches.
     for (const auto &branch : if_else.branches) {
-
         // Analyze the condition.
         auto condition = analyze_expression(*branch->condition);
         condition = values::promote(condition, tree::make<types::Bool>());
@@ -1588,7 +1570,6 @@ tree::Maybe<semantic::IfElse> AnalyzerHelper::analyze_if_else(
 
         // Add the branch.
         node->branches.emplace(condition, body);
-
     }
 
     // Analyze the otherwise block, if any.
@@ -1605,13 +1586,12 @@ tree::Maybe<semantic::IfElse> AnalyzerHelper::analyze_if_else(
                 // Constant true: optimize away all subsequent branches and
                 // replace the otherwise block with this one.
                 node->otherwise = node->branches[idx]->body;
-                while (node->branches.size() > idx) node->branches.remove();
-
+                while (node->branches.size() > idx) {
+                    node->branches.remove();
+                }
             } else {
-
                 // Constant false: remove this condition/block.
-                node->branches.remove(idx);
-
+                node->branches.remove(static_cast<tree::signed_size_t>(idx));
             }
         } else {
             idx++;
@@ -1778,12 +1758,12 @@ tree::Any<semantic::AnnotationData> AnalyzerHelper::analyze_annotations(
     const tree::Any<ast::AnnotationData> &annotations
 ) {
     auto retval = tree::Any<semantic::AnnotationData>();
-    for (auto annotation_ast : annotations) {
+    for (const auto &annotation_ast : annotations) {
         try {
             auto annotation = tree::make<semantic::AnnotationData>();
             annotation->interface = annotation_ast->interface->name;
             annotation->operation = annotation_ast->operation->name;
-            for (auto expression_ast : annotation_ast->operands->items) {
+            for (const auto &expression_ast : annotation_ast->operands->items) {
                 try {
                     annotation->operands.add(analyze_expression(*expression_ast));
                 } catch (error::AnalysisError &e) {
@@ -1879,10 +1859,10 @@ values::Value AnalyzerHelper::analyze_expression(const ast::Expression &expressi
         } else {
             throw std::runtime_error("unexpected expression node");
         }
-        if (!retval.empty() && (retval->as_function() || retval->as_variable_ref())) {
-            if (analyzer.api_version.compare("1.1") < 0) {
-                throw error::AnalysisError("dynamic expressions are only supported from cQASM 1.1 onwards");
-            }
+        if ((analyzer.api_version < "1.1") &&
+            !retval.empty() &&
+            (retval->as_function() || retval->as_variable_ref())) {
+            throw error::AnalysisError("dynamic expressions are only supported from cQASM 1.1 onwards");
         }
     } catch (error::AnalysisError &e) {
         e.context(expression);
@@ -1936,7 +1916,7 @@ values::Value AnalyzerHelper::analyze_matrix(const ast::MatrixLiteral &matrix_li
     // the ncols line is well-behaved.
     size_t nrows = matrix_lit.rows.size();
     size_t ncols = matrix_lit.rows[0]->items.size();
-    for (auto row : matrix_lit.rows) {
+    for (const auto &row : matrix_lit.rows) {
         if (row->items.size() != ncols) {
             throw error::AnalysisError("matrix is not rectangular");
         }
@@ -1988,11 +1968,11 @@ values::Value AnalyzerHelper::analyze_matrix_helper(
         for (size_t col = 0; col < ncols; col++) {
             auto val = values::promote(vals[row * ncols + col], tree::make<ElType>());
             if (val.empty()) {
-                return values::Value();
+                return {};
             } else {
                 auto val_real = val.template as<ElVal>();
                 if (val_real.empty()) {
-                    return values::Value();
+                    return {};
                 } else {
                     matrix.at(row + 1, col + 1) = val_real->value;
                 }
@@ -2011,7 +1991,7 @@ values::Value AnalyzerHelper::analyze_index(const ast::Index &index) {
 
         // Qubit refs.
         auto indices = analyze_index_list(*index.indices, qubit_refs->index.size());
-        for (auto idx : indices) {
+        for (const auto &idx : indices) {
             idx->value = qubit_refs->index[idx->value]->value;
         }
         return tree::make<values::QubitRefs>(indices);
@@ -2020,7 +2000,7 @@ values::Value AnalyzerHelper::analyze_index(const ast::Index &index) {
 
         // Measurement bit refs.
         auto indices = analyze_index_list(*index.indices, bit_refs->index.size());
-        for (auto idx : indices) {
+        for (const auto &idx : indices) {
             idx->value = bit_refs->index[idx->value]->value;
         }
         return tree::make<values::BitRefs>(indices);
@@ -2041,7 +2021,7 @@ values::Value AnalyzerHelper::analyze_index(const ast::Index &index) {
  */
 tree::Many<values::ConstInt> AnalyzerHelper::analyze_index_list(const ast::IndexList &index_list, size_t size) {
     tree::Many<values::ConstInt> retval;
-    for (auto entry : index_list.items) {
+    for (const auto &entry : index_list.items) {
         if (auto item = entry->as_index_item()) {
 
             // Single index.
@@ -2076,7 +2056,7 @@ tree::Many<values::ConstInt> AnalyzerHelper::analyze_index_list(const ast::Index
             if (first > last) {
                 throw error::AnalysisError("last index is lower than first index", range);
             }
-            for (auto index = (size_t)first; index <= (size_t)last; index++) {
+            for (auto index = first; index <= last; index++) {
                 auto index_val = tree::make<values::ConstInt>(index);
                 index_val->copy_annotation<parser::SourceLocation>(*range);
                 retval.add(index_val);
@@ -2094,7 +2074,7 @@ tree::Many<values::ConstInt> AnalyzerHelper::analyze_index_list(const ast::Index
  */
 values::Value AnalyzerHelper::analyze_function(const ast::Identifier &name, const ast::ExpressionList &args) {
     auto arg_values = values::Values();
-    for (auto arg : args.items) {
+    for (const auto &arg : args.items) {
         arg_values.add(analyze_expression(*arg));
     }
     auto retval = get_current_scope().functions.call(name.name, arg_values);
@@ -2121,6 +2101,4 @@ values::Value AnalyzerHelper::analyze_operator(
     return analyze_function(identifier, args);
 }
 
-} // namespace analyzer
-} // namespace v1x
-} // namespace cqasm
+} // namespace cqasm::v1x::analyzer
