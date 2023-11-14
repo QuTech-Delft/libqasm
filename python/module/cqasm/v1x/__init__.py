@@ -1,6 +1,7 @@
-import libQasm;
+import libQasm
 
-class Analyzer(libQasm.V1xAnalyzer):
+
+class V1xAnalyzer(libQasm.V1xAnalyzer):
 
     @staticmethod
     def parse_file(*args):
