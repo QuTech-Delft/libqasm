@@ -34,6 +34,7 @@ def diff():
                     diff()
                 print('Leaving %s...' % sub)
 
+
 def gild_all():
     is_test_dir = False
     for t in ('ast', 'semantic.1.0', 'semantic.1.1', 'semantic.1.2'):
@@ -47,6 +48,7 @@ def gild_all():
                 with local.cwd(sub):
                     gild_all()
                 print('Leaving %s...' % sub)
+
 
 cmd = sys.argv[1]
 
@@ -74,7 +76,7 @@ elif cmd == 'gild':
             local['cp']('-f', 'semantic.actual.txt', 'semantic.golden.txt')
 
 elif cmd == 'gild-all':
-    gild_all();
+    gild_all()
 
 else:
     print('unknown command')
