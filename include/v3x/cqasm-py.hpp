@@ -13,6 +13,9 @@
 #include <string>
 #include <vector>
 
+#include "cqasm-analyzer.hpp"
+
+
 // Forward declarations for internal types.
 namespace cqasm::v3x::analyzer { class Analyzer; }
 
@@ -23,7 +26,7 @@ class V3xAnalyzer {
     /**
      * Reference to the actual C++ analyzer that this wraps.
      */
-    std::unique_ptr<cqasm::v3x::analyzer::Analyzer> a;
+    std::unique_ptr<cqasm::v3x::analyzer::Analyzer> analyzer;
 
 public:
     /**
@@ -38,7 +41,7 @@ public:
      */
     V3xAnalyzer(
         const std::string &max_version = "3.0",
-        bool without_defaults=false
+        bool without_defaults = false
     );
 
     /**

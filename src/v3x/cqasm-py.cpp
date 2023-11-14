@@ -23,10 +23,10 @@ namespace v3x = cqasm::v3x;
  */
 V3xAnalyzer::V3xAnalyzer(const std::string &max_version, bool without_defaults) {
     if (without_defaults) {
-        a = std::make_unique<v3x::analyzer::Analyzer>(max_version);
-        a->register_default_mappings();
+        analyzer = std::make_unique<v3x::analyzer::Analyzer>(max_version);
+        analyzer->register_default_mappings();
     } else {
-        a = std::make_unique<v3x::analyzer::Analyzer>(v3x::default_analyzer(max_version));
+        analyzer = std::make_unique<v3x::analyzer::Analyzer>(v3x::default_analyzer(max_version));
     }
 }
 
@@ -39,7 +39,7 @@ void V3xAnalyzer::register_instruction(
     const std::string &param_types,
     bool request_qubit_and_bit_indices_have_same_size
 ) {
-    a->register_instruction(
+    analyzer->register_instruction(
         name,
         param_types,
         request_qubit_and_bit_indices_have_same_size
@@ -89,7 +89,7 @@ std::vector<std::string> V3xAnalyzer::parse_string(
 std::vector<std::string> V3xAnalyzer::analyze_file(
     const std::string &filename
 ) const {
-    auto result = a->analyze(
+    auto result = analyzer->analyze(
         [=](){ return cqasm::version::parse_file(filename); },
         [=](){ return v3x::parser::parse_file(filename); }
     );
@@ -106,7 +106,7 @@ std::vector<std::string> V3xAnalyzer::analyze_string(
     const std::string &data,
     const std::string &filename
 ) const {
-    auto result = a->analyze(
+    auto result = analyzer->analyze(
         [=](){ return cqasm::version::parse_string(data, filename); },
         [=](){ return v3x::parser::parse_string(data, filename); }
     );

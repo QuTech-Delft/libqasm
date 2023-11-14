@@ -3,9 +3,9 @@
  */
 
 #include "cqasm-version.hpp"
+#include "v1x/cqasm-parse-helper.hpp"
 #include "v1x/cqasm-py.hpp"
 #include "v1x/cqasm.hpp"
-#include "v1x/cqasm-parse-helper.hpp"
 
 #include <memory>
 
@@ -23,10 +23,10 @@ namespace v1x = cqasm::v1x;
  */
 V1xAnalyzer::V1xAnalyzer(const std::string &max_version, bool without_defaults) {
     if (without_defaults) {
-        a = std::make_unique<v1x::analyzer::Analyzer>(max_version);
-        a->register_default_functions_and_mappings();
+        analyzer = std::make_unique<v1x::analyzer::Analyzer>(max_version);
+        analyzer->register_default_functions_and_mappings();
     } else {
-        a = std::make_unique<v1x::analyzer::Analyzer>(v1x::default_analyzer(max_version));
+        analyzer = std::make_unique<v1x::analyzer::Analyzer>(v1x::default_analyzer(max_version));
     }
 }
 
@@ -42,7 +42,7 @@ void V1xAnalyzer::register_instruction(
     bool allow_reused_qubits,
     bool allow_different_index_sizes
 ) {
-    a->register_instruction(
+    analyzer->register_instruction(
         name,
         param_types,
         allow_conditional,
@@ -60,7 +60,7 @@ void V1xAnalyzer::register_error_model(
     const std::string &name,
     const std::string &param_types
 ) {
-    a->register_error_model(name, param_types);
+    analyzer->register_error_model(name, param_types);
 }
 
 /**
@@ -106,7 +106,7 @@ std::vector<std::string> V1xAnalyzer::parse_string(
 [[nodiscard]] std::vector<std::string> V1xAnalyzer::analyze_file(
     const std::string &filename
 ) const {
-    auto result = a->analyze(
+    auto result = analyzer->analyze(
         [=](){ return cqasm::version::parse_file(filename); },
         [=](){ return v1x::parser::parse_file(filename); }
     );
@@ -123,7 +123,7 @@ std::vector<std::string> V1xAnalyzer::parse_string(
     const std::string &data,
     const std::string &filename
 ) const {
-    auto result = a->analyze(
+    auto result = analyzer->analyze(
         [=](){ return cqasm::version::parse_string(data, filename); },
         [=](){ return v1x::parser::parse_string(data, filename); }
     );
