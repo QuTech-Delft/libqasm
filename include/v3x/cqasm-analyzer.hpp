@@ -163,7 +163,7 @@ public:
     /**
      * Parses and analyzes the given file.
      */
-    [[nodiscard]] AnalysisResult analyze(const std::string &filename);
+    [[nodiscard]] AnalysisResult analyze_file(const std::string &filename);
 
     /**
      * Parses and analyzes the given string.

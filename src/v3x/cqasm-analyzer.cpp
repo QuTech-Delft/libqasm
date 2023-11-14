@@ -130,7 +130,7 @@ AnalysisResult Analyzer::analyze(
 /**
  * Parses and analyzes the given file.
  */
-AnalysisResult Analyzer::analyze(const std::string &filename) {
+AnalysisResult Analyzer::analyze_file(const std::string &filename) {
     return analyze(
         [=](){ return version::parse_file(filename); },
         [=](){ return parser::parse_file(filename); }
