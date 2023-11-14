@@ -1,7 +1,7 @@
-from .test_init import LibQasmTest
+from .test_init import TestLibQasm
 
 
-class TestInterface(LibQasmTest):
+class TestInterface(TestLibQasm):
     def test_version_number(self):
         lib_qasm = self._generic_test_steps('bare_minimum')
         qasm_representation = lib_qasm.getQasmRepresentation()

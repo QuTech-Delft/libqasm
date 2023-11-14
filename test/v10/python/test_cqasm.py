@@ -1,7 +1,7 @@
-from .test_init import LibQasmTest
+from .test_init import TestLibQasm
 
 
-class TestQasm(LibQasmTest):
+class TestQasm(TestLibQasm):
     def test_bare_minimum(self):
         lib_qasm = self._generic_test_steps('bare_minimum')
         parse_res = lib_qasm.getParseResult()
