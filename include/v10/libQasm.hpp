@@ -11,7 +11,10 @@
 
 class libQasm {
 public:
-    libQasm() : parse_result_{ 0 }, qasm_rep_{} {}
+    libQasm()
+    : qasm_rep_{}
+    , parse_result_{ 0 }
+    {}
 
     void parse_string(const std::string &qasm_str) {
         compiler::QasmSemanticChecker sm(qasm_str);
