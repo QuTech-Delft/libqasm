@@ -94,7 +94,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 #=============================================================================#
 
 # Configure SWIG.
-set(SWIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/libQasm.i")
+set(SWIG_FILE
+    "${CMAKE_CURRENT_SOURCE_DIR}/libQasm.i"
+)
 
 set_source_files_properties("${SWIG_FILE}" PROPERTIES
     CPLUSPLUS ON
