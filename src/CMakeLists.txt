@@ -67,7 +67,7 @@ endif()
 # This exposes the generate_tree() function.
 FetchContent_Declare(tree-gen
     GIT_REPOSITORY https://github.com/QuTech-Delft/tree-gen.git
-    GIT_TAG "9f54878240f6ae5df9c35cbf273cfbfb6f76679f"
+    GIT_TAG "4fde286a11236a7f9680738981488911765f7ed3"
 )
 FetchContent_MakeAvailable(tree-gen)
 
