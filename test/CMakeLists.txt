@@ -11,7 +11,6 @@ add_subdirectory(v1x)
 add_subdirectory(v3x)
 
 target_sources(${PROJECT_NAME}_test PRIVATE
-    "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-result-to-json.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-utils.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-version.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
