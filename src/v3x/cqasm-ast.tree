@@ -85,12 +85,6 @@ annotated {
     annotations: Any<annotation_data>;
 
     statement {
-        # A mapping (alias) for an expression.
-        mapping {
-            alias: One<identifier>;
-            expr: One<expression>;
-        }
-
         # One or more variable declarations of some type.
         variables {
             names: Many<identifier>;
