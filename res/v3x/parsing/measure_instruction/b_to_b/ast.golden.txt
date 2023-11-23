@@ -22,23 +22,21 @@ Program(
           size: -
           annotations: []
         )
-        Instruction( # input.cq:5:5..12
+        MeasureInstruction( # input.cq:5:5..12
           name: <
             Identifier(
               name: measure
             )
           >
           condition: -
-          operands: <
-            ExpressionList(
-              items: [
-                Identifier( # input.cq:5:13..14
-                  name: b
-                )
-                Identifier( # input.cq:5:1..2
-                  name: b
-                )
-              ]
+          lhs: <
+            Identifier( # input.cq:5:1..2
+              name: b
+            )
+          >
+          rhs: <
+            Identifier( # input.cq:5:13..14
+              name: b
             )
           >
           annotations: []
