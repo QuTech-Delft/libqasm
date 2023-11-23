@@ -99,10 +99,23 @@ annotated {
         }
 
         # A gate.
-        instruction {
-            name: One<identifier>;
-            condition: Maybe<expression>;
-            operands: One<expression_list>;
+        instruction_base {
+            instruction {
+                name: One<identifier>;
+                condition: Maybe<expression>;
+                operands: One<expression_list>;
+            }
+
+            # For some instructions, like the measure instruction,
+            # we want to differentiate between left hand side and right and side operands.
+            # For a measure instruction, the right hand side operand should be a qubit,
+            # and the left hand side operand a bit.
+            measure_instruction {
+                name: One<identifier>;
+                condition: Maybe<expression>;
+                lhs: One<expression>;
+                rhs: One<expression>;
+            }
         }
     }
 }
