@@ -49,7 +49,36 @@ tree::One<cqasm::v3x::semantic::Program> analyze_string(
  * Constructs an Analyzer object with the defaults for cQASM 3.0 already loaded into it.
  */
 analyzer::Analyzer default_analyzer(const std::string &api_version) {
-    return analyzer::Analyzer{ api_version };
+    analyzer::Analyzer analyzer{ api_version };
+
+    analyzer.register_default_mappings();
+
+    analyzer.register_instruction("cnot", "QQ");
+    analyzer.register_instruction("cnot", "VV");
+    analyzer.register_instruction("cr", "QQr");
+    analyzer.register_instruction("crk", "QQi");
+    analyzer.register_instruction("cz", "QQ");
+    analyzer.register_instruction("h", "Q");
+    analyzer.register_instruction("h", "V");
+    analyzer.register_instruction("i", "Q");
+    analyzer.register_instruction("measure", "QB", true);  // qubit - bit
+    analyzer.register_instruction("measure", "VW", true);  // qubit array - bit array
+    analyzer.register_instruction("measure", "VB", true);  // qubit array - bit
+    analyzer.register_instruction("measure", "QW", true);  // qubit - bit array
+    analyzer.register_instruction("mx90", "Q");
+    analyzer.register_instruction("my90", "Q");
+    analyzer.register_instruction("rx", "Qr");
+    analyzer.register_instruction("ry", "Qr");
+    analyzer.register_instruction("rz", "Qr");
+    analyzer.register_instruction("s", "Q");
+    analyzer.register_instruction("sdag", "Q");
+    analyzer.register_instruction("x", "Q");
+    analyzer.register_instruction("x90", "Q");
+    analyzer.register_instruction("y", "Q");
+    analyzer.register_instruction("y90", "Q");
+    analyzer.register_instruction("z", "Q");
+
+    return analyzer;
 }
 
 } // namespace cqasm::v3x

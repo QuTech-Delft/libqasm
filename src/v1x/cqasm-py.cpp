@@ -131,3 +131,21 @@ std::vector<std::string> V1xAnalyzer::parse_string(
         ? std::vector<std::string>{ tree::base::serialize(result.root) }
         : result.errors;
 }
+
+
+V1xParseResult::V1xParseResult() {
+    parse_result = std::make_unique<cqasm::v1x::parser::ParseResult>();
+}
+
+std::string V1xParseResult::to_json() const {
+    return parse_result->to_json();
+}
+
+
+V1xAnalysisResult::V1xAnalysisResult() {
+    analysis_result = std::make_unique<cqasm::v1x::analyzer::AnalysisResult>();
+}
+
+std::string V1xAnalysisResult::to_json() const {
+    return analysis_result->to_json();
+}

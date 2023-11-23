@@ -14,7 +14,14 @@
 #include <vector>
 
 // Forward declarations for internal types.
-namespace cqasm::v1x::analyzer { class Analyzer; }
+namespace cqasm::v1x::parser {
+    class ParseResult;
+}
+namespace cqasm::v1x::analyzer {
+    class Analyzer;
+    class AnalysisResult;
+}
+
 
 /**
  * Main class for parsing and analyzing cQASM files with the v1.x API.
@@ -105,4 +112,20 @@ public:
         const std::string &data,
         const std::string &filename = "<unknown>"
     ) const;
+};
+
+
+class V1xParseResult {
+    std::unique_ptr<cqasm::v1x::parser::ParseResult> parse_result;
+public:
+    V1xParseResult();
+    std::string to_json() const;
+};
+
+
+class V1xAnalysisResult {
+    std::unique_ptr<cqasm::v1x::analyzer::AnalysisResult> analysis_result;
+public:
+    V1xAnalysisResult();
+    std::string to_json() const;
 };

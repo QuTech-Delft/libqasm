@@ -14,7 +14,13 @@
 #include <vector>
 
 // Forward declarations for internal types.
-namespace cqasm::v3x::analyzer { class Analyzer; }
+namespace cqasm::v3x::parser {
+    class ParseResult;
+}
+namespace cqasm::v3x::analyzer {
+    class Analyzer;
+    class AnalysisResult;
+}
 
 /**
  * Main class for parsing and analyzing cQASM files with the v3.x API.
@@ -93,4 +99,20 @@ public:
         const std::string &data,
         const std::string &filename = "<unknown>"
     ) const;
+};
+
+
+class V3xParseResult {
+    std::unique_ptr<cqasm::v3x::parser::ParseResult> parse_result;
+public:
+    V3xParseResult();
+    std::string to_json() const;
+};
+
+
+class V3xAnalysisResult {
+    std::unique_ptr<cqasm::v3x::analyzer::AnalysisResult> analysis_result;
+public:
+    V3xAnalysisResult();
+    std::string to_json() const;
 };

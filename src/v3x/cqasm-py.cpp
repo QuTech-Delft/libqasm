@@ -114,3 +114,21 @@ std::vector<std::string> V3xAnalyzer::analyze_string(
         ? std::vector<std::string>{ tree::base::serialize(result.root) }
         : result.errors;
 }
+
+
+V3xParseResult::V3xParseResult() {
+    parse_result = std::make_unique<cqasm::v3x::parser::ParseResult>();
+}
+
+std::string V3xParseResult::to_json() const {
+    return parse_result->to_json();
+}
+
+
+V3xAnalysisResult::V3xAnalysisResult() {
+    analysis_result = std::make_unique<cqasm::v3x::analyzer::AnalysisResult>();
+}
+
+std::string V3xAnalysisResult::to_json() const {
+    return analysis_result->to_json();
+}
