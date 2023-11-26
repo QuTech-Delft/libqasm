@@ -3,9 +3,9 @@
 #include "v3x/BuildCustomAstVisitor.hpp"
 #include "v3x/CqasmParser.h"
 #include "v3x/CqasmParserVisitor.h"
-#include "v3x/CustomErrorListener.hpp"
-
 #include <any>
+
+namespace cqasm::v3x::parser { class CustomErrorListener; }
 
 
 namespace cqasm::v3x::parser {

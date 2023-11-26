@@ -1,12 +1,13 @@
 #pragma once
 
 #include "v3x/BuildCustomAstVisitor.hpp"
-#include "v3x/CustomErrorListener.hpp"
+#include "v3x/cqasm-parse-result.hpp"
 
 #include <memory>  // unique_ptr
 #include <string>
 
 namespace antlr4 { class ANTLRInputStream; }
+namespace cqasm::v3x::parser { class CustomErrorListener; }
 
 
 namespace cqasm::v3x::parser {
