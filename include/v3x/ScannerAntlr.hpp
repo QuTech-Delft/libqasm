@@ -6,6 +6,8 @@
 #include <memory>  // unique_ptr
 #include <string>
 
+namespace antlr4 { class ANTLRInputStream; }
+
 
 namespace cqasm::v3x::parser {
 
