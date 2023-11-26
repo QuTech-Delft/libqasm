@@ -13,8 +13,6 @@
 #include <string>
 #include <vector>
 
-#include "cqasm-analyzer.hpp"
-
 
 // Forward declarations for internal types.
 namespace cqasm::v1x::analyzer { class Analyzer; }
@@ -43,6 +41,13 @@ public:
         const std::string &max_version = "1.0",
         bool without_defaults = false
     );
+
+    /**
+     * std::unique_ptr<T> requires T to be a complete class for the ~T operation.
+     * Since we are using a forward declaration for Analyzer, we need to declare ~T in the header file,
+     * and implement it in the source file.
+     */
+    ~V1xAnalyzer();
 
     /**
      * Registers an instruction type.

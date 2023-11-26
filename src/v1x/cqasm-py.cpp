@@ -3,6 +3,7 @@
  */
 
 #include "cqasm-version.hpp"
+#include "v1x/cqasm-analyzer.hpp"
 #include "v1x/cqasm-parse-helper.hpp"
 #include "v1x/cqasm-py.hpp"
 #include "v1x/cqasm.hpp"
@@ -29,6 +30,13 @@ V1xAnalyzer::V1xAnalyzer(const std::string &max_version, bool without_defaults) 
         analyzer = std::make_unique<v1x::analyzer::Analyzer>(v1x::default_analyzer(max_version));
     }
 }
+
+/**
+ * std::unique_ptr<T> requires T to be a complete class for the ~T operation.
+ * Since we are using a forward declaration for Analyzer, we need to declare ~T in the header file,
+ * and implement it in the source file.
+ */
+V1xAnalyzer::~V1xAnalyzer() = default;
 
 /**
  * Registers an instruction type.

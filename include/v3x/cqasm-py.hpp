@@ -13,8 +13,6 @@
 #include <string>
 #include <vector>
 
-#include "cqasm-analyzer.hpp"
-
 
 // Forward declarations for internal types.
 namespace cqasm::v3x::analyzer { class Analyzer; }
@@ -39,10 +37,17 @@ public:
      * the initial mappings and functions are not configurable at all.
      * The defaults for these are always used.
      */
-    V3xAnalyzer(
+    explicit V3xAnalyzer(
         const std::string &max_version = "3.0",
         bool without_defaults = false
     );
+
+    /**
+     * std::unique_ptr<T> requires T to be a complete class for the ~T operation.
+     * Since we are using a forward declaration for Analyzer, we need to declare ~T in the header file,
+     * and implement it in the source file.
+     */
+    ~V3xAnalyzer();
 
     /**
      * Registers an instruction type.
