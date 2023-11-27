@@ -68,10 +68,9 @@ void Analyzer::register_instruction(const instruction::Instruction &instruction)
  * Convenience method for registering an instruction type. The arguments
  * are passed straight to instruction::Instruction's constructor.
  */
-void Analyzer::register_instruction(const std::string &name, const std::string &param_types,
-    bool request_qubit_and_bit_indices_have_same_size) {
+void Analyzer::register_instruction(const std::string &name, const std::string &param_types) {
 
-    register_instruction(instruction::Instruction(name, param_types, request_qubit_and_bit_indices_have_same_size));
+    register_instruction(instruction::Instruction(name, param_types));
 }
 
 /**

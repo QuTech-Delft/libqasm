@@ -66,10 +66,10 @@ public:
             analyzer.register_instruction("h", "Q");
             analyzer.register_instruction("h", "V");
             analyzer.register_instruction("i", "Q");
-            analyzer.register_instruction("measure", "QB", true);  // qubit - bit
-            analyzer.register_instruction("measure", "VW", true);  // qubit array - bit array
-            analyzer.register_instruction("measure", "VB", true);  // qubit array - bit
-            analyzer.register_instruction("measure", "QW", true);  // qubit - bit array
+            analyzer.register_instruction("measure", "BQ");  // bit = qubit
+            analyzer.register_instruction("measure", "WV");  // bit array = qubit array
+            analyzer.register_instruction("measure", "BV");  // bit = qubit array
+            analyzer.register_instruction("measure", "WQ");  // bit array = qubit
             analyzer.register_instruction("mx90", "Q");
             analyzer.register_instruction("my90", "Q");
             analyzer.register_instruction("rx", "Qr");

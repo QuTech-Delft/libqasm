@@ -137,8 +137,7 @@ public:
      * Convenience method for registering an instruction type.
      * The arguments are passed straight to instruction::Instruction's constructor.
      */
-    void register_instruction(const std::string &name, const std::string &param_types = "",
-        bool request_qubit_and_bit_indices_have_same_size = false);
+    void register_instruction(const std::string &name, const std::string &param_types = "");
 
     /**
      * Analyzes the given program AST node.
