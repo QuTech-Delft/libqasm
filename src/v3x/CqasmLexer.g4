@@ -12,7 +12,25 @@
 // REQ004: cQASM shall support the following named constants: pi, im, eu, tau.
 //         They are not to be reserved as keywords.
 //
-// REQ005: cQASM shall support the following types: qubit, bit.
+// REQ005: cQASM shall support the following types: qubit, bit, bool, int, float.
+//
+// REQ006: cQASM shall support the angle type.
+//
+// REQ007: cQASM shall support the axis type.
+//
+// REQ008: cQASM shall support the following single-qubit gate modifier: pow.
+//
+// REQ009: cQASM shall support the following single-qubit gate modifier: inv.
+//
+// REQ010: cQASM shall support the following single-qubit gate modifier: ctrl.
+//
+// REQ011: cQASM shall support the following two-qubit gate modifiers: pow, inv, ctrl.
+//
+// REQ012: cQASM shall support a measure instruction that, optionally,
+//         accepts an argument of type axis denoting the axis of measurement.
+//         Examples:
+//             b0 = measure(x) q0
+//             axis a = [0, 1, 1]; br0 = measure(a) qr0
 //
 // REQ013: cQASM shall support the assignment of a measurement outcome to a bit variable.
 //         Examples:
@@ -22,15 +40,19 @@
 //
 // REQ014: cQASM shall support the explicit declaration of qubit registers through a declaration statement.
 //         Examples:
-//             qubit q0    Declaration of a single qubit reference
-//             qubit[3] q  Declaration of a qubit register/array of size 3
+//             qubit q0, q1       Declaration of single qubits
+//             qubit[3] qr0, qr1  Declaration of qubit registers/arrays of size 3
 //
 // REQ015: cQASM shall support the explicit declaration of bit registers through a declaration statement.
 //         Examples:
-//             bit b0     Declaration of a single bit
-//             bit[2] b2  Declaration of a bit register/array of size 2
+//             bit b0, b1       Declaration of single bits
+//             bit[2] br0, br1  Declaration of bit registers/arrays of size 2
 //
 // REQ016: cQASM shall support the declaration of separate qubit and bit registers of equal or distinct lengths.
+//
+// REQ021: cQASM shall support the definition of composite gates.
+//
+// REQ023: cQASM shall expose the quantum instruction database through its API.
 //
 // REQ024: when Single Gate Multiple Qubit (SGMQ) notation is used in multi-qubit gates,
 //         cQASM shall preserve the order of the qubit arguments.
@@ -59,8 +81,12 @@ CLOSE_BRACKET: ']';
 // Keywords
 VERSION: 'version' -> pushMode(VERSION_STATEMENT);
 MEASURE: 'measure';
-QUBIT_TYPE: 'qubit';
+AXIS_TYPE: 'axis';
 BIT_TYPE: 'bit';
+BOOL_TYPE: 'bool';
+FLOAT_TYPE: 'float';
+INT_TYPE: 'int';
+QUBIT_TYPE: 'qubit';
 
 // Numeric literals
 INTEGER_LITERAL : Digit+;
