@@ -72,10 +72,10 @@ analyzer::Analyzer default_analyzer(const std::string &api_version) {
     analyzer.register_instruction("h", "Q");
     analyzer.register_instruction("h", "V");
     analyzer.register_instruction("i", "Q");
-    analyzer.register_instruction("measure", "QB", true);
-    analyzer.register_instruction("measure", "VW", true);
-    analyzer.register_instruction("measure", "VB", true);
-    analyzer.register_instruction("measure", "QW", true);
+    analyzer.register_instruction("measure", "QB");
+    analyzer.register_instruction("measure", "VW");
+    analyzer.register_instruction("measure", "VB");
+    analyzer.register_instruction("measure", "QW");
     analyzer.register_instruction("mx90", "Q");
     analyzer.register_instruction("mx90", "V");
     analyzer.register_instruction("my90", "Q");
