@@ -8,15 +8,15 @@ Program(
   >
   statements: [
     Instruction(
-      instruction: measure(qubit, bit)
+      instruction: measure(bit, qubit)
       name: measure
       operands: [
         VariableRef(
           variable --> <
             Variable(
-              name: q
+              name: b
               typ: <
-                Qubit(
+                Bit(
 )
               >
               annotations: []
@@ -26,9 +26,9 @@ Program(
         VariableRef(
           variable --> <
             Variable(
-              name: b
+              name: q
               typ: <
-                Bit(
+                Qubit(
 )
               >
               annotations: []

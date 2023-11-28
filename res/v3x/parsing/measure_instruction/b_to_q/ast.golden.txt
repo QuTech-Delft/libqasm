@@ -8,10 +8,10 @@ Program(
   statements: <
     StatementList(
       items: [
-        Variables( # input.cq:3:7..9
+        Variables( # input.cq:3:7..8
           names: [
             Identifier(
-              name: q0
+              name: q
             )
           ]
           typ: <
@@ -22,7 +22,7 @@ Program(
           size: -
           annotations: []
         )
-        Variables( # input.cq:4:8..9
+        Variables( # input.cq:4:5..6
           names: [
             Identifier(
               name: b
@@ -33,14 +33,10 @@ Program(
               name: bit
             )
           >
-          size: <
-            IntegerLiteral(
-              value: 3
-            )
-          >
+          size: -
           annotations: []
         )
-        MeasureInstruction( # input.cq:6:8..15
+        MeasureInstruction( # input.cq:6:5..12
           name: <
             Identifier(
               name: measure
@@ -48,30 +44,13 @@ Program(
           >
           condition: -
           lhs: <
-            Index( # input.cq:6:1..2
-              expr: <
-                Identifier(
-                  name: b
-                )
-              >
-              indices: <
-                IndexList(
-                  items: [
-                    IndexItem(
-                      index: <
-                        IntegerLiteral( # input.cq:6:3..4
-                          value: 0
-                        )
-                      >
-                    )
-                  ]
-                )
-              >
+            Identifier( # input.cq:6:1..2
+              name: q
             )
           >
           rhs: <
-            Identifier( # input.cq:6:16..18
-              name: q0
+            Identifier( # input.cq:6:13..14
+              name: b
             )
           >
           annotations: []

@@ -52,6 +52,8 @@ void AnalyzeTreeGenAstVisitor::visitStatements(const ast::StatementList &stateme
         try {
             if (auto variables = statement->as_variables()) {
                 visitVariables(*variables);
+            } else if (auto measure_instruction = statement->as_measure_instruction()) {
+                result_.root->statements.add(visitMeasureInstruction(*measure_instruction));
             } else if (auto instruction = statement->as_instruction()) {
                 result_.root->statements.add(visitInstruction(*instruction));
             } else {
@@ -108,6 +110,10 @@ void AnalyzeTreeGenAstVisitor::visitVariables(const ast::Variables &variables_as
 bool check_qubit_and_bit_indices_have_same_size(const values::Values &operands) {
     size_t qubit_indices_size{};
     size_t bit_indices_size{};
+    // Instruction operands can be, whether variables references or index references
+    // Variables can be of type qubit, bit, qubit array, or bit array
+    // Qubits and bits have a single index, arrays have a size
+    // Index references point to a qubit array or bit array
     for (const auto &operand : operands) {
         if (auto variable_ref = operand->as_variable_ref()) {
             const auto &variable = *variable_ref->variable;
@@ -132,6 +138,44 @@ bool check_qubit_and_bit_indices_have_same_size(const values::Values &operands) 
     return qubit_indices_size == bit_indices_size;
 }
 
+tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitMeasureInstruction(
+    const ast::MeasureInstruction &instruction_ast) {
+
+    tree::Maybe<semantic::Instruction> node;
+    try {
+        // Set operand list
+        // Notice operands have to be added in this order
+        // Otherwise instruction resolution would fail
+        auto operands = values::Values();
+        operands.add(visitExpression(*instruction_ast.lhs));
+        operands.add(visitExpression(*instruction_ast.rhs));
+
+        // Resolve the instruction
+        // For a measure instruction, this resolution will check that
+        // the first operand is of bit type, and that
+        // the second operand is of qubit type
+        node.set(analyzer_.resolve_instruction(instruction_ast.name->name, operands));
+
+        // Check qubit and bit indices have the same size
+        if (!node->instruction.empty()) {
+            if (!check_qubit_and_bit_indices_have_same_size(operands)) {
+                throw error::AnalysisError{ "qubit and bit indices have different sizes", &instruction_ast };
+            }
+        }
+
+        // Set condition code
+        node->condition.set(tree::make<values::ConstBool>(true));
+
+        // Copy annotation data
+        node->annotations = visitAnnotations(instruction_ast.annotations);
+        node->copy_annotation<parser::SourceLocation>(instruction_ast);
+    } catch (error::AnalysisError &err) {
+        err.context(instruction_ast);
+        throw;
+    }
+    return node;
+}
+
 tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(
     const ast::Instruction &instruction_ast) {
 
@@ -145,13 +189,6 @@ tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(
 
         // Resolve the instruction
         node.set(analyzer_.resolve_instruction(instruction_ast.name->name, operands));
-
-        // Check qubit and bit indices have the same size
-        if (!node->instruction.empty() && node->instruction->request_qubit_and_bit_indices_have_same_size) {
-            if (!check_qubit_and_bit_indices_have_same_size(operands)) {
-                throw error::AnalysisError{ "qubit and bit indices have different sizes", &instruction_ast };
-            }
-        }
 
         // Set condition code
         node->condition.set(tree::make<values::ConstBool>(true));

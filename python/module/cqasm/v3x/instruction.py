@@ -2,12 +2,7 @@ import cqasm.v3x.types
 
 
 class Instruction(object):
-    def __init__(
-        self,
-        name,
-        types=None,
-        request_qubit_and_bit_indices_have_same_size=False
-    ):
+    def __init__(self, name, types=None):
         super().__init__()
         self._name = str(name)
         if types is None:
@@ -17,7 +12,6 @@ class Instruction(object):
                 if not isinstance(typ, cqasm.v3x.types.Node):
                     raise TypeError('types must be an iterable of cqasm.v3x.types.Node if specified')
             self._types = tuple(types)
-        self._request_qubit_and_bit_indices_have_same_size = bool(request_qubit_and_bit_indices_have_same_size)
 
     @property
     def name(self):
@@ -26,10 +20,6 @@ class Instruction(object):
     @property
     def types(self):
         return self._types
-
-    @property
-    def request_qubit_and_bit_indices_have_same_size(self):
-        return self._request_qubit_and_bit_indices_have_same_size
 
     def __str__(self):
         return '{}({})'.format(self._name, ', '.join(map(str, self._types)))
