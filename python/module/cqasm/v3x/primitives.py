@@ -38,7 +38,6 @@ def serialize(typ, val):
         else:
             return {
                 'n': val.data.name,
-                'i': val.data.request_qubit_and_bit_indices_have_same_size,
                 't': [x.serialize() for x in val.data.types]
             }
     else:
@@ -64,8 +63,7 @@ def deserialize(typ, val):
         if 'n' in val:
             return InstructionRef(
                 val['n'],
-                [cqasm.v3x.types.Node.deserialize(x) for x in val['t']],
-                val['i']
+                [cqasm.v3x.types.Node.deserialize(x) for x in val['t']]
             )
         else:
             return InstructionRef()

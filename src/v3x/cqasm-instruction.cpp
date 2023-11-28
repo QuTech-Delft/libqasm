@@ -15,13 +15,9 @@ namespace instruction {
  * param_types is a shorthand type specification string as parsed by cqasm::types::from_spec().
  * If you need more control, you can also manipulate param_types directly.
  */
-Instruction::Instruction(
-    const std::string &name,
-    const std::string &param_types,
-    bool request_qubit_and_bit_indices_have_same_size)
+Instruction::Instruction(const std::string &name, const std::string &param_types)
 : name{ name }
 , param_types{ types::from_spec(param_types) }
-, request_qubit_and_bit_indices_have_same_size{ request_qubit_and_bit_indices_have_same_size }
 {}
 
 /**
@@ -58,7 +54,6 @@ void serialize(const instruction::InstructionRef &obj, ::tree::cbor::MapWriter &
         return;
     }
     map.append_string("n", obj->name);
-    map.append_bool("i", obj->request_qubit_and_bit_indices_have_same_size);
     auto aw = map.append_array("t");
     for (const auto &t : obj->param_types) {
         aw.append_binary(::tree::base::serialize(t));
@@ -71,11 +66,7 @@ instruction::InstructionRef deserialize(const ::tree::cbor::MapReader &map) {
     if (!map.count("n")) {
         return {};
     }
-    auto insn = tree::make<instruction::Instruction>(
-        map.at("n").as_string(),
-        "",
-        map.at("f").as_bool()
-    );
+    auto insn = tree::make<instruction::Instruction>(map.at("n").as_string(), "");
     auto ar = map.at("t").as_array();
     for (const auto &element : ar) {
         insn->param_types.add(::tree::base::deserialize<types::Node>(element.as_binary()));
