@@ -2,7 +2,7 @@ import os
 import re
 
 
-def get_version(verbose=0):
+def get_version(verbose=False):
     """Extract version information from source code"""
 
     root_dir = os.getcwd()  # root of the repository
