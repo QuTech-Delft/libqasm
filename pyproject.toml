@@ -1,4 +1,6 @@
 [tool.pytest.ini_options]
 testpaths = [
-    "test/v10/python"
+    "test/v10/python",
+    "test/v1x/python",
+    "test/v3x/python"
 ]

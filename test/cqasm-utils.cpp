@@ -33,7 +33,7 @@ TEST(to_json, v1x_parser_errors) {
     auto semantic_ast_result = analyzer.analyze(input_file_path.generic_string());
     auto json_result = to_json(semantic_ast_result);
     auto expected_json_result = std::string{
-        R"delim({"errors":["res/v1x/parsing/grammar/expression_recovery/input.cq:4:21: syntax error, unexpected ','""res/v1x/parsing/grammar/expression_recovery/input.cq:4:31: syntax error, unexpected ','""res/v1x/parsing/grammar/expression_recovery/input.cq:4:37: syntax error, unexpected ')', expecting ']'""res/v1x/parsing/grammar/expression_recovery/input.cq:4:61: syntax error, unexpected ','""res/v1x/parsing/grammar/expression_recovery/input.cq:4:67: syntax error, unexpected ')', expecting ',' or ']'""Failed to parse res/v1x/parsing/grammar/expression_recovery/input.cq"]})delim"
+        R"delim({"errors":["res/v1x/parsing/grammar/expression_recovery/input.cq:4:21: syntax error, unexpected ','","res/v1x/parsing/grammar/expression_recovery/input.cq:4:31: syntax error, unexpected ','","res/v1x/parsing/grammar/expression_recovery/input.cq:4:37: syntax error, unexpected ')', expecting ']'","res/v1x/parsing/grammar/expression_recovery/input.cq:4:61: syntax error, unexpected ','","res/v1x/parsing/grammar/expression_recovery/input.cq:4:67: syntax error, unexpected ')', expecting ',' or ']'","Failed to parse res/v1x/parsing/grammar/expression_recovery/input.cq"]})delim"
     };
     EXPECT_EQ(json_result, expected_json_result);
 }

@@ -30,6 +30,8 @@ V1xAnalyzer::V1xAnalyzer(const std::string &max_version, bool without_defaults) 
     }
 }
 
+V1xAnalyzer::~V1xAnalyzer() = default;
+
 /**
  * Registers an instruction type.
  * The arguments are passed straight to instruction::Instruction's constructor.
@@ -133,18 +135,22 @@ std::vector<std::string> V1xAnalyzer::parse_string(
 }
 
 
-V1xParseResult::V1xParseResult() {
-    parse_result = std::make_unique<cqasm::v1x::parser::ParseResult>();
-}
+V1xParseResult::V1xParseResult()
+: parse_result{ std::make_unique<cqasm::v1x::parser::ParseResult>() }
+{}
+
+V1xParseResult::~V1xParseResult() = default;
 
 std::string V1xParseResult::to_json() const {
     return parse_result->to_json();
 }
 
 
-V1xAnalysisResult::V1xAnalysisResult() {
-    analysis_result = std::make_unique<cqasm::v1x::analyzer::AnalysisResult>();
-}
+V1xAnalysisResult::V1xAnalysisResult()
+: analysis_result{ std::make_unique<cqasm::v1x::analyzer::AnalysisResult>() }
+{}
+
+V1xAnalysisResult::~V1xAnalysisResult() = default;
 
 std::string V1xAnalysisResult::to_json() const {
     return analysis_result->to_json();

@@ -48,6 +48,8 @@ public:
         bool without_defaults = false
     );
 
+    ~V1xAnalyzer();
+
     /**
      * Registers an instruction type.
      * The arguments are passed straight to instruction::Instruction's constructor.
@@ -119,6 +121,7 @@ class V1xParseResult {
     std::unique_ptr<cqasm::v1x::parser::ParseResult> parse_result;
 public:
     V1xParseResult();
+    ~V1xParseResult();
     std::string to_json() const;
 };
 
@@ -127,5 +130,6 @@ class V1xAnalysisResult {
     std::unique_ptr<cqasm::v1x::analyzer::AnalysisResult> analysis_result;
 public:
     V1xAnalysisResult();
+    ~V1xAnalysisResult();
     std::string to_json() const;
 };

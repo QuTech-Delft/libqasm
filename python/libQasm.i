@@ -11,6 +11,7 @@
 #include "v10/qasm_ast.hpp"
 #include "v10/libQasm.hpp"
 #include "v1x/cqasm-py.hpp"
+#include "v3x/cqasm-py.hpp"
 %}
 
 %include "exception.i"
@@ -49,6 +50,7 @@ namespace std {
 %include "v10/qasm_ast.hpp"
 %include "v10/libQasm.hpp"
 %include "v1x/cqasm-py.hpp"
+%include "v3x/cqasm-py.hpp"
 
 namespace std {
     %template(subcircuit_vector) vector<shared_ptr<compiler::SubCircuit>>;

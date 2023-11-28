@@ -44,8 +44,10 @@ public:
      */
     V3xAnalyzer(
         const std::string &max_version = "3.0",
-        bool without_defaults=false
+        bool without_defaults = false
     );
+
+    ~V3xAnalyzer();
 
     /**
      * Registers an instruction type.
@@ -106,6 +108,7 @@ class V3xParseResult {
     std::unique_ptr<cqasm::v3x::parser::ParseResult> parse_result;
 public:
     V3xParseResult();
+    ~V3xParseResult();
     std::string to_json() const;
 };
 
@@ -114,5 +117,6 @@ class V3xAnalysisResult {
     std::unique_ptr<cqasm::v3x::analyzer::AnalysisResult> analysis_result;
 public:
     V3xAnalysisResult();
+    ~V3xAnalysisResult();
     std::string to_json() const;
 };

@@ -6,8 +6,7 @@ import cqasm.v3x.parser as parser
 import cqasm.v3x.analyzer as analyzer
 
 
-class Analyzer(libQasm.V3xAnalyzer):
-
+class V3xAnalyzer(libQasm.V3xAnalyzer):
     # parse_file and parse_string are static methods because they do not change the status of the analyzer
     # Instead, they just invoke free functions that create a temporary instance of a parser
     # analyze_file and analyze_string are not static methods because they change the status of the analyzer
@@ -44,13 +43,13 @@ class Analyzer(libQasm.V3xAnalyzer):
         return list(retval[1:])
 
 
-class ParseResult(libQasm.V3xParseResult):
+class V3xParseResult(libQasm.V3xParseResult):
     @staticmethod
     def to_json(parse_result: parser.ParseResult) -> str:
         return parse_result.to_json()
 
 
-class AnalysisResult(libQasm.V3xAnalysisResult):
+class V3xAnalysisResult(libQasm.V3xAnalysisResult):
     @staticmethod
     def to_json(analysis_result: analyzer.AnalysisResult) -> str:
         return analysis_result.to_json()
