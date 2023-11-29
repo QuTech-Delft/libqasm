@@ -1,7 +1,8 @@
 from enum import Enum
 import numpy as np
-from cqasm.v1x.error_model import ErrorModel, ErrorModelRef
-from cqasm.v1x.instruction import Instruction, InstructionRef
+
+import cqasm.v1x.error_model
+import cqasm.v1x.instruction
 import cqasm.v1x.types
 
 Str = str
@@ -100,7 +101,7 @@ def serialize(typ, val):
         return {'c': val.size_cols(), 'd': data}
     elif typ is Version:
         return {'x': list(val)}
-    elif typ is ErrorModelRef:
+    elif typ is cqasm.v1x.error_model.ErrorModelRef:
         if val.data is None:
             return {}
         else:
@@ -108,7 +109,7 @@ def serialize(typ, val):
                 'n': val.data.name,
                 't': [x.serialize() for x in val.data.types]
             }
-    elif typ is InstructionRef:
+    elif typ is cqasm.v1x.instruction.InstructionRef:
         if val.data is None:
             return {}
         else:
@@ -152,17 +153,17 @@ def deserialize(typ, val):
         return CMatrix(np.array(val['d'], dtype=complex).reshape([val['c'], len(val['d']) // val['c']]))
     elif typ is Version:
         return Version(val['x'])
-    elif typ is ErrorModelRef:
+    elif typ is cqasm.v1x.error_model.ErrorModelRef:
         if 'n' in val:
-            return ErrorModelRef(
+            return cqasm.v1x.error_model.ErrorModelRef(
                 val['n'],
                 [cqasm.v1x.types.Node.deserialize(x) for x in val['t']]
             )
         else:
-            return ErrorModelRef()
-    elif typ is InstructionRef:
+            return cqasm.v1x.error_model.ErrorModelRef()
+    elif typ is cqasm.v1x.instruction.InstructionRef:
         if 'n' in val:
-            return InstructionRef(
+            return cqasm.v1x.instruction.InstructionRef(
                 val['n'],
                 [cqasm.v1x.types.Node.deserialize(x) for x in val['t']],
                 val['c'],
@@ -171,6 +172,6 @@ def deserialize(typ, val):
                 val['d']
             )
         else:
-            return InstructionRef()
+            return cqasm.v1x.instruction.InstructionRef()
     else:
         assert False
