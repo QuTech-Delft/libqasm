@@ -9,7 +9,6 @@ class TestParseResult(unittest.TestCase):
         program_str = "version 3; bit[3.14]"
         v3x_analyzer = cq.Analyzer()
         actual_errors_json = v3x_analyzer.parse_string_to_json(program_str)
-        print(actual_errors_json)
         expected_errors_json = '''{"errors":["Error at <unknown>:1:19..20: declaring bit array of size <= 0"]}'''
         self.assertEqual(expected_errors_json, expected_errors_json)
 
@@ -18,6 +17,5 @@ class TestParseResult(unittest.TestCase):
         program_str = "version 1.0; bit[0] b"
         v3x_analyzer = cq.Analyzer()
         actual_ast_json = v3x_analyzer.parse_string_to_json(program_str)
-        print(actual_ast_json)
         expected_ast_json = '''{"Program":{"version":{"Version":{"items":"1.0","source_location":"<unknown>:1:9..12"}},"statements":{"StatementList":{"items":[{"Variables":{"names":[{"Identifier":{"name":"b"}}],"typ":{"Identifier":{"name":"bit"}},"size":{"IntegerLiteral":{"value":"0"}},"annotations":"[]","source_location":"<unknown>:1:21..22"}}]}}}}'''
         self.assertEqual(actual_ast_json, expected_ast_json)
