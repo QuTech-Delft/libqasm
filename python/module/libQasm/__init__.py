@@ -5,6 +5,10 @@ import os
 from sys import version_info
 
 # Before we can import the dynamic modules, we have to set the linker search path appropriately.
+from sys import version_info
+
+
+# Before we can import the dynamic modules, we have to set the linker search path appropriately.
 ld_lib_path = os.environ.get('LD_LIBRARY_PATH', '')
 if ld_lib_path:
     ld_lib_path += ':'
