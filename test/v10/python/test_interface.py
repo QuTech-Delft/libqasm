@@ -1,4 +1,4 @@
-from ...test_init import TestLibQasm
+from test_init import TestLibQasm
 
 
 class TestInterface(TestLibQasm):
