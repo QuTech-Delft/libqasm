@@ -1,17 +1,17 @@
 # Author Imran Ashraf, Jeroen van Straten
 
-# Before we can import the dynamic modules, we have to set the linker search
-# path appropriately.
 import os
+from sys import version_info
+
+
+# Before we can import the dynamic modules, we have to set the linker search path appropriately.
 ld_lib_path = os.environ.get('LD_LIBRARY_PATH', '')
 if ld_lib_path:
     ld_lib_path += ':'
 os.environ['LD_LIBRARY_PATH'] = ld_lib_path + os.path.dirname(__file__)
 del ld_lib_path, os
 
-# The import syntax changes slightly between python 2 and 3, so we
-# need to detect which version is being used:
-from sys import version_info
+# The import syntax changes slightly between python 2 and 3, so we need to detect which version is being used:
 if version_info[0] == 3:
     PY3 = True
 elif version_info[0] == 2:
