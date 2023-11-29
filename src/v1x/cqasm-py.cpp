@@ -3,9 +3,10 @@
  */
 
 #include "cqasm-version.hpp"
+#include "v1x/cqasm-analyzer.hpp"
+#include "v1x/cqasm-parse-helper.hpp"
 #include "v1x/cqasm-py.hpp"
 #include "v1x/cqasm.hpp"
-#include "v1x/cqasm-parse-helper.hpp"
 
 #include <memory>
 
@@ -23,13 +24,18 @@ namespace v1x = cqasm::v1x;
  */
 V1xAnalyzer::V1xAnalyzer(const std::string &max_version, bool without_defaults) {
     if (without_defaults) {
-        a = std::make_unique<v1x::analyzer::Analyzer>(max_version);
-        a->register_default_functions_and_mappings();
+        analyzer = std::make_unique<v1x::analyzer::Analyzer>(max_version);
+        analyzer->register_default_functions_and_mappings();
     } else {
-        a = std::make_unique<v1x::analyzer::Analyzer>(v1x::default_analyzer(max_version));
+        analyzer = std::make_unique<v1x::analyzer::Analyzer>(v1x::default_analyzer(max_version));
     }
 }
 
+/**
+ * std::unique_ptr<T> requires T to be a complete class for the ~T operation.
+ * Since we are using a forward declaration for Analyzer, we need to declare ~T in the header file,
+ * and implement it in the source file.
+ */
 V1xAnalyzer::~V1xAnalyzer() = default;
 
 /**
@@ -44,7 +50,7 @@ void V1xAnalyzer::register_instruction(
     bool allow_reused_qubits,
     bool allow_different_index_sizes
 ) {
-    a->register_instruction(
+    analyzer->register_instruction(
         name,
         param_types,
         allow_conditional,
@@ -62,7 +68,7 @@ void V1xAnalyzer::register_error_model(
     const std::string &name,
     const std::string &param_types
 ) {
-    a->register_error_model(name, param_types);
+    analyzer->register_error_model(name, param_types);
 }
 
 /**
@@ -76,10 +82,12 @@ void V1xAnalyzer::register_error_model(
 std::vector<std::string> V1xAnalyzer::parse_file(
     const std::string &filename
 ) {
-    auto result = v1x::parser::parse_file(filename);
-    return result.errors.empty()
-        ? std::vector<std::string>{ tree::base::serialize(result.root) }
-        : result.errors;
+    if (auto parse_result = v1x::parser::parse_file(filename); parse_result.errors.empty()) {
+        return std::vector<std::string>{ tree::base::serialize(parse_result.root) };
+    } else {
+        parse_result.errors.insert(parse_result.errors.begin(), "");
+        return parse_result.errors;
+    }
 }
 
 /**
@@ -90,10 +98,12 @@ std::vector<std::string> V1xAnalyzer::parse_string(
     const std::string &data,
     const std::string &filename
 ) {
-    auto result = v1x::parser::parse_string(data, filename);
-    return result.errors.empty()
-        ? std::vector<std::string>{ tree::base::serialize(result.root) }
-        : result.errors;
+    if (auto parse_result = v1x::parser::parse_string(data, filename); parse_result.errors.empty()) {
+        return std::vector<std::string>{ tree::base::serialize(parse_result.root) };
+    } else {
+        parse_result.errors.insert(parse_result.errors.begin(), "");
+        return parse_result.errors;
+    }
 }
 
 /**
@@ -108,13 +118,16 @@ std::vector<std::string> V1xAnalyzer::parse_string(
 [[nodiscard]] std::vector<std::string> V1xAnalyzer::analyze_file(
     const std::string &filename
 ) const {
-    auto result = a->analyze(
+    auto analysis_result = analyzer->analyze(
         [=](){ return cqasm::version::parse_file(filename); },
         [=](){ return v1x::parser::parse_file(filename); }
     );
-    return result.errors.empty()
-        ? std::vector<std::string>{ tree::base::serialize(result.root) }
-        : result.errors;
+    if (analysis_result.errors.empty()) {
+        return std::vector<std::string>{ tree::base::serialize(analysis_result.root) };
+    } else {
+        analysis_result.errors.insert(analysis_result.errors.begin(), "");
+        return analysis_result.errors;
+    }
 }
 
 /**
@@ -125,13 +138,16 @@ std::vector<std::string> V1xAnalyzer::parse_string(
     const std::string &data,
     const std::string &filename
 ) const {
-    auto result = a->analyze(
+    auto analysis_result = analyzer->analyze(
         [=](){ return cqasm::version::parse_string(data, filename); },
         [=](){ return v1x::parser::parse_string(data, filename); }
     );
-    return result.errors.empty()
-        ? std::vector<std::string>{ tree::base::serialize(result.root) }
-        : result.errors;
+    if (analysis_result.errors.empty()) {
+        return std::vector<std::string>{ tree::base::serialize(analysis_result.root) };
+    } else {
+        analysis_result.errors.insert(analysis_result.errors.begin(), "");
+        return analysis_result.errors;
+    }
 }
 
 
