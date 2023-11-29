@@ -12,7 +12,7 @@ class Analyzer(libQasm.V3xAnalyzer):
             serialized_ast_bytes = serialized_ast_str.encode(encoding='utf-8', errors="surrogateescape")
             deserialized_ast = ast.Root.deserialize(serialized_ast_bytes)
             return deserialized_ast
-        return list(ret[1:])
+        return [str(error) for error in ret[1:]]
 
     @staticmethod
     def parse_string(*args):
@@ -23,7 +23,7 @@ class Analyzer(libQasm.V3xAnalyzer):
             serialized_ast_bytes = serialized_ast_str.encode(encoding='utf-8', errors="surrogateescape")
             deserialized_ast = ast.Root.deserialize(serialized_ast_bytes)
             return deserialized_ast
-        return list(ret[1:])
+        return [str(error) for error in ret[1:]]
 
     def analyze_file(self, *args):
         ret = super().analyze_file(*args)
@@ -33,7 +33,7 @@ class Analyzer(libQasm.V3xAnalyzer):
             serialized_ast_bytes = serialized_ast_str.encode(encoding='utf-8', errors="surrogateescape")
             deserialized_ast = semantic.Root.deserialize(serialized_ast_bytes)
             return deserialized_ast
-        return list(ret[1:])
+        return [str(error) for error in ret[1:]]
 
     def analyze_string(self, *args):
         ret = super().analyze_string(*args)
@@ -43,4 +43,4 @@ class Analyzer(libQasm.V3xAnalyzer):
             serialized_ast_bytes = serialized_ast_str.encode(encoding='utf-8', errors="surrogateescape")
             deserialized_ast = semantic.Root.deserialize(serialized_ast_bytes)
             return deserialized_ast
-        return list(ret[1:])
+        return [str(error) for error in ret[1:]]
