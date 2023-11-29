@@ -37,7 +37,7 @@ class Analyzer(libQasm.V1xAnalyzer):
         if len(ret) == 1:
             serialized_ast_str = str(ret[0])
             serialized_ast_bytes = serialized_ast_str.encode(encoding='utf-8', errors="surrogateescape")
-            deserialized_ast = semantic.Root.deserialize(serialized_ast_bytes)
+            deserialized_ast = semantic.Program.deserialize(serialized_ast_bytes)
             return deserialized_ast
         return [str(error) for error in ret[1:]]
 
@@ -46,7 +46,7 @@ class Analyzer(libQasm.V1xAnalyzer):
         if len(ret) == 1:
             serialized_ast_str = str(ret[0])
             serialized_ast_bytes = serialized_ast_str.encode(encoding='utf-8', errors="surrogateescape")
-            deserialized_ast = semantic.Root.deserialize(serialized_ast_bytes)
+            deserialized_ast = semantic.Program.deserialize(serialized_ast_bytes)
             return deserialized_ast
         return [str(error) for error in ret[1:]]
 
