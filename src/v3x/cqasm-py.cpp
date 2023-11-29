@@ -64,9 +64,9 @@ std::vector<std::string> V3xAnalyzer::parse_file(const std::string &filename) {
     }
 }
 
-/ **
-  * Counterpart of parse_file that returns a string with a JSON representation of the ParseResult.
-  */
+/**
+ * Counterpart of parse_file that returns a string with a JSON representation of the ParseResult.
+ */
 std::string V3xAnalyzer::parse_file_to_json(const std::string &filename) {
     return cqasm::utils::to_json(v3x::parser::parse_file(filename));
 }
@@ -84,9 +84,9 @@ std::vector<std::string> V3xAnalyzer::parse_string(const std::string &data, cons
     }
 }
 
-/ **
-  * Counterpart of parse_string that returns a string with a JSON representation of the ParseResult.
-  */
+/**
+ * Counterpart of parse_string that returns a string with a JSON representation of the ParseResult.
+ */
 std::string V3xAnalyzer::parse_string_to_json(const std::string &data, const std::string &filename) {
     return cqasm::utils::to_json(v3x::parser::parse_string(data, filename));
 }
@@ -113,9 +113,9 @@ std::vector<std::string> V3xAnalyzer::analyze_file(const std::string &filename) 
     }
 }
 
-/ **
-  * Counterpart of analyze_file that returns a string with a JSON representation of the AnalysisResult.
-  */
+/**
+ * Counterpart of analyze_file that returns a string with a JSON representation of the AnalysisResult.
+ */
 [[nodiscard]] std::string V3xAnalyzer::analyze_file_to_json(const std::string &filename) const {
     return cqasm::utils::to_json(analyzer->analyze(
         [=](){ return cqasm::version::parse_file(filename); },
@@ -140,9 +140,9 @@ std::vector<std::string> V3xAnalyzer::analyze_string(const std::string &data, co
     }
 }
 
-/ **
-  * Counterpart of analyze_string that returns a string with a JSON representation of the AnalysisResult.
-  */
+/**
+ * Counterpart of analyze_string that returns a string with a JSON representation of the AnalysisResult.
+ */
 [[nodiscard]] std::string V3xAnalyzer::analyze_string_to_json(const std::string &data, const std::string &filename) const {
     return cqasm::utils::to_json(analyzer->analyze(
         [=](){ return cqasm::version::parse_string(data, filename); },

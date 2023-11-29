@@ -58,9 +58,9 @@ public:
      */
     static std::vector<std::string> parse_file(const std::string &filename);
 
-    / **
-      * Counterpart of parse_file that returns a string with a JSON representation of the ParseResult.
-      */
+    /**
+     * Counterpart of parse_file that returns a string with a JSON representation of the ParseResult.
+     */
     static std::string parse_file_to_json(const std::string &filename);
 
     /**
@@ -69,9 +69,9 @@ public:
      */
     static std::vector<std::string> parse_string(const std::string &data, const std::string &filename = "<unknown>");
 
-    / **
-      * Counterpart of parse_string that returns a string with a JSON representation of the ParseResult.
-      */
+    /**
+     * Counterpart of parse_string that returns a string with a JSON representation of the ParseResult.
+     */
     static std::string parse_string_to_json(const std::string &data, const std::string &filename = "<unknown>");
 
     /**
@@ -85,9 +85,9 @@ public:
      */
     std::vector<std::string> analyze_file(const std::string &filename) const;
 
-    / **
-      * Counterpart of analyze_file that returns a string with a JSON representation of the AnalysisResult.
-      */
+    /**
+     * Counterpart of analyze_file that returns a string with a JSON representation of the AnalysisResult.
+     */
     std::string analyze_file_to_json(const std::string &filename) const;
 
     /**
@@ -96,8 +96,8 @@ public:
      */
     std::vector<std::string> analyze_string(const std::string &data, const std::string &filename = "<unknown>") const;
 
-    / **
-      * Counterpart of analyze_string that returns a string with a JSON representation of the AnalysisResult.
-      */
+    /**
+     * Counterpart of analyze_string that returns a string with a JSON representation of the AnalysisResult.
+     */
     std::string analyze_string_to_json(const std::string &data, const std::string &filename = "<unknown>") const;
 };
