@@ -1,26 +1,23 @@
-import libQasm as cq
 import unittest
+
+import cqasm.v1x as cq
 
 
 class TestAnalysisResult(unittest.TestCase):
-    def setUp(self):
-        self.analyzer = cq.V1xAnalyzer()
-
-    def analyze(self, s: str):
-        return self.analyzer.analyze_string(s)
-
     def test_to_json_with_analyzer_errors(self):
-        result = self.analyze("version 1.0; qubits 2; wait 1")
-        json_result = result.to_json()
-        expected_json_result = '''{"errors":["Error at res/v1x/parsing/misc/wait_not_ok_1/input.cq:4:1..7: failed to resolve overload for wait with argument pack (int)"]}'''
-        self.assertEqual(json_result, expected_json_result)
+        # res/v1x/parsing/misc/wait_not_ok_1
+        program_str = "version 1.0; qubits 2; wait 1"
+        v1x_analyzer = cq.Analyzer()
+        actual_errors_json = v1x_analyzer.analyze_string_to_json(program_str)
+        print(actual_errors_json)
+        expected_errors_json = '''{"errors":["Error at <unknown>:1:24..30: failed to resolve overload for wait with argument pack (int)"]}'''
+        self.assertEqual(actual_errors_json, expected_errors_json)
 
     def test_to_json_with_analyzer_ast(self):
-        result = self.analyze("version 1.0; qubits 2; wait 1")
-        json_result = result.to_json()
-        expected_json_result = '''{"Program":{"api_version":"1.0","version":{"Version":{"items":"1.0","source_location":"res/v1x/parsing/grammar/map/input.cq:1:9..12"}},"num_qubits":"10","error_model":"-","subcircuits":"[]","mappings":[{"Mapping":{"name":"three","value":{"ConstInt":{"value":"3","source_location":"res/v1x/parsing/grammar/map/input.cq:4:5..6"}},"annotations":[{"AnnotationData":{"interface":"first","operation":"annot","operands":"[]","source_location":"res/v1x/parsing/grammar/map/input.cq:4:15..26"}}],"source_location":"res/v1x/parsing/grammar/map/input.cq:4:1..26"}},{"Mapping":{"name":"also_three","value":{"ConstInt":{"value":"3","source_location":"res/v1x/parsing/grammar/map/input.cq:5:18..23"}},"annotations":[{"AnnotationData":{"interface":"second","operation":"annot","operands":"[]","source_location":"res/v1x/parsing/grammar/map/input.cq:5:25..37"}},{"AnnotationData":{"interface":"third","operation":"annot","operands":"[]","source_location":"res/v1x/parsing/grammar/map/input.cq:5:39..50"}}],"source_location":"res/v1x/parsing/grammar/map/input.cq:5:1..50"}}],"variables":"[]","source_location":"res/v1x/parsing/grammar/map/input.cq:1:1..6:1"}}'''
-        self.assertEqual(json_result, expected_json_result)
-
-
-if __name__ == '__main__':
-    unittest.main()
+        # res/v1x/parsing/grammar/map
+        program_str = "version 1.0; qubits 10; map 3, three @first.annot; map also_three = three @second.annot @third.annot"
+        v1x_analyzer = cq.Analyzer()
+        actual_ast_json = v1x_analyzer.analyze_string_to_json(program_str)
+        print(actual_ast_json)
+        expected_ast_json = '''{"Program":{"api_version":"1.0","version":{"Version":{"items":"1.0","source_location":"<unknown>:1:9..12"}},"num_qubits":"10","error_model":"-","subcircuits":"[]","mappings":[{"Mapping":{"name":"three","value":{"ConstInt":{"value":"3","source_location":"<unknown>:1:29..30"}},"annotations":[{"AnnotationData":{"interface":"first","operation":"annot","operands":"[]","source_location":"<unknown>:1:39..50"}}],"source_location":"<unknown>:1:25..50"}},{"Mapping":{"name":"also_three","value":{"ConstInt":{"value":"3","source_location":"<unknown>:1:69..74"}},"annotations":[{"AnnotationData":{"interface":"second","operation":"annot","operands":"[]","source_location":"<unknown>:1:76..88"}},{"AnnotationData":{"interface":"third","operation":"annot","operands":"[]","source_location":"<unknown>:1:90..101"}}],"source_location":"<unknown>:1:52..101"}}],"variables":"[]","source_location":"<unknown>:1:1..101"}}'''
+        self.assertEqual(actual_ast_json, expected_ast_json)

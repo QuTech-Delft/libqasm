@@ -1,9 +1,6 @@
-import libQasm
-
 import cqasm.v3x.ast as ast
 import cqasm.v3x.semantic as semantic
-import cqasm.v3x.parser as parser
-import cqasm.v3x.analyzer as analyzer
+import libQasm
 
 
 class Analyzer(libQasm.V3xAnalyzer):
@@ -53,14 +50,16 @@ class Analyzer(libQasm.V3xAnalyzer):
             return deserialized_ast
         return [str(error) for error in ret[1:]]
 
-
-class V3xParseResult(libQasm.V3xParseResult):
     @staticmethod
-    def to_json(parse_result: parser.ParseResult) -> str:
-        return parse_result.to_json()
+    def parse_file_to_json(*args):
+        return libQasm.V3xAnalyzer.parse_file_to_json(*args)
 
-
-class V3xAnalysisResult(libQasm.V3xAnalysisResult):
     @staticmethod
-    def to_json(analysis_result: analyzer.AnalysisResult) -> str:
-        return analysis_result.to_json()
+    def parse_string_to_json(*args):
+        return libQasm.V3xAnalyzer.parse_string_to_json(*args)
+
+    def analyze_file_to_json(self, *args):
+        return super().analyze_file_to_json(*args)
+
+    def analyze_string_to_json(self, *args):
+        return super().analyze_string_to_json(*args)

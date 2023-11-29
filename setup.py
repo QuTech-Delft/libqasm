@@ -188,7 +188,7 @@ setup(
         'Topic :: Scientific/Engineering'
     ],
 
-    packages=['libQasm', 'cqasm', 'cqasm.v1x'],
+    packages=['libQasm', 'cqasm', 'cqasm.v1x', 'cqasm.v3x'],
     package_dir={'': 'pybuild/module'},
 
     # NOTE: the library build process is completely overridden to let CMake handle it.

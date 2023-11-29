@@ -1,9 +1,6 @@
-import libQasm
-
 import cqasm.v1x.ast as ast
 import cqasm.v1x.semantic as semantic
-import cqasm.v1x.parser as parser
-import cqasm.v1x.analyzer as analyzer
+import libQasm
 
 
 class Analyzer(libQasm.V1xAnalyzer):
@@ -53,14 +50,16 @@ class Analyzer(libQasm.V1xAnalyzer):
             return deserialized_ast
         return [str(error) for error in ret[1:]]
 
-
-class V1xParseResult(libQasm.V1xParseResult):
     @staticmethod
-    def to_json(parse_result: parser.ParseResult) -> str:
-        return parse_result.to_json()
+    def parse_file_to_json(*args):
+        return libQasm.V1xAnalyzer.parse_file_to_json(*args)
 
-
-class V1xAnalysisResult(libQasm.V1xAnalysisResult):
     @staticmethod
-    def to_json(analysis_result: analyzer.AnalysisResult) -> str:
-        return analysis_result.to_json()
+    def parse_string_to_json(*args):
+        return libQasm.V1xAnalyzer.parse_string_to_json(*args)
+
+    def analyze_file_to_json(self, *args):
+        return super().analyze_file_to_json(*args)
+
+    def analyze_string_to_json(self, *args):
+        return super().analyze_string_to_json(*args)

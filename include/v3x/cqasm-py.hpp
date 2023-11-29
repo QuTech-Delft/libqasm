@@ -14,12 +14,8 @@
 #include <vector>
 
 // Forward declarations for internal types.
-namespace cqasm::v3x::parser {
-    class ParseResult;
-}
 namespace cqasm::v3x::analyzer {
     class Analyzer;
-    class AnalysisResult;
 }
 
 /**
@@ -29,7 +25,7 @@ class V3xAnalyzer {
     /**
      * Reference to the actual C++ analyzer that this wraps.
      */
-    std::unique_ptr<cqasm::v3x::analyzer::Analyzer> a;
+    std::unique_ptr<cqasm::v3x::analyzer::Analyzer> analyzer;
 
 public:
     /**
@@ -42,10 +38,7 @@ public:
      * the initial mappings and functions are not configurable at all.
      * The defaults for these are always used.
      */
-    V3xAnalyzer(
-        const std::string &max_version = "3.0",
-        bool without_defaults = false
-    );
+    V3xAnalyzer(const std::string &max_version = "3.0", bool without_defaults = false);
 
     ~V3xAnalyzer();
 
@@ -63,18 +56,23 @@ public:
      * of which the first is always present and is the CBOR serialization of the v3.x AST.
      * Any additional strings represent error messages.
      */
-    static std::vector<std::string> parse_file(
-        const std::string &filename
-    );
+    static std::vector<std::string> parse_file(const std::string &filename);
+
+    / **
+      * Counterpart of parse_file that returns a string with a JSON representation of the ParseResult.
+      */
+    static std::string parse_file_to_json(const std::string &filename);
 
     /**
      * Same as parse_file(), but instead receives the file contents directly.
      * The filename, if specified, is only used when reporting errors.
      */
-    static std::vector<std::string> parse_string(
-        const std::string &data,
-        const std::string &filename = "<unknown>"
-    );
+    static std::vector<std::string> parse_string(const std::string &data, const std::string &filename = "<unknown>");
+
+    / **
+      * Counterpart of parse_string that returns a string with a JSON representation of the ParseResult.
+      */
+    static std::string parse_string_to_json(const std::string &data, const std::string &filename = "<unknown>");
 
     /**
      * Parses and analyzes the given file.
@@ -85,34 +83,21 @@ public:
      * of which the first is always present and is the CBOR serialization of the v3.x semantic tree.
      * Any additional strings represent error messages.
      */
-    std::vector<std::string> analyze_file(
-        const std::string &filename
-    ) const;
+    std::vector<std::string> analyze_file(const std::string &filename) const;
+
+    / **
+      * Counterpart of analyze_file that returns a string with a JSON representation of the AnalysisResult.
+      */
+    std::string analyze_file_to_json(const std::string &filename) const;
 
     /**
      * Same as analyze_file(), but instead receives the file contents directly.
      * The filename, if specified, is only used when reporting errors.
      */
-    std::vector<std::string> analyze_string(
-        const std::string &data,
-        const std::string &filename = "<unknown>"
-    ) const;
-};
+    std::vector<std::string> analyze_string(const std::string &data, const std::string &filename = "<unknown>") const;
 
-
-class V3xParseResult {
-    std::unique_ptr<cqasm::v3x::parser::ParseResult> parse_result;
-public:
-    V3xParseResult();
-    ~V3xParseResult();
-    std::string to_json() const;
-};
-
-
-class V3xAnalysisResult {
-    std::unique_ptr<cqasm::v3x::analyzer::AnalysisResult> analysis_result;
-public:
-    V3xAnalysisResult();
-    ~V3xAnalysisResult();
-    std::string to_json() const;
+    / **
+      * Counterpart of analyze_string that returns a string with a JSON representation of the AnalysisResult.
+      */
+    std::string analyze_string_to_json(const std::string &data, const std::string &filename = "<unknown>") const;
 };

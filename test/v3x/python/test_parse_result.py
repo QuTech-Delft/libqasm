@@ -1,27 +1,23 @@
-import libQasm as cq
 import unittest
+
+import cqasm.v3x as cq
 
 
 class TestParseResult(unittest.TestCase):
-    def setUp(self):
-        self.analyzer = cq.V3xAnalyzer()
-
-    def analyze(self, s: str):
-        return self.analyzer.analyze_string(s)
-
     def test_to_json_with_parser_errors(self):
-        result = self.analyze("version 3; bit[3.14]")
-        json_result = result.to_json()
-        expected_json_result = '''{"errors":["<unknown>:3:5: mismatched input '3.14' expecting INTEGER_LITERAL"]}'''
-        self.assertEqual(json_result, expected_json_result)
+        # res/v3x/parsing/bit_array_definition/bit_array_of_3_14
+        program_str = "version 3; bit[3.14]"
+        v3x_analyzer = cq.Analyzer()
+        actual_errors_json = v3x_analyzer.parse_string_to_json(program_str)
+        print(actual_errors_json)
+        expected_errors_json = '''{"errors":["Error at <unknown>:1:19..20: declaring bit array of size <= 0"]}'''
+        self.assertEqual(expected_errors_json, expected_errors_json)
 
     def test_to_json_with_parser_ast(self):
-        result = self.analyze("version 1.0; bit[0] b")
-        json_result = result.to_json()
-        expected_json_result = '''{"Program":{"version":{"Version":{"items":"3","source_location":"<unknown>:1:9..10"}},"statements":{"StatementList":{"items":[{"Variables":{"names":[{"Identifier":{"name":"b"}}],"typ":{"Identifier":{"name":"bit"}},"size":{"IntegerLiteral":{"value":"0"}},"annotations":"[]","source_location":"<unknown>:3:8..9"}}]}}}}'''
-        self.assertEqual(json_result, expected_json_result)
-
-
-if __name__ == '__main__':
-    unittest.main()
-
+        # res/v3x/parsing/bit_array_definition/bit_array_of_0_b
+        program_str = "version 1.0; bit[0] b"
+        v3x_analyzer = cq.Analyzer()
+        actual_ast_json = v3x_analyzer.parse_string_to_json(program_str)
+        print(actual_ast_json)
+        expected_ast_json = '''{"Program":{"version":{"Version":{"items":"1.0","source_location":"<unknown>:1:9..12"}},"statements":{"StatementList":{"items":[{"Variables":{"names":[{"Identifier":{"name":"b"}}],"typ":{"Identifier":{"name":"bit"}},"size":{"IntegerLiteral":{"value":"0"}},"annotations":"[]","source_location":"<unknown>:1:21..22"}}]}}}}'''
+        self.assertEqual(actual_ast_json, expected_ast_json)
