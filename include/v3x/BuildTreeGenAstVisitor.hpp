@@ -33,6 +33,16 @@ public:
     std::any visitStatementSeparator(CqasmParser::StatementSeparatorContext *context) override;
     std::any visitQubitTypeDefinition(CqasmParser::QubitTypeDefinitionContext *context) override;
     std::any visitBitTypeDefinition(CqasmParser::BitTypeDefinitionContext *context) override;
+    std::any visitAxisTypeDefinition(CqasmParser::AxisTypeDefinitionContext *context) override;
+    std::any visitBoolTypeDefinition(CqasmParser::BoolTypeDefinitionContext *context) override;
+    std::any visitBoolArrayTypeDefinition(CqasmParser::BoolArrayTypeDefinitionContext *context) override;
+    std::any visitIntTypeDefinition(CqasmParser::IntTypeDefinitionContext *context) override;
+    std::any visitIntArrayTypeDefinition(CqasmParser::IntArrayTypeDefinitionContext *context) override;
+    std::any visitFloatTypeDefinition(CqasmParser::FloatTypeDefinitionContext *context) override;
+    std::any visitFloatArrayTypeDefinition(CqasmParser::FloatArrayTypeDefinitionContext *context) override;
+    std::any visitArraySizeDefinition(CqasmParser::ArraySizeDefinitionContext *context) override;
+    std::any visitAxisTypeInitializer(CqasmParser::AxisTypeInitializerContext *context) override;
+    std::any visitArrayTypeInitializer(CqasmParser::ArrayTypeInitializerContext *context) override;
     std::any visitMeasureInstruction(CqasmParser::MeasureInstructionContext *context) override;
     std::any visitInstruction(CqasmParser::InstructionContext *context) override;
     std::any visitExpressionList(CqasmParser::ExpressionListContext *context) override;

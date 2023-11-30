@@ -14,8 +14,6 @@
 //
 // REQ005: cQASM shall support the following types: qubit, bit, bool, int, float.
 //
-// REQ006: cQASM shall support the angle type.
-//
 // REQ007: cQASM shall support the axis type.
 //
 // REQ008: cQASM shall support the following single-qubit gate modifier: pow.
@@ -77,6 +75,8 @@ DOT: '.';
 EQUALS: '=';
 OPEN_BRACKET: '[';
 CLOSE_BRACKET: ']';
+OPEN_BRACE: '{';
+CLOSE_BRACE: '}';
 
 // Keywords
 VERSION: 'version' -> pushMode(VERSION_STATEMENT);
@@ -89,8 +89,8 @@ INT_TYPE: 'int';
 QUBIT_TYPE: 'qubit';
 
 // Numeric literals
-INTEGER_LITERAL : Digit+;
-FLOAT_LITERAL: Digit* '.' Digit+([eE][-+]Digit+)?;
+INTEGER_LITERAL : ([-+])? Digit+;
+FLOAT_LITERAL: ([-+])? Digit* '.' Digit+([eE][-+]Digit+)?;
 fragment Digit: [0-9];
 
 // Identifier

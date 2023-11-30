@@ -143,6 +143,56 @@ std::any BuildTreeGenAstVisitor::visitBitTypeDefinition(CqasmParser::BitTypeDefi
     return One<Statement>{ ret };
 }
 
+std::any BuildTreeGenAstVisitor::visitAxisTypeDefinition(CqasmParser::AxisTypeDefinitionContext *context) {
+    (void) context;
+    throw std::runtime_error{ "Unimplemented" };
+}
+
+std::any BuildTreeGenAstVisitor::visitBoolTypeDefinition(CqasmParser::BoolTypeDefinitionContext *context) {
+    (void) context;
+    throw std::runtime_error{ "Unimplemented" };
+}
+
+std::any BuildTreeGenAstVisitor::visitBoolArrayTypeDefinition(CqasmParser::BoolArrayTypeDefinitionContext *context) {
+    (void) context;
+    throw std::runtime_error{ "Unimplemented" };
+}
+
+std::any BuildTreeGenAstVisitor::visitIntTypeDefinition(CqasmParser::IntTypeDefinitionContext *context) {
+    (void) context;
+    throw std::runtime_error{ "Unimplemented" };
+}
+
+std::any BuildTreeGenAstVisitor::visitIntArrayTypeDefinition(CqasmParser::IntArrayTypeDefinitionContext *context) {
+    (void) context;
+    throw std::runtime_error{ "Unimplemented" };
+}
+
+std::any BuildTreeGenAstVisitor::visitFloatTypeDefinition(CqasmParser::FloatTypeDefinitionContext *context) {
+    (void) context;
+    throw std::runtime_error{ "Unimplemented" };
+}
+
+std::any BuildTreeGenAstVisitor::visitFloatArrayTypeDefinition(CqasmParser::FloatArrayTypeDefinitionContext *context) {
+    (void) context;
+    throw std::runtime_error{ "Unimplemented" };
+}
+
+std::any BuildTreeGenAstVisitor::visitArraySizeDefinition(CqasmParser::ArraySizeDefinitionContext *context) {
+    (void) context;
+    throw std::runtime_error{ "Unimplemented" };
+}
+
+std::any BuildTreeGenAstVisitor::visitAxisTypeInitializer(CqasmParser::AxisTypeInitializerContext *context) {
+    (void) context;
+    throw std::runtime_error{ "Unimplemented" };
+}
+
+std::any BuildTreeGenAstVisitor::visitArrayTypeInitializer(CqasmParser::ArrayTypeInitializerContext *context) {
+    (void) context;
+    throw std::runtime_error{ "Unimplemented" };
+}
+
 std::any BuildTreeGenAstVisitor::visitMeasureInstruction(CqasmParser::MeasureInstructionContext *context) {
     auto ret = cqasm::tree::make<Instruction>();
     ret->name = cqasm::tree::make<Identifier>(context->MEASURE()->getText());

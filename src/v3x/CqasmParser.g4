@@ -20,9 +20,22 @@ statementSeparator: NEW_LINE | SEMICOLON;
 statement:
     QUBIT_TYPE (OPEN_BRACKET INTEGER_LITERAL CLOSE_BRACKET)? IDENTIFIER  # qubitTypeDefinition
     | BIT_TYPE (OPEN_BRACKET INTEGER_LITERAL CLOSE_BRACKET)? IDENTIFIER  # bitTypeDefinition
+    | AXIS_TYPE IDENTIFIER (EQUALS axisTypeInitializer)?  # axisTypeDefinition
+    | BOOL_TYPE IDENTIFIER (EQUALS expression)?  # boolTypeDefinition
+    | BOOL_TYPE arraySizeDefinition IDENTIFIER (EQUALS arrayTypeInitializer)?  # boolArrayTypeDefinition
+    | INT_TYPE IDENTIFIER (EQUALS expression)?  # intTypeDefinition
+    | INT_TYPE arraySizeDefinition IDENTIFIER (EQUALS arrayTypeInitializer)?  # intArrayTypeDefinition
+    | FLOAT_TYPE IDENTIFIER (EQUALS expression)?  # floatTypeDefinition
+    | FLOAT_TYPE arraySizeDefinition IDENTIFIER (EQUALS arrayTypeInitializer)?  # floatArrayTypeDefinition
     | expression EQUALS MEASURE expression  # measureInstruction
     | IDENTIFIER expressionList  # instruction
     ;
+
+arraySizeDefinition: OPEN_BRACKET INTEGER_LITERAL CLOSE_BRACKET;
+
+axisTypeInitializer: OPEN_BRACKET expression COMMA expression COMMA expression CLOSE_BRACKET;
+
+arrayTypeInitializer: OPEN_BRACE expressionList CLOSE_BRACE;
 
 expressionList: expression (COMMA expression)*;
 
