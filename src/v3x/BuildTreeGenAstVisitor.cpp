@@ -109,13 +109,14 @@ std::any BuildTreeGenAstVisitor::visitStatementSeparator(CqasmParser::StatementS
     return {};
 }
 
+// tree-gen AST has support for many variable declarations on the same line,
+// but parser grammar only allows one variable declaration per line at the moment
+
 std::any BuildTreeGenAstVisitor::visitQubitTypeDefinition(CqasmParser::QubitTypeDefinitionContext *context) {
-    auto int_ctx = context->INTEGER_LITERAL();
-    auto size = (int_ctx)
-        ? tree::Maybe<IntegerLiteral>{ cqasm::tree::make<IntegerLiteral>(get_int_value(int_ctx)) }
+    auto array_size_definition_ctx = context->arraySizeDefinition();
+    auto size = (array_size_definition_ctx)
+        ? tree::Maybe<IntegerLiteral>{ std::any_cast<One<IntegerLiteral>>(array_size_definition_ctx->accept(this)).get_ptr() }
         : tree::Maybe<IntegerLiteral>{};
-    // tree-gen AST has support for many variable declarations on the same line,
-    // but parser grammar only allows one variable declaration per line at the moment
     auto ret = cqasm::tree::make<Variables>(
         Many<Identifier>{ cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()) },
         cqasm::tree::make<Identifier>(context->QUBIT_TYPE()->getText()),
@@ -127,12 +128,10 @@ std::any BuildTreeGenAstVisitor::visitQubitTypeDefinition(CqasmParser::QubitType
 }
 
 std::any BuildTreeGenAstVisitor::visitBitTypeDefinition(CqasmParser::BitTypeDefinitionContext *context) {
-    auto int_ctx = context->INTEGER_LITERAL();
-    auto size = (int_ctx)
-        ? tree::Maybe<IntegerLiteral>{ cqasm::tree::make<IntegerLiteral>(get_int_value(int_ctx)) }
+    auto array_size_definition_ctx = context->arraySizeDefinition();
+    auto size = (array_size_definition_ctx)
+        ? tree::Maybe<IntegerLiteral>{ std::any_cast<One<IntegerLiteral>>(array_size_definition_ctx->accept(this)).get_ptr() }
         : tree::Maybe<IntegerLiteral>{};
-    // tree-gen AST has support for many variable declarations on the same line,
-    // but parser grammar only allows one variable declaration per line at the moment
     auto ret = cqasm::tree::make<Variables>(
         Many<Identifier>{ cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()) },
         cqasm::tree::make<Identifier>(context->BIT_TYPE()->getText()),
@@ -144,43 +143,92 @@ std::any BuildTreeGenAstVisitor::visitBitTypeDefinition(CqasmParser::BitTypeDefi
 }
 
 std::any BuildTreeGenAstVisitor::visitAxisTypeDefinition(CqasmParser::AxisTypeDefinitionContext *context) {
-    (void) context;
-    throw std::runtime_error{ "Unimplemented" };
+    auto ret = cqasm::tree::make<Variables>(
+        Many<Identifier>{ cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()) },
+        cqasm::tree::make<Identifier>(context->AXIS_TYPE()->getText()),
+        tree::Maybe<IntegerLiteral>{}
+    );
+    // TODO: initialization
+    const auto &token = context->IDENTIFIER()->getSymbol();
+    setNodeAnnotation(ret, token);
+    return One<Statement>{ ret };
 }
 
 std::any BuildTreeGenAstVisitor::visitBoolTypeDefinition(CqasmParser::BoolTypeDefinitionContext *context) {
-    (void) context;
-    throw std::runtime_error{ "Unimplemented" };
+    auto ret = cqasm::tree::make<Variables>(
+        Many<Identifier>{ cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()) },
+        cqasm::tree::make<Identifier>(context->BOOL_TYPE()->getText()),
+        tree::Maybe<IntegerLiteral>{}
+    );
+    const auto &token = context->IDENTIFIER()->getSymbol();
+    setNodeAnnotation(ret, token);
+    return One<Statement>{ ret };
 }
 
 std::any BuildTreeGenAstVisitor::visitBoolArrayTypeDefinition(CqasmParser::BoolArrayTypeDefinitionContext *context) {
-    (void) context;
-    throw std::runtime_error{ "Unimplemented" };
+    auto size = std::any_cast<One<IntegerLiteral>>(visitArraySizeDefinition(context->arraySizeDefinition()));
+    auto ret = cqasm::tree::make<Variables>(
+        Many<Identifier>{ cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()) },
+        cqasm::tree::make<Identifier>(context->BOOL_TYPE()->getText()),
+        tree::Maybe<IntegerLiteral>{ size.get_ptr() }
+    );
+    // TODO: initialization
+    const auto &token = context->IDENTIFIER()->getSymbol();
+    setNodeAnnotation(ret, token);
+    return One<Statement>{ ret };
 }
 
 std::any BuildTreeGenAstVisitor::visitIntTypeDefinition(CqasmParser::IntTypeDefinitionContext *context) {
-    (void) context;
-    throw std::runtime_error{ "Unimplemented" };
+    auto ret = cqasm::tree::make<Variables>(
+        Many<Identifier>{ cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()) },
+        cqasm::tree::make<Identifier>(context->INT_TYPE()->getText()),
+        tree::Maybe<IntegerLiteral>{}
+    );
+    const auto &token = context->IDENTIFIER()->getSymbol();
+    setNodeAnnotation(ret, token);
+    return One<Statement>{ ret };
 }
 
 std::any BuildTreeGenAstVisitor::visitIntArrayTypeDefinition(CqasmParser::IntArrayTypeDefinitionContext *context) {
-    (void) context;
-    throw std::runtime_error{ "Unimplemented" };
+    auto size = std::any_cast<One<IntegerLiteral>>(visitArraySizeDefinition(context->arraySizeDefinition()));
+    auto ret = cqasm::tree::make<Variables>(
+        Many<Identifier>{ cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()) },
+        cqasm::tree::make<Identifier>(context->INT_TYPE()->getText()),
+        tree::Maybe<IntegerLiteral>{ size.get_ptr() }
+    );
+    // TODO: initialization
+    const auto &token = context->IDENTIFIER()->getSymbol();
+    setNodeAnnotation(ret, token);
+    return One<Statement>{ ret };
 }
 
 std::any BuildTreeGenAstVisitor::visitFloatTypeDefinition(CqasmParser::FloatTypeDefinitionContext *context) {
-    (void) context;
-    throw std::runtime_error{ "Unimplemented" };
+    auto ret = cqasm::tree::make<Variables>(
+        Many<Identifier>{ cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()) },
+        cqasm::tree::make<Identifier>(context->FLOAT_TYPE()->getText()),
+        tree::Maybe<IntegerLiteral>{}
+    );
+    const auto &token = context->IDENTIFIER()->getSymbol();
+    setNodeAnnotation(ret, token);
+    return One<Statement>{ ret };
 }
 
 std::any BuildTreeGenAstVisitor::visitFloatArrayTypeDefinition(CqasmParser::FloatArrayTypeDefinitionContext *context) {
-    (void) context;
-    throw std::runtime_error{ "Unimplemented" };
+    auto size = std::any_cast<One<IntegerLiteral>>(visitArraySizeDefinition(context->arraySizeDefinition()));
+    auto ret = cqasm::tree::make<Variables>(
+        Many<Identifier>{ cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()) },
+        cqasm::tree::make<Identifier>(context->FLOAT_TYPE()->getText()),
+        tree::Maybe<IntegerLiteral>{ size.get_ptr() }
+    );
+    // TODO: initialization
+    const auto &token = context->IDENTIFIER()->getSymbol();
+    setNodeAnnotation(ret, token);
+    return One<Statement>{ ret };
 }
 
 std::any BuildTreeGenAstVisitor::visitArraySizeDefinition(CqasmParser::ArraySizeDefinitionContext *context) {
-    (void) context;
-    throw std::runtime_error{ "Unimplemented" };
+    auto int_ctx = context->INTEGER_LITERAL();
+    return cqasm::tree::make<IntegerLiteral>(get_int_value(int_ctx));
 }
 
 std::any BuildTreeGenAstVisitor::visitAxisTypeInitializer(CqasmParser::AxisTypeInitializerContext *context) {

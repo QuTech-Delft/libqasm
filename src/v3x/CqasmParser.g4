@@ -18,8 +18,8 @@ statements: (statementSeparator+ statement)*;
 statementSeparator: NEW_LINE | SEMICOLON;
 
 statement:
-    QUBIT_TYPE (OPEN_BRACKET INTEGER_LITERAL CLOSE_BRACKET)? IDENTIFIER  # qubitTypeDefinition
-    | BIT_TYPE (OPEN_BRACKET INTEGER_LITERAL CLOSE_BRACKET)? IDENTIFIER  # bitTypeDefinition
+    QUBIT_TYPE arraySizeDefinition? IDENTIFIER  # qubitTypeDefinition
+    | BIT_TYPE arraySizeDefinition? IDENTIFIER  # bitTypeDefinition
     | AXIS_TYPE IDENTIFIER (EQUALS axisTypeInitializer)?  # axisTypeDefinition
     | BOOL_TYPE IDENTIFIER (EQUALS expression)?  # boolTypeDefinition
     | BOOL_TYPE arraySizeDefinition IDENTIFIER (EQUALS arrayTypeInitializer)?  # boolArrayTypeDefinition
