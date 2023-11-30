@@ -44,6 +44,11 @@ Analyzer::Analyzer(const primitives::Version &api_version)
  */
 void Analyzer::register_default_mappings() {
     static constexpr double tau = 2 * std::numbers::pi;
+    register_mapping("x", tree::make<values::ConstAxis>(primitives::Axis::X));
+    register_mapping("y", tree::make<values::ConstAxis>(primitives::Axis::Y));
+    register_mapping("z", tree::make<values::ConstAxis>(primitives::Axis::Z));
+    register_mapping("true", tree::make<values::ConstBool>(true));
+    register_mapping("false", tree::make<values::ConstBool>(false));
     register_mapping("pi", tree::make<values::ConstReal>(std::numbers::pi));
     register_mapping("eu", tree::make<values::ConstReal>(std::numbers::e));
     register_mapping("tau", tree::make<values::ConstReal>(tau));

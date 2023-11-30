@@ -4,10 +4,14 @@
 
 #include "v1x/cqasm-primitives.hpp"
 
-namespace cqasm {
-namespace v1x {
-namespace primitives {
+#include <algorithm>  // transform
 
+
+namespace cqasm::v1x::primitives {
+
+/**
+ * String
+ */
 template <>
 Str initialize<Str>() { return ""; }
 
@@ -21,6 +25,9 @@ Str deserialize(const ::tree::cbor::MapReader &map) {
     return map.at("x").as_binary();
 }
 
+/**
+ * Bool
+ */
 template <>
 Bool initialize<Bool>() { return false; }
 
@@ -34,6 +41,9 @@ Bool deserialize(const ::tree::cbor::MapReader &map) {
     return map.at("x").as_bool();
 }
 
+/**
+ * Axis
+ */
 template <>
 Axis initialize<Axis>() { return Axis::X; }
 
@@ -56,6 +66,9 @@ Axis deserialize(const ::tree::cbor::MapReader &map) {
     throw std::runtime_error("invalid value for axis enum during deserialization");
 }
 
+/**
+ * Int
+ */
 template <>
 Int initialize<Int>() { return 0; }
 
@@ -69,6 +82,9 @@ Int deserialize(const ::tree::cbor::MapReader &map) {
     return map.at("x").as_int();
 }
 
+/**
+ * Real
+ */
 template <>
 Real initialize<Real>() { return 0.0; }
 
@@ -88,6 +104,9 @@ void serialize(const Complex &obj, ::tree::cbor::MapWriter &map) {
     map.append_float("i", obj.imag());
 }
 
+/**
+ * Complex
+ */
 template <>
 Complex deserialize(const ::tree::cbor::MapReader &map) {
     return {map.at("r").as_float(), map.at("i").as_float()};
@@ -95,7 +114,7 @@ Complex deserialize(const ::tree::cbor::MapReader &map) {
 
 template <>
 void serialize(const RMatrix &obj, ::tree::cbor::MapWriter &map) {
-    map.append_int("c", obj.size_cols());
+    map.append_int("c", static_cast<std::int64_t>(obj.size_cols()));
     auto aw = map.append_array("d");
     for (const auto &value : obj.get_data()) {
         aw.append_float(value);
@@ -103,6 +122,9 @@ void serialize(const RMatrix &obj, ::tree::cbor::MapWriter &map) {
     aw.close();
 }
 
+/**
+ * RMatrix
+ */
 template <>
 RMatrix deserialize(const ::tree::cbor::MapReader &map) {
     size_t num_cols = map.at("c").as_int();
@@ -117,7 +139,7 @@ RMatrix deserialize(const ::tree::cbor::MapReader &map) {
 
 template <>
 void serialize(const CMatrix &obj, ::tree::cbor::MapWriter &map) {
-    map.append_int("c", obj.size_cols());
+    map.append_int("c", static_cast<std::int64_t>(obj.size_cols()));
     auto aw = map.append_array("d");
     for (const auto &value : obj.get_data()) {
         aw.append_float(value.real());
@@ -126,6 +148,9 @@ void serialize(const CMatrix &obj, ::tree::cbor::MapWriter &map) {
     aw.close();
 }
 
+/**
+ * CMatrix
+ */
 template <>
 CMatrix deserialize(const ::tree::cbor::MapReader &map) {
     size_t num_cols = map.at("c").as_int();
@@ -147,14 +172,15 @@ void serialize(const Version &obj, ::tree::cbor::MapWriter &map) {
     aw.close();
 }
 
+/**
+ * Version
+ */
 template <>
 Version deserialize(const ::tree::cbor::MapReader &map) {
     auto ar = map.at("x").as_array();
     auto v = Version("");
-    v.reserve(ar.size());
-    for (size_t i = 0; i < ar.size(); i++) {
-        v.push_back(ar.at(i).as_int());
-    }
+    v.resize(ar.size());
+    std::transform(ar.begin(), ar.end(), v.begin(), [](const auto &e) { return e.as_int(); });
     return v;
 }
 
@@ -163,19 +189,12 @@ Version deserialize(const ::tree::cbor::MapReader &map) {
  */
 std::ostream &operator<<(std::ostream &os, const Axis &axis) {
     switch (axis) {
-        case Axis::X:
-            os << "X";
-            break;
-        case Axis::Y:
-            os << "Y";
-            break;
-        case Axis::Z:
-            os << "Z";
-            break;
+        case Axis::X: os << "X"; break;
+        case Axis::Y: os << "Y"; break;
+        case Axis::Z: os << "Z"; break;
+        default: break;
     }
     return os;
 }
 
-} // namespace primitives
-} // namespace v1x
-} // namespace cqasm
+} // namespace cqasm::v1x::primitives

@@ -4,9 +4,14 @@
 
 #include "v3x/cqasm-primitives.hpp"
 
+#include <algorithm>  // transform
+
 
 namespace cqasm::v3x::primitives {
 
+/**
+ * String
+ */
 template <>
 Str initialize<Str>() { return ""; }
 
@@ -20,6 +25,34 @@ Str deserialize(const ::tree::cbor::MapReader &map) {
     return map.at("x").as_binary();
 }
 
+/**
+ * Axis
+ */
+template <>
+Axis initialize<Axis>() { return Axis::X; }
+
+template <>
+void serialize(const Axis &obj, ::tree::cbor::MapWriter &map) {
+    switch (obj) {
+        case Axis::X: map.append_int("x", 0); break;
+        case Axis::Y: map.append_int("x", 1); break;
+        case Axis::Z: map.append_int("x", 2); break;
+    }
+}
+
+template <>
+Axis deserialize(const ::tree::cbor::MapReader &map) {
+    switch (map.at("x").as_int()) {
+        case 0: return Axis::X;
+        case 1: return Axis::Y;
+        case 2: return Axis::Z;
+    }
+    throw std::runtime_error("invalid value for axis enum during deserialization");
+}
+
+/**
+ * Bool
+ */
 template <>
 Bool initialize<Bool>() { return false; }
 
@@ -33,6 +66,9 @@ Bool deserialize(const ::tree::cbor::MapReader &map) {
     return map.at("x").as_bool();
 }
 
+/**
+ * Int
+ */
 template <>
 Int initialize<Int>() { return 0; }
 
@@ -46,6 +82,9 @@ Int deserialize(const ::tree::cbor::MapReader &map) {
     return map.at("x").as_int();
 }
 
+/**
+ * Real
+ */
 template <>
 Real initialize<Real>() { return 0.0; }
 
@@ -65,6 +104,9 @@ void serialize(const Complex &obj, ::tree::cbor::MapWriter &map) {
     map.append_float("i", obj.imag());
 }
 
+/**
+ * Complex
+ */
 template <>
 Complex deserialize(const ::tree::cbor::MapReader &map) {
     return {map.at("r").as_float(), map.at("i").as_float()};
@@ -79,15 +121,29 @@ void serialize(const Version &obj, ::tree::cbor::MapWriter &map) {
     aw.close();
 }
 
+/**
+ * Version
+ */
 template <>
 Version deserialize(const ::tree::cbor::MapReader &map) {
     auto ar = map.at("x").as_array();
     auto v = Version("");
-    v.reserve(ar.size());
-    for (size_t i = 0; i < ar.size(); i++) {
-        v.push_back(ar.at(i).as_int());
-    }
+    v.resize(ar.size());
+    std::transform(ar.begin(), ar.end(), v.begin(), [](const auto &e) { return e.as_int(); });
     return v;
+}
+
+/**
+ * Stream << overload for axis nodes.
+ */
+std::ostream &operator<<(std::ostream &os, const Axis &axis) {
+    switch (axis) {
+        case Axis::X: os << "X"; break;
+        case Axis::Y: os << "Y"; break;
+        case Axis::Z: os << "Z"; break;
+        default: break;
+    }
+    return os;
 }
 
 } // namespace cqasm::v3x::primitives

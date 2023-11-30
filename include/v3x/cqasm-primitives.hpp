@@ -49,6 +49,17 @@ template <>
 Str deserialize(const ::tree::cbor::MapReader &map);
 
 /**
+ * Axis primitive used within the semantic trees. Defaults to X.
+ */
+enum class Axis { X, Y, Z };
+template <>
+Axis initialize<Axis>();
+template <>
+void serialize(const Axis &obj, ::tree::cbor::MapWriter &map);
+template <>
+Axis deserialize(const ::tree::cbor::MapReader &map);
+
+/**
  * Boolean primitive used within the semantic trees. Defaults to false.
  */
 using Bool = bool;
@@ -98,5 +109,10 @@ template <>
 void serialize(const Version &obj, ::tree::cbor::MapWriter &map);
 template <>
 Version deserialize(const ::tree::cbor::MapReader &map);
+
+/**
+ * Stream << overload for axis nodes.
+ */
+std::ostream &operator<<(std::ostream &os, const Axis &axis);
 
 } // namespace cqasm::v3x::primitives
