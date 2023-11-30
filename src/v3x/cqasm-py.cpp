@@ -34,16 +34,8 @@ V3xAnalyzer::V3xAnalyzer(const std::string &max_version, bool without_defaults) 
  * Registers an instruction type.
  * The arguments are passed straight to instruction::Instruction's constructor.
  */
-void V3xAnalyzer::register_instruction(
-    const std::string &name,
-    const std::string &param_types,
-    bool request_qubit_and_bit_indices_have_same_size
-) {
-    a->register_instruction(
-        name,
-        param_types,
-        request_qubit_and_bit_indices_have_same_size
-    );
+void V3xAnalyzer::register_instruction(const std::string &name, const std::string &param_types) {
+    a->register_instruction(name, param_types);
 }
 
 /**

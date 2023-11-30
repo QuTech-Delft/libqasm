@@ -16,6 +16,7 @@ public:
     void visitVersion(const ast::Version &version_ast);
     void visitStatements(const ast::StatementList &statement_list_ast);
     void visitVariables(const ast::Variables &variables_ast);
+    tree::Maybe<semantic::Instruction> visitMeasureInstruction(const ast::MeasureInstruction &ast);
     tree::Maybe<semantic::Instruction> visitInstruction(const ast::Instruction &ast);
     values::Value visitExpression(const ast::Expression &ast);
     values::Value visitIndex(const ast::Index &ast);

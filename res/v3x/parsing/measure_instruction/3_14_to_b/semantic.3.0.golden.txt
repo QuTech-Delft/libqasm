@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:5:5..12: failed to resolve overload for measure with argument pack (real, bit)
+Error at input.cq:5:5..12: failed to resolve overload for measure with argument pack (bit, real)
