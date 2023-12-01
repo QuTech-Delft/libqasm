@@ -1,0 +1,47 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  statements: <
+    StatementList(
+      items: [
+        Variables( # input.cq:3:8..9
+          names: [
+            Identifier(
+              name: i
+            )
+          ]
+          typ: <
+            Identifier(
+              name: int
+            )
+          >
+          size: <
+            IntegerLiteral(
+              value: 3
+            )
+          >
+          annotations: []
+        )
+        AssignmentInstruction( # input.cq:3:10..11
+          condition: -
+          lhs: <
+            Identifier( # input.cq:3:8..9
+              name: i
+            )
+          >
+          rhs: <
+            Identifier( # input.cq:3:12..13
+              name: i
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

@@ -1,0 +1,61 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  statements: <
+    StatementList(
+      items: [
+        Variables( # input.cq:3:7..8
+          names: [
+            Identifier(
+              name: q
+            )
+          ]
+          typ: <
+            Identifier(
+              name: qubit
+            )
+          >
+          size: -
+          annotations: []
+        )
+        Variables( # input.cq:4:8..9
+          names: [
+            Identifier(
+              name: i
+            )
+          ]
+          typ: <
+            Identifier(
+              name: int
+            )
+          >
+          size: <
+            IntegerLiteral(
+              value: 3
+            )
+          >
+          annotations: []
+        )
+        AssignmentInstruction( # input.cq:4:10..11
+          condition: -
+          lhs: <
+            Identifier( # input.cq:4:8..9
+              name: i
+            )
+          >
+          rhs: <
+            Identifier( # input.cq:4:12..13
+              name: q
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

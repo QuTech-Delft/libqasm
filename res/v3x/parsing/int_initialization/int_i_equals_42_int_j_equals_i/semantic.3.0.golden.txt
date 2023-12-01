@@ -1,0 +1,93 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  statements: [
+    AssignmentInstruction(
+      lhs: <
+        VariableRef(
+          variable --> <
+            Variable(
+              name: i
+              typ: <
+                Int(
+)
+              >
+              annotations: []
+            )
+          >
+        )
+      >
+      rhs: <
+        ConstInt(
+          value: 42
+        )
+      >
+      condition: <
+        ConstBool(
+          value: 1
+        )
+      >
+      annotations: []
+    )
+    AssignmentInstruction(
+      lhs: <
+        VariableRef(
+          variable --> <
+            Variable(
+              name: j
+              typ: <
+                Int(
+)
+              >
+              annotations: []
+            )
+          >
+        )
+      >
+      rhs: <
+        VariableRef(
+          variable --> <
+            Variable(
+              name: i
+              typ: <
+                Int(
+)
+              >
+              annotations: []
+            )
+          >
+        )
+      >
+      condition: <
+        ConstBool(
+          value: 1
+        )
+      >
+      annotations: []
+    )
+  ]
+  variables: [
+    Variable(
+      name: i
+      typ: <
+        Int(
+)
+      >
+      annotations: []
+    )
+    Variable(
+      name: j
+      typ: <
+        Int(
+)
+      >
+      annotations: []
+    )
+  ]
+)
+
