@@ -11,12 +11,15 @@ class AnalyzeTreeGenAstVisitor {
     Analyzer &analyzer_;
     AnalysisResult result_;
 
+    void visitAssignmentInstructionOperands(const ast::AssignmentInstruction &ast,
+        tree::Maybe<semantic::AssignmentInstruction> &node);
+
 public:
     AnalysisResult visitProgram(const ast::Program &program_ast);
     void visitVersion(const ast::Version &version_ast);
     void visitStatements(const ast::StatementList &statement_list_ast);
     void visitVariables(const ast::Variables &variables_ast);
-    tree::Maybe<semantic::Instruction> visitAssignmentInstruction(const ast::AssignmentInstruction &ast);
+    tree::Maybe<semantic::AssignmentInstruction> visitAssignmentInstruction(const ast::AssignmentInstruction &ast);
     tree::Maybe<semantic::Instruction> visitInstruction(const ast::Instruction &ast);
     values::Value visitExpression(const ast::Expression &ast);
     values::Value visitIndex(const ast::Index &ast);

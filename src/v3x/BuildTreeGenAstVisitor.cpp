@@ -176,12 +176,12 @@ std::any BuildTreeGenAstVisitor::visitBoolTypeDefinition(CqasmParser::BoolTypeDe
 std::any BuildTreeGenAstVisitor::visitIntTypeDeclaration(CqasmParser::IntTypeDefinitionContext *context) {
     auto array_size_definition_ctx = context->arraySizeDefinition();
     auto size = (array_size_definition_ctx)
-                ? tree::Maybe<IntegerLiteral>{ std::any_cast<One<IntegerLiteral>>(array_size_definition_ctx->accept(this)).get_ptr() }
-                : tree::Maybe<IntegerLiteral>{};
+        ? tree::Maybe<IntegerLiteral>{ std::any_cast<One<IntegerLiteral>>(array_size_definition_ctx->accept(this)).get_ptr() }
+        : tree::Maybe<IntegerLiteral>{};
     auto ret = cqasm::tree::make<Variables>(
-            Many<Identifier>{ cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()) },
-            cqasm::tree::make<Identifier>(context->INT_TYPE()->getText()),
-            size
+        Many<Identifier>{ cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()) },
+        cqasm::tree::make<Identifier>(context->INT_TYPE()->getText()),
+        size
     );
     const auto &token = context->IDENTIFIER()->getSymbol();
     setNodeAnnotation(ret, token);
@@ -198,6 +198,8 @@ std::any BuildTreeGenAstVisitor::visitIntTypeInitialization(CqasmParser::IntType
     ret->condition = cqasm::tree::Maybe<Expression>{};
     ret->lhs = std::any_cast<One<Expression>>(visitIntTypeIdentifier(context));
     ret->rhs = std::any_cast<One<Expression>>(context->expression()->accept(this));
+    const auto &token = context->EQUALS()->getSymbol();
+    setNodeAnnotation(ret, token);
     return One<Statement>{ ret };
 }
 

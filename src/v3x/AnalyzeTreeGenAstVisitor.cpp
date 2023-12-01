@@ -54,6 +54,8 @@ void AnalyzeTreeGenAstVisitor::visitStatements(const ast::StatementList &stateme
         try {
             if (auto variables = statement->as_variables()) {
                 visitVariables(*variables);
+            } else if (auto assignment_instruction = statement->as_assignment_instruction()) {
+                result_.root->statements.add(visitAssignmentInstruction(*assignment_instruction));
             } else if (auto instruction = statement->as_instruction()) {
                 result_.root->statements.add(visitInstruction(*instruction));
             } else {
@@ -144,7 +146,7 @@ bool check_qubit_and_bit_indices_have_same_size(const values::Values &operands) 
 tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(
     const ast::Instruction &instruction_ast) {
 
-    tree::Maybe<semantic::Instruction> node;
+    tree::Maybe<semantic::Instruction> node{};
     try {
         // Set operand list
         auto operands = values::Values();
@@ -175,24 +177,65 @@ tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(
     return node;
 }
 
-tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitAssignmentInstruction(
-    const ast::AssignmentInstruction &ast) {
+void AnalyzeTreeGenAstVisitor::visitAssignmentInstructionOperands(const ast::AssignmentInstruction &instruction_ast,
+    tree::Maybe<semantic::AssignmentInstruction> &node) {
 
-    (void) ast;
-    throw std::runtime_error{ "Unimplemented" };
+    // Analyze the expressions
+    auto lhs = visitExpression(*instruction_ast.lhs);
+    auto rhs = visitExpression(*instruction_ast.rhs);
+
+    // Check assignability of the left-hand side
+    if (bool assignable = lhs->as_reference(); !assignable) {
+        throw error::AnalysisError(
+            "left-hand side of assignment statement must be assignable"
+        );
+    }
+
+    // Type-check/promote the right-hand side
+    auto target_type = values::type_of(lhs).clone();
+    if (auto rhs_promoted = values::promote(rhs, target_type); !rhs_promoted.empty()) {
+        // Set the node operands
+        node.emplace<semantic::AssignmentInstruction>(lhs, rhs_promoted);
+    } else {
+        throw error::AnalysisError{ fmt::format(
+            "type of right-hand side ({}) could not be coerced to left-hand side ({})",
+            values::type_of(rhs), values::type_of(lhs)) };
+    }
+}
+
+tree::Maybe<semantic::AssignmentInstruction> AnalyzeTreeGenAstVisitor::visitAssignmentInstruction(
+    const ast::AssignmentInstruction &instruction_ast) {
+
+    tree::Maybe<semantic::AssignmentInstruction> node{};
+    try {
+        // Analyze the operands
+        visitAssignmentInstructionOperands(instruction_ast, node);
+
+        // Set condition code
+        node->condition.set(tree::make<values::ConstBool>(true));
+
+        // Copy annotation data
+        node->annotations = visitAnnotations(instruction_ast.annotations);
+        node->copy_annotation<parser::SourceLocation>(instruction_ast);
+
+    } catch (error::AnalysisError &err) {
+        err.context(instruction_ast);
+        throw;
+    }
+    return node;
 }
 
 values::Value AnalyzeTreeGenAstVisitor::visitExpression(const ast::Expression &expression_ast) {
-    values::Value retval;
+    values::Value ret{};
     try {
         if (auto integer_literal = expression_ast.as_integer_literal()) {
-            retval.set(tree::make<values::ConstInt>(integer_literal->value));
+            ret.set(tree::make<values::ConstInt>(integer_literal->value));
         } else if (auto float_literal = expression_ast.as_float_literal()) {
-            retval.set(tree::make<values::ConstReal>(float_literal->value));
+            ret.set(tree::make<values::ConstReal>(float_literal->value));
         } else if (auto identifier = expression_ast.as_identifier()) {
-            retval.set(analyzer_.resolve_mapping(identifier->name));
+            ret.set(analyzer_.resolve_mapping(identifier->name));
         } else if (auto index = expression_ast.as_index()) {
-            retval.set(visitIndex(*index));
+            ret.set(visitIndex(*index));
         } else {
             throw std::runtime_error{ "unexpected expression node" };
         }
@@ -200,11 +243,11 @@ values::Value AnalyzeTreeGenAstVisitor::visitExpression(const ast::Expression &e
         err.context(expression_ast);
         throw;
     }
-    if (retval.empty()) {
+    if (ret.empty()) {
         throw std::runtime_error{ "visitExpression returned an empty value" };
     }
-    retval->copy_annotation<parser::SourceLocation>(expression_ast);
-    return retval;
+    ret->copy_annotation<parser::SourceLocation>(expression_ast);
+    return ret;
 }
 
 values::Value AnalyzeTreeGenAstVisitor::visitIndex(const ast::Index &index_ast) {
