@@ -11,12 +11,12 @@ Program(
         Variables( # input.cq:3:9..10
           names: [
             Identifier(
-              name: b
+              name: i
             )
           ]
           typ: <
             Identifier(
-              name: bit
+              name: int
             )
           >
           size: <
@@ -29,12 +29,12 @@ Program(
         Variables( # input.cq:4:9..10
           names: [
             Identifier(
-              name: b
+              name: i
             )
           ]
           typ: <
             Identifier(
-              name: bit
+              name: int
             )
           >
           size: <
