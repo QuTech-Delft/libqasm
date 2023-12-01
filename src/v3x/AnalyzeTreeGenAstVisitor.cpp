@@ -92,7 +92,7 @@ void AnalyzeTreeGenAstVisitor::visitVariables(const ast::Variables &variables_as
         } else if (type_name == "int") {
             type = visitVariablesType<types::Int, types::IntArray>(variables_ast, "int");
         } else if (type_name == "float") {
-            type = visitVariablesType<types::Real, types::RealArray>(variables_ast, "float");
+            type = visitVariablesType<types::Real, types::RealArray>(variables_ast, "real");
         } else {
             throw error::AnalysisError("unknown type \"" + type_name + "\"");
         }
@@ -173,6 +173,13 @@ tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(
         throw;
     }
     return node;
+}
+
+tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitAssignmentInstruction(
+    const ast::AssignmentInstruction &ast) {
+
+    (void) ast;
+    throw std::runtime_error{ "Unimplemented" };
 }
 
 values::Value AnalyzeTreeGenAstVisitor::visitExpression(const ast::Expression &expression_ast) {

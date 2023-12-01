@@ -1,14 +1,27 @@
 #pragma once
 
+#include "cqasm-tree.hpp"
 #include "v3x/BuildCustomAstVisitor.hpp"
 #include "v3x/CqasmParser.h"
 #include "v3x/CqasmParserVisitor.h"
 #include "v3x/CustomErrorListener.hpp"
+#include "v3x/cqasm-ast.hpp"
 
 #include <any>
 
 
 namespace cqasm::v3x::parser {
+
+using Expression = cqasm::v3x::ast::Expression;
+using Identifier = cqasm::v3x::ast::Identifier;
+
+template <typename Context, typename SetNodeAnnotationFunction>
+tree::One<Expression> visitContextIdentifier(Context *context, SetNodeAnnotationFunction setNodeAnnotation) {
+    auto ret = cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText());
+    const auto &token = context->IDENTIFIER()->getSymbol();
+    setNodeAnnotation(ret, token);
+    return tree::One<Expression>{ ret };
+}
 
 class  BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
     /**
@@ -25,6 +38,10 @@ class  BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
     std::int64_t get_int_value(antlr4::tree::TerminalNode *node);
     double get_float_value(size_t line, size_t char_position_in_line, const std::string &text);
     double get_float_value(antlr4::tree::TerminalNode *node);
+
+    std::any visitIntTypeDeclaration(CqasmParser::IntTypeDefinitionContext *context);
+    std::any visitIntTypeIdentifier(CqasmParser::IntTypeDefinitionContext *context);
+    std::any visitIntTypeInitialization(CqasmParser::IntTypeDefinitionContext *context);
 
 public:
     std::any visitProgram(CqasmParser::ProgramContext *context) override;
