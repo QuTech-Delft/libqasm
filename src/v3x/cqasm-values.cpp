@@ -31,14 +31,14 @@ Value promote(const Value &value, const types::Type &type) {
     // Integers promote to real
     if (type->as_real()) {
         if (const auto &const_int = value->as_const_int()) {
-            ret = tree::make<values::ConstReal>(static_cast<ConstReal>(const_int->value));
+            ret = tree::make<values::ConstReal>(static_cast<ConstReal>(static_cast<double>(const_int->value)));
         }
     }
 
     // Integers and reals promote to complex
     if (type->as_complex()) {
         if (const auto &const_int = value->as_const_int()) {
-            ret = tree::make<values::ConstComplex>(static_cast<ConstComplex>(const_int->value));
+            ret = tree::make<values::ConstComplex>(static_cast<ConstComplex>(static_cast<double>(const_int->value)));
         } else if (const auto &const_real = value->as_const_real()) {
             ret = tree::make<values::ConstComplex>(static_cast<ConstComplex>(const_real->value));
         }
@@ -51,10 +51,16 @@ Value promote(const Value &value, const types::Type &type) {
  * Returns the type of the given value.
  */
 types::Type type_of(const Value &value) {
-    if (value->as_const_int()) {
+    if (value->as_const_axis()) {
+        return tree::make<types::Axis>();
+    } else if (value->as_const_bool()) {
+        return tree::make<types::Bool>();
+    } else if (value->as_const_int()) {
         return tree::make<types::Int>();
     } else if (value->as_const_real()) {
         return tree::make<types::Real>();
+    } else if (value->as_const_complex()) {
+        return tree::make<types::Complex>();
     } else if (auto index = value->as_index_ref()) {
         return index->variable->typ;
     } else if (auto var = value->as_variable_ref()) {

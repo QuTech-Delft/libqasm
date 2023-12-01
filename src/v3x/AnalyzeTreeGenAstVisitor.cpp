@@ -2,6 +2,8 @@
 #include "v3x/cqasm-ast-gen.hpp"
 #include "v3x/cqasm-analyzer.hpp"
 
+#include <string_view>
+
 
 namespace cqasm::v3x::analyzer {
 
@@ -64,26 +66,33 @@ void AnalyzeTreeGenAstVisitor::visitStatements(const ast::StatementList &stateme
     }
 }
 
+template <typename T, typename TArray>
+types::Type visitVariablesType(const ast::Variables &variables_ast, std::string_view type_name) {
+    if (variables_ast.size.empty()) {
+        return tree::make<T>();
+    } else if (variables_ast.size->value > 0) {
+        return tree::make<TArray>(variables_ast.size->value);
+    } else {
+        throw error::AnalysisError{ fmt::format("declaring {} array of size <= 0", type_name) };
+    }
+}
+
 void AnalyzeTreeGenAstVisitor::visitVariables(const ast::Variables &variables_ast) {
     try {
         auto type_name = variables_ast.typ->name;
         types::Type type{};
         if (type_name == "qubit") {
-            if (variables_ast.size.empty()) {
-                type = tree::make<types::Qubit>();
-            } else if (variables_ast.size->value > 0) {
-                type = tree::make<types::QubitArray>(variables_ast.size->value);
-            } else {
-                throw error::AnalysisError("declaring qubit array of size <= 0");
-            }
+            type = visitVariablesType<types::Qubit, types::QubitArray>(variables_ast, "qubit");
         } else if (type_name == "bit") {
-            if (variables_ast.size.empty()) {
-                type = tree::make<types::Bit>();
-            } else if (variables_ast.size->value > 0) {
-                type = tree::make<types::BitArray>(variables_ast.size->value);
-            } else {
-                throw error::AnalysisError("declaring bit array of size <= 0");
-            }
+            type = visitVariablesType<types::Bit, types::BitArray>(variables_ast, "bit");
+        } else if (type_name == "axis") {
+            type = tree::make<types::Axis>();
+        } else if (type_name == "bool") {
+            type = visitVariablesType<types::Bool, types::BoolArray>(variables_ast, "bool");
+        } else if (type_name == "int") {
+            type = visitVariablesType<types::Int, types::IntArray>(variables_ast, "int");
+        } else if (type_name == "float") {
+            type = visitVariablesType<types::Real, types::RealArray>(variables_ast, "float");
         } else {
             throw error::AnalysisError("unknown type \"" + type_name + "\"");
         }

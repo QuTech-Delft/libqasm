@@ -4,7 +4,6 @@
 
 #include "v3x/cqasm-types.hpp"
 
-#include <cctype>
 #include <fmt/ostream.h>
 
 
@@ -16,23 +15,33 @@ namespace cqasm::v3x::types {
  *
  *  - Q = qubit
  *  - B = bit (measurement register)
- *  - V = qubit array
- *  - W = bit array
- *  - i = integer
+ *  - a = axis (x, y, or z)
+ *  - b = bool
+ *  - i = int
  *  - r = real
  *  - c = complex
+ *  - V = qubit array
+ *  - W = bit array
+ *  - X = bool array
+ *  - Y = int array
+ *  - Z = real array
  */
 Types from_spec(const std::string &spec) {
     Types types;
     for (auto c : spec) {
-        switch (std::tolower(c)) {
-            case 'q': types.add_raw(new types::Qubit()); break;
-            case 'b': types.add_raw(new types::Bit()); break;
-            case 'v': types.add_raw(new types::QubitArray()); break;
-            case 'w': types.add_raw(new types::BitArray()); break;
+        switch (c) {
+            case 'Q': types.add_raw(new types::Qubit()); break;
+            case 'B': types.add_raw(new types::Bit()); break;
+            case 'a': types.add_raw(new types::Axis()); break;
+            case 'b': types.add_raw(new types::Bool()); break;
             case 'i': types.add_raw(new types::Int()); break;
             case 'r': types.add_raw(new types::Real()); break;
             case 'c': types.add_raw(new types::Complex()); break;
+            case 'V': types.add_raw(new types::QubitArray()); break;
+            case 'W': types.add_raw(new types::BitArray()); break;
+            case 'X': types.add_raw(new types::BoolArray()); break;
+            case 'Y': types.add_raw(new types::IntArray()); break;
+            case 'Z': types.add_raw(new types::RealArray()); break;
             default: throw std::invalid_argument("unknown type code encountered");
         }
     }
@@ -51,17 +60,21 @@ bool type_check(const Type &expected, const Type &actual) {
  */
 std::ostream &operator<<(std::ostream &os, const Type &type) {
     if (type.empty()) { os << "!EMPTY"; }
+    else if (type->as_qubit()) { os << "qubit"; }
+    else if (type->as_bit()) { os << "bit"; }
+    else if (type->as_axis()) { os << "axis"; }
+    else if (type->as_bool()) { os << "bool"; }
     else if (type->as_int()) { os << "int"; }
     else if (type->as_real()) { os << "real"; }
     else if (type->as_complex()) { os << "complex"; }
-    else if (type->as_bit()) { os << "bit"; }
-    else if (type->as_bit_array()) { os << "bit array"; }
-    else if (type->as_qubit()) { os << "qubit"; }
     else if (type->as_qubit_array()) { os << "qubit array"; }
+    else if (type->as_bit_array()) { os << "bit array"; }
+    else if (type->as_bool_array()) { os << "bool array"; }
+    else if (type->as_int_array()) { os << "int array"; }
+    else if (type->as_real_array()) { os << "real array"; }
     else {
         // Fallback when no friendly repr is known
-        os << *type;
-        return os;
+        return os << *type;
     }
     return os;
 }

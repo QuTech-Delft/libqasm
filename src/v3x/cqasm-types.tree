@@ -23,11 +23,29 @@ namespace v3x
 namespace types
 
 type_base {
+    # Type of an axis (x, y, or z).
+    axis {}
+
+    # Type of a boolean.
+    bool {}
+
+    bool_array {
+        size: cqasm::v3x::primitives::Int;
+    }
+
     # Type of an integer (signed 64-bit).
     int {}
 
+    int_array {
+        size: cqasm::v3x::primitives::Int;
+    }
+
     # Type of a real number (IEEE double).
     real {}
+
+    real_array {
+        size: cqasm::v3x::primitives::Int;
+    }
 
     # Type of a complex number (2x IEEE double).
     complex {}

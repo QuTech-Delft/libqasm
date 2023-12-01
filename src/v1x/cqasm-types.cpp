@@ -70,7 +70,7 @@ Types from_spec(const std::string &spec) {
                 break;
             case 'u':
                 types.add_raw(new types::ComplexMatrix(
-                    1ull << num_qubits, 1ull << num_qubits, assignable));
+                    1ul << num_qubits, 1ul << num_qubits, assignable));
                 break;
             case 'm':
                 types.add_raw(new types::RealMatrix(-1, -1, assignable));
@@ -189,8 +189,7 @@ std::ostream &operator<<(std::ostream &os, const Type &type) {
         os << "qubit";
     } else {
         // Fallback when no friendly repr is known.
-        os << *type;
-        return os;
+        return os << *type;
     }
     if (type->assignable) {
         os << " reference";

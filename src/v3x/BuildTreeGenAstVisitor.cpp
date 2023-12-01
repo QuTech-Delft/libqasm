@@ -155,22 +155,14 @@ std::any BuildTreeGenAstVisitor::visitAxisTypeDefinition(CqasmParser::AxisTypeDe
 }
 
 std::any BuildTreeGenAstVisitor::visitBoolTypeDefinition(CqasmParser::BoolTypeDefinitionContext *context) {
+    auto array_size_definition_ctx = context->arraySizeDefinition();
+    auto size = (array_size_definition_ctx)
+        ? tree::Maybe<IntegerLiteral>{ std::any_cast<One<IntegerLiteral>>(array_size_definition_ctx->accept(this)).get_ptr() }
+        : tree::Maybe<IntegerLiteral>{};
     auto ret = cqasm::tree::make<Variables>(
         Many<Identifier>{ cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()) },
         cqasm::tree::make<Identifier>(context->BOOL_TYPE()->getText()),
-        tree::Maybe<IntegerLiteral>{}
-    );
-    const auto &token = context->IDENTIFIER()->getSymbol();
-    setNodeAnnotation(ret, token);
-    return One<Statement>{ ret };
-}
-
-std::any BuildTreeGenAstVisitor::visitBoolArrayTypeDefinition(CqasmParser::BoolArrayTypeDefinitionContext *context) {
-    auto size = std::any_cast<One<IntegerLiteral>>(visitArraySizeDefinition(context->arraySizeDefinition()));
-    auto ret = cqasm::tree::make<Variables>(
-        Many<Identifier>{ cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()) },
-        cqasm::tree::make<Identifier>(context->BOOL_TYPE()->getText()),
-        tree::Maybe<IntegerLiteral>{ size.get_ptr() }
+        size
     );
     // TODO: initialization
     const auto &token = context->IDENTIFIER()->getSymbol();
@@ -179,22 +171,14 @@ std::any BuildTreeGenAstVisitor::visitBoolArrayTypeDefinition(CqasmParser::BoolA
 }
 
 std::any BuildTreeGenAstVisitor::visitIntTypeDefinition(CqasmParser::IntTypeDefinitionContext *context) {
+    auto array_size_definition_ctx = context->arraySizeDefinition();
+    auto size = (array_size_definition_ctx)
+        ? tree::Maybe<IntegerLiteral>{ std::any_cast<One<IntegerLiteral>>(array_size_definition_ctx->accept(this)).get_ptr() }
+        : tree::Maybe<IntegerLiteral>{};
     auto ret = cqasm::tree::make<Variables>(
         Many<Identifier>{ cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()) },
         cqasm::tree::make<Identifier>(context->INT_TYPE()->getText()),
-        tree::Maybe<IntegerLiteral>{}
-    );
-    const auto &token = context->IDENTIFIER()->getSymbol();
-    setNodeAnnotation(ret, token);
-    return One<Statement>{ ret };
-}
-
-std::any BuildTreeGenAstVisitor::visitIntArrayTypeDefinition(CqasmParser::IntArrayTypeDefinitionContext *context) {
-    auto size = std::any_cast<One<IntegerLiteral>>(visitArraySizeDefinition(context->arraySizeDefinition()));
-    auto ret = cqasm::tree::make<Variables>(
-        Many<Identifier>{ cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()) },
-        cqasm::tree::make<Identifier>(context->INT_TYPE()->getText()),
-        tree::Maybe<IntegerLiteral>{ size.get_ptr() }
+        size
     );
     // TODO: initialization
     const auto &token = context->IDENTIFIER()->getSymbol();
@@ -203,22 +187,14 @@ std::any BuildTreeGenAstVisitor::visitIntArrayTypeDefinition(CqasmParser::IntArr
 }
 
 std::any BuildTreeGenAstVisitor::visitFloatTypeDefinition(CqasmParser::FloatTypeDefinitionContext *context) {
+    auto array_size_definition_ctx = context->arraySizeDefinition();
+    auto size = (array_size_definition_ctx)
+        ? tree::Maybe<IntegerLiteral>{ std::any_cast<One<IntegerLiteral>>(array_size_definition_ctx->accept(this)).get_ptr() }
+        : tree::Maybe<IntegerLiteral>{};
     auto ret = cqasm::tree::make<Variables>(
         Many<Identifier>{ cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()) },
         cqasm::tree::make<Identifier>(context->FLOAT_TYPE()->getText()),
-        tree::Maybe<IntegerLiteral>{}
-    );
-    const auto &token = context->IDENTIFIER()->getSymbol();
-    setNodeAnnotation(ret, token);
-    return One<Statement>{ ret };
-}
-
-std::any BuildTreeGenAstVisitor::visitFloatArrayTypeDefinition(CqasmParser::FloatArrayTypeDefinitionContext *context) {
-    auto size = std::any_cast<One<IntegerLiteral>>(visitArraySizeDefinition(context->arraySizeDefinition()));
-    auto ret = cqasm::tree::make<Variables>(
-        Many<Identifier>{ cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()) },
-        cqasm::tree::make<Identifier>(context->FLOAT_TYPE()->getText()),
-        tree::Maybe<IntegerLiteral>{ size.get_ptr() }
+        size
     );
     // TODO: initialization
     const auto &token = context->IDENTIFIER()->getSymbol();
@@ -229,16 +205,6 @@ std::any BuildTreeGenAstVisitor::visitFloatArrayTypeDefinition(CqasmParser::Floa
 std::any BuildTreeGenAstVisitor::visitArraySizeDefinition(CqasmParser::ArraySizeDefinitionContext *context) {
     auto int_ctx = context->INTEGER_LITERAL();
     return cqasm::tree::make<IntegerLiteral>(get_int_value(int_ctx));
-}
-
-std::any BuildTreeGenAstVisitor::visitAxisTypeInitializer(CqasmParser::AxisTypeInitializerContext *context) {
-    (void) context;
-    throw std::runtime_error{ "Unimplemented" };
-}
-
-std::any BuildTreeGenAstVisitor::visitArrayTypeInitializer(CqasmParser::ArrayTypeInitializerContext *context) {
-    (void) context;
-    throw std::runtime_error{ "Unimplemented" };
 }
 
 std::any BuildTreeGenAstVisitor::visitMeasureInstruction(CqasmParser::MeasureInstructionContext *context) {
@@ -325,6 +291,15 @@ std::any BuildTreeGenAstVisitor::visitIndex(CqasmParser::IndexContext *context) 
     const auto &token = context->IDENTIFIER()->getSymbol();
     setNodeAnnotation(ret, token);
     return One<Expression>{ ret };
+}
+std::any BuildTreeGenAstVisitor::visitAxisInitializationList(CqasmParser::AxisInitializationListContext *context) {
+    (void) context;
+    throw std::runtime_error{ "Unimplemented" };
+}
+
+std::any BuildTreeGenAstVisitor::visitInitializationList(CqasmParser::InitializationListContext *context) {
+    (void) context;
+    throw std::runtime_error{ "Unimplemented" };
 }
 
 }  // namespace cqasm::v3x::parser
