@@ -20,22 +20,15 @@ statementSeparator: NEW_LINE | SEMICOLON;
 statement:
     QUBIT_TYPE arraySizeDefinition? IDENTIFIER  # qubitTypeDefinition
     | BIT_TYPE arraySizeDefinition? IDENTIFIER  # bitTypeDefinition
-    | AXIS_TYPE IDENTIFIER (EQUALS axisTypeInitializer)?  # axisTypeDefinition
-    | BOOL_TYPE IDENTIFIER (EQUALS expression)?  # boolTypeDefinition
-    | BOOL_TYPE arraySizeDefinition IDENTIFIER (EQUALS arrayTypeInitializer)?  # boolArrayTypeDefinition
-    | INT_TYPE IDENTIFIER (EQUALS expression)?  # intTypeDefinition
-    | INT_TYPE arraySizeDefinition IDENTIFIER (EQUALS arrayTypeInitializer)?  # intArrayTypeDefinition
-    | FLOAT_TYPE IDENTIFIER (EQUALS expression)?  # floatTypeDefinition
-    | FLOAT_TYPE arraySizeDefinition IDENTIFIER (EQUALS arrayTypeInitializer)?  # floatArrayTypeDefinition
+    | AXIS_TYPE IDENTIFIER (EQUALS expression)?  # axisTypeDefinition
+    | BOOL_TYPE arraySizeDefinition? IDENTIFIER (EQUALS expression)?  # boolTypeDefinition
+    | INT_TYPE arraySizeDefinition? IDENTIFIER (EQUALS expression)?  # intTypeDefinition
+    | FLOAT_TYPE arraySizeDefinition? IDENTIFIER (EQUALS expression)?  # floatTypeDefinition
     | expression EQUALS MEASURE expression  # measureInstruction
     | IDENTIFIER expressionList  # instruction
     ;
 
 arraySizeDefinition: OPEN_BRACKET INTEGER_LITERAL CLOSE_BRACKET;
-
-axisTypeInitializer: OPEN_BRACKET expression COMMA expression COMMA expression CLOSE_BRACKET;
-
-arrayTypeInitializer: OPEN_BRACE expressionList CLOSE_BRACE;
 
 expressionList: expression (COMMA expression)*;
 
@@ -51,4 +44,6 @@ expression:
     | FLOAT_LITERAL  # floatLiteral
     | IDENTIFIER  # identifier
     | IDENTIFIER OPEN_BRACKET indexList CLOSE_BRACKET  # index
+    | OPEN_BRACKET expression COMMA expression COMMA expression CLOSE_BRACKET  # axisInitializationList
+    | OPEN_BRACE expressionList CLOSE_BRACE  # initializationList
     ;

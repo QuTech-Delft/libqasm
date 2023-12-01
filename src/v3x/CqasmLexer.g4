@@ -81,12 +81,12 @@ CLOSE_BRACE: '}';
 // Keywords
 VERSION: 'version' -> pushMode(VERSION_STATEMENT);
 MEASURE: 'measure';
-AXIS_TYPE: 'axis';
-BIT_TYPE: 'bit';
-BOOL_TYPE: 'bool';
-FLOAT_TYPE: 'float';
-INT_TYPE: 'int';
 QUBIT_TYPE: 'qubit';
+BIT_TYPE: 'bit';
+AXIS_TYPE: 'axis';
+BOOL_TYPE: 'bool';
+INT_TYPE: 'int';
+FLOAT_TYPE: 'float';
 
 // Numeric literals
 INTEGER_LITERAL : ([-+])? Digit+;
