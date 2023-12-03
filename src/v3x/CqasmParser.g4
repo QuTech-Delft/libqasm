@@ -18,17 +18,17 @@ statements: (statementSeparator+ statement)*;
 statementSeparator: NEW_LINE | SEMICOLON;
 
 statement:
-    QUBIT_TYPE arraySizeDefinition? IDENTIFIER  # qubitTypeDefinition
-    | BIT_TYPE arraySizeDefinition? IDENTIFIER  # bitTypeDefinition
-    | AXIS_TYPE IDENTIFIER (EQUALS expression)?  # axisTypeDefinition
-    | BOOL_TYPE arraySizeDefinition? IDENTIFIER (EQUALS expression)?  # boolTypeDefinition
-    | INT_TYPE arraySizeDefinition? IDENTIFIER (EQUALS expression)?  # intTypeDefinition
-    | FLOAT_TYPE arraySizeDefinition? IDENTIFIER (EQUALS expression)?  # floatTypeDefinition
+    QUBIT_TYPE arraySizeDeclaration? IDENTIFIER  # qubitTypeDeclaration
+    | BIT_TYPE arraySizeDeclaration? IDENTIFIER  # bitTypeDeclaration
+    | AXIS_TYPE IDENTIFIER (EQUALS expression)?  # axisTypeDeclaration
+    | BOOL_TYPE arraySizeDeclaration? IDENTIFIER (EQUALS expression)?  # boolTypeDeclaration
+    | INT_TYPE arraySizeDeclaration? IDENTIFIER (EQUALS expression)?  # intTypeDeclaration
+    | FLOAT_TYPE arraySizeDeclaration? IDENTIFIER (EQUALS expression)?  # floatTypeDeclaration
     | expression EQUALS MEASURE expression  # measureInstruction
     | IDENTIFIER expressionList  # instruction
     ;
 
-arraySizeDefinition: OPEN_BRACKET INTEGER_LITERAL CLOSE_BRACKET;
+arraySizeDeclaration: OPEN_BRACKET INTEGER_LITERAL CLOSE_BRACKET;
 
 expressionList: expression (COMMA expression)*;
 

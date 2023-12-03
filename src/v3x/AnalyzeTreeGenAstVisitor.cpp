@@ -52,8 +52,10 @@ void AnalyzeTreeGenAstVisitor::visitVersion(const ast::Version &version_ast) {
 void AnalyzeTreeGenAstVisitor::visitStatements(const ast::StatementList &statement_list_ast) {
     for (const auto &statement : statement_list_ast.items) {
         try {
-            if (auto variables = statement->as_variables()) {
-                visitVariables(*variables);
+            if (auto variable = statement->as_variable()) {
+                visitVariable(*variable);
+            } else if (auto initialization = statement->as_initialization()) {
+                result_.root->statements.add(visitInitialization(*initialization));
             } else if (auto assignment_instruction = statement->as_assignment_instruction()) {
                 result_.root->statements.add(visitAssignmentInstruction(*assignment_instruction));
             } else if (auto instruction = statement->as_instruction()) {
@@ -69,49 +71,49 @@ void AnalyzeTreeGenAstVisitor::visitStatements(const ast::StatementList &stateme
 }
 
 template <typename T, typename TArray>
-types::Type visitVariablesType(const ast::Variables &variables_ast, std::string_view type_name) {
-    if (variables_ast.size.empty()) {
+types::Type AnalyzeTreeGenAstVisitor::visitVariableType(const ast::Variable &variable_ast,
+    std::string_view type_name) {
+
+    if (variable_ast.size.empty()) {
         return tree::make<T>();
-    } else if (variables_ast.size->value > 0) {
-        return tree::make<TArray>(variables_ast.size->value);
+    } else if (variable_ast.size->value > 0) {
+        return tree::make<TArray>(variable_ast.size->value);
     } else {
         throw error::AnalysisError{ fmt::format("declaring {} array of size <= 0", type_name) };
     }
 }
 
-void AnalyzeTreeGenAstVisitor::visitVariables(const ast::Variables &variables_ast) {
+void AnalyzeTreeGenAstVisitor::visitVariable(const ast::Variable &variable_ast) {
     try {
-        auto type_name = variables_ast.typ->name;
+        auto type_name = variable_ast.typ->name;
         types::Type type{};
         if (type_name == "qubit") {
-            type = visitVariablesType<types::Qubit, types::QubitArray>(variables_ast, "qubit");
+            type = visitVariableType<types::Qubit, types::QubitArray>(variable_ast, "qubit");
         } else if (type_name == "bit") {
-            type = visitVariablesType<types::Bit, types::BitArray>(variables_ast, "bit");
+            type = visitVariableType<types::Bit, types::BitArray>(variable_ast, "bit");
         } else if (type_name == "axis") {
             type = tree::make<types::Axis>();
         } else if (type_name == "bool") {
-            type = visitVariablesType<types::Bool, types::BoolArray>(variables_ast, "bool");
+            type = visitVariableType<types::Bool, types::BoolArray>(variable_ast, "bool");
         } else if (type_name == "int") {
-            type = visitVariablesType<types::Int, types::IntArray>(variables_ast, "int");
+            type = visitVariableType<types::Int, types::IntArray>(variable_ast, "int");
         } else if (type_name == "float") {
-            type = visitVariablesType<types::Real, types::RealArray>(variables_ast, "real");
+            type = visitVariableType<types::Real, types::RealArray>(variable_ast, "real");
         } else {
             throw error::AnalysisError("unknown type \"" + type_name + "\"");
         }
 
-        // Construct the variables
-        for (const auto &identifier : variables_ast.names) {
-            // Construct variable
-            // Use the location tag of the identifier to record where the variable was defined
-            auto variable = tree::make<semantic::Variable>(identifier->name, type.clone());
-            variable->copy_annotation<parser::SourceLocation>(*identifier);
-            variable->annotations = visitAnnotations(variables_ast.annotations);
-            result_.root->variables.add(variable);
+        // Construct variable
+        // Use the location tag of the identifier to record where the variable was defined
+        const auto &identifier = variable_ast.name;
+        const auto &variable = tree::make<semantic::Variable>(identifier->name, type.clone());
+        variable->copy_annotation<parser::SourceLocation>(*identifier);
+        variable->annotations = visitAnnotations(variable_ast.annotations);
+        result_.root->variables.add(variable);
 
-            analyzer_.add_mapping(identifier->name, tree::make<values::VariableRef>(variable));
-        }
+        analyzer_.add_mapping(identifier->name, tree::make<values::VariableRef>(variable));
     } catch (error::AnalysisError &err) {
-        err.context(variables_ast);
+        err.context(variable_ast);
         result_.errors.push_back(err.get_message());
     }
 }
@@ -172,30 +174,23 @@ tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(
         node->copy_annotation<parser::SourceLocation>(instruction_ast);
     } catch (error::AnalysisError &err) {
         err.context(instruction_ast);
-        throw;
+        result_.errors.push_back(err.get_message());
     }
     return node;
 }
 
-void AnalyzeTreeGenAstVisitor::visitAssignmentInstructionOperands(const ast::AssignmentInstruction &instruction_ast,
-    tree::Maybe<semantic::AssignmentInstruction> &node) {
-
-    // Analyze the expressions
-    auto lhs = visitExpression(*instruction_ast.lhs);
-    auto rhs = visitExpression(*instruction_ast.rhs);
+tree::One<semantic::AssignmentInstruction> AnalyzeTreeGenAstVisitor::visitAssignmentOperands(
+    const values::Value &lhs, const values::Value &rhs) {
 
     // Check assignability of the left-hand side
     if (bool assignable = lhs->as_reference(); !assignable) {
-        throw error::AnalysisError(
-            "left-hand side of assignment statement must be assignable"
-        );
+        throw error::AnalysisError{ "left-hand side of assignment statement must be assignable" };
     }
 
     // Type-check/promote the right-hand side
     auto target_type = values::type_of(lhs).clone();
     if (auto rhs_promoted = values::promote(rhs, target_type); !rhs_promoted.empty()) {
-        // Set the node operands
-        node.emplace<semantic::AssignmentInstruction>(lhs, rhs_promoted);
+        return cqasm::tree::make<semantic::AssignmentInstruction>(lhs, rhs_promoted);
     } else {
         throw error::AnalysisError{ fmt::format(
             "type of right-hand side ({}) could not be coerced to left-hand side ({})",
@@ -203,26 +198,65 @@ void AnalyzeTreeGenAstVisitor::visitAssignmentInstructionOperands(const ast::Ass
     }
 }
 
+template <typename InstructionAst>
+tree::One<semantic::AssignmentInstruction> AnalyzeTreeGenAstVisitor::visitAssignment(
+    const values::Value &lhs, const values::Value &rhs, const InstructionAst &instruction_ast) {
+
+    // Check if right-hand side operand need be promoted
+    auto ret = visitAssignmentOperands(lhs, rhs);
+
+    // Set condition code
+    ret->condition.set(tree::make<values::ConstBool>(true));
+
+    // Copy annotation data
+    ret->annotations = visitAnnotations(instruction_ast.annotations);
+    ret->copy_annotation<parser::SourceLocation>(instruction_ast);
+
+    return ret;
+}
+
+tree::Maybe<semantic::AssignmentInstruction> AnalyzeTreeGenAstVisitor::visitInitialization(
+    const ast::Initialization &initialization_ast) {
+
+    tree::Maybe<semantic::AssignmentInstruction> ret{};
+    try {
+        // Analyze the right-hand side operand
+        //
+        // Initialization instructions check the right-hand side operand first
+        // In order to avoid code such as 'int i = i' being correct
+        auto rhs = visitExpression(*initialization_ast.rhs);
+
+        // Add the variable declaration
+        visitVariable(*initialization_ast.var);
+
+        // Analyze the left-hand side operand
+        auto lhs = visitExpression(*initialization_ast.var->name);
+
+        // Add the assignment instruction
+        ret = visitAssignment(lhs, rhs, initialization_ast);
+    } catch (error::AnalysisError &err) {
+        err.context(initialization_ast);
+        result_.errors.push_back(err.get_message());
+    }
+    return ret;
+}
+
 tree::Maybe<semantic::AssignmentInstruction> AnalyzeTreeGenAstVisitor::visitAssignmentInstruction(
     const ast::AssignmentInstruction &instruction_ast) {
 
-    tree::Maybe<semantic::AssignmentInstruction> node{};
     try {
         // Analyze the operands
-        visitAssignmentInstructionOperands(instruction_ast, node);
+        //
+        // Assignment instructions check the right-hand side operand first
+        auto rhs = visitExpression(*instruction_ast.rhs);
+        auto lhs = visitExpression(*instruction_ast.lhs);
 
-        // Set condition code
-        node->condition.set(tree::make<values::ConstBool>(true));
-
-        // Copy annotation data
-        node->annotations = visitAnnotations(instruction_ast.annotations);
-        node->copy_annotation<parser::SourceLocation>(instruction_ast);
-
+        return visitAssignment(lhs, rhs, instruction_ast);
     } catch (error::AnalysisError &err) {
         err.context(instruction_ast);
-        throw;
+        result_.errors.push_back(err.get_message());
+        return {};
     }
-    return node;
 }
 
 values::Value AnalyzeTreeGenAstVisitor::visitExpression(const ast::Expression &expression_ast) {

@@ -11,14 +11,20 @@ class AnalyzeTreeGenAstVisitor {
     Analyzer &analyzer_;
     AnalysisResult result_;
 
-    void visitAssignmentInstructionOperands(const ast::AssignmentInstruction &ast,
-        tree::Maybe<semantic::AssignmentInstruction> &node);
+    template <typename T, typename TArray>
+    types::Type visitVariableType(const ast::Variable &variable_ast, std::string_view type_name);
+    static tree::One<semantic::AssignmentInstruction> visitAssignmentOperands(
+        const values::Value &lhs, const values::Value &rhs);
+    template <typename InstructionAst>
+    tree::One<semantic::AssignmentInstruction> visitAssignment(
+        const values::Value &lhs, const values::Value &rhs, const InstructionAst &instruction_ast);
 
 public:
     AnalysisResult visitProgram(const ast::Program &program_ast);
     void visitVersion(const ast::Version &version_ast);
     void visitStatements(const ast::StatementList &statement_list_ast);
-    void visitVariables(const ast::Variables &variables_ast);
+    void visitVariable(const ast::Variable &variable_ast);
+    tree::Maybe<semantic::AssignmentInstruction> visitInitialization(const ast::Initialization &initializaion_ast);
     tree::Maybe<semantic::AssignmentInstruction> visitAssignmentInstruction(const ast::AssignmentInstruction &ast);
     tree::Maybe<semantic::Instruction> visitInstruction(const ast::Instruction &ast);
     values::Value visitExpression(const ast::Expression &ast);

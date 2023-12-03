@@ -85,15 +85,21 @@ annotated {
     annotations: Any<annotation_data>;
 
     statement {
-        # One or more variable declarations of some type.
-        variables {
-            names: Many<identifier>;
+        # One variable declaration of some type.
+        variable {
+            name: One<identifier>;
             typ: One<identifier>;
             size: Maybe<integer_literal>;
         }
 
-        # A gate.
+        # An initialization is a variable declaration plus an assignment instruction.
+        initialization {
+            var: One<variable>;
+            rhs: One<expression>;
+        }
+
         instruction_base {
+            # A gate.
             instruction {
                 name: One<identifier>;
                 condition: Maybe<expression>;
