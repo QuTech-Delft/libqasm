@@ -187,6 +187,14 @@ tree::One<semantic::AssignmentInstruction> AnalyzeTreeGenAstVisitor::visitAssign
         throw error::AnalysisError{ "left-hand side of assignment statement must be assignable" };
     }
 
+    // TODO: when the rhs is an initialization list
+    // - the lhs has to be an array type,
+    // - the size of the rhs and the lhs have to be the same, and
+    // - all the elements of the rhs have to be type-checked/promoted
+
+    // TODO: when the rhs is an identifier, and the lhs is of array type
+    // - the size of the rhs and the lhs have to be the same
+
     // Type-check/promote the right-hand side
     auto target_type = values::type_of(lhs).clone();
     if (auto rhs_promoted = values::promote(rhs, target_type); !rhs_promoted.empty()) {

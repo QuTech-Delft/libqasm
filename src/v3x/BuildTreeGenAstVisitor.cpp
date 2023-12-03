@@ -309,8 +309,7 @@ std::any BuildTreeGenAstVisitor::visitAxisInitializationList(CqasmParser::AxisIn
 }
 
 std::any BuildTreeGenAstVisitor::visitInitializationList(CqasmParser::InitializationListContext *context) {
-    (void) context;
-    throw std::runtime_error{ "Unimplemented" };
+    return visitExpressionList(context->expressionList());
 }
 
 }  // namespace cqasm::v3x::parser
