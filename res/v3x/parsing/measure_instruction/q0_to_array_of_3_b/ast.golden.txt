@@ -8,12 +8,12 @@ Program(
   statements: <
     StatementList(
       items: [
-        Variables( # input.cq:3:7..9
-          names: [
+        Variable( # input.cq:3:7..9
+          name: <
             Identifier(
               name: q0
             )
-          ]
+          >
           typ: <
             Identifier(
               name: qubit
@@ -22,12 +22,12 @@ Program(
           size: -
           annotations: []
         )
-        Variables( # input.cq:4:8..9
-          names: [
+        Variable( # input.cq:4:8..9
+          name: <
             Identifier(
               name: b
             )
-          ]
+          >
           typ: <
             Identifier(
               name: bit
