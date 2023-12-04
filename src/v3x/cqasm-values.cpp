@@ -8,6 +8,7 @@
 #include "v3x/cqasm-types.hpp"
 #include "v3x/cqasm-semantic.hpp"
 
+#include <cassert>
 #include  <fmt/format.h>
 
 
@@ -15,7 +16,6 @@ namespace cqasm::v3x::values {
 
 /**
  * Type-checks and (if necessary) promotes the given value to the given type.
- * Also checks assignability of the value if the type says the value must be assignable.
  * Returns null if the check/promotion fails,
  * otherwise returns the constructed value by way of a smart pointer.
  * If the type was an exact match, this may return the given value without modification or a clone thereof.
@@ -44,6 +44,11 @@ Value promote(const Value &value, const types::Type &type) {
         }
     }
 
+    // If a promotion rule was successful, copy the source location annotation from the old value to the new one
+    if (!ret.empty()) {
+        ret->copy_annotation<parser::SourceLocation>(*value);
+    }
+
     return ret;
 }
 
@@ -61,6 +66,8 @@ types::Type type_of(const Value &value) {
         return tree::make<types::Real>();
     } else if (value->as_const_complex()) {
         return tree::make<types::Complex>();
+    } else if (value->as_const_int_array()) {
+        return tree::make<types::IntArray>();
     } else if (auto index = value->as_index_ref()) {
         return index->variable->typ;
     } else if (auto var = value->as_variable_ref()) {
@@ -79,6 +86,28 @@ types::Types types_of(const Values &values) {
         types.add(type_of(value));
     }
     return types;
+}
+
+/**
+ * Returns the number of elements of the given value.
+ */
+primitives::Int range_of(const Value &value) {
+    if (value->as_const_axis() ||
+        value->as_const_bool() ||
+        value->as_const_int() ||
+        value->as_const_real() ||
+        value->as_const_complex()) {
+        return 1;
+    } else if (auto int_array = value->as_const_int_array()) {
+        return static_cast<primitives::Int>(int_array->value.size());
+    } else if (auto index = value->as_index_ref()) {
+        return static_cast<primitives::Int>(index->indices.size());
+    } else if (auto var = value->as_variable_ref()) {
+        assert(var->variable->typ->as_type_base());
+        return var->variable->typ->as_type_base()->size;
+    } else {
+        throw std::runtime_error("unknown type!");
+    }
 }
 
 /**

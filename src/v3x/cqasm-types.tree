@@ -23,42 +23,34 @@ namespace v3x
 namespace types
 
 type_base {
+    size: cqasm::v3x::primitives::Int;
+
     # Type of an axis (x, y, or z).
     axis {}
 
     # Type of a boolean.
     bool {}
 
-    bool_array {
-        size: cqasm::v3x::primitives::Int;
-    }
+    bool_array {}
 
     # Type of an integer (signed 64-bit).
     int {}
 
-    int_array {
-        size: cqasm::v3x::primitives::Int;
-    }
+    int_array {}
 
     # Type of a real number (IEEE double).
     real {}
 
-    real_array {
-        size: cqasm::v3x::primitives::Int;
-    }
+    real_array {}
 
     # Type of a complex number (2x IEEE double).
     complex {}
 
     bit {}
 
-    bit_array {
-        size: cqasm::v3x::primitives::Int;
-    }
+    bit_array {}
 
     qubit {}
 
-    qubit_array {
-        size: cqasm::v3x::primitives::Int;
-    }
+    qubit_array {}
 }

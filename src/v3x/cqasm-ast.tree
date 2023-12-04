@@ -60,6 +60,10 @@ expression {
         expr: One<expression>;
         indices: One<index_list>;
     }
+
+    initialization_list {
+        expr_list: One<expression_list>;
+    }
 }
 
 expression_list {

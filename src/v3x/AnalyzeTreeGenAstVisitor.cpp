@@ -2,6 +2,7 @@
 #include "v3x/cqasm-ast-gen.hpp"
 #include "v3x/cqasm-analyzer.hpp"
 
+#include <algorithm>  // transform
 #include <string_view>
 
 
@@ -72,10 +73,10 @@ void AnalyzeTreeGenAstVisitor::visitStatements(const ast::StatementList &stateme
 
 template <typename T, typename TArray>
 types::Type AnalyzeTreeGenAstVisitor::visitVariableType(const ast::Variable &variable_ast,
-    std::string_view type_name) {
+    std::string_view type_name) const {
 
     if (variable_ast.size.empty()) {
-        return tree::make<T>();
+        return tree::make<T>(1);
     } else if (variable_ast.size->value > 0) {
         return tree::make<TArray>(variable_ast.size->value);
     } else {
@@ -179,48 +180,14 @@ tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(
     return node;
 }
 
-tree::One<semantic::AssignmentInstruction> AnalyzeTreeGenAstVisitor::visitAssignmentOperands(
-    const values::Value &lhs, const values::Value &rhs) {
-
-    // Check assignability of the left-hand side
-    if (bool assignable = lhs->as_reference(); !assignable) {
-        throw error::AnalysisError{ "left-hand side of assignment statement must be assignable" };
-    }
-
-    // TODO: when the rhs is an initialization list
-    // - the lhs has to be an array type,
-    // - the size of the rhs and the lhs have to be the same, and
-    // - all the elements of the rhs have to be type-checked/promoted
-
-    // TODO: when the rhs is an identifier, and the lhs is of array type
-    // - the size of the rhs and the lhs have to be the same
-
-    // Type-check/promote the right-hand side
-    auto target_type = values::type_of(lhs).clone();
-    if (auto rhs_promoted = values::promote(rhs, target_type); !rhs_promoted.empty()) {
-        return cqasm::tree::make<semantic::AssignmentInstruction>(lhs, rhs_promoted);
-    } else {
+values::Value AnalyzeTreeGenAstVisitor::promoteValueToType(const values::Value &rhs_value, const types::Type &lhs_type) {
+    if (auto rhs_promoted_value = values::promote(rhs_value, lhs_type); rhs_promoted_value.empty()) {
         throw error::AnalysisError{ fmt::format(
             "type of right-hand side ({}) could not be coerced to left-hand side ({})",
-            values::type_of(rhs), values::type_of(lhs)) };
+            values::type_of(rhs_value), lhs_type) };
+    } else {
+        return rhs_promoted_value;
     }
-}
-
-template <typename InstructionAst>
-tree::One<semantic::AssignmentInstruction> AnalyzeTreeGenAstVisitor::visitAssignment(
-    const values::Value &lhs, const values::Value &rhs, const InstructionAst &instruction_ast) {
-
-    // Check if right-hand side operand need be promoted
-    auto ret = visitAssignmentOperands(lhs, rhs);
-
-    // Set condition code
-    ret->condition.set(tree::make<values::ConstBool>(true));
-
-    // Copy annotation data
-    ret->annotations = visitAnnotations(instruction_ast.annotations);
-    ret->copy_annotation<parser::SourceLocation>(instruction_ast);
-
-    return ret;
 }
 
 tree::Maybe<semantic::AssignmentInstruction> AnalyzeTreeGenAstVisitor::visitInitialization(
@@ -232,16 +199,76 @@ tree::Maybe<semantic::AssignmentInstruction> AnalyzeTreeGenAstVisitor::visitInit
         //
         // Initialization instructions check the right-hand side operand first
         // In order to avoid code such as 'int i = i' being correct
-        auto rhs = visitExpression(*initialization_ast.rhs);
+        //auto rhs = visitExpression(*initialization_ast.rhs);
+        const auto &rhs_ast = *initialization_ast.rhs;
+        values::Value rhs_value{};
+        if (rhs_ast.as_identifier()) {
+            rhs_value = visitExpression(rhs_ast);
+        }
+        // TODO: we shouldn't distinguish between cases
+        //       always check for size of lhs equals size of rhs
+        //       and type-check/promote rhs
 
         // Add the variable declaration
         visitVariable(*initialization_ast.var);
 
         // Analyze the left-hand side operand
-        auto lhs = visitExpression(*initialization_ast.var->name);
+        // Left-hand side is always assignable for an initialization
+        const auto &var_ast = *initialization_ast.var;
+        const auto &lhs_value = visitExpression(*var_ast.name);
+        const auto &lhs_type = values::type_of(lhs_value);
 
-        // Add the assignment instruction
-        ret = visitAssignment(lhs, rhs, initialization_ast);
+        // Check if right-hand side operand needs be promoted
+        if (const auto rhs_initialization_list_ptr = rhs_ast.as_initialization_list()) {
+            // When the rhs is an initialization list
+            // - the lhs has to be an array type,
+            // - the size of the rhs and the lhs have to be the same, and
+            // - all the elements of the rhs have to be type-checked/promoted
+            const auto &rhs_expression_list_ast = rhs_initialization_list_ptr->expr_list;
+            if (var_ast.size.empty()) {
+                throw error::AnalysisError{
+                    "trying to initialize a variable of non-array type with an initialization list"} ;
+            } else if (var_ast.size->value != static_cast<primitives::Int>(rhs_expression_list_ast->items.size())) {
+                throw error::AnalysisError{
+                    fmt::format("trying to initialize a variable of size {} with an initialization list of size {}",
+                        var_ast.size->value, rhs_expression_list_ast->items.size())};
+            } else {
+                const auto &rhs_expression_list = rhs_expression_list_ast->items.get_vec();
+                if (lhs_type->as_int_array()) {
+                    values::ConstIntArray rhs_value_list{};
+                    std::transform(rhs_expression_list.begin(), rhs_expression_list.end(), rhs_value_list.value.begin(),
+                        [this, &lhs_type](const auto &rhs_expression) {
+                            const auto &rhs_value = visitExpression(*rhs_expression);
+                            return promoteValueToType(rhs_value, lhs_type);
+                    });
+                } else {
+                    throw error::AnalysisError{ "unimplemented" };
+                }
+            }
+        } else if (!rhs_value.empty()) {
+            // When the rhs is an identifier
+            // - the size of the rhs and the lhs have to be the same, and
+            // - the rhs have to be type-checked/promoted
+            auto lhs_size = values::range_of(lhs_value);
+            auto rhs_size = values::range_of(rhs_value);
+            if (lhs_size != rhs_size) {
+                throw error::AnalysisError{
+                    fmt::format("trying to initialize a variable of size {} with an initialization list of size {}",
+                        lhs_size, rhs_size)};
+            } else {
+                ret->rhs = promoteValueToType(rhs_value, lhs_type);
+            }
+        } else {
+            // rhs is not neither an initialization list nor an identifier
+            ret->rhs = promoteValueToType(rhs_value, lhs_type);
+        }
+
+        // Set condition code
+        ret->condition.set(tree::make<values::ConstBool>(true));
+
+        // Copy annotation data
+        ret->annotations = visitAnnotations(initialization_ast.annotations);
+        ret->copy_annotation<parser::SourceLocation>(initialization_ast);
     } catch (error::AnalysisError &err) {
         err.context(initialization_ast);
         result_.errors.push_back(err.get_message());
@@ -252,19 +279,33 @@ tree::Maybe<semantic::AssignmentInstruction> AnalyzeTreeGenAstVisitor::visitInit
 tree::Maybe<semantic::AssignmentInstruction> AnalyzeTreeGenAstVisitor::visitAssignmentInstruction(
     const ast::AssignmentInstruction &instruction_ast) {
 
+    tree::Maybe<semantic::AssignmentInstruction> ret{};
     try {
         // Analyze the operands
-        //
-        // Assignment instructions check the right-hand side operand first
-        auto rhs = visitExpression(*instruction_ast.rhs);
-        auto lhs = visitExpression(*instruction_ast.lhs);
+        const auto &lhs = visitExpression(*instruction_ast.lhs);
+        const auto &rhs = visitExpression(*instruction_ast.rhs);
 
-        return visitAssignment(lhs, rhs, instruction_ast);
+        // Check assignability of the left-hand side
+        if (bool assignable = lhs->as_reference(); !assignable) {
+            throw error::AnalysisError{ "left-hand side of assignment statement must be assignable" };
+        } else {
+            ret->lhs = lhs;
+        }
+
+        // Check if right-hand side operand needs be promoted
+        ret->rhs = promoteValueToType(rhs, values::type_of(lhs));
+
+        // Set condition code
+        ret->condition.set(tree::make<values::ConstBool>(true));
+
+        // Copy annotation data
+        ret->annotations = visitAnnotations(instruction_ast.annotations);
+        ret->copy_annotation<parser::SourceLocation>(instruction_ast);
     } catch (error::AnalysisError &err) {
         err.context(instruction_ast);
         result_.errors.push_back(err.get_message());
-        return {};
     }
+    return ret;
 }
 
 values::Value AnalyzeTreeGenAstVisitor::visitExpression(const ast::Expression &expression_ast) {

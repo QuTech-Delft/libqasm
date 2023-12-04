@@ -40,6 +40,10 @@ constant {
         value: cqasm::v3x::primitives::Int;
     }
 
+    const_int_array {
+        value: Many<const_int>;
+    }
+
     const_real {
         value: cqasm::v3x::primitives::Real;
     }

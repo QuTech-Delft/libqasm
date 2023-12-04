@@ -12,12 +12,8 @@ class AnalyzeTreeGenAstVisitor {
     AnalysisResult result_;
 
     template <typename T, typename TArray>
-    types::Type visitVariableType(const ast::Variable &variable_ast, std::string_view type_name);
-    static tree::One<semantic::AssignmentInstruction> visitAssignmentOperands(
-        const values::Value &lhs, const values::Value &rhs);
-    template <typename InstructionAst>
-    tree::One<semantic::AssignmentInstruction> visitAssignment(
-        const values::Value &lhs, const values::Value &rhs, const InstructionAst &instruction_ast);
+    [[nodiscard]] types::Type visitVariableType(const ast::Variable &variable_ast, std::string_view type_name) const;
+    [[nodiscard]] static values::Value promoteValueToType(const values::Value &rhs_value, const types::Type &lhs_type);
 
 public:
     AnalysisResult visitProgram(const ast::Program &program_ast);

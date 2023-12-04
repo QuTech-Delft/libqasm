@@ -50,6 +50,11 @@ types::Type type_of(const Value &value);
 types::Types types_of(const Values &values);
 
 /**
+ * Returns the number of elements of the given value.
+ */
+    primitives::Int range_of(const Value &value);
+
+/**
  * Throws an AnalysisError if the given value is not a constant,
  * i.e. if it doesn't have a known value at this time.
  */
