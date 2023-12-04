@@ -28,6 +28,8 @@ public:
     tree::Many<values::ConstInt> visitIndexList(const ast::IndexList &ast, size_t size);
     tree::One<values::ConstInt> visitIndexItem(const ast::IndexItem &ast, size_t size);
     tree::Many<values::ConstInt> visitIndexRange(const ast::IndexRange &ast, size_t size);
+    values::Value visitInitializationList(const ast::InitializationList &initialization_list_ast);
+
     tree::Any<semantic::AnnotationData> visitAnnotations(const tree::Any<ast::AnnotationData> &annotations_ast);
 
     /**
