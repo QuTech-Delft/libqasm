@@ -12,7 +12,8 @@ Program(
       name: i
       typ: <
         Int(
-)
+          size: 1
+        )
       >
       annotations: []
     )
@@ -20,7 +21,8 @@ Program(
       name: i
       typ: <
         Int(
-)
+          size: 1
+        )
       >
       annotations: []
     )

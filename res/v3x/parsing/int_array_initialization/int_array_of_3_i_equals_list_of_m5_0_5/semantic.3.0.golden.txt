@@ -7,27 +7,37 @@ Program(
     )
   >
   statements: [
-    Instruction(
-      instruction: rx(qubit, real)
-      name: rx
-      operands: [
+    AssignmentInstruction(
+      lhs: <
         VariableRef(
           variable --> <
             Variable(
-              name: q
+              name: i
               typ: <
-                Qubit(
-                  size: 1
+                IntArray(
+                  size: 3
                 )
               >
               annotations: []
             )
           >
         )
-        ConstReal(
-          value: 6.28319
+      >
+      rhs: <
+        ConstIntArray(
+          value: [
+            ConstInt(
+              value: -5
+            )
+            ConstInt(
+              value: 0
+            )
+            ConstInt(
+              value: 5
+            )
+          ]
         )
-      ]
+      >
       condition: <
         ConstBool(
           value: 1
@@ -38,10 +48,10 @@ Program(
   ]
   variables: [
     Variable(
-      name: q
+      name: i
       typ: <
-        Qubit(
-          size: 1
+        IntArray(
+          size: 3
         )
       >
       annotations: []

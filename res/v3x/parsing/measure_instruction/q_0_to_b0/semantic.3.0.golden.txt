@@ -35,7 +35,8 @@ Program(
               name: b0
               typ: <
                 Bit(
-)
+                  size: 1
+                )
               >
               annotations: []
             )
@@ -64,7 +65,8 @@ Program(
       name: b0
       typ: <
         Bit(
-)
+          size: 1
+        )
       >
       annotations: []
     )

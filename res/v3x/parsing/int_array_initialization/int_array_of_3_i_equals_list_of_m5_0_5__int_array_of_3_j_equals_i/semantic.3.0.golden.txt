@@ -14,8 +14,8 @@ Program(
             Variable(
               name: i
               typ: <
-                Int(
-                  size: 1
+                IntArray(
+                  size: 3
                 )
               >
               annotations: []
@@ -24,8 +24,18 @@ Program(
         )
       >
       rhs: <
-        ConstInt(
-          value: 42
+        ConstIntArray(
+          value: [
+            ConstInt(
+              value: -5
+            )
+            ConstInt(
+              value: 0
+            )
+            ConstInt(
+              value: 5
+            )
+          ]
         )
       >
       condition: <
@@ -42,8 +52,8 @@ Program(
             Variable(
               name: j
               typ: <
-                Int(
-                  size: 1
+                IntArray(
+                  size: 3
                 )
               >
               annotations: []
@@ -57,8 +67,8 @@ Program(
             Variable(
               name: i
               typ: <
-                Int(
-                  size: 1
+                IntArray(
+                  size: 3
                 )
               >
               annotations: []
@@ -78,8 +88,8 @@ Program(
     Variable(
       name: i
       typ: <
-        Int(
-          size: 1
+        IntArray(
+          size: 3
         )
       >
       annotations: []
@@ -87,8 +97,8 @@ Program(
     Variable(
       name: j
       typ: <
-        Int(
-          size: 1
+        IntArray(
+          size: 3
         )
       >
       annotations: []

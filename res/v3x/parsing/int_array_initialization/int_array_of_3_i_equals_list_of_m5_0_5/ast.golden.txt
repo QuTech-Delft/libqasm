@@ -1,0 +1,57 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  statements: <
+    StatementList(
+      items: [
+        Initialization( # input.cq:3:10..11
+          var: <
+            Variable( # input.cq:3:8..9
+              name: <
+                Identifier(
+                  name: i
+                )
+              >
+              typ: <
+                Identifier(
+                  name: int
+                )
+              >
+              size: <
+                IntegerLiteral(
+                  value: 3
+                )
+              >
+              annotations: []
+            )
+          >
+          rhs: <
+            InitializationList(
+              expr_list: <
+                ExpressionList(
+                  items: [
+                    IntegerLiteral( # input.cq:3:14..16
+                      value: -5
+                    )
+                    IntegerLiteral( # input.cq:3:18..19
+                      value: 0
+                    )
+                    IntegerLiteral( # input.cq:3:21..22
+                      value: 5
+                    )
+                  ]
+                )
+              >
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:4:10..11: type of right-hand side (qubit) could not be coerced to left-hand side (int array)
+Error at input.cq:4:10..11: trying to initialize a variable of size 3 with a value of size 1
