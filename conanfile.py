@@ -26,6 +26,7 @@ class LibqasmConan(ConanFile):
         "shared": [True, False],
         "fPIC": [True, False],
         "asan_enabled": [True, False],
+        "build_emscripten": [True, False],
         "build_python": [True, False],
         "build_tests": [True, False],
         "compat": [True, False],
@@ -38,6 +39,7 @@ class LibqasmConan(ConanFile):
         "shared": False,
         "fPIC": True,
         "asan_enabled": False,
+        "build_emscripten": True,
         "build_python": False,
         "build_tests": False,
         "compat": False,
@@ -63,6 +65,9 @@ class LibqasmConan(ConanFile):
             self.tool_requires("zulu-openjdk/11.0.19")
         if self.options.build_tests:
             self.requires("gtest/1.14.0")
+        if self.options.build_emscripten:
+            self.requires("emsdk/3.1.49")
+            self.requires("nodejs/16.3.0")
 
     def requirements(self):
         self.requires("antlr4-cppruntime/4.13.0")
@@ -92,6 +97,7 @@ class LibqasmConan(ConanFile):
         deps.generate()
         tc = CMakeToolchain(self)
         tc.variables["ASAN_ENABLED"] = self.options.asan_enabled
+        tc.variables["LIBQASM_BUILD_EMSCRIPTEN"] = self.options.build_emscripten
         tc.variables["LIBQASM_BUILD_PYTHON"] = self.options.build_python
         tc.variables["LIBQASM_BUILD_TESTS"] = self.options.build_tests
         tc.variables["LIBQASM_COMPAT"] = self.options.compat

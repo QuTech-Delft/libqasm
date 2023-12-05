@@ -1,0 +1,8 @@
+[settings]
+arch=wasm
+os=Emscripten
+compiler=clang
+compiler.version=14
+
+[options]
+libqasm/*:build_emscripten=True

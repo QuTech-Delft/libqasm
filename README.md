@@ -179,3 +179,13 @@ If you are having trouble with this just create new clone of this repository usi
 ```
 git clone --config core.autocrlf=input git@github.com:QuTech-Delft/libqasm.git
 ```
+
+## Emscripten
+
+Build with:
+
+```
+conan build . -pr=conan/profiles/emscripten -pr:b=conan/profiles/release -b missing
+```
+
+This will generate a `libqasm_emscripten` executable.
