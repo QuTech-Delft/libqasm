@@ -1,4 +1,4 @@
-#include "EmscriptenWrapper.hpp"
+#include "emscripten_wrapper.hpp"
 
 #include "v3x/cqasm-py.hpp"
 #include "version.hpp"

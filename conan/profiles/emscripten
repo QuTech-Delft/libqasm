@@ -1,6 +1,7 @@
 [settings]
 arch=wasm
 os=Emscripten
+build_type=Release
 compiler=clang
 compiler.version=14
 
