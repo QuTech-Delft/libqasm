@@ -2,8 +2,6 @@
 
 import os
 
-from sys import version_info
-
 # Before we can import the dynamic modules, we have to set the linker search path appropriately.
 from sys import version_info
 
