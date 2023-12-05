@@ -39,7 +39,7 @@ class LibqasmConan(ConanFile):
         "shared": False,
         "fPIC": True,
         "asan_enabled": False,
-        "build_emscripten": True,
+        "build_emscripten": False,
         "build_python": False,
         "build_tests": False,
         "compat": False,
@@ -66,8 +66,7 @@ class LibqasmConan(ConanFile):
         if self.options.build_tests:
             self.requires("gtest/1.14.0")
         if self.options.build_emscripten:
-            self.requires("emsdk/3.1.49")
-            self.requires("nodejs/16.3.0")
+            self.tool_requires("emsdk/3.1.44")
 
     def requirements(self):
         self.requires("antlr4-cppruntime/4.13.0")
