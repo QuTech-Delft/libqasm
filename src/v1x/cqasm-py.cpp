@@ -73,9 +73,9 @@ void V1xAnalyzer::register_error_model(const std::string &name, const std::strin
  * Only parses the given file.
  * The file must be in v1.x syntax.
  * No version check or conversion is performed.
- * Returns a vector of strings,
- * of which the first is always present and is the CBOR serialization of the v1.x AST.
+ * Returns a vector of strings, of which the first is reserved for the CBOR serialization of the v1.x AST.
  * Any additional strings represent error messages.
+ * Notice that the AST and error messages won't be available at the same time.
  */
 std::vector<std::string> V1xAnalyzer::parse_file(const std::string &filename) {
     if (auto parse_result = v1x::parser::parse_file(filename); parse_result.errors.empty()) {
@@ -118,9 +118,9 @@ std::string V1xAnalyzer::parse_string_to_json(const std::string &data, const std
  * If the file is written in a later file version,
  * this function may try to reduce it to the maximum v1.x API version support advertised
  * using this object's constructor.
- * Returns a vector of strings,
- * of which the first is always present and is the CBOR serialization of the v1x semantic tree.
+ * Returns a vector of strings, of which the first is reserved for the CBOR serialization of the v1.x semantic tree.
  * Any additional strings represent error messages.
+ * Notice that the AST and error messages won't be available at the same time.
  */
 [[nodiscard]] std::vector<std::string> V1xAnalyzer::analyze_file(const std::string &filename) const {
     auto analysis_result = analyzer->analyze(

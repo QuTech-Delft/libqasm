@@ -3,8 +3,10 @@
 #include "v3x/BuildTreeGenAstVisitor.hpp"
 #include "v3x/CqasmLexer.h"
 #include "v3x/CqasmParser.h"
+#include "v3x/CustomErrorListener.hpp"
 #include "v3x/ScannerAntlr.hpp"
 
+#include <antlr4-runtime.h>
 #include <filesystem>
 #include <fmt/format.h>
 

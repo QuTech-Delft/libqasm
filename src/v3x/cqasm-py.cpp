@@ -51,9 +51,9 @@ void V3xAnalyzer::register_instruction(const std::string &name, const std::strin
  * Only parses the given file.
  * The file must be in v3.x syntax.
  * No version check or conversion is performed.
- * Returns a vector of strings,
- * of which the first is always present and is the CBOR serialization of the v3.x AST.
+ * Returns a vector of strings, of which the first is reserved for the CBOR serialization of the v3.x AST.
  * Any additional strings represent error messages.
+ * Notice that the AST and error messages won't be available at the same time.
  */
 std::vector<std::string> V3xAnalyzer::parse_file(const std::string &filename) {
     if (auto parse_result = v3x::parser::parse_file(filename); parse_result.errors.empty()) {
@@ -96,9 +96,9 @@ std::string V3xAnalyzer::parse_string_to_json(const std::string &data, const std
  * If the file is written in a later file version,
  * this function may try to reduce it to the maximum v3.x API version support advertised
  * using this object's constructor.
- * Returns a vector of strings,
- * of which the first is always present and is the CBOR serialization of the v3x semantic tree.
+ * Returns a vector of strings, of which the first is reserved for the CBOR serialization of the v3.x semantic tree.
  * Any additional strings represent error messages.
+ * Notice that the AST and error messages won't be available at the same time.
  */
 std::vector<std::string> V3xAnalyzer::analyze_file(const std::string &filename) const {
     auto analysis_result = analyzer->analyze(

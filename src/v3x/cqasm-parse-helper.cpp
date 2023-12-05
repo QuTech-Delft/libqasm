@@ -2,10 +2,11 @@
  * Implementation for \ref include/v3x/cqasm-parse-helper.hpp "v3x/cqasm-parse-helper.hpp".
  */
 
-#include "v3x/cqasm-parse-result.hpp"
 #include "v3x/BuildTreeGenAstVisitor.hpp"
-#include "v3x/cqasm-parse-helper.hpp"
+#include "v3x/CustomErrorListener.hpp"
 #include "v3x/ScannerAntlr.hpp"
+#include "v3x/cqasm-parse-helper.hpp"
+#include "v3x/cqasm-parse-result.hpp"
 
 
 namespace cqasm::v3x::parser {

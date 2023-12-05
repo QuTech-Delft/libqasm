@@ -2,6 +2,7 @@
 #include "cqasm-tree.hpp"
 #include "v3x/cqasm-ast.hpp"
 #include "v3x/BuildTreeGenAstVisitor.hpp"
+#include "v3x/CustomErrorListener.hpp"
 
 #include <algorithm>  // for_each
 #include <antlr4-runtime.h>

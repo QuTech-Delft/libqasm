@@ -256,13 +256,13 @@ public:
     /**
      * Parses and analyzes the given file.
      */
-    AnalysisResult analyze(const std::string &filename) const;
+    AnalysisResult analyze_file(const std::string &filename) const;
 
     /**
      * Parses and analyzes the given file pointer.
      * The optional filename argument will be used only for error messages.
      */
-    AnalysisResult analyze(FILE *file, const std::string &filename = "<unknown>") const;
+    AnalysisResult analyze_file(FILE *file, const std::string &filename = "<unknown>") const;
 
     /**
      * Parses and analyzes the given string.

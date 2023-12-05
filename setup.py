@@ -4,6 +4,7 @@ import os
 import platform
 import re
 import shutil
+
 from distutils.dir_util import copy_tree
 from setuptools import setup, Extension
 
@@ -15,6 +16,8 @@ from distutils.command.bdist import bdist as _bdist
 from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
 from distutils.command.sdist import sdist as _sdist
 from setuptools.command.egg_info import egg_info as _egg_info
+
+from version import get_version
 
 root_dir = os.getcwd()  # root of the repository
 src_dir = root_dir + os.sep + 'src'  # C++ source directory
@@ -34,10 +37,6 @@ module_dir = target_dir + os.sep + 'module'  # libQasm Python module directory, 
 if not os.path.exists(target_dir):
     os.makedirs(target_dir)
 copy_tree(srcmod_dir, module_dir)
-
-
-def get_version():
-    return '0.4.1'
 
 
 def read(file_name):
@@ -89,7 +88,7 @@ class build_ext(_build_ext):
             cmd & FG
 
             cmd = (local['conan']['create']['.']
-                ['--version']['0.4.1']
+                ['--version'][get_version()]
                 ['-s:h']['compiler.cppstd=20']
                 ['-s:h']["libqasm/*:build_type=" + build_type]
 
