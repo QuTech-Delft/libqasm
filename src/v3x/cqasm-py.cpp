@@ -3,9 +3,10 @@
  */
 
 #include "cqasm-version.hpp"
+#include "v3x/cqasm-analyzer.hpp"
+#include "v3x/cqasm-parse-helper.hpp"
 #include "v3x/cqasm-py.hpp"
 #include "v3x/cqasm.hpp"
-#include "v3x/cqasm-parse-helper.hpp"
 
 #include <memory>
 
@@ -23,36 +24,45 @@ namespace v3x = cqasm::v3x;
  */
 V3xAnalyzer::V3xAnalyzer(const std::string &max_version, bool without_defaults) {
     if (without_defaults) {
-        a = std::make_unique<v3x::analyzer::Analyzer>(max_version);
-        a->register_default_mappings();
+        analyzer = std::make_unique<v3x::analyzer::Analyzer>(max_version);
+        analyzer->register_default_mappings();
     } else {
-        a = std::make_unique<v3x::analyzer::Analyzer>(v3x::default_analyzer(max_version));
+        analyzer = std::make_unique<v3x::analyzer::Analyzer>(v3x::default_analyzer(max_version));
     }
 }
+
+/**
+ * std::unique_ptr<T> requires T to be a complete class for the ~T operation.
+ * Since we are using a forward declaration for Analyzer, we need to declare ~T in the header file,
+ * and implement it in the source file.
+ */
+V3xAnalyzer::~V3xAnalyzer() = default;
 
 /**
  * Registers an instruction type.
  * The arguments are passed straight to instruction::Instruction's constructor.
  */
 void V3xAnalyzer::register_instruction(const std::string &name, const std::string &param_types) {
-    a->register_instruction(name, param_types);
+    analyzer->register_instruction(name, param_types);
 }
 
 /**
  * Only parses the given file.
  * The file must be in v3.x syntax.
  * No version check or conversion is performed.
- * Returns a vector of strings,
- * of which the first is always present and is the CBOR serialization of the v3.x AST.
+ * Returns a vector of strings, of which the first is reserved for the CBOR serialization of the v3.x AST.
  * Any additional strings represent error messages.
+ * Notice that the AST and error messages won't be available at the same time.
  */
 std::vector<std::string> V3xAnalyzer::parse_file(
     const std::string &filename
 ) {
-    auto result = v3x::parser::parse_file(filename);
-    return result.errors.empty()
-        ? std::vector<std::string>{ tree::base::serialize(result.root) }
-        : result.errors;
+    if (auto parse_result = v3x::parser::parse_file(filename); parse_result.errors.empty()) {
+        return std::vector<std::string>{ tree::base::serialize(parse_result.root) };
+    } else {
+        parse_result.errors.insert(parse_result.errors.begin(), "");
+        return parse_result.errors;
+    }
 }
 
 /**
@@ -63,10 +73,12 @@ std::vector<std::string> V3xAnalyzer::parse_string(
     const std::string &data,
     const std::string &filename
 ) {
-    auto result = v3x::parser::parse_string(data, filename);
-    return result.errors.empty()
-        ? std::vector<std::string>{ tree::base::serialize(result.root) }
-        : result.errors;
+    if (auto parse_result = v3x::parser::parse_string(data, filename); parse_result.errors.empty()) {
+        return std::vector<std::string>{ tree::base::serialize(parse_result.root) };
+    } else {
+        parse_result.errors.insert(parse_result.errors.begin(), "");
+        return parse_result.errors;
+    }
 }
 
 /**
@@ -74,20 +86,23 @@ std::vector<std::string> V3xAnalyzer::parse_string(
  * If the file is written in a later file version,
  * this function may try to reduce it to the maximum v3.x API version support advertised
  * using this object's constructor.
- * Returns a vector of strings,
- * of which the first is always present and is the CBOR serialization of the v3x semantic tree.
+ * Returns a vector of strings, of which the first is reserved for the CBOR serialization of the v3.x semantic tree.
  * Any additional strings represent error messages.
+ * Notice that the AST and error messages won't be available at the same time.
  */
 std::vector<std::string> V3xAnalyzer::analyze_file(
     const std::string &filename
 ) const {
-    auto result = a->analyze(
+    auto analysis_result = analyzer->analyze(
         [=](){ return cqasm::version::parse_file(filename); },
         [=](){ return v3x::parser::parse_file(filename); }
     );
-    return result.errors.empty()
-        ? std::vector<std::string>{ tree::base::serialize(result.root) }
-        : result.errors;
+    if (analysis_result.errors.empty()) {
+        return std::vector<std::string>{ tree::base::serialize(analysis_result.root) };
+    } else {
+        analysis_result.errors.insert(analysis_result.errors.begin(), "");
+        return analysis_result.errors;
+    }
 }
 
 /**
@@ -98,11 +113,14 @@ std::vector<std::string> V3xAnalyzer::analyze_string(
     const std::string &data,
     const std::string &filename
 ) const {
-    auto result = a->analyze(
+    auto analysis_result = analyzer->analyze(
         [=](){ return cqasm::version::parse_string(data, filename); },
         [=](){ return v3x::parser::parse_string(data, filename); }
     );
-    return result.errors.empty()
-        ? std::vector<std::string>{ tree::base::serialize(result.root) }
-        : result.errors;
+    if (analysis_result.errors.empty()) {
+        return std::vector<std::string>{ tree::base::serialize(analysis_result.root) };
+    } else {
+        analysis_result.errors.insert(analysis_result.errors.begin(), "");
+        return analysis_result.errors;
+    }
 }

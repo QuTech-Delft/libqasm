@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 
+
 // Forward declarations for internal types.
 namespace cqasm::v1x::analyzer { class Analyzer; }
 
@@ -23,7 +24,7 @@ class V1xAnalyzer {
     /**
      * Reference to the actual C++ analyzer that this wraps.
      */
-    std::unique_ptr<cqasm::v1x::analyzer::Analyzer> a;
+    std::unique_ptr<cqasm::v1x::analyzer::Analyzer> analyzer;
 
 public:
     /**
@@ -40,6 +41,13 @@ public:
         const std::string &max_version = "1.0",
         bool without_defaults = false
     );
+
+    /**
+     * std::unique_ptr<T> requires T to be a complete class for the ~T operation.
+     * Since we are using a forward declaration for Analyzer, we need to declare ~T in the header file,
+     * and implement it in the source file.
+     */
+    ~V1xAnalyzer();
 
     /**
      * Registers an instruction type.
@@ -67,9 +75,9 @@ public:
      * Only parses the given file.
      * The file must be in v1.x syntax.
      * No version check or conversion is performed.
-     * Returns a vector of strings,
-     * of which the first is always present and is the CBOR serialization of the v1.x AST.
+     * Returns a vector of strings, of which the first is reserved for the CBOR serialization of the v1.x AST.
      * Any additional strings represent error messages.
+     * Notice that the AST and error messages won't be available at the same time.
      */
     static std::vector<std::string> parse_file(
         const std::string &filename
@@ -89,9 +97,9 @@ public:
      * If the file is written in a later file version,
      * this function may try to reduce it to the maximum v1.x API version support advertised
      * using this object's constructor.
-     * Returns a vector of strings,
-     * of which the first is always present and is the CBOR serialization of the v1.x semantic tree.
+     * Returns a vector of strings, of which the first is reserved for the CBOR serialization of the v1.x semantic tree.
      * Any additional strings represent error messages.
+     * Notice that the AST and error messages won't be available at the same time.
      */
     std::vector<std::string> analyze_file(
         const std::string &filename

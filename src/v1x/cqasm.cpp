@@ -17,11 +17,11 @@ namespace v1x {
  * Parses and analyzes the given file path with the default analyzer,
  * dumping error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
  */
-tree::One<semantic::Program> analyze(
+tree::One<semantic::Program> analyze_file(
     const std::string &file_path,
     const std::string &api_version
 ) {
-    return default_analyzer(api_version).analyze(file_path).unwrap();
+    return default_analyzer(api_version).analyze_file(file_path).unwrap();
 }
 
 /**
@@ -29,12 +29,12 @@ tree::One<semantic::Program> analyze(
  * dumping error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
  * The optional file_name is only used for error messages.
  */
-tree::One<semantic::Program> analyze(
+tree::One<semantic::Program> analyze_file(
     FILE *fp,
     const std::string &file_name,
     const std::string &api_version
 ) {
-    return default_analyzer(api_version).analyze(fp, file_name).unwrap();
+    return default_analyzer(api_version).analyze_file(fp, file_name).unwrap();
 }
 
 /**

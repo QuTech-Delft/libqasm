@@ -25,7 +25,7 @@ namespace v3x {
  * Parses and analyzes the given file path with the default analyzer,
  * dumping error messages to stderr and throwing an analyzer::AnalysisFailed on failure.
  */
-tree::One<cqasm::v3x::semantic::Program> analyze(
+tree::One<cqasm::v3x::semantic::Program> analyze_file(
     const std::string &file_path,
     const std::string &api_version = "3.0"
 );
