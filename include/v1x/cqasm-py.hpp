@@ -42,8 +42,6 @@ public:
      */
     explicit V1xAnalyzer(const std::string &max_version = "1.0", bool without_defaults = false);
 
-    ~V1xAnalyzer();
-
     /**
      * std::unique_ptr<T> requires T to be a complete class for the ~T operation.
      * Since we are using a forward declaration for Analyzer, we need to declare ~T in the header file,
