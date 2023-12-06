@@ -182,10 +182,19 @@ git clone --config core.autocrlf=input git@github.com:QuTech-Delft/libqasm.git
 
 ## Emscripten
 
-Build with:
+We need a multi-stage build for cross-platform builds of `libqasm`:
+- First, we generate intermediate binaries with a host platform format (e.g., `tree-gen`).
+- Then, we run those intermediate binaries to generate source files (e.g., `tree-gen` classes).
+And we generate the target platform binaries (e.g., `cqasm_emscripten`).
 
 ```
+rm -fr build
+conan build . -pr=conan/profiles/release -b missing
+rm -fr build/Release/{CMake*,cmake_install.cmake,Makefile,generators,metadata}
 conan build . -pr=conan/profiles/emscripten -pr:b=conan/profiles/release -b missing
+ls -hl build/Release/emscripten
 ```
 
-This will generate a `libqasm_emscripten` executable.
+The output of this build lives in `build/Release/emscripten`:
+- `cqasm_emscripten.js`.
+- `cqasm_emscripten.wasm`.
