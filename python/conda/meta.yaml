@@ -7,8 +7,6 @@ source:
 
 build:
   number: 0
-  script_env:
-    - NPROCS
 
 requirements:
   build:

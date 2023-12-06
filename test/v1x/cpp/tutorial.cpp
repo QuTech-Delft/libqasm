@@ -13,7 +13,7 @@ TEST(tutorial, tutorial) {
     // (cqasm::tree::One<cq1x::semantic::Program> to be specific), or the
     // error messages printed to stderr and a cq1x::analysis::AnalysisError
     // exception (derived from std::runtime_error) on failure.
-    auto result = cq1x::analyze("res/v1x/grover.cq");
+    auto result = cq1x::analyze_file("res/v1x/grover.cq");
 
     // There is also an overload for a FILE* directly (with an optional second
     // argument for the filename used in error messages to refer back to the

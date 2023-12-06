@@ -525,7 +525,7 @@ AnalysisResult Analyzer::analyze(
 /**
  * Parses and analyzes the given file.
  */
-AnalysisResult Analyzer::analyze(const std::string &filename) const {
+AnalysisResult Analyzer::analyze_file(const std::string &filename) const {
     return analyze(
         [=](){ return version::parse_file(filename); },
         [=](){ return parser::parse_file(filename); }
@@ -536,7 +536,7 @@ AnalysisResult Analyzer::analyze(const std::string &filename) const {
  * Parses and analyzes the given file pointer. The optional filename
  * argument will be used only for error messages.
  */
-AnalysisResult Analyzer::analyze(FILE *file, const std::string &filename) const {
+AnalysisResult Analyzer::analyze_file(FILE *file, const std::string &filename) const {
     return analyze(
         [=](){ return version::parse_file(file, filename); },
         [=](){ return parser::parse_file(file, filename); }

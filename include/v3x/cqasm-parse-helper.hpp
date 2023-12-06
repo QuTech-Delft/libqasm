@@ -10,7 +10,6 @@
 #include "v3x/cqasm-parse-result.hpp"
 #include "v3x/ScannerAntlr.hpp"
 
-#include <antlr4-runtime.h>
 #include <memory>  // unique_ptr
 #include <string>
 
