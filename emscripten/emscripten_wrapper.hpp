@@ -19,18 +19,18 @@ struct EmscriptenWrapper {
      * Returns a vector of strings,
      * of which the first is reserved for the CBOR serialization of the v3.x AST.
      * Any additional strings represent error messages.
-     * The filename, if specified, is only used when reporting errors.
+     * The filename is only used when reporting errors.
      */
-    std::string parse_string_to_json(const std::string &data, const std::string &filename = "<unknown>");
+    std::string parse_string_to_json(const std::string &data, const std::string &filename);
 
     /**
      * Parses and analyzes the given string.
      * Returns a vector of strings,
      * of which the first is reserved for the CBOR serialization of the v3.x semantic tree.
      * Any additional strings represent error messages.
-     * The filename, if specified, is only used when reporting errors.
+     * The filename is only used when reporting errors.
      */
-    std::string analyze_string_to_json(const std::string &data, const std::string &filename = "<unknown>");
+    std::string analyze_string_to_json(const std::string &data, const std::string &filename);
 };
 
 

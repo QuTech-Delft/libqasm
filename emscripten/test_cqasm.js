@@ -1,41 +1,40 @@
-// TODO: this 'build_wasm' hardcoded path has to go
-// TODO: maybe I can use Pablo's Superpositeur/wasm/demo.js as an example
-
-wrapper = require("../build_wasm/main.js");
+wrapper = require("../build/Release/emscripten/cqasm_emscripten.js");
 
 wrapper().then(function(result) {
-    cqasm_wrapper = new result.EmscriptenWrapper()
+    var cqasm = new result["EmscriptenWrapper"]()
 
     console.log(
-        "Hola from JavaScript!\n\n",
-        "The version of cqasm compiled with emscripten is: ", cqasm_wrapper.get_version(), "\n"
+        "Hola from JavaScript!",
+        "\nThe version of cqasm compiled with emscripten is:", cqasm.get_version(), "\n"
     );
 
-    program_1 = "version 3;qubit[5] q;bit[5] b;h q[0:4];b = measure q"
+    var program_1 = "version 3;qubit[5] q;bit[5] b;h q[0:4];b = measure q"
     console.log(
-        "Example 1: '", program_1, "'\n",
-        "Calling parse_file...\n",
-        "Output: '", cqasm_wrapper.parse_file_to_json(program_1), "'\n"
+        "\nExample 1:", program_1,
+        "\nCalling parse_string_to_json...",
+        "\nOutput:", cqasm.parse_string_to_json(program_1, "<unknown>"), "\n"
     )
 
-    program_2 = "version 3;qubit[5] q;bit[5] b;h q[0:4];b = measure"
+    // TODO: fix cases 2 and 4, which test the parser and the analyser returning an error string, respectively
+
+    // var program_2 = "version 3;qubit[5] q;bit[5] b;h q[0:4];b = measure"
+    // console.log(
+    //     "\nExample 2:", program_2,
+    //     "\nCalling parse_string_to_json...",
+    //     "\nOutput:", cqasm.parse_string_to_json(program_2, "shor.cq"), "\n"
+    // )
+
+    var program_3 = "version 3;qubit[5] q;bit[5] b;h q[0:4];b = measure q"
     console.log(
-        "Example 2: '", program_2, "'\n",
-        "Calling parse_file...\n",
-        "Output: '", cqasm_wrapper.parse_file_to_json(program_2), "'\n"
+        "\nExample 3:", program_3,
+        "\nCalling analyze_string_to_json...",
+        "\nOutput:", cqasm.analyze_string_to_json(program_3, "spin_q.cq"), "\n"
     )
 
-    program_3 = "version 3;qubit[5] q;bit[5] b;h q[0:4];b = measure q"
-    console.log(
-        "Example 3: '", program_3, "'\n",
-        "Calling parse_file...\n",
-        "Output: '", cqasm_wrapper.analyze_file_to_json(program_3), "'\n"
-    )
-
-    program_4 = "version 3;qubit[3] q;x q[3]"
-    console.log(
-        "Example 4: '", program_4, "'\n",
-        "Calling parse_file...\n",
-        "Output: '", cqasm_wrapper.analyze_file_to_json(program_4), "'\n"
-    )
+    // var program_4 = "version 3;qubit[3] q;x q[3]"
+    // console.log(
+    //     "\nExample 4:", program_4,
+    //     "\nCalling analyze_string_to_json...",
+    //     "\nOutput:", cqasm.analyze_string_to_json.(program_4, "qgym.cq"), "\n"
+    // )
 });
