@@ -15,7 +15,10 @@
 
 
 // Forward declarations for internal types.
-namespace cqasm::v1x::analyzer { class Analyzer; }
+namespace cqasm::v1x::analyzer {
+    class Analyzer;
+}
+
 
 /**
  * Main class for parsing and analyzing cQASM files with the v1.x API.
@@ -37,10 +40,7 @@ public:
      * the initial mappings and functions are not configurable at all.
      * The defaults for these are always used.
      */
-    explicit V1xAnalyzer(
-        const std::string &max_version = "1.0",
-        bool without_defaults = false
-    );
+    explicit V1xAnalyzer(const std::string &max_version = "1.0", bool without_defaults = false);
 
     /**
      * std::unique_ptr<T> requires T to be a complete class for the ~T operation.
@@ -66,10 +66,7 @@ public:
      * Registers an error model.
      * The arguments are passed straight to error_model::ErrorModel's constructor.
      */
-    void register_error_model(
-        const std::string &name,
-        const std::string &param_types = ""
-    );
+    void register_error_model(const std::string &name, const std::string &param_types = "");
 
     /**
      * Only parses the given file.
@@ -79,18 +76,23 @@ public:
      * Any additional strings represent error messages.
      * Notice that the AST and error messages won't be available at the same time.
      */
-    static std::vector<std::string> parse_file(
-        const std::string &filename
-    );
+    static std::vector<std::string> parse_file(const std::string &filename);
+
+    /**
+     * Counterpart of parse_file that returns a string with a JSON representation of the ParseResult.
+     */
+    static std::string parse_file_to_json(const std::string &filename);
 
     /**
      * Same as parse_file(), but instead receives the file contents directly.
      * The filename, if specified, is only used when reporting errors.
      */
-    static std::vector<std::string> parse_string(
-        const std::string &data,
-        const std::string &filename = "<unknown>"
-    );
+    static std::vector<std::string> parse_string(const std::string &data, const std::string &filename = "<unknown>");
+
+    /**
+     * Counterpart of parse_string that returns a string with a JSON representation of the ParseResult.
+     */
+    static std::string parse_string_to_json(const std::string &data, const std::string &filename = "<unknown>");
 
     /**
      * Parses and analyzes the given file.
@@ -101,16 +103,21 @@ public:
      * Any additional strings represent error messages.
      * Notice that the AST and error messages won't be available at the same time.
      */
-    std::vector<std::string> analyze_file(
-        const std::string &filename
-    ) const;
+    std::vector<std::string> analyze_file(const std::string &filename) const;
+
+    /**
+     * Counterpart of analyze_file that returns a string with a JSON representation of the AnalysisResult.
+     */
+    std::string analyze_file_to_json(const std::string &filename) const;
 
     /**
      * Same as analyze_file(), but instead receives the file contents directly.
      * The filename, if specified, is only used when reporting errors.
      */
-    std::vector<std::string> analyze_string(
-        const std::string &data,
-        const std::string &filename = "<unknown>"
-    ) const;
+    std::vector<std::string> analyze_string(const std::string &data, const std::string &filename = "<unknown>") const;
+
+    /**
+     * Counterpart of analyze_string that returns a string with a JSON representation of the AnalysisResult.
+     */
+    std::string analyze_string_to_json(const std::string &data, const std::string &filename = "<unknown>") const;
 };

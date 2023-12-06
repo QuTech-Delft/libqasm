@@ -8,8 +8,8 @@ RUN apt-get -qq update && \
 ADD . /libqasm
 
 WORKDIR /libqasm
-RUN conan profile detect
-RUN conan build . -s:h compiler.cppstd=20 -o libqasm/*:build_tests=True -o libqasm/*:compat=True -o libqasm/*:tree_gen_build_tests=True -o libqasm/*:asan_enabled=True -b missing
+RUN conan profile detect --force
+RUN conan build . -pr=./conan/profiles/tests-debug-compat -b missing
 
 WORKDIR /libqasm/build/Release
 RUN ctest -C Release --output-on-failure
