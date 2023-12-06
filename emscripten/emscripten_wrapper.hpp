@@ -37,6 +37,7 @@ struct EmscriptenWrapper {
 EMSCRIPTEN_BINDINGS(CqasmJS) {
     emscripten::class_<EmscriptenWrapper>("EmscriptenWrapper")
     .constructor()
+    .function("parse_string_to_json", &EmscriptenWrapper::get_version)
     .function("parse_string_to_json", &EmscriptenWrapper::parse_string_to_json)
-    .function("analyze_string_to_json", &EmscriptenWrapper::analyze_string_to_json)
+    .function("analyze_string_to_json", &EmscriptenWrapper::analyze_string_to_json);
 }

@@ -25,7 +25,8 @@ std::string EmscriptenWrapper::get_version() {
  * The filename, if specified, is only used when reporting errors.
  */
 std::string EmscriptenWrapper::parse_string_to_json(const std::string &data, const std::string &filename) {
-    return V3xAnalyzer::parse_string_to_json(data, filename);
+    return {};
+//    return V3xAnalyzer::parse_string_to_json(data, filename);
 }
 
 
@@ -37,5 +38,6 @@ std::string EmscriptenWrapper::parse_string_to_json(const std::string &data, con
  * The filename, if specified, is only used when reporting errors.
  */
 std::string EmscriptenWrapper::analyze_string_to_json(const std::string &data, const std::string &filename) {
-    return V3xAnalyzer{}.analyze_string_to_json(data, filename);
+    return {};
+//    return V3xAnalyzer{}.analyze_string_to_json(data, filename);
 }

@@ -6,5 +6,8 @@ add_executable(${PROJECT_NAME}_emscripten
 
 target_link_libraries(${PROJECT_NAME}_emscripten
     cqasm
-    emsdk
+)
+
+set_target_properties(${PROJECT_NAME}_emscripten
+    PROPERTIES LINK_FLAGS "-lembind -sMODULARIZE=1"
 )
