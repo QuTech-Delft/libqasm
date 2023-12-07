@@ -71,7 +71,7 @@ class LibqasmConan(ConanFile):
             if self.options.build_tests:
                 self.requires("gtest/1.14.0")
         else:
-            self.tool_requires("emsdk/3.1.44")
+            self.tool_requires("emsdk/3.1.49")
 
     def requirements(self):
         self.requires("antlr4-cppruntime/4.13.0")

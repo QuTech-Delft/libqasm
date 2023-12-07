@@ -1,6 +1,7 @@
 #include "cqasm-utils.hpp"
 #include "v1x/cqasm.hpp"  // default_analyzer
 #include "v3x/cqasm.hpp"  // default_analyzer
+#include "v3x/cqasm-py.hpp"  // V3xAnalyzer
 
 #include <filesystem>
 #include <gmock/gmock.h>
@@ -29,9 +30,8 @@ TEST(equal_case_insensitive, different_strings) { EXPECT_FALSE(equal_case_insens
 
 TEST(to_json, v1x_parser_errors) {
     auto input_file_path = fs::path{"res"}/"v1x"/"parsing"/"grammar"/"expression_recovery"/"input.cq";
-    cqasm::v1x::analyzer::Analyzer analyzer{};
-    auto semantic_ast_result = analyzer.analyze_file(input_file_path.generic_string());
-    auto json_result = to_json(semantic_ast_result);
+    auto parse_result = cqasm::v1x::parser::parse_file(input_file_path.generic_string());
+    auto json_result = to_json(parse_result);
     auto expected_json_result = std::string{
         R"delim({"errors":["res/v1x/parsing/grammar/expression_recovery/input.cq:4:21: syntax error, unexpected ','","res/v1x/parsing/grammar/expression_recovery/input.cq:4:31: syntax error, unexpected ','","res/v1x/parsing/grammar/expression_recovery/input.cq:4:37: syntax error, unexpected ')', expecting ']'","res/v1x/parsing/grammar/expression_recovery/input.cq:4:61: syntax error, unexpected ','","res/v1x/parsing/grammar/expression_recovery/input.cq:4:67: syntax error, unexpected ')', expecting ',' or ']'","Failed to parse res/v1x/parsing/grammar/expression_recovery/input.cq"]})delim"
     };
@@ -39,8 +39,8 @@ TEST(to_json, v1x_parser_errors) {
 }
 TEST(to_json, v1x_parser_ast) {
     auto input_file_path = fs::path{"res"}/"v1x"/"parsing"/"misc"/"wait_not_ok_1"/"input.cq";
-    auto ast_result = cqasm::v1x::parser::parse_file(input_file_path.generic_string());
-    auto json_result = to_json(ast_result);
+    auto parse_result = cqasm::v1x::parser::parse_file(input_file_path.generic_string());
+    auto json_result = to_json(parse_result);
     auto expected_json_result = std::string{
         R"delim({"Program":{"version":{"Version":{"items":"1.0","source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:1:9..12"}},"num_qubits":{"IntegerLiteral":{"value":"2","source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:2:8..9"}},"statements":{"StatementList":{"items":[{"Bundle":{"items":[{"Instruction":{"name":{"Identifier":{"name":"wait","source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:4:1..5"}},"condition":"-","operands":{"ExpressionList":{"items":[{"IntegerLiteral":{"value":"1","source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:4:6..7"}}],"source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:4:6..7"}},"annotations":"[]","source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:4:1..7"}}],"annotations":"[]","source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:4:1..7"}}],"source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:2:1..5:7"}},"source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:1:1..5:1"}})delim"
     };
@@ -48,8 +48,8 @@ TEST(to_json, v1x_parser_ast) {
 }
 TEST(to_json, v1x_analyzer_errors) {
     auto input_file_path = fs::path{"res"}/"v1x"/"parsing"/"misc"/"wait_not_ok_1"/"input.cq";
-    auto semantic_ast_result = cqasm::v1x::default_analyzer().analyze_file(input_file_path.generic_string());
-    auto json_result = to_json(semantic_ast_result);
+    auto analysis_result = cqasm::v1x::default_analyzer().analyze_file(input_file_path.generic_string());
+    auto json_result = to_json(analysis_result);
     auto expected_json_result = std::string{
         R"delim({"errors":["Error at res/v1x/parsing/misc/wait_not_ok_1/input.cq:4:1..7: failed to resolve overload for wait with argument pack (int)"]})delim"
     };
@@ -57,8 +57,8 @@ TEST(to_json, v1x_analyzer_errors) {
 }
 TEST(to_json, v1x_analyzer_ast) {
     auto input_file_path = fs::path{"res"}/"v1x"/"parsing"/"grammar"/"map"/"input.cq";
-    auto semantic_ast_result = cqasm::v1x::default_analyzer().analyze_file(input_file_path.generic_string());
-    auto json_result = to_json(semantic_ast_result);
+    auto analysis_result = cqasm::v1x::default_analyzer().analyze_file(input_file_path.generic_string());
+    auto json_result = to_json(analysis_result);
     auto expected_json_result = std::string{
         R"delim({"Program":{"api_version":"1.0","version":{"Version":{"items":"1.0","source_location":"res/v1x/parsing/grammar/map/input.cq:1:9..12"}},"num_qubits":"10","error_model":"-","subcircuits":"[]","mappings":[{"Mapping":{"name":"three","value":{"ConstInt":{"value":"3","source_location":"res/v1x/parsing/grammar/map/input.cq:4:5..6"}},"annotations":[{"AnnotationData":{"interface":"first","operation":"annot","operands":"[]","source_location":"res/v1x/parsing/grammar/map/input.cq:4:15..26"}}],"source_location":"res/v1x/parsing/grammar/map/input.cq:4:1..26"}},{"Mapping":{"name":"also_three","value":{"ConstInt":{"value":"3","source_location":"res/v1x/parsing/grammar/map/input.cq:5:18..23"}},"annotations":[{"AnnotationData":{"interface":"second","operation":"annot","operands":"[]","source_location":"res/v1x/parsing/grammar/map/input.cq:5:25..37"}},{"AnnotationData":{"interface":"third","operation":"annot","operands":"[]","source_location":"res/v1x/parsing/grammar/map/input.cq:5:39..50"}}],"source_location":"res/v1x/parsing/grammar/map/input.cq:5:1..50"}}],"variables":"[]","source_location":"res/v1x/parsing/grammar/map/input.cq:1:1..6:1"}})delim"
     };
@@ -67,9 +67,8 @@ TEST(to_json, v1x_analyzer_ast) {
 
 TEST(to_json, v3x_parser_errors) {
     auto input_file_path = fs::path{"res"}/"v3x"/"parsing"/"bit_array_definition"/"bit_array_of_3_14"/"input.cq";
-    cqasm::v3x::analyzer::Analyzer analyzer{};
-    auto semantic_ast_result = analyzer.analyze_file(input_file_path.generic_string());
-    auto json_result = to_json(semantic_ast_result);
+    auto parse_result = cqasm::v3x::parser::parse_file(input_file_path.generic_string());
+    auto json_result = to_json(parse_result);
     auto expected_json_result = std::string{
         R"delim({"errors":["<unknown>:3:5: mismatched input '3.14' expecting INTEGER_LITERAL"]})delim"
     };
@@ -86,8 +85,8 @@ TEST(to_json, v3x_parser_ast) {
 }
 TEST(to_json, v3x_analyzer_errors) {
     auto input_file_path = fs::path{"res"}/"v3x"/"parsing"/"bit_array_definition"/"bit_array_of_0_b"/"input.cq";
-    auto semantic_ast_result = cqasm::v3x::default_analyzer().analyze_file(input_file_path.generic_string());
-    auto json_result = to_json(semantic_ast_result);
+    auto analysis_result = cqasm::v3x::default_analyzer().analyze_file(input_file_path.generic_string());
+    auto json_result = to_json(analysis_result);
     auto expected_json_result = std::string{
         R"delim({"errors":["Error at <unknown>:3:8..9: declaring bit array of size <= 0"]})delim"
     };
@@ -95,10 +94,43 @@ TEST(to_json, v3x_analyzer_errors) {
 }
 TEST(to_json, v3x_analyzer_ast) {
     auto input_file_path = fs::path{"res"}/"v3x"/"parsing"/"bit_array_definition"/"bit_array_of_17_b"/"input.cq";
-    auto semantic_ast_result = cqasm::v3x::default_analyzer().analyze_file(input_file_path.generic_string());
-    auto json_result = to_json(semantic_ast_result);
+    auto analysis_result = cqasm::v3x::default_analyzer().analyze_file(input_file_path.generic_string());
+    auto json_result = to_json(analysis_result);
     auto expected_json_result = std::string{
         R"delim({"Program":{"api_version":"3.0","version":{"Version":{"items":"3"}},"statements":"[]","variables":[{"Variable":{"name":"b","typ":{"BitArray":{"size":"17"}},"annotations":"[]"}}]}})delim"
+    };
+    EXPECT_EQ(json_result, expected_json_result);
+}
+
+TEST(to_json, emscripten_test_1__v3x_parser_errors) {
+    auto program = "version 3;qubit[5] q;bit[5] b;h q[0:4];b = measure";
+    auto json_result = V3xAnalyzer::parse_string_to_json(program, "shor.cq");
+    auto expected_json_result = std::string{
+        R"delim({"errors":["shor.cq:1:51: mismatched input '<EOF>' expecting {INTEGER_LITERAL, FLOAT_LITERAL, IDENTIFIER}"]})delim"
+    };
+    EXPECT_EQ(json_result, expected_json_result);
+}
+TEST(to_json, emscripten_test_2__v3x_parser_ast) {
+    auto program = "version 3;qubit[5] q;bit[5] b;h q[0:4];b = measure q";
+    auto json_result = V3xAnalyzer::parse_string_to_json(program, "<unknown>");
+    auto expected_json_result = std::string{
+        R"delim({"Program":{"version":{"Version":{"items":"3","source_location":"<unknown>:1:9..10"}},"statements":{"StatementList":{"items":[{"Variables":{"names":[{"Identifier":{"name":"q"}}],"typ":{"Identifier":{"name":"qubit"}},"size":{"IntegerLiteral":{"value":"5"}},"annotations":"[]","source_location":"<unknown>:1:20..21"}},{"Variables":{"names":[{"Identifier":{"name":"b"}}],"typ":{"Identifier":{"name":"bit"}},"size":{"IntegerLiteral":{"value":"5"}},"annotations":"[]","source_location":"<unknown>:1:29..30"}},{"Instruction":{"name":{"Identifier":{"name":"h"}},"condition":"-","operands":{"ExpressionList":{"items":[{"Index":{"expr":{"Identifier":{"name":"q"}},"indices":{"IndexList":{"items":[{"IndexRange":{"first":{"IntegerLiteral":{"value":"0","source_location":"<unknown>:1:35..36"}},"last":{"IntegerLiteral":{"value":"4","source_location":"<unknown>:1:37..38"}}}}]}},"source_location":"<unknown>:1:33..34"}}]}},"annotations":"[]","source_location":"<unknown>:1:31..32"}},{"MeasureInstruction":{"name":{"Identifier":{"name":"measure"}},"condition":"-","lhs":{"Identifier":{"name":"b","source_location":"<unknown>:1:40..41"}},"rhs":{"Identifier":{"name":"q","source_location":"<unknown>:1:52..53"}},"annotations":"[]","source_location":"<unknown>:1:44..51"}}]}}}})delim"
+    };
+    EXPECT_EQ(json_result, expected_json_result);
+}
+TEST(to_json, emscripten_test_3__v3x_analyzer_errors) {
+    auto program = "version 3;qubit[3] q;x q[3]";
+    auto json_result = V3xAnalyzer{}.analyze_string_to_json(program, "q_gym.cq");
+    auto expected_json_result = std::string{
+        R"delim({"errors":["Error at q_gym.cq:1:24..25: index 3 out of range (size 3)"]})delim"
+    };
+    EXPECT_EQ(json_result, expected_json_result);
+}
+TEST(to_json, emscripten_test_4__v3x_analyzer_ast) {
+    auto program = "version 3;qubit[5] q;bit[5] b;h q[0:4];b = measure q";
+    auto json_result = V3xAnalyzer{}.analyze_string_to_json(program, "spin_q.cq");
+    auto expected_json_result = std::string{
+        R"delim({"Program":{"api_version":"3.0","version":{"Version":{"items":"3"}},"statements":[{"Instruction":{"instruction":"h(qubit array)","name":"h","operands":[{"IndexRef":{"variable":{"Variable":{"name":"q","typ":{"QubitArray":{"size":"5"}},"annotations":"[]"}},"indices":[{"ConstInt":{"value":"0"}},{"ConstInt":{"value":"1"}},{"ConstInt":{"value":"2"}},{"ConstInt":{"value":"3"}},{"ConstInt":{"value":"4"}}]}}],"condition":{"ConstBool":{"value":"1"}},"annotations":"[]"}},{"Instruction":{"instruction":"measure(bit array, qubit array)","name":"measure","operands":[{"VariableRef":{"variable":{"Variable":{"name":"b","typ":{"BitArray":{"size":"5"}},"annotations":"[]"}}}},{"VariableRef":{"variable":{"Variable":{"name":"q","typ":{"QubitArray":{"size":"5"}},"annotations":"[]"}}}}],"condition":{"ConstBool":{"value":"1"}},"annotations":"[]"}}],"variables":[{"Variable":{"name":"q","typ":{"QubitArray":{"size":"5"}},"annotations":"[]"}},{"Variable":{"name":"b","typ":{"BitArray":{"size":"5"}},"annotations":"[]"}}]}})delim"
     };
     EXPECT_EQ(json_result, expected_json_result);
 }

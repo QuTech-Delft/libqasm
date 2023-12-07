@@ -8,6 +8,10 @@ target_link_libraries(${PROJECT_NAME}_emscripten
     cqasm
 )
 
-set_target_properties(${PROJECT_NAME}_emscripten
-    PROPERTIES LINK_FLAGS "-lembind -sMODULARIZE=1"
+target_compile_options(${PROJECT_NAME}_emscripten PUBLIC
+    -fwasm-exceptions
+)
+
+target_link_options(${PROJECT_NAME}_emscripten PUBLIC
+    -lembind -fwasm-exceptions -sMODULARIZE=1
 )
