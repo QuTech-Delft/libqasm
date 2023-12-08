@@ -88,14 +88,7 @@ std::vector<std::string> V3xAnalyzer::parse_string(const std::string &data, cons
  * Counterpart of parse_string that returns a string with a JSON representation of the ParseResult.
  */
 std::string V3xAnalyzer::parse_string_to_json(const std::string &data, const std::string &filename) {
-    (void) data;
-    (void) filename;
-    try {
-        throw std::runtime_error{ "blah" };
-    } catch (const std::runtime_error &err) {
-        return std::string{ "*** " } + err.what();
-    }
-    //return cqasm::utils::to_json(v3x::parser::parse_string(data, filename));
+    return cqasm::utils::to_json(v3x::parser::parse_string(data, filename));
 }
 
 /**

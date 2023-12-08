@@ -9,9 +9,9 @@ target_link_libraries(${PROJECT_NAME}_emscripten
 )
 
 target_compile_options(${PROJECT_NAME}_emscripten PUBLIC
-    -fwasm-exceptions -g3 -O0
+    -fwasm-exceptions
 )
 
 target_link_options(${PROJECT_NAME}_emscripten PUBLIC
-    -lembind -fwasm-exceptions -g3 -O0 --profiling-funcs -sASSERTIONS=1 -sMODULARIZE=1
+    -lembind -fwasm-exceptions --profiling-funcs -sASSERTIONS=1 -sMODULARIZE=1
 )
