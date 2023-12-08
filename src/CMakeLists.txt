@@ -28,7 +28,6 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 # Packages
 #-------------------------------------------------------------------------------
 
-find_package(antlr4-runtime)
 if(NOT LIBQASM_BUILD_EMSCRIPTEN)
     find_package(BISON 3.0)
     find_package(FLEX 2.6.4)
@@ -43,11 +42,30 @@ find_package(Python3 REQUIRED)
 
 include(FetchContent)
 
+# antlr4-runtime
+find_package(antlr4-runtime)
+if(NOT antlr4-runtime_FOUND)
+    message(STATUS "Fetching antlr4-runtime")
+    # We point SOURCE_SUBDIR to a non existent directory, because we want FetchContent to download the sources,
+    # but we do not want CMake to process any subdirectory.
+    # Instead we will just build all the antlr4-runtime source files ourselves.
+    # This is needed when compiling to emscripten, because exception support is disabled by default.
+    # So if you compile C++ code using exceptions, as it is the case of the antlr4-runtime, to emscripten,
+    # and you want it to work as expected, you have to build the sources with the -fwasm-exceptions option.
+    FetchContent_Declare(antlr4-runtime
+        GIT_REPOSITORY https://github.com/antlr/antlr4.git
+        GIT_TAG "7ed420ff2c78d62883875c442d75f32e73bc86c8"
+        SOURCE_SUBDIR this-directory-does-not-exist
+    )
+    FetchContent_MakeAvailable(antlr4-runtime)
+endif()
+
 # fmt
 set(fmt_VERSION_REQUIRED 10.1.1)
 find_package(fmt ${fmt_VERSION_REQUIRED})
 if(NOT fmt_FOUND)
     # fmt 10.1.1
+    message(STATUS "Fetching fmt")
     FetchContent_Declare(fmt
         GIT_REPOSITORY https://github.com/fmtlib/fmt.git
         GIT_TAG "f5e54359df4c26b6230fc61d38aa294581393084"
@@ -58,6 +76,7 @@ endif()
 # range-v3
 find_package(range-v3)
 if(NOT range-v3_FOUND)
+    message(STATUS "Fetching range-v3")
     FetchContent_Declare(range-v3
         GIT_REPOSITORY https://github.com/ericniebler/range-v3
         GIT_TAG "a81477931a8aa2ad025c6bda0609f38e09e4d7ec"
@@ -289,11 +308,28 @@ add_library(cqasm-lib-obj OBJECT
     ${CQASM_V1X_SOURCES}
     ${CQASM_V3X_SOURCES}
 )
+if(LIBQASM_BUILD_EMSCRIPTEN)
+    file(GLOB ANTLR4_CPP_RUNTIME_SOURCES
+        "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/*.cpp"
+        "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/atn/*.cpp"
+        "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/dfa/*.cpp"
+        "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/internal/*.cpp"
+        "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/misc/*.cpp"
+        "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/support/*.cpp"
+        "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/tree/*.cpp"
+        "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/tree/pattern/*.cpp"
+        "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/tree/xpath/*.cpp"
+    )
+    target_sources(cqasm-lib-obj PRIVATE "${ANTLR4_CPP_RUNTIME_SOURCES}")
+endif()
 
 target_compile_definitions(cqasm-lib-obj
     PRIVATE ${TREE_LIB_PRIVATE_DEFS}
 )
 
+if(LIBQASM_BUILD_EMSCRIPTEN)
+    set(antlr4-runtime_INCLUDE_DIRS "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src")
+endif()
 target_include_directories(cqasm-lib-obj
     PRIVATE ${TREE_LIB_PRIVATE_INCLUDE}
     PUBLIC ${TREE_LIB_PUBLIC_INCLUDE}
@@ -311,11 +347,13 @@ target_compile_features(cqasm-lib-obj PUBLIC
 )
 
 target_link_libraries(cqasm-lib-obj
-    PRIVATE antlr4_static
     PRIVATE fmt::fmt
     PRIVATE range-v3::range-v3
     PRIVATE tree-lib-obj
 )
+if(NOT LIBQASM_BUILD_EMSCRIPTEN)
+    target_link_libraries(cqasm-lib-obj PRIVATE antlr4_static)
+endif()
 
 # fPIC: otherwise some weirdness happens with pthreads or something when linking statically.
 if(CMAKE_COMPILER_IS_GNUCXX)
@@ -344,6 +382,9 @@ elseif(MSVC)
     )
 else()
     message(SEND_ERROR "Unknown compiler!")
+endif()
+if(LIBQASM_BUILD_EMSCRIPTEN)
+    target_compile_options(cqasm-lib-obj PRIVATE -Wno-error=unused-parameter)
 endif()
 
 # Main cQASM library in shared or static form as managed by cmake's

@@ -56,8 +56,6 @@ class LibqasmConan(ConanFile):
     exports_sources = "CMakeLists.txt", "include/*", "python/*", "res/*", "scripts/*", "src/*", "test/*"
 
     def build_requirements(self):
-        self.requires("fmt/10.1.1")
-        self.requires("range-v3/0.12.0")
         if not self.options.build_emscripten:
             self.tool_requires("m4/1.4.19")
             if self.settings.os == "Windows":
@@ -74,7 +72,12 @@ class LibqasmConan(ConanFile):
             self.tool_requires("emsdk/3.1.49")
 
     def requirements(self):
-        self.requires("antlr4-cppruntime/4.13.0")
+        self.requires("fmt/10.1.1")
+        self.requires("range-v3/0.12.0")
+        if not self.options.build_emscripten:
+            self.requires("antlr4-cppruntime/4.13.1")
+            if self.options.build_tests:
+                self.requires("gtest/1.14.0")
 
     def config_options(self):
         if self.settings.os == "Windows":
