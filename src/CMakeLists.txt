@@ -305,6 +305,7 @@ elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     target_compile_options(cqasm-lib-obj PRIVATE
         -Wall -Wextra -Werror -Wfatal-errors
         -fPIC
+        -Wno-maybe-uninitialized
         -Wno-error=sign-compare
         -Wno-error=unused-private-field
         -Wno-error=unused-but-set-variable
@@ -319,11 +320,6 @@ elseif(MSVC)
     )
 else()
     message(SEND_ERROR "Unknown compiler!")
-endif()
-
-# TODO: this flag should go in tree-gen CMakeLists.txt, not here
-if(CMAKE_COMPILER_IS_GNUCXX)
-    add_compile_options(-Wno-error=maybe-uninitialized)
 endif()
 
 # Main cQASM library in shared or static form as managed by cmake's
