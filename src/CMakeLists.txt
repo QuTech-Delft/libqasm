@@ -298,7 +298,6 @@ if(CMAKE_COMPILER_IS_GNUCXX)
         -Wall -Wextra -Werror -Wfatal-errors
         -fPIC
         -Wno-error=deprecated-declarations
-        -Wno-error=maybe-uninitialized
         -Wno-error=restrict
         -Wno-error=sign-compare
     )
@@ -320,6 +319,11 @@ elseif(MSVC)
     )
 else()
     message(SEND_ERROR "Unknown compiler!")
+endif()
+
+# TODO: this flag should go in tree-gen CMakeLists.txt, not here
+if(CMAKE_COMPILER_IS_GNUCXX)
+    add_compile_options(-Werror=maybe-uninitialized)
 endif()
 
 # Main cQASM library in shared or static form as managed by cmake's
