@@ -298,6 +298,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
         -Wall -Wextra -Werror -Wfatal-errors
         -fPIC
         -Wno-error=deprecated-declarations
+        -Wno-maybe-uninitialized
         -Wno-error=restrict
         -Wno-error=sign-compare
     )
@@ -305,7 +306,6 @@ elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     target_compile_options(cqasm-lib-obj PRIVATE
         -Wall -Wextra -Werror -Wfatal-errors
         -fPIC
-        -Wno-maybe-uninitialized
         -Wno-error=sign-compare
         -Wno-error=unused-private-field
         -Wno-error=unused-but-set-variable
