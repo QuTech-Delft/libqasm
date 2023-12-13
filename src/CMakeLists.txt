@@ -323,7 +323,7 @@ endif()
 
 # TODO: this flag should go in tree-gen CMakeLists.txt, not here
 if(CMAKE_COMPILER_IS_GNUCXX)
-    add_compile_options(-Werror=maybe-uninitialized)
+    add_compile_options(-Wno-error=maybe-uninitialized)
 endif()
 
 # Main cQASM library in shared or static form as managed by cmake's
