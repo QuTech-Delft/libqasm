@@ -4,6 +4,9 @@ inputs:
   build_type:
     required: true
     description: Is the build a debug or release version
+  compiler:
+    required: true
+    description: Which compiler to use
   shell:
     required: true
     description: Which shell to use for the `run` command
@@ -21,7 +24,7 @@ runs:
         conan profile detect --force
         build_type=${{ inputs.build_type }}
         lowercase_build_type=$(echo ${build_type} | tr '[:upper:]' '[:lower:]')
-        conan build . -pr=conan/profiles/tests-${lowercase_build_type} -b missing
+        conan build . -pr=conan/profiles/tests-${lowercase_build_type} -s: compiler=${{ inputs.compiler }} -b missing
       shell: ${{ inputs.shell }}
     - name: Test
       working-directory: build/${{ inputs.build_type }}

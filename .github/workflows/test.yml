@@ -81,6 +81,7 @@ jobs:
       - uses: ./.github/actions/cpp-tests
         with:
           build_type: Release
+          compiler: gcc
           shell: bash
 
 #  cpp-macos-arm64:
