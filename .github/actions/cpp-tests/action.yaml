@@ -22,9 +22,9 @@ runs:
     - name: Configure and build
       run: |
         conan profile detect --force
-        build_type=${{ inputs.build_type }}
-        lowercase_build_type=$(echo ${build_type} | tr '[:upper:]' '[:lower:]')
-        conan build . -pr=conan/profiles/${{ inputs.conan_profile }} -b missing
+        conan_profile=${{ inputs.conan_profile }}
+        lowercase_conan_profile=$(echo ${conan_profile} | tr '[:upper:]' '[:lower:]')
+        conan build . -pr=conan/profiles/${lowercase_conan_profile} -b missing
       shell: ${{ inputs.shell }}
     - name: Test
       working-directory: build/${{ inputs.build_type }}
