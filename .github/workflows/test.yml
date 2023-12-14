@@ -17,8 +17,8 @@ jobs:
           - Debug
           - Release
         compiler:
-          - clang++
-          - g++
+          - clang
+          - gcc
     steps:
       - name: Checkout
         uses: actions/checkout@v4
