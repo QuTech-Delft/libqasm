@@ -8,6 +8,3 @@ libqasm/*:build_type=Release
 libqasm/*:asan_enabled=True
 libqasm/*:build_tests=True
 libqasm/*:compat=False
-
-[conf]
-tools.build:cxxflags=["-Wno-error=maybe-uninitialized"]

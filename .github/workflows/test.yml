@@ -25,7 +25,7 @@ jobs:
       - uses: ./.github/actions/cpp-tests
         with:
           build_type: ${{ matrix.build_type }}
-          compiler: ${{ matrix.compiler }}
+          conan_profile: tests-${{ matrix.build_type }}-${{ matrix.compiler }}-linux-x64
           shell: bash
 
   cpp-macos-x64:
@@ -43,7 +43,7 @@ jobs:
       - uses: ./.github/actions/cpp-tests
         with:
           build_type: ${{ matrix.build_type }}
-          compiler: clang
+          conan_profile: tests-${{ matrix.build_type }}-macos-x64
           shell: bash
 
   cpp-windows-x64:
@@ -61,7 +61,7 @@ jobs:
       - uses: ./.github/actions/cpp-tests
         with:
           build_type: ${{ matrix.build_type }}
-          compiler: msvc
+          conan_profile: tests-${{ matrix.build_type }}-windows-x64
           shell: bash
 
   cpp-linux-arm64:
@@ -89,8 +89,8 @@ jobs:
           apt-get install -y bison flex default-jre
       - uses: ./.github/actions/cpp-tests
         with:
-          build_type: Release
-          compiler: gcc
+          build_type: ${{ matrix.build_type }}
+          conan_profile: tests-${{ matrix.build_type }}-linux-arm64
           shell: bash
 
   cpp-macos-arm64:
@@ -117,8 +117,8 @@ jobs:
         shell: bash
       - uses: ./.github/actions/cpp-tests
         with:
-          build_type: Release
-          compiler: clang
+          build_type: ${{ matrix.build_type }}
+          conan_profile: tests-${{ matrix.build_type }}-macos-arm64
           shell: bash
 
   python-linux-x64:
