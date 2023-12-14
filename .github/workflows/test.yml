@@ -25,6 +25,7 @@ jobs:
       - uses: ./.github/actions/cpp-tests
         with:
           build_type: ${{ matrix.build_type }}
+          compiler: ${{ matrix.compiler }}
           shell: bash
 
   cpp-macos-x64:
@@ -42,6 +43,7 @@ jobs:
       - uses: ./.github/actions/cpp-tests
         with:
           build_type: ${{ matrix.build_type }}
+          compiler: clang
           shell: bash
 
   cpp-windows-x64:
@@ -59,6 +61,7 @@ jobs:
       - uses: ./.github/actions/cpp-tests
         with:
           build_type: ${{ matrix.build_type }}
+          compiler: msvc
           shell: bash
 
   cpp-linux-arm64:
@@ -115,6 +118,7 @@ jobs:
       - uses: ./.github/actions/cpp-tests
         with:
           build_type: Release
+          compiler: clang
           shell: bash
 
   python-linux-x64:
