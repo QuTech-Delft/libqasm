@@ -298,7 +298,6 @@ if(CMAKE_COMPILER_IS_GNUCXX)
         -Wall -Wextra -Werror -Wfatal-errors
         -fPIC
         -Wno-error=deprecated-declarations
-        -Wno-maybe-uninitialized
         -Wno-error=restrict
         -Wno-error=sign-compare
     )
