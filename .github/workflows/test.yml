@@ -14,11 +14,11 @@ jobs:
       fail-fast: false
       matrix:
         build_type:
-#          - Debug
+          - Debug
           - Release
         compiler:
           - clang
-#          - gcc
+          - gcc
     steps:
       - name: Checkout
         uses: actions/checkout@v4
