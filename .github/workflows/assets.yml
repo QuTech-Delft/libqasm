@@ -137,7 +137,7 @@ jobs:
             flex_version: 'flex-2.6.1-9.el8'
             java_version: 'java-11-openjdk-11.0.20.0.8-3.el8'
             swig_version: 'swig-3.0.12-19.module_el8.4.0+2254+838326ab'
-      steps:
+    steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Install dependencies
