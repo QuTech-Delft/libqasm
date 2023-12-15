@@ -135,7 +135,7 @@ jobs:
           - manylinux: _2_28
             bison_version: 'bison-3.0.4-10.el8'
             flex_version: 'flex-2.6.1-9.el8'
-            java_version: 'java-11-openjdk-11.0.20.0.8-3.el8'
+            java_version: 'java-11-openjdk-11.0.21.0.9-2.el8'
             swig_version: 'swig-3.0.12-19.module_el8.4.0+2254+838326ab'
     steps:
       - name: Checkout
