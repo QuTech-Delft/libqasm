@@ -56,6 +56,8 @@ jobs:
     name: PyPI wheels for Manylinux (x64)
     runs-on: ubuntu-latest
     container: quay.io/pypa/manylinux${{ matrix.manylinux }}_x86_64:latest
+    env:
+      SWIG_VERSION: '3.0.12-17.el7'
     strategy:
       matrix:
         manylinux:
@@ -71,7 +73,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Install dependencies
         run: |
-          yum install -y bison-$BISON_VERSION swig3-$SWIG_VERSION
+          yum install -y swig3-$SWIG_VERSION
           /opt/python/${{ matrix.cpython_version }}/bin/python -m pip install --upgrade conan wheel auditwheel
       - name: Build wheel
         run: |
@@ -120,7 +122,7 @@ jobs:
           /opt/python/${{ matrix.cpython_version }}/bin/python -m pip install --upgrade pip conan wheel auditwheel
       - name: Build wheel
         run: |
-          conan remove -c "qx/*"
+          conan remove -c "libqasm/*"
           /opt/python/${{ matrix.cpython_version }}/bin/python setup.py bdist_wheel
           /opt/python/${{ matrix.cpython_version }}/bin/python -m auditwheel repair pybuild/dist/*.whl
       - name: Wheel path
