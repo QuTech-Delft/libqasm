@@ -56,8 +56,6 @@ jobs:
     name: PyPI wheels for Manylinux (x64)
     runs-on: ubuntu-latest
     container: quay.io/pypa/manylinux${{ matrix.manylinux }}_x86_64:latest
-    env:
-      SWIG_VERSION: '4.1.1-1.module_el8.8.0+3488+86d650f8'
     strategy:
       matrix:
         manylinux:
@@ -73,7 +71,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Install dependencies
         run: |
-          yum install -y swig-$SWIG_VERSION
+          yum install -y swig
           /opt/python/${{ matrix.cpython_version }}/bin/python -m pip install --upgrade conan wheel auditwheel
       - name: Build wheel
         run: |
@@ -104,8 +102,6 @@ jobs:
       - "ARM64"
       - "Linux"
     container: quay.io/pypa/manylinux${{ matrix.manylinux }}_aarch64:latest
-    env:
-      SWIG_VERSION: '4.1.1-1.module_el8.8.0+3488+86d650f8'
     strategy:
       matrix:
         manylinux:
@@ -121,7 +117,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Install dependencies
         run: |
-          yum install -y swig-$SWIG_VERSION
+          yum install -y swig
           /opt/python/${{ matrix.cpython_version }}/bin/python -m pip install --upgrade pip conan wheel auditwheel
       - name: Build wheel
         run: |
