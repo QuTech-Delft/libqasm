@@ -73,7 +73,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Install dependencies
         run: |
-          yum install -y swig3-$SWIG_VERSION
+          yum install -y swig-$SWIG_VERSION
           /opt/python/${{ matrix.cpython_version }}/bin/python -m pip install --upgrade conan wheel auditwheel
       - name: Build wheel
         run: |
@@ -121,7 +121,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Install dependencies
         run: |
-          yum install -y swig3-$SWIG_VERSION
+          yum install -y swig-$SWIG_VERSION
           /opt/python/${{ matrix.cpython_version }}/bin/python -m pip install --upgrade pip conan wheel auditwheel
       - name: Build wheel
         run: |
