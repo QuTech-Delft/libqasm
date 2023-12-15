@@ -72,7 +72,13 @@ jobs:
       - name: Install dependencies
         run: |
           yum install -y swig
-          /opt/python/${{ matrix.cpython_version }}/bin/python -m pip install --upgrade conan wheel auditwheel
+          python_bin="/opt/python/${{ matrix.cpython_version }}/bin/python"
+          ${python_bin} -m pip install --upgrade conan wheel auditwheel
+          pip_installation_folder=$(${python_bin} -m pip show --files conan | grep 'Location:' | sed 's/Location: //')
+          conan_installation_folder_relative_path=$(${python_bin} -m pip show --files conan | grep '/bin/' | sed 's#\s\+\(.*\)/conan#\1#')
+          conan_installation_folder="${pip_installation_folder}/${conan_installation_folder_relative_path}"
+          echo "Conan installation folder: ${conan_installation_folder}"
+          echo "${conan_installation_folder}" >> $GITHUB_PATH
       - name: Build wheel
         run: |
           /opt/python/${{ matrix.cpython_version }}/bin/python setup.py bdist_wheel
@@ -118,7 +124,13 @@ jobs:
       - name: Install dependencies
         run: |
           yum install -y swig
-          /opt/python/${{ matrix.cpython_version }}/bin/python -m pip install --upgrade pip conan wheel auditwheel
+          python_bin="/opt/python/${{ matrix.cpython_version }}/bin/python"
+          ${python_bin} -m pip install --upgrade pip conan wheel auditwheel
+          pip_installation_folder=$(${python_bin} -m pip show --files conan | grep 'Location:' | sed 's/Location: //')
+          conan_installation_folder_relative_path=$(${python_bin} -m pip show --files conan | grep '/bin/' | sed 's#\s\+\(.*\)/conan#\1#')
+          conan_installation_folder="${pip_installation_folder}/${conan_installation_folder_relative_path}"
+          echo "Conan installation folder: ${conan_installation_folder}"
+          echo "${conan_installation_folder}" >> $GITHUB_PATH
       - name: Build wheel
         run: |
           conan remove -c "libqasm/*"
