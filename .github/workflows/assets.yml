@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     container: quay.io/pypa/manylinux${{ matrix.manylinux }}_x86_64:latest
     env:
-      SWIG_VERSION: '4.0.2-8.el9'
+      SWIG_VERSION: '4.1.1-1.module_el8.8.0+3488+86d650f8'
     strategy:
       matrix:
         manylinux:
@@ -105,7 +105,7 @@ jobs:
       - "Linux"
     container: quay.io/pypa/manylinux${{ matrix.manylinux }}_aarch64:latest
     env:
-      SWIG_VERSION: '4.0.2-8.el9'
+      SWIG_VERSION: '4.1.1-1.module_el8.8.0+3488+86d650f8'
     strategy:
       matrix:
         manylinux:
