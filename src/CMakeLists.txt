@@ -28,6 +28,8 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 # Packages
 #-------------------------------------------------------------------------------
 
+include(FetchContent)
+
 find_package(antlr4-runtime)
 find_package(BISON 3.0)
 find_package(FLEX 2.6.4)
@@ -36,10 +38,7 @@ if(WIN32)
 else()
     set(flex_win_compat)
 endif()
-find_package(fmt 10.1.1)
 find_package(Python3 REQUIRED)
-
-include(FetchContent)
 
 # fmt
 set(fmt_VERSION_REQUIRED 10.1.1)
@@ -321,8 +320,7 @@ else()
     message(SEND_ERROR "Unknown compiler!")
 endif()
 
-# Main cQASM library in shared or static form as managed by cmake's
-# internal BUILD_SHARED_LIBS variable.
+# Main cQASM library in shared or static form as managed by CMake's internal BUILD_SHARED_LIBS variable.
 add_library(cqasm
     $<TARGET_OBJECTS:cqasm-lib-obj>
 )
