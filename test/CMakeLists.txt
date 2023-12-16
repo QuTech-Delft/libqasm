@@ -1,5 +1,3 @@
-set(THREADS_PREFER_PTHREAD_FLAG ON)
-find_package(Threads REQUIRED)
 find_package(GTest REQUIRED)
 
 # Test executable
@@ -31,7 +29,6 @@ target_link_libraries(${PROJECT_NAME}_test PRIVATE
     cqasm
     GTest::gmock
     GTest::gtest
-    Threads::Threads
 )
 
 if(CMAKE_COMPILER_IS_GNUCXX)
