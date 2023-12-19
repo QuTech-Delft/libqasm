@@ -81,6 +81,7 @@ jobs:
           python -m pip install --upgrade conan wheel auditwheel
       - name: Build wheel
         run: |
+          export PATH="/opt/python/${{ matrix.cpython_version }}/bin:$PATH"
           /opt/python/${{ matrix.cpython_version }}/bin/python setup.py bdist_wheel
           /opt/python/${{ matrix.cpython_version }}/bin/python -m auditwheel repair pybuild/dist/*.whl
       - name: Wheel path
@@ -142,6 +143,7 @@ jobs:
           python -m pip install --upgrade pip conan wheel auditwheel
       - name: Build wheel
         run: |
+          export PATH="/opt/python/${{ matrix.cpython_version }}/bin:$PATH"
           conan remove -c "libqasm/*"
           python setup.py bdist_wheel
           python -m auditwheel repair pybuild/dist/*.whl
