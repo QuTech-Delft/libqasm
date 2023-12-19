@@ -82,6 +82,7 @@ jobs:
       - name: Build wheel
         run: |
           export PATH="/opt/python/${{ matrix.cpython_version }}/bin:$PATH"
+          conan remove -c "*/*"
           /opt/python/${{ matrix.cpython_version }}/bin/python setup.py bdist_wheel
           /opt/python/${{ matrix.cpython_version }}/bin/python -m auditwheel repair pybuild/dist/*.whl
       - name: Wheel path
@@ -144,7 +145,7 @@ jobs:
       - name: Build wheel
         run: |
           export PATH="/opt/python/${{ matrix.cpython_version }}/bin:$PATH"
-          conan remove -c "libqasm/*"
+          conan remove -c "*/*"
           python setup.py bdist_wheel
           python -m auditwheel repair pybuild/dist/*.whl
       - name: Wheel path
