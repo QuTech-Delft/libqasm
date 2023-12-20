@@ -24,12 +24,12 @@ void BuildTreeGenAstVisitor::addErrorListener(CustomErrorListener *errorListener
     error_listener_p_ = errorListener;
 }
 
-void BuildTreeGenAstVisitor::syntaxError(size_t line, size_t char_position_in_line, const std::string &text) {
+void BuildTreeGenAstVisitor::syntaxError(size_t line, size_t char_position_in_line, const std::string &text) const {
     assert(error_listener_p_);
     error_listener_p_->syntaxError(line, char_position_in_line, text);
 }
 
-void BuildTreeGenAstVisitor::setNodeAnnotation(ast::One<ast::Node> node, antlr4::Token *token) {
+void BuildTreeGenAstVisitor::setNodeAnnotation(const ast::One<ast::Node> &node, antlr4::Token *token) const {
     auto token_size = token->getStopIndex() - token->getStartIndex() + 1;
     // ANTLR provides a zero-based character position in line
     // We change it here to a one-based index, which is the more human-readable, and the common option in text editors
@@ -42,7 +42,7 @@ void BuildTreeGenAstVisitor::setNodeAnnotation(ast::One<ast::Node> node, antlr4:
     });
 }
 
-std::int64_t BuildTreeGenAstVisitor::get_int_value(size_t line, size_t char_position_in_line, const std::string &text) {
+std::int64_t BuildTreeGenAstVisitor::get_int_value(size_t line, size_t char_position_in_line, const std::string &text) const {
     try {
         return std::stoll(text);
     } catch (std::out_of_range&) {
@@ -51,13 +51,7 @@ std::int64_t BuildTreeGenAstVisitor::get_int_value(size_t line, size_t char_posi
     return {};
 }
 
-std::int64_t BuildTreeGenAstVisitor::get_int_value(antlr4::tree::TerminalNode *node) {
-    const auto &token = node->getSymbol();
-    assert(token->getType() == CqasmParser::INTEGER_LITERAL);
-    return get_int_value(token->getLine(), token->getCharPositionInLine(), node->getText());
-}
-
-double BuildTreeGenAstVisitor::get_float_value(size_t line, size_t char_position_in_line, const std::string &text) {
+double BuildTreeGenAstVisitor::get_float_value(size_t line, size_t char_position_in_line, const std::string &text) const {
     try {
         return std::stod(text);
     } catch (std::out_of_range&) {
@@ -66,7 +60,19 @@ double BuildTreeGenAstVisitor::get_float_value(size_t line, size_t char_position
     return {};
 }
 
-double BuildTreeGenAstVisitor::get_float_value(antlr4::tree::TerminalNode *node) {
+bool BuildTreeGenAstVisitor::get_bool_value(antlr4::tree::TerminalNode *node) const {
+    const auto &token = node->getSymbol();
+    assert(token->getType() == CqasmParser::BOOLEAN_LITERAL);
+    return node->getText() == "true";
+}
+
+std::int64_t BuildTreeGenAstVisitor::get_int_value(antlr4::tree::TerminalNode *node) const {
+    const auto &token = node->getSymbol();
+    assert(token->getType() == CqasmParser::INTEGER_LITERAL);
+    return get_int_value(token->getLine(), token->getCharPositionInLine(), node->getText());
+}
+
+double BuildTreeGenAstVisitor::get_float_value(antlr4::tree::TerminalNode *node) const {
     const auto &token = node->getSymbol();
     const auto &text = node->getText();
     assert(token->getType() == CqasmParser::FLOAT_LITERAL);
@@ -270,6 +276,14 @@ std::any BuildTreeGenAstVisitor::visitIndexRange(CqasmParser::IndexRangeContext 
         std::any_cast<One<Expression>>(context->expression(0)->accept(this)),
         std::any_cast<One<Expression>>(context->expression(1)->accept(this))
     )};
+}
+
+std::any BuildTreeGenAstVisitor::visitBooleanLiteral(CqasmParser::BooleanLiteralContext *context) {
+    auto value = get_bool_value(context->BOOLEAN_LITERAL());
+    auto ret = cqasm::tree::make<BooleanLiteral>(value);
+    const auto &token = context->BOOLEAN_LITERAL()->getSymbol();
+    setNodeAnnotation(ret, token);
+    return One<Expression>{ ret };
 }
 
 std::any BuildTreeGenAstVisitor::visitIntegerLiteral(CqasmParser::IntegerLiteralContext *context) {

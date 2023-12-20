@@ -301,7 +301,9 @@ tree::Maybe<semantic::AssignmentInstruction> AnalyzeTreeGenAstVisitor::visitAssi
 values::Value AnalyzeTreeGenAstVisitor::visitExpression(const ast::Expression &expression_ast) {
     values::Value ret{};
     try {
-        if (auto integer_literal = expression_ast.as_integer_literal()) {
+        if (auto boolean_literal = expression_ast.as_boolean_literal()) {
+            ret.set(tree::make<values::ConstBool>(boolean_literal->value));
+        } else if (auto integer_literal = expression_ast.as_integer_literal()) {
             ret.set(tree::make<values::ConstInt>(integer_literal->value));
         } else if (auto float_literal = expression_ast.as_float_literal()) {
             ret.set(tree::make<values::ConstReal>(float_literal->value));

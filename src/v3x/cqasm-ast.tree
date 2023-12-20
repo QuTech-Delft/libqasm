@@ -44,6 +44,10 @@ index_list {
 }
 
 expression {
+    boolean_literal {
+        value: cqasm::v3x::primitives::Bool;
+    }
+
     integer_literal {
         value: cqasm::v3x::primitives::Int;
     }

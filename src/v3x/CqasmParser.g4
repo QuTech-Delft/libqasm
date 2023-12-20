@@ -40,7 +40,8 @@ indexEntry:
     ;
 
 expression:
-    INTEGER_LITERAL  # integerLiteral
+    BOOLEAN_LITERAL  # booleanLiteral
+    | INTEGER_LITERAL  # integerLiteral
     | FLOAT_LITERAL  # floatLiteral
     | IDENTIFIER  # identifier
     | IDENTIFIER OPEN_BRACKET indexList CLOSE_BRACKET  # index

@@ -23,10 +23,12 @@ class  BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
      */
     CustomErrorListener* error_listener_p_;
 
-    std::int64_t get_int_value(size_t line, size_t char_position_in_line, const std::string &text);
-    std::int64_t get_int_value(antlr4::tree::TerminalNode *node);
-    double get_float_value(size_t line, size_t char_position_in_line, const std::string &text);
-    double get_float_value(antlr4::tree::TerminalNode *node);
+    std::int64_t get_int_value(size_t line, size_t char_position_in_line, const std::string &text) const;
+    double get_float_value(size_t line, size_t char_position_in_line, const std::string &text) const;
+
+    bool get_bool_value(antlr4::tree::TerminalNode *node) const;
+    std::int64_t get_int_value(antlr4::tree::TerminalNode *node) const ;
+    double get_float_value(antlr4::tree::TerminalNode *node) const;
 
     std::any visitIntTypeDefinition(CqasmParser::IntTypeDeclarationContext *context);
     std::any visitIntTypeInitialization(CqasmParser::IntTypeDeclarationContext *context);
@@ -49,6 +51,7 @@ public:
     std::any visitIndexList(CqasmParser::IndexListContext *context) override;
     std::any visitIndexItem(CqasmParser::IndexItemContext *context) override;
     std::any visitIndexRange(CqasmParser::IndexRangeContext *context) override;
+    std::any visitBooleanLiteral(CqasmParser::BooleanLiteralContext *context) override;
     std::any visitIntegerLiteral(CqasmParser::IntegerLiteralContext *context) override;
     std::any visitFloatLiteral(CqasmParser::FloatLiteralContext *context) override;
     std::any visitIdentifier(CqasmParser::IdentifierContext *context) override;
@@ -58,8 +61,8 @@ public:
 
     explicit BuildTreeGenAstVisitor(std::string file_name = "<unknown>");
     void addErrorListener(CustomErrorListener *errorListener) override;
-    void syntaxError(size_t line, size_t char_position_in_line, const std::string &text) override;
-    void setNodeAnnotation(ast::One<ast::Node> node, antlr4::Token *token) override;
+    void syntaxError(size_t line, size_t char_position_in_line, const std::string &text) const override;
+    void setNodeAnnotation(const ast::One<ast::Node> &node, antlr4::Token *token) const override;
 };
 
 }  // namespace cqasm::v3x::parser

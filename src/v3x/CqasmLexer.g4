@@ -89,7 +89,8 @@ INT_TYPE: 'int';
 FLOAT_TYPE: 'float';
 
 // Numeric literals
-INTEGER_LITERAL : ([-+])? Digit+;
+BOOLEAN_LITERAL: 'true' | 'false';
+INTEGER_LITERAL: ([-+])? Digit+;
 FLOAT_LITERAL: ([-+])? Digit* '.' Digit+([eE][-+]Digit+)?;
 fragment Digit: [0-9];
 

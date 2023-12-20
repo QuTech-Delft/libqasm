@@ -28,16 +28,27 @@ Value promote(const Value &value, const types::Type &type) {
 
     Value ret{};
 
-    // Integers promote to real
+    // Booleans promote to integer
+    if (type->as_int()) {
+        if (const auto &const_bool = value->as_const_bool()) {
+            ret = tree::make<values::ConstInt>(static_cast<ConstInt>(const_bool->value));
+        }
+    }
+
+    // Booleans and integers promote to real
     if (type->as_real()) {
-        if (const auto &const_int = value->as_const_int()) {
+        if (const auto &const_bool = value->as_const_bool()) {
+            ret = tree::make<values::ConstReal>(static_cast<ConstReal>(const_bool->value));
+        } else if (const auto &const_int = value->as_const_int()) {
             ret = tree::make<values::ConstReal>(static_cast<ConstReal>(static_cast<double>(const_int->value)));
         }
     }
 
-    // Integers and reals promote to complex
+    // Booleans, integers and reals promote to complex
     if (type->as_complex()) {
-        if (const auto &const_int = value->as_const_int()) {
+        if (const auto &const_bool = value->as_const_bool()) {
+            ret = tree::make<values::ConstComplex>(static_cast<ConstComplex>(const_bool->value));
+        } else if (const auto &const_int = value->as_const_int()) {
             ret = tree::make<values::ConstComplex>(static_cast<ConstComplex>(static_cast<double>(const_int->value)));
         } else if (const auto &const_real = value->as_const_real()) {
             ret = tree::make<values::ConstComplex>(static_cast<ConstComplex>(const_real->value));
