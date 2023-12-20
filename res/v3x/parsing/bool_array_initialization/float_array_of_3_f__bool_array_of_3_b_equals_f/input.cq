@@ -1,0 +1,4 @@
+version 3
+
+float[3] f
+bool[3] b = f

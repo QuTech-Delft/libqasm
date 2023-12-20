@@ -1,2 +1,51 @@
-ERROR
-Error at input.cq:3:7..8: type of right-hand side (bool) could not be coerced to left-hand side (int)
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  statements: [
+    AssignmentInstruction(
+      lhs: <
+        VariableRef(
+          variable --> <
+            Variable(
+              name: i
+              typ: <
+                Int(
+                  size: 1
+                )
+              >
+              annotations: []
+            )
+          >
+        )
+      >
+      rhs: <
+        ConstInt(
+          value: 0
+        )
+      >
+      condition: <
+        ConstBool(
+          value: 1
+        )
+      >
+      annotations: []
+    )
+  ]
+  variables: [
+    Variable(
+      name: i
+      typ: <
+        Int(
+          size: 1
+        )
+      >
+      annotations: []
+    )
+  ]
+)
+

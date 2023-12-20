@@ -40,8 +40,8 @@ Program(
                     IntegerLiteral( # input.cq:3:17..18
                       value: 1
                     )
-                    Identifier( # input.cq:3:20..25
-                      name: false
+                    BooleanLiteral( # input.cq:3:20..25
+                      value: 0
                     )
                   ]
                 )

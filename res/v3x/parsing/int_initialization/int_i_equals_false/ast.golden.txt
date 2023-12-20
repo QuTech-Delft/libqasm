@@ -26,8 +26,8 @@ Program(
             )
           >
           rhs: <
-            Identifier( # input.cq:3:9..14
-              name: false
+            BooleanLiteral( # input.cq:3:9..14
+              value: 0
             )
           >
           annotations: []
