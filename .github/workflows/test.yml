@@ -49,7 +49,7 @@ jobs:
         shell: bash
       - name: Test
         working-directory: build/${{ matrix.build_type }}
-        run: ctest -C ${{ matrix.build_type }} --output-on-failure
+        run: ctest -C ${{ matrix.build_type }} --output-on-failure --parallel 10
 
   cpp-arm64:
     name: 'C++ tests (gcc/Linux/ARM64, clang/MacOS/ARM64)'
@@ -94,7 +94,7 @@ jobs:
           conan build . -pr=conan/profiles/tests-release-compat -b missing
       - name: Test
         working-directory: build/Release
-        run: ctest -C Release --output-on-failure
+        run: ctest -C Release --output-on-failure --parallel 10
 
   python:
     name: Python
