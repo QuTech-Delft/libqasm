@@ -31,26 +31,21 @@ type_base {
     # Type of a boolean.
     bool {}
 
-    bool_array {}
-
     # Type of an integer (signed 64-bit).
     int {}
 
-    int_array {}
-
     # Type of a real number (IEEE double).
     real {}
-
-    real_array {}
 
     # Type of a complex number (2x IEEE double).
     complex {}
 
     bit {}
-
-    bit_array {}
-
     qubit {}
 
+    bool_array {}
+    int_array {}
+    real_array {}
+    bit_array {}
     qubit_array {}
 }

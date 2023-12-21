@@ -2,7 +2,8 @@
 #include "v3x/cqasm-ast-gen.hpp"
 #include "v3x/cqasm-analyzer.hpp"
 
-#include <algorithm>  // for_each
+#include <algorithm>  // for_each, transform
+#include <cassert>  // assert
 #include <string_view>
 
 
@@ -186,22 +187,39 @@ tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(
     return node;
 }
 
+/* static */
+template <typename ConstTypeArray>
+values::Value AnalyzeTreeGenAstVisitor::promoteArrayValueToArrayType(const ConstTypeArray *rhs_value_ptr,
+    const values::Value &rhs_value, const types::Type &lhs_type) {
+
+    // TODO: as_int_array() and types::Int() are not generic types yet
+    // TODO: 1) as_int_array(), this first check should be done in the caller method
+    //       It would be useful to have a lhs_type->as_array()
+    //       For that, we would need an array class serving as base class for bool_array, int_array, and real_array
+    // TODO: 2) pass both Type and ConstTypeArray
+    if (lhs_type->as_int_array()) {
+        const auto &rhs_value_items = rhs_value_ptr->value.get_vec();
+        auto rhs_promoted_value = cqasm::tree::make<ConstTypeArray>();
+        std::for_each(rhs_value_items.begin(), rhs_value_items.end(),
+            [&rhs_promoted_value](const auto &rhs_value) {
+                rhs_promoted_value->value.add(promoteValueToType(rhs_value, tree::make<types::Int>()));
+        });
+        return rhs_promoted_value;
+    } else {
+        throw error::AnalysisError{ fmt::format(
+            "type of right-hand side ({}) could not be coerced to left-hand side ({})",
+            values::type_of(rhs_value), types::Type(tree::make<types::Int>())) };
+    }
+}
+
+/* static */
 values::Value AnalyzeTreeGenAstVisitor::promoteValueToType(const values::Value &rhs_value, const types::Type &lhs_type) {
-    // TODO: the code below should be generic, e.g., work as well for Bool/BoolArray, Real/RealArray, and so on
-    if (auto rhs_value_ptr = rhs_value->as_const_int_array()) {
-        if (lhs_type->as_int_array()) {
-            const auto &rhs_value_items = rhs_value_ptr->value.get_vec();
-            auto rhs_promoted_value = cqasm::tree::make<values::ConstIntArray>();
-            std::for_each(rhs_value_items.begin(), rhs_value_items.end(),
-                [&rhs_promoted_value](const auto &rhs_value) {
-                    rhs_promoted_value->value.add(promoteValueToType(rhs_value, tree::make<types::Int>()));
-            });
-            return rhs_promoted_value;
-        } else {
-            throw error::AnalysisError{ fmt::format(
-                "type of right-hand side ({}) could not be coerced to left-hand side ({})",
-                values::type_of(rhs_value), types::Type(tree::make<types::Int>())) };
-        }
+    if (auto const_bool_array_ptr = rhs_value->as_const_bool_array()) {
+        return promoteArrayValueToArrayType<values::ConstBoolArray>(const_bool_array_ptr, rhs_value, lhs_type);
+    } else if (auto const_int_array_ptr = rhs_value->as_const_int_array()) {
+        return promoteArrayValueToArrayType<values::ConstIntArray>(const_int_array_ptr, rhs_value, lhs_type);
+    } else if (auto const_real_array_ptr = rhs_value->as_const_real_array()) {
+        return promoteArrayValueToArrayType<values::ConstRealArray>(const_real_array_ptr, rhs_value, lhs_type);
     } else if (auto rhs_promoted_value = values::promote(rhs_value, lhs_type); rhs_promoted_value.empty()) {
         throw error::AnalysisError{ fmt::format(
             "type of right-hand side ({}) could not be coerced to left-hand side ({})",
@@ -401,31 +419,55 @@ tree::Many<values::ConstInt> AnalyzeTreeGenAstVisitor::visitIndexRange(
     return ret;
 }
 
+/* static */
+template <typename ConstTypeArray>
+tree::One<ConstTypeArray> AnalyzeTreeGenAstVisitor::buildArrayValueFromPromotedValues(const values::Values &values, const types::Type &type) {
+    auto ret = tree::make<ConstTypeArray>();
+    std::transform(values.begin(), values.end(), ret->value.begin(),
+       [&type](const auto &const_value) {
+            return values::promote(const_value, type);
+    });
+    return ret;
+}
+
+/* static */
+values::Value AnalyzeTreeGenAstVisitor::buildValueFromPromotedValues(const values::Values &values, const types::Type &type) {
+    if (types::type_check(type, tree::make<types::Bool>())) {
+        return buildArrayValueFromPromotedValues<values::ConstBoolArray>(values, type);
+    } else if (types::type_check(type, tree::make<types::Int>())) {
+        return buildArrayValueFromPromotedValues<values::ConstIntArray>(values, type);
+    } else if (types::type_check(type, tree::make<types::Real>())) {
+        return buildArrayValueFromPromotedValues<values::ConstRealArray>(values, type);
+    } else {
+        assert(false && "expecting Bool, Int, or Real type");
+    }
+}
+
 values::Value AnalyzeTreeGenAstVisitor::visitInitializationList(
     const ast::InitializationList &initialization_list_ast) {
 
-    // TODO: the code below should be generic, e.g., work as well for Bool/BoolArray, Real/RealArray, and so on
-    if (initialization_list_ast.expr_list->items.empty()) {
-        throw error::AnalysisError{ "initialization list should have at least one element" };
-    }
-    const auto &items = initialization_list_ast.expr_list->items.get_vec();
-    const auto &first_value = visitExpression(*items[0]);
-    if (types::type_check(values::type_of(first_value), tree::make<types::Int>())) {
-        auto ret = tree::make<values::ConstIntArray>();
-        ret->value.add(first_value);
-        std::for_each(std::next(items.begin()), items.end(), [this, &ret](const auto &item) {
-            const auto &value = visitExpression(*item);
-            if (types::type_check(values::type_of(value), tree::make<types::Int>())) {
-                ret->value.add(value);
+    // Build a list of expression values,
+    // keeping the highest type to which we can promote (e.g., for a list of booleans and integers, integer)
+    const auto &expressions_ast = initialization_list_ast.expr_list->items.get_vec();
+    auto expressions_values = values::Values();
+    auto expressions_highest_type = tree::make<types::Bool>();
+    std::for_each(expressions_ast.begin(), expressions_ast.end(),
+        [this, &expressions_values, &expressions_highest_type](const auto &expression_ast) {
+            const auto &value = visitExpression(*expression_ast);
+            expressions_values.add(value);
+            if (values::check_promote(values::type_of(value), expressions_highest_type)) {
+                return;
+            } else if (values::check_promote(expressions_highest_type, values::type_of(value))) {
+                expressions_highest_type = values::type_of(value);
             } else {
-                throw error::AnalysisError{ fmt::format("expecting value of type ({}) but found ({})",
-                    types::Type(tree::make<types::Int>()), values::type_of(value)) };
+                throw error::AnalysisError{
+                    fmt::format("cannot perform a promotion between these two types: ({}) and ({})",
+                        values::type_of(value), types::Type(expressions_highest_type)) };
             }
-        });
-        return ret;
-    } else {
-        throw error::AnalysisError{ "unimplemented" };
-    }
+    });
+
+    // Then return a Const<Type>Array value, where <Type> is the highest type to which we can promote
+    return buildValueFromPromotedValues(expressions_values, expressions_highest_type);
 }
 
 tree::Any<semantic::AnnotationData> AnalyzeTreeGenAstVisitor::visitAnnotations(
@@ -470,14 +512,14 @@ values::Value AnalyzeTreeGenAstVisitor::analyze_as(const ast::Expression &expres
  */
 primitives::Int AnalyzeTreeGenAstVisitor::visitConstInt(const ast::Expression &expression) {
     try {
-        auto value = analyze_as<types::Int>(expression);
-        if (value.empty()) {
+        if (auto int_value = analyze_as<types::Int>(expression); !int_value.empty()) {
+            if (auto const_int_value = int_value->as_const_int()) {
+                return const_int_value->value;
+            } else {
+                throw error::AnalysisError("integer must be constant");
+            }
+        } else{
             throw error::AnalysisError("expected an integer");
-        }
-        if (auto int_value = value->as_const_int()) {
-            return int_value->value;
-        } else {
-            throw error::AnalysisError("integer must be constant");
         }
     } catch (error::AnalysisError &e) {
         e.context(expression);

@@ -7,8 +7,9 @@ options {
 // Actual grammar start
 //
 // Note that texts such as '# integerLiteral' are not comments but alternative labels
-// The use of alternative labels simplifies the visitor classes by removing the need to implement some methods,
-// that would otherwise contain boilerplate code (e.g. 'statement' and 'expression')
+// The use of alternative labels simplifies the visitor classes
+// by removing the need to implement some methods,
+// which would otherwise contain boilerplate code (e.g. 'statement' and 'expression')
 program: statementSeparator* version statements statementSeparator* EOF;
 
 version: VERSION VERSION_NUMBER;
@@ -34,6 +35,8 @@ expressionList: expression (COMMA expression)*;
 
 indexList: indexEntry (COMMA indexEntry)*;
 
+// Current implementation of the semantic parser will expect constant integers
+// both for the expression in indexItem and the two expressions in indexRange
 indexEntry:
     expression  # indexItem
     | expression COLON expression  # indexRange

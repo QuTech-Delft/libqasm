@@ -64,6 +64,16 @@ Value promote(const Value &value, const types::Type &type) {
 }
 
 /**
+ * Checks if a from_type can be promoted to a to_type.
+ */
+bool check_promote(const types::Type &from_type, const types::Type &to_type) {
+    return types::type_check(from_type, to_type) ||
+        (from_type->as_bool() && (to_type->as_int() || to_type->as_real() || to_type->as_complex())) ||
+        (from_type->as_int() && (to_type->as_real() || to_type->as_complex())) ||
+        (from_type->as_real() && to_type->as_complex());
+}
+
+/**
  * Returns the type of the given value.
  */
 types::Type type_of(const Value &value) {
@@ -77,8 +87,12 @@ types::Type type_of(const Value &value) {
         return tree::make<types::Real>();
     } else if (value->as_const_complex()) {
         return tree::make<types::Complex>();
+    } else if (value->as_const_bool_array()) {
+        return tree::make<types::BoolArray>();
     } else if (value->as_const_int_array()) {
         return tree::make<types::IntArray>();
+    } else if (value->as_const_real_array()) {
+        return tree::make<types::RealArray>();
     } else if (auto index = value->as_index_ref()) {
         return index->variable->typ;
     } else if (auto var = value->as_variable_ref()) {
@@ -109,8 +123,12 @@ primitives::Int range_of(const Value &value) {
         value->as_const_real() ||
         value->as_const_complex()) {
         return 1;
+    } else if (auto bool_array = value->as_const_bool_array()) {
+        return static_cast<primitives::Bool>(bool_array->value.size());
     } else if (auto int_array = value->as_const_int_array()) {
         return static_cast<primitives::Int>(int_array->value.size());
+    } else if (auto real_array = value->as_const_real_array()) {
+        return static_cast<primitives::Real>(real_array->value.size());
     } else if (auto index = value->as_index_ref()) {
         return static_cast<primitives::Int>(index->indices.size());
     } else if (auto var = value->as_variable_ref()) {

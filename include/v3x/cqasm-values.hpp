@@ -40,6 +40,11 @@ using Values = tree::Any<Node>;
 Value promote(const Value &value, const types::Type &type);
 
 /**
+ * Checks if a from_type can be promoted to a to_type.
+ */
+bool check_promote(const types::Type &from_type, const types::Type &to_type);
+
+/**
  * Returns the type of the given value.
  */
 types::Type type_of(const Value &value);

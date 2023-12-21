@@ -13,7 +13,20 @@ class AnalyzeTreeGenAstVisitor {
 
     template <typename T, typename TArray>
     [[nodiscard]] types::Type visitVariableType(const ast::Variable &variable_ast, std::string_view type_name) const;
-    [[nodiscard]] static values::Value promoteValueToType(const values::Value &rhs_value, const types::Type &lhs_type);
+
+    template <typename ConstTypeArray>
+    [[nodiscard]] static values::Value promoteArrayValueToArrayType(
+        const ConstTypeArray *rhs_value_ptr, const values::Value &rhs_value, const types::Type &lhs_type);
+
+    [[nodiscard]] static values::Value promoteValueToType(
+        const values::Value &rhs_value, const types::Type &lhs_type);
+
+    template <typename ConstTypeArray>
+    [[nodiscard]] static tree::One<ConstTypeArray> buildArrayValueFromPromotedValues(
+        const values::Values &values, const types::Type &type);
+
+    [[nodiscard]] static values::Value buildValueFromPromotedValues(
+        const values::Values &values, const types::Type &type);
 
 public:
     AnalysisResult visitProgram(const ast::Program &program_ast);
