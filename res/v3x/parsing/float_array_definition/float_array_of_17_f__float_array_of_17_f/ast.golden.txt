@@ -1,0 +1,51 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  statements: <
+    StatementList(
+      items: [
+        Variable( # input.cq:3:11..12
+          name: <
+            Identifier(
+              name: f
+            )
+          >
+          typ: <
+            Identifier(
+              name: float
+            )
+          >
+          size: <
+            IntegerLiteral(
+              value: 17
+            )
+          >
+          annotations: []
+        )
+        Variable( # input.cq:4:11..12
+          name: <
+            Identifier(
+              name: f
+            )
+          >
+          typ: <
+            Identifier(
+              name: float
+            )
+          >
+          size: <
+            IntegerLiteral(
+              value: 17
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+
