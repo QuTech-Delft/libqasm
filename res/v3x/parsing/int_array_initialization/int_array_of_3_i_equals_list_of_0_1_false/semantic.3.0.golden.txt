@@ -1,2 +1,0 @@
-ERROR
-Error at input.cq:3:10..11: expecting value of type (int) but found (bool)

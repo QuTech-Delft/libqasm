@@ -1,0 +1,53 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  statements: <
+    StatementList(
+      items: [
+        Variable( # input.cq:3:7..8
+          name: <
+            Identifier(
+              name: q
+            )
+          >
+          typ: <
+            Identifier(
+              name: qubit
+            )
+          >
+          size: -
+          annotations: []
+        )
+        Initialization( # input.cq:4:8..9
+          var: <
+            Variable( # input.cq:4:6..7
+              name: <
+                Identifier(
+                  name: b
+                )
+              >
+              typ: <
+                Identifier(
+                  name: bool
+                )
+              >
+              size: -
+              annotations: []
+            )
+          >
+          rhs: <
+            Identifier( # input.cq:4:10..11
+              name: q
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+
