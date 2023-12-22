@@ -187,45 +187,15 @@ tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(
     return node;
 }
 
-/* static */
-template <typename ConstTypeArray>
-values::Value AnalyzeTreeGenAstVisitor::promoteArrayValueToArrayType(const ConstTypeArray *rhs_value_ptr,
+/* static */ values::Value AnalyzeTreeGenAstVisitor::promoteValueToType(
     const values::Value &rhs_value, const types::Type &lhs_type) {
 
-    // TODO: as_int_array() and types::Int() are not generic types yet
-    // TODO: 1) as_int_array(), this first check should be done in the caller method
-    //       It would be useful to have a lhs_type->as_array()
-    //       For that, we would need an array class serving as base class for bool_array, int_array, and real_array
-    // TODO: 2) pass both Type and ConstTypeArray
-    if (lhs_type->as_int_array()) {
-        const auto &rhs_value_items = rhs_value_ptr->value.get_vec();
-        auto rhs_promoted_value = cqasm::tree::make<ConstTypeArray>();
-        std::for_each(rhs_value_items.begin(), rhs_value_items.end(),
-            [&rhs_promoted_value](const auto &rhs_value) {
-                rhs_promoted_value->value.add(promoteValueToType(rhs_value, tree::make<types::Int>()));
-        });
+    if (auto rhs_promoted_value = values::promote(rhs_value, lhs_type); !rhs_promoted_value.empty()) {
         return rhs_promoted_value;
     } else {
-        throw error::AnalysisError{ fmt::format(
-            "type of right-hand side ({}) could not be coerced to left-hand side ({})",
-            values::type_of(rhs_value), types::Type(tree::make<types::Int>())) };
-    }
-}
-
-/* static */
-values::Value AnalyzeTreeGenAstVisitor::promoteValueToType(const values::Value &rhs_value, const types::Type &lhs_type) {
-    if (auto const_bool_array_ptr = rhs_value->as_const_bool_array()) {
-        return promoteArrayValueToArrayType<values::ConstBoolArray>(const_bool_array_ptr, rhs_value, lhs_type);
-    } else if (auto const_int_array_ptr = rhs_value->as_const_int_array()) {
-        return promoteArrayValueToArrayType<values::ConstIntArray>(const_int_array_ptr, rhs_value, lhs_type);
-    } else if (auto const_real_array_ptr = rhs_value->as_const_real_array()) {
-        return promoteArrayValueToArrayType<values::ConstRealArray>(const_real_array_ptr, rhs_value, lhs_type);
-    } else if (auto rhs_promoted_value = values::promote(rhs_value, lhs_type); rhs_promoted_value.empty()) {
         throw error::AnalysisError{ fmt::format(
             "type of right-hand side ({}) could not be coerced to left-hand side ({})",
             values::type_of(rhs_value), lhs_type) };
-    } else {
-        return rhs_promoted_value;
     }
 }
 
@@ -419,10 +389,13 @@ tree::Many<values::ConstInt> AnalyzeTreeGenAstVisitor::visitIndexRange(
     return ret;
 }
 
-/* static */
+
 template <typename ConstTypeArray>
-tree::One<ConstTypeArray> AnalyzeTreeGenAstVisitor::buildArrayValueFromPromotedValues(const values::Values &values, const types::Type &type) {
+/* static */ tree::One<ConstTypeArray> AnalyzeTreeGenAstVisitor::buildArrayValueFromPromotedValues(
+    const values::Values &values, const types::Type &type) {
+
     auto ret = tree::make<ConstTypeArray>();
+    ret->value.get_vec().resize(values.size());
     std::transform(values.begin(), values.end(), ret->value.begin(),
        [&type](const auto &const_value) {
             return values::promote(const_value, type);
@@ -430,8 +403,9 @@ tree::One<ConstTypeArray> AnalyzeTreeGenAstVisitor::buildArrayValueFromPromotedV
     return ret;
 }
 
-/* static */
-values::Value AnalyzeTreeGenAstVisitor::buildValueFromPromotedValues(const values::Values &values, const types::Type &type) {
+/* static */ values::Value AnalyzeTreeGenAstVisitor::buildValueFromPromotedValues(
+    const values::Values &values, const types::Type &type) {
+
     if (types::type_check(type, tree::make<types::Bool>())) {
         return buildArrayValueFromPromotedValues<values::ConstBoolArray>(values, type);
     } else if (types::type_check(type, tree::make<types::Int>())) {

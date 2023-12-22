@@ -23,15 +23,19 @@ class  BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
      */
     CustomErrorListener* error_listener_p_;
 
-    std::int64_t get_int_value(size_t line, size_t char_position_in_line, const std::string &text) const;
-    double get_float_value(size_t line, size_t char_position_in_line, const std::string &text) const;
+    [[nodiscard]] std::int64_t get_int_value(size_t line, size_t char_position_in_line, const std::string &text) const;
+    [[nodiscard]] double get_float_value(size_t line, size_t char_position_in_line, const std::string &text) const;
 
     bool get_bool_value(antlr4::tree::TerminalNode *node) const;
     std::int64_t get_int_value(antlr4::tree::TerminalNode *node) const ;
     double get_float_value(antlr4::tree::TerminalNode *node) const;
 
+    std::any visitBoolTypeDefinition(CqasmParser::BoolTypeDeclarationContext *context);
+    std::any visitBoolTypeInitialization(CqasmParser::BoolTypeDeclarationContext *context);
     std::any visitIntTypeDefinition(CqasmParser::IntTypeDeclarationContext *context);
     std::any visitIntTypeInitialization(CqasmParser::IntTypeDeclarationContext *context);
+    std::any visitFloatTypeDefinition(CqasmParser::FloatTypeDeclarationContext *context);
+    std::any visitFloatTypeInitialization(CqasmParser::FloatTypeDeclarationContext *context);
 
 public:
     std::any visitProgram(CqasmParser::ProgramContext *context) override;

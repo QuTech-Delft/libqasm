@@ -14,6 +14,17 @@
 
 namespace cqasm::v3x::values {
 
+template <typename ConstTypeArray, typename Type>
+Value promoteArrayValueToArrayType(const ConstTypeArray *array_value) {
+    const auto &array_value_items = array_value->value.get_vec();
+    auto promoted_array_value = cqasm::tree::make<ConstTypeArray>();
+    std::for_each(array_value_items.begin(), array_value_items.end(),
+        [&promoted_array_value](const auto &item) {
+            promoted_array_value->value.add(promote(item, tree::make<Type>()));
+    });
+    return promoted_array_value;
+}
+
 /**
  * Type-checks and (if necessary) promotes the given value to the given type.
  * Returns null if the check/promotion fails,
@@ -32,6 +43,19 @@ Value promote(const Value &value, const types::Type &type) {
     if (type->as_int()) {
         if (const auto &const_bool = value->as_const_bool()) {
             ret = tree::make<values::ConstInt>(static_cast<ConstInt>(const_bool->value));
+        } else if (const auto variable_ref = value->as_variable_ref(); variable_ref &&
+            types::type_check(variable_ref->variable->typ, tree::make<types::Bool>())) {
+            ret = value;
+        }
+    }
+    // Boolean arrays promote to integer arrays
+    if (type->as_int_array()) {
+        if (const auto &const_bool_array = value->as_const_bool_array()) {
+            ret = promoteArrayValueToArrayType<ConstBoolArray, types::Int>(const_bool_array);
+        } else if (const auto variable_ref = value->as_variable_ref(); variable_ref) {
+            if (types::type_check(variable_ref->variable->typ, tree::make<types::BoolArray>())) {
+                ret = value;
+            }
         }
     }
 
@@ -41,6 +65,24 @@ Value promote(const Value &value, const types::Type &type) {
             ret = tree::make<values::ConstReal>(static_cast<ConstReal>(const_bool->value));
         } else if (const auto &const_int = value->as_const_int()) {
             ret = tree::make<values::ConstReal>(static_cast<ConstReal>(static_cast<double>(const_int->value)));
+        } else if (const auto variable_ref = value->as_variable_ref(); variable_ref) {
+            if (types::type_check(variable_ref->variable->typ, tree::make<types::Bool>()) ||
+                types::type_check(variable_ref->variable->typ, tree::make<types::Int>())) {
+                ret = value;
+            }
+        }
+    }
+    // Boolean and integer arrays promote to real arrays
+    if (type->as_real_array()) {
+        if (const auto &const_bool_array = value->as_const_bool_array()) {
+            ret = promoteArrayValueToArrayType<ConstBoolArray, types::Real>(const_bool_array);
+        } else if (const auto &const_int_array = value->as_const_int_array()) {
+            ret = promoteArrayValueToArrayType<ConstIntArray, types::Real>(const_int_array);
+        } else if (const auto variable_ref = value->as_variable_ref(); variable_ref) {
+            if (types::type_check(variable_ref->variable->typ, tree::make<types::BoolArray>()) ||
+                types::type_check(variable_ref->variable->typ, tree::make<types::IntArray>())) {
+                ret = value;
+            }
         }
     }
 
@@ -52,6 +94,12 @@ Value promote(const Value &value, const types::Type &type) {
             ret = tree::make<values::ConstComplex>(static_cast<ConstComplex>(static_cast<double>(const_int->value)));
         } else if (const auto &const_real = value->as_const_real()) {
             ret = tree::make<values::ConstComplex>(static_cast<ConstComplex>(const_real->value));
+        } else if (const auto variable_ref = value->as_variable_ref(); variable_ref) {
+            if (types::type_check(variable_ref->variable->typ, tree::make<types::Bool>()) ||
+                types::type_check(variable_ref->variable->typ, tree::make<types::Int>()) ||
+                types::type_check(variable_ref->variable->typ, tree::make<types::Real>())) {
+                ret = value;
+            }
         }
     }
 
@@ -124,11 +172,11 @@ primitives::Int range_of(const Value &value) {
         value->as_const_complex()) {
         return 1;
     } else if (auto bool_array = value->as_const_bool_array()) {
-        return static_cast<primitives::Bool>(bool_array->value.size());
+        return static_cast<primitives::Int>(bool_array->value.size());
     } else if (auto int_array = value->as_const_int_array()) {
         return static_cast<primitives::Int>(int_array->value.size());
     } else if (auto real_array = value->as_const_real_array()) {
-        return static_cast<primitives::Real>(real_array->value.size());
+        return static_cast<primitives::Int>(real_array->value.size());
     } else if (auto index = value->as_index_ref()) {
         return static_cast<primitives::Int>(index->indices.size());
     } else if (auto var = value->as_variable_ref()) {

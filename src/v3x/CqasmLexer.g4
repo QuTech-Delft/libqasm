@@ -90,8 +90,8 @@ FLOAT_TYPE: 'float';
 
 // Numeric literals
 BOOLEAN_LITERAL: 'true' | 'false';
-INTEGER_LITERAL: ([-+])? Digit+;
-FLOAT_LITERAL: ([-+])? Digit* '.' Digit+([eE][-+]Digit+)?;
+INTEGER_LITERAL: Digit+;
+FLOAT_LITERAL: Digit* '.' Digit+([eE][-+]Digit+)?;
 fragment Digit: [0-9];
 
 // Identifier

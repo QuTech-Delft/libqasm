@@ -157,7 +157,7 @@ std::any BuildTreeGenAstVisitor::visitAxisTypeDeclaration(CqasmParser::AxisTypeD
     return One<Statement>{ ret };
 }
 
-std::any BuildTreeGenAstVisitor::visitBoolTypeDeclaration(CqasmParser::BoolTypeDeclarationContext *context) {
+std::any BuildTreeGenAstVisitor::visitBoolTypeDefinition(CqasmParser::BoolTypeDeclarationContext *context) {
     auto array_size_declaration_ctx = context->arraySizeDeclaration();
     auto size = (array_size_declaration_ctx)
         ? tree::Maybe<IntegerLiteral>{ std::any_cast<One<IntegerLiteral>>(array_size_declaration_ctx->accept(this)).get_ptr() }
@@ -169,8 +169,22 @@ std::any BuildTreeGenAstVisitor::visitBoolTypeDeclaration(CqasmParser::BoolTypeD
     );
     const auto &token = context->IDENTIFIER()->getSymbol();
     setNodeAnnotation(ret, token);
-    // TODO: initialization
     return One<Statement>{ ret };
+}
+
+std::any BuildTreeGenAstVisitor::visitBoolTypeInitialization(CqasmParser::BoolTypeDeclarationContext *context) {
+    auto ret = cqasm::tree::make<Initialization>();
+    ret->var = std::any_cast<One<Statement>>(visitBoolTypeDefinition(context));
+    ret->rhs = std::any_cast<One<Expression>>(context->expression()->accept(this));
+    const auto &token = context->EQUALS()->getSymbol();
+    setNodeAnnotation(ret, token);
+    return One<Statement>{ ret };
+}
+
+std::any BuildTreeGenAstVisitor::visitBoolTypeDeclaration(CqasmParser::BoolTypeDeclarationContext *context) {
+    return (context->expression())  // rhs
+        ? std::any_cast<One<Statement>>(visitBoolTypeInitialization(context))
+        : std::any_cast<One<Statement>>(visitBoolTypeDefinition(context));
 }
 
 std::any BuildTreeGenAstVisitor::visitIntTypeDefinition(CqasmParser::IntTypeDeclarationContext *context) {
@@ -203,7 +217,7 @@ std::any BuildTreeGenAstVisitor::visitIntTypeDeclaration(CqasmParser::IntTypeDec
         : std::any_cast<One<Statement>>(visitIntTypeDefinition(context));
 }
 
-std::any BuildTreeGenAstVisitor::visitFloatTypeDeclaration(CqasmParser::FloatTypeDeclarationContext *context) {
+std::any BuildTreeGenAstVisitor::visitFloatTypeDefinition(CqasmParser::FloatTypeDeclarationContext *context) {
     auto array_size_declaration_ctx = context->arraySizeDeclaration();
     auto size = (array_size_declaration_ctx)
         ? tree::Maybe<IntegerLiteral>{ std::any_cast<One<IntegerLiteral>>(array_size_declaration_ctx->accept(this)).get_ptr() }
@@ -215,8 +229,22 @@ std::any BuildTreeGenAstVisitor::visitFloatTypeDeclaration(CqasmParser::FloatTyp
     );
     const auto &token = context->IDENTIFIER()->getSymbol();
     setNodeAnnotation(ret, token);
-    // TODO: initialization
     return One<Statement>{ ret };
+}
+
+std::any BuildTreeGenAstVisitor::visitFloatTypeInitialization(CqasmParser::FloatTypeDeclarationContext *context) {
+    auto ret = cqasm::tree::make<Initialization>();
+    ret->var = std::any_cast<One<Statement>>(visitFloatTypeDefinition(context));
+    ret->rhs = std::any_cast<One<Expression>>(context->expression()->accept(this));
+    const auto &token = context->EQUALS()->getSymbol();
+    setNodeAnnotation(ret, token);
+    return One<Statement>{ ret };
+}
+
+std::any BuildTreeGenAstVisitor::visitFloatTypeDeclaration(CqasmParser::FloatTypeDeclarationContext *context) {
+    return (context->expression())  // rhs
+        ? std::any_cast<One<Statement>>(visitFloatTypeInitialization(context))
+        : std::any_cast<One<Statement>>(visitFloatTypeDefinition(context));
 }
 
 std::any BuildTreeGenAstVisitor::visitArraySizeDeclaration(CqasmParser::ArraySizeDeclarationContext *context) {
