@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:4:12..13: cannot perform a promotion between these two types: (bit) and (bool)

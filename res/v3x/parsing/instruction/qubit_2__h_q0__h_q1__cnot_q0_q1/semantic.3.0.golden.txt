@@ -8,7 +8,7 @@ Program(
   >
   statements: [
     Instruction(
-      instruction: h(qubit array)
+      instruction: h(qubit)
       name: h
       operands: [
         IndexRef(
@@ -38,7 +38,7 @@ Program(
       annotations: []
     )
     Instruction(
-      instruction: h(qubit array)
+      instruction: h(qubit)
       name: h
       operands: [
         IndexRef(
@@ -68,7 +68,7 @@ Program(
       annotations: []
     )
     Instruction(
-      instruction: cnot(qubit array, qubit array)
+      instruction: cnot(qubit, qubit)
       name: cnot
       operands: [
         IndexRef(

@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:3:10..11: trying to initialize a variable of size 3 with a value of size 2
+Error at input.cq:3:10..11: trying to initialize a lhs of size 3 with a rhs of size 2

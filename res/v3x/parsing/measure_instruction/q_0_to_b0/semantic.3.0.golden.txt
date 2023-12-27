@@ -8,7 +8,7 @@ Program(
   >
   statements: [
     Instruction(
-      instruction: measure(qubit array, bit)
+      instruction: measure(qubit, bit)
       name: measure
       operands: [
         IndexRef(
