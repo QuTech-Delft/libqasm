@@ -199,6 +199,26 @@ tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(
     }
 }
 
+/* static */ void AnalyzeTreeGenAstVisitor::doAssignment(
+    tree::Maybe<semantic::AssignmentInstruction> &assignment_instruction,
+    const values::Value &lhs_value,
+    const values::Value &rhs_value) {
+
+    auto rhs_size = values::range_of(rhs_value);
+    auto lhs_size = values::range_of(lhs_value);
+    if (rhs_size != lhs_size) {
+        throw error::AnalysisError{ fmt::format(
+            "trying to initialize a lhs of size {} with a rhs of size {}",
+            lhs_size, rhs_size) };
+    } else {
+        // Check if right-hand side operand needs be promoted
+        const auto &lhs_type = values::type_of(lhs_value);
+        const auto &promoted_rhs_value = promoteValueToType(rhs_value, lhs_type);
+        assignment_instruction.emplace(lhs_value, promoted_rhs_value);
+    }
+}
+
+// TODO: enable support for axis type
 tree::Maybe<semantic::AssignmentInstruction> AnalyzeTreeGenAstVisitor::visitInitialization(
     const ast::Initialization &initialization_ast) {
 
@@ -217,18 +237,8 @@ tree::Maybe<semantic::AssignmentInstruction> AnalyzeTreeGenAstVisitor::visitInit
         // Left-hand side is always assignable for an initialization
         const auto &lhs_value = visitExpression(*initialization_ast.var->name);
 
-        // Check if right-hand side operand needs be promoted
-        auto rhs_size = values::range_of(rhs_value);
-        auto lhs_size = values::range_of(lhs_value);
-        if (rhs_size != lhs_size) {
-            throw error::AnalysisError{ fmt::format(
-                "trying to initialize a variable of size {} with a value of size {}",
-                lhs_size, rhs_size) };
-        } else {
-            const auto &lhs_type = values::type_of(lhs_value);
-            const auto &promoted_rhs_value = promoteValueToType(rhs_value, lhs_type);
-            ret.emplace(lhs_value, promoted_rhs_value);
-        }
+        // Perform assignment
+        doAssignment(ret, lhs_value, rhs_value);
 
         // Set condition code
         ret->condition.set(tree::make<values::ConstBool>(true));
@@ -259,19 +269,8 @@ tree::Maybe<semantic::AssignmentInstruction> AnalyzeTreeGenAstVisitor::visitAssi
             ret->lhs = lhs_value;
         }
 
-        // Check if right-hand side operand needs be promoted
-        // TODO: factor this code and the same code in visitInitialization out?
-        auto rhs_size = values::range_of(rhs_value);
-        auto lhs_size = values::range_of(lhs_value);
-        if (rhs_size != lhs_size) {
-            throw error::AnalysisError{ fmt::format(
-                "trying to initialize a variable of size {} with an initialization list of size {}",
-                lhs_size, rhs_size) };
-        } else {
-            const auto &lhs_type = values::type_of(lhs_value);
-            const auto &promoted_rhs_value = promoteValueToType(rhs_value, lhs_type);
-            ret.emplace(lhs_value, promoted_rhs_value);
-        }
+        // Perform assignment
+        doAssignment(ret, lhs_value, rhs_value);
 
         // Set condition code
         ret->condition.set(tree::make<values::ConstBool>(true));
@@ -413,24 +412,34 @@ template <typename ConstTypeArray>
     } else if (types::type_check(type, tree::make<types::Real>())) {
         return buildArrayValueFromPromotedValues<values::ConstRealArray>(values, type);
     } else {
-        assert(false && "expecting Bool, Int, or Real type");
+        throw error::AnalysisError{
+            fmt::format("expecting Bool, Int, or Real type, found ({}) in initialization list", type) };
     }
 }
 
+// TODO: enable support for axis type
 values::Value AnalyzeTreeGenAstVisitor::visitInitializationList(
     const ast::InitializationList &initialization_list_ast) {
 
-    // Build a list of expression values,
-    // keeping the highest type to which we can promote (e.g., for a list of booleans and integers, integer)
-    const auto &expressions_ast = initialization_list_ast.expr_list->items.get_vec();
-    auto expressions_values = values::Values();
-    auto expressions_highest_type = tree::make<types::Bool>();
-    std::for_each(expressions_ast.begin(), expressions_ast.end(),
-        [this, &expressions_values, &expressions_highest_type](const auto &expression_ast) {
+    try {
+        // If initialization list is empty, throw an error
+        const auto &expressions_ast = initialization_list_ast.expr_list->items.get_vec();
+        if (expressions_ast.empty()) {
+            throw error::AnalysisError{ "initialization list is empty" };
+        }
+
+        // TODO: set expressions_highest_type to first element, then walk the rest of the list
+        // TODO: if any element of the initialization list is not of type boolean, int, or float, throw an error
+
+        // Build a list of expression values,
+        // keeping the highest type to which we can promote (e.g., for a list of booleans and integers, integer)
+        auto expressions_values = values::Values();
+        auto expressions_highest_type = tree::make<types::Bool>();
+        for (const auto &expression_ast : expressions_ast) {
             const auto &value = visitExpression(*expression_ast);
             expressions_values.add(value);
             if (values::check_promote(values::type_of(value), expressions_highest_type)) {
-                return;
+                continue;
             } else if (values::check_promote(expressions_highest_type, values::type_of(value))) {
                 expressions_highest_type = values::type_of(value);
             } else {
@@ -438,10 +447,14 @@ values::Value AnalyzeTreeGenAstVisitor::visitInitializationList(
                     fmt::format("cannot perform a promotion between these two types: ({}) and ({})",
                         values::type_of(value), types::Type(expressions_highest_type)) };
             }
-    });
+        }
 
-    // Then return a Const<Type>Array value, where <Type> is the highest type to which we can promote
-    return buildValueFromPromotedValues(expressions_values, expressions_highest_type);
+        // Then return a Const<Type>Array value, where <Type> is the highest type to which we can promote
+        return buildValueFromPromotedValues(expressions_values, expressions_highest_type);
+    } catch (error::AnalysisError &err) {
+        err.context(initialization_list_ast);
+        throw;
+    }
 }
 
 tree::Any<semantic::AnnotationData> AnalyzeTreeGenAstVisitor::visitAnnotations(
@@ -485,19 +498,14 @@ values::Value AnalyzeTreeGenAstVisitor::analyze_as(const ast::Expression &expres
  * Shorthand for parsing an expression to a constant integer.
  */
 primitives::Int AnalyzeTreeGenAstVisitor::visitConstInt(const ast::Expression &expression) {
-    try {
-        if (auto int_value = analyze_as<types::Int>(expression); !int_value.empty()) {
-            if (auto const_int_value = int_value->as_const_int()) {
-                return const_int_value->value;
-            } else {
-                throw error::AnalysisError("integer must be constant");
-            }
-        } else{
-            throw error::AnalysisError("expected an integer");
+    if (auto int_value = analyze_as<types::Int>(expression); !int_value.empty()) {
+        if (auto const_int_value = int_value->as_const_int()) {
+            return const_int_value->value;
+        } else {
+            throw error::AnalysisError{ "integer must be constant", &expression };
         }
-    } catch (error::AnalysisError &e) {
-        e.context(expression);
-        throw;
+    } else{
+        throw error::AnalysisError{ "expected an integer", &expression };
     }
 }
 

@@ -9,7 +9,8 @@
 #include "v3x/cqasm-semantic.hpp"
 
 #include <cassert>
-#include  <fmt/format.h>
+#include <fmt/format.h>
+#include <stdexcept>  // runtime_error
 
 
 namespace cqasm::v3x::values {
@@ -122,6 +123,26 @@ bool check_promote(const types::Type &from_type, const types::Type &to_type) {
 }
 
 /**
+ * Returns the element type of the given type.
+ * Throws an error if the given type is not of array type.
+ */
+types::Type element_type_of(const types::Type &type) {
+    if (types::type_check(type, tree::make<types::QubitArray>())) {
+        return tree::make<types::Qubit>();
+    } else if (types::type_check(type, tree::make<types::BitArray>())) {
+        return tree::make<types::Bit>();
+    } else if (types::type_check(type, tree::make<types::BoolArray>())) {
+        return tree::make<types::Bool>();
+    } else if (types::type_check(type, tree::make<types::IntArray>())) {
+        return tree::make<types::Int>();
+    } else if (types::type_check(type, tree::make<types::RealArray>())) {
+        return tree::make<types::Real>();
+    } else {
+        throw std::runtime_error{ fmt::format("type ({}) is not of array type", type) };
+    }
+}
+
+/**
  * Returns the type of the given value.
  */
 types::Type type_of(const Value &value) {
@@ -142,7 +163,13 @@ types::Type type_of(const Value &value) {
     } else if (value->as_const_real_array()) {
         return tree::make<types::RealArray>();
     } else if (auto index = value->as_index_ref()) {
-        return index->variable->typ;
+        // If the range of the index is 1, return the type of the element (qubit, bit, bool...)
+        // Otherwise, return the type of the variable it refers to (qubit array, bit array, bool array...)
+        if (range_of(value) == 1) {
+            return element_type_of(index->variable->typ);
+        } else {
+            return index->variable->typ;
+        }
     } else if (auto var = value->as_variable_ref()) {
         return var->variable->typ;
     } else {

@@ -30,6 +30,8 @@ class  BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
     std::int64_t get_int_value(antlr4::tree::TerminalNode *node) const ;
     double get_float_value(antlr4::tree::TerminalNode *node) const;
 
+    std::any visitAxisTypeDefinition(CqasmParser::AxisTypeDeclarationContext *context);
+    std::any visitAxisTypeInitialization(CqasmParser::AxisTypeDeclarationContext *context);
     std::any visitBoolTypeDefinition(CqasmParser::BoolTypeDeclarationContext *context);
     std::any visitBoolTypeInitialization(CqasmParser::BoolTypeDeclarationContext *context);
     std::any visitIntTypeDefinition(CqasmParser::IntTypeDeclarationContext *context);

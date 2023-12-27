@@ -17,6 +17,9 @@ class AnalyzeTreeGenAstVisitor {
     [[nodiscard]] static values::Value promoteValueToType(
         const values::Value &rhs_value, const types::Type &lhs_type);
 
+    static void doAssignment(tree::Maybe<semantic::AssignmentInstruction> &assignment_instruction,
+        const values::Value &lhs_value, const values::Value &rhs_value);
+
     template <typename ConstTypeArray>
     [[nodiscard]] static tree::One<ConstTypeArray> buildArrayValueFromPromotedValues(
         const values::Values &values, const types::Type &type);

@@ -47,6 +47,13 @@ Value promote(const Value &value, const types::Type &type);
  */
 bool check_promote(const types::Type &from_type, const types::Type &to_type);
 
+
+/**
+ * Returns the element type of the given type.
+ * Throws an error if the given type is not of array type.
+ */
+types::Type element_type_of(const types::Type &type);
+
 /**
  * Returns the type of the given value.
  */

@@ -145,7 +145,7 @@ std::any BuildTreeGenAstVisitor::visitBitTypeDeclaration(CqasmParser::BitTypeDec
     return One<Statement>{ ret };
 }
 
-std::any BuildTreeGenAstVisitor::visitAxisTypeDeclaration(CqasmParser::AxisTypeDeclarationContext *context) {
+std::any BuildTreeGenAstVisitor::visitAxisTypeDefinition(CqasmParser::AxisTypeDeclarationContext *context) {
     auto ret = cqasm::tree::make<Variable>(
         One<Identifier>{ cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()) },
         cqasm::tree::make<Identifier>(context->AXIS_TYPE()->getText()),
@@ -153,8 +153,22 @@ std::any BuildTreeGenAstVisitor::visitAxisTypeDeclaration(CqasmParser::AxisTypeD
     );
     const auto &token = context->IDENTIFIER()->getSymbol();
     setNodeAnnotation(ret, token);
-    // TODO: initialization
     return One<Statement>{ ret };
+}
+
+std::any BuildTreeGenAstVisitor::visitAxisTypeInitialization(CqasmParser::AxisTypeDeclarationContext *context) {
+    auto ret = cqasm::tree::make<Initialization>();
+    ret->var = std::any_cast<One<Statement>>(visitAxisTypeDefinition(context));
+    ret->rhs = std::any_cast<One<Expression>>(context->expression()->accept(this));
+    const auto &token = context->EQUALS()->getSymbol();
+    setNodeAnnotation(ret, token);
+    return One<Statement>{ ret };
+}
+
+std::any BuildTreeGenAstVisitor::visitAxisTypeDeclaration(CqasmParser::AxisTypeDeclarationContext *context) {
+    return (context->expression())  // rhs
+        ? std::any_cast<One<Statement>>(visitAxisTypeInitialization(context))
+        : std::any_cast<One<Statement>>(visitAxisTypeDefinition(context));
 }
 
 std::any BuildTreeGenAstVisitor::visitBoolTypeDefinition(CqasmParser::BoolTypeDeclarationContext *context) {
@@ -345,9 +359,14 @@ std::any BuildTreeGenAstVisitor::visitIndex(CqasmParser::IndexContext *context) 
     setNodeAnnotation(ret, token);
     return One<Expression>{ ret };
 }
+
 std::any BuildTreeGenAstVisitor::visitAxisInitializationList(CqasmParser::AxisInitializationListContext *context) {
-    (void) context;
-    throw std::runtime_error{ "Unimplemented" };
+    auto expression_list = cqasm::tree::make<ExpressionList>();
+    const auto &expressions = context->expression();
+    std::for_each(expressions.begin(), expressions.end(), [this, &expression_list](auto &expression_ctx) {
+        expression_list->items.add(std::any_cast<One<Expression>>(expression_ctx->accept(this)));
+    });
+    return cqasm::tree::make<InitializationList>(expression_list);
 }
 
 std::any BuildTreeGenAstVisitor::visitInitializationList(CqasmParser::InitializationListContext *context) {
