@@ -4,6 +4,7 @@
 
 #include <algorithm>  // for_each, transform
 #include <cassert>  // assert
+#include <range/v3/view/tail.hpp>  // tail
 #include <string_view>
 
 
@@ -187,9 +188,7 @@ tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(
     return node;
 }
 
-/* static */ values::Value AnalyzeTreeGenAstVisitor::promoteValueToType(
-    const values::Value &rhs_value, const types::Type &lhs_type) {
-
+values::Value promoteValueToType(const values::Value &rhs_value, const types::Type &lhs_type) {
     if (auto rhs_promoted_value = values::promote(rhs_value, lhs_type); !rhs_promoted_value.empty()) {
         return rhs_promoted_value;
     } else {
@@ -199,7 +198,7 @@ tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(
     }
 }
 
-/* static */ void AnalyzeTreeGenAstVisitor::doAssignment(
+void doAssignment(
     tree::Maybe<semantic::AssignmentInstruction> &assignment_instruction,
     const values::Value &lhs_value,
     const values::Value &rhs_value) {
@@ -411,7 +410,18 @@ template <typename ConstTypeArray>
         return buildArrayValueFromPromotedValues<values::ConstIntArray>(values, type);
     } else if (types::type_check(type, tree::make<types::Real>())) {
         return buildArrayValueFromPromotedValues<values::ConstRealArray>(values, type);
-    } else {
+    }
+    assert(false && "expecting Bool, Int, or Real type in initialization list");
+}
+
+/*
+ * If any element of the initialization list is not of type boolean, int, or float, throw an error
+ */
+void checkInitializationListElementType(const types::Type &type) {
+    if (!types::type_check(type, tree::make<types::Bool>()) &&
+        !types::type_check(type, tree::make<types::Int>()) &&
+        !types::type_check(type, tree::make<types::Real>())) {
+
         throw error::AnalysisError{
             fmt::format("expecting Bool, Int, or Real type, found ({}) in initialization list", type) };
     }
@@ -428,24 +438,29 @@ values::Value AnalyzeTreeGenAstVisitor::visitInitializationList(
             throw error::AnalysisError{ "initialization list is empty" };
         }
 
-        // TODO: set expressions_highest_type to first element, then walk the rest of the list
-        // TODO: if any element of the initialization list is not of type boolean, int, or float, throw an error
+        // Set expressions_highest_type to the type of the first expression
+        const auto &first_value = visitExpression(*expressions_ast[0]);
+        const auto &first_value_type = values::type_of(first_value);
+        checkInitializationListElementType(first_value_type);
+        auto expressions_highest_type = first_value_type;
 
         // Build a list of expression values,
         // keeping the highest type to which we can promote (e.g., for a list of booleans and integers, integer)
         auto expressions_values = values::Values();
-        auto expressions_highest_type = tree::make<types::Bool>();
-        for (const auto &expression_ast : expressions_ast) {
-            const auto &value = visitExpression(*expression_ast);
-            expressions_values.add(value);
-            if (values::check_promote(values::type_of(value), expressions_highest_type)) {
+        expressions_values.add(first_value);
+        for (const auto &current_expression_ast : ranges::views::tail(expressions_ast)) {
+            const auto &current_value = visitExpression(*current_expression_ast);
+            const auto &current_value_type = values::type_of(current_value);
+            checkInitializationListElementType(current_value_type);
+            expressions_values.add(current_value);
+            if (values::check_promote(current_value_type, expressions_highest_type)) {
                 continue;
-            } else if (values::check_promote(expressions_highest_type, values::type_of(value))) {
-                expressions_highest_type = values::type_of(value);
+            } else if (values::check_promote(expressions_highest_type, current_value_type)) {
+                expressions_highest_type.set(current_value_type);
             } else {
                 throw error::AnalysisError{
                     fmt::format("cannot perform a promotion between these two types: ({}) and ({})",
-                        values::type_of(value), types::Type(expressions_highest_type)) };
+                        current_value_type, expressions_highest_type) };
             }
         }
 
