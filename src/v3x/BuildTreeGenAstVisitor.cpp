@@ -146,10 +146,11 @@ std::any BuildTreeGenAstVisitor::visitBitTypeDeclaration(CqasmParser::BitTypeDec
 }
 
 std::any BuildTreeGenAstVisitor::visitAxisTypeDefinition(CqasmParser::AxisTypeDeclarationContext *context) {
+    auto size = tree::make<IntegerLiteral>(3);
     auto ret = cqasm::tree::make<Variable>(
         One<Identifier>{ cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText()) },
         cqasm::tree::make<Identifier>(context->AXIS_TYPE()->getText()),
-        tree::Maybe<IntegerLiteral>{}
+        size
     );
     const auto &token = context->IDENTIFIER()->getSymbol();
     setNodeAnnotation(ret, token);
@@ -366,7 +367,8 @@ std::any BuildTreeGenAstVisitor::visitAxisInitializationList(CqasmParser::AxisIn
     std::for_each(expressions.begin(), expressions.end(), [this, &expression_list](auto &expression_ctx) {
         expression_list->items.add(std::any_cast<One<Expression>>(expression_ctx->accept(this)));
     });
-    return cqasm::tree::make<InitializationList>(expression_list);
+    auto ret = cqasm::tree::make<InitializationList>(expression_list);
+    return One<Expression>{ ret };
 }
 
 std::any BuildTreeGenAstVisitor::visitInitializationList(CqasmParser::InitializationListContext *context) {

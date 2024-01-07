@@ -8,6 +8,7 @@
 #include "v3x/cqasm-types.hpp"
 #include "v3x/cqasm-semantic.hpp"
 
+#include <algorithm>  // all_of
 #include <cassert>
 #include <fmt/format.h>
 #include <stdexcept>  // runtime_error
@@ -15,13 +16,13 @@
 
 namespace cqasm::v3x::values {
 
-template <typename ConstTypeArray, typename Type>
+template <typename ConstTypeArray, typename ConstPromotedTypeArray, typename PromotedType>
 Value promoteArrayValueToArrayType(const ConstTypeArray *array_value) {
     const auto &array_value_items = array_value->value.get_vec();
-    auto promoted_array_value = cqasm::tree::make<ConstTypeArray>();
+    auto promoted_array_value = cqasm::tree::make<ConstPromotedTypeArray>();
     std::for_each(array_value_items.begin(), array_value_items.end(),
         [&promoted_array_value](const auto &item) {
-            promoted_array_value->value.add(promote(item, tree::make<Type>()));
+            promoted_array_value->value.add(promote(item, tree::make<PromotedType>()));
     });
     return promoted_array_value;
 }
@@ -52,7 +53,7 @@ Value promote(const Value &value, const types::Type &type) {
     // Boolean arrays promote to integer arrays
     if (type->as_int_array()) {
         if (const auto &const_bool_array = value->as_const_bool_array()) {
-            ret = promoteArrayValueToArrayType<ConstBoolArray, types::Int>(const_bool_array);
+            ret = promoteArrayValueToArrayType<ConstBoolArray, ConstIntArray, types::Int>(const_bool_array);
         } else if (const auto variable_ref = value->as_variable_ref(); variable_ref) {
             if (types::type_check(variable_ref->variable->typ, tree::make<types::BoolArray>())) {
                 ret = value;
@@ -76,9 +77,9 @@ Value promote(const Value &value, const types::Type &type) {
     // Boolean and integer arrays promote to real arrays
     if (type->as_real_array()) {
         if (const auto &const_bool_array = value->as_const_bool_array()) {
-            ret = promoteArrayValueToArrayType<ConstBoolArray, types::Real>(const_bool_array);
+            ret = promoteArrayValueToArrayType<ConstBoolArray, ConstRealArray, types::Real>(const_bool_array);
         } else if (const auto &const_int_array = value->as_const_int_array()) {
-            ret = promoteArrayValueToArrayType<ConstIntArray, types::Real>(const_int_array);
+            ret = promoteArrayValueToArrayType<ConstIntArray, ConstRealArray, types::Real>(const_int_array);
         } else if (const auto variable_ref = value->as_variable_ref(); variable_ref) {
             if (types::type_check(variable_ref->variable->typ, tree::make<types::BoolArray>()) ||
                 types::type_check(variable_ref->variable->typ, tree::make<types::IntArray>())) {
@@ -99,6 +100,28 @@ Value promote(const Value &value, const types::Type &type) {
             if (types::type_check(variable_ref->variable->typ, tree::make<types::Bool>()) ||
                 types::type_check(variable_ref->variable->typ, tree::make<types::Int>()) ||
                 types::type_check(variable_ref->variable->typ, tree::make<types::Real>())) {
+                ret = value;
+            }
+        }
+    }
+
+    // Boolean, integer, and real arrays promote to axis
+    if (type->as_axis()) {
+        if (const auto &const_bool_array = value->as_const_bool_array()) {
+            assert(const_bool_array->value.size() == 3);
+            ret = promoteArrayValueToArrayType<ConstBoolArray, ConstRealArray, types::Real>(const_bool_array);
+        } else if(const auto &const_int_array = value->as_const_int_array()) {
+            assert(const_int_array->value.size() == 3);
+            ret = promoteArrayValueToArrayType<ConstIntArray, ConstRealArray, types::Real>(const_int_array);
+        } else if(const auto &const_real_array = value->as_const_real_array()) {
+            assert(const_real_array->value.size() == 3);
+            ret = tree::make<values::ConstRealArray>(const_real_array->value);
+        } else if (const auto variable_ref = value->as_variable_ref(); variable_ref) {
+            if (types::type_check(variable_ref->variable->typ, tree::make<types::BoolArray>()) ||
+                types::type_check(variable_ref->variable->typ, tree::make<types::IntArray>()) ||
+                types::type_check(variable_ref->variable->typ, tree::make<types::RealArray>())) {
+                assert(variable_ref->variable->typ->as_type_base());
+                assert(variable_ref->variable->typ->as_type_base()->size == 3);
                 ret = value;
             }
         }
@@ -192,8 +215,9 @@ types::Types types_of(const Values &values) {
  * Returns the number of elements of the given value.
  */
 primitives::Int range_of(const Value &value) {
-    if (value->as_const_axis() ||
-        value->as_const_bool() ||
+    if (value->as_const_axis()) {
+        return 3;
+    } else if (value->as_const_bool() ||
         value->as_const_int() ||
         value->as_const_real() ||
         value->as_const_complex()) {

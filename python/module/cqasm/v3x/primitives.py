@@ -22,6 +22,8 @@ def serialize(typ, val):
         return None
     elif typ is Str:
         return {'x': val}
+    elif typ is Axis:
+        return {'x': val[0], 'y': val[1], 'z': val[2]}
     elif typ is Bool:
         return {'x': val}
     elif typ is Int:
@@ -50,6 +52,8 @@ def deserialize(typ, val):
         return None
     elif typ is Str:
         return Str(val['x'])
+    elif typ is Axis:
+        return Axis(val['x'], val['y'], val['z'])
     elif typ is Bool:
         return Bool(val['x'])
     elif typ is Int:

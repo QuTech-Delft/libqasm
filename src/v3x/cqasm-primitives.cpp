@@ -5,6 +5,7 @@
 #include "v3x/cqasm-primitives.hpp"
 
 #include <algorithm>  // transform
+#include <fmt/format.h>
 
 
 namespace cqasm::v3x::primitives {
@@ -29,25 +30,23 @@ Str deserialize(const ::tree::cbor::MapReader &map) {
  * Axis
  */
 template <>
-Axis initialize<Axis>() { return Axis::X; }
+Axis initialize<Axis>() { return Axis{ 1.0, 0.0, 0.0 }; }
 
 template <>
 void serialize(const Axis &obj, ::tree::cbor::MapWriter &map) {
-    switch (obj) {
-        case Axis::X: map.append_int("x", 0); break;
-        case Axis::Y: map.append_int("x", 1); break;
-        case Axis::Z: map.append_int("x", 2); break;
+    auto aw = map.append_array("x");
+    for (auto x : obj) {
+        aw.append_float(x);
     }
+    aw.close();
 }
 
 template <>
 Axis deserialize(const ::tree::cbor::MapReader &map) {
-    switch (map.at("x").as_int()) {
-        case 0: return Axis::X;
-        case 1: return Axis::Y;
-        case 2: return Axis::Z;
-    }
-    throw std::runtime_error("invalid value for axis enum during deserialization");
+    auto ar = map.at("x").as_array();
+    auto axis = Axis{};
+    std::transform(ar.begin(), ar.end(), axis.begin(), [](const auto &e) { return e.as_float(); });
+    return axis;
 }
 
 /**
@@ -98,20 +97,23 @@ Real deserialize(const ::tree::cbor::MapReader &map) {
     return map.at("x").as_float();
 }
 
+/**
+ * Complex
+ */
 template <>
 void serialize(const Complex &obj, ::tree::cbor::MapWriter &map) {
     map.append_float("r", obj.real());
     map.append_float("i", obj.imag());
 }
 
-/**
- * Complex
- */
 template <>
 Complex deserialize(const ::tree::cbor::MapReader &map) {
     return {map.at("r").as_float(), map.at("i").as_float()};
 }
 
+/**
+ * Version
+ */
 template <>
 void serialize(const Version &obj, ::tree::cbor::MapWriter &map) {
     auto aw = map.append_array("x");
@@ -121,9 +123,6 @@ void serialize(const Version &obj, ::tree::cbor::MapWriter &map) {
     aw.close();
 }
 
-/**
- * Version
- */
 template <>
 Version deserialize(const ::tree::cbor::MapReader &map) {
     auto ar = map.at("x").as_array();
@@ -137,13 +136,7 @@ Version deserialize(const ::tree::cbor::MapReader &map) {
  * Stream << overload for axis nodes.
  */
 std::ostream &operator<<(std::ostream &os, const Axis &axis) {
-    switch (axis) {
-        case Axis::X: os << "X"; break;
-        case Axis::Y: os << "Y"; break;
-        case Axis::Z: os << "Z"; break;
-        default: break;
-    }
-    return os;
+    return os << fmt::format("[{}]", fmt::join(axis, ", "));
 }
 
 } // namespace cqasm::v3x::primitives

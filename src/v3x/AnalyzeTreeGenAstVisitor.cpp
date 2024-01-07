@@ -101,7 +101,7 @@ void AnalyzeTreeGenAstVisitor::visitVariable(const ast::Variable &variable_ast) 
         } else if (type_name == "bit") {
             type = visitVariableType<types::Bit, types::BitArray>(variable_ast, "bit");
         } else if (type_name == "axis") {
-            type = tree::make<types::Axis>();
+            type = tree::make<types::Axis>(3);
         } else if (type_name == "bool") {
             type = visitVariableType<types::Bool, types::BoolArray>(variable_ast, "bool");
         } else if (type_name == "int") {
@@ -213,11 +213,19 @@ void doAssignment(
         // Check if right-hand side operand needs be promoted
         const auto &lhs_type = values::type_of(lhs_value);
         const auto &promoted_rhs_value = promoteValueToType(rhs_value, lhs_type);
+
+        // Check axis types are not assigned [0, 0, 0]
+        if (lhs_type->as_axis()) {
+            if (values::all_of(rhs_value, [](const auto &e){ return static_cast<double>(e->value) == 0.0; })) {
+                throw error::AnalysisError{ "cannot set an axis variable type to [0.0, 0.0, 0.0]" };
+            }
+        }
+
         assignment_instruction.emplace(lhs_value, promoted_rhs_value);
     }
+
 }
 
-// TODO: enable support for axis type
 tree::Maybe<semantic::AssignmentInstruction> AnalyzeTreeGenAstVisitor::visitInitialization(
     const ast::Initialization &initialization_ast) {
 
@@ -427,7 +435,6 @@ void checkInitializationListElementType(const types::Type &type) {
     }
 }
 
-// TODO: enable support for axis type
 values::Value AnalyzeTreeGenAstVisitor::visitInitializationList(
     const ast::InitializationList &initialization_list_ast) {
 
@@ -438,7 +445,7 @@ values::Value AnalyzeTreeGenAstVisitor::visitInitializationList(
             throw error::AnalysisError{ "initialization list is empty" };
         }
 
-        // Set expressions_highest_type to the type of the first expression
+        // Set expression's highest type to the type of the first expression
         const auto &first_value = visitExpression(*expressions_ast[0]);
         const auto &first_value_type = values::type_of(first_value);
         checkInitializationListElementType(first_value_type);

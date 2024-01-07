@@ -15,7 +15,7 @@ namespace cqasm::v3x::types {
  *
  *  - Q = qubit
  *  - B = bit (measurement register)
- *  - a = axis (x, y, or z)
+ *  - a = axis (x, y, and z vectors)
  *  - b = bool
  *  - i = int
  *  - r = real

@@ -7,8 +7,11 @@
 #include "cqasm-version.hpp"
 #include "tree-cbor.hpp"
 
+#include <array>
 #include <cstdint>
 #include <complex>
+#include <fmt/format.h>
+#include <fmt/ostream.h>
 #include <string>
 #include <vector>
 
@@ -49,9 +52,9 @@ template <>
 Str deserialize(const ::tree::cbor::MapReader &map);
 
 /**
- * Axis primitive used within the semantic trees. Defaults to X.
+ * Axis primitive used within the semantic trees.
  */
-enum class Axis { X, Y, Z };
+class Axis : public std::array<double, 3> {};
 template <>
 Axis initialize<Axis>();
 template <>
@@ -116,3 +119,6 @@ Version deserialize(const ::tree::cbor::MapReader &map);
 std::ostream &operator<<(std::ostream &os, const Axis &axis);
 
 } // namespace cqasm::v3x::primitives
+
+
+template <> struct fmt::formatter<cqasm::v3x::primitives::Axis> : fmt::ostream_formatter {};

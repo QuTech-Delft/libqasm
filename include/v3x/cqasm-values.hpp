@@ -30,8 +30,8 @@ using Value = tree::One<Node>;
  */
 using Values = tree::Any<Node>;
 
-template <typename ConstTypeArray, typename Type>
-values::Value promoteArrayValueToArrayType(const ConstTypeArray *array_value);
+template <typename ConstTypeArray, typename ConstPromotedTypeArray, typename PromotedType>
+Value promoteArrayValueToArrayType(const ConstTypeArray *array_value);
 
 /**
  * Type-checks and (if necessary) promotes the given value to the given type.
@@ -80,6 +80,24 @@ void check_const(const Value &value);
  * i.e. if it doesn't have a known value at this time.
  */
 void check_const(const Values &values);
+
+
+/**
+ * Checks all the elements of a value satisfy a predicate.
+ * This is only checked when the value is a boolean, integer or real array.
+ */
+template <typename Pred>
+bool all_of(const Value &value, Pred&& pred) {
+    if (const auto &const_bool_array = value->as_const_bool_array()) {
+        return std::all_of(const_bool_array->value.begin(), const_bool_array->value.end(), pred);
+    } else if (const auto &const_int_array = value->as_const_int_array()) {
+        return std::all_of(const_int_array->value.begin(), const_int_array->value.end(), pred);
+    } else if (const auto &const_real_array = value->as_const_real_array()) {
+        return std::all_of(const_real_array->value.begin(), const_real_array->value.end(), pred);
+    } else {
+        return false;
+    }
+}
 
 /**
  * Stream << overload for a single value.

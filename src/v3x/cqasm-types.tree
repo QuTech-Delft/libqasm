@@ -25,7 +25,7 @@ namespace types
 type_base {
     size: cqasm::v3x::primitives::Int;
 
-    # Type of an axis (x, y, or z).
+    # Type of an axis (x, y, and z vectors).
     axis {}
 
     # Type of a boolean.
