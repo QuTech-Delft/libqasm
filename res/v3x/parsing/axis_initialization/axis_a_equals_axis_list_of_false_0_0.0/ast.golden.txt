@@ -34,14 +34,14 @@ Program(
               expr_list: <
                 ExpressionList(
                   items: [
-                    FloatLiteral( # input.cq:3:11..14
-                      value: 0.5
+                    BooleanLiteral( # input.cq:3:11..16
+                      value: 0
                     )
-                    FloatLiteral( # input.cq:3:16..19
-                      value: 0.5
+                    IntegerLiteral( # input.cq:3:18..19
+                      value: 0
                     )
                     FloatLiteral( # input.cq:3:21..24
-                      value: 0.5
+                      value: 0
                     )
                   ]
                 )

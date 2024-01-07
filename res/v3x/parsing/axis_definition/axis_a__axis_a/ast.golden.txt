@@ -1,0 +1,51 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  statements: <
+    StatementList(
+      items: [
+        Variable( # input.cq:3:6..7
+          name: <
+            Identifier(
+              name: a
+            )
+          >
+          typ: <
+            Identifier(
+              name: axis
+            )
+          >
+          size: <
+            IntegerLiteral(
+              value: 3
+            )
+          >
+          annotations: []
+        )
+        Variable( # input.cq:4:6..7
+          name: <
+            Identifier(
+              name: a
+            )
+          >
+          typ: <
+            Identifier(
+              name: axis
+            )
+          >
+          size: <
+            IntegerLiteral(
+              value: 3
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

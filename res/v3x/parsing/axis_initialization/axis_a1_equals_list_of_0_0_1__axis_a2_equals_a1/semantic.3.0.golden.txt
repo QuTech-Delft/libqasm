@@ -12,6 +12,44 @@ Program(
         VariableRef(
           variable --> <
             Variable(
+              name: a1
+              typ: <
+                Axis(
+                  size: 3
+                )
+              >
+              annotations: []
+            )
+          >
+        )
+      >
+      rhs: <
+        ConstRealArray(
+          value: [
+            ConstReal(
+              value: 0
+            )
+            ConstReal(
+              value: 0
+            )
+            ConstReal(
+              value: 1
+            )
+          ]
+        )
+      >
+      condition: <
+        ConstBool(
+          value: 1
+        )
+      >
+      annotations: []
+    )
+    AssignmentInstruction(
+      lhs: <
+        VariableRef(
+          variable --> <
+            Variable(
               name: a2
               typ: <
                 Axis(
