@@ -13,10 +13,10 @@ namespace annotations {
  */
 SourceLocation::SourceLocation(
     const std::string &filename,
-    uint32_t first_line,
-    uint32_t first_column,
-    uint32_t last_line,
-    uint32_t last_column
+    std::uint32_t first_line,
+    std::uint32_t first_column,
+    std::uint32_t last_line,
+    std::uint32_t last_column
 ) :
     filename(filename),
     first_line(first_line),
@@ -36,7 +36,7 @@ SourceLocation::SourceLocation(
  * Expands the location range to contain the given location in the source
  * file.
  */
-void SourceLocation::expand_to_include(uint32_t line, uint32_t column) {
+void SourceLocation::expand_to_include(std::uint32_t line, std::uint32_t column) {
     if (line < first_line) {
         first_line = line;
     }

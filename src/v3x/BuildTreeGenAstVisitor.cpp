@@ -36,10 +36,10 @@ void BuildTreeGenAstVisitor::setNodeAnnotation(ast::One<ast::Node> node, antlr4:
     // We change it here to a one-based index, which is the more human-readable, and the common option in text editors
     node->set_annotation(cqasm::annotations::SourceLocation{
         file_name_,
-        static_cast<uint32_t>(token->getLine()),
-        static_cast<uint32_t>(token->getCharPositionInLine() + 1),
-        static_cast<uint32_t>(token->getLine()),
-        static_cast<uint32_t>(token->getCharPositionInLine() + 1 + token_size)
+        static_cast<std::uint32_t>(token->getLine()),
+        static_cast<std::uint32_t>(token->getCharPositionInLine() + 1),
+        static_cast<std::uint32_t>(token->getLine()),
+        static_cast<std::uint32_t>(token->getCharPositionInLine() + 1 + token_size)
     });
 }
 
