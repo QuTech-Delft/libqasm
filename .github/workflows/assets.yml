@@ -37,7 +37,9 @@ jobs:
       - name: Wheel path
         id: wheel
         working-directory: pybuild/dist/
-        run: echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_OUTPUT
+        run: |
+          echo "WHEEL_NAME=$(ls *.whl)"
+          echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_OUTPUT
       - uses: actions/upload-artifact@v3
         env:
           WHEEL_NAME: ${{ steps.wheel.outputs.WHEEL_NAME }}
@@ -91,7 +93,9 @@ jobs:
       - name: Wheel path
         id: wheel
         working-directory: wheelhouse
-        run: echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_OUTPUT
+        run: |
+          echo "WHEEL_NAME=$(ls *.whl)"
+          echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_OUTPUT
       - uses: actions/upload-artifact@v3
         env:
           WHEEL_NAME: ${{ steps.wheel.outputs.WHEEL_NAME }}
@@ -157,7 +161,9 @@ jobs:
       - name: Wheel path
         id: wheel
         working-directory: wheelhouse
-        run: echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_OUTPUT
+        run: |
+          echo "WHEEL_NAME=$(ls *.whl)"
+          echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_OUTPUT
       - uses: actions/upload-artifact@v3
         env:
           WHEEL_NAME: ${{ steps.wheel.outputs.WHEEL_NAME }}
@@ -199,7 +205,9 @@ jobs:
       - name: Wheel path
         id: wheel
         working-directory: pybuild/dist/
-        run: echo "WHEEL_NAME=$(Get-ChildItem -name *.whl)" >> $GITHUB_OUTPUT
+        run: |
+          echo "WHEEL_NAME=$(Get-ChildItem -name *.whl)"
+          echo "WHEEL_NAME=$(Get-ChildItem -name *.whl)" >> $GITHUB_OUTPUT
       - uses: actions/upload-artifact@v3
         env:
           WHEEL_NAME: ${{ steps.wheel.outputs.WHEEL_NAME }}
