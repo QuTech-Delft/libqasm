@@ -1,15 +1,15 @@
 Release procedure
 =================
 
-Most of the release process is managed by GitHub Actions. If you follow the
-procedure below, it will automatically test and build all wheels for all platforms,
+Most of the release process is managed by GitHub Actions. If you follow the procedure below,
+it will automatically test and build all wheels for all platforms,
 and publish them to PyPI assuming the secrets are configured correctly.
 
  - Make a branch with a name starting with "release" based upon the commit that is to be released.
    For example, `release-0.0.1`, but the suffix doesn't matter.
 
  - Change the version in `include/version.hpp` (this is the only place where the version is hardcoded)
-   and change any other files where applicable (`CHANGELOG.md`, etc), then commit and make a PR for it.
+   and change any other files where applicable (`CHANGELOG.md`, etc.), then commit and make a PR for it.
 
  - CI will now run not only the test workflow, but also the assets workflow.
    The assets workflow builds the wheels, but publishes them to the GitHub Actions build artifacts only.
