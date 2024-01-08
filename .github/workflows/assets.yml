@@ -40,9 +40,8 @@ jobs:
         run: |
           echo "WHEEL_NAME=$(ls *.whl)"
           echo "WHEEL_NAME=$(ls *.whl)" >> "$GITHUB_OUTPUT"
+          echo "WHEEL_NAME=$(ls *.whl)" >> "$GITHUB_ENV"
       - uses: actions/upload-artifact@v3
-        env:
-          WHEEL_NAME: ${{ steps.wheel.outputs.WHEEL_NAME }}
         with:
           name: pypi-macos-py${{ matrix.python }}
           path: "pybuild/dist/$WHEEL_NAME"
@@ -50,7 +49,6 @@ jobs:
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WHEEL_NAME: ${{ steps.wheel.outputs.WHEEL_NAME }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: "pybuild/dist/$WHEEL_NAME"
@@ -96,9 +94,8 @@ jobs:
         run: |
           echo "WHEEL_NAME=$(ls *.whl)"
           echo "WHEEL_NAME=$(ls *.whl)" >> "$GITHUB_OUTPUT"
+          echo "WHEEL_NAME=$(ls *.whl)" >> "$GITHUB_ENV"
       - uses: actions/upload-artifact@v3
-        env:
-          WHEEL_NAME: ${{ steps.wheel.outputs.WHEEL_NAME }}
         with:
           name: pypi-linux-${{ matrix.cpython_version }}
           path: "wheelhouse/$WHEEL_NAME"
@@ -106,7 +103,6 @@ jobs:
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WHEEL_NAME: ${{ steps.wheel.outputs.WHEEL_NAME }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: "wheelhouse/$WHEEL_NAME"
@@ -164,9 +160,8 @@ jobs:
         run: |
           echo "WHEEL_NAME=$(ls *.whl)"
           echo "WHEEL_NAME=$(ls *.whl)" >> "$GITHUB_OUTPUT"
+          echo "WHEEL_NAME=$(ls *.whl)" >> "$GITHUB_ENV"
       - uses: actions/upload-artifact@v3
-        env:
-          WHEEL_NAME: ${{ steps.wheel.outputs.WHEEL_NAME }}
         with:
           name: pypi-linux-${{ matrix.cpython_version }}
           path: "wheelhouse/$WHEEL_NAME"
@@ -174,7 +169,6 @@ jobs:
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WHEEL_NAME: ${{ steps.wheel.outputs.WHEEL_NAME }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: "wheelhouse/$WHEEL_NAME"
@@ -208,9 +202,8 @@ jobs:
         run: |
           echo "WHEEL_NAME=$(Get-ChildItem -name *.whl)"
           echo "WHEEL_NAME=$(Get-ChildItem -name *.whl)" >> "$GITHUB_OUTPUT"
+          echo "WHEEL_NAME=$(Get-ChildItem -name *.whl)" >> "$GITHUB_ENV"
       - uses: actions/upload-artifact@v3
-        env:
-          WHEEL_NAME: ${{ steps.wheel.outputs.WHEEL_NAME }}
         with:
           name: pypi-windows-py${{ matrix.python }}
           path: "pybuild/dist/$WHEEL_NAME"
@@ -218,7 +211,6 @@ jobs:
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WHEEL_NAME: ${{ steps.wheel.outputs.WHEEL_NAME }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: "pybuild/dist/$WHEEL_NAME"
