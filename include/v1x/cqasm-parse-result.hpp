@@ -9,7 +9,8 @@
 #include "cqasm-annotations.hpp"
 #include "cqasm-ast.hpp"
 
-#include <cstdio>
+#include <string>
+#include <vector>
 
 
 /**
@@ -22,7 +23,6 @@ namespace cqasm::v1x::parser {
  */
 class ParseResult {
 public:
-
     /**
      * Root node of the AST, if analysis was sufficiently successful.
      * This may be set even if parsing was not ENTIRELY successful,
@@ -36,6 +36,10 @@ public:
      */
     std::vector<std::string> errors;
 
+    /**
+     * Returns a string with a JSON representation of the ParseResult.
+     */
+    std::string to_json() const;
 };
 
 } // namespace cqasm::v1x::parser

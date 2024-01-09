@@ -28,6 +28,7 @@ public:
     void visitVariable(const ast::Variable &variable_ast);
     tree::Maybe<semantic::AssignmentInstruction> visitInitialization(const ast::Initialization &initializaion_ast);
     tree::Maybe<semantic::AssignmentInstruction> visitAssignmentInstruction(const ast::AssignmentInstruction &ast);
+    tree::Maybe<semantic::Instruction> visitMeasureInstruction(const ast::MeasureInstruction &ast);
     tree::Maybe<semantic::Instruction> visitInstruction(const ast::Instruction &ast);
     values::Value visitExpression(const ast::Expression &ast);
     values::Value visitIndex(const ast::Index &ast);

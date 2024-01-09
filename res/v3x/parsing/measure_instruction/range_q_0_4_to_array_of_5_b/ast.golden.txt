@@ -44,45 +44,43 @@ Program(
           >
           annotations: []
         )
-        Instruction( # input.cq:6:5..12
+        MeasureInstruction( # input.cq:6:5..12
           name: <
             Identifier(
               name: measure
             )
           >
           condition: -
-          operands: <
-            ExpressionList(
-              items: [
-                Index( # input.cq:6:13..14
-                  expr: <
-                    Identifier(
-                      name: q
-                    )
-                  >
-                  indices: <
-                    IndexList(
-                      items: [
-                        IndexRange(
-                          first: <
-                            IntegerLiteral( # input.cq:6:15..16
-                              value: 0
-                            )
-                          >
-                          last: <
-                            IntegerLiteral( # input.cq:6:17..18
-                              value: 4
-                            )
-                          >
+          lhs: <
+            Identifier( # input.cq:6:1..2
+              name: b
+            )
+          >
+          rhs: <
+            Index( # input.cq:6:13..14
+              expr: <
+                Identifier(
+                  name: q
+                )
+              >
+              indices: <
+                IndexList(
+                  items: [
+                    IndexRange(
+                      first: <
+                        IntegerLiteral( # input.cq:6:15..16
+                          value: 0
                         )
-                      ]
+                      >
+                      last: <
+                        IntegerLiteral( # input.cq:6:17..18
+                          value: 4
+                        )
+                      >
                     )
-                  >
+                  ]
                 )
-                Identifier( # input.cq:6:1..2
-                  name: b
-                )
-              ]
+              >
             )
           >
           annotations: []

@@ -8,22 +8,9 @@ Program(
   >
   statements: [
     Instruction(
-      instruction: measure(qubit, bit)
+      instruction: measure(bit array, qubit)
       name: measure
       operands: [
-        VariableRef(
-          variable --> <
-            Variable(
-              name: q0
-              typ: <
-                Qubit(
-                  size: 1
-                )
-              >
-              annotations: []
-            )
-          >
-        )
         IndexRef(
           variable --> <
             Variable(
@@ -42,6 +29,18 @@ Program(
             )
           ]
         )
+        VariableRef(
+          variable --> <
+            Variable(
+              name: q0
+              typ: <
+                Qubit(
+)
+              >
+              annotations: []
+            )
+          >
+        )
       ]
       condition: <
         ConstBool(
@@ -56,8 +55,7 @@ Program(
       name: q0
       typ: <
         Qubit(
-          size: 1
-        )
+)
       >
       annotations: []
     )

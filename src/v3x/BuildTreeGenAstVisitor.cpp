@@ -2,6 +2,7 @@
 #include "cqasm-tree.hpp"
 #include "v3x/cqasm-ast.hpp"
 #include "v3x/BuildTreeGenAstVisitor.hpp"
+#include "v3x/CustomErrorListener.hpp"
 
 #include <algorithm>  // for_each
 #include <antlr4-runtime.h>
@@ -269,12 +270,11 @@ std::any BuildTreeGenAstVisitor::visitArraySizeDeclaration(CqasmParser::ArraySiz
 }
 
 std::any BuildTreeGenAstVisitor::visitMeasureInstruction(CqasmParser::MeasureInstructionContext *context) {
-    auto ret = cqasm::tree::make<Instruction>();
+    auto ret = cqasm::tree::make<MeasureInstruction>();
     ret->name = cqasm::tree::make<Identifier>(context->MEASURE()->getText());
     ret->condition = cqasm::tree::Maybe<Expression>{};
-    ret->operands = cqasm::tree::make<ExpressionList>();
-    ret->operands->items.add(std::any_cast<One<Expression>>(context->expression(1)->accept(this)));
-    ret->operands->items.add(std::any_cast<One<Expression>>(context->expression(0)->accept(this)));
+    ret->lhs = std::any_cast<One<Expression>>(context->expression(0)->accept(this));
+    ret->rhs = std::any_cast<One<Expression>>(context->expression(1)->accept(this));
     const auto &token = context->MEASURE()->getSymbol();
     setNodeAnnotation(ret, token);
     return One<Statement>{ ret };

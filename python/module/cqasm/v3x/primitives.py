@@ -1,4 +1,4 @@
-from cqasm.v3x.instruction import Instruction, InstructionRef
+import cqasm.v3x.instruction
 import cqasm.v3x.types
 
 Str = str
@@ -34,13 +34,12 @@ def serialize(typ, val):
         return {'r': val.real, 'i': val.imag}
     elif typ is Version:
         return {'x': list(val)}
-    elif typ is InstructionRef:
+    elif typ is cqasm.v3x.instruction.InstructionRef:
         if val.data is None:
             return {}
         else:
             return {
                 'n': val.data.name,
-                'i': val.data.request_qubit_and_bit_indices_have_same_size,
                 't': [x.serialize() for x in val.data.types]
             }
     else:
@@ -64,14 +63,13 @@ def deserialize(typ, val):
         return Complex(val['r'], val['i'])
     elif typ is Version:
         return Version(val['x'])
-    elif typ is InstructionRef:
+    elif typ is cqasm.v3x.instruction.InstructionRef:
         if 'n' in val:
-            return InstructionRef(
+            return cqasm.v3x.instruction.InstructionRef(
                 val['n'],
-                [cqasm.v3x.types.Node.deserialize(x) for x in val['t']],
-                val['i']
+                [cqasm.v3x.types.Node.deserialize(x) for x in val['t']]
             )
         else:
-            return InstructionRef()
+            return cqasm.v3x.instruction.InstructionRef()
     else:
         assert False

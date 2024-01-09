@@ -44,19 +44,11 @@ public:
     types::Types param_types;
 
     /**
-     * Whether qubit and bit indices have the same size (e.g. for a measure instruction).
-     */
-    bool request_qubit_and_bit_indices_have_same_size;
-
-    /**
      * Creates a new instruction.
      * param_types is a shorthand type specification string as parsed by cqasm::types::from_spec().
      * If you need more control, you can also manipulate param_types directly.
      */
-    explicit Instruction(
-        const std::string &name,
-        const std::string &param_types = "",
-        bool request_qubit_and_bit_indices_have_same_size = false);
+    explicit Instruction(const std::string &name, const std::string &param_types = "");
 
     bool operator==(const Instruction& rhs) const;
     inline bool operator!=(const Instruction& rhs) const {

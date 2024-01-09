@@ -22,23 +22,21 @@ Program(
           size: -
           annotations: []
         )
-        Instruction( # input.cq:5:5..12
+        MeasureInstruction( # input.cq:5:5..12
           name: <
             Identifier(
               name: measure
             )
           >
           condition: -
-          operands: <
-            ExpressionList(
-              items: [
-                FloatLiteral( # input.cq:5:13..17
-                  value: 3.14
-                )
-                Identifier( # input.cq:5:1..2
-                  name: b
-                )
-              ]
+          lhs: <
+            Identifier( # input.cq:5:1..2
+              name: b
+            )
+          >
+          rhs: <
+            FloatLiteral( # input.cq:5:13..17
+              value: 3.14
             )
           >
           annotations: []

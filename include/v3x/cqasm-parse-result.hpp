@@ -9,7 +9,8 @@
 #include "cqasm-annotations.hpp"
 #include "cqasm-ast.hpp"
 
-#include <cstdio>
+#include <string>
+#include <vector>
 
 
 /**
@@ -34,6 +35,11 @@ public:
      * Analysis was successful if and only if errors.empty().
      */
     std::vector<std::string> errors;
+
+    /**
+     * Returns a string with a JSON representation of the ParseResult.
+     */
+    std::string to_json() const;
 };
 
 } // namespace cqasm::v3x::parser

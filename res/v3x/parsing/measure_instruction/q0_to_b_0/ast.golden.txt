@@ -40,40 +40,38 @@ Program(
           >
           annotations: []
         )
-        Instruction( # input.cq:6:8..15
+        MeasureInstruction( # input.cq:6:8..15
           name: <
             Identifier(
               name: measure
             )
           >
           condition: -
-          operands: <
-            ExpressionList(
-              items: [
-                Identifier( # input.cq:6:16..18
-                  name: q0
+          lhs: <
+            Index( # input.cq:6:1..2
+              expr: <
+                Identifier(
+                  name: b
                 )
-                Index( # input.cq:6:1..2
-                  expr: <
-                    Identifier(
-                      name: b
-                    )
-                  >
-                  indices: <
-                    IndexList(
-                      items: [
-                        IndexItem(
-                          index: <
-                            IntegerLiteral( # input.cq:6:3..4
-                              value: 0
-                            )
-                          >
+              >
+              indices: <
+                IndexList(
+                  items: [
+                    IndexItem(
+                      index: <
+                        IntegerLiteral( # input.cq:6:3..4
+                          value: 0
                         )
-                      ]
+                      >
                     )
-                  >
+                  ]
                 )
-              ]
+              >
+            )
+          >
+          rhs: <
+            Identifier( # input.cq:6:16..18
+              name: q0
             )
           >
           annotations: []

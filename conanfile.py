@@ -9,9 +9,12 @@ from conan.tools.cmake import CMakeToolchain, CMakeDeps, CMake
 from conan.tools.files import copy
 from conan.tools.scm import Version
 
+from version import get_version
+
 
 class LibqasmConan(ConanFile):
     name = "libqasm"
+    version = get_version()
 
     # Optional metadata
     license = "Apache-2.0"
@@ -47,6 +50,7 @@ class LibqasmConan(ConanFile):
         "tree_gen_build_tests": False
     }
 
+    exports = "version.py", "include/version.hpp"
     exports_sources = "CMakeLists.txt", "include/*", "python/*", "res/*", "scripts/*", "src/*", "test/*"
 
     def build_requirements(self):

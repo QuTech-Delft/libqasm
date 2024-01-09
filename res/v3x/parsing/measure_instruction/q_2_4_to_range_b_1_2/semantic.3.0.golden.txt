@@ -8,30 +8,9 @@ Program(
   >
   statements: [
     Instruction(
-      instruction: measure(qubit array, bit array)
+      instruction: measure(bit array, qubit array)
       name: measure
       operands: [
-        IndexRef(
-          variable --> <
-            Variable(
-              name: q
-              typ: <
-                QubitArray(
-                  size: 5
-                )
-              >
-              annotations: []
-            )
-          >
-          indices: [
-            ConstInt(
-              value: 2
-            )
-            ConstInt(
-              value: 4
-            )
-          ]
-        )
         IndexRef(
           variable --> <
             Variable(
@@ -50,6 +29,27 @@ Program(
             )
             ConstInt(
               value: 2
+            )
+          ]
+        )
+        IndexRef(
+          variable --> <
+            Variable(
+              name: q
+              typ: <
+                QubitArray(
+                  size: 5
+                )
+              >
+              annotations: []
+            )
+          >
+          indices: [
+            ConstInt(
+              value: 2
+            )
+            ConstInt(
+              value: 4
             )
           ]
         )
