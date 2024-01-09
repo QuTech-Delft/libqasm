@@ -30,8 +30,21 @@ using Value = tree::One<Node>;
  */
 using Values = tree::Any<Node>;
 
+/**
+ * Promotes a value of array of Type to a value of array of PromotedType.
+ * For example, given an array of bool, and a promoted type of float, returns an array of float.
+ * It doesn't perform any checks on the value returned by the promote function.
+ */
 template <typename ConstTypeArray, typename ConstPromotedTypeArray, typename PromotedType>
-Value promoteArrayValueToArrayType(const ConstTypeArray *array_value);
+Value promote_array_value_to_array_type(const ConstTypeArray *array_value) {
+    const auto &array_value_items = array_value->value.get_vec();
+    auto promoted_array_value = cqasm::tree::make<ConstPromotedTypeArray>();
+    std::for_each(array_value_items.begin(), array_value_items.end(),
+        [&promoted_array_value](const auto &item) {
+            promoted_array_value->value.add(promote(item, tree::make<PromotedType>()));
+    });
+    return promoted_array_value;
+}
 
 /**
  * Type-checks and (if necessary) promotes the given value to the given type.
@@ -46,7 +59,6 @@ Value promote(const Value &value, const types::Type &type);
  * Checks if a from_type can be promoted to a to_type.
  */
 bool check_promote(const types::Type &from_type, const types::Type &to_type);
-
 
 /**
  * Returns the element type of the given type.
@@ -81,13 +93,12 @@ void check_const(const Value &value);
  */
 void check_const(const Values &values);
 
-
 /**
  * Checks all the elements of a value satisfy a predicate.
  * This is only checked when the value is a boolean, integer or real array.
  */
 template <typename Pred>
-bool all_of(const Value &value, Pred&& pred) {
+bool check_all_of_array_values(const Value &value, Pred&& pred) {
     if (const auto &const_bool_array = value->as_const_bool_array()) {
         return std::all_of(const_bool_array->value.begin(), const_bool_array->value.end(), pred);
     } else if (const auto &const_int_array = value->as_const_int_array()) {

@@ -216,7 +216,8 @@ void doAssignment(
 
         // Check axis types are not assigned [0, 0, 0]
         if (lhs_type->as_axis()) {
-            if (values::all_of(rhs_value, [](const auto &e){ return static_cast<double>(e->value) == 0.0; })) {
+            if (values::check_all_of_array_values(rhs_value,
+                    [](const auto &e){ return static_cast<double>(e->value) == 0.0; })) {
                 throw error::AnalysisError{ "cannot set an axis variable type to [0.0, 0.0, 0.0]" };
             }
         }
