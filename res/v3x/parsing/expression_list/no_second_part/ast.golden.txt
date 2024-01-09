@@ -1,2 +1,2 @@
 ERROR
-input.cq:7:11: mismatched input '\n' expecting {'[', '{', INTEGER_LITERAL, FLOAT_LITERAL, IDENTIFIER}
+input.cq:7:11: mismatched input '\n' expecting {'[', '{', BOOLEAN_LITERAL, INTEGER_LITERAL, FLOAT_LITERAL, IDENTIFIER}

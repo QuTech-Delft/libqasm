@@ -8,18 +8,18 @@ Program(
   statements: <
     StatementList(
       items: [
-        Instruction( # input.cq:3:1..2
+        Instruction( # input.cq:3:1..4
           name: <
             Identifier(
-              name: x
+              name: Bit
             )
           >
           condition: -
           operands: <
             ExpressionList(
               items: [
-                FloatLiteral( # input.cq:3:3..7
-                  value: 3.14
+                Identifier( # input.cq:3:5..6
+                  name: b
                 )
               ]
             )

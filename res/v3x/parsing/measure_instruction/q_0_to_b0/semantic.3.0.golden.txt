@@ -8,7 +8,7 @@ Program(
   >
   statements: [
     Instruction(
-      instruction: measure(bit, qubit array)
+      instruction: measure(bit, qubit)
       name: measure
       operands: [
         VariableRef(
@@ -17,7 +17,8 @@ Program(
               name: b0
               typ: <
                 Bit(
-)
+                  size: 1
+                )
               >
               annotations: []
             )
@@ -64,7 +65,8 @@ Program(
       name: b0
       typ: <
         Bit(
-)
+          size: 1
+        )
       >
       annotations: []
     )

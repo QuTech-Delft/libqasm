@@ -1,2 +1,0 @@
-ERROR
-input.cq:3:7: mismatched input '3.14' expecting INTEGER_LITERAL
