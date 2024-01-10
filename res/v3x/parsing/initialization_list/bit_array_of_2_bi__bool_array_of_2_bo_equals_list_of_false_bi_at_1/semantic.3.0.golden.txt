@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:4:12..13: expecting Bool, Int, or Real type, found (bit) in initialization list
+Error at input.cq:4:12..13: expecting a const bool, const int, or const real value

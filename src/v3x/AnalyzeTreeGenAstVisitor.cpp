@@ -66,7 +66,9 @@ void AnalyzeTreeGenAstVisitor::visitStatements(const ast::StatementList &stateme
                     result_.root->statements.add(semantic_statement);
                 }
             } else if (auto measure_instruction = statement->as_measure_instruction()) {
-                result_.root->statements.add(visitMeasureInstruction(*measure_instruction));
+                if (auto semantic_statement = visitMeasureInstruction(*measure_instruction); !semantic_statement.empty()) {
+                    result_.root->statements.add(semantic_statement);
+                }
             } else if (auto instruction = statement->as_instruction()) {
                 if (auto semantic_statement = visitInstruction(*instruction); !semantic_statement.empty()) {
                     result_.root->statements.add(semantic_statement);
@@ -163,7 +165,7 @@ bool check_qubit_and_bit_indices_have_same_size(const values::Values &operands) 
 tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitMeasureInstruction(
     const ast::MeasureInstruction &instruction_ast) {
 
-    tree::Maybe<semantic::Instruction> node;
+    tree::Maybe<semantic::Instruction> ret{};
     try {
         // Set operand list
         // Notice operands have to be added in this order
@@ -176,32 +178,33 @@ tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitMeasureInstruc
         // For a measure instruction, this resolution will check that
         // the first operand is of bit type, and that
         // the second operand is of qubit type
-        node.set(analyzer_.resolve_instruction(instruction_ast.name->name, operands));
+        ret.set(analyzer_.resolve_instruction(instruction_ast.name->name, operands));
 
         // Check qubit and bit indices have the same size
-        if (!node->instruction.empty()) {
+        if (!ret->instruction.empty()) {
             if (!check_qubit_and_bit_indices_have_same_size(operands)) {
                 throw error::AnalysisError{ "qubit and bit indices have different sizes", &instruction_ast };
             }
         }
 
         // Set condition code
-        node->condition.set(tree::make<values::ConstBool>(true));
+        ret->condition.set(tree::make<values::ConstBool>(true));
 
         // Copy annotation data
-        node->annotations = visitAnnotations(instruction_ast.annotations);
-        node->copy_annotation<parser::SourceLocation>(instruction_ast);
+        ret->annotations = visitAnnotations(instruction_ast.annotations);
+        ret->copy_annotation<parser::SourceLocation>(instruction_ast);
     } catch (error::AnalysisError &err) {
         err.context(instruction_ast);
-        throw;
+        result_.errors.push_back(err.get_message());
+        ret.reset();
     }
-    return node;
+    return ret;
 }
 
 tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(
     const ast::Instruction &instruction_ast) {
 
-    tree::Maybe<semantic::Instruction> node{};
+    tree::Maybe<semantic::Instruction> ret{};
     try {
         // Set operand list
         auto operands = values::Values();
@@ -210,19 +213,20 @@ tree::Maybe<semantic::Instruction> AnalyzeTreeGenAstVisitor::visitInstruction(
         }
 
         // Resolve the instruction
-        node.set(analyzer_.resolve_instruction(instruction_ast.name->name, operands));
+        ret.set(analyzer_.resolve_instruction(instruction_ast.name->name, operands));
 
         // Set condition code
-        node->condition.set(tree::make<values::ConstBool>(true));
+        ret->condition.set(tree::make<values::ConstBool>(true));
 
         // Copy annotation data
-        node->annotations = visitAnnotations(instruction_ast.annotations);
-        node->copy_annotation<parser::SourceLocation>(instruction_ast);
+        ret->annotations = visitAnnotations(instruction_ast.annotations);
+        ret->copy_annotation<parser::SourceLocation>(instruction_ast);
     } catch (error::AnalysisError &err) {
         err.context(instruction_ast);
         result_.errors.push_back(err.get_message());
+        ret.reset();
     }
-    return node;
+    return ret;
 }
 
 values::Value promoteValueToType(const values::Value &rhs_value, const types::Type &lhs_type) {
@@ -294,6 +298,7 @@ tree::Maybe<semantic::AssignmentInstruction> AnalyzeTreeGenAstVisitor::visitInit
     } catch (error::AnalysisError &err) {
         err.context(initialization_ast);
         result_.errors.push_back(err.get_message());
+        ret.reset();
     }
     return ret;
 }
@@ -326,6 +331,7 @@ tree::Maybe<semantic::AssignmentInstruction> AnalyzeTreeGenAstVisitor::visitAssi
     } catch (error::AnalysisError &err) {
         err.context(instruction_ast);
         result_.errors.push_back(err.get_message());
+        ret.reset();
     }
     return ret;
 }
@@ -461,15 +467,11 @@ template <typename ConstTypeArray>
 }
 
 /*
- * If any element of the initialization list is not of type boolean, int, or float, throw an error
+ * If any element of the initialization list is not a const boolean, const int, or const float, throw an error
  */
-void checkInitializationListElementType(const types::Type &type) {
-    if (!types::type_check(type, tree::make<types::Bool>()) &&
-        !types::type_check(type, tree::make<types::Int>()) &&
-        !types::type_check(type, tree::make<types::Real>())) {
-
-        throw error::AnalysisError{
-            fmt::format("expecting Bool, Int, or Real type, found ({}) in initialization list", type) };
+void checkInitializationListElementType(const values::Value &value) {
+    if (!(value->as_const_bool() || value->as_const_int() || value->as_const_real())) {
+        throw error::AnalysisError{ "expecting a const bool, const int, or const real value" };
     }
 }
 
@@ -485,9 +487,8 @@ values::Value AnalyzeTreeGenAstVisitor::visitInitializationList(
 
         // Set expression's highest type to the type of the first expression
         const auto &first_value = visitExpression(*expressions_ast[0]);
-        const auto &first_value_type = values::type_of(first_value);
-        checkInitializationListElementType(first_value_type);
-        auto expressions_highest_type = first_value_type;
+        checkInitializationListElementType(first_value);
+        auto expressions_highest_type = values::type_of(first_value);
 
         // Build a list of expression values,
         // keeping the highest type to which we can promote (e.g., for a list of booleans and integers, integer)
@@ -495,10 +496,10 @@ values::Value AnalyzeTreeGenAstVisitor::visitInitializationList(
         expressions_values.add(first_value);
         for (const auto &current_expression_ast : ranges::views::tail(expressions_ast)) {
             const auto &current_value = visitExpression(*current_expression_ast);
-            const auto &current_value_type = values::type_of(current_value);
-            checkInitializationListElementType(current_value_type);
+            checkInitializationListElementType(current_value);
             expressions_values.add(current_value);
-            if (values::check_promote(current_value_type, expressions_highest_type)) {
+            if (const auto &current_value_type = values::type_of(current_value);
+                values::check_promote(current_value_type, expressions_highest_type)) {
                 continue;
             } else if (values::check_promote(expressions_highest_type, current_value_type)) {
                 expressions_highest_type.set(current_value_type);

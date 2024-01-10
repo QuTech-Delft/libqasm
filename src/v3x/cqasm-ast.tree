@@ -26,6 +26,10 @@ namespace cqasm
 namespace v3x
 namespace ast
 
+keyword {
+    name: cqasm::v3x::primitives::Str;
+}
+
 index_entry {
     # Zero based.
     index_item {
@@ -96,7 +100,7 @@ annotated {
         # One variable declaration of some type.
         variable {
             name: One<identifier>;
-            typ: One<identifier>;
+            typ: One<keyword>;
             size: Maybe<integer_literal>;
         }
 

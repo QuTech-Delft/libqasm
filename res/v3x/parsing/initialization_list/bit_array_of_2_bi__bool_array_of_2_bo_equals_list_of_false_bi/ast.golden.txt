@@ -15,7 +15,7 @@ Program(
             )
           >
           typ: <
-            Identifier(
+            Keyword(
               name: bit
             )
           >
@@ -35,7 +35,7 @@ Program(
                 )
               >
               typ: <
-                Identifier(
+                Keyword(
                   name: bool
                 )
               >

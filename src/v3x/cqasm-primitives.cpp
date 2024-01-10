@@ -5,6 +5,7 @@
 #include "v3x/cqasm-primitives.hpp"
 
 #include <algorithm>  // transform
+#include <cassert>
 #include <fmt/format.h>
 
 
@@ -35,18 +36,39 @@ Axis initialize<Axis>() { return Axis{ 1.0, 0.0, 0.0 }; }
 template <>
 void serialize(const Axis &obj, ::tree::cbor::MapWriter &map) {
     auto aw = map.append_array("x");
-    for (auto x : obj) {
-        aw.append_float(x);
-    }
+    aw.append_float(obj.x);
+    aw.append_float(obj.y);
+    aw.append_float(obj.z);
     aw.close();
 }
 
 template <>
 Axis deserialize(const ::tree::cbor::MapReader &map) {
     auto ar = map.at("x").as_array();
-    auto axis = Axis{};
-    std::transform(ar.begin(), ar.end(), axis.begin(), [](const auto &e) { return e.as_float(); });
+    assert(ar.size() == 3);
+    auto axis = Axis{ ar[0].as_float(), ar[1].as_float(), ar[2].as_float() };
     return axis;
+}
+
+/**
+ * Compares this axis against the other axis.
+ * Returns:
+ *   1 if this axis is smaller than the other,
+ *   -1 if this axis is greater than the other, or
+ *   0 if both axes are the same.
+ */
+int Axis::compare(const Axis &other) const {
+    if (x < other.x) { return -1; }
+    else if (x > other.x) { return 1; }
+    else {
+        if (y < other.y) { return -1; }
+        else if (y > other.y) { return 1; }
+        else {
+            if (z < other.z) { return -1; }
+            else if (z > other.z) { return 1; }
+        }
+    }
+    return 0;
 }
 
 /**
@@ -136,7 +158,7 @@ Version deserialize(const ::tree::cbor::MapReader &map) {
  * Stream << overload for axis nodes.
  */
 std::ostream &operator<<(std::ostream &os, const Axis &axis) {
-    return os << fmt::format("[{}]", fmt::join(axis, ", "));
+    return os << fmt::format("[{}, {}, {}]", axis.x, axis.y, axis.z);
 }
 
 } // namespace cqasm::v3x::primitives

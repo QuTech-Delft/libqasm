@@ -17,7 +17,7 @@ Program(
                 )
               >
               typ: <
-                Identifier(
+                Keyword(
                   name: axis
                 )
               >
@@ -59,7 +59,7 @@ Program(
                 )
               >
               typ: <
-                Identifier(
+                Keyword(
                   name: axis
                 )
               >

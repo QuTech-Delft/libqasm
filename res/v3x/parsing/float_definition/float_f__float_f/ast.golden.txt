@@ -15,7 +15,7 @@ Program(
             )
           >
           typ: <
-            Identifier(
+            Keyword(
               name: float
             )
           >
@@ -29,7 +29,7 @@ Program(
             )
           >
           typ: <
-            Identifier(
+            Keyword(
               name: float
             )
           >

@@ -8,9 +8,9 @@
 #include "v3x/cqasm-types.hpp"
 #include "v3x/cqasm-semantic.hpp"
 
-#include <algorithm>  // all_of
 #include <cassert>
 #include <fmt/format.h>
+#include <ostream>
 #include <stdexcept>  // runtime_error
 
 
@@ -128,10 +128,16 @@ Value promote(const Value &value, const types::Type &type) {
  * Checks if a from_type can be promoted to a to_type.
  */
 bool check_promote(const types::Type &from_type, const types::Type &to_type) {
-    return types::type_check(from_type, to_type) ||
-        (from_type->as_bool() && (to_type->as_int() || to_type->as_real() || to_type->as_complex())) ||
-        (from_type->as_int() && (to_type->as_real() || to_type->as_complex())) ||
-        (from_type->as_real() && to_type->as_complex());
+    if (types::type_check(from_type, to_type)) {
+        return true;
+    } else if (from_type->as_bool()) {
+        return to_type->as_int() || to_type->as_real() || to_type->as_complex();
+    } else if  (from_type->as_int()) {
+        return to_type->as_real() || to_type->as_complex();
+    } else if (from_type->as_real()) {
+        return to_type->as_complex();
+    }
+    return false;
 }
 
 /**

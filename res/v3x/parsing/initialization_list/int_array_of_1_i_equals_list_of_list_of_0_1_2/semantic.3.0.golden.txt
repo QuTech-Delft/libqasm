@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:3:10..11: expecting Bool, Int, or Real type, found (int array) in initialization list
+Error at input.cq:3:10..11: expecting a const bool, const int, or const real value
