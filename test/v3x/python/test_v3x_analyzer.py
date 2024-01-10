@@ -12,12 +12,12 @@ class TestV3xAnalyzer(unittest.TestCase):
         self.assertEqual(ast.version.items[0], 3)
         
         qubit_array = ast.statements.items[0] 
-        self.assertEqual(qubit_array.names[0].name, "b'q'")
+        self.assertEqual(qubit_array.name.name, "b'q'")
         self.assertEqual(qubit_array.typ.name, "b'qubit'")
         self.assertEqual(qubit_array.size.value, 5)
         
         bit_array = ast.statements.items[1]
-        self.assertEqual(bit_array.names[0].name, "b'b'")
+        self.assertEqual(bit_array.name.name, "b'b'")
         self.assertEqual(bit_array.typ.name, "b'bit'")
         self.assertEqual(bit_array.size.value, 5)
         
@@ -37,7 +37,7 @@ class TestV3xAnalyzer(unittest.TestCase):
         program_str = "version 3;qubit[5] q;bit[5] b;h q[0:4];b = measure"
         v3x_analyzer = cq.Analyzer()
         errors = v3x_analyzer.parse_string(program_str)
-        expected_errors = ["<unknown>:1:51: mismatched input '<EOF>' expecting {INTEGER_LITERAL, FLOAT_LITERAL, IDENTIFIER}"]
+        expected_errors = ["<unknown>:1:51: mismatched input '<EOF>' expecting {'[', '{', BOOLEAN_LITERAL, INTEGER_LITERAL, FLOAT_LITERAL, IDENTIFIER}"]
         self.assertEqual(errors, expected_errors)
 
     def test_analyze_string_returning_ast(self):

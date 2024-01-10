@@ -5,7 +5,6 @@
 #include "v3x/cqasm-primitives.hpp"
 
 #include <algorithm>  // transform
-#include <cassert>
 #include <fmt/format.h>
 
 
@@ -35,19 +34,14 @@ Axis initialize<Axis>() { return Axis{ 1.0, 0.0, 0.0 }; }
 
 template <>
 void serialize(const Axis &obj, ::tree::cbor::MapWriter &map) {
-    auto aw = map.append_array("x");
-    aw.append_float(obj.x);
-    aw.append_float(obj.y);
-    aw.append_float(obj.z);
-    aw.close();
+    map.append_float("x", obj.x);
+    map.append_float("y", obj.y);
+    map.append_float("z", obj.z);
 }
 
 template <>
 Axis deserialize(const ::tree::cbor::MapReader &map) {
-    auto ar = map.at("x").as_array();
-    assert(ar.size() == 3);
-    auto axis = Axis{ ar[0].as_float(), ar[1].as_float(), ar[2].as_float() };
-    return axis;
+    return {map.at("x").as_float(), map.at("y").as_float(), map.at("z").as_float()};
 }
 
 /**
