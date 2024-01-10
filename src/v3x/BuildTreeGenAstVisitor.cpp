@@ -63,8 +63,7 @@ double BuildTreeGenAstVisitor::get_float_value(size_t line, size_t char_position
 }
 
 bool BuildTreeGenAstVisitor::get_bool_value(antlr4::tree::TerminalNode *node) const {
-    const auto token = node->getSymbol();
-    assert(token->getType() == CqasmParser::BOOLEAN_LITERAL);
+    assert(node->getSymbol()->getType() == CqasmParser::BOOLEAN_LITERAL);
     return node->getText() == "true";
 }
 

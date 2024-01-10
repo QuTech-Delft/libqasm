@@ -462,8 +462,9 @@ template <typename ConstTypeArray>
         return buildArrayValueFromPromotedValues<values::ConstIntArray>(values, type);
     } else if (types::type_check(type, tree::make<types::Real>())) {
         return buildArrayValueFromPromotedValues<values::ConstRealArray>(values, type);
+    } else {
+        throw error::AnalysisError{ "expecting Bool, Int, or Real type in initialization list" };
     }
-    assert(false && "expecting Bool, Int, or Real type in initialization list");
 }
 
 /*

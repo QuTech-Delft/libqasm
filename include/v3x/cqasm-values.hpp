@@ -10,6 +10,7 @@
 #include "cqasm-types.hpp"
 #include "v3x/cqasm-values-gen.hpp"
 
+#include <algorithm>  // all_of, for_each
 #include <fmt/format.h>
 #include <fmt/ostream.h>
 
