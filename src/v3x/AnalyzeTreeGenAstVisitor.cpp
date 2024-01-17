@@ -268,11 +268,10 @@ std::any AnalyzeTreeGenAstVisitor::visit_instruction(ast::Instruction &node) {
 values::Value promote_or_error(const values::Value &rhs_value, const types::Type &lhs_type) {
     if (auto rhs_promoted_value = values::promote(rhs_value, lhs_type); !rhs_promoted_value.empty()) {
         return rhs_promoted_value;
-    } else {
-        throw error::AnalysisError{ fmt::format(
-            "type of right-hand side ({}) could not be coerced to left-hand side ({})",
-            values::type_of(rhs_value), lhs_type) };
     }
+    throw error::AnalysisError{ fmt::format(
+        "type of right-hand side ({}) could not be coerced to left-hand side ({})",
+        values::type_of(rhs_value), lhs_type) };
 }
 
 void do_assignment(
@@ -283,25 +282,25 @@ void do_assignment(
     // Check left and right-hand sides have the same size
     auto rhs_size = values::size_of(rhs_value);
     auto lhs_size = values::size_of(lhs_value);
-    if (rhs_size == lhs_size) {
-        // Check if right-hand side operand needs be promoted
-        const auto lhs_type = values::type_of(lhs_value);
-        const auto promoted_rhs_value = promote_or_error(rhs_value, lhs_type);
-
-        // Check axis types are not assigned [0, 0, 0]
-        if (lhs_type->as_axis()) {
-            if (values::check_all_of_array_values(rhs_value,
-                    [](const auto e){ return static_cast<double>(e->value) == 0.0; })) {
-                throw error::AnalysisError{ "cannot set an axis variable type to [0.0, 0.0, 0.0]" };
-            }
-        }
-
-        assignment_instruction.emplace(lhs_value, promoted_rhs_value);
-    } else {
+    if (rhs_size != lhs_size) {
         throw error::AnalysisError{ fmt::format(
             "trying to initialize a lhs of size {} with a rhs of size {}",
             lhs_size, rhs_size) };
     }
+
+    // Check if right-hand side operand needs be promoted
+    const auto lhs_type = values::type_of(lhs_value);
+    const auto promoted_rhs_value = promote_or_error(rhs_value, lhs_type);
+
+    // Check axis types are not assigned [0, 0, 0]
+    if (lhs_type->as_axis()) {
+        if (values::check_all_of_array_values(rhs_value,
+                [](const auto e){ return static_cast<double>(e->value) == 0.0; })) {
+            throw error::AnalysisError{ "cannot set an axis variable type to [0.0, 0.0, 0.0]" };
+        }
+    }
+
+    assignment_instruction.emplace(lhs_value, promoted_rhs_value);
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_initialization(ast::Initialization &node) {
@@ -578,12 +577,10 @@ primitives::Int AnalyzeTreeGenAstVisitor::visit_const_int(ast::Expression &expre
     if (auto int_value = analyze_as<types::Int>(expression); !int_value.empty()) {
         if (auto const_int_value = int_value->as_const_int()) {
             return const_int_value->value;
-        } else {
-            throw error::AnalysisError{ "integer must be constant", &expression };
         }
-    } else{
-        throw error::AnalysisError{ "expected an integer", &expression };
+        throw error::AnalysisError{ "integer must be constant", &expression };
     }
+    throw error::AnalysisError{ "expected an integer", &expression };
 }
 
-}  // namespace cqasm::v3x::analyzer
+}  // namespace cqasm::v3x::analyzer`
