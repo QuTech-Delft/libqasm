@@ -298,8 +298,8 @@ void do_assignment(
     const values::Value &rhs_value) {
 
     // Check left and right-hand sides have the same size
-    auto rhs_size = values::range_of(rhs_value);
-    auto lhs_size = values::range_of(lhs_value);
+    auto rhs_size = values::size_of(rhs_value);
+    auto lhs_size = values::size_of(lhs_value);
     if (rhs_size == lhs_size) {
         // Check if right-hand side operand needs be promoted
         const auto lhs_type = values::type_of(lhs_value);
@@ -436,14 +436,10 @@ std::any AnalyzeTreeGenAstVisitor::visit_index(ast::Index &node) {
         auto expression = std::any_cast<values::Value>(visit_expression(*node.expr));
         auto variable_ref_ptr = expression->as_variable_ref();
         const auto variable_link = variable_ref_ptr->variable;
-        const auto &variable = *variable_link;
-        if (auto qubit_array = variable.typ->as_qubit_array()) {
+        const auto variable_type = variable_link->typ;
+        if (variable_type->as_qubit_array() || variable_type->as_bit_array()) {
             auto indices = std::any_cast<IndexListT>(visit_index_list(*node.indices));
-            check_out_of_range(indices, qubit_array->size);
-            return tree::make<values::IndexRef>(variable_link, indices);
-        } else if (auto bit_array = variable.typ->as_bit_array()) {
-            auto indices = std::any_cast<IndexListT>(visit_index_list(*node.indices));
-            check_out_of_range(indices, bit_array->size);
+            check_out_of_range(indices, types::size_of(variable_type));
             return tree::make<values::IndexRef>(variable_link, indices);
         } else {
             throw error::AnalysisError{ fmt::format(

@@ -80,7 +80,7 @@ types::Types types_of(const Values &values);
 /**
  * Returns the number of elements of the given value.
  */
-primitives::Int range_of(const Value &value);
+primitives::Int size_of(const Value &value);
 
 /**
  * Throws an AnalysisError if the given value is not a constant,

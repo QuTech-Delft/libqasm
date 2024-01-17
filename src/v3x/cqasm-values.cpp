@@ -109,8 +109,7 @@ Value promote(const Value &value, const types::Type &type) {
             if (types::type_check(variable_ref->variable->typ, tree::make<types::BoolArray>()) ||
                 types::type_check(variable_ref->variable->typ, tree::make<types::IntArray>()) ||
                 types::type_check(variable_ref->variable->typ, tree::make<types::RealArray>())) {
-                assert(variable_ref->variable->typ->as_type_base());
-                assert(variable_ref->variable->typ->as_type_base()->size == 3);
+                assert(types::size_of(variable_ref->variable->typ) == 3);
                 ret = value;
             }
         }
@@ -181,9 +180,9 @@ types::Type type_of(const Value &value) {
     } else if (value->as_const_real_array()) {
         return tree::make<types::RealArray>();
     } else if (auto index = value->as_index_ref()) {
-        // If the range of the index is 1, return the type of the element (qubit, bit, bool...)
+        // If the size of the index is 1, return the type of the element (qubit, bit, bool...)
         // Otherwise, return the type of the variable it refers to (qubit array, bit array, bool array...)
-        if (range_of(value) == 1) {
+        if (size_of(value) == 1) {
             return element_type_of(index->variable->typ);
         } else {
             return index->variable->typ;
@@ -209,13 +208,10 @@ types::Types types_of(const Values &values) {
 /**
  * Returns the number of elements of the given value.
  */
-primitives::Int range_of(const Value &value) {
+primitives::Int size_of(const Value &value) {
     if (value->as_const_axis()) {
         return 3;
-    } else if (value->as_const_bool() ||
-        value->as_const_int() ||
-        value->as_const_real() ||
-        value->as_const_complex()) {
+    } else if (value->as_const_bool() || value->as_const_int() || value->as_const_real() || value->as_const_complex()) {
         return 1;
     } else if (auto bool_array = value->as_const_bool_array()) {
         return static_cast<primitives::Int>(bool_array->value.size());
@@ -226,8 +222,7 @@ primitives::Int range_of(const Value &value) {
     } else if (auto index = value->as_index_ref()) {
         return static_cast<primitives::Int>(index->indices.size());
     } else if (auto var = value->as_variable_ref()) {
-        assert(var->variable->typ->as_type_base());
-        return var->variable->typ->as_type_base()->size;
+        return types::size_of(var->variable->typ);
     } else {
         throw std::runtime_error("unknown type!");
     }

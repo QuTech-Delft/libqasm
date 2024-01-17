@@ -56,6 +56,13 @@ bool type_check(const Type &expected, const Type &actual) {
 }
 
 /**
+ * Returns the number of elements of the given type.
+ */
+primitives::Int size_of(const Type &type) {
+    return type->as_type_base()->size;
+}
+
+/**
  * Stream << overload for a single type.
  */
 std::ostream &operator<<(std::ostream &os, const Type &type) {
