@@ -1,0 +1,2 @@
+ERROR
+input.cq:3:9: mismatched input ';' expecting {'[', '{', BOOLEAN_LITERAL, INTEGER_LITERAL, FLOAT_LITERAL, IDENTIFIER}

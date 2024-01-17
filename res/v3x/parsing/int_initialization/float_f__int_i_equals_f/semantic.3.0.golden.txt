@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:4:7..8: type of right-hand side (real) could not be coerced to left-hand side (int)

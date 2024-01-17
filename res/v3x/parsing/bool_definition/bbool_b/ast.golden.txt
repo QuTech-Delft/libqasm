@@ -1,0 +1,33 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  statements: <
+    StatementList(
+      items: [
+        Instruction( # input.cq:3:1..5
+          name: <
+            Identifier(
+              name: Bool
+            )
+          >
+          condition: -
+          operands: <
+            ExpressionList(
+              items: [
+                Identifier( # input.cq:3:6..7
+                  name: b
+                )
+              ]
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

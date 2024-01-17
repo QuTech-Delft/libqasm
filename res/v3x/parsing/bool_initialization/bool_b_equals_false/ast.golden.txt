@@ -1,0 +1,39 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  statements: <
+    StatementList(
+      items: [
+        Initialization( # input.cq:3:8..9
+          var: <
+            Variable( # input.cq:3:6..7
+              name: <
+                Identifier(
+                  name: b
+                )
+              >
+              typ: <
+                Keyword(
+                  name: bool
+                )
+              >
+              size: -
+              annotations: []
+            )
+          >
+          rhs: <
+            BooleanLiteral( # input.cq:3:10..15
+              value: 0
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

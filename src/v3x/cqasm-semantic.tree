@@ -63,6 +63,14 @@ annotated {
                 # Operands for the instruction.
                 operands: external Any<cqasm::v3x::values::Node>;
             }
+
+            assignment_instruction {
+                # The assignment target.
+                lhs: external One<cqasm::v3x::values::Node>;
+
+                # The value to assign.
+                rhs: external One<cqasm::v3x::values::Node>;
+            }
         }
     }
 

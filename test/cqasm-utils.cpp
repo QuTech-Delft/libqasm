@@ -66,7 +66,7 @@ TEST(to_json, v1x_analyzer_ast) {
 }
 
 TEST(to_json, v3x_parser_errors) {
-    auto input_file_path = fs::path{"res"}/"v3x"/"parsing"/"bit_array_definition"/"bit_array_of_3_14"/"input.cq";
+    auto input_file_path = fs::path{"res"}/"v3x"/"parsing"/"bit_array_definition"/"bit_array_of_3.14"/"input.cq";
     cqasm::v3x::analyzer::Analyzer analyzer{};
     auto semantic_ast_result = analyzer.analyze_file(input_file_path.generic_string());
     auto json_result = to_json(semantic_ast_result);
@@ -80,7 +80,7 @@ TEST(to_json, v3x_parser_ast) {
     auto ast_result = cqasm::v3x::parser::parse_file(input_file_path.generic_string());
     auto json_result = to_json(ast_result);
     auto expected_json_result = std::string{
-        R"delim({"Program":{"version":{"Version":{"items":"3","source_location":"<unknown>:1:9..10"}},"statements":{"StatementList":{"items":[{"Variables":{"names":[{"Identifier":{"name":"b"}}],"typ":{"Identifier":{"name":"bit"}},"size":{"IntegerLiteral":{"value":"0"}},"annotations":"[]","source_location":"<unknown>:3:8..9"}}]}}}})delim"
+        R"delim({"Program":{"version":{"Version":{"items":"3","source_location":"<unknown>:1:9..10"}},"statements":{"StatementList":{"items":[{"Variable":{"name":{"Identifier":{"name":"b"}},"typ":{"Keyword":{"name":"bit"}},"size":{"IntegerLiteral":{"value":"0"}},"annotations":"[]","source_location":"<unknown>:3:8..9"}}]}}}})delim"
     };
     EXPECT_EQ(json_result, expected_json_result);
 }

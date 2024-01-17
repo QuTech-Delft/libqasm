@@ -93,7 +93,7 @@ public:
     /**
      * Analyzes the given program AST node.
      */
-    [[nodiscard]] AnalysisResult analyze(const ast::Program &program);
+    [[nodiscard]] AnalysisResult analyze(ast::Program &program);
 
     /**
      * Analyzes the given parse result.

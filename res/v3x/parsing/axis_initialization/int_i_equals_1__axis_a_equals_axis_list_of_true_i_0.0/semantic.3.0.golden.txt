@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:4:8..9: expecting a const bool, const int, or const real value

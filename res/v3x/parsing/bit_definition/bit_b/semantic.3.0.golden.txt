@@ -12,7 +12,8 @@ Program(
       name: b
       typ: <
         Bit(
-)
+          size: 1
+        )
       >
       annotations: []
     )

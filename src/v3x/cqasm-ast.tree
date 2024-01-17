@@ -26,6 +26,10 @@ namespace cqasm
 namespace v3x
 namespace ast
 
+keyword {
+    name: cqasm::v3x::primitives::Str;
+}
+
 index_entry {
     # Zero based.
     index_item {
@@ -44,6 +48,10 @@ index_list {
 }
 
 expression {
+    boolean_literal {
+        value: cqasm::v3x::primitives::Bool;
+    }
+
     integer_literal {
         value: cqasm::v3x::primitives::Int;
     }
@@ -59,6 +67,10 @@ expression {
     index {
         expr: One<expression>;
         indices: One<index_list>;
+    }
+
+    initialization_list {
+        expr_list: One<expression_list>;
     }
 }
 
@@ -85,19 +97,31 @@ annotated {
     annotations: Any<annotation_data>;
 
     statement {
-        # One or more variable declarations of some type.
-        variables {
-            names: Many<identifier>;
-            typ: One<identifier>;
+        # One variable declaration of some type.
+        variable {
+            name: One<identifier>;
+            typ: One<keyword>;
             size: Maybe<integer_literal>;
         }
 
-        # A gate.
+        # An initialization is a variable declaration plus an assignment instruction.
+        initialization {
+            var: One<variable>;
+            rhs: One<expression>;
+        }
+
         instruction_base {
+            # A gate.
             instruction {
                 name: One<identifier>;
                 condition: Maybe<expression>;
                 operands: One<expression_list>;
+            }
+
+            assignment_instruction {
+                condition: Maybe<expression>;
+                lhs: One<expression>;
+                rhs: One<expression>;
             }
 
             # For some instructions, like the measure instruction,

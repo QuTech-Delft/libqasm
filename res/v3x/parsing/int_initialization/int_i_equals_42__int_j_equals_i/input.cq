@@ -1,0 +1,4 @@
+version 3
+
+int i = 42
+int j = i

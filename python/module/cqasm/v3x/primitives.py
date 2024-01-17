@@ -8,6 +8,19 @@ Real = float
 Complex = complex
 
 
+class Axis:
+
+    def __init__(self):
+        self._x = 1.0
+        self._y = 0.0
+        self._z = 0.0
+
+    def __init__(self, x, y, z):
+        self._x = x
+        self._y = y
+        self._z = z
+
+
 class Version(tuple):
     """cQASM file version number."""
 
@@ -30,6 +43,8 @@ def serialize(typ, val):
         return {'x': val}
     elif typ is Complex:
         return {'r': val.real, 'i': val.imag}
+    elif typ is Axis:
+        return {'x': val.x, 'y': val.y, 'z': val.z}
     elif typ is Version:
         return {'x': list(val)}
     elif typ is cqasm.v3x.instruction.InstructionRef:
@@ -57,6 +72,8 @@ def deserialize(typ, val):
         return Real(val['x'])
     elif typ is Complex:
         return Complex(val['r'], val['i'])
+    elif typ is Axis:
+        return Axis(val['x'], val['y'], val['z'])
     elif typ is Version:
         return Version(val['x'])
     elif typ is cqasm.v3x.instruction.InstructionRef:

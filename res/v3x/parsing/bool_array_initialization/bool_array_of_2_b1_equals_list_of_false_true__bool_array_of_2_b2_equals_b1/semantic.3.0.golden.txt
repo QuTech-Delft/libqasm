@@ -1,0 +1,105 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  statements: [
+    AssignmentInstruction(
+      lhs: <
+        VariableRef(
+          variable --> <
+            Variable(
+              name: b1
+              typ: <
+                BoolArray(
+                  size: 2
+                )
+              >
+              annotations: []
+            )
+          >
+        )
+      >
+      rhs: <
+        ConstBoolArray(
+          value: [
+            ConstBool(
+              value: 0
+            )
+            ConstBool(
+              value: 1
+            )
+          ]
+        )
+      >
+      condition: <
+        ConstBool(
+          value: 1
+        )
+      >
+      annotations: []
+    )
+    AssignmentInstruction(
+      lhs: <
+        VariableRef(
+          variable --> <
+            Variable(
+              name: b2
+              typ: <
+                BoolArray(
+                  size: 2
+                )
+              >
+              annotations: []
+            )
+          >
+        )
+      >
+      rhs: <
+        VariableRef(
+          variable --> <
+            Variable(
+              name: b1
+              typ: <
+                BoolArray(
+                  size: 2
+                )
+              >
+              annotations: []
+            )
+          >
+        )
+      >
+      condition: <
+        ConstBool(
+          value: 1
+        )
+      >
+      annotations: []
+    )
+  ]
+  variables: [
+    Variable(
+      name: b1
+      typ: <
+        BoolArray(
+          size: 2
+        )
+      >
+      annotations: []
+    )
+    Variable(
+      name: b2
+      typ: <
+        BoolArray(
+          size: 2
+        )
+      >
+      annotations: []
+    )
+  ]
+)
+

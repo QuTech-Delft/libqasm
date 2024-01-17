@@ -1,0 +1,61 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  statements: [
+    AssignmentInstruction(
+      lhs: <
+        VariableRef(
+          variable --> <
+            Variable(
+              name: a
+              typ: <
+                Axis(
+                  size: 3
+                )
+              >
+              annotations: []
+            )
+          >
+        )
+      >
+      rhs: <
+        ConstRealArray(
+          value: [
+            ConstReal(
+              value: 0
+            )
+            ConstReal(
+              value: 1
+            )
+            ConstReal(
+              value: 2
+            )
+          ]
+        )
+      >
+      condition: <
+        ConstBool(
+          value: 1
+        )
+      >
+      annotations: []
+    )
+  ]
+  variables: [
+    Variable(
+      name: a
+      typ: <
+        Axis(
+          size: 3
+        )
+      >
+      annotations: []
+    )
+  ]
+)
+

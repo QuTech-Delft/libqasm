@@ -8,14 +8,14 @@ Program(
   statements: <
     StatementList(
       items: [
-        Variables( # input.cq:1:18..19
-          names: [
+        Variable( # input.cq:1:18..19
+          name: <
             Identifier(
               name: q
             )
-          ]
+          >
           typ: <
-            Identifier(
+            Keyword(
               name: qubit
             )
           >

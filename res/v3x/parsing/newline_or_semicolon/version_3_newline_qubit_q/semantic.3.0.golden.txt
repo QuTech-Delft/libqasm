@@ -12,7 +12,8 @@ Program(
       name: q
       typ: <
         Qubit(
-)
+          size: 1
+        )
       >
       annotations: []
     )

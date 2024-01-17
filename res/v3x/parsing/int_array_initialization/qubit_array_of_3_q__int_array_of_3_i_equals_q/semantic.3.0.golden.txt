@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:4:10..11: type of right-hand side (qubit array) could not be coerced to left-hand side (int array)

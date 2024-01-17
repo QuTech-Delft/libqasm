@@ -1,0 +1,4 @@
+version 3
+
+qubit[3] q
+bool[3] b = q

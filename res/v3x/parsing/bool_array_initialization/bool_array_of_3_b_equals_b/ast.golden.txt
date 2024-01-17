@@ -1,0 +1,43 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  statements: <
+    StatementList(
+      items: [
+        Initialization( # input.cq:3:11..12
+          var: <
+            Variable( # input.cq:3:9..10
+              name: <
+                Identifier(
+                  name: b
+                )
+              >
+              typ: <
+                Keyword(
+                  name: bool
+                )
+              >
+              size: <
+                IntegerLiteral(
+                  value: 3
+                )
+              >
+              annotations: []
+            )
+          >
+          rhs: <
+            Identifier( # input.cq:3:13..14
+              name: b
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+
