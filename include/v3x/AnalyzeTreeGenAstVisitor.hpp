@@ -31,7 +31,10 @@ public:
     std::any visit_assignment_instruction(ast::AssignmentInstruction &node) override;
     std::any visit_measure_instruction(ast::MeasureInstruction &node) override;
     std::any visit_instruction(ast::Instruction &node) override;
-    std::any visit_expression(ast::Expression &node) override;
+    std::any visit_boolean_literal(ast::BooleanLiteral &node) override;
+    std::any visit_integer_literal(ast::IntegerLiteral &node) override;
+    std::any visit_float_literal(ast::FloatLiteral &node) override;
+    std::any visit_identifier(ast::Identifier &node) override;
     std::any visit_index(ast::Index &node) override;
     std::any visit_index_list(ast::IndexList &node) override;
     std::any visit_index_item(ast::IndexItem &node) override;

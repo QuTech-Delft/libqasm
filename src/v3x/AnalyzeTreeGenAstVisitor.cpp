@@ -103,7 +103,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_annotation_data(ast::AnnotationData &no
         ret->operation = node.operation->name;
         for (const auto &expression_ast : node.operands->items) {
             try {
-                ret->operands.add(std::any_cast<values::Value>(visit_expression(*expression_ast)));
+                ret->operands.add(std::any_cast<values::Value>(expression_ast->visit(*this)));
             } catch (error::AnalysisError &err) {
                 err.context(node);
                 result_.errors.push_back(err.get_message());
@@ -215,8 +215,8 @@ std::any AnalyzeTreeGenAstVisitor::visit_measure_instruction(ast::MeasureInstruc
         // Notice operands have to be added in this order
         // Otherwise instruction resolution would fail
         auto operands = values::Values();
-        operands.add(std::any_cast<values::Value>(visit_expression(*node.lhs)));
-        operands.add(std::any_cast<values::Value>(visit_expression(*node.rhs)));
+        operands.add(std::any_cast<values::Value>(node.lhs->visit(*this)));
+        operands.add(std::any_cast<values::Value>(node.rhs->visit(*this)));
 
         // Resolve the instruction
         // For a measure instruction, this resolution will check that
@@ -254,7 +254,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_instruction(ast::Instruction &node) {
         // Set operand list
         auto operands = values::Values();
         for (const auto &operand_expr : node.operands->items) {
-            operands.add(std::any_cast<values::Value>(visit_expression(*operand_expr)));
+            operands.add(std::any_cast<values::Value>(operand_expr->visit(*this)));
         }
 
         // Resolve the instruction
@@ -328,14 +328,14 @@ std::any AnalyzeTreeGenAstVisitor::visit_initialization(ast::Initialization &nod
         //
         // Initialization instructions check the right-hand side operand first
         // In order to avoid code such as 'int i = i' being correct
-        const auto rhs_value = std::any_cast<values::Value>(visit_expression(*node.rhs));
+        const auto rhs_value = std::any_cast<values::Value>(node.rhs->visit(*this));
 
         // Add the variable declaration
         visit_variable(*node.var);
 
         // Analyze the left-hand side operand
         // Left-hand side is always assignable for an initialization
-        const auto lhs_value = std::any_cast<values::Value>(visit_expression(*node.var->name));
+        const auto lhs_value = std::any_cast<values::Value>(node.var->name->visit(*this));
 
         // Perform assignment
         do_assignment(ret, lhs_value, rhs_value);
@@ -361,8 +361,8 @@ std::any AnalyzeTreeGenAstVisitor::visit_assignment_instruction(ast::AssignmentI
     auto ret = tree::Maybe<semantic::AssignmentInstruction>();
     try {
         // Analyze the operands
-        const auto lhs_value = std::any_cast<values::Value>(visit_expression(*node.lhs));
-        const auto rhs_value = std::any_cast<values::Value>(visit_expression(*node.rhs));
+        const auto lhs_value = std::any_cast<values::Value>(node.lhs->visit(*this));
+        const auto rhs_value = std::any_cast<values::Value>(node.rhs->visit(*this));
 
         // Check assignability of the left-hand side
         if (bool assignable = lhs_value->as_reference(); !assignable) {
@@ -391,33 +391,33 @@ std::any AnalyzeTreeGenAstVisitor::visit_assignment_instruction(ast::AssignmentI
     return ret;
 }
 
-std::any AnalyzeTreeGenAstVisitor::visit_expression(ast::Expression &node) {
-    auto ret = values::Value{};
+std::any AnalyzeTreeGenAstVisitor::visit_boolean_literal(ast::BooleanLiteral &node) {
+    auto ret = tree::make<values::ConstBool>(node.value);
+    ret->copy_annotation<parser::SourceLocation>(node);
+    return values::Value{ ret };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_integer_literal(ast::IntegerLiteral &node) {
+    auto ret = tree::make<values::ConstInt>(node.value);
+    ret->copy_annotation<parser::SourceLocation>(node);
+    return values::Value{ ret };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_float_literal(ast::FloatLiteral &node) {
+    auto ret = tree::make<values::ConstReal>(node.value);
+    ret->copy_annotation<parser::SourceLocation>(node);
+    return values::Value{ ret };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_identifier(ast::Identifier &node) {
     try {
-        if (auto boolean_literal = node.as_boolean_literal()) {
-            ret.set(tree::make<values::ConstBool>(boolean_literal->value));
-        } else if (auto integer_literal = node.as_integer_literal()) {
-            ret.set(tree::make<values::ConstInt>(integer_literal->value));
-        } else if (auto float_literal = node.as_float_literal()) {
-            ret.set(tree::make<values::ConstReal>(float_literal->value));
-        } else if (auto identifier = node.as_identifier()) {
-            ret.set(analyzer_.resolve_mapping(identifier->name));
-        } else if (auto index = node.as_index()) {
-            ret.set(std::any_cast<ast::One<values::IndexRef>>(visit_index(*index)));
-        } else if (auto initialization_list = node.as_initialization_list()) {
-            ret.set(std::any_cast<values::Value>(visit_initialization_list(*initialization_list)));
-        } else {
-            throw std::runtime_error{ "unexpected expression node" };
-        }
+        auto ret = analyzer_.resolve_mapping(node.name);
+        ret->copy_annotation<parser::SourceLocation>(node);
+        return ret;
     } catch (error::AnalysisError &err) {
         err.context(node);
         throw;
     }
-    if (ret.empty()) {
-        throw std::runtime_error{ "visit_expression returned an empty value" };
-    }
-    ret->copy_annotation<parser::SourceLocation>(node);
-    return ret;
 }
 
 /*
@@ -433,14 +433,16 @@ void check_out_of_range(const IndexListT &indices, primitives::Int size) {
 
 std::any AnalyzeTreeGenAstVisitor::visit_index(ast::Index &node) {
     try {
-        auto expression = std::any_cast<values::Value>(visit_expression(*node.expr));
+        auto expression = std::any_cast<values::Value>(node.expr->visit(*this));
         auto variable_ref_ptr = expression->as_variable_ref();
         const auto variable_link = variable_ref_ptr->variable;
         const auto variable_type = variable_link->typ;
         if (variable_type->as_qubit_array() || variable_type->as_bit_array()) {
             auto indices = std::any_cast<IndexListT>(visit_index_list(*node.indices));
             check_out_of_range(indices, types::size_of(variable_type));
-            return tree::make<values::IndexRef>(variable_link, indices);
+            auto ret = tree::make<values::IndexRef>(variable_link, indices);
+            ret->copy_annotation<parser::SourceLocation>(node);
+            return values::Value{ ret };
         } else {
             throw error::AnalysisError{ fmt::format(
                 "indexation is not supported for value of type '{}'", values::type_of(expression)) };
@@ -544,7 +546,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_initialization_list(ast::Initialization
         }
 
         // Set expression's highest type to the type of the first expression
-        const auto first_value = std::any_cast<values::Value>(visit_expression(*expressions_ast[0]));
+        const auto first_value = std::any_cast<values::Value>(expressions_ast[0]->visit(*this));
         check_initialization_list_element_type(first_value);
         auto expressions_highest_type = values::type_of(first_value);
 
@@ -553,7 +555,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_initialization_list(ast::Initialization
         auto expressions_values = values::Values();
         expressions_values.add(first_value);
         for (const auto &current_expression_ast : ranges::views::tail(expressions_ast)) {
-            const auto current_value = std::any_cast<values::Value>(visit_expression(*current_expression_ast));
+            const auto current_value = std::any_cast<values::Value>(current_expression_ast->visit(*this));
             check_initialization_list_element_type(current_value);
             expressions_values.add(current_value);
             if (const auto current_value_type = values::type_of(current_value);
@@ -569,7 +571,9 @@ std::any AnalyzeTreeGenAstVisitor::visit_initialization_list(ast::Initialization
         }
 
         // Then return a Const<Type>Array value, where <Type> is the highest type to which we can promote
-        return build_value_from_promoted_values(expressions_values, expressions_highest_type);
+        auto ret = build_value_from_promoted_values(expressions_values, expressions_highest_type);
+        ret->copy_annotation<parser::SourceLocation>(node);
+        return ret;
     } catch (error::AnalysisError &err) {
         err.context(node);
         throw;
@@ -583,7 +587,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_initialization_list(ast::Initialization
  */
 template <class Type, class... TypeArgs>
 values::Value AnalyzeTreeGenAstVisitor::analyze_as(ast::Expression &expression, TypeArgs... type_args) {
-    return values::promote(std::any_cast<values::Value>(visit_expression(expression)), tree::make<Type>(type_args...));
+    return values::promote(std::any_cast<values::Value>(expression.visit(*this)), tree::make<Type>(type_args...));
 }
 
 /**
