@@ -214,7 +214,6 @@ setup(
         'delocate; platform_system == "Darwin"',
     ],
     install_requires=[
-        'msvc-runtime; platform_system == "Windows"',
         'numpy'
     ],
     tests_require=[
