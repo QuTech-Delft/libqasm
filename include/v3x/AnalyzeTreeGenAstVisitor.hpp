@@ -25,12 +25,12 @@ public:
     std::any visit_annotated(ast::Annotated &node) override;
     std::any visit_annotation_data(ast::AnnotationData &node) override;
     std::any visit_statement_list(ast::StatementList &node) override;
-    std::any visit_statement(ast::Statement &node) override;
     std::any visit_variable(ast::Variable &node) override;
     std::any visit_initialization(ast::Initialization &node) override;
     std::any visit_assignment_instruction(ast::AssignmentInstruction &node) override;
     std::any visit_measure_instruction(ast::MeasureInstruction &node) override;
     std::any visit_instruction(ast::Instruction &node) override;
+    std::any visit_expression(ast::Expression &node) override;
     std::any visit_boolean_literal(ast::BooleanLiteral &node) override;
     std::any visit_integer_literal(ast::IntegerLiteral &node) override;
     std::any visit_float_literal(ast::FloatLiteral &node) override;
