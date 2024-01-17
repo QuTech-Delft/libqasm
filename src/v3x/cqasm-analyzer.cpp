@@ -81,9 +81,9 @@ void Analyzer::register_instruction(const std::string &name, const std::string &
 /**
  * Analyzes the given AST.
  */
-AnalysisResult Analyzer::analyze(const ast::Program &ast) {
+AnalysisResult Analyzer::analyze(ast::Program &ast) {
     auto analyze_visitor_up = std::make_unique<AnalyzeTreeGenAstVisitor>(*this);
-    auto result =  analyze_visitor_up->visitProgram(ast);
+    auto result =  std::any_cast<AnalysisResult>(analyze_visitor_up->visit_program(ast));
     if (result.errors.empty() && !result.root.is_well_formed()) {
         std::cerr << *result.root;
         throw std::runtime_error{ "internal error: no semantic errors returned, but semantic tree is incomplete."
