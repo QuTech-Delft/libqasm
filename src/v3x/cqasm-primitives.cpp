@@ -45,27 +45,6 @@ Axis deserialize(const ::tree::cbor::MapReader &map) {
 }
 
 /**
- * Compares this axis against the other axis.
- * Returns:
- *   1 if this axis is smaller than the other,
- *   -1 if this axis is greater than the other, or
- *   0 if both axes are the same.
- */
-int Axis::compare(const Axis &other) const {
-    if (x < other.x) { return -1; }
-    else if (x > other.x) { return 1; }
-    else {
-        if (y < other.y) { return -1; }
-        else if (y > other.y) { return 1; }
-        else {
-            if (z < other.z) { return -1; }
-            else if (z > other.z) { return 1; }
-        }
-    }
-    return 0;
-}
-
-/**
  * Bool
  */
 template <>

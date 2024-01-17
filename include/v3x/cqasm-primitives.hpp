@@ -54,27 +54,12 @@ Str deserialize(const ::tree::cbor::MapReader &map);
 /**
  * Axis primitive used within the semantic trees.
  */
-class Axis {
-    /**
-     * Compares this axis against the other axis.
-     * Returns:
-     *   1 if this axis is greater than the other,
-     *   -1 if this axis is smaller than the other, or
-     *   0 if both axes are the same.
-     */
-    [[nodiscard]] int compare(const Axis &other) const;
-
-public:
+struct Axis {
     double x = 0.0;
     double y = 0.0;
     double z = 0.0;
 
-    [[nodiscard]] auto operator==(const Axis &rhs) const {
-        return compare(rhs) == 0;
-    }
-    [[nodiscard]] auto operator<=>(const Axis &rhs) const {
-        return compare(rhs) <=> 0;
-    }
+    [[nodiscard]] bool operator==(const Axis &rhs) const = default;
 };
 template <>
 Axis initialize<Axis>();
