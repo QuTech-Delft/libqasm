@@ -60,7 +60,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_version(ast::Version &node) {
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_statement_list(ast::StatementList &node) {
-    for (auto &statement_ast : node.items) {
+    for (const auto &statement_ast : node.items) {
         visit_statement(*statement_ast);
     }
     return {};
@@ -90,7 +90,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_statement(ast::Statement &node) {
 
 std::any AnalyzeTreeGenAstVisitor::visit_annotated(ast::Annotated &node) {
     auto ret = tree::Any<semantic::AnnotationData>();
-    for (auto &annotation_data_ast : node.annotations) {
+    for (const auto &annotation_data_ast : node.annotations) {
         ret.add(std::any_cast<ast::One<semantic::AnnotationData>>(visit_annotation_data(*annotation_data_ast)));
     }
     return ret;
@@ -302,13 +302,13 @@ void do_assignment(
     auto lhs_size = values::range_of(lhs_value);
     if (rhs_size == lhs_size) {
         // Check if right-hand side operand needs be promoted
-        const auto &lhs_type = values::type_of(lhs_value);
-        const auto &promoted_rhs_value = promote_or_error(rhs_value, lhs_type);
+        const auto lhs_type = values::type_of(lhs_value);
+        const auto promoted_rhs_value = promote_or_error(rhs_value, lhs_type);
 
         // Check axis types are not assigned [0, 0, 0]
         if (lhs_type->as_axis()) {
             if (values::check_all_of_array_values(rhs_value,
-                    [](const auto &e){ return static_cast<double>(e->value) == 0.0; })) {
+                    [](const auto e){ return static_cast<double>(e->value) == 0.0; })) {
                 throw error::AnalysisError{ "cannot set an axis variable type to [0.0, 0.0, 0.0]" };
             }
         }
@@ -328,14 +328,14 @@ std::any AnalyzeTreeGenAstVisitor::visit_initialization(ast::Initialization &nod
         //
         // Initialization instructions check the right-hand side operand first
         // In order to avoid code such as 'int i = i' being correct
-        const auto &rhs_value = std::any_cast<values::Value>(visit_expression(*node.rhs));
+        const auto rhs_value = std::any_cast<values::Value>(visit_expression(*node.rhs));
 
         // Add the variable declaration
         visit_variable(*node.var);
 
         // Analyze the left-hand side operand
         // Left-hand side is always assignable for an initialization
-        const auto &lhs_value = std::any_cast<values::Value>(visit_expression(*node.var->name));
+        const auto lhs_value = std::any_cast<values::Value>(visit_expression(*node.var->name));
 
         // Perform assignment
         do_assignment(ret, lhs_value, rhs_value);
@@ -361,8 +361,8 @@ std::any AnalyzeTreeGenAstVisitor::visit_assignment_instruction(ast::AssignmentI
     auto ret = tree::Maybe<semantic::AssignmentInstruction>();
     try {
         // Analyze the operands
-        const auto &lhs_value = std::any_cast<values::Value>(visit_expression(*node.lhs));
-        const auto &rhs_value = std::any_cast<values::Value>(visit_expression(*node.rhs));
+        const auto lhs_value = std::any_cast<values::Value>(visit_expression(*node.lhs));
+        const auto rhs_value = std::any_cast<values::Value>(visit_expression(*node.rhs));
 
         // Check assignability of the left-hand side
         if (bool assignable = lhs_value->as_reference(); !assignable) {
@@ -435,7 +435,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_index(ast::Index &node) {
     try {
         auto expression = std::any_cast<values::Value>(visit_expression(*node.expr));
         auto variable_ref_ptr = expression->as_variable_ref();
-        const auto &variable_link = variable_ref_ptr->variable;
+        const auto variable_link = variable_ref_ptr->variable;
         const auto &variable = *variable_link;
         if (auto qubit_array = variable.typ->as_qubit_array()) {
             auto indices = std::any_cast<IndexListT>(visit_index_list(*node.indices));
@@ -504,7 +504,7 @@ template <typename ConstTypeArray>
     auto ret = tree::make<ConstTypeArray>();
     ret->value.get_vec().resize(values.size());
     std::transform(values.begin(), values.end(), ret->value.begin(),
-       [&type](const auto &const_value) {
+       [&type](const auto const_value) {
             return values::promote(const_value, type);
     });
     return ret;
@@ -548,7 +548,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_initialization_list(ast::Initialization
         }
 
         // Set expression's highest type to the type of the first expression
-        const auto &first_value = std::any_cast<values::Value>(visit_expression(*expressions_ast[0]));
+        const auto first_value = std::any_cast<values::Value>(visit_expression(*expressions_ast[0]));
         check_initialization_list_element_type(first_value);
         auto expressions_highest_type = values::type_of(first_value);
 
@@ -557,10 +557,10 @@ std::any AnalyzeTreeGenAstVisitor::visit_initialization_list(ast::Initialization
         auto expressions_values = values::Values();
         expressions_values.add(first_value);
         for (const auto &current_expression_ast : ranges::views::tail(expressions_ast)) {
-            const auto &current_value = std::any_cast<values::Value>(visit_expression(*current_expression_ast));
+            const auto current_value = std::any_cast<values::Value>(visit_expression(*current_expression_ast));
             check_initialization_list_element_type(current_value);
             expressions_values.add(current_value);
-            if (const auto &current_value_type = values::type_of(current_value);
+            if (const auto current_value_type = values::type_of(current_value);
                 values::check_promote(current_value_type, expressions_highest_type)) {
                 continue;
             } else if (values::check_promote(expressions_highest_type, current_value_type)) {
