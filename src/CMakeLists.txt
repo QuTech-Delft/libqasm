@@ -62,6 +62,17 @@ if(NOT range-v3_FOUND)
     FetchContent_MakeAvailable(range-v3)
 endif()
 
+# func-gen, a simple program that generates the function that
+# registers all default functions (operators, trigonometry, etc) with a resolver::FunctionTable object.
+# This file would otherwise be extremely repetitive and annoying to maintain due to the amount of overloads.
+# This exposes the generate_funcs() function, which should be called once with the header and source file paths.
+FetchContent_Declare(func-gen
+    # func-gen/v1x_and_v3x_generators
+    GIT_REPOSITORY https://github.com/QuTech-Delft/func-gen.git
+    GIT_TAG "ee0d22f4eba579727dfdd142ab29626ba3532c09"
+)
+FetchContent_MakeAvailable(func-gen)
+
 # tree-gen, a custom utility to generate classes for typed tree-like structures and enums with variants containing data.
 # This exposes the generate_tree() function.
 FetchContent_Declare(tree-gen
@@ -69,12 +80,6 @@ FetchContent_Declare(tree-gen
     GIT_TAG "2ae96a563bb2346207450bf8865e65058f248ee7"
 )
 FetchContent_MakeAvailable(tree-gen)
-
-# Include func-gen, a simple program that generates the function that registers all default functions
-# (operators, trigonometry, etc) with a resolver::FunctionTable object.
-# This file would otherwise be extremely repetitive and annoying to maintain due to the amount of overloads.
-# This exposes the generate_funcs() function, which should be called once with the header and source file paths.
-add_subdirectory(func-gen)
 
 #-------------------------------------------------------------------------------
 # cQASM common code generation and inclusion
