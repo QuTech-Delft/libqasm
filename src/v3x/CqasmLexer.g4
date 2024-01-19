@@ -66,7 +66,7 @@ WHITE_SPACE: [ \t]+ -> skip;
 SINGLE_LINE_COMMENT: '//' ~[\r\n]* -> skip;
 MULTI_LINE_COMMENT: '/*' .*? '*/' -> skip;
 
-// Punctuation signs
+// Signs
 NEW_LINE: '\r'?'\n';
 SEMICOLON: ';';
 COLON: ':';
@@ -77,6 +77,37 @@ OPEN_BRACKET: '[';
 CLOSE_BRACKET: ']';
 OPEN_BRACE: '{';
 CLOSE_BRACE: '}';
+OPEN_PARENS: '(';
+CLOSE_PARENS: ')';
+PLUS: '+';  // this token is shared by UNARY_PLUS_OP and PLUS_OP
+MINUS: '-';  // this token is shared by UNARY_MINUS_OP and MINUS_OP
+
+// Operators
+// UNARY_PLUS_OP: '+';
+// UNARY_MINUS_OP: '-';
+UNARY_BITWISE_NOT_OP: '~';
+UNARY_LOGICAL_NOT_OP: '!';
+POWER_OP: '**';
+PRODUCT_OP: '*';
+DIVISION_OP: '/';
+MODULUS_OP: '%';
+// PLUS_OP: '+';
+// MINUS_OP: '-';
+SHL_OP: '<<';
+SHR_OP: '>>';
+CMP_GT_OP: '>';
+CMP_LT_OP: '<';
+CMP_GE_OP: '>=';
+CMP_LE_OP: '<=';
+CMP_EQ_OP: '==';
+CMP_NE_OP: '!=';
+BITWISE_AND_OP: '&';
+BITWISE_XOR_OP: '^';
+BITWISE_OR_OP: '|';
+LOGICAL_AND_OP: '&&';
+LOGICAL_XOR_OP: '^^';
+LOGICAL_OR_OP: '||';
+TERNARY_CONDITIONAL_OP: '?';
 
 // Keywords
 VERSION: 'version' -> pushMode(VERSION_STATEMENT);
@@ -91,7 +122,7 @@ FLOAT_TYPE: 'float';
 // Numeric literals
 BOOLEAN_LITERAL: 'true' | 'false';
 INTEGER_LITERAL: Digit+;
-FLOAT_LITERAL: Digit* '.' Digit+([eE][-+]Digit+)?;
+FLOAT_LITERAL: Digit* '.' (Digit+([eE][-+]Digit+)?)?;  // Float literals can end with a dot
 fragment Digit: [0-9];
 
 // Identifier

@@ -43,11 +43,29 @@ indexEntry:
     ;
 
 expression:
-    BOOLEAN_LITERAL  # booleanLiteral
-    | INTEGER_LITERAL  # integerLiteral
-    | FLOAT_LITERAL  # floatLiteral
-    | IDENTIFIER  # identifier
+    OPEN_PARENS expression CLOSE_PARENS  # parensExpression
+    | <assoc=right> (PLUS | MINUS) expression  # unaryPlusMinusExpression
+    | <assoc=right> UNARY_BITWISE_NOT_OP expression  # unaryBitwiseNotExpression
+    | <assoc=right> UNARY_LOGICAL_NOT_OP expression  # unaryLogicalNotExpression
+    | <assoc=right> POWER_OP expression  # powerExpression
+    | expression (PRODUCT_OP | DIVISION_OP | MODULUS_OP) expression  # productExpression
+    | expression (PLUS | MINUS) expression  # additionExpression
+    | expression (SHL_OP | SHR_OP) expression  # shiftExpression
+    | expression (CMP_GT_OP | CMP_LT_OP | CMP_GE_OP | CMP_LE_OP) expression  # comparisonExpression
+    | expression (CMP_EQ_OP | CMP_NE_OP) expression  # equalityExpression
+    | expression BITWISE_AND_OP expression  # bitwiseAndExpression
+    | expression BITWISE_XOR_OP expression  # bitwiseXorExpression
+    | expression BITWISE_OR_OP expression  # bitwiseOrExpression
+    | expression LOGICAL_AND_OP expression  # logicalAndExpression
+    | expression LOGICAL_XOR_OP expression  # logicalXorExpression
+    | expression LOGICAL_OR_OP expression  # logicalOrExpression
+    | <assoc=right> expression TERNARY_CONDITIONAL_OP expression COLON expression  # ternaryConditionalExpression
+    | IDENTIFIER OPEN_PARENS expressionList CLOSE_PARENS  # functionCall
     | IDENTIFIER OPEN_BRACKET indexList CLOSE_BRACKET  # index
+    | IDENTIFIER  # identifier
     | OPEN_BRACKET expression COMMA expression COMMA expression CLOSE_BRACKET  # axisInitializationList
     | OPEN_BRACE expressionList CLOSE_BRACE  # initializationList
+    | BOOLEAN_LITERAL  # booleanLiteral
+    | INTEGER_LITERAL  # integerLiteral
+    | FLOAT_LITERAL  # floatLiteral
     ;
