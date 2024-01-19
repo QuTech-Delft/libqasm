@@ -116,10 +116,10 @@ public:
     void add(const std::string &name, const types::Types &param_types, const FunctionImpl &impl);
 
     /**
-     * Calls a function. Throws NameResolutionFailure if no function by the
-     * given name exists, OverloadResolutionFailure if no overload of the
-     * function exists for the given arguments, or otherwise returns the value
-     * returned by the function.
+     * Calls a function.
+     * Throws NameResolutionFailure if no function by the given name exists,
+     * OverloadResolutionFailure if no overload of the function exists for the given arguments, or otherwise
+     * returns the value returned by the function.
      */
     [[nodiscard]] values::Value call(const std::string &name, const values::Values &args) const;
 };

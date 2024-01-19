@@ -69,7 +69,7 @@ endif()
 FetchContent_Declare(func-gen
     # func-gen/v1x_and_v3x_generators
     GIT_REPOSITORY https://github.com/QuTech-Delft/func-gen.git
-    GIT_TAG "ee0d22f4eba579727dfdd142ab29626ba3532c09"
+    GIT_TAG "2c4ec6dc81e63e9a52bc4b8c6efb509aa70d12b5"
 )
 FetchContent_MakeAvailable(func-gen)
 
@@ -257,6 +257,14 @@ generate_tree_py(
     "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/cqasm-semantic-gen.py"
 )
 list(APPEND CQASM_V3X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-semantic-gen.cpp")
+
+# Generate the cQASM default function set.
+generate_funcs(
+    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x/cqasm-functions-gen.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-functions-gen.cpp"
+    "v3x"
+)
+list(APPEND CQASM_V3X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-functions-gen.cpp")
 
 #-------------------------------------------------------------------------------
 # Compilation instructions
