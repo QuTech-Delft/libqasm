@@ -314,10 +314,12 @@ if(CMAKE_COMPILER_IS_GNUCXX)
         -Wno-error=sign-compare
     )
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    # CqasmParser.cpp, expressionSempred method defines _localctx parameter but does not use it
     target_compile_options(cqasm-lib-obj PRIVATE
         -Wall -Wextra -Werror -Wfatal-errors
         -fPIC
         -Wno-error=sign-compare
+        -Wno-error=unused-parameter
         -Wno-error=unused-private-field
         -Wno-error=unused-but-set-variable
     )
