@@ -384,24 +384,98 @@ std::any AnalyzeTreeGenAstVisitor::visit_expression(ast::Expression &node) {
     }
 }
 
-std::any AnalyzeTreeGenAstVisitor::visit_boolean_literal(ast::BooleanLiteral &node) {
-    auto ret = tree::make<values::ConstBool>(node.value);
-    return values::Value{ ret };
+std::any AnalyzeTreeGenAstVisitor::visit_unary_minus_expression(ast::UnaryMinusExpression &/* node */) {
+    throw std::runtime_error{ "unimplemented" };
 }
 
-std::any AnalyzeTreeGenAstVisitor::visit_integer_literal(ast::IntegerLiteral &node) {
-    auto ret = tree::make<values::ConstInt>(node.value);
-    return values::Value{ ret };
+std::any AnalyzeTreeGenAstVisitor::visit_bitwise_not_expression(ast::BitwiseNotExpression &/* node */) {
+    throw std::runtime_error{ "unimplemented" };
 }
 
-std::any AnalyzeTreeGenAstVisitor::visit_float_literal(ast::FloatLiteral &node) {
-    auto ret = tree::make<values::ConstReal>(node.value);
-    return values::Value{ ret };
+std::any AnalyzeTreeGenAstVisitor::visit_logical_not_expression(ast::LogicalNotExpression &/* node */) {
+    throw std::runtime_error{ "unimplemented" };
 }
 
-std::any AnalyzeTreeGenAstVisitor::visit_identifier(ast::Identifier &node) {
-    return analyzer_.resolve_mapping(node.name);
+std::any AnalyzeTreeGenAstVisitor::visit_power_expression(ast::PowerExpression &/* node */) {
+    throw std::runtime_error{ "unimplemented" };
 }
+
+std::any AnalyzeTreeGenAstVisitor::visit_product_expression(ast::ProductExpression &/* node */) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_division_expression(ast::DivisionExpression &/* node */) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_modulo_expression(ast::ModuloExpression &/* node */) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_shift_left_expression(ast::ShiftLeftExpression &/* node */) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_shift_right_expression(ast::ShiftRightExpression &/* node */) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_cmp_gt_expression(ast::CmpGtExpression &/* node */) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_cmp_lt_expression(ast::CmpLtExpression &/* node */) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_cmp_ge_expression(ast::CmpGeExpression &/* node */) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_cmp_le_expression(ast::CmpLeExpression &/* node */) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_cmp_eq_expression(ast::CmpEqExpression &/* node */) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_cmp_ne_expression(ast::CmpNeExpression &/* node */) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_bitwise_and_expression(ast::BitwiseAndExpression &/* node */) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_bitwise_xor_expression(ast::BitwiseXorExpression &/* node */) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_bitwise_or_expression(ast::BitwiseOrExpression &/* node */) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_logical_and_expression(ast::LogicalAndExpression &/* node */) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_logical_xor_expression(ast::LogicalXorExpression &/* node */) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_logical_or_expression(ast::LogicalOrExpression &/* node */) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_ternary_conditional_expression(ast::TernaryConditionalExpression &/* node */) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_function_call(ast::FunctionCall &/* node */) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
 
 /*
  * Check out of range accesses from any index in an input list to an array of a given size
@@ -471,6 +545,10 @@ std::any AnalyzeTreeGenAstVisitor::visit_index_range(ast::IndexRange &index_rang
         ret.add(index_value_sp);
     }
     return ret;
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_identifier(ast::Identifier &node) {
+    return analyzer_.resolve_mapping(node.name);
 }
 
 /*
@@ -558,6 +636,21 @@ std::any AnalyzeTreeGenAstVisitor::visit_initialization_list(ast::Initialization
         err.context(node);
         throw;
     }
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_boolean_literal(ast::BooleanLiteral &node) {
+    auto ret = tree::make<values::ConstBool>(node.value);
+    return values::Value{ ret };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_integer_literal(ast::IntegerLiteral &node) {
+    auto ret = tree::make<values::ConstInt>(node.value);
+    return values::Value{ ret };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_float_literal(ast::FloatLiteral &node) {
+    auto ret = tree::make<values::ConstReal>(node.value);
+    return values::Value{ ret };
 }
 
 /**
