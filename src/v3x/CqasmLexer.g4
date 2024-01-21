@@ -85,12 +85,12 @@ MINUS: '-';  // this token is shared by UNARY_MINUS_OP and MINUS_OP
 // Operators
 // UNARY_PLUS_OP: '+';
 // UNARY_MINUS_OP: '-';
-UNARY_BITWISE_NOT_OP: '~';
-UNARY_LOGICAL_NOT_OP: '!';
+BITWISE_NOT_OP: '~';
+LOGICAL_NOT_OP: '!';
 POWER_OP: '**';
 PRODUCT_OP: '*';
 DIVISION_OP: '/';
-MODULUS_OP: '%';
+MODULO_OP: '%';
 // PLUS_OP: '+';
 // MINUS_OP: '-';
 SHL_OP: '<<';

@@ -321,76 +321,124 @@ std::any BuildTreeGenAstVisitor::visitIndexRange(CqasmParser::IndexRangeContext 
     )};
 }
 
-std::any BuildTreeGenAstVisitor::visitParensExpression(CqasmParser::ParensExpressionContext */* context */) {
-    throw std::runtime_error{ "unimplemented" };
+std::any BuildTreeGenAstVisitor::visitParensExpression(CqasmParser::ParensExpressionContext *context) {
+    return context->expression()->accept(this);
 }
 
-std::any BuildTreeGenAstVisitor::visitUnaryPlusMinusExpression(CqasmParser::UnaryPlusMinusExpressionContext */* context */) {
-    throw std::runtime_error{ "unimplemented" };
+std::any BuildTreeGenAstVisitor::visitUnaryPlusMinusExpression(CqasmParser::UnaryPlusMinusExpressionContext *context) {
+    if (context->PLUS()) {
+        return std::any_cast<One<Expression>>(context->expression()->accept(this));
+    }
+    auto ret = tree::make<UnaryMinusExpression>(std::any_cast<One<Expression>>(context->expression()->accept(this)));
+    const auto token = context->MINUS()->getSymbol();
+    setNodeAnnotation(ret, token);
+    return One<Expression>{ ret };
 }
 
-std::any BuildTreeGenAstVisitor::visitUnaryBitwiseNotExpression(CqasmParser::UnaryBitwiseNotExpressionContext */* context */) {
-    throw std::runtime_error{ "unimplemented" };
+std::any BuildTreeGenAstVisitor::visitBitwiseNotExpression(CqasmParser::BitwiseNotExpressionContext *context) {
+    auto ret = tree::make<BitwiseNotExpression>(std::any_cast<One<Expression>>(context->expression()->accept(this)));
+    const auto token = context->BITWISE_NOT_OP()->getSymbol();
+    setNodeAnnotation(ret, token);
+    return One<Expression>{ ret };
 }
 
-std::any BuildTreeGenAstVisitor::visitUnaryLogicalNotExpression(CqasmParser::UnaryLogicalNotExpressionContext */* context */) {
-    throw std::runtime_error{ "unimplemented" };
+std::any BuildTreeGenAstVisitor::visitLogicalNotExpression(CqasmParser::LogicalNotExpressionContext *context) {
+    auto ret = tree::make<LogicalNotExpression>(std::any_cast<One<Expression>>(context->expression()->accept(this)));
+    const auto token = context->LOGICAL_NOT_OP()->getSymbol();
+    setNodeAnnotation(ret, token);
+    return One<Expression>{ ret };
 }
 
-std::any BuildTreeGenAstVisitor::visitPowerExpression(CqasmParser::PowerExpressionContext */* context */) {
-    throw std::runtime_error{ "unimplemented" };
+std::any BuildTreeGenAstVisitor::visitPowerExpression(CqasmParser::PowerExpressionContext *context) {
+    auto ret = tree::make<PowerExpression>(std::any_cast<One<Expression>>(context->expression()->accept(this)));
+    const auto token = context->POWER_OP()->getSymbol();
+    setNodeAnnotation(ret, token);
+    return One<Expression>{ ret };
 }
 
-std::any BuildTreeGenAstVisitor::visitProductExpression(CqasmParser::ProductExpressionContext */* context */) {
-    throw std::runtime_error{ "unimplemented" };
+std::any BuildTreeGenAstVisitor::visitProductExpression(CqasmParser::ProductExpressionContext *context) {
+    if (context->PRODUCT_OP()) {
+        return visitBinaryExpression<ProductExpression>(context, [context]() { return context->PRODUCT_OP(); });
+    } else if (context->DIVISION_OP()) {
+        return visitBinaryExpression<DivisionExpression>(context, [context]() { return context->DIVISION_OP(); });
+    }
+    return visitBinaryExpression<ModuloExpression>(context, [context]() { return context->MODULO_OP(); });
 }
 
-std::any BuildTreeGenAstVisitor::visitAdditionExpression(CqasmParser::AdditionExpressionContext */* context */) {
-    throw std::runtime_error{ "unimplemented" };
+std::any BuildTreeGenAstVisitor::visitAdditionExpression(CqasmParser::AdditionExpressionContext *context) {
+    if (context->PLUS()) {
+        return visitBinaryExpression<AdditionExpression>(context, [context]() { return context->PLUS(); });
+    }
+    return visitBinaryExpression<SubtractionExpression>(context, [context]() { return context->MINUS(); });
 }
 
-std::any BuildTreeGenAstVisitor::visitShiftExpression(CqasmParser::ShiftExpressionContext */* context */) {
-    throw std::runtime_error{ "unimplemented" };
+std::any BuildTreeGenAstVisitor::visitShiftExpression(CqasmParser::ShiftExpressionContext *context) {
+    if (context->SHL_OP()) {
+        return visitBinaryExpression<ShiftLeftExpression>(context, [context]() { return context->SHL_OP(); });
+    }
+    return visitBinaryExpression<ShiftRightExpression>(context, [context]() { return context->SHR_OP(); });
 }
 
-std::any BuildTreeGenAstVisitor::visitComparisonExpression(CqasmParser::ComparisonExpressionContext */* context */) {
-    throw std::runtime_error{ "unimplemented" };
+std::any BuildTreeGenAstVisitor::visitComparisonExpression(CqasmParser::ComparisonExpressionContext *context) {
+    if (context->CMP_GT_OP()) {
+        return visitBinaryExpression<CmpGtExpression>(context, [context]() { return context->CMP_GT_OP(); });
+    } else if (context->CMP_LT_OP()) {
+        return visitBinaryExpression<CmpLtExpression>(context, [context]() { return context->CMP_LT_OP(); });
+    } else if (context->CMP_GE_OP()) {
+        return visitBinaryExpression<CmpGeExpression>(context, [context]() { return context->CMP_GE_OP(); });
+    }
+    return visitBinaryExpression<CmpLeExpression>(context, [context]() { return context->CMP_LE_OP(); });
 }
 
-std::any BuildTreeGenAstVisitor::visitEqualityExpression(CqasmParser::EqualityExpressionContext */* context */) {
-    throw std::runtime_error{ "unimplemented" };
+std::any BuildTreeGenAstVisitor::visitEqualityExpression(CqasmParser::EqualityExpressionContext *context) {
+    if (context->CMP_EQ_OP()) {
+        return visitBinaryExpression<CmpEqExpression>(context, [context]() { return context->CMP_EQ_OP(); });
+    }
+    return visitBinaryExpression<CmpNeExpression>(context, [context]() { return context->CMP_NE_OP(); });
 }
 
-std::any BuildTreeGenAstVisitor::visitBitwiseAndExpression(CqasmParser::BitwiseAndExpressionContext */* context */) {
-    throw std::runtime_error{ "unimplemented" };
+std::any BuildTreeGenAstVisitor::visitBitwiseAndExpression(CqasmParser::BitwiseAndExpressionContext *context) {
+    return visitBinaryExpression<BitwiseAndExpression>(context, [context]() { return context->BITWISE_AND_OP(); });
 }
 
-std::any BuildTreeGenAstVisitor::visitBitwiseXorExpression(CqasmParser::BitwiseXorExpressionContext */* context */) {
-    throw std::runtime_error{ "unimplemented" };
+std::any BuildTreeGenAstVisitor::visitBitwiseXorExpression(CqasmParser::BitwiseXorExpressionContext *context) {
+    return visitBinaryExpression<BitwiseXorExpression>(context, [context]() { return context->BITWISE_XOR_OP(); });
 }
 
-std::any BuildTreeGenAstVisitor::visitBitwiseOrExpression(CqasmParser::BitwiseOrExpressionContext */* context */) {
-    throw std::runtime_error{ "unimplemented" };
+std::any BuildTreeGenAstVisitor::visitBitwiseOrExpression(CqasmParser::BitwiseOrExpressionContext *context) {
+    return visitBinaryExpression<BitwiseOrExpression>(context, [context]() { return context->BITWISE_OR_OP(); });
 }
 
-std::any BuildTreeGenAstVisitor::visitLogicalAndExpression(CqasmParser::LogicalAndExpressionContext */* context */) {
-    throw std::runtime_error{ "unimplemented" };
+std::any BuildTreeGenAstVisitor::visitLogicalAndExpression(CqasmParser::LogicalAndExpressionContext *context) {
+    return visitBinaryExpression<LogicalAndExpression>(context, [context]() { return context->LOGICAL_AND_OP(); });
 }
 
-std::any BuildTreeGenAstVisitor::visitLogicalXorExpression(CqasmParser::LogicalXorExpressionContext */* context */) {
-    throw std::runtime_error{ "unimplemented" };
+std::any BuildTreeGenAstVisitor::visitLogicalXorExpression(CqasmParser::LogicalXorExpressionContext *context) {
+    return visitBinaryExpression<LogicalXorExpression>(context, [context]() { return context->LOGICAL_XOR_OP(); });
 }
 
-std::any BuildTreeGenAstVisitor::visitLogicalOrExpression(CqasmParser::LogicalOrExpressionContext */* context */) {
-    throw std::runtime_error{ "unimplemented" };
+std::any BuildTreeGenAstVisitor::visitLogicalOrExpression(CqasmParser::LogicalOrExpressionContext *context) {
+    return visitBinaryExpression<LogicalOrExpression>(context, [context]() { return context->LOGICAL_OR_OP(); });
 }
 
-std::any BuildTreeGenAstVisitor::visitTernaryConditionalExpression(CqasmParser::TernaryConditionalExpressionContext */* context */) {
-    throw std::runtime_error{ "unimplemented" };
+std::any BuildTreeGenAstVisitor::visitTernaryConditionalExpression(CqasmParser::TernaryConditionalExpressionContext *context) {
+    auto ret = tree::make<TernaryConditionalExpression>(
+        std::any_cast<One<Expression>>(context->expression(0)->accept(this)),
+        std::any_cast<One<Expression>>(context->expression(1)->accept(this)),
+        std::any_cast<One<Expression>>(context->expression(2)->accept(this))
+    );
+    const auto token = context->TERNARY_CONDITIONAL_OP()->getSymbol();
+    setNodeAnnotation(ret, token);
+    return One<Expression>{ ret };
 }
 
-std::any BuildTreeGenAstVisitor::visitFunctionCall(CqasmParser::FunctionCallContext */* context */) {
-    throw std::runtime_error{ "unimplemented" };
+std::any BuildTreeGenAstVisitor::visitFunctionCall(CqasmParser::FunctionCallContext *context) {
+    auto ret = tree::make<FunctionCall>();
+    ret->name = cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText());
+    ret->arguments = std::any_cast<One<ExpressionList>>(context->expressionList()->accept(this));
+    const auto token = context->IDENTIFIER()->getSymbol();
+    setNodeAnnotation(ret, token);
+    return One<Expression>{ ret };
 }
 
 std::any BuildTreeGenAstVisitor::visitIndex(CqasmParser::IndexContext *context) {

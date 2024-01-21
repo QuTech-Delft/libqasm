@@ -37,6 +37,17 @@ class  BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
     std::any visitFloatTypeDefinition(CqasmParser::FloatTypeDeclarationContext *context);
     std::any visitFloatTypeInitialization(CqasmParser::FloatTypeDeclarationContext *context);
 
+    template <typename RetExpressionType, typename Context, typename GetTerminalNodeFunction>
+    std::any visitBinaryExpression(Context *context, GetTerminalNodeFunction&& getTerminalNode) {
+        auto ret = tree::make<RetExpressionType>(
+            std::any_cast<tree::One<cqasm::v3x::ast::Expression>>(context->expression(0)->accept(this)),
+            std::any_cast<tree::One<cqasm::v3x::ast::Expression>>(context->expression(1)->accept(this))
+        );
+        const auto token = getTerminalNode()->getSymbol();
+        setNodeAnnotation(ret, token);
+        return tree::One<cqasm::v3x::ast::Expression>{ ret };
+    }
+
 public:
     std::any visitProgram(CqasmParser::ProgramContext *context) override;
     std::any visitVersion(CqasmParser::VersionContext *context) override;
@@ -57,8 +68,8 @@ public:
     std::any visitIndexRange(CqasmParser::IndexRangeContext *context) override;
     std::any visitParensExpression(CqasmParser::ParensExpressionContext *context) override;
     std::any visitUnaryPlusMinusExpression(CqasmParser::UnaryPlusMinusExpressionContext *context) override;
-    std::any visitUnaryBitwiseNotExpression(CqasmParser::UnaryBitwiseNotExpressionContext *context) override;
-    std::any visitUnaryLogicalNotExpression(CqasmParser::UnaryLogicalNotExpressionContext *context) override;
+    std::any visitBitwiseNotExpression(CqasmParser::BitwiseNotExpressionContext *context) override;
+    std::any visitLogicalNotExpression(CqasmParser::LogicalNotExpressionContext *context) override;
     std::any visitPowerExpression(CqasmParser::PowerExpressionContext *context) override;
     std::any visitProductExpression(CqasmParser::ProductExpressionContext *context) override;
     std::any visitAdditionExpression(CqasmParser::AdditionExpressionContext *context) override;

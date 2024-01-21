@@ -45,10 +45,10 @@ indexEntry:
 expression:
     OPEN_PARENS expression CLOSE_PARENS  # parensExpression
     | <assoc=right> (PLUS | MINUS) expression  # unaryPlusMinusExpression
-    | <assoc=right> UNARY_BITWISE_NOT_OP expression  # unaryBitwiseNotExpression
-    | <assoc=right> UNARY_LOGICAL_NOT_OP expression  # unaryLogicalNotExpression
+    | <assoc=right> BITWISE_NOT_OP expression  # bitwiseNotExpression
+    | <assoc=right> LOGICAL_NOT_OP expression  # logicalNotExpression
     | <assoc=right> POWER_OP expression  # powerExpression
-    | expression (PRODUCT_OP | DIVISION_OP | MODULUS_OP) expression  # productExpression
+    | expression (PRODUCT_OP | DIVISION_OP | MODULO_OP) expression  # productExpression
     | expression (PLUS | MINUS) expression  # additionExpression
     | expression (SHL_OP | SHR_OP) expression  # shiftExpression
     | expression (CMP_GT_OP | CMP_LT_OP | CMP_GE_OP | CMP_LE_OP) expression  # comparisonExpression

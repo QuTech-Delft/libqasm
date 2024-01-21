@@ -60,17 +60,83 @@ expression {
         value: cqasm::v3x::primitives::Real;
     }
 
-    identifier {
-        name: cqasm::v3x::primitives::Str;
-    }
-
     index {
         expr: One<expression>;
         indices: One<index_list>;
     }
 
+    identifier {
+        name: cqasm::v3x::primitives::Str;
+    }
+
     initialization_list {
         expr_list: One<expression_list>;
+    }
+
+    function_call {
+        name: One<identifier>;
+        arguments: One<expression_list>;
+    }
+
+    unary_expression {
+        expr: One<expression>;
+
+        # Two's complement.
+        unary_minus_expression {}
+
+        # One's complement.
+        bitwise_not_expression {}
+
+        logical_not_expression {}
+    }
+
+    binary_expression {
+        lhs: One<expression>;
+        rhs: One<expression>;
+
+        arithmetic_expression {
+            power_expression {}
+            product_expression {}
+            division_expression {}
+            modulo_expression {}
+            addition_expression {}
+            subtraction_expression {}
+        }
+
+        shift_expression {
+            shift_left_expression {}
+            shift_right_expression {}
+        }
+
+        comparison_expression {
+            cmp_gt_expression {}
+            cmp_lt_expression {}
+            cmp_ge_expression {}
+            cmp_le_expression {}
+        }
+
+        equality_expression {
+            cmp_eq_expression {}
+            cmp_ne_expression {}
+        }
+
+        bitwise_expression {
+            bitwise_and_expression {}
+            bitwise_xor_expression {}
+            bitwise_or_expression {}
+        }
+
+        logical_expression {
+            logical_and_expression {}
+            logical_xor_expression {}
+            logical_or_expression {}
+        }
+    }
+
+    ternary_conditional_expression {
+        cond: One<expression>;
+        if_true: One<expression>;
+        if_false: One<expression>;
     }
 }
 
