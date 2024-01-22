@@ -69,7 +69,7 @@ endif()
 FetchContent_Declare(func-gen
     # func-gen/v1x_and_v3x_generators
     GIT_REPOSITORY https://github.com/QuTech-Delft/func-gen.git
-    GIT_TAG "81e746f42439059a971c6737d0cc7b7d5ffee45c"
+    GIT_TAG "1bc7bd975e861449bde4f6ed82a3082e0cc754ca"
 )
 FetchContent_MakeAvailable(func-gen)
 
