@@ -74,6 +74,28 @@ private:
     [[nodiscard]] types::Type visit_variable_type(const ast::Variable &variable_ast, std::string_view type_name) const;
 
     /*
+     * Convenience function for visiting a function call given the function's name and arguments
+     */
+    values::Value visit_function_call(
+        const tree::One<ast::Identifier> &name,
+        const tree::One<ast::ExpressionList> &arguments);
+
+    /*
+     * Convenience function for visiting unary operators
+     */
+    std::any visit_unary_operator(
+        const std::string &name,
+        const tree::One<ast::Expression> &expression);
+
+    /*
+     * Convenience function for visiting binary operators
+     */
+    std::any visit_binary_operator(
+        const std::string &name,
+        const tree::One<ast::Expression> &lhs,
+        const tree::One<ast::Expression> &rhs);
+
+    /*
      * Transform an input array of values into an array of a given Type
      * Pre condition: all the values in the input array can be promoted to Type
      */

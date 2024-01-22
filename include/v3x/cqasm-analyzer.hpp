@@ -56,6 +56,11 @@ private:
     resolver::MappingTable mappings;
 
     /**
+     * The functions visible to the analyzer.
+     */
+    resolver::FunctionTable functions;
+
+    /**
      * The supported set of quantum/classical/mixed instructions,
      * appearing in the cQASM file as assembly-like commands.
      * Instructions have a case-sensitively matched name, and
@@ -70,25 +75,14 @@ public:
     explicit Analyzer(const primitives::Version &api_version = "3.0");
 
     /**
-     * Registers an initial mapping from the given name to the given value.
-     */
-    void register_mapping(const std::string &name, const values::Value &value);
-
-    /**
      * Registers mappings for pi, eu (aka e, 2.718...), tau and im (imaginary unit).
      */
     void register_default_mappings();
 
     /**
-     * Registers an instruction type.
+     * Registers a number of default functions, such as the operator functions, and the usual trigonometric functions.
      */
-    void register_instruction(const instruction::Instruction &instruction);
-
-    /**
-     * Convenience method for registering an instruction type.
-     * The arguments are passed straight to instruction::Instruction's constructor.
-     */
-    void register_instruction(const std::string &name, const std::string &param_types = "");
+    void register_default_functions();
 
     /**
      * Analyzes the given program AST node.
@@ -129,19 +123,56 @@ public:
     [[nodiscard]] values::Value resolve_mapping(const std::string &name) const;
 
     /**
-     * Adds a mapping.
+     * Registers a mapping.
      */
-    void add_mapping(const std::string &name, const values::Value &value);
+    void register_mapping(const std::string &name, const values::Value &value);
 
-        /**
-         * Resolves an instruction.
-         * Throws NameResolutionFailure if no instruction by the given name exists,
-         * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
-         * returns the resolved instruction node.
-         * Annotation data, line number information, and the condition still need to be set by the caller.
-         */
+    /**
+     * Calls a function.
+     * Throws NameResolutionFailure if no function by the given name exists,
+     * OverloadResolutionFailure if no overload of the function exists for the given arguments, or otherwise
+     * returns the value returned by the function.
+     */
+    [[nodiscard]] values::Value call_function(const std::string &name, const values::Values &args) const;
+
+    /**
+     * Registers a function, usable within expressions.
+     */
+    void register_function(
+        const std::string &name,
+        const types::Types &param_types,
+        const resolver::FunctionImpl &impl);
+
+    /**
+     * Convenience method for registering a function.
+     * The param_types are specified as a string,
+     * converted to types::Types for the other overload using types::from_spec.
+     */
+    void register_function(
+        const std::string &name,
+        const std::string &param_types,
+        const resolver::FunctionImpl &impl);
+
+    /**
+     * Resolves an instruction.
+     * Throws NameResolutionFailure if no instruction by the given name exists,
+     * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
+     * returns the resolved instruction node.
+     * Annotation data, line number information, and the condition still need to be set by the caller.
+     */
     [[nodiscard]] tree::One<semantic::Instruction> resolve_instruction(
         const std::string &name, const values::Values &args) const;
+
+    /**
+     * Registers an instruction type.
+     */
+    void register_instruction(const instruction::Instruction &instruction);
+
+    /**
+     * Convenience method for registering an instruction type.
+     * The arguments are passed straight to instruction::Instruction's constructor.
+     */
+    void register_instruction(const std::string &name, const std::string &param_types = "");
 };
 
 } // namespace cqasm::v3x::analyzer

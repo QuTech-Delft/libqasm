@@ -7,8 +7,8 @@
 #include "cqasm-tree.hpp"  // signed_size_t
 #include "cqasm-utils.hpp"
 #include "v1x/cqasm-analyzer.hpp"
-#include "v1x/cqasm-parse-helper.hpp"
 #include "v1x/cqasm-functions-gen.hpp"
+#include "v1x/cqasm-parse-helper.hpp"
 
 #include <cmath>
 #include <list>
@@ -65,9 +65,9 @@ void Analyzer::register_function(
 }
 
 /**
- * Convenience method for registering a function. The param_types are
- * specified as a string, converted to types::Types for the other overload
- * using types::from_spec.
+ * Convenience method for registering a function.
+ * The param_types are specified as a string,
+ * converted to types::Types for the other overload using types::from_spec.
  */
 void Analyzer::register_function(
     const std::string &name,
@@ -91,7 +91,7 @@ void Analyzer::register_default_functions_and_mappings() {
     register_mapping("pi", tree::make<values::ConstReal>(M_PI));
     register_mapping("eu", tree::make<values::ConstReal>(M_E));
     register_mapping("im", tree::make<values::ConstComplex>(primitives::Complex(0.0, 1.0)));
-    functions::register_into(functions);
+    cqasm::v1x::functions::register_default_functions_into(functions);
 }
 
 /**

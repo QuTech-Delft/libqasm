@@ -4,6 +4,7 @@
 
 #include "v3x/AnalyzeTreeGenAstVisitor.hpp"
 #include "v3x/cqasm-analyzer.hpp"
+#include "v3x/cqasm-functions-gen.hpp"
 #include "v3x/cqasm-parse-helper.hpp"
 
 #include <memory>  // make_unique
@@ -56,26 +57,10 @@ void Analyzer::register_default_mappings() {
 }
 
 /**
- * Registers an initial mapping from the given name to the given value.
+ * Registers a number of default functions, such as the operator functions, and the usual trigonometric functions.
  */
-void Analyzer::register_mapping(const std::string &name, const values::Value &value) {
-    mappings.add(name, value);
-}
-
-/**
- * Registers an instruction type.
- */
-void Analyzer::register_instruction(const instruction::Instruction &instruction) {
-    instruction_set.add(instruction);
-}
-
-/**
- * Convenience method for registering an instruction type. The arguments
- * are passed straight to instruction::Instruction's constructor.
- */
-void Analyzer::register_instruction(const std::string &name, const std::string &param_types) {
-
-    register_instruction(instruction::Instruction(name, param_types));
+void Analyzer::register_default_functions() {
+    cqasm::v3x::functions::register_default_functions_into(functions);
 }
 
 /**
@@ -161,10 +146,44 @@ values::Value Analyzer::resolve_mapping(const std::string &name) const {
 }
 
 /**
- * Adds a mapping.
+ * Registers a mapping.
  */
-void Analyzer::add_mapping(const std::string &name, const values::Value &value) {
+void Analyzer::register_mapping(const std::string &name, const values::Value &value) {
     mappings.add(name, value);
+}
+
+/**
+ * Calls a function.
+ * Throws NameResolutionFailure if no function by the given name exists,
+ * OverloadResolutionFailure if no overload of the function exists for the given arguments, or otherwise
+ * returns the value returned by the function.
+ */
+values::Value Analyzer::call_function(const std::string &name, const values::Values &args) const {
+    return functions.call(name, args);
+}
+
+/**
+ * Registers a function, usable within expressions.
+ */
+void Analyzer::register_function(
+    const std::string &name,
+    const types::Types &param_types,
+    const resolver::FunctionImpl &impl
+) {
+    functions.add(name, param_types, impl);
+}
+
+/**
+ * Convenience method for registering a function.
+ * The param_types are specified as a string,
+ * converted to types::Types for the other overload using types::from_spec.
+ */
+void Analyzer::register_function(
+    const std::string &name,
+    const std::string &param_types,
+    const resolver::FunctionImpl &impl
+) {
+    functions.add(name, types::from_spec(param_types), impl);
 }
 
 /**
@@ -178,6 +197,21 @@ void Analyzer::add_mapping(const std::string &name, const values::Value &value) 
     const std::string &name, const values::Values &args) const {
 
     return instruction_set.resolve(name,  args);
+}
+
+/**
+ * Registers an instruction type.
+ */
+void Analyzer::register_instruction(const instruction::Instruction &instruction) {
+    instruction_set.add(instruction);
+}
+
+/**
+ * Convenience method for registering an instruction type. The arguments
+ * are passed straight to instruction::Instruction's constructor.
+ */
+void Analyzer::register_instruction(const std::string &name, const std::string &param_types) {
+    register_instruction(instruction::Instruction(name, param_types));
 }
 
 } // namespace cqasm::v3x::analyzer

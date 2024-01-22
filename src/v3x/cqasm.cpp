@@ -52,6 +52,7 @@ analyzer::Analyzer default_analyzer(const std::string &api_version) {
     analyzer::Analyzer analyzer{ api_version };
 
     analyzer.register_default_mappings();
+    analyzer.register_default_functions();
 
     analyzer.register_instruction("cnot", "QQ");
     analyzer.register_instruction("cnot", "QV");

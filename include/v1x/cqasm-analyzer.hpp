@@ -112,13 +112,12 @@ public:
     /**
      * Registers a function, usable within expressions.
      *
-     * values::check_const() can be used in the function implementation to
-     * assert that the values must be constant when the function can only be
-     * used during constant propagation. When the function also (or only)
-     * supports dynamic evaluation, the implementation will have to check
-     * whether the inputs are const manually (for instance using
-     * `as_constant()`) to determine when to return a dynamic values::Function
-     * node instead.
+     * values::check_const() can be used in the function implementation
+     * to assert that the values must be constant when the function can only be used during constant propagation.
+     * When the function also (or only) supports dynamic evaluation,
+     * the implementation will have to check
+     * whether the inputs are const manually (for instance using `as_constant()`)
+     * to determine when to return a dynamic values::Function node instead.
      */
     void register_function(
         const std::string &name,
@@ -127,9 +126,9 @@ public:
     );
 
     /**
-     * Convenience method for registering a function. The param_types are
-     * specified as a string, converted to types::Types for the other overload
-     * using types::from_spec.
+     * Convenience method for registering a function.
+     * The param_types are specified as a string,
+     * converted to types::Types for the other overload using types::from_spec.
      */
     void register_function(
         const std::string &name,
@@ -143,9 +142,8 @@ public:
     void register_mapping(const std::string &name, const values::Value &value);
 
     /**
-     * Registers a number of default functions and mappings, such as the
-     * operator functions, the usual trigonometric functions, mappings for pi,
-     * eu (aka e, 2.718...), im (imaginary unit) and so on.
+     * Registers a number of default functions and mappings, such as the operator functions,
+     * the usual trigonometric functions, mappings for pi, eu (aka e, 2.718...), im (imaginary unit) and so on.
      */
     void register_default_functions_and_mappings();
 

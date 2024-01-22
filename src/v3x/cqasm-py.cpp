@@ -27,6 +27,7 @@ V3xAnalyzer::V3xAnalyzer(const std::string &max_version, bool without_defaults) 
     if (without_defaults) {
         analyzer = std::make_unique<v3x::analyzer::Analyzer>(max_version);
         analyzer->register_default_mappings();
+        analyzer->register_default_functions();
     } else {
         analyzer = std::make_unique<v3x::analyzer::Analyzer>(v3x::default_analyzer(max_version));
     }
