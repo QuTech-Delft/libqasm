@@ -312,6 +312,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
         -Wno-error=deprecated-declarations
         -Wno-error=restrict
         -Wno-error=sign-compare
+        -Wno-error=unused-parameter
     )
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     # CqasmParser.cpp, expressionSempred method defines _localctx parameter but does not use it
