@@ -122,7 +122,10 @@ FLOAT_TYPE: 'float';
 // Numeric literals
 BOOLEAN_LITERAL: 'true' | 'false';
 INTEGER_LITERAL: Digit+;
-FLOAT_LITERAL: Digit* '.' (Digit+([eE][-+]Digit+)?)?;  // Float literals can end with a dot
+FLOAT_LITERAL:
+    Digit* '.' Digit+([eE][-+]Digit+)?
+    | Digit* '.'  // float literals can end with a dot
+    | '.' Digit+([eE][-+]Digit+)?;  // or just start with a dot
 fragment Digit: [0-9];
 
 // Identifier
