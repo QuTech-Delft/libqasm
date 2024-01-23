@@ -3,6 +3,8 @@
 #include "v3x/BuildCustomAstVisitor.hpp"
 #include "v3x/CqasmParser.h"
 #include "v3x/CqasmParserVisitor.h"
+
+#include <antlr4-runtime.h>
 #include <any>
 
 namespace cqasm::v3x::parser { class CustomErrorListener; }
@@ -37,13 +39,12 @@ class  BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
     std::any visitFloatTypeDefinition(CqasmParser::FloatTypeDeclarationContext *context);
     std::any visitFloatTypeInitialization(CqasmParser::FloatTypeDeclarationContext *context);
 
-    template <typename RetExpressionType, typename Context, typename GetTerminalNodeFunction>
-    std::any visitBinaryExpression(Context *context, GetTerminalNodeFunction&& getTerminalNode) {
+    template <typename RetExpressionType, typename Context>
+    std::any visitBinaryExpression(Context *context, antlr4::Token *token) {
         auto ret = tree::make<RetExpressionType>(
             std::any_cast<tree::One<cqasm::v3x::ast::Expression>>(context->expression(0)->accept(this)),
             std::any_cast<tree::One<cqasm::v3x::ast::Expression>>(context->expression(1)->accept(this))
         );
-        const auto token = getTerminalNode()->getSymbol();
         setNodeAnnotation(ret, token);
         return tree::One<cqasm::v3x::ast::Expression>{ ret };
     }

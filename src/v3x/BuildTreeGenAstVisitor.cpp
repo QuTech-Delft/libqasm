@@ -358,67 +358,67 @@ std::any BuildTreeGenAstVisitor::visitPowerExpression(CqasmParser::PowerExpressi
 
 std::any BuildTreeGenAstVisitor::visitProductExpression(CqasmParser::ProductExpressionContext *context) {
     if (context->PRODUCT_OP()) {
-        return visitBinaryExpression<ProductExpression>(context, [context]() { return context->PRODUCT_OP(); });
+        return visitBinaryExpression<ProductExpression>(context, context->PRODUCT_OP()->getSymbol());
     } else if (context->DIVISION_OP()) {
-        return visitBinaryExpression<DivisionExpression>(context, [context]() { return context->DIVISION_OP(); });
+        return visitBinaryExpression<DivisionExpression>(context, context->DIVISION_OP()->getSymbol());
     }
-    return visitBinaryExpression<ModuloExpression>(context, [context]() { return context->MODULO_OP(); });
+    return visitBinaryExpression<ModuloExpression>(context, context->MODULO_OP()->getSymbol());
 }
 
 std::any BuildTreeGenAstVisitor::visitAdditionExpression(CqasmParser::AdditionExpressionContext *context) {
     if (context->PLUS()) {
-        return visitBinaryExpression<AdditionExpression>(context, [context]() { return context->PLUS(); });
+        return visitBinaryExpression<AdditionExpression>(context, context->PLUS()->getSymbol());
     }
-    return visitBinaryExpression<SubtractionExpression>(context, [context]() { return context->MINUS(); });
+    return visitBinaryExpression<SubtractionExpression>(context, context->MINUS()->getSymbol());
 }
 
 std::any BuildTreeGenAstVisitor::visitShiftExpression(CqasmParser::ShiftExpressionContext *context) {
     if (context->SHL_OP()) {
-        return visitBinaryExpression<ShiftLeftExpression>(context, [context]() { return context->SHL_OP(); });
+        return visitBinaryExpression<ShiftLeftExpression>(context, context->SHL_OP()->getSymbol());
     }
-    return visitBinaryExpression<ShiftRightExpression>(context, [context]() { return context->SHR_OP(); });
+    return visitBinaryExpression<ShiftRightExpression>(context, context->SHR_OP()->getSymbol());
 }
 
 std::any BuildTreeGenAstVisitor::visitComparisonExpression(CqasmParser::ComparisonExpressionContext *context) {
     if (context->CMP_GT_OP()) {
-        return visitBinaryExpression<CmpGtExpression>(context, [context]() { return context->CMP_GT_OP(); });
+        return visitBinaryExpression<CmpGtExpression>(context, context->CMP_GT_OP()->getSymbol());
     } else if (context->CMP_LT_OP()) {
-        return visitBinaryExpression<CmpLtExpression>(context, [context]() { return context->CMP_LT_OP(); });
+        return visitBinaryExpression<CmpLtExpression>(context, context->CMP_LT_OP()->getSymbol());
     } else if (context->CMP_GE_OP()) {
-        return visitBinaryExpression<CmpGeExpression>(context, [context]() { return context->CMP_GE_OP(); });
+        return visitBinaryExpression<CmpGeExpression>(context, context->CMP_GE_OP()->getSymbol());
     }
-    return visitBinaryExpression<CmpLeExpression>(context, [context]() { return context->CMP_LE_OP(); });
+    return visitBinaryExpression<CmpLeExpression>(context, context->CMP_LE_OP()->getSymbol());
 }
 
 std::any BuildTreeGenAstVisitor::visitEqualityExpression(CqasmParser::EqualityExpressionContext *context) {
     if (context->CMP_EQ_OP()) {
-        return visitBinaryExpression<CmpEqExpression>(context, [context]() { return context->CMP_EQ_OP(); });
+        return visitBinaryExpression<CmpEqExpression>(context, context->CMP_EQ_OP()->getSymbol());
     }
-    return visitBinaryExpression<CmpNeExpression>(context, [context]() { return context->CMP_NE_OP(); });
+    return visitBinaryExpression<CmpNeExpression>(context, context->CMP_NE_OP()->getSymbol());
 }
 
 std::any BuildTreeGenAstVisitor::visitBitwiseAndExpression(CqasmParser::BitwiseAndExpressionContext *context) {
-    return visitBinaryExpression<BitwiseAndExpression>(context, [context]() { return context->BITWISE_AND_OP(); });
+    return visitBinaryExpression<BitwiseAndExpression>(context, context->BITWISE_AND_OP()->getSymbol());
 }
 
 std::any BuildTreeGenAstVisitor::visitBitwiseXorExpression(CqasmParser::BitwiseXorExpressionContext *context) {
-    return visitBinaryExpression<BitwiseXorExpression>(context, [context]() { return context->BITWISE_XOR_OP(); });
+    return visitBinaryExpression<BitwiseXorExpression>(context, context->BITWISE_XOR_OP()->getSymbol());
 }
 
 std::any BuildTreeGenAstVisitor::visitBitwiseOrExpression(CqasmParser::BitwiseOrExpressionContext *context) {
-    return visitBinaryExpression<BitwiseOrExpression>(context, [context]() { return context->BITWISE_OR_OP(); });
+    return visitBinaryExpression<BitwiseOrExpression>(context, context->BITWISE_OR_OP()->getSymbol());
 }
 
 std::any BuildTreeGenAstVisitor::visitLogicalAndExpression(CqasmParser::LogicalAndExpressionContext *context) {
-    return visitBinaryExpression<LogicalAndExpression>(context, [context]() { return context->LOGICAL_AND_OP(); });
+    return visitBinaryExpression<LogicalAndExpression>(context, context->LOGICAL_AND_OP()->getSymbol());
 }
 
 std::any BuildTreeGenAstVisitor::visitLogicalXorExpression(CqasmParser::LogicalXorExpressionContext *context) {
-    return visitBinaryExpression<LogicalXorExpression>(context, [context]() { return context->LOGICAL_XOR_OP(); });
+    return visitBinaryExpression<LogicalXorExpression>(context, context->LOGICAL_XOR_OP()->getSymbol());
 }
 
 std::any BuildTreeGenAstVisitor::visitLogicalOrExpression(CqasmParser::LogicalOrExpressionContext *context) {
-    return visitBinaryExpression<LogicalOrExpression>(context, [context]() { return context->LOGICAL_OR_OP(); });
+    return visitBinaryExpression<LogicalOrExpression>(context, context->LOGICAL_OR_OP()->getSymbol());
 }
 
 std::any BuildTreeGenAstVisitor::visitTernaryConditionalExpression(CqasmParser::TernaryConditionalExpressionContext *context) {
