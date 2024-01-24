@@ -1,0 +1,77 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  statements: [
+    Instruction(
+      instruction: cnot(qubit array, qubit array)
+      name: cnot
+      operands: [
+        IndexRef(
+          variable --> <
+            Variable(
+              name: q
+              typ: <
+                QubitArray(
+                  size: 4
+                )
+              >
+              annotations: []
+            )
+          >
+          indices: [
+            ConstInt(
+              value: 0
+            )
+            ConstInt(
+              value: 1
+            )
+          ]
+        )
+        IndexRef(
+          variable --> <
+            Variable(
+              name: q
+              typ: <
+                QubitArray(
+                  size: 4
+                )
+              >
+              annotations: []
+            )
+          >
+          indices: [
+            ConstInt(
+              value: 3
+            )
+            ConstInt(
+              value: 2
+            )
+          ]
+        )
+      ]
+      condition: <
+        ConstBool(
+          value: 1
+        )
+      >
+      annotations: []
+    )
+  ]
+  variables: [
+    Variable(
+      name: q
+      typ: <
+        QubitArray(
+          size: 4
+        )
+      >
+      annotations: []
+    )
+  ]
+)
+

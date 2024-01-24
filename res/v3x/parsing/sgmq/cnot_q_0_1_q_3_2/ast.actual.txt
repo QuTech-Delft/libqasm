@@ -1,0 +1,102 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  statements: <
+    StatementList(
+      items: [
+        Variable( # input.cq:3:10..11
+          name: <
+            Identifier(
+              name: q
+            )
+          >
+          typ: <
+            Keyword(
+              name: qubit
+            )
+          >
+          size: <
+            IntegerLiteral(
+              value: 4
+            )
+          >
+          annotations: []
+        )
+        Instruction( # input.cq:5:1..5
+          name: <
+            Identifier(
+              name: cnot
+            )
+          >
+          condition: -
+          operands: <
+            ExpressionList(
+              items: [
+                Index( # input.cq:5:6..7
+                  expr: <
+                    Identifier(
+                      name: q
+                    )
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexItem(
+                          index: <
+                            IntegerLiteral( # input.cq:5:8..9
+                              value: 0
+                            )
+                          >
+                        )
+                        IndexItem(
+                          index: <
+                            IntegerLiteral( # input.cq:5:11..12
+                              value: 1
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
+                )
+                Index( # input.cq:5:15..16
+                  expr: <
+                    Identifier(
+                      name: q
+                    )
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexItem(
+                          index: <
+                            IntegerLiteral( # input.cq:5:17..18
+                              value: 3
+                            )
+                          >
+                        )
+                        IndexItem(
+                          index: <
+                            IntegerLiteral( # input.cq:5:20..21
+                              value: 2
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
+                )
+              ]
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+
