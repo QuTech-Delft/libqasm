@@ -38,6 +38,8 @@ public:
     std::any visit_product_expression(ast::ProductExpression &node) override;
     std::any visit_division_expression(ast::DivisionExpression &node) override;
     std::any visit_modulo_expression(ast::ModuloExpression &node) override;
+    std::any visit_addition_expression(ast::AdditionExpression &node) override;
+    std::any visit_subtraction_expression(ast::SubtractionExpression &node) override;
     std::any visit_shift_left_expression(ast::ShiftLeftExpression &node) override;
     std::any visit_shift_right_expression(ast::ShiftRightExpression &node) override;
     std::any visit_cmp_gt_expression(ast::CmpGtExpression &node) override;

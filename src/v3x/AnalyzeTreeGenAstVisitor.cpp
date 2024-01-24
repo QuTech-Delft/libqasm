@@ -463,6 +463,14 @@ std::any AnalyzeTreeGenAstVisitor::visit_modulo_expression(ast::ModuloExpression
     return visit_binary_operator("%", node.lhs, node.rhs);
 }
 
+std::any AnalyzeTreeGenAstVisitor::visit_addition_expression(ast::AdditionExpression &node) {
+    return visit_binary_operator("+", node.lhs, node.rhs);
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_subtraction_expression(ast::SubtractionExpression &node) {
+    return visit_binary_operator("-", node.lhs, node.rhs);
+}
+
 std::any AnalyzeTreeGenAstVisitor::visit_shift_left_expression(ast::ShiftLeftExpression &node) {
     return visit_binary_operator("<<", node.lhs, node.rhs);
 }
