@@ -67,9 +67,9 @@ endif()
 # This file would otherwise be extremely repetitive and annoying to maintain due to the amount of overloads.
 # This exposes the generate_funcs() function, which should be called once with the header and source file paths.
 FetchContent_Declare(func-gen
-    # func-gen/v1x_and_v3x_generators
+    # func-gen 0.1.2
     GIT_REPOSITORY https://github.com/QuTech-Delft/func-gen.git
-    GIT_TAG "2b5052e69391f72a4ffca2e13f64dd08bb80cc14"
+    GIT_TAG "67b93a83671d015abaed4b3746f380b64bdb4243"
 )
 FetchContent_MakeAvailable(func-gen)
 
