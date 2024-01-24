@@ -123,10 +123,11 @@ FLOAT_TYPE: 'float';
 BOOLEAN_LITERAL: 'true' | 'false';
 INTEGER_LITERAL: Digit+;
 FLOAT_LITERAL:
-    Digit* '.' Digit+([eE][-+]Digit+)?
-    | Digit* '.'  // float literals can end with a dot
-    | '.' Digit+([eE][-+]Digit+)?;  // or just start with a dot
+    Digit+ '.' Digit+ Exponent?
+    | Digit+ '.' Exponent?  // float literals can end with a dot
+    | '.' Digit+ Exponent?;  // or just start with a dot
 fragment Digit: [0-9];
+fragment Exponent: [eE][-+]?Digit+;
 
 // Identifier
 IDENTIFIER: Letter (Letter | Digit)*;
