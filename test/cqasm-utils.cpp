@@ -51,7 +51,7 @@ TEST(to_json, v1x_analyzer_errors) {
     auto semantic_ast_result = cqasm::v1x::default_analyzer().analyze_file(input_file_path.generic_string());
     auto json_result = to_json(semantic_ast_result);
     auto expected_json_result = std::string{
-        R"delim({"errors":["Error at res/v1x/parsing/misc/wait_not_ok_1/input.cq:4:1..7: failed to resolve overload for wait with argument pack (int)"]})delim"
+        R"delim({"errors":["Error at res/v1x/parsing/misc/wait_not_ok_1/input.cq:4:1..7: failed to resolve overload for 'wait' with argument pack (int)"]})delim"
     };
     EXPECT_EQ(json_result, expected_json_result);
 }

@@ -49,7 +49,7 @@ struct OverloadedNameResolver : public cqasm::overload::OverloadedNameResolver<T
             throw NameResolutionFailure{ "failed to resolve " + name };
         } catch (const cqasm::overload::OverloadResolutionFailure &) {
             throw OverloadResolutionFailure{
-                fmt::format("failed to resolve overload for {} with argument pack {}",
+                fmt::format("failed to resolve overload for '{}' with argument pack {}",
                     name, values::types_of(args)) };
         }
     }

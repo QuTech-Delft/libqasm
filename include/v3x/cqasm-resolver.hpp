@@ -46,10 +46,10 @@ struct OverloadedNameResolver : public cqasm::overload::OverloadedNameResolver<T
         try {
             return cqasm::overload::OverloadedNameResolver<T, types::TypeBase, values::Node>::resolve(name, args);
         } catch (const cqasm::overload::NameResolutionFailure &) {
-            throw NameResolutionFailure{ fmt::format("failed to resolve instruction '{}'", name) };
+            throw NameResolutionFailure{ fmt::format("failed to resolve '{}'", name) };
         } catch (const cqasm::overload::OverloadResolutionFailure &) {
             throw OverloadResolutionFailure{
-                fmt::format("failed to resolve overload for {} with argument pack {}",
+                fmt::format("failed to resolve overload for '{}' with argument pack {}",
                     name, values::types_of(args)) };
         }
     }
