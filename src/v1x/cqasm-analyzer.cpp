@@ -7,7 +7,7 @@
 #include "cqasm-tree.hpp"  // signed_size_t
 #include "cqasm-utils.hpp"
 #include "v1x/cqasm-analyzer.hpp"
-#include "v1x/cqasm-functions-gen.hpp"
+#include "v1x/cqasm-functions.hpp"
 #include "v1x/cqasm-parse-helper.hpp"
 
 #include <cmath>

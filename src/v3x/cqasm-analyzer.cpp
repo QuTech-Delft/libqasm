@@ -4,7 +4,7 @@
 
 #include "v3x/AnalyzeTreeGenAstVisitor.hpp"
 #include "v3x/cqasm-analyzer.hpp"
-#include "v3x/cqasm-functions-gen.hpp"
+#include "v3x/cqasm-functions.hpp"
 #include "v3x/cqasm-parse-helper.hpp"
 
 #include <memory>  // make_unique

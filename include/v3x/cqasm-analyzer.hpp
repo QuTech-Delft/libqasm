@@ -75,31 +75,36 @@ public:
     explicit Analyzer(const primitives::Version &api_version = "3.0");
 
     /**
+     * Destroys a semantic analyzer.
+     */
+     virtual ~Analyzer() = default;
+
+    /**
      * Registers mappings for pi, eu (aka e, 2.718...), tau and im (imaginary unit).
      */
-    void register_default_mappings();
+    virtual void register_default_mappings();
 
     /**
      * Registers a number of default functions, such as the operator functions, and the usual trigonometric functions.
      */
-    void register_default_functions();
+    virtual void register_default_functions();
 
     /**
      * Analyzes the given program AST node.
      */
-    [[nodiscard]] AnalysisResult analyze(ast::Program &program);
+    [[nodiscard]] virtual AnalysisResult analyze(ast::Program &program);
 
     /**
      * Analyzes the given parse result.
      * If there are parse errors, they are copied into the AnalysisResult error list, and
      * the root node will be empty.
      */
-    [[nodiscard]] AnalysisResult analyze(const parser::ParseResult &parse_result);
+    [[nodiscard]] virtual AnalysisResult analyze(const parser::ParseResult &parse_result);
 
     /**
      * Parses and analyzes using the given version and parser closures.
      */
-    [[nodiscard]] AnalysisResult analyze(
+    [[nodiscard]] virtual AnalysisResult analyze(
         const std::function<version::Version()> &version_parser,
         const std::function<parser::ParseResult()> &parser
     );
@@ -107,25 +112,25 @@ public:
     /**
      * Parses and analyzes the given file.
      */
-    [[nodiscard]] AnalysisResult analyze_file(const std::string &filename);
+    [[nodiscard]] virtual AnalysisResult analyze_file(const std::string &filename);
 
     /**
      * Parses and analyzes the given string.
      * The optional filename argument will be used only for error messages.
      */
-    [[nodiscard]] AnalysisResult analyze_string(
+    [[nodiscard]] virtual AnalysisResult analyze_string(
         const std::string &data, const std::string &filename = "<unknown>");
 
     /**
      * Resolves a mapping.
      * Throws NameResolutionFailure if no mapping by the given name exists.
      */
-    [[nodiscard]] values::Value resolve_mapping(const std::string &name) const;
+    [[nodiscard]] virtual values::Value resolve_mapping(const std::string &name) const;
 
     /**
      * Registers a mapping.
      */
-    void register_mapping(const std::string &name, const values::Value &value);
+    virtual void register_mapping(const std::string &name, const values::Value &value);
 
     /**
      * Calls a function.
@@ -133,12 +138,12 @@ public:
      * OverloadResolutionFailure if no overload of the function exists for the given arguments, or otherwise
      * returns the value returned by the function.
      */
-    [[nodiscard]] values::Value call_function(const std::string &name, const values::Values &args) const;
+    [[nodiscard]] virtual values::Value call_function(const std::string &name, const values::Values &args) const;
 
     /**
      * Registers a function, usable within expressions.
      */
-    void register_function(
+    virtual void register_function(
         const std::string &name,
         const types::Types &param_types,
         const resolver::FunctionImpl &impl);
@@ -148,7 +153,7 @@ public:
      * The param_types are specified as a string,
      * converted to types::Types for the other overload using types::from_spec.
      */
-    void register_function(
+    virtual void register_function(
         const std::string &name,
         const std::string &param_types,
         const resolver::FunctionImpl &impl);
@@ -160,19 +165,19 @@ public:
      * returns the resolved instruction node.
      * Annotation data, line number information, and the condition still need to be set by the caller.
      */
-    [[nodiscard]] tree::One<semantic::Instruction> resolve_instruction(
+    [[nodiscard]] virtual tree::One<semantic::Instruction> resolve_instruction(
         const std::string &name, const values::Values &args) const;
 
     /**
      * Registers an instruction type.
      */
-    void register_instruction(const instruction::Instruction &instruction);
+    virtual void register_instruction(const instruction::Instruction &instruction);
 
     /**
      * Convenience method for registering an instruction type.
      * The arguments are passed straight to instruction::Instruction's constructor.
      */
-    void register_instruction(const std::string &name, const std::string &param_types = "");
+    virtual void register_instruction(const std::string &name, const std::string &param_types = "");
 };
 
 } // namespace cqasm::v3x::analyzer

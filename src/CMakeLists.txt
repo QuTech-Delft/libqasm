@@ -62,17 +62,6 @@ if(NOT range-v3_FOUND)
     FetchContent_MakeAvailable(range-v3)
 endif()
 
-# func-gen, a simple program that generates the function that
-# registers all default functions (operators, trigonometry, etc) with a resolver::FunctionTable object.
-# This file would otherwise be extremely repetitive and annoying to maintain due to the amount of overloads.
-# This exposes the generate_funcs() function, which should be called once with the header and source file paths.
-FetchContent_Declare(func-gen
-    # func-gen 0.1.4
-    GIT_REPOSITORY https://github.com/QuTech-Delft/func-gen.git
-    GIT_TAG "8b3579893a9ef7e66c05e305ca91597e39571cf6"
-)
-FetchContent_MakeAvailable(func-gen)
-
 # tree-gen, a custom utility to generate classes for typed tree-like structures and enums with variants containing data.
 # This exposes the generate_tree() function.
 FetchContent_Declare(tree-gen
@@ -185,14 +174,6 @@ generate_tree_py(
 )
 list(APPEND CQASM_V1X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-semantic-gen.cpp")
 
-# Generate the cQASM default function set.
-generate_funcs(
-    "${CMAKE_CURRENT_BINARY_DIR}/../include/v1x/cqasm-functions-gen.hpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-functions-gen.cpp"
-    "v1x"
-)
-list(APPEND CQASM_V1X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-functions-gen.cpp")
-
 #-------------------------------------------------------------------------------
 # cQASM v3.x parser generation and inclusion
 #-------------------------------------------------------------------------------
@@ -257,14 +238,6 @@ generate_tree_py(
     "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/cqasm-semantic-gen.py"
 )
 list(APPEND CQASM_V3X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-semantic-gen.cpp")
-
-# Generate the cQASM default function set.
-generate_funcs(
-    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x/cqasm-functions-gen.hpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-functions-gen.cpp"
-    "v3x"
-)
-list(APPEND CQASM_V3X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-functions-gen.cpp")
 
 #-------------------------------------------------------------------------------
 # Compilation instructions
