@@ -6,30 +6,36 @@ namespace values = cqasm::v3x::values;
 
 
 /*
- * Convenience function for invoking unary and binary operators, and functions:
+ * Convenience function templates for invoking operators and functions:
  *
  * - F is the operator or function being invoked.
- *   FRT is the return type of F, and
+ *   FReturnType is the return type of F, and
  *   FParamsType is the type of the parameters of F.
- * - The caller to invoke uses simple types as Params, e.g., doubles 2.0 and 2.0 for testing op_eq_rr, and
- *   receives a simple type as RT, e.g., a Bool when testing op_eq_rr.
+ * - The caller uses simple types as ParamsType, e.g., doubles 2.0 and 2.0 for testing op_eq_rr, and
+ *   receives a simple type as ReturnType, e.g., a Bool when testing op_eq_rr.
  */
-template <typename RT, typename FRT, typename FParamsType, auto F, typename... Params>
-RT invoke(Params... ps) {
-    auto values = values::Values{{ cqasm::tree::make<FParamsType>(ps)... }};
+
+template <typename ReturnType, typename FReturnType, typename FParamType, auto F, typename ParamType>
+ReturnType invoke_unary(ParamType p) {
+    auto values = values::Values{{ cqasm::tree::make<FParamType>(p) }};
     auto ret = F(values);
-    return dynamic_cast<FRT&>(*ret).value;
+    return dynamic_cast<FReturnType&>(*ret).value;
 }
 
-/*
- * Convenience function for invoking ternary operators:
- *
- * - The first parameter, p, is the condition
- *   Which always translates to a ConstBool value
- */
-template <typename RT, typename FRT, typename FParamsType, auto F, typename... Params>
-RT invoke_ternary(bool p, Params... ps) {
-    auto values = values::Values{{ cqasm::tree::make<values::ConstBool>(p), cqasm::tree::make<FParamsType>(ps)... }};
+template <typename ReturnType, typename FReturnType, typename FParamsType, auto F, typename ParamsType>
+ReturnType invoke_binary(ParamsType a, ParamsType b) {
+    auto values = values::Values{{ cqasm::tree::make<FParamsType>(a), cqasm::tree::make<FParamsType>(b) }};
     auto ret = F(values);
-    return dynamic_cast<FRT&>(*ret).value;
+    return dynamic_cast<FReturnType&>(*ret).value;
+}
+
+template <typename ReturnType, typename FReturnType, typename FParamsType, auto F, typename ParamsType>
+ReturnType invoke_ternary(bool condition, ParamsType if_true, ParamsType if_false) {
+    auto values = values::Values{{
+        cqasm::tree::make<values::ConstBool>(condition),
+        cqasm::tree::make<FParamsType>(if_true),
+        cqasm::tree::make<FParamsType>(if_false)
+    }};
+    auto ret = F(values);
+    return dynamic_cast<FReturnType&>(*ret).value;
 }
