@@ -1,12 +1,14 @@
 #pragma once
 
+#include "v1x/cqasm-primitives.hpp"
+#include "v1x/cqasm-resolver.hpp"
+
 #include <cmath>
 #include <complex>
-#include <cstdint>  // int64_t
+#include <cstdint>
 #include <string>
 
-
-#include "v1x/cqasm-resolver.hpp"
+namespace primitives = cqasm::v1x::primitives;
 
 
 namespace cqasm::v1x::functions {

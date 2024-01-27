@@ -1,10 +1,13 @@
 #pragma once
 
+#include "v3x/cqasm-primitives.hpp"
 #include "v3x/cqasm-resolver.hpp"
 
-#include <cmath>  // sqrt
+#include <cmath>
 #include <functional>
-#include <numeric>  // pow
+#include <numeric>
+
+namespace primitives = cqasm::v3x::primitives;
 
 
 /*
@@ -63,6 +66,7 @@ values::Value tf_cps(const values::Values &vs) {
 
 constexpr auto op_neg_r = uf_cp<values::ConstReal, values::ConstReal, std::negate{}>;
 constexpr auto op_neg_i = uf_cp<values::ConstInt, values::ConstInt, std::negate{}>;
+
 constexpr auto op_add_rr = bf_cps<values::ConstReal, values::ConstReal, std::plus{}>;
 constexpr auto op_add_ii = bf_cps<values::ConstInt, values::ConstInt, std::plus{}>;
 constexpr auto op_sub_rr = bf_cps<values::ConstReal, values::ConstReal, std::minus{}>;
