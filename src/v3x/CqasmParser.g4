@@ -47,7 +47,7 @@ expression:
     | <assoc=right> (PLUS | MINUS) expression  # unaryPlusMinusExpression
     | <assoc=right> BITWISE_NOT_OP expression  # bitwiseNotExpression
     | <assoc=right> LOGICAL_NOT_OP expression  # logicalNotExpression
-    | <assoc=right> POWER_OP expression  # powerExpression
+    | <assoc=right> expression POWER_OP expression  # powerExpression
     | expression (PRODUCT_OP | DIVISION_OP | MODULO_OP) expression  # productExpression
     | expression (PLUS | MINUS) expression  # additionExpression
     | expression (SHL_OP | SHR_OP) expression  # shiftExpression

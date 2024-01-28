@@ -350,10 +350,7 @@ std::any BuildTreeGenAstVisitor::visitLogicalNotExpression(CqasmParser::LogicalN
 }
 
 std::any BuildTreeGenAstVisitor::visitPowerExpression(CqasmParser::PowerExpressionContext *context) {
-    auto ret = tree::make<PowerExpression>(std::any_cast<One<Expression>>(context->expression()->accept(this)));
-    const auto token = context->POWER_OP()->getSymbol();
-    setNodeAnnotation(ret, token);
-    return One<Expression>{ ret };
+    return visitBinaryExpression<PowerExpression>(context, context->POWER_OP()->getSymbol());
 }
 
 std::any BuildTreeGenAstVisitor::visitProductExpression(CqasmParser::ProductExpressionContext *context) {
