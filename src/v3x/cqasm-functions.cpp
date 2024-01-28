@@ -17,7 +17,7 @@ void register_default_functions_into(resolver::FunctionTable &table) {
     table.add("operator*", types::from_spec("rr"), op_mul_rr);
     table.add("operator*", types::from_spec("ii"), op_mul_ii);
     table.add("operator/", types::from_spec("rr"), op_div_rr);
-    table.add("operator/", types::from_spec("rr"), op_div_ii);
+    table.add("operator/", types::from_spec("ii"), op_div_ii);
     table.add("operator%", types::from_spec("ii"), op_mod_ii);
 
     table.add("operator**", types::from_spec("rr"), op_pow_rr);
