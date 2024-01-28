@@ -1,0 +1,66 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  statements: <
+    StatementList(
+      items: [
+        Initialization( # input.cq:3:7..8
+          var: <
+            Variable( # input.cq:3:5..6
+              name: <
+                Identifier(
+                  name: i
+                )
+              >
+              typ: <
+                Keyword(
+                  name: int
+                )
+              >
+              size: -
+              annotations: []
+            )
+          >
+          rhs: <
+            BitwiseOrExpression( # input.cq:3:11..12
+              lhs: <
+                IntegerLiteral( # input.cq:3:9..10
+                  value: 1
+                )
+              >
+              rhs: <
+                BitwiseXorExpression( # input.cq:3:15..16
+                  lhs: <
+                    IntegerLiteral( # input.cq:3:13..14
+                      value: 2
+                    )
+                  >
+                  rhs: <
+                    BitwiseAndExpression( # input.cq:3:19..20
+                      lhs: <
+                        IntegerLiteral( # input.cq:3:17..18
+                          value: 3
+                        )
+                      >
+                      rhs: <
+                        IntegerLiteral( # input.cq:3:21..22
+                          value: 2
+                        )
+                      >
+                    )
+                  >
+                )
+              >
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

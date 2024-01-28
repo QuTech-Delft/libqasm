@@ -1,0 +1,88 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  statements: <
+    StatementList(
+      items: [
+        Initialization( # input.cq:3:9..10
+          var: <
+            Variable( # input.cq:3:7..8
+              name: <
+                Identifier(
+                  name: f
+                )
+              >
+              typ: <
+                Keyword(
+                  name: float
+                )
+              >
+              size: -
+              annotations: []
+            )
+          >
+          rhs: <
+            SubtractionExpression( # input.cq:3:27..28
+              lhs: <
+                ProductExpression( # input.cq:3:22..23
+                  lhs: <
+                    DivisionExpression( # input.cq:3:13..14
+                      lhs: <
+                        IntegerLiteral( # input.cq:3:11..12
+                          value: 1
+                        )
+                      >
+                      rhs: <
+                        PowerExpression( # input.cq:3:17..19
+                          lhs: <
+                            IntegerLiteral( # input.cq:3:15..16
+                              value: 2
+                            )
+                          >
+                          rhs: <
+                            IntegerLiteral( # input.cq:3:20..21
+                              value: 3
+                            )
+                          >
+                        )
+                      >
+                    )
+                  >
+                  rhs: <
+                    UnaryMinusExpression( # input.cq:3:24..25
+                      expr: <
+                        IntegerLiteral( # input.cq:3:25..26
+                          value: 4
+                        )
+                      >
+                    )
+                  >
+                )
+              >
+              rhs: <
+                ProductExpression( # input.cq:3:31..32
+                  lhs: <
+                    IntegerLiteral( # input.cq:3:29..30
+                      value: 5
+                    )
+                  >
+                  rhs: <
+                    IntegerLiteral( # input.cq:3:33..34
+                      value: 6
+                    )
+                  >
+                )
+              >
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+
