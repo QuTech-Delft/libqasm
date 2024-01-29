@@ -1,4 +1,5 @@
 #include "matcher_values.hpp"
+#include "v3x/cqasm-semantic-gen.hpp"
 
 #include <algorithm>  // equal
 #include <gmock/gmock.h>
