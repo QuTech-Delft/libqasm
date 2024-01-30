@@ -17,8 +17,8 @@ namespace values = cqasm::v3x::values;
 
 template <auto F, typename ParamType>
 auto invoke_unary(ParamType p) {
-    using FReturnType = decltype(F)::return_type;
-    using FParamType = decltype(F)::param_type;
+    using FReturnType = typename decltype(F)::return_type;
+    using FParamType = typename decltype(F)::param_type;
 
     auto values = values::Values{{ cqasm::tree::make<FParamType>(p) }};
     auto ret = F(values);
@@ -27,8 +27,8 @@ auto invoke_unary(ParamType p) {
 
 template <auto F, typename ParamsType>
 auto invoke_binary(ParamsType a, ParamsType b) {
-    using FReturnType = decltype(F)::return_type;
-    using FParamType = decltype(F)::param_type;
+    using FReturnType = typename decltype(F)::return_type;
+    using FParamType = typename decltype(F)::param_type;
 
     auto values = values::Values{{ cqasm::tree::make<FParamType>(a), cqasm::tree::make<FParamType>(b) }};
     auto ret = F(values);
@@ -37,8 +37,8 @@ auto invoke_binary(ParamsType a, ParamsType b) {
 
 template <auto F, typename ParamsType>
 auto invoke_ternary(bool condition, ParamsType if_true, ParamsType if_false) {
-    using FReturnType = decltype(F)::return_type;
-    using FParamType = decltype(F)::param_type;
+    using FReturnType = typename decltype(F)::return_type;
+    using FParamType = typename decltype(F)::param_type;
 
     auto values = values::Values{{
         cqasm::tree::make<values::ConstBool>(condition),
