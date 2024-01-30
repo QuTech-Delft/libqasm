@@ -6,6 +6,7 @@
 #include <cmath>
 #include <complex>
 #include <cstdint>
+#include <functional>
 #include <string>
 
 namespace primitives = cqasm::v1x::primitives;
@@ -79,7 +80,7 @@ template <typename ParamType, auto F>
 struct tf_cp : public f_cp<ParamType, ParamType, F> {
     values::Value operator()(const values::Values &vs) const {
         values::check_const(vs);
-        auto condition = dynamic_cast<values::ConstBool&>(*vs[0]).value; 
+        auto condition = vs[0]->as_const_bool()->value;
         auto if_true = dynamic_cast<ParamType&>(*vs[1]).value;
         auto if_false = dynamic_cast<ParamType&>(*vs[2]).value;
         return tree::make<ParamType>(F(condition, if_true, if_false));
