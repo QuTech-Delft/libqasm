@@ -41,7 +41,7 @@ template <typename ReturnType, typename ParamType, auto F>
 struct uf_cp : public f_cp<ReturnType, ParamType, F> {
     values::Value operator()(const values::Values &vs) const {
         values::check_const(vs);
-        auto arg = dynamic_cast<ParamType&>(*vs[0]).value;
+        auto arg = vs[0].as<ParamType>()->value;
         return tree::make<ReturnType>(F(arg));
     }
 };
@@ -53,8 +53,8 @@ template <typename ReturnType, typename ParamType, auto F>
 struct bf_cp : public f_cp<ReturnType, ParamType, F> {
     values::Value operator()(const values::Values &vs) const {
         values::check_const(vs);
-        auto a = dynamic_cast<ParamType&>(*vs[0]).value;
-        auto b = dynamic_cast<ParamType&>(*vs[1]).value;
+        auto a = vs[0].as<ParamType>()->value;
+        auto b = vs[1].as<ParamType>()->value;
         return tree::make<ReturnType>(F(a, b));
     }
 };
@@ -67,8 +67,8 @@ struct tf_cp : public f_cp<ParamType, ParamType, F> {
     values::Value operator()(const values::Values &vs) const {
         values::check_const(vs);
         auto condition = vs[0]->as_const_bool()->value;
-        auto if_true = dynamic_cast<ParamType&>(*vs[1]).value;
-        auto if_false = dynamic_cast<ParamType&>(*vs[2]).value;
+        auto if_true = vs[1].as<ParamType>()->value;
+        auto if_false = vs[2].as<ParamType>()->value;
         return tree::make<ParamType>(F(condition, if_true, if_false));
     }
 };

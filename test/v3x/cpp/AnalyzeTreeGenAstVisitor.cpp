@@ -29,7 +29,7 @@ TEST(visit_function_call, analyzer_call_function_returns_a_non_empty_value) {
     auto arguments = cqasm::tree::make<ast::ExpressionList>(cqasm::tree::Any<ast::Expression>{});
     auto function_call = ast::FunctionCall{ name, arguments };
     auto ret = std::any_cast<values::Value>(visitor.visit_function_call(function_call));
-    EXPECT_EQ(ret->as_const_real()->value, function_return_value->as_const_real()->value);
+    EXPECT_TRUE(ret.equals(function_return_value));
 }
 
 TEST(visit_function_call, analyzer_call_function_returns_an_empty_value) {
