@@ -46,10 +46,10 @@ struct OverloadedNameResolver : public cqasm::overload::OverloadedNameResolver<T
         try {
             return cqasm::overload::OverloadedNameResolver<T, types::TypeBase, values::Node>::resolve(name, args);
         } catch (const cqasm::overload::NameResolutionFailure &) {
-            throw NameResolutionFailure{ fmt::format("failed to resolve instruction '{}'", name) };
+            throw NameResolutionFailure{ fmt::format("failed to resolve '{}'", name) };
         } catch (const cqasm::overload::OverloadResolutionFailure &) {
             throw OverloadResolutionFailure{
-                fmt::format("failed to resolve overload for {} with argument pack {}",
+                fmt::format("failed to resolve overload for '{}' with argument pack {}",
                     name, values::types_of(args)) };
         }
     }
@@ -77,6 +77,48 @@ public:
      * Grants read access to the underlying map.
      */
     const std::unordered_map<std::string, values::Value> &get_table() const;
+};
+
+/**
+ * C++ function representing (one of the overloads of) a function usable in cQASM constant expressions.
+ */
+using FunctionImpl = std::function<values::Value(const values::Values&)>;
+
+/**
+ * Table of all overloads of all constant propagation functions.
+ */
+class FunctionTable {
+    std::unique_ptr<OverloadedNameResolver<FunctionImpl>> resolver;
+
+public:
+    FunctionTable();
+    ~FunctionTable();
+    FunctionTable(const FunctionTable& t);
+    FunctionTable(FunctionTable&& t) noexcept;
+    FunctionTable& operator=(const FunctionTable& t);
+    FunctionTable& operator=(FunctionTable&& t) noexcept;
+
+    /**
+     * Registers a function.
+     * Matching will be done case-sensitively.
+     * The param_types variadic specifies the amount and types of the parameters that
+     * (this particular overload of) the function expects.
+     * The C++ implementation of the function can assume that
+     * the value list it gets is of the right size and the values are of the right types.
+     *
+     * This method does not contain any intelligence to override previously added overloads.
+     * However, the overload resolution engine will always use the last applicable overload it finds,
+     * so adding does have the effect of overriding.
+     */
+    void add(const std::string &name, const types::Types &param_types, const FunctionImpl &impl);
+
+    /**
+     * Calls a function.
+     * Throws NameResolutionFailure if no function by the given name exists,
+     * OverloadResolutionFailure if no overload of the function exists for the given arguments, or otherwise
+     * returns the value returned by the function.
+     */
+    [[nodiscard]] values::Value call(const std::string &name, const values::Values &args) const;
 };
 
 /**

@@ -69,7 +69,7 @@ class LibqasmConan(ConanFile):
             self.requires("gtest/1.14.0")
 
     def requirements(self):
-        self.requires("antlr4-cppruntime/4.13.0")
+        self.requires("antlr4-cppruntime/4.13.1")
 
     def config_options(self):
         if self.settings.os == "Windows":

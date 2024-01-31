@@ -56,6 +56,11 @@ private:
     resolver::MappingTable mappings;
 
     /**
+     * The functions visible to the analyzer.
+     */
+    resolver::FunctionTable functions;
+
+    /**
      * The supported set of quantum/classical/mixed instructions,
      * appearing in the cQASM file as assembly-like commands.
      * Instructions have a case-sensitively matched name, and
@@ -70,42 +75,36 @@ public:
     explicit Analyzer(const primitives::Version &api_version = "3.0");
 
     /**
-     * Registers an initial mapping from the given name to the given value.
+     * Destroys a semantic analyzer.
      */
-    void register_mapping(const std::string &name, const values::Value &value);
+     virtual ~Analyzer() = default;
 
     /**
      * Registers mappings for pi, eu (aka e, 2.718...), tau and im (imaginary unit).
      */
-    void register_default_mappings();
+    virtual void register_default_mappings();
 
     /**
-     * Registers an instruction type.
+     * Registers a number of default functions, such as the operator functions, and the usual trigonometric functions.
      */
-    void register_instruction(const instruction::Instruction &instruction);
-
-    /**
-     * Convenience method for registering an instruction type.
-     * The arguments are passed straight to instruction::Instruction's constructor.
-     */
-    void register_instruction(const std::string &name, const std::string &param_types = "");
+    virtual void register_default_functions();
 
     /**
      * Analyzes the given program AST node.
      */
-    [[nodiscard]] AnalysisResult analyze(ast::Program &program);
+    [[nodiscard]] virtual AnalysisResult analyze(ast::Program &program);
 
     /**
      * Analyzes the given parse result.
      * If there are parse errors, they are copied into the AnalysisResult error list, and
      * the root node will be empty.
      */
-    [[nodiscard]] AnalysisResult analyze(const parser::ParseResult &parse_result);
+    [[nodiscard]] virtual AnalysisResult analyze(const parser::ParseResult &parse_result);
 
     /**
      * Parses and analyzes using the given version and parser closures.
      */
-    [[nodiscard]] AnalysisResult analyze(
+    [[nodiscard]] virtual AnalysisResult analyze(
         const std::function<version::Version()> &version_parser,
         const std::function<parser::ParseResult()> &parser
     );
@@ -113,35 +112,72 @@ public:
     /**
      * Parses and analyzes the given file.
      */
-    [[nodiscard]] AnalysisResult analyze_file(const std::string &filename);
+    [[nodiscard]] virtual AnalysisResult analyze_file(const std::string &filename);
 
     /**
      * Parses and analyzes the given string.
      * The optional filename argument will be used only for error messages.
      */
-    [[nodiscard]] AnalysisResult analyze_string(
+    [[nodiscard]] virtual AnalysisResult analyze_string(
         const std::string &data, const std::string &filename = "<unknown>");
 
     /**
      * Resolves a mapping.
      * Throws NameResolutionFailure if no mapping by the given name exists.
      */
-    [[nodiscard]] values::Value resolve_mapping(const std::string &name) const;
+    [[nodiscard]] virtual values::Value resolve_mapping(const std::string &name) const;
 
     /**
-     * Adds a mapping.
+     * Registers a mapping.
      */
-    void add_mapping(const std::string &name, const values::Value &value);
+    virtual void register_mapping(const std::string &name, const values::Value &value);
 
-        /**
-         * Resolves an instruction.
-         * Throws NameResolutionFailure if no instruction by the given name exists,
-         * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
-         * returns the resolved instruction node.
-         * Annotation data, line number information, and the condition still need to be set by the caller.
-         */
-    [[nodiscard]] tree::One<semantic::Instruction> resolve_instruction(
+    /**
+     * Calls a function.
+     * Throws NameResolutionFailure if no function by the given name exists,
+     * OverloadResolutionFailure if no overload of the function exists for the given arguments, or otherwise
+     * returns the value returned by the function.
+     */
+    [[nodiscard]] virtual values::Value call_function(const std::string &name, const values::Values &args) const;
+
+    /**
+     * Registers a function, usable within expressions.
+     */
+    virtual void register_function(
+        const std::string &name,
+        const types::Types &param_types,
+        const resolver::FunctionImpl &impl);
+
+    /**
+     * Convenience method for registering a function.
+     * The param_types are specified as a string,
+     * converted to types::Types for the other overload using types::from_spec.
+     */
+    virtual void register_function(
+        const std::string &name,
+        const std::string &param_types,
+        const resolver::FunctionImpl &impl);
+
+    /**
+     * Resolves an instruction.
+     * Throws NameResolutionFailure if no instruction by the given name exists,
+     * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
+     * returns the resolved instruction node.
+     * Annotation data, line number information, and the condition still need to be set by the caller.
+     */
+    [[nodiscard]] virtual tree::One<semantic::Instruction> resolve_instruction(
         const std::string &name, const values::Values &args) const;
+
+    /**
+     * Registers an instruction type.
+     */
+    virtual void register_instruction(const instruction::Instruction &instruction);
+
+    /**
+     * Convenience method for registering an instruction type.
+     * The arguments are passed straight to instruction::Instruction's constructor.
+     */
+    virtual void register_instruction(const std::string &name, const std::string &param_types = "");
 };
 
 } // namespace cqasm::v3x::analyzer

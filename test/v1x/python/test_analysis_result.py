@@ -9,7 +9,7 @@ class TestAnalysisResult(unittest.TestCase):
         program_str = "version 1.0; qubits 2; wait 1"
         v1x_analyzer = cq.Analyzer()
         actual_errors_json = v1x_analyzer.analyze_string_to_json(program_str)
-        expected_errors_json = '''{"errors":["Error at <unknown>:1:24..30: failed to resolve overload for wait with argument pack (int)"]}'''
+        expected_errors_json = '''{"errors":["Error at <unknown>:1:24..30: failed to resolve overload for 'wait' with argument pack (int)"]}'''
         self.assertEqual(actual_errors_json, expected_errors_json)
 
     def test_to_json_with_analyzer_ast(self):

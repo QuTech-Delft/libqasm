@@ -1,2 +1,2 @@
 ERROR
-input.cq:3:12: mismatched input ';' expecting {'[', '{', BOOLEAN_LITERAL, INTEGER_LITERAL, FLOAT_LITERAL, IDENTIFIER}
+input.cq:3:12: mismatched input ';' expecting {'[', '{', '(', '+', '-', '~', '!', BOOLEAN_LITERAL, INTEGER_LITERAL, FLOAT_LITERAL, IDENTIFIER}
