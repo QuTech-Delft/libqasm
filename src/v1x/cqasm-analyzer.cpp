@@ -516,7 +516,7 @@ AnalysisResult Analyzer::analyze(
             return result;
         }
     } catch (error::AnalysisError &e) {
-        result.errors.push_back(e.get_message());
+        result.errors.push_back(e.what());
         return result;
     }
     return analyze(parser());
@@ -607,7 +607,7 @@ AnalyzerHelper::AnalyzerHelper(
                     }
                 } catch (error::AnalysisError &e) {
                     e.context(*subcircuit);
-                    result.errors.push_back(e.get_message());
+                    result.errors.push_back(e.what());
                 }
             }
 
@@ -623,7 +623,7 @@ AnalyzerHelper::AnalyzerHelper(
                     it.first->target = it2->second;
                 } catch (error::AnalysisError &e) {
                     e.context(*it.first);
-                    result.errors.push_back(e.get_message());
+                    result.errors.push_back(e.what());
                 }
             }
 
@@ -672,7 +672,7 @@ AnalyzerHelper::AnalyzerHelper(
             });
 
     } catch (error::AnalysisError &e) {
-        result.errors.push_back(e.get_message());
+        result.errors.push_back(e.what());
     }
 }
 
@@ -704,7 +704,7 @@ void AnalyzerHelper::analyze_version(const ast::Version &ast) {
 
     } catch (error::AnalysisError &e) {
         e.context(ast);
-        result.errors.push_back(e.get_message());
+        result.errors.push_back(e.what());
     }
     result.root->version->copy_annotation<parser::SourceLocation>(ast);
 }
@@ -739,7 +739,7 @@ void AnalyzerHelper::analyze_qubits(const ast::Expression &count) {
 
     } catch (error::AnalysisError &e) {
         e.context(count);
-        result.errors.push_back(e.get_message());
+        result.errors.push_back(e.what());
     }
 }
 
@@ -852,7 +852,7 @@ void AnalyzerHelper::analyze_statements(const ast::StatementList &statements) {
             }
         } catch (error::AnalysisError &e) {
             e.context(*stmt);
-            result.errors.push_back(e.get_message());
+            result.errors.push_back(e.what());
         }
     }
 }
@@ -933,7 +933,7 @@ void AnalyzerHelper::analyze_bundle(const ast::Bundle &bundle) {
                     }
                 } catch (error::AnalysisError &e) {
                     e.context(*insn);
-                    result.errors.push_back(e.get_message());
+                    result.errors.push_back(e.what());
                 }
             }
         }
@@ -954,7 +954,7 @@ void AnalyzerHelper::analyze_bundle(const ast::Bundle &bundle) {
 
     } catch (error::AnalysisError &e) {
         e.context(bundle);
-        result.errors.push_back(e.get_message());
+        result.errors.push_back(e.what());
     }
 }
 
@@ -1013,7 +1013,7 @@ void AnalyzerHelper::analyze_bundle_ext(const ast::Bundle &bundle) {
                     }
                 } catch (error::AnalysisError &e) {
                     e.context(*insn_base);
-                    result.errors.push_back(e.get_message());
+                    result.errors.push_back(e.what());
                 }
             }
         }
@@ -1034,7 +1034,7 @@ void AnalyzerHelper::analyze_bundle_ext(const ast::Bundle &bundle) {
 
     } catch (error::AnalysisError &e) {
         e.context(bundle);
-        result.errors.push_back(e.get_message());
+        result.errors.push_back(e.what());
     }
 }
 
@@ -1146,7 +1146,7 @@ tree::Maybe<semantic::Instruction> AnalyzerHelper::analyze_instruction(const ast
         return node;
     } catch (error::AnalysisError &e) {
         e.context(insn);
-        result.errors.push_back(e.get_message());
+        result.errors.push_back(e.what());
     }
     return {};
 }
@@ -1198,7 +1198,7 @@ tree::Maybe<semantic::SetInstruction> AnalyzerHelper::analyze_set_instruction(
         return node;
     } catch (error::AnalysisError &e) {
         e.context(insn);
-        result.errors.push_back(e.get_message());
+        result.errors.push_back(e.what());
     }
     return {};
 }
@@ -1305,7 +1305,7 @@ tree::Maybe<semantic::GotoInstruction> AnalyzerHelper::analyze_goto_instruction(
         return node;
     } catch (error::AnalysisError &e) {
         e.context(insn);
-        result.errors.push_back(e.get_message());
+        result.errors.push_back(e.what());
     }
     return {};
 }
@@ -1370,7 +1370,7 @@ void AnalyzerHelper::analyze_error_model(const ast::Instruction &insn) {
 
     } catch (error::AnalysisError &e) {
         e.context(insn);
-        result.errors.push_back(e.get_message());
+        result.errors.push_back(e.what());
     }
 }
 
@@ -1388,7 +1388,7 @@ void AnalyzerHelper::analyze_mapping(const ast::Mapping &mapping) {
         );
     } catch (error::AnalysisError &e) {
         e.context(mapping);
-        result.errors.push_back(e.get_message());
+        result.errors.push_back(e.what());
     }
 }
 
@@ -1442,7 +1442,7 @@ void AnalyzerHelper::analyze_variables(const ast::Variables &variables) {
 
     } catch (error::AnalysisError &e) {
         e.context(variables);
-        result.errors.push_back(e.get_message());
+        result.errors.push_back(e.what());
     }
 }
 
@@ -1478,7 +1478,7 @@ void AnalyzerHelper::analyze_subcircuit(const ast::Subcircuit &subcircuit) {
         result.root->subcircuits.add(node);
     } catch (error::AnalysisError &e) {
         e.context(subcircuit);
-        result.errors.push_back(e.get_message());
+        result.errors.push_back(e.what());
     }
 }
 
@@ -1541,7 +1541,7 @@ void AnalyzerHelper::analyze_structured(const ast::Structured &structured) {
 
     } catch (error::AnalysisError &e) {
         e.context(structured);
-        result.errors.push_back(e.get_message());
+        result.errors.push_back(e.what());
     }
 }
 
@@ -1768,14 +1768,14 @@ tree::Any<semantic::AnnotationData> AnalyzerHelper::analyze_annotations(
                     annotation->operands.add(analyze_expression(*expression_ast));
                 } catch (error::AnalysisError &e) {
                     e.context(*annotation_ast);
-                    result.errors.push_back(e.get_message());
+                    result.errors.push_back(e.what());
                 }
             }
             annotation->copy_annotation<parser::SourceLocation>(*annotation_ast);
             retval.add(annotation);
         } catch (error::AnalysisError &e) {
             e.context(*annotation_ast);
-            result.errors.push_back(e.get_message());
+            result.errors.push_back(e.what());
         }
     }
     return retval;

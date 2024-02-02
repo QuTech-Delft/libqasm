@@ -69,5 +69,5 @@ void yyerror(YYLTYPE* yyllocp, yyscan_t unused, const std::string &filename, cqa
        << ":"  << yyllocp->first_line
        << ":"  << yyllocp->first_column
        << ": " << msg;
-    throw cqasm::error::AnalysisError(sb.str());
+    throw cqasm::error::ParseError(sb.str());
 }

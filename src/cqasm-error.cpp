@@ -4,58 +4,84 @@
 
 #include "cqasm-error.hpp"
 
+#include <fmt/format.h>
+#include <regex>
+
 
 namespace cqasm::error {
 
 /**
- * Constructs a new error. If node is a non-null annotatable with a
- * location node, its location information is attached.
+ * Constructs a new error.
+ * If node is a non-null annotatable with a location node, its location information is attached.
  */
-AnalysisError::AnalysisError(
-    std::string &&message,
-    const tree::Annotatable *node
-) : std::runtime_error("") {
-    this->message << message;
+Error::Error(const std::string &message, const tree::Annotatable *node)
+: std::runtime_error{ message.c_str() }, message_{ message } {
     if (node) {
         context(*node);
     }
 }
 
 /**
- * Sets the context of this error to the SourceLocation annotation of the
- * given node, if the error doesn't already have such a context. If it
- * does, this is no-op.
+ * Constructs a new error from a message and a source location.
  */
-void AnalysisError::context(const tree::Annotatable &node) {
-    if (!location) {
+Error::Error(const std::string &message, std::shared_ptr<annotations::SourceLocation> location)
+: std::runtime_error{ message.c_str() }, message_{ message }, location_ { location }
+{}
+
+/**
+ * Sets the context of this error to the SourceLocation annotation of the given node,
+ * if the error doesn't already have such a context.
+ * If it does, this is no-op.
+ */
+void Error::context(const tree::Annotatable &node) {
+    if (!location_) {
         if (auto loc = node.get_annotation_ptr<annotations::SourceLocation>()) {
-            location = std::make_unique<annotations::SourceLocation>(*loc);
+            location_ = std::make_unique<annotations::SourceLocation>(*loc);
         }
     }
 }
 
 /**
- * Constructs the message string.
+ * Returns the exception-style message.
  */
-const std::string &AnalysisError::get_message() const {
-    std::ostringstream ss;
-    ss << "Error";
-    if (location) {
-        ss << " at " << *location;
-    }
-    ss << ": " << message.str();
-    msg = ss.str();
-    return msg;
+const char *Error::what() const noexcept {
+    what_message_ = fmt::format("Error{}: {}",
+        (location_) ? fmt::format(" at {}", *location_) : std::string{},
+        message_);
+    return what_message_.c_str();
 }
 
 /**
- * Returns the message exception-style.
+ * Stream << overload for Error.
  */
-const char *AnalysisError::what() const noexcept {
-    // NOTE: this does *not* return a dangling pointer, because get_message()
-    // returns a const reference to the private msg field, which is used to
-    // maintain ownership of the memory used for the string.
-    return get_message().c_str();
+std::ostream &operator<<(std::ostream &os, const Error &error) {
+    return os << error.what();
+}
+
+/**
+ * Returns a string with a JSON representation of an Error.
+ * The JSON representation follows the Language Server Protocol (LSP) specification.
+ * Every error is mapped to an LSP Diagnostic structure:
+ * Severity is hardcoded to 1 at the moment (value corresponding to an Error level)
+ */
+std::string Error::to_json() const {
+    return fmt::format(R"(
+        {{ "filename" : "{0}",
+          "range": {{
+            "start": {{ "line" : {1}, "character" : {2} }},
+            "end" : {{ "line" : {3}, "character" : {4} }}
+          }},
+          "message" : "{5}",
+          "severity" : {6}
+        }})",
+        (location_ ? location_->filename : std::string{}),
+        (location_ ? location_->first_line : 0),
+        (location_ ? location_->first_column : 0),
+        (location_ ? location_->last_line : 0),
+        (location_ ? location_->last_column : 0),
+        message_,
+        1
+    );
 }
 
 } // namespace cqasm::error

@@ -102,20 +102,20 @@ public:
 
 /**
  * Parse the given file path to get its version number.
- * Throws an AnalysisError if this fails.
+ * Throws a ParseError if this fails.
  */
 Version parse_file(const std::string &file_path);
 
 /**
  * Parse using the given file pointer to get its version number.
- * Throws an AnalysisError if this fails.
- * A file_name may be given in addition for use within the AnalysisError thrown when version parsing fails.
+ * Throws a ParseError if this fails.
+ * A file_name may be given in addition for use within the ParseError thrown when version parsing fails.
  */
 Version parse_file(FILE* fp, const std::string &file_name = "<unknown>");
 
 /**
  * Parse the given string as a file to get its version number.
- * A file_name may be given in addition for use within the AnalysisError thrown when version parsing fails.
+ * A file_name may be given in addition for use within the ParseError thrown when version parsing fails.
  */
 Version parse_string(const std::string &data, const std::string &file_name = "<unknown>");
 

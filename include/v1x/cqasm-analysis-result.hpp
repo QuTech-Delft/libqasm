@@ -67,9 +67,16 @@ public:
     ast::One<semantic::Program> unwrap(std::ostream &out = std::cerr) const;
 
     /**
+     * Returns a vector of strings, of which the first is reserved for the CBOR serialization of the v1.x semantic AST.
+     * Any additional strings represent error messages.
+     * Notice that the AST and error messages won't be available at the same time.
+     */
+    [[nodiscard]] std::vector<std::string> to_strings() const;
+
+    /**
      * Returns a string with a JSON representation of the AnalysisResult.
      */
-    std::string to_json() const;
+    [[nodiscard]] std::string to_json() const;
 };
 
 } // namespace cqasm::v1x::analyzer

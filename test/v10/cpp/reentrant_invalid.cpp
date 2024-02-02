@@ -19,11 +19,11 @@ TEST(v10, reentrant_invalid) {
 
     EXPECT_THAT([&]() { compiler::QasmSemanticChecker sm(fp); },
         ::testing::ThrowsMessage<std::runtime_error>(
-            "Error at <unknown>:6:14..15: index 2 out of range (size 2)"));
+            "<unknown>:6:14..15: index 2 out of range (size 2)"));
 
     rewind(fp);
 
     EXPECT_THAT([&]() { compiler::QasmSemanticChecker sm(fp); },
         ::testing::ThrowsMessage<std::runtime_error>(
-            "Error at <unknown>:6:14..15: index 2 out of range (size 2)"));
+            "<unknown>:6:14..15: index 2 out of range (size 2)"));
 }

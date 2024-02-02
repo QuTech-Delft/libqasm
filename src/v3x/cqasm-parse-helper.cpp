@@ -13,7 +13,7 @@ namespace cqasm::v3x::parser {
 
 /**
  * Parse using the given file path.
- * Throws an AnalysisError if the file does not exist.
+ * Throws a ParseError if the file does not exist.
  * A file_name may be given in addition for use within error messages.
  */
 cqasm::v3x::parser::ParseResult parse_file(const std::string &file_path, const std::string &file_name) {
@@ -52,7 +52,7 @@ cqasm::v3x::parser::ParseResult ParseHelper::parse() {
     }
     if (result.errors.empty() && !result.root.is_well_formed()) {
         std::cerr << *result.root;
-        throw cqasm::error::AnalysisError(
+        throw cqasm::error::ParseError(
             "ParseHelper::parse: no parse errors returned, but AST is incomplete. AST was dumped.");
     }
     return result;

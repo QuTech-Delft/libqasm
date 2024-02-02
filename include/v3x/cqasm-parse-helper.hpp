@@ -20,7 +20,7 @@ using SourceLocation = annotations::SourceLocation;
 
 /**
  * Parse using the given file path.
- * Throws an AnalysisError if this fails.
+ * Throws a ParseError if this fails.
  */
 cqasm::v3x::parser::ParseResult parse_file(const std::string &file_path, const std::string &file_name = "<unknown>");
 

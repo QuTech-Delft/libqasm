@@ -4,8 +4,10 @@
 
 #pragma once
 
-#include <string>
 #include <cstdint>
+#include <fmt/ostream.h>
+#include <string>
+
 
 namespace cqasm::annotations {
 
@@ -14,7 +16,6 @@ namespace cqasm::annotations {
  */
 class SourceLocation {
 public:
-
     /**
      * The name of the source file.
      */
@@ -43,7 +44,7 @@ public:
     /**
      * Constructs a source location object.
      */
-    SourceLocation(
+    explicit SourceLocation(
         const std::string &filename,
         std::uint32_t first_line = 0,
         std::uint32_t first_column = 0,
@@ -56,7 +57,6 @@ public:
      * file.
      */
     void expand_to_include(std::uint32_t line, std::uint32_t column = 1);
-
 };
 
 /**
@@ -65,3 +65,8 @@ public:
 std::ostream &operator<<(std::ostream &os, const SourceLocation &object);
 
 } // namespace cqasm::annotations
+
+/**
+ * std::ostream support via fmt (uses operator<<).
+ */
+template <> struct fmt::formatter<cqasm::annotations::SourceLocation> : ostream_formatter {};

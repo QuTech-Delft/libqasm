@@ -37,7 +37,14 @@ public:
     std::vector<std::string> errors;
 
     /**
-     * Returns a string with a JSON representation of the ParseResult.
+     * Returns a vector of strings, of which the first is reserved for the CBOR serialization of the v1.x syntactic AST.
+     * Any additional strings represent error messages.
+     * Notice that the AST and error messages won't be available at the same time.
+     */
+    [[nodiscard]] std::vector<std::string> to_strings() const;
+
+    /**
+     * Returns a string with a JSON representation of a ParseResult.
      */
     std::string to_json() const;
 };

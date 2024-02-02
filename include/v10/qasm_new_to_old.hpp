@@ -1,7 +1,7 @@
 /** \file
- * Contains the guts of the compatibility layer, parsing using
- * \ref cqasm::analyzer::Analyzer "Analyzer" and converting the result to an
- * \ref compiler::QasmRepresentation "old API AST".
+ * Contains the guts of the compatibility layer,
+ * parsing using \ref cqasm::analyzer::Analyzer "Analyzer" and
+ * converting the result to an \ref compiler::QasmRepresentation "old API AST".
  */
 
 #pragma once
@@ -10,19 +10,16 @@
 #include "v1x/cqasm.hpp"
 #include "qasm_ast.hpp"
 
-namespace compiler {
-
 /**
- * Namespace containing the guts of the compatibility layer emulating the old
- * API while using the guts of the new one.
+ * Namespace containing the guts of the compatibility layer
+ * emulating the old API while using the guts of the new one.
  */
-namespace new_to_old {
+namespace compiler::new_to_old {
 
 namespace cq1x = cqasm::v1x;
 
 /**
- * All instruction types supported by the old API based on the
- * types of their parameters alone.
+ * All instruction types supported by the old API based on the types of their parameters alone.
  */
 enum class ParameterType {
     NoArg,
@@ -46,8 +43,7 @@ enum class ParameterType {
 };
 
 /**
- * Converts a list of indices from the new API format to the old API
- * format.
+ * Converts a list of indices from the new API format to the old API format.
  */
 static NumericalIdentifiers convert_indices(const cqasm::tree::Many<cq1x::values::ConstInt> &indices) {
     NumericalIdentifiers retval;
@@ -70,8 +66,8 @@ static std::string convert_axis(const cq1x::values::Value &value) {
 }
 
 /**
- * Converts an instruction from the new API format to the old API
- * format. May return null to optimize the instruction away.
+ * Converts an instruction from the new API format to the old API format.
+ * May return null to optimize the instruction away.
  */
 static std::shared_ptr<Operation> convert_instruction(const cq1x::semantic::Instruction &instruction) {
     // Handle the normal arguments.
@@ -214,9 +210,8 @@ static std::shared_ptr<Operation> convert_instruction(const cq1x::semantic::Inst
 }
 
 /**
- * Checks the parse results for errors, runs semantic analysis on
- * the result, checks *that* for errors, and then converts from the
- * new API format to the old one.
+ * Checks the parse results for errors, runs semantic analysis on the result,
+ * checks *that* for errors, and then converts from the new API format to the old one.
  */
 static void handle_parse_result(QasmRepresentation &qasm, cq1x::parser::ParseResult &&result) {
 
@@ -375,9 +370,9 @@ static void handle_parse_result(QasmRepresentation &qasm, cq1x::parser::ParseRes
                     if (auto loc = instruction->get_annotation_ptr<cq1x::parser::SourceLocation>()) {
                         line_number = static_cast<int>(loc->first_line);
                     }
-                    opclus = std::make_shared<OperationsCluster>(std::move(op), line_number);
+                    opclus = std::make_shared<OperationsCluster>(op, line_number);
                 } else {
-                    opclus->addParallelOperation(std::move(op));
+                    opclus->addParallelOperation(op);
                 }
             }
 
@@ -400,7 +395,6 @@ static void handle_parse_result(QasmRepresentation &qasm, cq1x::parser::ParseRes
 
 }
 
-} // namespace new_to_old
-} // namespace compiler
+} // namespace compiler::new_to_old
 
 #endif
