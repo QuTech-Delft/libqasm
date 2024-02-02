@@ -25,7 +25,7 @@ Error::Error(const std::string &message, const tree::Annotatable *node)
  * Constructs a new error from a message and a source location.
  */
 Error::Error(const std::string &message, std::shared_ptr<annotations::SourceLocation> location)
-: std::runtime_error{ message.c_str() }, message_{ message }, location_ { location }
+: std::runtime_error{ message.c_str() }, message_{ message }, location_ { std::move(location) }
 {}
 
 /**
@@ -65,15 +65,11 @@ std::ostream &operator<<(std::ostream &os, const Error &error) {
  * Severity is hardcoded to 1 at the moment (value corresponding to an Error level)
  */
 std::string Error::to_json() const {
-    return fmt::format(R"(
-        {{ "filename" : "{0}",
-          "range": {{
-            "start": {{ "line" : {1}, "character" : {2} }},
-            "end" : {{ "line" : {3}, "character" : {4} }}
-          }},
-          "message" : "{5}",
-          "severity" : {6}
-        }})",
+    return fmt::format(
+        R"({{"filename":"{0}",)"
+        R"("range":{{"start":{{"line":{1},"character":{2}}},"end":{{"line":{3},"character":{4}}}}},)"
+        R"("message":"{5}",)"
+        R"("severity":{6}}})",
         (location_ ? location_->filename : std::string{}),
         (location_ ? location_->first_line : 0),
         (location_ ? location_->first_column : 0),

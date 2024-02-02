@@ -678,9 +678,10 @@ Root            : Program                                                       
 void yyerror(YYLTYPE* yyllocp, yyscan_t unused, cqasm::v1x::parser::ParseHelper &helper, const char* msg) {
     (void)unused;
     std::ostringstream sb;
-    sb << helper.file_name
-       << ":"  << yyllocp->first_line
-       << ":"  << yyllocp->first_column
+    sb << "Error at "
+       << helper.file_name
+       << ":" << yyllocp->first_line
+       << ":" << yyllocp->first_column
        << ": " << msg;
     helper.push_error(sb.str());
 }

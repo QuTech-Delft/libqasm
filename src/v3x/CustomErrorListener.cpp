@@ -28,7 +28,7 @@ void CustomErrorListener::syntaxError(
             static_cast<std::uint32_t>(line),
             static_cast<std::uint32_t>(charPositionInLine + 1),
             static_cast<std::uint32_t>(line),
-            static_cast<std::uint32_t>(charPositionInLine + 1 + offendingSymbol->getText().size())
+            static_cast<std::uint32_t>(charPositionInLine + 1 + (offendingSymbol ? offendingSymbol->getText().size() : 0))
         )
     };
 }

@@ -16,7 +16,7 @@ namespace cqasm::v3x::parser {
  * Throws a ParseError if the file does not exist.
  * A file_name may be given in addition for use within error messages.
  */
-cqasm::v3x::parser::ParseResult parse_file(const std::string &file_path, const std::string &file_name) {
+ParseResult parse_file(const std::string &file_path, const std::string &file_name) {
     auto builder_visitor_up = std::make_unique<BuildTreeGenAstVisitor>(file_name);
     auto error_listener_up = std::make_unique<CustomErrorListener>(file_name);
     auto scanner_up = std::make_unique<ScannerAntlrFile>(
@@ -28,7 +28,7 @@ cqasm::v3x::parser::ParseResult parse_file(const std::string &file_path, const s
  * Parse the given string.
  * A file_name may be given in addition for use within error messages.
  */
-cqasm::v3x::parser::ParseResult parse_string(const std::string &data, const std::string &file_name) {
+ParseResult parse_string(const std::string &data, const std::string &file_name) {
     auto builder_visitor_up = std::make_unique<BuildTreeGenAstVisitor>(file_name);
     auto error_listener_up = std::make_unique<CustomErrorListener>(file_name);
     auto scanner_up = std::make_unique<ScannerAntlrString>(
@@ -43,16 +43,19 @@ ParseHelper::ParseHelper(std::unique_ptr<ScannerAdaptor> scanner_up, std::string
 /**
  * Does the actual parsing.
  */
-cqasm::v3x::parser::ParseResult ParseHelper::parse() {
-    cqasm::v3x::parser::ParseResult result;
+ParseResult ParseHelper::parse() {
+    ParseResult result;
     try {
         result = scanner_up_->parse();
+    } catch (error::AnalysisError &err) {
+        result.errors.push_back(std::move(err));
     } catch (const std::runtime_error &err) {
         result.errors.emplace_back(err.what());
     }
+    
     if (result.errors.empty() && !result.root.is_well_formed()) {
         std::cerr << *result.root;
-        throw cqasm::error::ParseError(
+        throw error::ParseError(
             "ParseHelper::parse: no parse errors returned, but AST is incomplete. AST was dumped.");
     }
     return result;

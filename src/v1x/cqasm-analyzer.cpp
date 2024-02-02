@@ -149,7 +149,6 @@ void Analyzer::register_error_model(
  */
 class Scope {
 public:
-
     /**
      * The mappings visible within this scope.
      */
@@ -194,7 +193,6 @@ public:
         block(),
         within_loop(false)
     {}
-
 };
 
 /**
@@ -203,7 +201,6 @@ public:
  */
 class AnalyzerHelper {
 public:
-
     /**
      * The analyzer associated with this helper.
      */
@@ -469,7 +466,6 @@ public:
         const tree::One<ast::Expression> &b = tree::One<ast::Expression>(),
         const tree::One<ast::Expression> &c = tree::One<ast::Expression>()
     );
-
 };
 
 /**
@@ -507,8 +503,7 @@ AnalysisResult Analyzer::analyze(
 ) const {
     AnalysisResult result;
     try {
-        auto version = version_parser();
-        if (version > api_version) {
+        if (auto version = version_parser(); version > api_version) {
             std::ostringstream ss;
             ss << "cQASM file version is " << version << ", but at most ";
             ss << api_version << " is supported here";
@@ -516,7 +511,7 @@ AnalysisResult Analyzer::analyze(
             return result;
         }
     } catch (error::AnalysisError &e) {
-        result.errors.push_back(e.what());
+        result.errors.emplace_back(e.what());
         return result;
     }
     return analyze(parser());
@@ -566,7 +561,6 @@ AnalyzerHelper::AnalyzerHelper(
     scope_stack({Scope(analyzer.mappings, analyzer.functions, analyzer.instruction_set)})
 {
     try {
-
         // Construct the program node.
         result.root.set(tree::make<semantic::Program>());
         result.root->copy_annotation<parser::SourceLocation>(ast);
@@ -607,7 +601,7 @@ AnalyzerHelper::AnalyzerHelper(
                     }
                 } catch (error::AnalysisError &e) {
                     e.context(*subcircuit);
-                    result.errors.push_back(e.what());
+                    result.errors.emplace_back(e.what());
                 }
             }
 
@@ -623,7 +617,7 @@ AnalyzerHelper::AnalyzerHelper(
                     it.first->target = it2->second;
                 } catch (error::AnalysisError &e) {
                     e.context(*it.first);
-                    result.errors.push_back(e.what());
+                    result.errors.emplace_back(e.what());
                 }
             }
 
@@ -672,7 +666,7 @@ AnalyzerHelper::AnalyzerHelper(
             });
 
     } catch (error::AnalysisError &e) {
-        result.errors.push_back(e.what());
+        result.errors.emplace_back(e.what());
     }
 }
 
@@ -681,7 +675,6 @@ AnalyzerHelper::AnalyzerHelper(
  */
 void AnalyzerHelper::analyze_version(const ast::Version &ast) {
     try {
-
         // Default to API version in case the version in the AST is broken.
         result.root->version = tree::make<semantic::Version>();
         result.root->version->items = analyzer.api_version;
@@ -704,7 +697,7 @@ void AnalyzerHelper::analyze_version(const ast::Version &ast) {
 
     } catch (error::AnalysisError &e) {
         e.context(ast);
-        result.errors.push_back(e.what());
+        result.errors.emplace_back(e.what());
     }
     result.root->version->copy_annotation<parser::SourceLocation>(ast);
 }
@@ -739,7 +732,7 @@ void AnalyzerHelper::analyze_qubits(const ast::Expression &count) {
 
     } catch (error::AnalysisError &e) {
         e.context(count);
-        result.errors.push_back(e.what());
+        result.errors.emplace_back(e.what());
     }
 }
 
@@ -751,7 +744,6 @@ void AnalyzerHelper::analyze_qubits(const ast::Expression &count) {
 tree::Maybe<semantic::Subcircuit> AnalyzerHelper::get_current_subcircuit(
     const tree::Annotatable &source
 ) {
-
     // If we don't have a subcircuit yet, add a default one. Note that the
     // original libqasm always had this default subcircuit (even if it was
     // empty) and used the name "default" vs. the otherwise invalid empty
@@ -767,7 +759,6 @@ tree::Maybe<semantic::Subcircuit> AnalyzerHelper::get_current_subcircuit(
 
     // Add the node to the last subcircuit.
     return result.root->subcircuits.back();
-
 }
 
 /**
@@ -790,7 +781,6 @@ Scope &AnalyzerHelper::get_global_scope() {
 tree::Maybe<semantic::Block> AnalyzerHelper::get_current_block(
     const tree::Annotatable &source
 ) {
-
     // If we're in a local scope/block, return that block.
     const auto &scope = get_current_scope();
     if (!scope.block.empty()) {
@@ -805,7 +795,6 @@ tree::Maybe<semantic::Block> AnalyzerHelper::get_current_block(
  * Adds an analyzed statement to the current block (1.2+).
  */
 void AnalyzerHelper::add_to_current_block(const tree::Maybe<semantic::Statement> &stmt) {
-
     // Add the statement to the current block.
     auto block = get_current_block(*stmt);
     block->statements.add(stmt);
@@ -820,7 +809,6 @@ void AnalyzerHelper::add_to_current_block(const tree::Maybe<semantic::Statement>
             block->set_annotation<parser::SourceLocation>(*stmt_loc);
         }
     }
-
 }
 
 /**
@@ -852,7 +840,7 @@ void AnalyzerHelper::analyze_statements(const ast::StatementList &statements) {
             }
         } catch (error::AnalysisError &e) {
             e.context(*stmt);
-            result.errors.push_back(e.what());
+            result.errors.emplace_back(e.what());
         }
     }
 }
@@ -866,7 +854,6 @@ tree::Maybe<semantic::Block> AnalyzerHelper::analyze_subblock(
     const ast::StatementList &statements,
     bool is_loop
 ) {
-
     // Create the block.
     tree::Maybe<semantic::Block> block;
     block.emplace();
@@ -893,7 +880,6 @@ tree::Maybe<semantic::Block> AnalyzerHelper::analyze_subblock(
  */
 void AnalyzerHelper::analyze_bundle(const ast::Bundle &bundle) {
     try {
-
         // The error model statement from the original cQASM grammar is a bit
         // of a pain, because it conflicts with gates/instructions, so we have
         // to special-case it here. Technically we could also have made it a
@@ -933,7 +919,7 @@ void AnalyzerHelper::analyze_bundle(const ast::Bundle &bundle) {
                     }
                 } catch (error::AnalysisError &e) {
                     e.context(*insn);
-                    result.errors.push_back(e.what());
+                    result.errors.emplace_back(e.what());
                 }
             }
         }
@@ -954,7 +940,7 @@ void AnalyzerHelper::analyze_bundle(const ast::Bundle &bundle) {
 
     } catch (error::AnalysisError &e) {
         e.context(bundle);
-        result.errors.push_back(e.what());
+        result.errors.emplace_back(e.what());
     }
 }
 
@@ -965,7 +951,6 @@ void AnalyzerHelper::analyze_bundle(const ast::Bundle &bundle) {
  */
 void AnalyzerHelper::analyze_bundle_ext(const ast::Bundle &bundle) {
     try {
-
         // The error model statement from the original cQASM grammar is a bit
         // of a pain, because it conflicts with gates/instructions, so we have
         // to special-case it here. Technically we could also have made it a
@@ -1013,7 +998,7 @@ void AnalyzerHelper::analyze_bundle_ext(const ast::Bundle &bundle) {
                     }
                 } catch (error::AnalysisError &e) {
                     e.context(*insn_base);
-                    result.errors.push_back(e.what());
+                    result.errors.emplace_back(e.what());
                 }
             }
         }
@@ -1034,7 +1019,7 @@ void AnalyzerHelper::analyze_bundle_ext(const ast::Bundle &bundle) {
 
     } catch (error::AnalysisError &e) {
         e.context(bundle);
-        result.errors.push_back(e.what());
+        result.errors.emplace_back(e.what());
     }
 }
 
@@ -1046,7 +1031,6 @@ void AnalyzerHelper::analyze_bundle_ext(const ast::Bundle &bundle) {
  */
 tree::Maybe<semantic::Instruction> AnalyzerHelper::analyze_instruction(const ast::Instruction &insn) {
     try {
-
         // Figure out the operand list.
         auto operands = values::Values();
         for (const auto &operand_expr : insn.operands->items) {
@@ -1146,7 +1130,7 @@ tree::Maybe<semantic::Instruction> AnalyzerHelper::analyze_instruction(const ast
         return node;
     } catch (error::AnalysisError &e) {
         e.context(insn);
-        result.errors.push_back(e.what());
+        result.errors.emplace_back(e.what());
     }
     return {};
 }
@@ -1160,7 +1144,6 @@ tree::Maybe<semantic::SetInstruction> AnalyzerHelper::analyze_set_instruction(
     const ast::Instruction &insn
 ) {
     try {
-
         // Figure out the operand list.
         if (insn.operands->items.size() != 2) {
             throw error::AnalysisError("set instruction must have two operands");
@@ -1198,7 +1181,7 @@ tree::Maybe<semantic::SetInstruction> AnalyzerHelper::analyze_set_instruction(
         return node;
     } catch (error::AnalysisError &e) {
         e.context(insn);
-        result.errors.push_back(e.what());
+        result.errors.emplace_back(e.what());
     }
     return {};
 }
@@ -1212,7 +1195,6 @@ tree::Maybe<semantic::SetInstruction> AnalyzerHelper::analyze_set_instruction_op
     const ast::Expression &lhs_expr,
     const ast::Expression &rhs_expr
 ) {
-
     // Analyze the expressions.
     auto lhs = analyze_expression(lhs_expr);
     auto rhs = analyze_expression(rhs_expr);
@@ -1254,7 +1236,6 @@ tree::Maybe<semantic::GotoInstruction> AnalyzerHelper::analyze_goto_instruction(
     const ast::Instruction &insn
 ) {
     try {
-
         // Parse the operands.
         if (insn.operands->items.size() != 1) {
             throw error::AnalysisError(
@@ -1305,7 +1286,7 @@ tree::Maybe<semantic::GotoInstruction> AnalyzerHelper::analyze_goto_instruction(
         return node;
     } catch (error::AnalysisError &e) {
         e.context(insn);
-        result.errors.push_back(e.what());
+        result.errors.emplace_back(e.what());
     }
     return {};
 }
@@ -1317,7 +1298,6 @@ tree::Maybe<semantic::GotoInstruction> AnalyzerHelper::analyze_goto_instruction(
  */
 void AnalyzerHelper::analyze_error_model(const ast::Instruction &insn) {
     try {
-
         // Only one error model should be specified, so throw an error
         // if we already have one.
         if (!result.root->error_model.empty()) {
@@ -1370,7 +1350,7 @@ void AnalyzerHelper::analyze_error_model(const ast::Instruction &insn) {
 
     } catch (error::AnalysisError &e) {
         e.context(insn);
-        result.errors.push_back(e.what());
+        result.errors.emplace_back(e.what());
     }
 }
 
@@ -1388,7 +1368,7 @@ void AnalyzerHelper::analyze_mapping(const ast::Mapping &mapping) {
         );
     } catch (error::AnalysisError &e) {
         e.context(mapping);
-        result.errors.push_back(e.what());
+        result.errors.emplace_back(e.what());
     }
 }
 
@@ -1399,7 +1379,6 @@ void AnalyzerHelper::analyze_mapping(const ast::Mapping &mapping) {
  */
 void AnalyzerHelper::analyze_variables(const ast::Variables &variables) {
     try {
-
         // Check version compatibility.
         if (result.root->version->items < "1.1") {
             throw error::AnalysisError("variables are only supported from cQASM 1.1 onwards");
@@ -1442,7 +1421,7 @@ void AnalyzerHelper::analyze_variables(const ast::Variables &variables) {
 
     } catch (error::AnalysisError &e) {
         e.context(variables);
-        result.errors.push_back(e.what());
+        result.errors.emplace_back(e.what());
     }
 }
 
@@ -1478,7 +1457,7 @@ void AnalyzerHelper::analyze_subcircuit(const ast::Subcircuit &subcircuit) {
         result.root->subcircuits.add(node);
     } catch (error::AnalysisError &e) {
         e.context(subcircuit);
-        result.errors.push_back(e.what());
+        result.errors.emplace_back(e.what());
     }
 }
 
@@ -1541,7 +1520,7 @@ void AnalyzerHelper::analyze_structured(const ast::Structured &structured) {
 
     } catch (error::AnalysisError &e) {
         e.context(structured);
-        result.errors.push_back(e.what());
+        result.errors.emplace_back(e.what());
     }
 }
 
@@ -1618,7 +1597,6 @@ tree::Maybe<semantic::IfElse> AnalyzerHelper::analyze_if_else(
 tree::Maybe<semantic::ForLoop> AnalyzerHelper::analyze_for_loop(
     const ast::ForLoop &for_loop
 ) {
-
     // Create the for-loop node.
     tree::Maybe<semantic::ForLoop> node;
     node.emplace();
@@ -1689,7 +1667,6 @@ tree::Maybe<semantic::ForeachLoop> AnalyzerHelper::analyze_foreach_loop(
 tree::Maybe<semantic::WhileLoop> AnalyzerHelper::analyze_while_loop(
     const ast::WhileLoop &while_loop
 ) {
-
     // Create the while-loop node.
     tree::Maybe<semantic::WhileLoop> node;
     node.emplace();
@@ -1721,7 +1698,6 @@ tree::Maybe<semantic::WhileLoop> AnalyzerHelper::analyze_while_loop(
 tree::Maybe<semantic::RepeatUntilLoop> AnalyzerHelper::analyze_repeat_until_loop(
     const ast::RepeatUntilLoop &repeat_until_loop
 ) {
-
     // Create the repeat-until-loop node.
     tree::Maybe<semantic::RepeatUntilLoop> node;
     node.emplace();
@@ -1768,14 +1744,14 @@ tree::Any<semantic::AnnotationData> AnalyzerHelper::analyze_annotations(
                     annotation->operands.add(analyze_expression(*expression_ast));
                 } catch (error::AnalysisError &e) {
                     e.context(*annotation_ast);
-                    result.errors.push_back(e.what());
+                    result.errors.emplace_back(e.what());
                 }
             }
             annotation->copy_annotation<parser::SourceLocation>(*annotation_ast);
             retval.add(annotation);
         } catch (error::AnalysisError &e) {
             e.context(*annotation_ast);
-            result.errors.push_back(e.what());
+            result.errors.emplace_back(e.what());
         }
     }
     return retval;
@@ -1910,7 +1886,6 @@ primitives::Int AnalyzerHelper::analyze_as_const_int(const ast::Expression &expr
  * Parses a matrix. Always returns a filled value or throws an exception.
  */
 values::Value AnalyzerHelper::analyze_matrix(const ast::MatrixLiteral &matrix_lit) {
-
     // Figure out the size of the matrix and parse the subexpressions.
     // Note that the number of rows is always at least 1 (Many vs Any) so
     // the ncols line is well-behaved.
@@ -1950,7 +1925,6 @@ values::Value AnalyzerHelper::analyze_matrix(const ast::MatrixLiteral &matrix_li
     // added in the future, this should probably be written a little
     // neater.
     throw error::AnalysisError("only matrices of constant real or complex numbers are currently supported");
-
 }
 
 /**
@@ -2012,7 +1986,6 @@ values::Value AnalyzerHelper::analyze_index(const ast::Index &index) {
         std::ostringstream ss;
         ss << "indexation is not supported for value of type " << values::type_of(expr);
         throw error::AnalysisError(ss.str());
-
     }
 }
 

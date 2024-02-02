@@ -22,13 +22,13 @@ using SourceLocation = annotations::SourceLocation;
  * Parse using the given file path.
  * Throws a ParseError if this fails.
  */
-cqasm::v3x::parser::ParseResult parse_file(const std::string &file_path, const std::string &file_name = "<unknown>");
+ParseResult parse_file(const std::string &file_path, const std::string &file_name = "<unknown>");
 
 /**
  * Parse the given string.
  * A file_name may be given in addition for use within error messages.
  */
-cqasm::v3x::parser::ParseResult parse_string(const std::string &data, const std::string &file_name="<unknown>");
+ParseResult parse_string(const std::string &data, const std::string &file_name="<unknown>");
 
 
 /**
@@ -51,7 +51,7 @@ public:
     /**
      * Does the actual parsing.
      */
-    cqasm::v3x::parser::ParseResult parse();
+    ParseResult parse();
 };
 
 } // namespace cqasm::v3x::parser

@@ -55,7 +55,6 @@ void SourceLocation::expand_to_include(std::uint32_t line, std::uint32_t column)
  * Stream << overload for source location objects.
  */
 std::ostream &operator<<(std::ostream &os, const SourceLocation &object) {
-
     // Print filename.
     os << object.filename;
 
@@ -69,12 +68,10 @@ std::ostream &operator<<(std::ostream &os, const SourceLocation &object) {
 
     // Special case for when only line numbers are known.
     if (!object.first_column) {
-
         // Print last line too, if greater.
         if (object.last_line > object.first_line) {
             os << ".." << object.last_line;
         }
-
         return os;
     }
 
@@ -82,17 +79,13 @@ std::ostream &operator<<(std::ostream &os, const SourceLocation &object) {
     os << ":" << object.first_column;
 
     if (object.last_line == object.first_line) {
-
         // Range is on a single line. Only repeat the column number.
         if (object.last_column > object.first_column) {
             os << ".." << object.last_column;
         }
-
     } else if (object.last_line > object.first_line) {
-
         // Range is on multiple lines. Repeat both line and column number.
         os << ".." << object.last_line << ":" << object.last_column;
-
     }
 
     return os;

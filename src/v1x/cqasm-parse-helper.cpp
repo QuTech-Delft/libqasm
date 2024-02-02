@@ -38,11 +38,8 @@ ParseResult parse_string(const std::string &data, const std::string &file_name) 
  * Otherwise, file_path is used only for error messages, and data is read instead.
  * Don't use this directly, use parse().
  */
-ParseHelper::ParseHelper(
-    const std::string &file_path,
-    const std::string &data,
-    bool use_file
-) : file_name(file_path) {
+ParseHelper::ParseHelper(const std::string &file_path, const std::string &data, bool use_file)
+: file_name(file_path) {
 
     // Create the scanner.
     if (!construct()) return;
@@ -64,16 +61,13 @@ ParseHelper::ParseHelper(
 
     // Do the actual parsing.
     parse();
-
 }
 
 /**
  * Construct the analyzer internals for the given file_name, and analyze the file.
  */
-ParseHelper::ParseHelper(
-    const std::string &file_name,
-    FILE *fptr
-) : file_name(file_name) {
+ParseHelper::ParseHelper(const std::string &file_name, FILE *fptr)
+: file_name(file_name) {
 
     // Create the scanner.
     if (!construct()) return;
@@ -83,7 +77,6 @@ ParseHelper::ParseHelper(
 
     // Do the actual parsing.
     parse();
-
 }
 
 /**
@@ -91,10 +84,9 @@ ParseHelper::ParseHelper(
  * Returns whether this was successful.
  */
 bool ParseHelper::construct() {
-    int retcode = cqasm_v1x_lex_init((yyscan_t*)&scanner);
-    if (retcode) {
+    if (int ret_code = cqasm_v1x_lex_init((yyscan_t*)&scanner); ret_code) {
         std::ostringstream sb;
-        sb << "Failed to construct scanner: " << strerror(retcode);
+        sb << "Failed to construct scanner: " << strerror(ret_code);
         push_error(sb.str());
         return false;
     } else {
@@ -106,13 +98,12 @@ bool ParseHelper::construct() {
  * Does the actual parsing.
  */
 void ParseHelper::parse() {
-    int retcode = cqasm_v1x_parse((yyscan_t) scanner, *this);
-    if (retcode == 2) {
+    if (int ret_code = cqasm_v1x_parse((yyscan_t) scanner, *this); ret_code == 2) {
         std::ostringstream sb;
         sb << "Out of memory while parsing " << file_name;
         push_error(sb.str());
         return;
-    } else if (retcode) {
+    } else if (ret_code) {
         std::ostringstream sb;
         sb << "Failed to parse " << file_name;
         push_error(sb.str());

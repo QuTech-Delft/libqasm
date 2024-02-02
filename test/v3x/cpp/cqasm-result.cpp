@@ -14,7 +14,7 @@ TEST(to_json, v3x_parser_errors) {
     auto semantic_ast_result = analyzer.analyze_file(input_file_path.generic_string());
     auto json_result = to_json(semantic_ast_result);
     auto expected_json_result = std::string{
-        R"delim({"errors":["<unknown>:3:5: mismatched input '3.14' expecting INTEGER_LITERAL"]})delim"
+        R"delim({"errors":["{"filename":"<unknown>","range":{"start":{"line":3,"character":5},"end":{"line":3,"character":9}},"message":"mismatched input '3.14' expecting INTEGER_LITERAL","severity":1}"]})delim"
     };
     EXPECT_EQ(json_result, expected_json_result);
 }
@@ -32,7 +32,7 @@ TEST(to_json, v3x_analyzer_errors) {
     auto semantic_ast_result = cqasm::v3x::default_analyzer().analyze_file(input_file_path.generic_string());
     auto json_result = to_json(semantic_ast_result);
     auto expected_json_result = std::string{
-        R"delim({"errors":["<unknown>:3:8..9: declaring bit array of size <= 0"]})delim"
+        R"delim({"errors":["{"filename":"<unknown>","range":{"start":{"line":3,"character":8},"end":{"line":3,"character":9}},"message":"declaring bit array of size <= 0","severity":1}"]})delim"
     };
     EXPECT_EQ(json_result, expected_json_result);
 }

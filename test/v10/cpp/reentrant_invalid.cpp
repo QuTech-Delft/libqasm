@@ -3,9 +3,7 @@
 #include <cstdio>
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
-#include <iostream>
-#include <string>
-#include <vector>
+#include <stdexcept>  // runtime_error
 
 
 TEST(v10, reentrant_invalid) {
@@ -19,11 +17,11 @@ TEST(v10, reentrant_invalid) {
 
     EXPECT_THAT([&]() { compiler::QasmSemanticChecker sm(fp); },
         ::testing::ThrowsMessage<std::runtime_error>(
-            "<unknown>:6:14..15: index 2 out of range (size 2)"));
+            "Error at <unknown>:6:14..15: index 2 out of range (size 2)"));
 
     rewind(fp);
 
     EXPECT_THAT([&]() { compiler::QasmSemanticChecker sm(fp); },
         ::testing::ThrowsMessage<std::runtime_error>(
-            "<unknown>:6:14..15: index 2 out of range (size 2)"));
+            "Error at <unknown>:6:14..15: index 2 out of range (size 2)"));
 }
