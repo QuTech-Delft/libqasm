@@ -1,2 +1,2 @@
 ERROR
-input.cq:3:12: mismatched input ']' expecting ','
+Error at input.cq:3:12..13: mismatched input ']' expecting ','

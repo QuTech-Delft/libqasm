@@ -1,2 +1,2 @@
 ERROR
-input.cq:3:1: extraneous input 'measure' expecting {<EOF>, NEW_LINE, ';'}
+Error at input.cq:3:1..8: extraneous input 'measure' expecting {<EOF>, NEW_LINE, ';'}

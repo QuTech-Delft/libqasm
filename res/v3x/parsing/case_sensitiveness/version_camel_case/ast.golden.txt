@@ -1,2 +1,2 @@
 ERROR
-input.cq:1:1: mismatched input 'Version' expecting {NEW_LINE, ';', 'version'}
+Error at input.cq:1:1..8: mismatched input 'Version' expecting {NEW_LINE, ';', 'version'}
