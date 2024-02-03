@@ -4,6 +4,7 @@
 
 #include <algorithm>  // transform
 #include <fmt/format.h>
+#include <numeric>  // accumulate
 #include <string>
 #include <vector>
 
@@ -18,14 +19,30 @@ namespace cqasm::v1x {
  */
 template <typename Result>
 std::vector<std::string> to_strings(const Result &result) {
-    auto ret = std::vector<std::string>{};
+    auto ret = std::vector<std::string>(1);
     if (result.errors.empty()) {
-        ret.push_back( { ::tree::base::serialize(result.root) } );
+        ret[0] = ::tree::base::serialize(result.root);
     } else {
-        ret = result.errors;
-        ret.insert(ret.begin(), "");
+        ret.resize(result.errors.size() + 1);
+        std::transform(result.errors.begin(), result.errors.end(), std::next(ret.begin()),
+            [](const auto &error) { return error.what(); });
     }
     return ret;
+}
+
+template <typename Errors>
+std::string errors_to_json(const Errors &errors) {
+    return fmt::format(R"({{"errors":["{}"]}})",
+       std::accumulate(errors.begin(), errors.end(), std::string{},
+           [](auto total, const auto &error) { return total + error.to_json(); })
+    );
+}
+
+template <typename Root>
+std::string root_to_json(const Root &root) {
+    std::ostringstream oss{};
+    root->dump_json(oss);
+    return oss.str();
 }
 
 /**
@@ -33,16 +50,9 @@ std::vector<std::string> to_strings(const Result &result) {
  */
 template <typename Result>
 std::string to_json(const Result &result) {
-    if (!result.errors.empty()) {
-        return fmt::format(R"({{"errors":["{}"]}})",  // first quote of first error message, and
-                                                      // last quote of last error message
-            fmt::join(result.errors, R"(",")"));  // last quote of any intermediate error message, and
-                                                  // first quote of the following
-    } else {
-        std::ostringstream oss{};
-        result.root->dump_json(oss);
-        return oss.str();
-    }
+    return (result.errors.empty())
+        ? root_to_json(result.root)
+        : errors_to_json(result.errors);
 }
 
 } // namespace cqasm::v1x

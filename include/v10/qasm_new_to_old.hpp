@@ -286,7 +286,7 @@ static void handle_parse_result(QasmRepresentation &qasm, cq1x::parser::ParseRes
     // Run analysis.
     auto analysis_result = analyzer.analyze(*result.root->as_program());
     if (!analysis_result.errors.empty()) {
-        throw std::runtime_error(analysis_result.errors[0]);
+        throw analysis_result.errors[0];
     }
 
     // Convert the new parse tree to the old AST classes.

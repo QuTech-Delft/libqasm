@@ -46,7 +46,6 @@ ParseResult parse_string(const std::string &data, const std::string &file_name="
  */
 class ParseHelper {
 public:
-
     /**
      * File pointer being scanned, if no data was specified.
      */
@@ -83,12 +82,12 @@ private:
      * Otherwise, file_path is used only for error messages, and data is read instead.
      * Don't use this directly, use parse().
      */
-    ParseHelper(const std::string &file_path, const std::string &data, bool use_file);
+    ParseHelper(std::string file_path, const std::string &data, bool use_file);
 
     /**
      * Construct the analyzer internals for the given file_name, and analyze the file.
      */
-    ParseHelper(const std::string &file_name, FILE *fptr);
+    ParseHelper(std::string file_name, FILE *fptr);
 
     /**
      * Initializes the scanner. Returns whether this was successful.
@@ -101,7 +100,6 @@ private:
     void parse();
 
 public:
-
     /**
      * Destroys the parse helper.
      */
@@ -110,8 +108,17 @@ public:
     /**
      * Pushes an error.
      */
-    void push_error(const std::string &error);
+    void push_error(const error::ParseError &error);
 
+    /**
+     * Builds and pushes an error.
+     */
+    void push_error(
+        const std::string &message,
+        int first_line,
+        int first_column,
+        int last_line,
+        int last_column);
 };
 
 } // namespace parser

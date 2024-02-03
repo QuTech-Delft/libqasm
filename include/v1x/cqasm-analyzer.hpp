@@ -234,39 +234,38 @@ public:
     /**
      * Analyzes the given program AST node.
      */
-    AnalysisResult analyze(const ast::Program &program) const;
+    AnalysisResult analyze(ast::Program &program);
 
     /**
      * Analyzes the given parse result.
-     * If there are parse errors, they are copied into the AnalysisResult error list, and
+     * If there are parse errors, they are moved into the AnalysisResult error list, and
      * the root node will be empty.
      */
-    AnalysisResult analyze(const parser::ParseResult &parse_result) const;
+    AnalysisResult analyze(parser::ParseResult &&parse_result);
 
     /**
      * Parses and analyzes using the given version and parser closures.
      */
     AnalysisResult analyze(
         const std::function<version::Version()> &version_parser,
-        const std::function<parser::ParseResult()> &parser
-    ) const;
+        const std::function<parser::ParseResult()> &parser);
 
     /**
      * Parses and analyzes the given file.
      */
-    AnalysisResult analyze_file(const std::string &filename) const;
+    AnalysisResult analyze_file(const std::string &filename);
 
     /**
      * Parses and analyzes the given file pointer.
      * The optional filename argument will be used only for error messages.
      */
-    AnalysisResult analyze_file(FILE *file, const std::string &filename = "<unknown>") const;
+    AnalysisResult analyze_file(FILE *file, const std::string &filename = "<unknown>");
 
     /**
      * Parses and analyzes the given string.
      * The optional filename argument will be used only for error messages.
      */
-    AnalysisResult analyze_string(const std::string &data, const std::string &filename = "<unknown>") const;
+    AnalysisResult analyze_string(const std::string &data, const std::string &filename = "<unknown>");
 };
 
 } // namespace cqasm::v1x::analyzer

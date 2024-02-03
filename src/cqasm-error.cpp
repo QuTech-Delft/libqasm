@@ -36,7 +36,7 @@ Error::Error(const std::string &message, std::shared_ptr<annotations::SourceLoca
 void Error::context(const tree::Annotatable &node) {
     if (!location_) {
         if (auto loc = node.get_annotation_ptr<annotations::SourceLocation>()) {
-            location_ = std::make_unique<annotations::SourceLocation>(*loc);
+            location_ = std::make_shared<annotations::SourceLocation>(*loc);
         }
     }
 }
@@ -46,7 +46,7 @@ void Error::context(const tree::Annotatable &node) {
  */
 const char *Error::what() const noexcept {
     what_message_ = fmt::format("Error{}: {}",
-        (location_) ? fmt::format(" at {}", *location_) : std::string{},
+        location_ ? fmt::format(" at {}", *location_) : std::string{},
         message_);
     return what_message_.c_str();
 }
@@ -70,11 +70,11 @@ std::string Error::to_json() const {
         R"("range":{{"start":{{"line":{1},"character":{2}}},"end":{{"line":{3},"character":{4}}}}},)"
         R"("message":"{5}",)"
         R"("severity":{6}}})",
-        (location_ ? location_->filename : std::string{}),
-        (location_ ? location_->first_line : 0),
-        (location_ ? location_->first_column : 0),
-        (location_ ? location_->last_line : 0),
-        (location_ ? location_->last_column : 0),
+        location_ ? location_->filename : std::string{},
+        location_ ? location_->first_line : 0,
+        location_ ? location_->first_column : 0,
+        location_ ? location_->last_line : 0,
+        location_ ? location_->last_column : 0,
         message_,
         1
     );

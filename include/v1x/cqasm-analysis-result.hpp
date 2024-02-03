@@ -57,7 +57,7 @@ public:
      * List of accumulated errors.
      * Analysis was successful if and only if `errors.empty()`.
      */
-    std::vector<std::string> errors;
+    error::AnalysisErrors errors;
 
     /**
      * "Unwraps" the result (as you would in Rust) to get the program node or an exception.

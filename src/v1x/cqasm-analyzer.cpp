@@ -471,7 +471,7 @@ public:
 /**
  * Analyzes the given AST.
  */
-AnalysisResult Analyzer::analyze(const ast::Program &ast) const {
+AnalysisResult Analyzer::analyze(ast::Program &ast) {
     auto result = AnalyzerHelper(*this, ast).result;
     if (result.errors.empty() && !result.root.is_well_formed()) {
         std::cerr << *result.root;
@@ -481,13 +481,14 @@ AnalysisResult Analyzer::analyze(const ast::Program &ast) const {
 }
 
 /**
- * Analyzes the given parse result. If there are parse errors, they are copied
- * into the AnalysisResult error list, and the root node will be empty.
+ * Analyzes the given parse result.
+ * If there are parse errors, they are moved into the AnalysisResult error list,
+ * and the root node will be empty.
  */
-AnalysisResult Analyzer::analyze(const parser::ParseResult &parse_result) const {
+AnalysisResult Analyzer::analyze(parser::ParseResult &&parse_result) {
     if (!parse_result.errors.empty()) {
         AnalysisResult result;
-        result.errors = parse_result.errors;
+        result.errors = std::move(parse_result.errors);
         return result;
     } else {
         return analyze(*parse_result.root->as_program());
@@ -499,19 +500,19 @@ AnalysisResult Analyzer::analyze(const parser::ParseResult &parse_result) const 
  */
 AnalysisResult Analyzer::analyze(
     const std::function<version::Version()> &version_parser,
-    const std::function<parser::ParseResult()> &parser
-) const {
+    const std::function<parser::ParseResult()> &parser) {
+
     AnalysisResult result;
     try {
         if (auto version = version_parser(); version > api_version) {
             std::ostringstream ss;
             ss << "cQASM file version is " << version << ", but at most ";
             ss << api_version << " is supported here";
-            result.errors.push_back(ss.str());
+            result.errors.emplace_back(ss.str());
             return result;
         }
-    } catch (error::AnalysisError &e) {
-        result.errors.emplace_back(e.what());
+    } catch (error::AnalysisError &err) {
+        result.errors.push_back(std::move(err));
         return result;
     }
     return analyze(parser());
@@ -520,7 +521,7 @@ AnalysisResult Analyzer::analyze(
 /**
  * Parses and analyzes the given file.
  */
-AnalysisResult Analyzer::analyze_file(const std::string &filename) const {
+AnalysisResult Analyzer::analyze_file(const std::string &filename) {
     return analyze(
         [=](){ return version::parse_file(filename); },
         [=](){ return parser::parse_file(filename); }
@@ -531,7 +532,7 @@ AnalysisResult Analyzer::analyze_file(const std::string &filename) const {
  * Parses and analyzes the given file pointer. The optional filename
  * argument will be used only for error messages.
  */
-AnalysisResult Analyzer::analyze_file(FILE *file, const std::string &filename) const {
+AnalysisResult Analyzer::analyze_file(FILE *file, const std::string &filename) {
     return analyze(
         [=](){ return version::parse_file(file, filename); },
         [=](){ return parser::parse_file(file, filename); }
@@ -542,7 +543,7 @@ AnalysisResult Analyzer::analyze_file(FILE *file, const std::string &filename) c
  * Parses and analyzes the given string. The optional filename argument
  * will be used only for error messages.
  */
-AnalysisResult Analyzer::analyze_string(const std::string &data, const std::string &filename) const {
+AnalysisResult Analyzer::analyze_string(const std::string &data, const std::string &filename) {
     return analyze(
         [=](){ return version::parse_string(data, filename); },
         [=](){ return parser::parse_string(data, filename); }
@@ -552,13 +553,10 @@ AnalysisResult Analyzer::analyze_string(const std::string &data, const std::stri
 /**
  * Analyzes the given AST using the given analyzer.
  */
-AnalyzerHelper::AnalyzerHelper(
-    const Analyzer &analyzer,
-    const ast::Program &ast
-) :
-    analyzer(analyzer),
-    result(),
-    scope_stack({Scope(analyzer.mappings, analyzer.functions, analyzer.instruction_set)})
+AnalyzerHelper::AnalyzerHelper(const Analyzer &analyzer, const ast::Program &ast)
+: analyzer(analyzer)
+, result()
+, scope_stack( { Scope(analyzer.mappings, analyzer.functions, analyzer.instruction_set) } )
 {
     try {
         // Construct the program node.
@@ -599,9 +597,9 @@ AnalyzerHelper::AnalyzerHelper(
                         }
                         throw error::AnalysisError(ss.str());
                     }
-                } catch (error::AnalysisError &e) {
-                    e.context(*subcircuit);
-                    result.errors.emplace_back(e.what());
+                } catch (error::AnalysisError &err) {
+                    err.context(*subcircuit);
+                    result.errors.push_back(std::move(err));
                 }
             }
 
@@ -615,9 +613,9 @@ AnalyzerHelper::AnalyzerHelper(
                         );
                     }
                     it.first->target = it2->second;
-                } catch (error::AnalysisError &e) {
-                    e.context(*it.first);
-                    result.errors.emplace_back(e.what());
+                } catch (error::AnalysisError &err) {
+                    err.context(*it.first);
+                    result.errors.push_back(std::move(err));
                 }
             }
 
@@ -665,8 +663,8 @@ AnalyzerHelper::AnalyzerHelper(
                 return false;
             });
 
-    } catch (error::AnalysisError &e) {
-        result.errors.emplace_back(e.what());
+    } catch (error::AnalysisError &err) {
+        result.errors.push_back(std::move(err));
     }
 }
 
@@ -695,9 +693,9 @@ void AnalyzerHelper::analyze_version(const ast::Version &ast) {
         // Save the file version.
         result.root->version->items = ast.items;
 
-    } catch (error::AnalysisError &e) {
-        e.context(ast);
-        result.errors.emplace_back(e.what());
+    } catch (error::AnalysisError &err) {
+        err.context(ast);
+        result.errors.push_back(std::move(err));
     }
     result.root->version->copy_annotation<parser::SourceLocation>(ast);
 }
@@ -730,9 +728,9 @@ void AnalyzerHelper::analyze_qubits(const ast::Expression &count) {
         get_current_scope().mappings.add("q", tree::make<values::QubitRefs>(all_qubits));
         get_current_scope().mappings.add("b", tree::make<values::BitRefs>(all_qubits));
 
-    } catch (error::AnalysisError &e) {
-        e.context(count);
-        result.errors.emplace_back(e.what());
+    } catch (error::AnalysisError &err) {
+        err.context(count);
+        result.errors.push_back(std::move(err));
     }
 }
 
@@ -838,9 +836,9 @@ void AnalyzerHelper::analyze_statements(const ast::StatementList &statements) {
             } else {
                 throw std::runtime_error("unexpected statement node");
             }
-        } catch (error::AnalysisError &e) {
-            e.context(*stmt);
-            result.errors.emplace_back(e.what());
+        } catch (error::AnalysisError &err) {
+            err.context(*stmt);
+            result.errors.push_back(std::move(err));
         }
     }
 }
@@ -917,9 +915,9 @@ void AnalyzerHelper::analyze_bundle(const ast::Bundle &bundle) {
                             throw error::AnalysisError(ss.str());
                         }
                     }
-                } catch (error::AnalysisError &e) {
-                    e.context(*insn);
-                    result.errors.emplace_back(e.what());
+                } catch (error::AnalysisError &err) {
+                    err.context(*insn);
+                    result.errors.push_back(std::move(err));
                 }
             }
         }
@@ -938,9 +936,9 @@ void AnalyzerHelper::analyze_bundle(const ast::Bundle &bundle) {
         // Add the node to the last subcircuit.
         get_current_subcircuit(bundle)->bundles.add(node);
 
-    } catch (error::AnalysisError &e) {
-        e.context(bundle);
-        result.errors.emplace_back(e.what());
+    } catch (error::AnalysisError &err) {
+        err.context(bundle);
+        result.errors.push_back(std::move(err));
     }
 }
 
@@ -996,9 +994,9 @@ void AnalyzerHelper::analyze_bundle_ext(const ast::Bundle &bundle) {
                             }
                         }
                     }
-                } catch (error::AnalysisError &e) {
-                    e.context(*insn_base);
-                    result.errors.emplace_back(e.what());
+                } catch (error::AnalysisError &err) {
+                    err.context(*insn_base);
+                    result.errors.push_back(std::move(err));
                 }
             }
         }
@@ -1017,9 +1015,9 @@ void AnalyzerHelper::analyze_bundle_ext(const ast::Bundle &bundle) {
         // Add the node to the last subcircuit.
         add_to_current_block(node.as<semantic::Statement>());
 
-    } catch (error::AnalysisError &e) {
-        e.context(bundle);
-        result.errors.emplace_back(e.what());
+    } catch (error::AnalysisError &err) {
+        err.context(bundle);
+        result.errors.push_back(std::move(err));
     }
 }
 
@@ -1128,9 +1126,9 @@ tree::Maybe<semantic::Instruction> AnalyzerHelper::analyze_instruction(const ast
         node->copy_annotation<parser::SourceLocation>(insn);
 
         return node;
-    } catch (error::AnalysisError &e) {
-        e.context(insn);
-        result.errors.emplace_back(e.what());
+    } catch (error::AnalysisError &err) {
+        err.context(insn);
+        result.errors.push_back(std::move(err));
     }
     return {};
 }
@@ -1179,9 +1177,9 @@ tree::Maybe<semantic::SetInstruction> AnalyzerHelper::analyze_set_instruction(
         node->copy_annotation<parser::SourceLocation>(insn);
 
         return node;
-    } catch (error::AnalysisError &e) {
-        e.context(insn);
-        result.errors.emplace_back(e.what());
+    } catch (error::AnalysisError &err) {
+        err.context(insn);
+        result.errors.push_back(std::move(err));
     }
     return {};
 }
@@ -1284,9 +1282,9 @@ tree::Maybe<semantic::GotoInstruction> AnalyzerHelper::analyze_goto_instruction(
         node->copy_annotation<parser::SourceLocation>(insn);
 
         return node;
-    } catch (error::AnalysisError &e) {
-        e.context(insn);
-        result.errors.emplace_back(e.what());
+    } catch (error::AnalysisError &err) {
+        err.context(insn);
+        result.errors.push_back(std::move(err));
     }
     return {};
 }
@@ -1348,9 +1346,9 @@ void AnalyzerHelper::analyze_error_model(const ast::Instruction &insn) {
         result.root->error_model->annotations = analyze_annotations(insn.annotations);
         result.root->error_model->copy_annotation<parser::SourceLocation>(insn);
 
-    } catch (error::AnalysisError &e) {
-        e.context(insn);
-        result.errors.emplace_back(e.what());
+    } catch (error::AnalysisError &err) {
+        err.context(insn);
+        result.errors.push_back(std::move(err));
     }
 }
 
@@ -1366,9 +1364,9 @@ void AnalyzerHelper::analyze_mapping(const ast::Mapping &mapping) {
             analyze_expression(*mapping.expr),
             tree::make<ast::Mapping>(mapping)
         );
-    } catch (error::AnalysisError &e) {
-        e.context(mapping);
-        result.errors.emplace_back(e.what());
+    } catch (error::AnalysisError &err) {
+        err.context(mapping);
+        result.errors.push_back(std::move(err));
     }
 }
 
@@ -1419,9 +1417,9 @@ void AnalyzerHelper::analyze_variables(const ast::Variables &variables) {
             );
         }
 
-    } catch (error::AnalysisError &e) {
-        e.context(variables);
-        result.errors.emplace_back(e.what());
+    } catch (error::AnalysisError &err) {
+        err.context(variables);
+        result.errors.push_back(std::move(err));
     }
 }
 
@@ -1455,9 +1453,9 @@ void AnalyzerHelper::analyze_subcircuit(const ast::Subcircuit &subcircuit) {
             node->body->copy_annotation<parser::SourceLocation>(subcircuit);
         }
         result.root->subcircuits.add(node);
-    } catch (error::AnalysisError &e) {
-        e.context(subcircuit);
-        result.errors.emplace_back(e.what());
+    } catch (error::AnalysisError &err) {
+        err.context(subcircuit);
+        result.errors.push_back(std::move(err));
     }
 }
 
@@ -1518,9 +1516,9 @@ void AnalyzerHelper::analyze_structured(const ast::Structured &structured) {
         // Add the node to the current block.
         add_to_current_block(node.as<semantic::Statement>());
 
-    } catch (error::AnalysisError &e) {
-        e.context(structured);
-        result.errors.emplace_back(e.what());
+    } catch (error::AnalysisError &err) {
+        err.context(structured);
+        result.errors.push_back(std::move(err));
     }
 }
 
@@ -1742,16 +1740,16 @@ tree::Any<semantic::AnnotationData> AnalyzerHelper::analyze_annotations(
             for (const auto &expression_ast : annotation_ast->operands->items) {
                 try {
                     annotation->operands.add(analyze_expression(*expression_ast));
-                } catch (error::AnalysisError &e) {
-                    e.context(*annotation_ast);
-                    result.errors.emplace_back(e.what());
+                } catch (error::AnalysisError &err) {
+                    err.context(*annotation_ast);
+                    result.errors.push_back(std::move(err));
                 }
             }
             annotation->copy_annotation<parser::SourceLocation>(*annotation_ast);
             retval.add(annotation);
-        } catch (error::AnalysisError &e) {
-            e.context(*annotation_ast);
-            result.errors.emplace_back(e.what());
+        } catch (error::AnalysisError &err) {
+            err.context(*annotation_ast);
+            result.errors.push_back(std::move(err));
         }
     }
     return retval;
@@ -1840,8 +1838,8 @@ values::Value AnalyzerHelper::analyze_expression(const ast::Expression &expressi
             (retval->as_function() || retval->as_variable_ref())) {
             throw error::AnalysisError("dynamic expressions are only supported from cQASM 1.1 onwards");
         }
-    } catch (error::AnalysisError &e) {
-        e.context(expression);
+    } catch (error::AnalysisError &err) {
+        err.context(expression);
         throw;
     }
     if (retval.empty()) {
@@ -1876,8 +1874,8 @@ primitives::Int AnalyzerHelper::analyze_as_const_int(const ast::Expression &expr
         } else {
             throw error::AnalysisError("integer must be constant");
         }
-    } catch (error::AnalysisError &e) {
-        e.context(expression);
+    } catch (error::AnalysisError &err) {
+        err.context(expression);
         throw;
     }
 }

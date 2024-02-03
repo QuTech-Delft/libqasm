@@ -86,8 +86,7 @@ AnalysisResult Analyzer::analyze(
 
     AnalysisResult result;
     try {
-        auto version = version_parser();
-        if (version > api_version) {
+        if (auto version = version_parser(); version > api_version) {
             std::ostringstream ss;
             ss << "cQASM file version is " << version << ", but at most ";
             ss << api_version << " is supported here";

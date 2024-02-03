@@ -45,7 +45,6 @@ class Error : public std::runtime_error {
     std::shared_ptr<annotations::SourceLocation> location_;
 
 public:
-
     /**
      * Constructs a new error.
      * If node is a non-null annotatable with a location node, its location information is attached.

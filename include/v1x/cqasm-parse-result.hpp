@@ -8,6 +8,7 @@
 
 #include "cqasm-annotations.hpp"
 #include "cqasm-ast.hpp"
+#include "cqasm-error.hpp"
 
 #include <string>
 #include <vector>
@@ -34,7 +35,7 @@ public:
      * List of accumulated errors.
      * Analysis was successful if and only if errors.empty().
      */
-    std::vector<std::string> errors;
+    error::ParseErrors errors;
 
     /**
      * Returns a vector of strings, of which the first is reserved for the CBOR serialization of the v1.x syntactic AST.

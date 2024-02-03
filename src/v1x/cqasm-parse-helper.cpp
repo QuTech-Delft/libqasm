@@ -6,9 +6,8 @@
 #include "v1x/cqasm-parser.hpp"
 #include "v1x/cqasm-lexer.hpp"
 
-namespace cqasm {
-namespace v1x {
-namespace parser {
+
+namespace cqasm::v1x::parser {
 
 /**
  * Parse the given file path.
@@ -38,20 +37,18 @@ ParseResult parse_string(const std::string &data, const std::string &file_name) 
  * Otherwise, file_path is used only for error messages, and data is read instead.
  * Don't use this directly, use parse().
  */
-ParseHelper::ParseHelper(const std::string &file_path, const std::string &data, bool use_file)
-: file_name(file_path) {
+ParseHelper::ParseHelper(std::string file_path, const std::string &data, bool use_file)
+: file_name{ std::move(file_path) } {
 
     // Create the scanner.
     if (!construct()) return;
 
     // Open the file or pass the data buffer to flex.
     if (use_file) {
-        fptr = fopen(file_path.c_str(), "r");
+        fptr = fopen(file_name.c_str(), "r");
         if (!fptr) {
-            std::ostringstream sb;
-            sb << "Failed to open input file " << file_path << ": "
-               << strerror(errno);
-            push_error(sb.str());
+            push_error(error::ParseError{
+                fmt::format("Failed to open input file '{}': {}", file_name, strerror(errno)) });
             return;
         }
         cqasm_v1x_set_in(fptr, (yyscan_t)scanner);
@@ -66,8 +63,8 @@ ParseHelper::ParseHelper(const std::string &file_path, const std::string &data, 
 /**
  * Construct the analyzer internals for the given file_name, and analyze the file.
  */
-ParseHelper::ParseHelper(const std::string &file_name, FILE *fptr)
-: file_name(file_name) {
+ParseHelper::ParseHelper(std::string file_name, FILE *fptr)
+: file_name{ std::move(file_name) } {
 
     // Create the scanner.
     if (!construct()) return;
@@ -85,13 +82,10 @@ ParseHelper::ParseHelper(const std::string &file_name, FILE *fptr)
  */
 bool ParseHelper::construct() {
     if (int ret_code = cqasm_v1x_lex_init((yyscan_t*)&scanner); ret_code) {
-        std::ostringstream sb;
-        sb << "Failed to construct scanner: " << strerror(ret_code);
-        push_error(sb.str());
+        push_error(error::ParseError{ fmt::format("Failed to construct scanner: {}", strerror(ret_code)) });
         return false;
-    } else {
-        return true;
     }
+    return true;
 }
 
 /**
@@ -99,14 +93,10 @@ bool ParseHelper::construct() {
  */
 void ParseHelper::parse() {
     if (int ret_code = cqasm_v1x_parse((yyscan_t) scanner, *this); ret_code == 2) {
-        std::ostringstream sb;
-        sb << "Out of memory while parsing " << file_name;
-        push_error(sb.str());
+        push_error(error::ParseError{ fmt::format("Out of memory while parsing '{}'", file_name) });
         return;
     } else if (ret_code) {
-        std::ostringstream sb;
-        sb << "Failed to parse " << file_name;
-        push_error(sb.str());
+        push_error(error::ParseError{ fmt::format("Failed to parse '{}'", file_name) });
         return;
     }
     if (result.errors.empty() && !result.root.is_well_formed()) {
@@ -133,10 +123,30 @@ ParseHelper::~ParseHelper() {
 /**
  * Pushes an error.
  */
-void ParseHelper::push_error(const std::string &error) {
+void ParseHelper::push_error(const error::ParseError &error) {
     result.errors.push_back(error);
 }
 
-} // namespace parser
-} // namespace v1x
-} // namespace cqasm
+/**
+ * Builds and pushes an error.
+ */
+void ParseHelper::push_error(
+    const std::string &message,
+    int first_line,
+    int first_column,
+    int last_line,
+    int last_column) {
+
+    push_error(error::ParseError{
+        message,
+        std::make_shared<annotations::SourceLocation>(
+            file_name,
+            static_cast<std::uint32_t>(first_line),
+            static_cast<std::uint32_t>(first_column),
+            static_cast<std::uint32_t>(last_line),
+            static_cast<std::uint32_t>(last_column)
+        )
+    });
+}
+
+} // namespace cqasm::v1x::parser
