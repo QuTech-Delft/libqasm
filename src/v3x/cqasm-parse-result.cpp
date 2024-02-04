@@ -1,5 +1,5 @@
+#include "cqasm-result.hpp"
 #include "v3x/cqasm-parse-result.hpp"
-#include "v3x/cqasm-result.hpp"
 
 
 namespace cqasm::v3x::parser {
@@ -10,14 +10,14 @@ namespace cqasm::v3x::parser {
  * Notice that the AST and error messages won't be available at the same time.
  */
 std::vector<std::string> ParseResult::to_strings() const {
-    return cqasm::v3x::to_strings(*this);
+    return cqasm::result::to_strings(*this);
 }
 
 /**
  * Returns a string with a JSON representation of a ParseResult.
  */
 std::string ParseResult::to_json() const {
-    return cqasm::v3x::to_json(*this);
+    return cqasm::result::to_json(*this);
 }
 
 } // namespace cqasm::v3x::parser

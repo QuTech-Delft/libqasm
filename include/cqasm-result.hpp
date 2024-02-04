@@ -9,11 +9,11 @@
 #include <vector>
 
 
-namespace cqasm::v3x {
+namespace cqasm::result {
 
 /**
  * Returns a vector of strings,
- * of which the first is reserved for the CBOR serialization of the v3.x syntactic or semantic AST.
+ * of which the first is reserved for the CBOR serialization of the syntactic or semantic AST.
  * Any additional strings represent error messages.
  * Notice that the AST and error messages won't be available at the same time.
  */
@@ -55,4 +55,4 @@ std::string to_json(const Result &result) {
         : errors_to_json(result.errors);
 }
 
-} // namespace cqasm::v3x
+} // namespace cqasm::result
