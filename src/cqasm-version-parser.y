@@ -23,11 +23,11 @@
 
 %code {
     int yylex(YYSTYPE* yylvalp, YYLTYPE* yyllocp, yyscan_t scanner);
-    void yyerror(YYLTYPE* yyllocp, yyscan_t scanner, const std::string &filename, cqasm::version::Version &version, const char* msg);
+    void yyerror(YYLTYPE* yyllocp, yyscan_t scanner, const std::string &file_name, cqasm::version::Version &version, const char* msg);
 }
 
 %param { yyscan_t scanner }
-%parse-param { const std::string &filename }
+%parse-param { const std::string &file_name }
 %parse-param { cqasm::version::Version &version }
 
 /* YYSTYPE union */
@@ -61,13 +61,15 @@ Root    : VERSION Version           {}
 
 %%
 
-void yyerror(YYLTYPE* yyllocp, yyscan_t unused, const std::string &filename, cqasm::version::Version &version, const char* msg) {
+void yyerror(YYLTYPE* yyllocp, yyscan_t unused, const std::string &file_name, cqasm::version::Version &version, const char* msg) {
     (void) unused;
     (void) version;
-    std::ostringstream sb;
-    sb << filename
-       << ":"  << yyllocp->first_line
-       << ":"  << yyllocp->first_column
-       << ": " << msg;
-    throw cqasm::error::ParseError(sb.str());
+    throw cqasm::error::ParseError(
+        std::string(msg),
+        file_name,
+        yyllocp->first_line,
+        yyllocp->first_column,
+        yyllocp->last_line,
+        yyllocp->last_column
+    );
 }

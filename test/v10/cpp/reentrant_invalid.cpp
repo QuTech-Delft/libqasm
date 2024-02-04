@@ -1,8 +1,8 @@
 #include "qasm_semantic.hpp"
 
 #include <cstdio>
-#include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
+#include <gtest/gtest.h>
 #include <stdexcept>  // runtime_error
 
 

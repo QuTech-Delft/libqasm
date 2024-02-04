@@ -253,19 +253,19 @@ public:
     /**
      * Parses and analyzes the given file.
      */
-    AnalysisResult analyze_file(const std::string &filename);
+    AnalysisResult analyze_file(const std::string &file_name);
 
     /**
      * Parses and analyzes the given file pointer.
-     * The optional filename argument will be used only for error messages.
+     * The optional file_name argument will be used only for error messages.
      */
-    AnalysisResult analyze_file(FILE *file, const std::string &filename = "<unknown>");
+    AnalysisResult analyze_file(FILE *file, const std::string &file_name = "<unknown>");
 
     /**
      * Parses and analyzes the given string.
-     * The optional filename argument will be used only for error messages.
+     * The optional file_name argument will be used only for error messages.
      */
-    AnalysisResult analyze_string(const std::string &data, const std::string &filename = "<unknown>");
+    AnalysisResult analyze_string(const std::string &data, const std::string &file_name = "<unknown>");
 };
 
 } // namespace cqasm::v1x::analyzer

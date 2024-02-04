@@ -17,11 +17,11 @@
  * never have to include any other file.* The most basic entry points into the
  * library for parsing a file are:
  *
- *  - \ref cqasm::analyze(const std::string &filename): read the given file,
- *    passed by filename, and parse it.
- *  - \ref cqasm::analyze(FILE *file, const std::string &filename): parse from
+ *  - \ref cqasm::analyze(const std::string &file_name): read the given file,
+ *    passed by file_name, and parse it.
+ *  - \ref cqasm::analyze(FILE *file, const std::string &file_name): parse from
  *    the given file pointer.
- *  - \ref cqasm::analyze_string(const std::string &data, const std::string &filename):
+ *  - \ref cqasm::analyze_string(const std::string &data, const std::string &file_name):
  *    parse the given string directly.
  *
  * which just use the \ref cqasm::default_analyzer() "default analyzer" to

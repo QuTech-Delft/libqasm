@@ -521,32 +521,32 @@ AnalysisResult Analyzer::analyze(
 /**
  * Parses and analyzes the given file.
  */
-AnalysisResult Analyzer::analyze_file(const std::string &filename) {
+AnalysisResult Analyzer::analyze_file(const std::string &file_name) {
     return analyze(
-        [=](){ return version::parse_file(filename); },
-        [=](){ return parser::parse_file(filename); }
+        [=](){ return version::parse_file(file_name); },
+        [=](){ return parser::parse_file(file_name); }
     );
 }
 
 /**
- * Parses and analyzes the given file pointer. The optional filename
- * argument will be used only for error messages.
+ * Parses and analyzes the given file pointer.
+ * The optional file_name argument will be used only for error messages.
  */
-AnalysisResult Analyzer::analyze_file(FILE *file, const std::string &filename) {
+AnalysisResult Analyzer::analyze_file(FILE *file, const std::string &file_name) {
     return analyze(
-        [=](){ return version::parse_file(file, filename); },
-        [=](){ return parser::parse_file(file, filename); }
+        [=](){ return version::parse_file(file, file_name); },
+        [=](){ return parser::parse_file(file, file_name); }
     );
 }
 
 /**
- * Parses and analyzes the given string. The optional filename argument
- * will be used only for error messages.
+ * Parses and analyzes the given string.
+ * The optional file_name argument will be used only for error messages.
  */
-AnalysisResult Analyzer::analyze_string(const std::string &data, const std::string &filename) {
+AnalysisResult Analyzer::analyze_string(const std::string &data, const std::string &file_name) {
     return analyze(
-        [=](){ return version::parse_string(data, filename); },
-        [=](){ return parser::parse_string(data, filename); }
+        [=](){ return version::parse_string(data, file_name); },
+        [=](){ return parser::parse_string(data, file_name); }
     );
 }
 
@@ -653,8 +653,8 @@ AnalyzerHelper::AnalyzerHelper(const Analyzer &analyzer, const ast::Program &ast
             [](const tree::One<semantic::Mapping> &lhs, const tree::One<semantic::Mapping> &rhs) -> bool {
                 if (auto lhsa = lhs->get_annotation_ptr<parser::SourceLocation>()) {
                     if (auto rhsa = rhs->get_annotation_ptr<parser::SourceLocation>()) {
-                        if (lhsa->filename < rhsa->filename) return true;
-                        if (rhsa->filename < lhsa->filename) return false;
+                        if (lhsa->file_name < rhsa->file_name) return true;
+                        if (rhsa->file_name < lhsa->file_name) return false;
                         if (lhsa->first_line < rhsa->first_line) return true;
                         if (rhsa->first_line < lhsa->first_line) return false;
                         return lhsa->first_column < rhsa->first_column;

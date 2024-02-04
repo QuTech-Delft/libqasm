@@ -19,7 +19,7 @@ public:
     /**
      * The name of the source file.
      */
-    std::string filename;
+    std::string file_name;
 
     /**
      * The first line of the range, or 0 if unknown.

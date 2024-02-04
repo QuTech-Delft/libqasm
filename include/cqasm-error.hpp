@@ -57,6 +57,13 @@ public:
     Error(const std::string &message, std::shared_ptr<annotations::SourceLocation> location);
 
     /**
+     * Constructs a new error from a message and all the fields of a source location.
+     */
+    Error(const std::string &message, const std::string &file_name,
+        std::uint32_t first_line, std::uint32_t first_column,
+        std::uint32_t last_line, std::uint32_t last_column);
+
+    /**
      * Sets the context of this error to the SourceLocation annotation of the given node,
      * if the error doesn't already have such a context.
      * If it does, this is no-op.

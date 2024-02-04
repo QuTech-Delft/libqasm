@@ -23,13 +23,11 @@ void CustomErrorListener::syntaxError(
     // We change it here to a one-based index, which is the more human-readable, and the common option in text editors
     throw error::ParseError{
         msg,
-        std::make_shared<annotations::SourceLocation>(
-            file_name_,
-            static_cast<std::uint32_t>(line),
-            static_cast<std::uint32_t>(charPositionInLine + 1),
-            static_cast<std::uint32_t>(line),
-            static_cast<std::uint32_t>(charPositionInLine + 1 + (offendingSymbol ? offendingSymbol->getText().size() : 0))
-        )
+        file_name_,
+        static_cast<std::uint32_t>(line),
+        static_cast<std::uint32_t>(charPositionInLine + 1),
+        static_cast<std::uint32_t>(line),
+        static_cast<std::uint32_t>(charPositionInLine + 1 + (offendingSymbol ? offendingSymbol->getText().size() : 0))
     };
 }
 

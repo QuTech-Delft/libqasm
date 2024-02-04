@@ -16,14 +16,13 @@ SourceLocation::SourceLocation(
     std::uint32_t first_line,
     std::uint32_t first_column,
     std::uint32_t last_line,
-    std::uint32_t last_column
-) :
-    filename(filename),
-    first_line(first_line),
-    first_column(first_column),
-    last_line(last_line),
-    last_column(last_column)
-{
+    std::uint32_t last_column)
+: file_name(filename)
+, first_line(first_line)
+, first_column(first_column)
+, last_line(last_line)
+, last_column(last_column) {
+
     if (last_line < first_line) {
         last_line = first_line;
     }
@@ -56,7 +55,7 @@ void SourceLocation::expand_to_include(std::uint32_t line, std::uint32_t column)
  */
 std::ostream &operator<<(std::ostream &os, const SourceLocation &object) {
     // Print filename.
-    os << object.filename;
+    os << object.file_name;
 
     // Special case for when only the source filename is known.
     if (!object.first_line) {

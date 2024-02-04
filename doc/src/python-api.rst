@@ -77,7 +77,7 @@ You can register error models in much the same way, if you want:
     )
 
 Besides ``analyze_string(data)``, the ``Analyzer`` class also has
-``analyze_file(filename)``, ``parse_string(data)``, and ``parse_file(filename)``
+``analyze_file(file_name)``, ``parse_string(data)``, and ``parse_file(file_name)``
 variants. The difference between ``*_string`` and ``*_file`` should be obvious;
 the difference between ``analyze_*`` and ``parse_*`` is that the former runs
 the complete analysis process, while the latter gives you the raw parse result.
