@@ -48,7 +48,7 @@ ParseHelper::ParseHelper(std::string file_path, const std::string &data, bool us
         fptr = fopen(file_name.c_str(), "r");
         if (!fptr) {
             push_error(error::ParseError{
-                fmt::format("Failed to open input file '{}': {}", file_name, strerror(errno)) });
+                fmt::format("failed to open input file '{}': {}", file_name, strerror(errno)) });
             return;
         }
         cqasm_v1x_set_in(fptr, (yyscan_t)scanner);
@@ -82,7 +82,7 @@ ParseHelper::ParseHelper(std::string file_name, FILE *fptr)
  */
 bool ParseHelper::construct() {
     if (int ret_code = cqasm_v1x_lex_init((yyscan_t*)&scanner); ret_code) {
-        push_error(error::ParseError{ fmt::format("Failed to construct scanner: {}", strerror(ret_code)) });
+        push_error(error::ParseError{ fmt::format("failed to construct scanner: {}", strerror(ret_code)) });
         return false;
     }
     return true;
@@ -93,10 +93,10 @@ bool ParseHelper::construct() {
  */
 void ParseHelper::parse() {
     if (int ret_code = cqasm_v1x_parse((yyscan_t) scanner, *this); ret_code == 2) {
-        push_error(error::ParseError{ fmt::format("Out of memory while parsing '{}'", file_name) });
+        push_error(error::ParseError{ fmt::format("out of memory while parsing '{}'", file_name) });
         return;
     } else if (ret_code) {
-        push_error(error::ParseError{ fmt::format("Failed to parse '{}'", file_name) });
+        push_error(error::ParseError{ fmt::format("failed to parse '{}'", file_name) });
         return;
     }
     if (result.errors.empty() && !result.root.is_well_formed()) {

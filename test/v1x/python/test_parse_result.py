@@ -9,7 +9,7 @@ class TestParseResult(unittest.TestCase):
         program_str = "version 1.0; qubits 10; display @test.test([, 1, 2, 3+, 4, 5) @test.test([, 1, 2, 3+, 4, 5)"
         v1x_analyzer = cq.Analyzer()
         actual_errors_json = v1x_analyzer.parse_string_to_json(program_str)
-        expected_errors_json = '''{"errors":["<unknown>:1:45: syntax error, unexpected ','","<unknown>:1:55: syntax error, unexpected ','","<unknown>:1:61: syntax error, unexpected ')', expecting ']'","<unknown>:1:85: syntax error, unexpected ','","<unknown>:1:91: syntax error, unexpected ')', expecting ',' or ']'","Failed to parse <unknown>"]}'''
+        expected_errors_json = '''{"errors":["<unknown>:1:45: syntax error, unexpected ','","<unknown>:1:55: syntax error, unexpected ','","<unknown>:1:61: syntax error, unexpected ')', expecting ']'","<unknown>:1:85: syntax error, unexpected ','","<unknown>:1:91: syntax error, unexpected ')', expecting ',' or ']'","failed to parse <unknown>"]}'''
         self.assertEqual(actual_errors_json, expected_errors_json)
 
     def test_to_json_with_parser_ast(self):
