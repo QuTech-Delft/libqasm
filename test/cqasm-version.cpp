@@ -12,22 +12,35 @@ using namespace cqasm::version;
 
 
 TEST(parse_file, filename_does_not_exist) {
-    EXPECT_THROW(parse_file("res/cqasm_version/does_not_exist.cq"), ParseError);
+    EXPECT_THAT([&]() { parse_file("res/cqasm_version/does_not_exist.cq"); },
+        ThrowsMessage<ParseError>(HasSubstr(
+            "Error: parse_file failed to open input file 'res/cqasm_version/does_not_exist.cq': "
+            "No such file or directory.")));
 }
 TEST(parse_file, filename_empty) {
-    EXPECT_THROW(parse_file("res/cqasm_version/empty.cq"), ParseError);
+    EXPECT_THAT([&]() { parse_file("res/cqasm_version/empty.cq"); },
+        Throws<ParseError>(Property(&ParseError::what,
+            HasSubstr("Error at res/cqasm_version/empty.cq:1:1: syntax error"))));
 }
 TEST(parse_file, filename_version_no_number) {
-    EXPECT_THROW(parse_file("res/cqasm_version/version_no_number.cq"), ParseError);
+    EXPECT_THAT([&]() { parse_file("res/cqasm_version/version_no_number.cq"); },
+        Throws<ParseError>(Property(&ParseError::what,
+            HasSubstr("Error at res/cqasm_version/version_no_number.cq:2:1: syntax error"))));
 }
 TEST(parse_file, filename_version_abc) {
-    EXPECT_THROW(parse_file("res/cqasm_version/version_abc.cq"), ParseError);
+    EXPECT_THAT([&]() { parse_file("res/cqasm_version/version_abc.cq"); },
+        Throws<ParseError>(Property(&ParseError::what,
+            HasSubstr("Error at res/cqasm_version/version_abc.cq:1:9..10: syntax error"))));
 }
 TEST(parse_file, filename_version_1_abc) {
-    EXPECT_THROW(parse_file("res/cqasm_version/version_1_abc.cq"), ParseError);
+    EXPECT_THAT([&]() { parse_file("res/cqasm_version/version_1_abc.cq"); },
+        Throws<ParseError>(Property(&ParseError::what,
+            HasSubstr("Error at res/cqasm_version/version_1_abc.cq:1:11..12: syntax error"))));
 }
 TEST(parse_file, filename_version_1_1_abc) {
-    EXPECT_THROW(parse_file("res/cqasm_version/version_1_1_abc.cq"), ParseError);
+    EXPECT_THAT([&]() { parse_file("res/cqasm_version/version_1_1_abc.cq"); },
+        Throws<ParseError>(Property(&ParseError::what,
+            HasSubstr("Error at res/cqasm_version/version_1_1_abc.cq:1:13..14: syntax error"))));
 }
 TEST(parse_file, filename_version_1_0) {
     EXPECT_EQ(parse_file("res/cqasm_version/version_1_0.cq"), Version{ "1.0" });
@@ -54,48 +67,65 @@ TEST(parse_file, filename_version_4_0) {
     EXPECT_EQ(parse_file("res/cqasm_version/version_4_0.cq"), Version{ "4.0" });
 }
 TEST(parse_file, instruction_called_version) {
-    EXPECT_THROW(parse_file("res/cqasm_version/instruction_called_version.cq"), ParseError);
+    EXPECT_THAT([&]() { parse_file("res/cqasm_version/instruction_called_version.cq"); },
+        Throws<ParseError>(Property(&ParseError::what,
+            HasSubstr("Error at res/cqasm_version/instruction_called_version.cq:1:9..10: syntax error"))));
 }
 TEST(parse_file, no_version_and_instruction) {
-    EXPECT_THROW(parse_file("res/cqasm_version/no_version_and_instruction.cq"), ParseError);
+    EXPECT_THAT([&]() { parse_file("res/cqasm_version/no_version_and_instruction.cq"); },
+        Throws<ParseError>(Property(&ParseError::what,
+            HasSubstr("Error at res/cqasm_version/no_version_and_instruction.cq:1:1..2: syntax error"))));
 }
 TEST(parse_file, version_1_0_and_instruction) {
     EXPECT_EQ(parse_file("res/cqasm_version/version_1_0_and_instruction.cq"), Version{ "1.0" });
 }
 TEST(parse_file, instruction_and_version_1_0) {
-    EXPECT_THROW(parse_file("res/cqasm_version/instruction_and_version_1_0.cq"), ParseError);
+    EXPECT_THAT([&]() { parse_file("res/cqasm_version/instruction_and_version_1_0.cq"); },
+        Throws<ParseError>(Property(&ParseError::what,
+            HasSubstr("Error at res/cqasm_version/instruction_and_version_1_0.cq:1:1..2: syntax error"))));
 }
 
 
 TEST(parse_file, fp_does_not_exist) {
     const char *filename{ "res/cqasm_version/does_not_exist.cq" };
     FILE *fp{ fopen(filename, "r") };
-    EXPECT_THROW(parse_file(fp, filename), ParseError);
+    EXPECT_THAT([&]() { parse_file(fp, filename); },
+        ThrowsMessage<ParseError>(HasSubstr("Error: ScannerFlexBisonFile couldn't access file.")));
 }
 TEST(parse_file, fp_empty) {
     const char *filename{ "res/cqasm_version/empty.cq" };
     FILE *fp{ fopen(filename, "r") };
-    EXPECT_THROW(parse_file(fp, filename), ParseError);
+    EXPECT_THAT([&]() { parse_file(fp, filename); },
+        Throws<ParseError>(Property(&ParseError::what,
+            HasSubstr("Error at res/cqasm_version/empty.cq:1:1: syntax error"))));
 }
 TEST(parse_file, fp_version_no_number) {
     const char *filename{ "res/cqasm_version/version_no_number.cq" };
     FILE *fp{ fopen(filename, "r") };
-    EXPECT_THROW(parse_file(fp, filename), ParseError);
+    EXPECT_THAT([&]() { parse_file(fp, filename); },
+        Throws<ParseError>(Property(&ParseError::what,
+            HasSubstr("Error at res/cqasm_version/version_no_number.cq:2:1: syntax error"))));
 }
 TEST(parse_file, fp_version_abc) {
     const char *filename{ "res/cqasm_version/version_abc.cq" };
     FILE *fp{ fopen(filename, "r") };
-    EXPECT_THROW(parse_file(fp, filename), ParseError);
+    EXPECT_THAT([&]() { parse_file(fp, filename); },
+        Throws<ParseError>(Property(&ParseError::what,
+            HasSubstr("Error at res/cqasm_version/version_abc.cq:1:9..10: syntax error"))));
 }
 TEST(parse_file, fp_version_1_abc) {
     const char *filename{ "res/cqasm_version/version_1_abc.cq" };
     FILE *fp{ fopen(filename, "r") };
-    EXPECT_THROW(parse_file(fp, filename), ParseError);
+    EXPECT_THAT([&]() { parse_file(fp, filename); },
+        Throws<ParseError>(Property(&ParseError::what,
+            HasSubstr("Error at res/cqasm_version/version_1_abc.cq:1:11..12: syntax error"))));
 }
 TEST(parse_file, fp_version_1_1_abc) {
     const char *filename{ "res/cqasm_version/version_1_1_abc.cq" };
     FILE *fp{ fopen(filename, "r") };
-    EXPECT_THROW(parse_file(fp, filename), ParseError);
+    EXPECT_THAT([&]() { parse_file(fp, filename); },
+        Throws<ParseError>(Property(&ParseError::what,
+            HasSubstr("Error at res/cqasm_version/version_1_1_abc.cq:1:13..14: syntax error"))));
 }
 TEST(parse_file, fp_version_1_0) {
     const char *filename{ "res/cqasm_version/version_1_0.cq" };
@@ -140,12 +170,16 @@ TEST(parse_file, fp_version_4_0) {
 TEST(parse_file, fp_instruction_called_version) {
     const char *filename{ "res/cqasm_version/instruction_called_version.cq" };
     FILE *fp{ fopen(filename, "r") };
-    EXPECT_THROW(parse_file(fp, filename), ParseError);
+    EXPECT_THAT([&]() { parse_file(fp, filename); },
+        Throws<ParseError>(Property(&ParseError::what,
+            HasSubstr("Error at res/cqasm_version/instruction_called_version.cq:1:9..10: syntax error"))));
 }
 TEST(parse_file, fp_no_version_and_instruction) {
     const char *filename{ "res/cqasm_version/no_version_and_instruction.cq" };
     FILE *fp{ fopen(filename, "r") };
-    EXPECT_THROW(parse_file(fp, filename), ParseError);
+    EXPECT_THAT([&]() { parse_file(fp, filename); },
+        Throws<ParseError>(Property(&ParseError::what,
+            HasSubstr("Error at res/cqasm_version/no_version_and_instruction.cq:1:1..2: syntax error"))));
 }
 TEST(parse_file, fp_version_1_0_and_instruction) {
     const char *filename{ "res/cqasm_version/version_1_0_and_instruction.cq" };
@@ -153,9 +187,11 @@ TEST(parse_file, fp_version_1_0_and_instruction) {
     EXPECT_EQ(parse_file(fp, filename), Version{ "1.0" });
 }
 TEST(parse_file, fp_instruction_and_version_1_0) {
-    const char *filename{ "res/cqasm_version/fp_instruction_and_version_1_0.cq" };
+    const char *filename{ "res/cqasm_version/instruction_and_version_1_0.cq" };
     FILE *fp{ fopen(filename, "r") };
-    EXPECT_THROW(parse_file(fp, filename), ParseError);
+    EXPECT_THAT([&]() { parse_file(fp, filename); },
+        Throws<ParseError>(Property(&ParseError::what,
+            HasSubstr("Error at res/cqasm_version/instruction_and_version_1_0.cq:1:1..2: syntax error"))));
 }
 TEST(parse_file, fp_version_1_0_and_no_filename_argument) {
     FILE *fp{ fopen("res/cqasm_version/version_1_0.cq", "r") };
@@ -163,33 +199,36 @@ TEST(parse_file, fp_version_1_0_and_no_filename_argument) {
 }
 TEST(parse_file, fp_empty_and_no_filename_argument) {
     FILE *fp{ fopen("res/cqasm_version/empty.cq", "r") };
-    try {
-        parse_file(fp);
-    } catch (const ParseError &err) {
-        EXPECT_THAT(err.what(), HasSubstr("<unknown>"));
-    }
+    EXPECT_THAT([&]() { parse_file(fp); },
+        Throws<ParseError>(Property(&ParseError::what,
+            HasSubstr("Error at <unknown>:1:1: syntax error"))));
 }
 
 
 TEST(parse_string, string_empty) {
     const std::string filename{ "res/cqasm_version/empty.cq" };
-    EXPECT_THROW(parse_string("", filename), ParseError);
+    EXPECT_THAT([&]() { parse_string("", filename); },
+        ThrowsMessage<ParseError>(HasSubstr("Error at res/cqasm_version/empty.cq:1:1: syntax error")));
 }
 TEST(parse_string, string_version_no_number) {
     const std::string filename{ "res/cqasm_version/version_no_number.cq" };
-    EXPECT_THROW(parse_string("version", filename), ParseError);
+    EXPECT_THAT([&]() { parse_string("version", filename); },
+        ThrowsMessage<ParseError>(HasSubstr("Error at res/cqasm_version/version_no_number.cq:1:8: syntax error")));
 }
 TEST(parse_string, string_version_abc) {
     const std::string filename{ "res/cqasm_version/version_abc.cq" };
-    EXPECT_THROW(parse_string("version abc", filename), ParseError);
+    EXPECT_THAT([&]() { parse_string("version abc", filename); },
+        ThrowsMessage<ParseError>(HasSubstr("Error at res/cqasm_version/version_abc.cq:1:9..10: syntax error")));
 }
 TEST(parse_string, string_version_1_abc) {
     const std::string filename{ "res/cqasm_version/version_1_abc.cq" };
-    EXPECT_THROW(parse_string("version 1.abc", filename), ParseError);
+    EXPECT_THAT([&]() { parse_string("version 1.abc", filename); },
+        ThrowsMessage<ParseError>(HasSubstr("Error at res/cqasm_version/version_1_abc.cq:1:11..12: syntax error")));
 }
 TEST(parse_string, string_version_1_1_abc) {
     const std::string filename{ "res/cqasm_version/version_1_1_abc.cq" };
-    EXPECT_THROW(parse_string("version 1.1.abc", filename), ParseError);
+    EXPECT_THAT([&]() { parse_string("version 1.1.abc", filename); },
+        ThrowsMessage<ParseError>(HasSubstr("Error at res/cqasm_version/version_1_1_abc.cq:1:13..14: syntax error")));
 }
 TEST(parse_string, string_version_1_0) {
     const std::string filename{ "res/cqasm_version/version_1_0.cq" };
@@ -225,11 +264,15 @@ TEST(parse_string, string_version_4_0) {
 }
 TEST(parse_string, string_instruction_called_version) {
     const std::string filename{ "res/cqasm_version/instruction_called_version.cq" };
-    EXPECT_THROW(parse_string("version q[1:6], 3.14159\nmeasure_all", filename), ParseError);
+    EXPECT_THAT([&]() { parse_string("version q[1:6], 3.14159\nmeasure_all", filename); },
+        ThrowsMessage<ParseError>(HasSubstr(
+            "Error at res/cqasm_version/instruction_called_version.cq:1:9..10: syntax error")));
 }
 TEST(parse_string, string_no_version_and_instruction) {
     const std::string filename{ "res/cqasm_version/no_version_and_instruction.cq" };
-    EXPECT_THROW(parse_string("qubits 3\n\nx q[0]", filename), ParseError);
+    EXPECT_THAT([&]() { parse_string("qubits 3\n\nx q[0]", filename); },
+        ThrowsMessage<ParseError>(HasSubstr(
+            "Error at res/cqasm_version/no_version_and_instruction.cq:1:1..2: syntax error")));
 }
 TEST(parse_string, string_version_1_0_and_instruction) {
     const std::string filename{ "res/cqasm_version/version_1_0_and_instruction.cq" };
@@ -237,17 +280,16 @@ TEST(parse_string, string_version_1_0_and_instruction) {
 }
 TEST(parse_string, string_instruction_and_version_1_0) {
     const std::string filename{ "res/cqasm_version/instruction_and_version_1_0.cq" };
-    EXPECT_THROW(parse_string("qubits 3\n\nx q[0]\n\nversion 1.0", filename), ParseError);
+    EXPECT_THAT([&]() { parse_string("qubits 3\n\nx q[0]\n\nversion 1.0", filename); },
+        ThrowsMessage<ParseError>(HasSubstr(
+            "Error at res/cqasm_version/instruction_and_version_1_0.cq:1:1..2: syntax error")));
 }
 TEST(parse_string, string_version_1_0_and_no_filename_argument) {
     EXPECT_EQ(parse_string("version 1.0"), Version{ "1.0" });
 }
 TEST(parse_string, string_empty_and_no_filename_argument) {
-    try {
-        parse_string("");
-    } catch (const ParseError &err) {
-        EXPECT_THAT(err.what(), HasSubstr("<unknown>"));
-    }
+    EXPECT_THAT([&]() { parse_string(""); },
+        ThrowsMessage<ParseError>(HasSubstr("Error at <unknown>:1:1: syntax error")));
 }
 
 
@@ -297,5 +339,5 @@ TEST(ParseHelper_parse, scanner_returns_correct_version) {
 TEST(ParseHelper_parse, scanner_throws_and_no_filename_argument) {
     auto scanner_up = std::make_unique<ScannerFlexBisonString>("");
     EXPECT_THAT([&]() { ParseHelper(std::move(scanner_up)).parse(); },
-        ThrowsMessage<ParseError>(HasSubstr("<unknown>")));
+        ThrowsMessage<ParseError>(HasSubstr("Error at <unknown>:1:1: syntax error")));
 }
