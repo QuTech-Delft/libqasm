@@ -37,7 +37,7 @@ tree::One<semantic::Program> analyze_file(
  */
 tree::One<semantic::Program> analyze_file(
     FILE *fp,
-    const std::string &file_name = "<unknown>",
+    const std::string &file_name = annotations::unknown_file_name,
     const std::string &api_version = "1.0"
 );
 
@@ -48,7 +48,7 @@ tree::One<semantic::Program> analyze_file(
  */
 tree::One<semantic::Program> analyze_string(
     const std::string &data,
-    const std::string &file_name = "<unknown>",
+    const std::string &file_name = annotations::unknown_file_name,
     const std::string &api_version = "1.0"
 );
 

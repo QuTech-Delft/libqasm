@@ -32,9 +32,14 @@ std::vector<std::string> to_strings(const Result &result) {
 
 template <typename Errors>
 std::string errors_to_json(const Errors &errors) {
-    return fmt::format(R"({{"errors":["{}"]}})",
-       std::accumulate(errors.begin(), errors.end(), std::string{},
-           [](auto total, const auto &error) { return total + error.to_json(); })
+    return fmt::format(R"({{"errors":[{}]}})",
+        std::accumulate(errors.begin(), errors.end(), std::string{},
+            [first=true](auto total, const auto &error) mutable {
+                total += (first ? "" : ",");
+                total += error.to_json();
+                first = false;
+                return total;
+        })
     );
 }
 

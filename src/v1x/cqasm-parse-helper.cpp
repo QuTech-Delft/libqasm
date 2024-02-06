@@ -130,14 +130,20 @@ void ParseHelper::push_error(const error::ParseError &error) {
 /**
  * Builds and pushes an error.
  */
-void ParseHelper::push_error(const std::string &message,
-    int first_line, int first_column,
-    int last_line, int last_column) {
+void ParseHelper::push_error(
+    const std::string &message,
+    int first_line,
+    int first_column,
+    int last_line,
+    int last_column) {
 
     result.errors.emplace_back(
-        message, file_name,
-        static_cast<std::uint32_t>(first_line), static_cast<std::uint32_t>(first_column),
-        static_cast<std::uint32_t>(last_line), static_cast<std::uint32_t>(last_column)
+        message,
+        file_name,
+        static_cast<std::uint32_t>(first_line),
+        static_cast<std::uint32_t>(first_column),
+        static_cast<std::uint32_t>(last_line),
+        static_cast<std::uint32_t>(last_column)
     );
 }
 

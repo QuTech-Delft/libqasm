@@ -11,6 +11,8 @@
 
 namespace cqasm::annotations {
 
+static constexpr const char* unknown_file_name = "<unknown file name>";
+
 /**
  * Source location annotation object, containing source file line numbers etc.
  */
@@ -45,7 +47,7 @@ public:
      * Constructs a source location object.
      */
     explicit SourceLocation(
-        const std::string &filename,
+        const std::string &file_name,
         std::uint32_t first_line = 0,
         std::uint32_t first_column = 0,
         std::uint32_t last_line = 0,
@@ -53,10 +55,14 @@ public:
     );
 
     /**
-     * Expands the location range to contain the given location in the source
-     * file.
+     * Expands the location range to contain the given location in the source file.
      */
     void expand_to_include(std::uint32_t line, std::uint32_t column = 1);
+
+    /**
+     * Checks if the name of the source file is known.
+     */
+    [[nodiscard]] bool file_name_known() const;
 };
 
 /**

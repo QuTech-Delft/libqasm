@@ -201,7 +201,7 @@ TEST(parse_file, fp_empty_and_no_filename_argument) {
     FILE *fp{ fopen("res/cqasm_version/empty.cq", "r") };
     EXPECT_THAT([&]() { parse_file(fp); },
         Throws<ParseError>(Property(&ParseError::what,
-            HasSubstr("Error at <unknown>:1:1: syntax error"))));
+            HasSubstr("Error at <unknown file name>:1:1: syntax error"))));
 }
 
 
@@ -289,7 +289,7 @@ TEST(parse_string, string_version_1_0_and_no_filename_argument) {
 }
 TEST(parse_string, string_empty_and_no_filename_argument) {
     EXPECT_THAT([&]() { parse_string(""); },
-        ThrowsMessage<ParseError>(HasSubstr("Error at <unknown>:1:1: syntax error")));
+        ThrowsMessage<ParseError>(HasSubstr("Error at <unknown file name>:1:1: syntax error")));
 }
 
 
@@ -339,5 +339,5 @@ TEST(ParseHelper_parse, scanner_returns_correct_version) {
 TEST(ParseHelper_parse, scanner_throws_and_no_filename_argument) {
     auto scanner_up = std::make_unique<ScannerFlexBisonString>("");
     EXPECT_THAT([&]() { ParseHelper(std::move(scanner_up)).parse(); },
-        ThrowsMessage<ParseError>(HasSubstr("Error at <unknown>:1:1: syntax error")));
+        ThrowsMessage<ParseError>(HasSubstr("Error at <unknown file name>:1:1: syntax error")));
 }

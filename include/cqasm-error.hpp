@@ -24,6 +24,8 @@ using AnalysisError = Error;
 using ParseErrors = std::vector<ParseError>;
 using AnalysisErrors = std::vector<AnalysisError>;
 
+static constexpr const char* unknown_error_message = "<unknown error message>";
+
 /**
  * Exception used for analysis errors.
  */
@@ -59,9 +61,13 @@ public:
     /**
      * Constructs a new error from a message and all the fields of a source location.
      */
-    Error(const std::string &message, const std::string &file_name,
-        std::uint32_t first_line, std::uint32_t first_column,
-        std::uint32_t last_line, std::uint32_t last_column);
+    Error(
+        const std::string &message,
+        const std::string &file_name,
+        std::uint32_t first_line,
+        std::uint32_t first_column,
+        std::uint32_t last_line,
+        std::uint32_t last_column);
 
     /**
      * Sets the context of this error to the SourceLocation annotation of the given node,

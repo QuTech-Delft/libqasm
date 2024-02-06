@@ -112,13 +112,13 @@ Version parse_file(const std::string &file_path);
  * Throws a ParseError if this fails.
  * A file_name may be given in addition for use within the ParseError thrown when version parsing fails.
  */
-Version parse_file(FILE* fp, const std::string &file_name = "<unknown>");
+Version parse_file(FILE* fp, const std::string &file_name = annotations::unknown_file_name);
 
 /**
  * Parse the given string as a file to get its version number.
  * A file_name may be given in addition for use within the ParseError thrown when version parsing fails.
  */
-Version parse_string(const std::string &data, const std::string &file_name = "<unknown>");
+Version parse_string(const std::string &data, const std::string &file_name = annotations::unknown_file_name);
 
 
 /**
@@ -136,7 +136,7 @@ class ParseHelper {
     std::string file_name;
 
 public:
-    explicit ParseHelper(std::unique_ptr<ScannerAdaptor> scanner_up, std::string file_name = "<unknown>");
+    explicit ParseHelper(std::unique_ptr<ScannerAdaptor> scanner_up, std::string file_name = annotations::unknown_file_name);
 
     /**
      * Does the actual parsing.

@@ -13,6 +13,7 @@ TEST(to_lowercase, contains_numbers) { EXPECT_EQ(to_lowercase("abCD123"), "abcd1
 TEST(to_lowercase, contains_punctuation_signs) { EXPECT_EQ(to_lowercase("[abCD!]"), "[abcd!]"); }
 TEST(to_lowercase, does_not_contain_letters) { EXPECT_EQ(to_lowercase("123"), "123"); }
 
+
 TEST(equal_case_insensitive, empty_strings) { EXPECT_TRUE(equal_case_insensitive("", "")); }
 TEST(equal_case_insensitive, both_all_lowercase) { EXPECT_TRUE(equal_case_insensitive("abcd", "abcd")); }
 TEST(equal_case_insensitive, both_all_uppercase) { EXPECT_TRUE(equal_case_insensitive("ABCD", "ABCD")); }
@@ -21,3 +22,18 @@ TEST(equal_case_insensitive, both_contain_lowercase_and_uppercase) {
 TEST(equal_case_insensitive, both_contain_numbers) { EXPECT_TRUE(equal_case_insensitive("[abCD!]", "[ABcd!]")); }
 TEST(equal_case_insensitive, non_contain_letters) { EXPECT_TRUE(equal_case_insensitive("123", "123")); }
 TEST(equal_case_insensitive, different_strings) { EXPECT_FALSE(equal_case_insensitive("123", "ABC")); }
+
+
+TEST(url_encode, random_string) { EXPECT_EQ(url_encode("a0 ^"), "a0%20%5E"); }
+TEST(url_encode, windows_file_path_with_spaces) { EXPECT_EQ(url_encode(R"(C:\my file.txt)"), "C%3A%5Cmy%20file.txt"); }
+
+
+TEST(json_encode, random_string) { EXPECT_EQ(json_encode(R"(a0 "\)"), R"(a0 \u0022\u005C)"); }
+TEST(json_encode, windows_file_path_with_spaces) {
+    EXPECT_EQ(json_encode(R"(C:\my file.txt)"), R"(C:\u005Cmy file.txt)");
+}
+TEST(json_encode, error) {
+    EXPECT_EQ(
+        json_encode("failed to parse 'res/v1x/parsing/grammar/expression_recovery/input.cq'"),
+        "failed to parse 'res/v1x/parsing/grammar/expression_recovery/input.cq'");
+}

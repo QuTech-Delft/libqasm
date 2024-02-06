@@ -259,13 +259,13 @@ public:
      * Parses and analyzes the given file pointer.
      * The optional file_name argument will be used only for error messages.
      */
-    AnalysisResult analyze_file(FILE *file, const std::string &file_name = "<unknown>");
+    AnalysisResult analyze_file(FILE *file, const std::string &file_name = annotations::unknown_file_name);
 
     /**
      * Parses and analyzes the given string.
      * The optional file_name argument will be used only for error messages.
      */
-    AnalysisResult analyze_string(const std::string &data, const std::string &file_name = "<unknown>");
+    AnalysisResult analyze_string(const std::string &data, const std::string &file_name = annotations::unknown_file_name);
 };
 
 } // namespace cqasm::v1x::analyzer

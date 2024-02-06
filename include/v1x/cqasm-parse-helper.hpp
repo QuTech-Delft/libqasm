@@ -13,13 +13,10 @@
 #include <cstdio>
 
 
-namespace cqasm {
-namespace v1x {
-
 /**
  * Namespace for the parser functions and classes.
  */
-namespace parser {
+namespace cqasm::v1x::parser {
 
 // SourceLocation used to live in this namespace, before the v1x namespace was a thing.
 // Make sure it exists here for compatibility.
@@ -33,13 +30,17 @@ ParseResult parse_file(const std::string &file_path);
 /**
  * Parse using the given file pointer.
  */
-ParseResult parse_file(FILE* fp, const std::string &file_name = "<unknown>");
+ParseResult parse_file(
+    FILE* fp,
+    const std::string &file_name = annotations::unknown_file_name);
 
 /**
  * Parse the given string.
  * A file_name may be given in addition for use within error messages.
  */
-ParseResult parse_string(const std::string &data, const std::string &file_name="<unknown>");
+ParseResult parse_string(
+    const std::string &data,
+    const std::string &file_name = annotations::unknown_file_name);
 
 /**
  * Internal helper class for parsing cQASM files.
@@ -113,11 +114,12 @@ public:
     /**
      * Builds and pushes an error.
      */
-    void push_error(const std::string &message,
-        int first_line, int first_column,
-        int last_line, int last_column);
+    void push_error(
+        const std::string &message,
+        int first_line,
+        int first_column,
+        int last_line,
+        int last_column);
 };
 
-} // namespace parser
-} // namespace v1x
-} // namespace cqasm
+} // namespace cqasm::v1x::parser

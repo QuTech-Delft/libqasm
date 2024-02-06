@@ -62,23 +62,27 @@ public:
      * Any additional strings represent error messages.
      * Notice that the AST and error messages won't be available at the same time.
      */
-    static std::vector<std::string> parse_file(const std::string &filename);
+    static std::vector<std::string> parse_file(const std::string &file_name);
 
     /**
      * Counterpart of parse_file that returns a string with a JSON representation of the ParseResult.
      */
-    static std::string parse_file_to_json(const std::string &filename);
+    static std::string parse_file_to_json(const std::string &file_name);
 
     /**
      * Same as parse_file(), but instead receives the file contents directly.
-     * The filename, if specified, is only used when reporting errors.
+     * The file_name, if specified, is only used when reporting errors.
      */
-    static std::vector<std::string> parse_string(const std::string &data, const std::string &filename = "<unknown>");
+    static std::vector<std::string> parse_string(
+        const std::string &data,
+        const std::string &file_name = cqasm::annotations::unknown_file_name);
 
     /**
      * Counterpart of parse_string that returns a string with a JSON representation of the ParseResult.
      */
-    static std::string parse_string_to_json(const std::string &data, const std::string &filename = "<unknown>");
+    static std::string parse_string_to_json(
+        const std::string &data,
+        const std::string &file_name = cqasm::annotations::unknown_file_name);
 
     /**
      * Parses and analyzes the given file.
@@ -89,21 +93,25 @@ public:
      * Any additional strings represent error messages.
      * Notice that the AST and error messages won't be available at the same time.
      */
-    std::vector<std::string> analyze_file(const std::string &filename) const;
+    std::vector<std::string> analyze_file(const std::string &file_name) const;
 
     /**
      * Counterpart of analyze_file that returns a string with a JSON representation of the AnalysisResult.
      */
-    std::string analyze_file_to_json(const std::string &filename) const;
+    std::string analyze_file_to_json(const std::string &file_name) const;
 
     /**
      * Same as analyze_file(), but instead receives the file contents directly.
-     * The filename, if specified, is only used when reporting errors.
+     * The file_name, if specified, is only used when reporting errors.
      */
-    std::vector<std::string> analyze_string(const std::string &data, const std::string &filename = "<unknown>") const;
+    std::vector<std::string> analyze_string(
+        const std::string &data,
+        const std::string &file_name = cqasm::annotations::unknown_file_name) const;
 
     /**
      * Counterpart of analyze_string that returns a string with a JSON representation of the AnalysisResult.
      */
-    std::string analyze_string_to_json(const std::string &data, const std::string &filename = "<unknown>") const;
+    std::string analyze_string_to_json(
+        const std::string &data,
+        const std::string &file_name = cqasm::annotations::unknown_file_name) const;
 };

@@ -21,7 +21,7 @@ class CustomErrorListener : public antlr4::BaseErrorListener {
         const std::string &msg, std::exception_ptr e) override;
 
 public:
-    explicit CustomErrorListener(std::string file_name = "<unknown>");
+    explicit CustomErrorListener(std::string file_name = annotations::unknown_file_name);
     void syntaxError(size_t line, size_t charPositionInLine, const std::string &msg);
 };
 

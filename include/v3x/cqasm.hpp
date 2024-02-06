@@ -37,7 +37,7 @@ tree::One<cqasm::v3x::semantic::Program> analyze_file(
  */
 tree::One<cqasm::v3x::semantic::Program> analyze_string(
     const std::string &data,
-    const std::string &file_name = "<unknown>",
+    const std::string &file_name = annotations::unknown_file_name,
     const std::string &api_version = "3.0"
 );
 
