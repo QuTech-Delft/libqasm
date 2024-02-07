@@ -32,8 +32,7 @@ SourceLocation::SourceLocation(
 }
 
 /**
- * Expands the location range to contain the given location in the source
- * file.
+ * Expands the location range to contain the given location in the source file.
  */
 void SourceLocation::expand_to_include(std::uint32_t line, std::uint32_t column) {
     if (line < first_line) {
