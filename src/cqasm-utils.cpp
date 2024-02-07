@@ -52,7 +52,7 @@ std::string url_encode(const std::string &str) {
 std::string json_encode(const std::string &str) {
     auto ret = std::string{};
     std::for_each(str.begin(), str.end(), [&ret](char c) {
-        ret += (c == '"' || c == '\\' || ('\x00' <= c && c <= '\x1f'))
+        ret += (c == '"' || c == '\\' || c <= '\x1f')
             ? fmt::format("\\u{:04X}", static_cast<int>(c))
             : std::string{ c };
     });
