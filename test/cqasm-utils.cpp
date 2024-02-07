@@ -24,13 +24,15 @@ TEST(equal_case_insensitive, non_contain_letters) { EXPECT_TRUE(equal_case_insen
 TEST(equal_case_insensitive, different_strings) { EXPECT_FALSE(equal_case_insensitive("123", "ABC")); }
 
 
+TEST(url_encode, empty_string) { EXPECT_TRUE(url_encode("").empty()); }
 TEST(url_encode, random_string) { EXPECT_EQ(url_encode("a0 ^"), "a0%20%5E"); }
-TEST(url_encode, windows_file_path_with_spaces) { EXPECT_EQ(url_encode(R"(C:\my file.txt)"), "C%3A%5Cmy%20file.txt"); }
+TEST(url_encode, windows_file_path_with_spaces) { EXPECT_EQ(url_encode("C:\\my file.txt"), "C%3A%5Cmy%20file.txt"); }
 
 
-TEST(json_encode, random_string) { EXPECT_EQ(json_encode(R"(a0 "\)"), R"(a0 \u0022\u005C)"); }
+TEST(json_encode, empty_string) { EXPECT_TRUE(json_encode("").empty()); }
+TEST(json_encode, random_string) { EXPECT_EQ(json_encode("a0 \"\\"), "a0 \\u0022\\u005C"); }
 TEST(json_encode, windows_file_path_with_spaces) {
-    EXPECT_EQ(json_encode(R"(C:\my file.txt)"), R"(C:\u005Cmy file.txt)");
+    EXPECT_EQ(json_encode("C:\\my file.txt"), "C:\\u005Cmy file.txt");
 }
 TEST(json_encode, error) {
     EXPECT_EQ(
