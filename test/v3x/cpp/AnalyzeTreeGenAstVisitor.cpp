@@ -15,8 +15,7 @@ namespace values = cqasm::v3x::values;
 
 class VisitFunctionCallTest : public ::testing::Test {
 protected:
-    void SetUp() override {
-    }
+    void SetUp() override {}
     void ExpectAnalyzerCallFunctionCall(const values::Value &function_return_value) {
         EXPECT_CALL(analyzer, call_function(::testing::_, ::testing::_))
             .WillOnce(::testing::Return(function_return_value));

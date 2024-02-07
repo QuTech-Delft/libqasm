@@ -14,6 +14,7 @@ using namespace tree::annotatable;
 
 class FakeNode : public Annotatable {};
 
+
 TEST(constructor_message_node, empty_message) {
     auto err = Error{ "" };
     EXPECT_EQ(fmt::format("{}", err), "Error: <unknown error message>");

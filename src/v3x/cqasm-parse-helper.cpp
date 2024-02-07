@@ -20,7 +20,7 @@ ParseResult parse_file(const std::string &file_path, const std::string &file_nam
     auto builder_visitor_up = std::make_unique<BuildTreeGenAstVisitor>(file_name);
     auto error_listener_up = std::make_unique<CustomErrorListener>(file_name);
     auto scanner_up = std::make_unique<ScannerAntlrFile>(
-            std::move(builder_visitor_up), std::move(error_listener_up), file_path);
+        std::move(builder_visitor_up), std::move(error_listener_up), file_path);
     return ParseHelper(std::move(scanner_up), file_name).parse();
 }
 
@@ -32,7 +32,7 @@ ParseResult parse_string(const std::string &data, const std::string &file_name) 
     auto builder_visitor_up = std::make_unique<BuildTreeGenAstVisitor>(file_name);
     auto error_listener_up = std::make_unique<CustomErrorListener>(file_name);
     auto scanner_up = std::make_unique<ScannerAntlrString>(
-            std::move(builder_visitor_up), std::move(error_listener_up), data);
+        std::move(builder_visitor_up), std::move(error_listener_up), data);
     return ParseHelper(std::move(scanner_up), file_name).parse();
 }
 

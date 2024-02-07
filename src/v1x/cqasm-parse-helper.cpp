@@ -67,7 +67,9 @@ ParseHelper::ParseHelper(std::string file_name, FILE *fptr)
 : file_name{ std::move(file_name) } {
 
     // Create the scanner.
-    if (!construct()) return;
+    if (!construct()) {
+        return;
+    }
 
     // Open the file or pass the data buffer to flex.
     cqasm_v1x_set_in(fptr, (yyscan_t)scanner);
