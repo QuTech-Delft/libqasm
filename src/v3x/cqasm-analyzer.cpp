@@ -7,6 +7,7 @@
 #include "v3x/cqasm-functions.hpp"
 #include "v3x/cqasm-parse-helper.hpp"
 
+#include <fmt/format.h>
 #include <memory>  // make_unique
 #include <numbers>
 #include <stdexcept>  // runtime_error
@@ -87,10 +88,8 @@ AnalysisResult Analyzer::analyze(
     AnalysisResult result;
     try {
         if (auto version = version_parser(); version > api_version) {
-            std::ostringstream ss;
-            ss << "cQASM file version is " << version << ", but at most ";
-            ss << api_version << " is supported here";
-            result.errors.emplace_back(ss.str());
+            result.errors.emplace_back(fmt::format(
+                "cQASM file version is {}, but at most {} is supported here", version, api_version));
             return result;
         }
     } catch (error::AnalysisError &err) {
