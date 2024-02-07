@@ -6,6 +6,7 @@
 #include "cqasm-version.hpp"
 #include "cqasm-version-parser.hpp"
 #include "cqasm-version-lexer.hpp"
+#include "flex_bison_parser.hpp"
 
 #include <fmt/format.h>
 #include <memory>
@@ -90,7 +91,8 @@ ScannerFlexBison::~ScannerFlexBison() {
 }
 
 void ScannerFlexBison::parse_(const std::string &file_name, Version &version) const {
-    if (auto result = cqasm_version_parse(static_cast<yyscan_t>(scanner_), file_name, version); result == 2) {
+    if (auto result = cqasm_version_parse(static_cast<yyscan_t>(scanner_), file_name, version);
+        result == cqasm::parser::flex_bison_parser::error_memory_exhausted) {
         throw error::ParseError(
             std::string("ScannerFlexBison::parse_: out of memory while parsing '") + file_name + "'.");
     } else if (result != 0) {

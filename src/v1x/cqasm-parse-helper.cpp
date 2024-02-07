@@ -2,6 +2,7 @@
  * Implementation for \ref include/v1x/cqasm-parse-helper.hpp "v1x/cqasm-parse-helper.hpp".
  */
 
+#include "flex_bison_parser.hpp"
 #include "v1x/cqasm-parse-helper.hpp"
 #include "v1x/cqasm-parser.hpp"
 #include "v1x/cqasm-lexer.hpp"
@@ -94,7 +95,8 @@ bool ParseHelper::construct() {
  * Does the actual parsing.
  */
 void ParseHelper::parse() {
-    if (int ret_code = cqasm_v1x_parse((yyscan_t) scanner, *this); ret_code == 2) {
+    if (auto ret_code = cqasm_v1x_parse((yyscan_t) scanner, *this);
+        ret_code == cqasm::parser::flex_bison_parser::error_memory_exhausted) {
         push_error(error::ParseError{ fmt::format("out of memory while parsing '{}'", file_name) });
         return;
     } else if (ret_code) {
