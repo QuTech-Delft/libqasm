@@ -7,7 +7,6 @@
 #include <algorithm>  // transform
 #include <cctype>  // isalnum, tolower, toupper
 #include <fmt/format.h>
-#include <iterator>  // back_inserter
 #include <range/v3/algorithm/equal.hpp>
 #include <range/v3/range/conversion.hpp>  // to
 #include <range/v3/view/transform.hpp>

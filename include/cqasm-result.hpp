@@ -4,7 +4,9 @@
 
 #include <algorithm>  // transform
 #include <fmt/format.h>
+#include <fmt/ranges.h>
 #include <numeric>  // accumulate
+#include <range/v3/view/transform.hpp>
 #include <string>
 #include <vector>
 
@@ -32,15 +34,8 @@ std::vector<std::string> to_strings(const Result &result) {
 
 template <typename Errors>
 std::string errors_to_json(const Errors &errors) {
-    return fmt::format(R"({{"errors":[{}]}})",
-        std::accumulate(errors.begin(), errors.end(), std::string{},
-            [first=true](auto total, const auto &error) mutable {
-                total += (first ? "" : ",");
-                total += error.to_json();
-                first = false;
-                return total;
-        })
-    );
+    return fmt::format(R"({{"errors":[{0}]}})",
+        fmt::join(errors | ranges::views::transform([](const auto &err) { return err.to_json(); }), ","));
 }
 
 template <typename Root>
