@@ -3,7 +3,7 @@
  */
 
 #include "cqasm-annotations-constants.hpp"
-#include "flex_bison_parser.hpp"
+#include "flex-bison-parser-constants.hpp"
 #include "v1x/cqasm-parse-helper.hpp"
 #include "v1x/cqasm-parser.hpp"
 #include "v1x/cqasm-lexer.hpp"

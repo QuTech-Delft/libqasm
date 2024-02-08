@@ -7,7 +7,7 @@
 #include "cqasm-version.hpp"
 #include "cqasm-version-parser.hpp"
 #include "cqasm-version-lexer.hpp"
-#include "flex_bison_parser.hpp"
+#include "flex-bison-parser-constants.hpp"
 
 #include <fmt/format.h>
 #include <memory>
