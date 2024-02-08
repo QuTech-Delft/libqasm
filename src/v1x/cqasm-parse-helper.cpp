@@ -42,8 +42,14 @@ ParseResult parse_string(const std::string &data, const std::optional<std::strin
 ParseHelper::ParseHelper(const std::optional<std::string> &file_path, const std::string &data, bool use_file)
 : file_name{ file_path.value_or(annotations::unknown_file_name) }
 {
+    if (file_name.empty()) {
+        file_name = annotations::unknown_file_name;
+    }
+
     // Create the scanner.
-    if (!construct()) return;
+    if (!construct()) {
+        return;
+    }
 
     // Open the file or pass the data buffer to flex.
     if (use_file) {
@@ -65,9 +71,13 @@ ParseHelper::ParseHelper(const std::optional<std::string> &file_path, const std:
 /**
  * Construct the analyzer internals for the given file_name, and analyze the file.
  */
-ParseHelper::ParseHelper(const std::optional<std::string> &file_name, FILE *fptr)
-: file_name{ file_name.value_or(annotations::unknown_file_name) }
+ParseHelper::ParseHelper(const std::optional<std::string> &file_name_op, FILE *fptr)
+: file_name{ file_name_op.value_or(annotations::unknown_file_name) }
 {
+    if (file_name.empty()) {
+        file_name = annotations::unknown_file_name;
+    }
+
     // Create the scanner.
     if (!construct()) {
         return;

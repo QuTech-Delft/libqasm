@@ -12,7 +12,7 @@ class CustomErrorListener : public antlr4::BaseErrorListener {
     /**
      * Name of the file being parsed.
      */
-    std::string file_name_;
+    std::optional<std::string> file_name_;
 
     void syntaxError(
         antlr4::Recognizer *recognizer,

@@ -53,7 +53,7 @@ TEST(to_json, v3x_parser_errors) {
     auto semantic_ast_result = analyzer.analyze_file(input_file_path.generic_string());
     auto json_result = to_json(semantic_ast_result);
     auto expected_json_result = std::string{
-        R"delim({"errors":[{"range":{"start":{"line":3,"character":5},"end":{"line":3,"character":9}},"message":"mismatched input '3.14' expecting INTEGER_LITERAL","severity":1}]})delim"
+        R"delim({"errors":[{"range":{"start":{"line":3,"character":5},"end":{"line":3,"character":9}},"message":"mismatched input '3.14' expecting INTEGER_LITERAL","severity":1,"relatedInformation":[{"location":{"uri":"file:///res%2Fv3x%2Fparsing%2Fbit_array_definition%2Fbit_array_of_3.14%2Finput.cq","range":{"start":{"line":0,"character":0},"end":{"line":0,"character":0}}},"message":"<unknown error message>"}]}]})delim"
     };
     EXPECT_EQ(json_result, expected_json_result);
 }
@@ -71,7 +71,7 @@ TEST(to_json, v3x_analyzer_errors) {
     auto semantic_ast_result = cqasm::v3x::default_analyzer().analyze_file(input_file_path.generic_string());
     auto json_result = to_json(semantic_ast_result);
     auto expected_json_result = std::string{
-        R"delim({"errors":[{"range":{"start":{"line":3,"character":8},"end":{"line":3,"character":9}},"message":"declaring bit array of size <= 0","severity":1}]})delim"
+        R"delim({"errors":[{"range":{"start":{"line":3,"character":8},"end":{"line":3,"character":9}},"message":"declaring bit array of size <= 0","severity":1,"relatedInformation":[{"location":{"uri":"file:///res%2Fv3x%2Fparsing%2Fbit_array_definition%2Fbit_array_of_0_b%2Finput.cq","range":{"start":{"line":0,"character":0},"end":{"line":0,"character":0}}},"message":"<unknown error message>"}]}]})delim"
     };
     EXPECT_EQ(json_result, expected_json_result);
 }

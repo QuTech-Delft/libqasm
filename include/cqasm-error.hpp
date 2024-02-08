@@ -9,6 +9,7 @@
 
 #include <fmt/ostream.h>
 #include <string>
+#include <optional>
 #include <vector>
 
 
@@ -63,7 +64,7 @@ public:
      */
     Error(
         const std::string &message,
-        const std::string &file_name,
+        const std::optional<std::string> &file_name,
         std::uint32_t first_line,
         std::uint32_t first_column,
         std::uint32_t last_line,

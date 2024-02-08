@@ -134,7 +134,7 @@ class ParseHelper {
     /**
      * Name of the file being parsed.
      */
-    std::string file_name;
+    std::string file_name_;
 
 public:
     explicit ParseHelper(std::unique_ptr<ScannerAdaptor> scanner_up, const std::optional<std::string> &file_name);

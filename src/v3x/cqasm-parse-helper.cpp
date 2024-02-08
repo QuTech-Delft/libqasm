@@ -41,7 +41,11 @@ ParseResult parse_string(const std::string &data, const std::optional<std::strin
 ParseHelper::ParseHelper(std::unique_ptr<ScannerAdaptor> scanner_up, const std::optional<std::string> &file_name)
 : scanner_up_{ std::move(scanner_up) }
 , file_name_{ file_name.value_or(annotations::unknown_file_name) }
-{}
+{
+    if (file_name_.empty()) {
+        file_name_ = annotations::unknown_file_name;
+    }
+}
 
 /**
  * Does the actual parsing.

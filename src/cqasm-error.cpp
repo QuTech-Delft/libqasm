@@ -2,7 +2,6 @@
  * Implementation for \ref include/cqasm-error.hpp "cqasm-error.hpp".
  */
 
-#include "cqasm-annotations-constants.hpp"
 #include "cqasm-error.hpp"
 #include "cqasm-utils.hpp"  // url_encode
 
@@ -38,7 +37,7 @@ Error::Error(const std::string &message, std::shared_ptr<annotations::SourceLoca
  */
 Error::Error(
     const std::string &message,
-    const std::string &file_name,
+    const std::optional<std::string> &file_name,
     std::uint32_t first_line,
     std::uint32_t first_column,
     std::uint32_t last_line,
@@ -46,7 +45,7 @@ Error::Error(
 : std::runtime_error{ !message.empty() ? message.c_str() : unknown_error_message }
 , message_{ !message.empty() ? message : unknown_error_message }
 , location_{ std::make_shared<annotations::SourceLocation>(
-    !file_name.empty() ? file_name : annotations::unknown_file_name,
+    file_name,
     first_line,
     first_column,
     last_line,
@@ -91,7 +90,7 @@ std::ostream &operator<<(std::ostream &os, const Error &error) {
  */
 std::string Error::to_json() const {
     std::string related_information{};
-    if (location_ && location_->file_name_known()) {
+    if (location_ && location_->file_name.has_value()) {
         related_information = fmt::format(
             R"(,"relatedInformation":[{{)"
                 R"("location":{{)"
@@ -109,7 +108,7 @@ std::string Error::to_json() const {
                 R"(}})"
                 R"(,"message":"{1}")"
             R"(}}])",
-            cqasm::utils::url_encode(location_->file_name),
+            cqasm::utils::url_encode(location_->file_name.value()),
             cqasm::utils::json_encode(unknown_error_message)
         );
     }

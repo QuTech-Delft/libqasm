@@ -1,17 +1,19 @@
-#include "cqasm-annotations-constants.hpp"
 #include "cqasm-error.hpp"
 #include "v3x/CustomErrorListener.hpp"
 
 #include <cstdint>  // uint32_t
-#include <memory>  // make_shared
 #include <stdexcept>
 
 
 namespace cqasm::v3x::parser {
 
 CustomErrorListener::CustomErrorListener(const std::optional<std::string> &file_name)
-: file_name_{ file_name.value_or(annotations::unknown_file_name) }
-{}
+: file_name_{ file_name }
+{
+    if (file_name_.has_value() && file_name_.value().empty()) {
+        file_name_ = std::nullopt;
+    }
+}
 
 void CustomErrorListener::syntaxError(
     antlr4::Recognizer * /* recognizer */,

@@ -14,17 +14,20 @@ namespace cqasm::annotations {
  * Constructs a source location object.
  */
 SourceLocation::SourceLocation(
-    const std::string &file_name,
-    std::uint32_t first_line,
-    std::uint32_t first_column,
-    std::uint32_t last_line,
-    std::uint32_t last_column)
-: file_name{ !file_name.empty() ? file_name : unknown_file_name }
-, first_line{ first_line }
-, first_column{ first_column }
-, last_line{ last_line }
-, last_column{ last_column } {
+    const std::optional<std::string> &file_name_,
+    std::uint32_t first_line_,
+    std::uint32_t first_column_,
+    std::uint32_t last_line_,
+    std::uint32_t last_column_)
+: file_name{ file_name_ }
+, first_line{ first_line_ }
+, first_column{ first_column_ }
+, last_line{ last_line_ }
+, last_column{ last_column_ } {
 
+    if (file_name.has_value() && file_name.value().empty()) {
+        file_name = std::nullopt;
+    }
     if (last_line < first_line) {
         last_line = first_line;
     }
@@ -52,18 +55,11 @@ void SourceLocation::expand_to_include(std::uint32_t line, std::uint32_t column)
 }
 
 /**
- * Checks if the name of the source file is known.
- */
-[[nodiscard]] bool SourceLocation::file_name_known() const {
-    return !file_name.empty() && file_name != unknown_file_name;
-}
-
-/**
  * Stream << overload for source location objects.
  */
 std::ostream &operator<<(std::ostream &os, const SourceLocation &object) {
     // Print file name.
-    os << object.file_name;
+    os << object.file_name.value_or(unknown_file_name);
 
     // Special case for when only the source file name is known.
     if (!object.first_line) {

@@ -172,15 +172,19 @@ Version parse_string(const std::string &data, const std::optional<std::string> &
 
 ParseHelper::ParseHelper(std::unique_ptr<ScannerAdaptor> scanner_up, const std::optional<std::string> &file_name)
 : scanner_up_{ std::move(scanner_up) }
-, file_name{ file_name.value_or(annotations::unknown_file_name) }
-{}
+, file_name_{ file_name.value_or(annotations::unknown_file_name) }
+{
+    if (file_name_.empty()) {
+        file_name_ = annotations::unknown_file_name;
+    }
+}
 
 /**
  * Does the actual parsing.
  */
 Version ParseHelper::parse() {
     Version version;
-    scanner_up_->parse(file_name, version);
+    scanner_up_->parse(file_name_, version);
     if (version.empty()) {
         throw error::ParseError{
             "ParseHelper::parse: no version info nor error info was returned by version parser." };

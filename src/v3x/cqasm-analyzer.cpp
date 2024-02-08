@@ -105,7 +105,7 @@ AnalysisResult Analyzer::analyze(
 AnalysisResult Analyzer::analyze_file(const std::string &file_name) {
     return analyze(
         [=](){ return version::parse_file(file_name); },
-        [=](){ return parser::parse_file(file_name, std::nullopt); }
+        [=](){ return parser::parse_file(file_name, file_name); }
     );
 }
 

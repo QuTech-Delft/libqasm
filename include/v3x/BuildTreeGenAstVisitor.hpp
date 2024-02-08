@@ -18,7 +18,7 @@ class  BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
     /**
      * Name of the file being parsed.
      */
-    std::string file_name_;
+    std::optional<std::string> file_name_;
 
     /**
      * Error listener.
