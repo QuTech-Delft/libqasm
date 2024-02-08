@@ -1,9 +1,8 @@
 #pragma once
 
-#include "cqasm-annotations-constants.hpp"
-
 #include <antlr4-runtime.h>
 #include <exception>
+#include <optional>
 #include <string>
 
 
@@ -23,7 +22,7 @@ class CustomErrorListener : public antlr4::BaseErrorListener {
         const std::string &msg, std::exception_ptr e) override;
 
 public:
-    explicit CustomErrorListener(std::string file_name = annotations::unknown_file_name);
+    explicit CustomErrorListener(const std::optional<std::string> &file_name);
     void syntaxError(size_t line, size_t charPositionInLine, const std::string &msg);
 };
 

@@ -102,21 +102,21 @@ AnalysisResult Analyzer::analyze(
 /**
  * Parses and analyzes the given file.
  */
-AnalysisResult Analyzer::analyze_file(const std::string &filename) {
+AnalysisResult Analyzer::analyze_file(const std::string &file_name) {
     return analyze(
-        [=](){ return version::parse_file(filename); },
-        [=](){ return parser::parse_file(filename); }
+        [=](){ return version::parse_file(file_name); },
+        [=](){ return parser::parse_file(file_name, std::nullopt); }
     );
 }
 
 /**
  * Parses and analyzes the given string.
- * The optional filename argument will be used only for error messages.
+ * The optional file_name argument will be used only for error messages.
  */
-AnalysisResult Analyzer::analyze_string(const std::string &data, const std::string &filename) {
+AnalysisResult Analyzer::analyze_string(const std::string &data, const std::optional<std::string> &file_name) {
     return analyze(
-        [=](){ return version::parse_string(data, filename); },
-        [=](){ return parser::parse_string(data, filename); }
+        [=](){ return version::parse_string(data, file_name); },
+        [=](){ return parser::parse_string(data, file_name); }
     );
 }
 

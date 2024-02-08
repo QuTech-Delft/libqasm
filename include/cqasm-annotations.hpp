@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include "cqasm-annotations-constants.hpp"
-
 #include <cstdint>
 #include <fmt/ostream.h>
 #include <string>

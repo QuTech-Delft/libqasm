@@ -2,6 +2,7 @@
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <optional>
 
 namespace cq1x = cqasm::v1x;
 
@@ -18,7 +19,7 @@ TEST(tutorial, tutorial) {
     // There is also an overload for a FILE* directly (with an optional second
     // argument for the filename used in error messages to refer back to the
     // code), and there's also cq1x::analyze_string():
-    cq1x::analyze_string("version 1.0; qubits 1; h q[0]; measure q[0]; display");
+    cq1x::analyze_string("version 1.0; qubits 1; h q[0]; measure q[0]; display", std::nullopt);
 
     // Note that a semicolon is now a one-to-one replacement for a newline
     // almost everywhere in a cQASM file, the only exceptions being inside a

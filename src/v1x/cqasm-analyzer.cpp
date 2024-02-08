@@ -531,7 +531,7 @@ AnalysisResult Analyzer::analyze_file(const std::string &file_name) {
  * Parses and analyzes the given file pointer.
  * The optional file_name argument will be used only for error messages.
  */
-AnalysisResult Analyzer::analyze_file(FILE *file, const std::string &file_name) {
+AnalysisResult Analyzer::analyze_file(FILE *file, const std::optional<std::string> &file_name) {
     return analyze(
         [=](){ return version::parse_file(file, file_name); },
         [=](){ return parser::parse_file(file, file_name); }
@@ -542,7 +542,7 @@ AnalysisResult Analyzer::analyze_file(FILE *file, const std::string &file_name) 
  * Parses and analyzes the given string.
  * The optional file_name argument will be used only for error messages.
  */
-AnalysisResult Analyzer::analyze_string(const std::string &data, const std::string &file_name) {
+AnalysisResult Analyzer::analyze_string(const std::string &data, const std::optional<std::string> &file_name) {
     return analyze(
         [=](){ return version::parse_string(data, file_name); },
         [=](){ return parser::parse_string(data, file_name); }

@@ -1,4 +1,5 @@
 #include "cqasm-annotations.hpp"
+#include "cqasm-annotations-constants.hpp"
 #include "cqasm-tree.hpp"
 #include "v3x/cqasm-ast.hpp"
 #include "v3x/BuildTreeGenAstVisitor.hpp"
@@ -18,8 +19,8 @@ namespace cqasm::v3x::parser {
 using namespace cqasm::v3x::ast;
 using namespace cqasm::error;
 
-BuildTreeGenAstVisitor::BuildTreeGenAstVisitor(std::string file_name)
-: file_name_{ std::move(file_name) }
+BuildTreeGenAstVisitor::BuildTreeGenAstVisitor(const std::optional<std::string> &file_name)
+: file_name_{ file_name.value_or(annotations::unknown_file_name) }
 , error_listener_p_{ nullptr } {}
 
 void BuildTreeGenAstVisitor::addErrorListener(CustomErrorListener *errorListener) {

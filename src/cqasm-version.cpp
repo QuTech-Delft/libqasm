@@ -2,6 +2,7 @@
  * Implementation for \ref include/cqasm-version.hpp "cqasm-version.hpp".
  */
 
+#include "cqasm-annotations-constants.hpp"
 #include "cqasm-error.hpp"
 #include "cqasm-version.hpp"
 #include "cqasm-version-parser.hpp"
@@ -153,7 +154,7 @@ Version parse_file(const std::string &file_path) {
  * Throws a ParseError if this fails.
  * The file is rewound back to the start when parsing completes.
  */
-Version parse_file(FILE *fp, const std::string &file_name) {
+Version parse_file(FILE *fp, const std::optional<std::string> &file_name) {
     auto scanner_up = std::make_unique<ScannerFlexBisonFile>(fp);
     auto version = ParseHelper(std::move(scanner_up), file_name).parse();
     rewind(fp);
@@ -163,14 +164,16 @@ Version parse_file(FILE *fp, const std::string &file_name) {
 /**
  * Parse the given string as a file to get its version number.
  */
-Version parse_string(const std::string &data, const std::string &file_name) {
+Version parse_string(const std::string &data, const std::optional<std::string> &file_name) {
     auto scanner_up = std::make_unique<ScannerFlexBisonString>(data.c_str());
     return ParseHelper(std::move(scanner_up), file_name).parse();
 }
 
 
-ParseHelper::ParseHelper(std::unique_ptr<ScannerAdaptor> scanner_up, std::string file_name)
-: scanner_up_(std::move(scanner_up)), file_name(std::move(file_name)) {}
+ParseHelper::ParseHelper(std::unique_ptr<ScannerAdaptor> scanner_up, const std::optional<std::string> &file_name)
+: scanner_up_{ std::move(scanner_up) }
+, file_name{ file_name.value_or(annotations::unknown_file_name) }
+{}
 
 /**
  * Does the actual parsing.

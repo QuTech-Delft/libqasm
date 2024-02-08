@@ -6,12 +6,11 @@
 
 #pragma once
 
-#include "cqasm-annotations-constants.hpp"
-
 // Don't include any libqasm headers!
 // We don't want SWIG to generate Python wrappers for the entire world.
 // Those headers are only included in the source file that provides the implementations.
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -75,16 +74,12 @@ public:
      * Same as parse_file(), but instead receives the file contents directly.
      * The file_name, if specified, is only used when reporting errors.
      */
-    static std::vector<std::string> parse_string(
-        const std::string &data,
-        const std::string &file_name = cqasm::annotations::unknown_file_name);
+    static std::vector<std::string> parse_string(const std::string &data, const std::optional<std::string> &file_name);
 
     /**
      * Counterpart of parse_string that returns a string with a JSON representation of the ParseResult.
      */
-    static std::string parse_string_to_json(
-        const std::string &data,
-        const std::string &file_name = cqasm::annotations::unknown_file_name);
+    static std::string parse_string_to_json(const std::string &data, const std::optional<std::string> &file_name);
 
     /**
      * Parses and analyzes the given file.
@@ -106,14 +101,10 @@ public:
      * Same as analyze_file(), but instead receives the file contents directly.
      * The file_name, if specified, is only used when reporting errors.
      */
-    std::vector<std::string> analyze_string(
-        const std::string &data,
-        const std::string &file_name = cqasm::annotations::unknown_file_name) const;
+    std::vector<std::string> analyze_string(const std::string &data, const std::optional<std::string> &file_name) const;
 
     /**
      * Counterpart of analyze_string that returns a string with a JSON representation of the AnalysisResult.
      */
-    std::string analyze_string_to_json(
-        const std::string &data,
-        const std::string &file_name = cqasm::annotations::unknown_file_name) const;
+    std::string analyze_string_to_json(const std::string &data, const std::optional<std::string> &file_name) const;
 };

@@ -1,4 +1,4 @@
-#include "cqasm-annotations.hpp"
+#include "cqasm-annotations-constants.hpp"
 #include "cqasm-error.hpp"
 #include "v3x/CustomErrorListener.hpp"
 
@@ -9,8 +9,9 @@
 
 namespace cqasm::v3x::parser {
 
-CustomErrorListener::CustomErrorListener(std::string file_name)
-: file_name_{ std::move(file_name) } {}
+CustomErrorListener::CustomErrorListener(const std::optional<std::string> &file_name)
+: file_name_{ file_name.value_or(annotations::unknown_file_name) }
+{}
 
 void CustomErrorListener::syntaxError(
     antlr4::Recognizer * /* recognizer */,

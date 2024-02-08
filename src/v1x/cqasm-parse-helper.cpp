@@ -2,6 +2,7 @@
  * Implementation for \ref include/v1x/cqasm-parse-helper.hpp "v1x/cqasm-parse-helper.hpp".
  */
 
+#include "cqasm-annotations-constants.hpp"
 #include "flex_bison_parser.hpp"
 #include "v1x/cqasm-parse-helper.hpp"
 #include "v1x/cqasm-parser.hpp"
@@ -20,7 +21,7 @@ ParseResult parse_file(const std::string &file_path) {
 /**
  * Parse using the given file pointer.
  */
-ParseResult parse_file(FILE *file, const std::string &file_name) {
+ParseResult parse_file(FILE *file, const std::optional<std::string> &file_name) {
     return ParseHelper(file_name, file).result;
 }
 
@@ -28,7 +29,7 @@ ParseResult parse_file(FILE *file, const std::string &file_name) {
  * Parse the given string.
  * A file_name may be given in addition for use within error messages.
  */
-ParseResult parse_string(const std::string &data, const std::string &file_name) {
+ParseResult parse_string(const std::string &data, const std::optional<std::string> &file_name) {
     return ParseHelper(file_name, data, false).result;
 }
 
@@ -38,9 +39,9 @@ ParseResult parse_string(const std::string &data, const std::string &file_name) 
  * Otherwise, file_path is used only for error messages, and data is read instead.
  * Don't use this directly, use parse().
  */
-ParseHelper::ParseHelper(std::string file_path, const std::string &data, bool use_file)
-: file_name{ std::move(file_path) } {
-
+ParseHelper::ParseHelper(const std::optional<std::string> &file_path, const std::string &data, bool use_file)
+: file_name{ file_path.value_or(annotations::unknown_file_name) }
+{
     // Create the scanner.
     if (!construct()) return;
 
@@ -64,9 +65,9 @@ ParseHelper::ParseHelper(std::string file_path, const std::string &data, bool us
 /**
  * Construct the analyzer internals for the given file_name, and analyze the file.
  */
-ParseHelper::ParseHelper(std::string file_name, FILE *fptr)
-: file_name{ std::move(file_name) } {
-
+ParseHelper::ParseHelper(const std::optional<std::string> &file_name, FILE *fptr)
+: file_name{ file_name.value_or(annotations::unknown_file_name) }
+{
     // Create the scanner.
     if (!construct()) {
         return;

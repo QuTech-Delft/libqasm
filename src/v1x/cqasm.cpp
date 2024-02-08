@@ -10,8 +10,7 @@
 #include "v1x/cqasm.hpp"
 
 
-namespace cqasm {
-namespace v1x {
+namespace cqasm::v1x {
 
 /**
  * Parses and analyzes the given file path with the default analyzer,
@@ -31,7 +30,7 @@ tree::One<semantic::Program> analyze_file(
  */
 tree::One<semantic::Program> analyze_file(
     FILE *fp,
-    const std::string &file_name,
+    const std::optional<std::string> &file_name,
     const std::string &api_version
 ) {
     return default_analyzer(api_version).analyze_file(fp, file_name).unwrap();
@@ -44,7 +43,7 @@ tree::One<semantic::Program> analyze_file(
  */
 tree::One<semantic::Program> analyze_string(
     const std::string &data,
-    const std::string &file_name,
+    const std::optional<std::string> &file_name,
     const std::string &api_version
 ) {
     return default_analyzer(api_version).analyze_string(data, file_name).unwrap();
@@ -118,5 +117,4 @@ analyzer::Analyzer default_analyzer(const std::string &api_version) {
     return analyzer;
 }
 
-} // namespace v1x
-} // namespace cqasm
+} // namespace cqasm::v1x

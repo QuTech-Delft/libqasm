@@ -1,12 +1,13 @@
 #pragma once
 
-#include "cqasm-annotations-constants.hpp"
 #include "v3x/BuildCustomAstVisitor.hpp"
 #include "v3x/CqasmParser.h"
 #include "v3x/CqasmParserVisitor.h"
 
 #include <antlr4-runtime.h>
 #include <any>
+#include <optional>
+
 
 namespace cqasm::v3x::parser { class CustomErrorListener; }
 
@@ -94,7 +95,7 @@ public:
     std::any visitIntegerLiteral(CqasmParser::IntegerLiteralContext *context) override;
     std::any visitFloatLiteral(CqasmParser::FloatLiteralContext *context) override;
 
-    explicit BuildTreeGenAstVisitor(std::string file_name = annotations::unknown_file_name);
+    explicit BuildTreeGenAstVisitor(const std::optional<std::string> &file_name);
     void addErrorListener(CustomErrorListener *errorListener) override;
     void syntaxError(size_t line, size_t char_position_in_line, const std::string &text) const override;
     void setNodeAnnotation(const ast::One<ast::Node> &node, antlr4::Token *token) const override;
