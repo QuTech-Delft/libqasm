@@ -9,6 +9,7 @@
 #include "v1x/cqasm.hpp"
 
 #include <memory>
+#include <optional>
 
 namespace v1x = cqasm::v1x;
 
@@ -91,15 +92,17 @@ std::string V1xAnalyzer::parse_file_to_json(const std::string &file_name) {
  * Same as parse_file(), but instead receives the file contents directly.
  * The file_name, if specified, is only used when reporting errors.
  */
-std::vector<std::string> V1xAnalyzer::parse_string(const std::string &data, const std::optional<std::string> &file_name) {
-    return v1x::parser::parse_string(data, file_name).to_strings();
+std::vector<std::string> V1xAnalyzer::parse_string(const std::string &data, const std::string &file_name) {
+    auto file_name_op = !file_name.empty() ? std::optional<std::string>{ file_name } : std::nullopt;
+    return v1x::parser::parse_string(data, file_name_op).to_strings();
 }
 
 /**
  * Counterpart of parse_string that returns a string with a JSON representation of the ParseResult.
  */
-std::string V1xAnalyzer::parse_string_to_json(const std::string &data, const std::optional<std::string> &file_name) {
-    return v1x::parser::parse_string(data, file_name).to_json();
+std::string V1xAnalyzer::parse_string_to_json(const std::string &data, const std::string &file_name) {
+    auto file_name_op = !file_name.empty() ? std::optional<std::string>{ file_name } : std::nullopt;
+    return v1x::parser::parse_string(data, file_name_op).to_json();
 }
 
 /**
@@ -133,11 +136,12 @@ std::string V1xAnalyzer::parse_string_to_json(const std::string &data, const std
  * The file_name, if specified, is only used when reporting errors.
  */
 [[nodiscard]] std::vector<std::string> V1xAnalyzer::analyze_string(
-    const std::string &data, const std::optional<std::string> &file_name) const {
+    const std::string &data, const std::string &file_name) const {
 
+    auto file_name_op = !file_name.empty() ? std::optional<std::string>{ file_name } : std::nullopt;
     return analyzer->analyze(
-        [=](){ return cqasm::version::parse_string(data, file_name); },
-        [=](){ return v1x::parser::parse_string(data, file_name); }
+        [=](){ return cqasm::version::parse_string(data, file_name_op); },
+        [=](){ return v1x::parser::parse_string(data, file_name_op); }
     ).to_strings();
 }
 
@@ -145,10 +149,11 @@ std::string V1xAnalyzer::parse_string_to_json(const std::string &data, const std
  * Counterpart of analyze_string that returns a string with a JSON representation of the AnalysisResult.
  */
 [[nodiscard]] std::string V1xAnalyzer::analyze_string_to_json(
-    const std::string &data, const std::optional<std::string> &file_name) const {
+    const std::string &data, const std::string &file_name) const {
 
+    auto file_name_op = !file_name.empty() ? std::optional<std::string>{ file_name } : std::nullopt;
     return analyzer->analyze(
-        [=](){ return cqasm::version::parse_string(data, file_name); },
-        [=](){ return v1x::parser::parse_string(data, file_name); }
+        [=](){ return cqasm::version::parse_string(data, file_name_op); },
+        [=](){ return v1x::parser::parse_string(data, file_name_op); }
     ).to_json();
 }
