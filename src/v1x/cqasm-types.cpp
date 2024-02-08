@@ -71,8 +71,8 @@ Types from_spec(const std::string &spec) {
                 break;
             case 'u':
                 types.add_raw(new types::ComplexMatrix(
-                    static_cast<std::int64_t>(static_cast<std::uint64_t>(1) << num_qubits),
-                    static_cast<std::int64_t>(static_cast<std::uint64_t>(1) << num_qubits),
+                    static_cast<primitives::Int>(static_cast<std::uint64_t>(1) << num_qubits),
+                    static_cast<primitives::Int>(static_cast<std::uint64_t>(1) << num_qubits),
                     assignable));
                 break;
             case 'm':
