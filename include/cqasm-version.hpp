@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "cqasm-annotations-constants.hpp"
 #include "cqasm-error.hpp"
 
 #include <cstdint>  // int64_t

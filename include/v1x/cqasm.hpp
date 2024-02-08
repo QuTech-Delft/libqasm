@@ -5,8 +5,9 @@
 
 #pragma once
 
-#include "cqasm-tree.hpp"
 #include "cqasm-analyzer.hpp"
+#include "cqasm-annotations-constants.hpp"
+#include "cqasm-tree.hpp"
 #include "cqasm-semantic.hpp"
 
 

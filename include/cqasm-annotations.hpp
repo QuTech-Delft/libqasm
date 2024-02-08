@@ -4,14 +4,14 @@
 
 #pragma once
 
+#include "cqasm-annotations-constants.hpp"
+
 #include <cstdint>
 #include <fmt/ostream.h>
 #include <string>
 
 
 namespace cqasm::annotations {
-
-static constexpr const char* unknown_file_name = "<unknown file name>";
 
 /**
  * Source location annotation object, containing source file line numbers etc.

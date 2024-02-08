@@ -2,11 +2,13 @@
  * Implementation for \ref include/cqasm-annotations.hpp "cqasm-annotations.hpp".
  */
 
-#include <iostream>
 #include "cqasm-annotations.hpp"
+#include "cqasm-annotations-constants.hpp"
 
-namespace cqasm {
-namespace annotations {
+#include <iostream>
+
+
+namespace cqasm::annotations {
 
 /**
  * Constructs a source location object.
@@ -96,5 +98,4 @@ std::ostream &operator<<(std::ostream &os, const SourceLocation &object) {
     return os;
 }
 
-} // namespace annotations
-} // namespace cqasm
+} // namespace cqasm::annotations

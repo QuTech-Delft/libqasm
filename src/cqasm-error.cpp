@@ -2,6 +2,7 @@
  * Implementation for \ref include/cqasm-error.hpp "cqasm-error.hpp".
  */
 
+#include "cqasm-annotations-constants.hpp"
 #include "cqasm-error.hpp"
 #include "cqasm-utils.hpp"  // url_encode
 

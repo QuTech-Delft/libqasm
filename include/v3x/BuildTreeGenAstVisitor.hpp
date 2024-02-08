@@ -1,5 +1,6 @@
 #pragma once
 
+#include "cqasm-annotations-constants.hpp"
 #include "v3x/BuildCustomAstVisitor.hpp"
 #include "v3x/CqasmParser.h"
 #include "v3x/CqasmParserVisitor.h"

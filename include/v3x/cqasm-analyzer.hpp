@@ -10,6 +10,7 @@
 
 #include "cqasm-analysis-result.hpp"
 #include "cqasm-analyzer.hpp"
+#include "cqasm-annotations-constants.hpp"
 #include "cqasm-ast.hpp"
 #include "cqasm-parse-helper.hpp"
 #include "cqasm-resolver.hpp"

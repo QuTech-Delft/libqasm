@@ -1,5 +1,7 @@
 #pragma once
 
+#include "cqasm-annotations-constants.hpp"
+
 #include <antlr4-runtime.h>
 #include <exception>
 #include <string>

@@ -7,6 +7,7 @@
 #pragma once
 
 #include "cqasm-annotations.hpp"
+#include "cqasm-annotations-constants.hpp"
 #include "v3x/cqasm-parse-result.hpp"
 #include "v3x/ScannerAntlr.hpp"
 

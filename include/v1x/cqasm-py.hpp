@@ -7,6 +7,7 @@
 #pragma once
 
 #include "cqasm-annotations.hpp"
+#include "cqasm-annotations-constants.hpp"
 
 // Don't include any libqasm headers!
 // We don't want SWIG to generate Python wrappers for the entire world.
