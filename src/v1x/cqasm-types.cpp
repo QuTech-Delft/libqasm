@@ -5,6 +5,7 @@
 #include "v1x/cqasm-types.hpp"
 
 #include <cctype>
+#include <cstdint>
 #include <fmt/format.h>
 
 
@@ -70,7 +71,9 @@ Types from_spec(const std::string &spec) {
                 break;
             case 'u':
                 types.add_raw(new types::ComplexMatrix(
-                    1ul << num_qubits, 1ul << num_qubits, assignable));
+                    static_cast<primitives::Int>(static_cast<std::uint64_t>(1) << num_qubits),
+                    static_cast<primitives::Int>(static_cast<std::uint64_t>(1) << num_qubits),
+                    assignable));
                 break;
             case 'm':
                 types.add_raw(new types::RealMatrix(-1, -1, assignable));

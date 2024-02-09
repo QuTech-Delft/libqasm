@@ -25,7 +25,7 @@ tree::One<cqasm::v3x::semantic::Program> analyze_file(
 ) {
     return cqasm::v3x::default_analyzer(api_version).analyze(
         [&file_path]() { return version::parse_file(file_path); },
-        [&file_path]() { return cqasm::v3x::parser::parse_file(file_path); }
+        [&file_path]() { return cqasm::v3x::parser::parse_file(file_path, std::nullopt); }
     ).unwrap();
 }
 
@@ -36,7 +36,7 @@ tree::One<cqasm::v3x::semantic::Program> analyze_file(
  */
 tree::One<cqasm::v3x::semantic::Program> analyze_string(
     const std::string &data,
-    const std::string &file_name,
+    const std::optional<std::string> &file_name,
     const std::string &api_version
 ) {
     return cqasm::v3x::default_analyzer(api_version).analyze(

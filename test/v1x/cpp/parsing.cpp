@@ -36,7 +36,7 @@ public:
         if (version <= "1.2") {
             parse_result = cq1x::parser::parse_string(input, "input.cq");
         } else {
-            parse_result.errors.push_back(fmt::format("detected version {}", version));
+            parse_result.errors.emplace_back(fmt::format("detected version {}", version));
         }
 
         // Check the parse result

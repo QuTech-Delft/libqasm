@@ -2,6 +2,7 @@
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <optional>
 
 namespace cq1x = cqasm::v1x;
 
@@ -18,7 +19,7 @@ TEST(tutorial, tutorial) {
     // There is also an overload for a FILE* directly (with an optional second
     // argument for the filename used in error messages to refer back to the
     // code), and there's also cq1x::analyze_string():
-    cq1x::analyze_string("version 1.0; qubits 1; h q[0]; measure q[0]; display");
+    cq1x::analyze_string("version 1.0; qubits 1; h q[0]; measure q[0]; display", std::nullopt);
 
     // Note that a semicolon is now a one-to-one replacement for a newline
     // almost everywhere in a cQASM file, the only exceptions being inside a
@@ -242,7 +243,7 @@ R"(QubitRefs( # res/v1x/grover.cq:10:9..15
     // Notice that the tree stores where the nodes that we didn't make ourselves
     // in this test case came from. This is accomplished using annotations,
     // of the type cq1x::parser::SourceLocation in this case:
-    EXPECT_EQ(clone->get_annotation<cq1x::parser::SourceLocation>().filename, "res/v1x/grover.cq");
+    EXPECT_EQ(clone->get_annotation<cq1x::parser::SourceLocation>().file_name, "res/v1x/grover.cq");
 
     // Annotations are a big magical in C++ land, in that you can annotate nodes
     // with *any* C++ object of *any* type, without having to modify libqasm!
@@ -264,7 +265,7 @@ R"(QubitRefs( # res/v1x/grover.cq:10:9..15
     // It's not just a void* wrapped in some casting either; you can in fact
     // have zero or one annotation of *every* C++ type *at the same time*.
     // So the source location is still there:
-    EXPECT_EQ(clone->get_annotation<cq1x::parser::SourceLocation>().filename, "res/v1x/grover.cq");
+    EXPECT_EQ(clone->get_annotation<cq1x::parser::SourceLocation>().file_name, "res/v1x/grover.cq");
 
     // When you call set_annotation, your object is either moved or copied into
     // the underlying annotation map. If you have something that cannot be moved

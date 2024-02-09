@@ -1,2 +1,2 @@
 ERROR
-input.cq:3:5: mismatched input '=' expecting INTEGER_LITERAL
+Error at input.cq:3:5..6: mismatched input '=' expecting INTEGER_LITERAL

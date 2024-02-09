@@ -1,2 +1,2 @@
 ERROR
-input.cq:3:9: mismatched input 'i' expecting '='
+Error at input.cq:3:9..10: mismatched input 'i' expecting '='

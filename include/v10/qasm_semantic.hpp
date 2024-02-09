@@ -8,8 +8,10 @@
 #endif
 
 #include <exception>
-#include <stdio.h>
-#include <string.h>
+#include <fmt/format.h>
+#include <optional>
+#include <stdexcept>
+#include <string>
 #include <vector>
 
 namespace compiler {
@@ -18,28 +20,27 @@ namespace cq1x = cqasm::v1x;
 
 class QasmSemanticChecker {
 public:
-    QasmSemanticChecker(const std::string &qasm_str_input) {
+    explicit QasmSemanticChecker(const std::string &qasm_str_input) {
         new_to_old::handle_parse_result(
-            qasm_, cq1x::parser::parse_string(qasm_str_input));
+            qasm_, cq1x::parser::parse_string(qasm_str_input, std::nullopt));
         maxNumQubit_ = qasm_.numQubits();
         parse_result_ = doChecks();
     }
 
-    QasmSemanticChecker(FILE* qasm_file) {
+    explicit QasmSemanticChecker(FILE* qasm_file) {
         if (!qasm_file) {
             throw std::invalid_argument("received null file pointer");
         }
-        new_to_old::handle_parse_result(
-            qasm_, cq1x::parser::parse_file(qasm_file));
+        new_to_old::handle_parse_result(qasm_, cq1x::parser::parse_file(qasm_file, std::nullopt));
         maxNumQubit_ = qasm_.numQubits();
         parse_result_ = doChecks();
     }
 
-    int parseResult() const {
+    [[nodiscard]] int parseResult() const {
         return parse_result_;
     }
 
-    const compiler::QasmRepresentation& getQasmRepresentation() const {
+    [[nodiscard]] const compiler::QasmRepresentation& getQasmRepresentation() const {
         return qasm_;
     }
 
@@ -55,10 +56,10 @@ protected:
                 throw std::runtime_error(std::string("Iteration count invalid for subcircuit ") +
                     subcircuit->nameSubCircuit() + " on Line: " + std::to_string(subcircuit->getLineNumber()));
             }
-            for (auto ops_cluster : subcircuit->getOperationsCluster()) {
-                int linenumber = ops_cluster->getLineNumber();
-                for (auto ops : ops_cluster->getOperations()) {
-                    checkQubits(*ops, checkResult, linenumber);
+            for (auto &ops_cluster : subcircuit->getOperationsCluster()) {
+                int line_number = ops_cluster->getLineNumber();
+                for (auto &ops : ops_cluster->getOperations()) {
+                    checkQubits(*ops, checkResult, line_number);
                 }
             }
         }
@@ -69,125 +70,107 @@ protected:
         return checkResult;
     }
 
-    void checkQubits(compiler::Operation& op, int& result, int linenumber) {
+    void checkQubits(compiler::Operation& op, int& result, int line_number) {
         std::string type_ = op.getType();
         if (type_ == "measure_parity") {
-            result = checkMeasureParity(op, linenumber);
+            result = checkMeasureParity(op, line_number);
         } else if (type_ == "u") {
-            result = checkUnitaryGate(op, linenumber);
+            result = checkUnitaryGate(op, line_number);
         } else if (type_ == "cnot" || type_ == "cz" || type_ == "swap" || type_ == "cr" || type_ == "crk") {
-            result = checkTwoQubits(op, linenumber);
+            result = checkTwoQubits(op, line_number);
         } else if (type_ == "toffoli") {
-            result = checkToffoli(op, linenumber);
+            result = checkToffoli(op, line_number);
         } else if (type_ == "measure_all") {
-            result = checkMeasureAll(op, linenumber);
+            result = checkMeasureAll(op, line_number);
         } else if (type_ == "reset-averaging") {
-            result = checkResetAveraging(op, linenumber);
+            result = checkResetAveraging(op, line_number);
         } else if (type_ == "skip" || type_ == "display" || type_ == "display_binary" || type_ == "not" || type_ == "load_state") {
-            result = checkSkipDisplayNot(op, linenumber);
+            result = checkSkipDisplayNot(op, line_number);
         } else {  // No other special operations. Left with single qubits
             try {
-                result = checkSingleQubit(op, linenumber);
+                result = checkSingleQubit(op, line_number);
             } catch (...) {
-                throw std::runtime_error(std::string("Operation invalid. Line: ") + std::to_string(linenumber));
+                throw std::runtime_error(std::string("Operation invalid. Line: ") + std::to_string(line_number));
             }
         }
         if (result > 0) {
-            throw std::runtime_error(std::string("Operation invalid. Line: ") + std::to_string(linenumber));
+            throw std::runtime_error(std::string("Operation invalid. Line: ") + std::to_string(line_number));
         }
     }
 
-    int checkQubitList(const compiler::Qubits& qubits, int linenumber) const {
-        auto indices = qubits.getSelectedQubits().getIndices();
-        if (indices.back() < maxNumQubit_) {
-            return 0;
-        } else {
-            throw std::runtime_error(std::string("Qubit indices exceed the number in qubit register. Line: ") + std::to_string(linenumber));
+    [[nodiscard]] int checkQubitList(const compiler::Qubits& qubits, int line_number) const {
+        if (auto indices = qubits.getSelectedQubits().getIndices(); indices.back() >= maxNumQubit_) {
+            throw std::runtime_error{ fmt::format(
+                "Qubit indices exceed the number in qubit register. Line: {}", line_number) };
         }
+        return 0;
     }
 
     // This function ensures that the lengths of the qubit lists are the same for the different pairs involved in the operation
-    int checkQubitListLength(const compiler::Qubits& qubits1,
-                             const compiler::Qubits& qubits2,
-                             int linenumber) const {
-        (void) linenumber;
-        int retnum = 1;
-        if (qubits1.getSelectedQubits().getIndices().size() ==
-            qubits2.getSelectedQubits().getIndices().size()) {
-            retnum = 0;
+    [[nodiscard]] int checkQubitListLength(
+        const compiler::Qubits& qubits1, const compiler::Qubits& qubits2, int line_number) const {
+
+        (void) line_number;
+        return static_cast<int>(
+            qubits1.getSelectedQubits().getIndices().size() != qubits2.getSelectedQubits().getIndices().size());
+    }
+
+    [[nodiscard]] int checkUnitaryGate(const compiler::Operation& op, int line_number) const {
+        if (int result_list = checkQubitList(op.getQubitsInvolved(), line_number); result_list <= 0) {
+            return result_list;
         }
-        return retnum;
+        throw std::runtime_error(std::string("Matrix is not unitary. Line: ") + std::to_string(line_number));
     }
 
-    int checkUnitaryGate(const compiler::Operation& op, int linenumber) const {
-        int result = 1;
-        int resultlist = checkQubitList(op.getQubitsInvolved(), linenumber);
-        if (resultlist > 0) {
-            throw std::runtime_error(std::string("Matrix is not unitary. Line: ") + std::to_string(linenumber));
-        }
-        result *= resultlist;
-        return result;
+    [[nodiscard]] int checkSingleQubit(const compiler::Operation& op, int line_number) const {
+        return checkQubitList(op.getQubitsInvolved(), line_number);
     }
 
-    int checkSingleQubit(const compiler::Operation& op, int linenumber) const {
-        return checkQubitList(op.getQubitsInvolved(), linenumber);
-    }
-
-    int checkSkipDisplayNot(const compiler::Operation& op, int linenumber) const {
+    [[nodiscard]] int checkSkipDisplayNot(const compiler::Operation& op, int line_number) const {
         (void) op;
-        (void) linenumber;
+        (void) line_number;
         return 0;
     }
 
-    int checkResetAveraging(const compiler::Operation& op, int linenumber) const {
-        int result = 1;
-        if (op.allQubitsBits()) {
-            result = 0;
-        } else {
-            result = checkQubitList(op.getQubitsInvolved(), linenumber);
-        }
-        return result;
+    [[nodiscard]] int checkResetAveraging(const compiler::Operation& op, int line_number) const {
+        return op.allQubitsBits()
+            ? 0
+            : checkQubitList(op.getQubitsInvolved(), line_number);
     }
 
-    int checkMeasureAll(const compiler::Operation& op, int linenumber) const {
+    [[nodiscard]] int checkMeasureAll(const compiler::Operation& op, int line_number) const {
         (void) op;
-        (void) linenumber;
+        (void) line_number;
         return 0;
     }
 
-    int checkToffoli(const compiler::Operation& op, int linenumber) const {
-        int result = 1;
-        int resultlist = checkQubitList(op.getToffoliQubitPairs().first, linenumber);
-        resultlist += checkQubitList(op.getToffoliQubitPairs().second.first, linenumber);
-        resultlist += checkQubitList(op.getToffoliQubitPairs().second.second, linenumber);
-        resultlist += checkQubitListLength(op.getQubitsInvolved(1), op.getQubitsInvolved(2), linenumber);
-        resultlist += checkQubitListLength(op.getQubitsInvolved(2), op.getQubitsInvolved(3), linenumber);
-        if (resultlist > 0) {
-            throw std::runtime_error(std::string("Mismatch in the qubit pair sizes. Line: ") + std::to_string(linenumber));
+    [[nodiscard]] int checkToffoli(const compiler::Operation& op, int line_number) const {
+        int result_list = checkQubitList(op.getToffoliQubitPairs().first, line_number);
+        result_list += checkQubitList(op.getToffoliQubitPairs().second.first, line_number);
+        result_list += checkQubitList(op.getToffoliQubitPairs().second.second, line_number);
+        result_list += checkQubitListLength(op.getQubitsInvolved(1), op.getQubitsInvolved(2), line_number);
+        result_list += checkQubitListLength(op.getQubitsInvolved(2), op.getQubitsInvolved(3), line_number);
+        if (result_list > 0) {
+            throw std::runtime_error{ fmt::format("Mismatch in the qubit pair sizes. Line: {}", line_number) };
         }
-        result *= resultlist;
-        return result;
+        return result_list;
     }
 
-    int checkTwoQubits(const compiler::Operation& op, int linenumber) const {
-        int result = 1;
-        int resultlist = checkQubitList(op.getTwoQubitPairs().first, linenumber);
-        resultlist += checkQubitList(op.getTwoQubitPairs().second, linenumber);
-        resultlist += checkQubitListLength(op.getQubitsInvolved(1), op.getQubitsInvolved(2), linenumber);
-        if (resultlist > 0) {
-            throw std::runtime_error(std::string("Mismatch in the qubit pair sizes. Line: ") + std::to_string(linenumber));
+    [[nodiscard]] int checkTwoQubits(const compiler::Operation& op, int line_number) const {
+        int result_list = checkQubitList(op.getTwoQubitPairs().first, line_number);
+        result_list += checkQubitList(op.getTwoQubitPairs().second, line_number);
+        result_list += checkQubitListLength(op.getQubitsInvolved(1), op.getQubitsInvolved(2), line_number);
+        if (result_list > 0) {
+            throw std::runtime_error{ fmt::format("Mismatch in the qubit pair sizes. Line: {}", line_number) };
         }
-        result *= resultlist;
-        return result;
+        return result_list;
     }
 
-    int checkMeasureParity(const compiler::Operation& op, int linenumber) const {
-        int result = 1;
+    [[nodiscard]] int checkMeasureParity(const compiler::Operation& op, int line_number) const {
         auto measureParityProperties = op.getMeasureParityQubitsAndAxis();
-        int resultlist = checkQubitList(measureParityProperties.first.first, linenumber);
-        resultlist += checkQubitList(measureParityProperties.first.second, linenumber);
-        result *= resultlist;
-        return result;
+        int result_list = checkQubitList(measureParityProperties.first.first, line_number);
+        result_list += checkQubitList(measureParityProperties.first.second, line_number);
+        return result_list;
     }
 
 }; // class QasmSemanticChecker

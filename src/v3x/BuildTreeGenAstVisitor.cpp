@@ -18,9 +18,13 @@ namespace cqasm::v3x::parser {
 using namespace cqasm::v3x::ast;
 using namespace cqasm::error;
 
-BuildTreeGenAstVisitor::BuildTreeGenAstVisitor(std::string file_name)
-: file_name_{ std::move(file_name) }
-, error_listener_p_{ nullptr } {}
+BuildTreeGenAstVisitor::BuildTreeGenAstVisitor(const std::optional<std::string> &file_name)
+: file_name_{ file_name }
+, error_listener_p_{ nullptr } {
+    if (file_name_.has_value() && file_name_.value().empty()) {
+        file_name_ = std::nullopt;
+    }
+}
 
 void BuildTreeGenAstVisitor::addErrorListener(CustomErrorListener *errorListener) {
     error_listener_p_ = errorListener;

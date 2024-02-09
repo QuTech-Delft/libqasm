@@ -1,2 +1,2 @@
 ERROR
-input.cq:3:8: missing IDENTIFIER at '\n'
+Error at input.cq:3:8..9: missing IDENTIFIER at '\n'

@@ -49,7 +49,7 @@ ScannerAntlrFile::ScannerAntlrFile(std::unique_ptr<BuildCustomAstVisitor> build_
 : ScannerAntlr{ std::move(build_visitor_up) , std::move(error_listener_up) }
 , file_path_{ file_path } {
     if (!fs::exists(file_path_) || !fs::is_regular_file(file_path_)) {
-        throw cqasm::error::AnalysisError{ fmt::format("ScannerAntlrFile couldn't access file '{}'.", file_path_) };
+        throw cqasm::error::ParseError{ fmt::format("ScannerAntlrFile couldn't access file '{}'.", file_path_) };
     }
 }
 

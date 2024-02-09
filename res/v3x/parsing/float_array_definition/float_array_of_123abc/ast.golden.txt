@@ -1,2 +1,2 @@
 ERROR
-input.cq:3:10: extraneous input 'abc' expecting ']'
+Error at input.cq:3:10..13: extraneous input 'abc' expecting ']'

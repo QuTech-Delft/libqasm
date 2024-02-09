@@ -46,7 +46,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_version(ast::Version &node) {
         ret->items = node.items;
     } catch (error::AnalysisError &err) {
         err.context(node);
-        result_.errors.push_back(err.get_message());
+        result_.errors.push_back(std::move(err));
 
         // Default to API version in case the version in the AST is broken
         ret->items = analyzer_.api_version;
@@ -65,7 +65,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_statement_list(ast::StatementList &node
             statement_ast->visit(*this);
         } catch (error::AnalysisError &err) {
             err.context(node);
-            result_.errors.push_back(err.get_message());
+            result_.errors.push_back(std::move(err));
         }
     }
     return {};
@@ -89,13 +89,13 @@ std::any AnalyzeTreeGenAstVisitor::visit_annotation_data(ast::AnnotationData &no
                 ret->operands.add(std::any_cast<values::Value>(expression_ast->visit(*this)));
             } catch (error::AnalysisError &err) {
                 err.context(node);
-                result_.errors.push_back(err.get_message());
+                result_.errors.push_back(std::move(err));
             }
         }
         ret->copy_annotation<parser::SourceLocation>(node);
     } catch (error::AnalysisError &err) {
         err.context(node);
-        result_.errors.push_back(err.get_message());
+        result_.errors.push_back(std::move(err));
         ret.reset();
     }
     return ret;
@@ -154,7 +154,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_variable(ast::Variable &node) {
         analyzer_.register_mapping(identifier->name, tree::make<values::VariableRef>(ret));
     } catch (error::AnalysisError &err) {
         err.context(node);
-        result_.errors.push_back(err.get_message());
+        result_.errors.push_back(std::move(err));
         ret.reset();
     }
     return ret;
@@ -225,7 +225,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_measure_instruction(ast::MeasureInstruc
         result_.root->statements.add(ret);
     } catch (error::AnalysisError &err) {
         err.context(node);
-        result_.errors.push_back(err.get_message());
+        result_.errors.push_back(std::move(err));
         ret.reset();
     }
     return ret;
@@ -254,7 +254,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_instruction(ast::Instruction &node) {
         result_.root->statements.add(ret);
     } catch (error::AnalysisError &err) {
         err.context(node);
-        result_.errors.push_back(err.get_message());
+        result_.errors.push_back(std::move(err));
         ret.reset();
     }
 
@@ -333,7 +333,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_initialization(ast::Initialization &nod
         result_.root->statements.add(ret);
     } catch (error::AnalysisError &err) {
         err.context(node);
-        result_.errors.push_back(err.get_message());
+        result_.errors.push_back(std::move(err));
         ret.reset();
     }
     return ret;
@@ -367,7 +367,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_assignment_instruction(ast::AssignmentI
         result_.root->statements.add(ret);
     } catch (error::AnalysisError &err) {
         err.context(node);
-        result_.errors.push_back(err.get_message());
+        result_.errors.push_back(std::move(err));
         ret.reset();
     }
     return ret;

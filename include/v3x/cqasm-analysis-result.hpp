@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cqasm-ast.hpp"
+#include "cqasm-error.hpp"
 #include "cqasm-semantic.hpp"
 
 #include <stdexcept>  // runtime_error
@@ -14,12 +15,14 @@
  */
 namespace cqasm::v3x::analyzer {
 
+using Root = ast::One<semantic::Program>;
+
 /**
  * Exception thrown by AnalysisResult::unwrap() when the cQASM file fails to parse.
  */
 class AnalysisFailed: public std::runtime_error {
 public:
-    AnalysisFailed() : std::runtime_error("cQASM analysis failed") {};
+    AnalysisFailed() : std::runtime_error{ "cQASM analysis failed" } {};
 };
 
 /**
@@ -54,19 +57,26 @@ public:
      * List of accumulated errors.
      * Analysis was successful if and only if `errors.empty()`.
      */
-    std::vector<std::string> errors;
+    error::AnalysisErrors errors;
 
     /**
      * "Unwraps" the result (as you would in Rust) to get the program node or an exception.
      * The exception is always an AnalysisFailed, deriving from std::runtime_error.
      * The actual error messages are in this case first written to the given output stream, defaulting to stderr.
      */
-    ast::One<semantic::Program> unwrap(std::ostream &out = std::cerr) const;
+    Root unwrap(std::ostream &out = std::cerr) const;
+
+    /**
+     * Returns a vector of strings, of which the first is reserved for the CBOR serialization of the v3.x semantic AST.
+     * Any additional strings represent error messages.
+     * Notice that the AST and error messages won't be available at the same time.
+     */
+    [[nodiscard]] std::vector<std::string> to_strings() const;
 
     /**
      * Returns a string with a JSON representation of the AnalysisResult.
      */
-    std::string to_json() const;
+    [[nodiscard]] std::string to_json() const;
 };
 
 } // namespace cqasm::v3x::analyzer

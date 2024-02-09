@@ -9,17 +9,14 @@
 #include "v3x/cqasm-analyzer.hpp"
 #include "v3x/cqasm-semantic.hpp"
 
+#include <optional>
 
-/**
- * Top level namespace with entry points for the new API.
- */
-namespace cqasm {
 
 /**
  * Namespace for the "new" cQASM 3.x API.
  * Its contents are pulled into the main cQASM namespace when you include "cqasm.hpp" for compatibility.
  */
-namespace v3x {
+namespace cqasm::v3x {
 
 /**
  * Parses and analyzes the given file path with the default analyzer,
@@ -37,7 +34,7 @@ tree::One<cqasm::v3x::semantic::Program> analyze_file(
  */
 tree::One<cqasm::v3x::semantic::Program> analyze_string(
     const std::string &data,
-    const std::string &file_name = "<unknown>",
+    const std::optional<std::string> &file_name,
     const std::string &api_version = "3.0"
 );
 
@@ -48,5 +45,4 @@ analyzer::Analyzer default_analyzer(
     const std::string &api_version = "3.0"
 );
 
-} // namespace v3x
-} // namespace cqasm
+} // namespace cqasm::v3x

@@ -6,6 +6,8 @@
 
 #include <antlr4-runtime.h>
 #include <any>
+#include <optional>
+
 
 namespace cqasm::v3x::parser { class CustomErrorListener; }
 
@@ -16,7 +18,7 @@ class  BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
     /**
      * Name of the file being parsed.
      */
-    std::string file_name_;
+    std::optional<std::string> file_name_;
 
     /**
      * Error listener.
@@ -93,7 +95,7 @@ public:
     std::any visitIntegerLiteral(CqasmParser::IntegerLiteralContext *context) override;
     std::any visitFloatLiteral(CqasmParser::FloatLiteralContext *context) override;
 
-    explicit BuildTreeGenAstVisitor(std::string file_name = "<unknown>");
+    explicit BuildTreeGenAstVisitor(const std::optional<std::string> &file_name);
     void addErrorListener(CustomErrorListener *errorListener) override;
     void syntaxError(size_t line, size_t char_position_in_line, const std::string &text) const override;
     void setNodeAnnotation(const ast::One<ast::Node> &node, antlr4::Token *token) const override;

@@ -1,2 +1,2 @@
 ERROR
-input.cq:4:22: syntax error, unexpected ']'
+Error at input.cq:4:22..23: syntax error, unexpected ']'

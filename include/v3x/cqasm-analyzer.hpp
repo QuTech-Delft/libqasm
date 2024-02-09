@@ -16,6 +16,7 @@
 #include "cqasm-semantic.hpp"
 
 #include <functional>
+#include <optional>
 #include <string>
 
 
@@ -96,10 +97,10 @@ public:
 
     /**
      * Analyzes the given parse result.
-     * If there are parse errors, they are copied into the AnalysisResult error list, and
-     * the root node will be empty.
+     * If there are parse errors, they are moved into the AnalysisResult error list,
+     * and the root node will be empty.
      */
-    [[nodiscard]] virtual AnalysisResult analyze(const parser::ParseResult &parse_result);
+    [[nodiscard]] virtual AnalysisResult analyze(parser::ParseResult &&parse_result);
 
     /**
      * Parses and analyzes using the given version and parser closures.
@@ -112,14 +113,14 @@ public:
     /**
      * Parses and analyzes the given file.
      */
-    [[nodiscard]] virtual AnalysisResult analyze_file(const std::string &filename);
+    [[nodiscard]] virtual AnalysisResult analyze_file(const std::string &file_name);
 
     /**
      * Parses and analyzes the given string.
-     * The optional filename argument will be used only for error messages.
+     * The optional file_name argument will be used only for error messages.
      */
     [[nodiscard]] virtual AnalysisResult analyze_string(
-        const std::string &data, const std::string &filename = "<unknown>");
+        const std::string &data, const std::optional<std::string> &file_name);
 
     /**
      * Resolves a mapping.

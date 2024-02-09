@@ -37,7 +37,7 @@ class TestV3xAnalyzer(unittest.TestCase):
         program_str = "version 3;qubit[5] q;bit[5] b;h q[0:4];b = measure"
         v3x_analyzer = cq.Analyzer()
         errors = v3x_analyzer.parse_string(program_str)
-        expected_errors = ["<unknown>:1:51: mismatched input '<EOF>' expecting {'[', '{', '(', '+', '-', '~', '!', BOOLEAN_LITERAL, INTEGER_LITERAL, FLOAT_LITERAL, IDENTIFIER}"]
+        expected_errors = ["Error at <unknown file name>:1:51..56: mismatched input '<EOF>' expecting {'[', '{', '(', '+', '-', '~', '!', BOOLEAN_LITERAL, INTEGER_LITERAL, FLOAT_LITERAL, IDENTIFIER}"]
         self.assertEqual(errors, expected_errors)
 
     def test_analyze_string_returning_ast(self):
@@ -81,5 +81,5 @@ class TestV3xAnalyzer(unittest.TestCase):
         program_str = "version 3;qubit[3] q;x q[3]"
         v3x_analyzer = cq.Analyzer()
         errors = v3x_analyzer.analyze_string(program_str)
-        expected_errors = ["Error at <unknown>:1:24..25: index 3 out of range (size 3)"]
+        expected_errors = ["Error at <unknown file name>:1:24..25: index 3 out of range (size 3)"]
         self.assertEqual(errors, expected_errors)
