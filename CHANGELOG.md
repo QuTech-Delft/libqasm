@@ -7,15 +7,16 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- cQasm 3.0 parser: implemented variable declaration and initialization for `bool`, `int`, and `float` (simple and array), and `axis` types
+- cQasm 3.0 parser: implemented variable declaration and initialization for `bool`, `int`, and `float`
+  (simple and array), and `axis` types.
 
 ### Changed
 
-- `v3x::AnalyzeTreeGenAstVisitor` is an instance of `tree-gen` generated visitor base class
+- `v3x::AnalyzeTreeGenAstVisitor` is an instance of `tree-gen` generated visitor base class.
 
 ### Removed
 
-- `msvc-runtime` pip dependency on Windows
+- `msvc-runtime` pip dependency on Windows.
 
 ## [ 0.5.1 ] - [ 2024-01-08 ]
 
