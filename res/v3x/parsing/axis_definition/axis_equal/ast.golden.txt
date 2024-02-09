@@ -1,2 +1,2 @@
 ERROR
-input.cq:3:6: missing IDENTIFIER at '='
+Error at input.cq:3:6..7: missing IDENTIFIER at '='

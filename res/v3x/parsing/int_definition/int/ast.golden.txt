@@ -1,2 +1,2 @@
 ERROR
-input.cq:3:4: mismatched input '\n' expecting {'[', IDENTIFIER}
+Error at input.cq:3:4..5: mismatched input '\n' expecting {'[', IDENTIFIER}

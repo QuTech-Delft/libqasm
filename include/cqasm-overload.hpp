@@ -61,12 +61,12 @@ public:
 };
 
 /**
- * Represents a set of possible overloads for the parameter types of a
- * function, gate, or error model. T is some tag type identifying the overload.
- * In case of a function, T would contain at least the return type, but maybe
- * also a lambda to represent the actual function. Note that ambiguous
- * overloads are silently resolved by using the last applicable overload, so
- * more specific overloads should always be added last.
+ * Represents a set of possible overloads for the parameter types of a function, gate, or error model.
+ * T is some tag type identifying the overload.
+ * In case of a function, T would contain at least the return type,
+ * but maybe also a lambda to represent the actual function.
+ * Note that ambiguous overloads are silently resolved by using the last applicable overload,
+ * so more specific overloads should always be added last.
  */
 template <class T, class TypeBase, class Node>
 class OverloadResolver {
@@ -79,8 +79,8 @@ class OverloadResolver {
 
 public:
     /**
-     * Adds a possible overload to the resolver. Note that ambiguous
-     * overloads are silently resolved by using the last applicable overload,
+     * Adds a possible overload to the resolver.
+     * Note that ambiguous overloads are silently resolved by using the last applicable overload,
      * so more specific overloads should always be added last.
      */
     void add_overload(const T &tag, const Types &param_types) {
@@ -88,9 +88,9 @@ public:
     }
 
     /**
-     * Tries to resolve which overload belongs to the given argument list, if
-     * any. Raises an OverloadResolutionFailure if no applicable overload
-     * exists, otherwise the tag corresponding to the first proper overload and
+     * Tries to resolve which overload belongs to the given argument list, if any.
+     * Raises an OverloadResolutionFailure if no applicable overload exists,
+     * otherwise the tag corresponding to the first proper overload and
      * the appropriately promoted vector of value pointers are returned.
      */
     [[nodiscard]] std::pair<T, Values> resolve(const Values &args) {

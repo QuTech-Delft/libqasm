@@ -21,12 +21,82 @@ Program(
           >
           size: <
             IntegerLiteral(
-              value: 4
+              value: 2
             )
           >
           annotations: []
         )
-        Instruction( # input.cq:5:1..5
+        Instruction( # input.cq:5:1..2
+          name: <
+            Identifier(
+              name: h
+            )
+          >
+          condition: -
+          operands: <
+            ExpressionList(
+              items: [
+                Index( # input.cq:5:3..4
+                  expr: <
+                    Identifier(
+                      name: q
+                    )
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexItem(
+                          index: <
+                            IntegerLiteral( # input.cq:5:5..6
+                              value: 0
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
+                )
+              ]
+            )
+          >
+          annotations: []
+        )
+        Instruction( # input.cq:6:1..2
+          name: <
+            Identifier(
+              name: h
+            )
+          >
+          condition: -
+          operands: <
+            ExpressionList(
+              items: [
+                Index( # input.cq:6:3..4
+                  expr: <
+                    Identifier(
+                      name: q
+                    )
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexItem(
+                          index: <
+                            IntegerLiteral( # input.cq:6:5..6
+                              value: 1
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
+                )
+              ]
+            )
+          >
+          annotations: []
+        )
+        Instruction( # input.cq:7:1..5
           name: <
             Identifier(
               name: cnot
@@ -36,7 +106,7 @@ Program(
           operands: <
             ExpressionList(
               items: [
-                Index( # input.cq:5:6..7
+                Index( # input.cq:7:6..7
                   expr: <
                     Identifier(
                       name: q
@@ -47,15 +117,8 @@ Program(
                       items: [
                         IndexItem(
                           index: <
-                            IntegerLiteral( # input.cq:5:8..9
+                            IntegerLiteral( # input.cq:7:8..9
                               value: 0
-                            )
-                          >
-                        )
-                        IndexItem(
-                          index: <
-                            IntegerLiteral( # input.cq:5:11..12
-                              value: 1
                             )
                           >
                         )
@@ -63,7 +126,7 @@ Program(
                     )
                   >
                 )
-                Index( # input.cq:5:15..16
+                Index( # input.cq:7:12..13
                   expr: <
                     Identifier(
                       name: q
@@ -74,15 +137,8 @@ Program(
                       items: [
                         IndexItem(
                           index: <
-                            IntegerLiteral( # input.cq:5:17..18
-                              value: 3
-                            )
-                          >
-                        )
-                        IndexItem(
-                          index: <
-                            IntegerLiteral( # input.cq:5:19..20
-                              value: 2
+                            IntegerLiteral( # input.cq:7:14..15
+                              value: 1
                             )
                           >
                         )

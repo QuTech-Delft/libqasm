@@ -4,71 +4,97 @@
 
 #pragma once
 
-#include <string>
-#include <sstream>
-#include <vector>
 #include "cqasm-tree.hpp"
 #include "cqasm-annotations.hpp"
 
-namespace cqasm {
+#include <fmt/ostream.h>
+#include <string>
+#include <optional>
+#include <vector>
+
 
 /**
  * Namespace for exceptions used by libqasm.
  */
-namespace error {
+namespace cqasm::error {
+
+class Error;
+
+using ParseError = Error;
+using AnalysisError = Error;
+using ParseErrors = std::vector<ParseError>;
+using AnalysisErrors = std::vector<AnalysisError>;
+
+static constexpr const char* unknown_error_message = "<unknown error message>";
 
 /**
  * Exception used for analysis errors.
- *
- * Contains a message in the form of an `std::ostringstream` that can be
- * appended to or otherwise modified even after the initial throw to add
- * information, as well as an optional source location object.
  */
-class AnalysisError : public std::runtime_error {
-private:
+class Error : public std::runtime_error {
+    /**
+     * The error message itself.
+     */
+    std::string message_;
 
     /**
-     * The fully constructed message, as returned by get_message().
+     * The error message, decorated with a header and location information.
+     * This is the string returned by the what() method.
      */
-    mutable std::string msg;
-
-public:
-
-    /**
-     * The stringstream used to construct the message. Additional information
-     * can be appended after construction.
-     */
-    std::ostringstream message;
+    mutable std::string what_message_;
 
     /**
      * Attached location in the source file, if any.
      */
-    std::unique_ptr<annotations::SourceLocation> location;
+    std::shared_ptr<annotations::SourceLocation> location_;
 
+public:
     /**
-     * Constructs a new error. If node is a non-null annotatable with a
-     * location node, its location information is attached.
+     * Constructs a new error.
+     * If node is a non-null annotatable with a location node, its location information is attached.
      */
-    explicit AnalysisError(std::string &&message = "", const tree::Annotatable *node = nullptr);
+    explicit Error(const std::string &message, const tree::Annotatable *node = nullptr);
 
     /**
-     * Sets the context of this error to the SourceLocation annotation of the
-     * given node, if the error doesn't already have such a context. If it
-     * does, this is no-op.
+     * Constructs a new error from a message and a source location.
+     */
+    Error(const std::string &message, std::shared_ptr<annotations::SourceLocation> location);
+
+    /**
+     * Constructs a new error from a message and all the fields of a source location.
+     */
+    Error(
+        const std::string &message,
+        const std::optional<std::string> &file_name,
+        std::uint32_t first_line,
+        std::uint32_t first_column,
+        std::uint32_t last_line,
+        std::uint32_t last_column);
+
+    /**
+     * Sets the context of this error to the SourceLocation annotation of the given node,
+     * if the error doesn't already have such a context.
+     * If it does, this is no-op.
      */
     void context(const tree::Annotatable &node);
-
-    /**
-     * Constructs the message string.
-     */
-    const std::string &get_message() const;
 
     /**
      * Returns the message exception-style.
      */
     const char *what() const noexcept override;
 
+    /**
+     * Returns a string with a JSON representation of an Error.
+     * The JSON representation follows the Language Server Protocol (LSP) specification.
+     * Every error is mapped to an LSP Diagnostic structure:
+     * Severity is hardcoded to 1 at the moment (value corresponding to an Error level)
+     */
+    std::string to_json() const;
 };
+
+/**
+ * Stream << overload for Error.
+ */
+std::ostream &operator<<(std::ostream &os, const Error &error);
 
 /**
  * Defines a new analysis error class.
@@ -84,5 +110,9 @@ public:
         {}                                                          \
     }
 
-} // namespace error
-} // namespace cqasm
+} // namespace cqasm::error
+
+/**
+ * std::ostream support via fmt (uses operator<<).
+ */
+template <> struct fmt::formatter<cqasm::error::Error> : ostream_formatter {};

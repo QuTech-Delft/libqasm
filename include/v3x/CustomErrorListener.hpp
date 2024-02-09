@@ -2,6 +2,7 @@
 
 #include <antlr4-runtime.h>
 #include <exception>
+#include <optional>
 #include <string>
 
 
@@ -11,7 +12,7 @@ class CustomErrorListener : public antlr4::BaseErrorListener {
     /**
      * Name of the file being parsed.
      */
-    std::string file_name_;
+    std::optional<std::string> file_name_;
 
     void syntaxError(
         antlr4::Recognizer *recognizer,
@@ -21,7 +22,7 @@ class CustomErrorListener : public antlr4::BaseErrorListener {
         const std::string &msg, std::exception_ptr e) override;
 
 public:
-    explicit CustomErrorListener(std::string file_name = "<unknown>");
+    explicit CustomErrorListener(const std::optional<std::string> &file_name);
     void syntaxError(size_t line, size_t charPositionInLine, const std::string &msg);
 };
 

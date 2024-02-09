@@ -1,2 +1,2 @@
 ERROR
-input.cq:3:9: missing 'measure' at 'false'
+Error at input.cq:3:9..14: missing 'measure' at 'false'

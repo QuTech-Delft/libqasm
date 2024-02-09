@@ -4,9 +4,8 @@
 
 #pragma once
 
-#include <fmt/format.h>
-#include <sstream>  // ostringstream
 #include <string>
+
 
 /**
  * Namespace for various utility functions.
@@ -24,20 +23,13 @@ std::string to_lowercase(const std::string &name);
 bool equal_case_insensitive(const std::string &lhs, const std::string &rhs);
 
 /**
- * Returns a string with a JSON representation of a ParseResult or an AnalysisResult.
+ * Encodes a string in URL format.
  */
-template <typename Result>
-std::string to_json(const Result &result) {
-    if (!result.errors.empty()) {
-        return fmt::format(R"({{"errors":["{}"]}})",  // first quote of first error message, and
-                                                      // last quote of last error message
-            fmt::join(result.errors, R"(",")"));  // last quote of any intermediate error message, and
-                                                  // first quote of the following
-    } else {
-        std::ostringstream oss{};
-        result.root->dump_json(oss);
-        return oss.str();
-    }
-}
+std::string url_encode(const std::string &str);
+
+/**
+ * Encodes a string in JSON format.
+ */
+std::string json_encode(const std::string &str);
 
 } // namespace cqasm::utils

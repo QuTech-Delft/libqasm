@@ -46,7 +46,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_version(ast::Version &node) {
         ret->items = node.items;
     } catch (error::AnalysisError &err) {
         err.context(node);
-        result_.errors.push_back(err.get_message());
+        result_.errors.push_back(std::move(err));
 
         // Default to API version in case the version in the AST is broken
         ret->items = analyzer_.api_version;
@@ -65,7 +65,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_statement_list(ast::StatementList &node
             statement_ast->visit(*this);
         } catch (error::AnalysisError &err) {
             err.context(node);
-            result_.errors.push_back(err.get_message());
+            result_.errors.push_back(std::move(err));
         }
     }
     return {};
@@ -89,13 +89,13 @@ std::any AnalyzeTreeGenAstVisitor::visit_annotation_data(ast::AnnotationData &no
                 ret->operands.add(std::any_cast<values::Value>(expression_ast->visit(*this)));
             } catch (error::AnalysisError &err) {
                 err.context(node);
-                result_.errors.push_back(err.get_message());
+                result_.errors.push_back(std::move(err));
             }
         }
         ret->copy_annotation<parser::SourceLocation>(node);
     } catch (error::AnalysisError &err) {
         err.context(node);
-        result_.errors.push_back(err.get_message());
+        result_.errors.push_back(std::move(err));
         ret.reset();
     }
     return ret;
@@ -151,10 +151,10 @@ std::any AnalyzeTreeGenAstVisitor::visit_variable(ast::Variable &node) {
         // Update program's variables
         // And register mapping
         result_.root->variables.add(ret);
-        analyzer_.add_mapping(identifier->name, tree::make<values::VariableRef>(ret));
+        analyzer_.register_mapping(identifier->name, tree::make<values::VariableRef>(ret));
     } catch (error::AnalysisError &err) {
         err.context(node);
-        result_.errors.push_back(err.get_message());
+        result_.errors.push_back(std::move(err));
         ret.reset();
     }
     return ret;
@@ -225,7 +225,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_measure_instruction(ast::MeasureInstruc
         result_.root->statements.add(ret);
     } catch (error::AnalysisError &err) {
         err.context(node);
-        result_.errors.push_back(err.get_message());
+        result_.errors.push_back(std::move(err));
         ret.reset();
     }
     return ret;
@@ -254,7 +254,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_instruction(ast::Instruction &node) {
         result_.root->statements.add(ret);
     } catch (error::AnalysisError &err) {
         err.context(node);
-        result_.errors.push_back(err.get_message());
+        result_.errors.push_back(std::move(err));
         ret.reset();
     }
 
@@ -333,7 +333,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_initialization(ast::Initialization &nod
         result_.root->statements.add(ret);
     } catch (error::AnalysisError &err) {
         err.context(node);
-        result_.errors.push_back(err.get_message());
+        result_.errors.push_back(std::move(err));
         ret.reset();
     }
     return ret;
@@ -367,7 +367,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_assignment_instruction(ast::AssignmentI
         result_.root->statements.add(ret);
     } catch (error::AnalysisError &err) {
         err.context(node);
-        result_.errors.push_back(err.get_message());
+        result_.errors.push_back(std::move(err));
         ret.reset();
     }
     return ret;
@@ -384,23 +384,154 @@ std::any AnalyzeTreeGenAstVisitor::visit_expression(ast::Expression &node) {
     }
 }
 
-std::any AnalyzeTreeGenAstVisitor::visit_boolean_literal(ast::BooleanLiteral &node) {
-    auto ret = tree::make<values::ConstBool>(node.value);
-    return values::Value{ ret };
+/*
+ * Convenience function for visiting a function call given the function's name and arguments
+ */
+values::Value AnalyzeTreeGenAstVisitor::visit_function_call(
+    const tree::One<ast::Identifier> &name,
+    const tree::One<ast::ExpressionList> &arguments) {
+
+    auto function_arguments = values::Values();
+    std::for_each(arguments->items.begin(), arguments->items.end(),
+        [&function_arguments, this](const auto node_argument) {
+            function_arguments.add(std::any_cast<values::Value>(visit_expression(*node_argument)));
+    });
+    const auto function_name = name->name;
+    auto ret = analyzer_.call_function(function_name, function_arguments);
+    if (ret.empty()) {
+        throw error::AnalysisError{ "function implementation returned empty value" };
+    }
+    return ret;
 }
 
-std::any AnalyzeTreeGenAstVisitor::visit_integer_literal(ast::IntegerLiteral &node) {
-    auto ret = tree::make<values::ConstInt>(node.value);
-    return values::Value{ ret };
+std::any AnalyzeTreeGenAstVisitor::visit_function_call(ast::FunctionCall &node) {
+    return visit_function_call(node.name, node.arguments);
 }
 
-std::any AnalyzeTreeGenAstVisitor::visit_float_literal(ast::FloatLiteral &node) {
-    auto ret = tree::make<values::ConstReal>(node.value);
-    return values::Value{ ret };
+/*
+ * Convenience function for visiting unary operators
+ */
+std::any AnalyzeTreeGenAstVisitor::visit_unary_operator(
+    const std::string &name,
+    const tree::One<ast::Expression> &expression) {
+
+    return visit_function_call(
+        tree::make<ast::Identifier>(std::string{ "operator" } + name),
+        tree::make<ast::ExpressionList>(tree::Any<ast::Expression>{ expression })
+    );
 }
 
-std::any AnalyzeTreeGenAstVisitor::visit_identifier(ast::Identifier &node) {
-    return analyzer_.resolve_mapping(node.name);
+/*
+ * Convenience function for visiting binary operators
+ */
+std::any AnalyzeTreeGenAstVisitor::visit_binary_operator(
+    const std::string &name,
+    const tree::One<ast::Expression> &lhs,
+    const tree::One<ast::Expression> &rhs) {
+
+    return visit_function_call(
+        tree::make<ast::Identifier>(std::string{ "operator" } + name),
+        tree::make<ast::ExpressionList>(tree::Any<ast::Expression>{ lhs, rhs })
+    );
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_unary_minus_expression(ast::UnaryMinusExpression &node) {
+    return visit_unary_operator("-", node.expr);
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_bitwise_not_expression(ast::BitwiseNotExpression &node) {
+    return visit_unary_operator("~", node.expr);
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_logical_not_expression(ast::LogicalNotExpression &node) {
+    return visit_unary_operator("!", node.expr);
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_power_expression(ast::PowerExpression &node) {
+    return visit_binary_operator("**", node.lhs, node.rhs);
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_product_expression(ast::ProductExpression &node) {
+    return visit_binary_operator("*", node.lhs, node.rhs);
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_division_expression(ast::DivisionExpression &node) {
+    return visit_binary_operator("/", node.lhs, node.rhs);
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_modulo_expression(ast::ModuloExpression &node) {
+    return visit_binary_operator("%", node.lhs, node.rhs);
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_addition_expression(ast::AdditionExpression &node) {
+    return visit_binary_operator("+", node.lhs, node.rhs);
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_subtraction_expression(ast::SubtractionExpression &node) {
+    return visit_binary_operator("-", node.lhs, node.rhs);
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_shift_left_expression(ast::ShiftLeftExpression &node) {
+    return visit_binary_operator("<<", node.lhs, node.rhs);
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_shift_right_expression(ast::ShiftRightExpression &node) {
+    return visit_binary_operator(">>", node.lhs, node.rhs);
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_cmp_gt_expression(ast::CmpGtExpression &node) {
+    return visit_binary_operator(">", node.lhs, node.rhs);
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_cmp_lt_expression(ast::CmpLtExpression &node) {
+    return visit_binary_operator("<", node.lhs, node.rhs);
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_cmp_ge_expression(ast::CmpGeExpression &node) {
+    return visit_binary_operator(">=", node.lhs, node.rhs);
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_cmp_le_expression(ast::CmpLeExpression &node) {
+    return visit_binary_operator("<=", node.lhs, node.rhs);
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_cmp_eq_expression(ast::CmpEqExpression &node) {
+    return visit_binary_operator("==", node.lhs, node.rhs);
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_cmp_ne_expression(ast::CmpNeExpression &node) {
+    return visit_binary_operator("!=", node.lhs, node.rhs);
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_bitwise_and_expression(ast::BitwiseAndExpression &node) {
+    return visit_binary_operator("&", node.lhs, node.rhs);
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_bitwise_xor_expression(ast::BitwiseXorExpression &node) {
+    return visit_binary_operator("^", node.lhs, node.rhs);
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_bitwise_or_expression(ast::BitwiseOrExpression &node) {
+    return visit_binary_operator("|", node.lhs, node.rhs);
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_logical_and_expression(ast::LogicalAndExpression &node) {
+    return visit_binary_operator("&&", node.lhs, node.rhs);
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_logical_xor_expression(ast::LogicalXorExpression &node) {
+    return visit_binary_operator("^^", node.lhs, node.rhs);
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_logical_or_expression(ast::LogicalOrExpression &node) {
+    return visit_binary_operator("||", node.lhs, node.rhs);
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_ternary_conditional_expression(ast::TernaryConditionalExpression &node) {
+    return visit_function_call(
+        tree::make<ast::Identifier>("operator?:"),
+        tree::make<ast::ExpressionList>(tree::Any<ast::Expression>{ node.cond, node.if_true, node.if_false })
+    );
 }
 
 /*
@@ -440,7 +571,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_index_list(ast::IndexList &index_list_a
     for (const auto &index_entry : index_list_ast.items) {
         if (auto index_item = index_entry->as_index_item()) {
             // Single index
-            ret.add(std::any_cast<ast::One<IndexT>>(visit_index_item(*index_item)));
+            ret.add(std::any_cast<tree::One<IndexT>>(visit_index_item(*index_item)));
         } else if (auto index_range = index_entry->as_index_range()) {
             // Range notation
             ret.extend(std::any_cast<IndexListT>(visit_index_range(*index_range)));
@@ -471,6 +602,10 @@ std::any AnalyzeTreeGenAstVisitor::visit_index_range(ast::IndexRange &index_rang
         ret.add(index_value_sp);
     }
     return ret;
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_identifier(ast::Identifier &node) {
+    return analyzer_.resolve_mapping(node.name);
 }
 
 /*
@@ -558,6 +693,21 @@ std::any AnalyzeTreeGenAstVisitor::visit_initialization_list(ast::Initialization
         err.context(node);
         throw;
     }
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_boolean_literal(ast::BooleanLiteral &node) {
+    auto ret = tree::make<values::ConstBool>(node.value);
+    return values::Value{ ret };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_integer_literal(ast::IntegerLiteral &node) {
+    auto ret = tree::make<values::ConstInt>(node.value);
+    return values::Value{ ret };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_float_literal(ast::FloatLiteral &node) {
+    auto ret = tree::make<values::ConstReal>(node.value);
+    return values::Value{ ret };
 }
 
 /**

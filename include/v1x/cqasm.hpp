@@ -5,21 +5,19 @@
 
 #pragma once
 
-#include "cqasm-tree.hpp"
 #include "cqasm-analyzer.hpp"
+#include "cqasm-tree.hpp"
 #include "cqasm-semantic.hpp"
 
+#include <optional>
+#include <string>
 
-/**
- * Top level namespace with entry points for the new API.
- */
-namespace cqasm {
 
 /**
  * Namespace for the "new" cQASM 1.x API. Its contents are pulled into the main
  * cQASM namespace when you include "cqasm.hpp" for compatibility.
  */
-namespace v1x {
+namespace cqasm::v1x {
 
 /**
  * Parses and analyzes the given file path with the default analyzer,
@@ -37,7 +35,7 @@ tree::One<semantic::Program> analyze_file(
  */
 tree::One<semantic::Program> analyze_file(
     FILE *fp,
-    const std::string &file_name = "<unknown>",
+    const std::optional<std::string> &file_name,
     const std::string &api_version = "1.0"
 );
 
@@ -48,7 +46,7 @@ tree::One<semantic::Program> analyze_file(
  */
 tree::One<semantic::Program> analyze_string(
     const std::string &data,
-    const std::string &file_name = "<unknown>",
+    const std::optional<std::string> &file_name,
     const std::string &api_version = "1.0"
 );
 
@@ -59,5 +57,4 @@ analyzer::Analyzer default_analyzer(
     const std::string &api_version = "1.0"
 );
 
-} // namespace v1x
-} // namespace cqasm
+} // namespace cqasm::v1x

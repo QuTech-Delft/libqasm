@@ -1,2 +1,2 @@
 ERROR
-input.cq:3:5: missing 'measure' at '5'
+Error at input.cq:3:5..6: missing 'measure' at '5'

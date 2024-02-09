@@ -7,6 +7,7 @@
 #pragma once
 
 #include "cqasm-annotations.hpp"
+#include "cqasm-error.hpp"
 #include "cqasm-ast.hpp"
 
 #include <string>
@@ -18,6 +19,8 @@
  */
 namespace cqasm::v3x::parser {
 
+using Root = ast::One<ast::Root>;
+
 /**
  * Parse result information.
  */
@@ -28,18 +31,25 @@ public:
      * This may be set even if parsing was not ENTIRELY successful,
      * in which case it will contain one or more error nodes.
      */
-    ast::One<ast::Root> root;
+    Root root;
 
     /**
      * List of accumulated errors.
      * Analysis was successful if and only if errors.empty().
      */
-    std::vector<std::string> errors;
+    error::ParseErrors errors;
 
     /**
-     * Returns a string with a JSON representation of the ParseResult.
+     * Returns a vector of strings, of which the first is reserved for the CBOR serialization of the v3.x syntactic AST.
+     * Any additional strings represent error messages.
+     * Notice that the AST and error messages won't be available at the same time.
      */
-    std::string to_json() const;
+    [[nodiscard]] std::vector<std::string> to_strings() const;
+
+    /**
+     * Returns a string with a JSON representation of a ParseResult.
+     */
+    [[nodiscard]] std::string to_json() const;
 };
 
 } // namespace cqasm::v3x::parser

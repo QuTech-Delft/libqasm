@@ -1,0 +1,11 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
+
+# Declare files that will always have LF line endings on checkout.
+#
+# Reading and writing of "actual test files" (e.g. ast.actual.txt) use LF line endings
+# (see read_file and write_file implementation in utils.{hpp,cpp})
+# Since we are comparing the actual test files against "golden test files" (e.g. ast.golden.txt),
+# we also want the golden test files to use LF line endings.
+res/v1x/parsing/*/*/*.* text eol=lf
+res/v3x/parsing/*/*/*.* text eol=lf

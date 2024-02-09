@@ -16,7 +16,9 @@
 #include "cqasm-semantic.hpp"
 
 #include <functional>
+#include <optional>
 #include <string>
+
 
 /**
  * Namespace for the \ref cqasm::analyzer::Analyzer "Analyzer" class and
@@ -112,13 +114,12 @@ public:
     /**
      * Registers a function, usable within expressions.
      *
-     * values::check_const() can be used in the function implementation to
-     * assert that the values must be constant when the function can only be
-     * used during constant propagation. When the function also (or only)
-     * supports dynamic evaluation, the implementation will have to check
-     * whether the inputs are const manually (for instance using
-     * `as_constant()`) to determine when to return a dynamic values::Function
-     * node instead.
+     * values::check_const() can be used in the function implementation
+     * to assert that the values must be constant when the function can only be used during constant propagation.
+     * When the function also (or only) supports dynamic evaluation,
+     * the implementation will have to check
+     * whether the inputs are const manually (for instance using `as_constant()`)
+     * to determine when to return a dynamic values::Function node instead.
      */
     void register_function(
         const std::string &name,
@@ -127,9 +128,9 @@ public:
     );
 
     /**
-     * Convenience method for registering a function. The param_types are
-     * specified as a string, converted to types::Types for the other overload
-     * using types::from_spec.
+     * Convenience method for registering a function.
+     * The param_types are specified as a string,
+     * converted to types::Types for the other overload using types::from_spec.
      */
     void register_function(
         const std::string &name,
@@ -143,9 +144,8 @@ public:
     void register_mapping(const std::string &name, const values::Value &value);
 
     /**
-     * Registers a number of default functions and mappings, such as the
-     * operator functions, the usual trigonometric functions, mappings for pi,
-     * eu (aka e, 2.718...), im (imaginary unit) and so on.
+     * Registers a number of default functions and mappings, such as the operator functions,
+     * the usual trigonometric functions, mappings for pi, eu (aka e, 2.718...), im (imaginary unit) and so on.
      */
     void register_default_functions_and_mappings();
 
@@ -236,39 +236,38 @@ public:
     /**
      * Analyzes the given program AST node.
      */
-    AnalysisResult analyze(const ast::Program &program) const;
+    AnalysisResult analyze(ast::Program &program);
 
     /**
      * Analyzes the given parse result.
-     * If there are parse errors, they are copied into the AnalysisResult error list, and
+     * If there are parse errors, they are moved into the AnalysisResult error list, and
      * the root node will be empty.
      */
-    AnalysisResult analyze(const parser::ParseResult &parse_result) const;
+    AnalysisResult analyze(parser::ParseResult &&parse_result);
 
     /**
      * Parses and analyzes using the given version and parser closures.
      */
     AnalysisResult analyze(
         const std::function<version::Version()> &version_parser,
-        const std::function<parser::ParseResult()> &parser
-    ) const;
+        const std::function<parser::ParseResult()> &parser);
 
     /**
      * Parses and analyzes the given file.
      */
-    AnalysisResult analyze_file(const std::string &filename) const;
+    AnalysisResult analyze_file(const std::string &file_name);
 
     /**
      * Parses and analyzes the given file pointer.
-     * The optional filename argument will be used only for error messages.
+     * The optional file_name argument will be used only for error messages.
      */
-    AnalysisResult analyze_file(FILE *file, const std::string &filename = "<unknown>") const;
+    AnalysisResult analyze_file(FILE *file, const std::optional<std::string> &file_name);
 
     /**
      * Parses and analyzes the given string.
-     * The optional filename argument will be used only for error messages.
+     * The optional file_name argument will be used only for error messages.
      */
-    AnalysisResult analyze_string(const std::string &data, const std::string &filename = "<unknown>") const;
+    AnalysisResult analyze_string(const std::string &data, const std::optional<std::string> &file_name);
 };
 
 } // namespace cqasm::v1x::analyzer

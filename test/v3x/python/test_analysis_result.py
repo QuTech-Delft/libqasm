@@ -9,7 +9,7 @@ class TestAnalysisResult(unittest.TestCase):
         program_str = "version 3; bit[0] b"
         v3x_analyzer = cq.Analyzer()
         actual_errors_json = v3x_analyzer.analyze_string_to_json(program_str)
-        expected_errors_json = '''{"errors":["Error at <unknown>:1:19..20: declaring bit array of size <= 0"]}'''
+        expected_errors_json = '''{"errors":[{"range":{"start":{"line":1,"character":19},"end":{"line":1,"character":20}},"message":"declaring bit array of size <= 0","severity":1}]}'''
         self.assertEqual(actual_errors_json, expected_errors_json)
 
     def test_to_json_with_analyzer_ast(self):

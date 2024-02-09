@@ -70,12 +70,6 @@ FetchContent_Declare(tree-gen
 )
 FetchContent_MakeAvailable(tree-gen)
 
-# Include func-gen, a simple program that generates the function that registers all default functions
-# (operators, trigonometry, etc) with a resolver::FunctionTable object.
-# This file would otherwise be extremely repetitive and annoying to maintain due to the amount of overloads.
-# This exposes the generate_funcs() function, which should be called once with the header and source file paths.
-add_subdirectory(func-gen)
-
 #-------------------------------------------------------------------------------
 # cQASM common code generation and inclusion
 #-------------------------------------------------------------------------------
@@ -179,14 +173,6 @@ generate_tree_py(
     "${LIBQASM_GENERATED_PYTHON_FILES}/v1x/cqasm-semantic-gen.py"
 )
 list(APPEND CQASM_V1X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-semantic-gen.cpp")
-
-# Generate the cQASM default function set.
-generate_funcs(
-    "${CMAKE_CURRENT_BINARY_DIR}/../include/v1x/cqasm-functions-gen.hpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-functions-gen.cpp"
-    "v1x"
-)
-list(APPEND CQASM_V1X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-functions-gen.cpp")
 
 #-------------------------------------------------------------------------------
 # cQASM v3.x parser generation and inclusion
@@ -299,12 +285,15 @@ if(CMAKE_COMPILER_IS_GNUCXX)
         -Wno-error=deprecated-declarations
         -Wno-error=restrict
         -Wno-error=sign-compare
+        -Wno-error=unused-parameter
     )
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    # CqasmParser.cpp, expressionSempred method defines _localctx parameter but does not use it
     target_compile_options(cqasm-lib-obj PRIVATE
         -Wall -Wextra -Werror -Wfatal-errors
         -fPIC
         -Wno-error=sign-compare
+        -Wno-error=unused-parameter
         -Wno-error=unused-private-field
         -Wno-error=unused-but-set-variable
     )
