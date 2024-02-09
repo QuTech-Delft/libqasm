@@ -462,11 +462,11 @@ instruction cannot share a bundle with other instructions.
     a subtraction otherwise). It is not possible to define custom instructions
     with dashes in them other than exactly ``reset-averaging``.
 
-``load_state <filename>``
+``load_state <file_name>``
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Meta-instruction for simulators, telling the simulator to load the qubit
-register state from the given filename. The filename is to be specified as a
+register state from the given file_name. The file_name is to be specified as a
 string literal. This instruction cannot share a bundle with other instructions.
 
 

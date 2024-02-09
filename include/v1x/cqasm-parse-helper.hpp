@@ -11,15 +11,13 @@
 #include "cqasm-parse-result.hpp"
 
 #include <cstdio>
+#include <optional>
 
-
-namespace cqasm {
-namespace v1x {
 
 /**
  * Namespace for the parser functions and classes.
  */
-namespace parser {
+namespace cqasm::v1x::parser {
 
 // SourceLocation used to live in this namespace, before the v1x namespace was a thing.
 // Make sure it exists here for compatibility.
@@ -33,20 +31,19 @@ ParseResult parse_file(const std::string &file_path);
 /**
  * Parse using the given file pointer.
  */
-ParseResult parse_file(FILE* fp, const std::string &file_name = "<unknown>");
+ParseResult parse_file(FILE* fp, const std::optional<std::string> &file_name);
 
 /**
  * Parse the given string.
  * A file_name may be given in addition for use within error messages.
  */
-ParseResult parse_string(const std::string &data, const std::string &file_name="<unknown>");
+ParseResult parse_string(const std::string &data, const std::optional<std::string> &file_name);
 
 /**
  * Internal helper class for parsing cQASM files.
  */
 class ParseHelper {
 public:
-
     /**
      * File pointer being scanned, if no data was specified.
      */
@@ -74,8 +71,8 @@ public:
 
 private:
     friend ParseResult parse_file(const std::string &file_path);
-    friend ParseResult parse_file(FILE* fp, const std::string &file_name);
-    friend ParseResult parse_string(const std::string &data, const std::string &file_name);
+    friend ParseResult parse_file(FILE* fp, const std::optional<std::string> &file_name);
+    friend ParseResult parse_string(const std::string &data, const std::optional<std::string> &file_name);
 
     /**
      * Parse a string or file with flex/bison.
@@ -83,12 +80,12 @@ private:
      * Otherwise, file_path is used only for error messages, and data is read instead.
      * Don't use this directly, use parse().
      */
-    ParseHelper(const std::string &file_path, const std::string &data, bool use_file);
+    ParseHelper(const std::optional<std::string> &file_path, const std::string &data, bool use_file);
 
     /**
      * Construct the analyzer internals for the given file_name, and analyze the file.
      */
-    ParseHelper(const std::string &file_name, FILE *fptr);
+    ParseHelper(const std::optional<std::string> &file_name, FILE *fptr);
 
     /**
      * Initializes the scanner. Returns whether this was successful.
@@ -101,7 +98,6 @@ private:
     void parse();
 
 public:
-
     /**
      * Destroys the parse helper.
      */
@@ -110,10 +106,17 @@ public:
     /**
      * Pushes an error.
      */
-    void push_error(const std::string &error);
+    void push_error(const error::ParseError &error);
 
+    /**
+     * Builds and pushes an error.
+     */
+    void push_error(
+        const std::string &message,
+        int first_line,
+        int first_column,
+        int last_line,
+        int last_column);
 };
 
-} // namespace parser
-} // namespace v1x
-} // namespace cqasm
+} // namespace cqasm::v1x::parser

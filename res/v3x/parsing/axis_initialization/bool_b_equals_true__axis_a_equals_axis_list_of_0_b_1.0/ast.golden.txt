@@ -1,0 +1,81 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  statements: <
+    StatementList(
+      items: [
+        Initialization( # input.cq:3:8..9
+          var: <
+            Variable( # input.cq:3:6..7
+              name: <
+                Identifier(
+                  name: b
+                )
+              >
+              typ: <
+                Keyword(
+                  name: bool
+                )
+              >
+              size: -
+              annotations: []
+            )
+          >
+          rhs: <
+            BooleanLiteral( # input.cq:3:10..14
+              value: 1
+            )
+          >
+          annotations: []
+        )
+        Initialization( # input.cq:4:8..9
+          var: <
+            Variable( # input.cq:4:6..7
+              name: <
+                Identifier(
+                  name: a
+                )
+              >
+              typ: <
+                Keyword(
+                  name: axis
+                )
+              >
+              size: <
+                IntegerLiteral(
+                  value: 3
+                )
+              >
+              annotations: []
+            )
+          >
+          rhs: <
+            InitializationList(
+              expr_list: <
+                ExpressionList(
+                  items: [
+                    IntegerLiteral( # input.cq:4:11..12
+                      value: 0
+                    )
+                    Identifier( # input.cq:4:14..15
+                      name: b
+                    )
+                    FloatLiteral( # input.cq:4:17..20
+                      value: 1
+                    )
+                  ]
+                )
+              >
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

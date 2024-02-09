@@ -11,6 +11,7 @@
 #include "v3x/ScannerAntlr.hpp"
 
 #include <memory>  // unique_ptr
+#include <optional>
 #include <string>
 
 
@@ -20,15 +21,15 @@ using SourceLocation = annotations::SourceLocation;
 
 /**
  * Parse using the given file path.
- * Throws an AnalysisError if this fails.
+ * Throws a ParseError if this fails.
  */
-cqasm::v3x::parser::ParseResult parse_file(const std::string &file_path, const std::string &file_name = "<unknown>");
+ParseResult parse_file(const std::string &file_path, const std::optional<std::string> &file_name);
 
 /**
  * Parse the given string.
  * A file_name may be given in addition for use within error messages.
  */
-cqasm::v3x::parser::ParseResult parse_string(const std::string &data, const std::string &file_name="<unknown>");
+ParseResult parse_string(const std::string &data, const std::optional<std::string> &file_name);
 
 
 /**
@@ -46,12 +47,12 @@ class ParseHelper {
     std::string file_name_;
 
 public:
-    explicit ParseHelper(std::unique_ptr<ScannerAdaptor> scanner_up, std::string file_name = "<unknown>");
+    explicit ParseHelper(std::unique_ptr<ScannerAdaptor> scanner_up, const std::optional<std::string> &file_name);
 
     /**
      * Does the actual parsing.
      */
-    cqasm::v3x::parser::ParseResult parse();
+    ParseResult parse();
 };
 
 } // namespace cqasm::v3x::parser

@@ -1,0 +1,3 @@
+version 3
+
+float[3] f = { false, 1.1, 2.2 }

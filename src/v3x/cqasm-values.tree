@@ -27,6 +27,11 @@ namespace values
 
 # Constant value
 constant {
+    # Represents an axis value (x, y, and z vectors).
+    const_axis {
+        value: cqasm::v3x::primitives::Axis;
+    }
+
     const_bool {
         value: cqasm::v3x::primitives::Bool;
     }
@@ -41,6 +46,18 @@ constant {
 
     const_complex {
         value: cqasm::v3x::primitives::Complex;
+    }
+
+    const_bool_array {
+        value: Many<const_bool>;
+    }
+
+    const_int_array {
+        value: Many<const_int>;
+    }
+
+    const_real_array {
+        value: Many<const_real>;
     }
 }
 

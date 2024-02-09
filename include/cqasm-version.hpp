@@ -10,9 +10,11 @@
 #include <cstdio>  // FILE*
 #include <fmt/ostream.h>
 #include <memory>  // unique_ptr
+#include <optional>
 #include <ostream>
 #include <string>
 #include <vector>
+
 
 /**
  * Namespace for detecting and dealing with cQASM language versions.
@@ -102,22 +104,22 @@ public:
 
 /**
  * Parse the given file path to get its version number.
- * Throws an AnalysisError if this fails.
+ * Throws a ParseError if this fails.
  */
 Version parse_file(const std::string &file_path);
 
 /**
  * Parse using the given file pointer to get its version number.
- * Throws an AnalysisError if this fails.
- * A file_name may be given in addition for use within the AnalysisError thrown when version parsing fails.
+ * Throws a ParseError if this fails.
+ * A file_name may be given in addition for use within the ParseError thrown when version parsing fails.
  */
-Version parse_file(FILE* fp, const std::string &file_name = "<unknown>");
+Version parse_file(FILE* fp, const std::optional<std::string> &file_name);
 
 /**
  * Parse the given string as a file to get its version number.
- * A file_name may be given in addition for use within the AnalysisError thrown when version parsing fails.
+ * A file_name may be given in addition for use within the ParseError thrown when version parsing fails.
  */
-Version parse_string(const std::string &data, const std::string &file_name = "<unknown>");
+Version parse_string(const std::string &data, const std::optional<std::string> &file_name);
 
 
 /**
@@ -132,10 +134,10 @@ class ParseHelper {
     /**
      * Name of the file being parsed.
      */
-    std::string file_name;
+    std::string file_name_;
 
 public:
-    explicit ParseHelper(std::unique_ptr<ScannerAdaptor> scanner_up, std::string file_name = "<unknown>");
+    explicit ParseHelper(std::unique_ptr<ScannerAdaptor> scanner_up, const std::optional<std::string> &file_name);
 
     /**
      * Does the actual parsing.

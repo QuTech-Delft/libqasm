@@ -1,0 +1,57 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  statements: <
+    StatementList(
+      items: [
+        Initialization( # input.cq:3:12..13
+          var: <
+            Variable( # input.cq:3:10..11
+              name: <
+                Identifier(
+                  name: f
+                )
+              >
+              typ: <
+                Keyword(
+                  name: float
+                )
+              >
+              size: <
+                IntegerLiteral(
+                  value: 3
+                )
+              >
+              annotations: []
+            )
+          >
+          rhs: <
+            InitializationList(
+              expr_list: <
+                ExpressionList(
+                  items: [
+                    BooleanLiteral( # input.cq:3:16..21
+                      value: 0
+                    )
+                    FloatLiteral( # input.cq:3:23..26
+                      value: 1.1
+                    )
+                    FloatLiteral( # input.cq:3:28..31
+                      value: 2.2
+                    )
+                  ]
+                )
+              >
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

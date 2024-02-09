@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:3:6..10: mismatched input '3.14' expecting INTEGER_LITERAL

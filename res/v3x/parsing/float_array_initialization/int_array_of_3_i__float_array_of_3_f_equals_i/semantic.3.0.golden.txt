@@ -1,0 +1,70 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  statements: [
+    AssignmentInstruction(
+      lhs: <
+        VariableRef(
+          variable --> <
+            Variable(
+              name: f
+              typ: <
+                RealArray(
+                  size: 3
+                )
+              >
+              annotations: []
+            )
+          >
+        )
+      >
+      rhs: <
+        VariableRef(
+          variable --> <
+            Variable(
+              name: i
+              typ: <
+                IntArray(
+                  size: 3
+                )
+              >
+              annotations: []
+            )
+          >
+        )
+      >
+      condition: <
+        ConstBool(
+          value: 1
+        )
+      >
+      annotations: []
+    )
+  ]
+  variables: [
+    Variable(
+      name: i
+      typ: <
+        IntArray(
+          size: 3
+        )
+      >
+      annotations: []
+    )
+    Variable(
+      name: f
+      typ: <
+        RealArray(
+          size: 3
+        )
+      >
+      annotations: []
+    )
+  ]
+)
+

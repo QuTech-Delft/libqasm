@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:3:5..9: mismatched input '3.14' expecting {'[', IDENTIFIER}

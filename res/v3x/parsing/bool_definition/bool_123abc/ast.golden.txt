@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:3:6..9: extraneous input '123' expecting {'[', IDENTIFIER}

@@ -1,0 +1,47 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  statements: <
+    StatementList(
+      items: [
+        Initialization( # input.cq:3:7..8
+          var: <
+            Variable( # input.cq:3:5..6
+              name: <
+                Identifier(
+                  name: i
+                )
+              >
+              typ: <
+                Keyword(
+                  name: int
+                )
+              >
+              size: -
+              annotations: []
+            )
+          >
+          rhs: <
+            BitwiseNotExpression( # input.cq:3:9..10
+              expr: <
+                UnaryMinusExpression( # input.cq:3:10..11
+                  expr: <
+                    IntegerLiteral( # input.cq:3:11..12
+                      value: 2
+                    )
+                  >
+                )
+              >
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

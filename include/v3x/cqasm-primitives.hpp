@@ -7,8 +7,11 @@
 #include "cqasm-version.hpp"
 #include "tree-cbor.hpp"
 
+#include <array>
 #include <cstdint>
 #include <complex>
+#include <fmt/format.h>
+#include <fmt/ostream.h>
 #include <string>
 #include <vector>
 
@@ -47,6 +50,23 @@ template <>
 void serialize(const Str &obj, ::tree::cbor::MapWriter &map);
 template <>
 Str deserialize(const ::tree::cbor::MapReader &map);
+
+/**
+ * Axis primitive used within the semantic trees.
+ */
+struct Axis {
+    double x = 0.0;
+    double y = 0.0;
+    double z = 0.0;
+
+    [[nodiscard]] bool operator==(const Axis &rhs) const = default;
+};
+template <>
+Axis initialize<Axis>();
+template <>
+void serialize(const Axis &obj, ::tree::cbor::MapWriter &map);
+template <>
+Axis deserialize(const ::tree::cbor::MapReader &map);
 
 /**
  * Boolean primitive used within the semantic trees. Defaults to false.
@@ -99,4 +119,12 @@ void serialize(const Version &obj, ::tree::cbor::MapWriter &map);
 template <>
 Version deserialize(const ::tree::cbor::MapReader &map);
 
+/**
+ * Stream << overload for axis nodes.
+ */
+std::ostream &operator<<(std::ostream &os, const Axis &axis);
+
 } // namespace cqasm::v3x::primitives
+
+
+template <> struct fmt::formatter<cqasm::v3x::primitives::Axis> : fmt::ostream_formatter {};

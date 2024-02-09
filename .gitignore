@@ -53,6 +53,7 @@ bin
 pybuild/
 build/
 cbuild/
+cmake-build-*
 
 # Testing
 Testing

@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:3:5..6: missing 'measure' at '5'

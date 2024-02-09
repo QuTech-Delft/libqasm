@@ -32,11 +32,16 @@ using Types = tree::Any<TypeBase>;
  *
  *  - Q = qubit
  *  - B = bit (measurement register)
- *  - V = qubit array
- *  - W = bit array
- *  - i = integer
+ *  - a = axis (x, y, or z)
+ *  - b = bool
+ *  - i = int
  *  - r = real
  *  - c = complex
+ *  - V = qubit array
+ *  - W = bit array
+ *  - X = bool array
+ *  - Y = int array
+ *  - Z = real array
  */
 Types from_spec(const std::string &spec);
 
@@ -44,6 +49,11 @@ Types from_spec(const std::string &spec);
  * Returns whether the `actual` type matches the constraints of the `expected` type.
  */
 bool type_check(const Type &expected, const Type &actual);
+
+/**
+ * Returns the number of elements of the given type.
+ */
+primitives::Int size_of(const Type &type);
 
 /**
  * Stream << overload for a single type.

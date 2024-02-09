@@ -69,6 +69,7 @@ public:
             auto analyzer = cq3x::analyzer::Analyzer{ api_version };
 
             analyzer.register_default_mappings();
+            analyzer.register_default_functions();
 
             analyzer.register_instruction("cnot", "QQ");
             analyzer.register_instruction("cnot", "VV");

@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:3:9..11: extraneous input 'b1' expecting {<EOF>, NEW_LINE, ';'}

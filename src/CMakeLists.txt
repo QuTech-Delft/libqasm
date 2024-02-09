@@ -28,6 +28,8 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 # Packages
 #-------------------------------------------------------------------------------
 
+include(FetchContent)
+
 if(NOT LIBQASM_BUILD_EMSCRIPTEN)
     find_package(BISON 3.0)
     find_package(FLEX 2.6.4)
@@ -37,10 +39,8 @@ if(NOT LIBQASM_BUILD_EMSCRIPTEN)
         set(flex_win_compat)
     endif()
 endif()
-find_package(fmt 10.1.1)
-find_package(Python3 REQUIRED)
 
-include(FetchContent)
+find_package(Python3 REQUIRED)
 
 # antlr4-runtime
 find_package(antlr4-runtime)
@@ -88,17 +88,9 @@ endif()
 # This exposes the generate_tree() function.
 FetchContent_Declare(tree-gen
     GIT_REPOSITORY https://github.com/QuTech-Delft/tree-gen.git
-    GIT_TAG "a661b4e91e0f537073fe48f0b9c032f52c5ab20a"
+    GIT_TAG "2ae96a563bb2346207450bf8865e65058f248ee7"
 )
 FetchContent_MakeAvailable(tree-gen)
-
-if(NOT LIBQASM_BUILD_EMSCRIPTEN)
-    # Include func-gen, a simple program that generates the function that registers all default functions
-    # (operators, trigonometry, etc) with a resolver::FunctionTable object.
-    # This file would otherwise be extremely repetitive and annoying to maintain due to the amount of overloads.
-    # This exposes the generate_funcs() function, which should be called once with the header and source file paths.
-    add_subdirectory(func-gen)
-endif()
 
 #-------------------------------------------------------------------------------
 # cQASM common code generation and inclusion
@@ -205,14 +197,6 @@ if(NOT LIBQASM_BUILD_EMSCRIPTEN)
         "${LIBQASM_GENERATED_PYTHON_FILES}/v1x/cqasm-semantic-gen.py"
     )
     list(APPEND CQASM_V1X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-semantic-gen.cpp")
-
-    # Generate the cQASM default function set.
-    generate_funcs(
-        "${CMAKE_CURRENT_BINARY_DIR}/../include/v1x/cqasm-functions-gen.hpp"
-        "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-functions-gen.cpp"
-        "v1x"
-    )
-    list(APPEND CQASM_V1X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-functions-gen.cpp")
 else()
     list(APPEND CQASM_V1X_SOURCES
         "${CMAKE_CURRENT_BINARY_DIR}/cqasm-version-lexer.cpp"
@@ -363,12 +347,15 @@ if(CMAKE_COMPILER_IS_GNUCXX)
         -Wno-error=deprecated-declarations
         -Wno-error=restrict
         -Wno-error=sign-compare
+        -Wno-error=unused-parameter
     )
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    # CqasmParser.cpp, expressionSempred method defines _localctx parameter but does not use it
     target_compile_options(cqasm-lib-obj PRIVATE
         -Wall -Wextra -Werror -Wfatal-errors
         -fPIC
         -Wno-error=sign-compare
+        -Wno-error=unused-parameter
         -Wno-error=unused-private-field
         -Wno-error=unused-but-set-variable
     )
@@ -387,8 +374,7 @@ if(LIBQASM_BUILD_EMSCRIPTEN)
     target_compile_options(cqasm-lib-obj PRIVATE -Wno-error=unused-parameter)
 endif()
 
-# Main cQASM library in shared or static form as managed by cmake's
-# internal BUILD_SHARED_LIBS variable.
+# Main cQASM library in shared or static form as managed by CMake's internal BUILD_SHARED_LIBS variable.
 add_library(cqasm
     $<TARGET_OBJECTS:cqasm-lib-obj>
 )

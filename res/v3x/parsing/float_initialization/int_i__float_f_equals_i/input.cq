@@ -1,0 +1,4 @@
+version 3
+
+int i
+float f = i

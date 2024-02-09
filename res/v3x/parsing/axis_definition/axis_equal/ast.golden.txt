@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:3:6..7: missing IDENTIFIER at '='

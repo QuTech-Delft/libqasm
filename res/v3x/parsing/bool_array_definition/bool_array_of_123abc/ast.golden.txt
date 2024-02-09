@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:3:9..12: extraneous input 'abc' expecting ']'

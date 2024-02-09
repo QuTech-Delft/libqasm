@@ -4,6 +4,9 @@
 
 #pragma once
 
+#include <cstdint>
+#include <fmt/ostream.h>
+#include <optional>
 #include <string>
 
 
@@ -14,49 +17,46 @@ namespace cqasm::annotations {
  */
 class SourceLocation {
 public:
-
     /**
      * The name of the source file.
      */
-    std::string filename;
+    std::optional<std::string> file_name;
 
     /**
      * The first line of the range, or 0 if unknown.
      */
-    uint32_t first_line;
+    std::uint32_t first_line;
 
     /**
      * The first column of the range, or 0 if unknown.
      */
-    uint32_t first_column;
+    std::uint32_t first_column;
 
     /**
      * The last line of the range, or 0 if unknown.
      */
-    uint32_t last_line;
+    std::uint32_t last_line;
 
     /**
      * The last column of the range, or 0 if unknown.
      */
-    uint32_t last_column;
+    std::uint32_t last_column;
 
     /**
      * Constructs a source location object.
      */
-    SourceLocation(
-        const std::string &filename,
-        uint32_t first_line = 0,
-        uint32_t first_column = 0,
-        uint32_t last_line = 0,
-        uint32_t last_column = 0
+    explicit SourceLocation(
+        const std::optional<std::string> &file_name,
+        std::uint32_t first_line = 0,
+        std::uint32_t first_column = 0,
+        std::uint32_t last_line = 0,
+        std::uint32_t last_column = 0
     );
 
     /**
-     * Expands the location range to contain the given location in the source
-     * file.
+     * Expands the location range to contain the given location in the source file.
      */
-    void expand_to_include(uint32_t line, uint32_t column = 1);
-
+    void expand_to_include(std::uint32_t line, std::uint32_t column = 1);
 };
 
 /**
@@ -65,3 +65,8 @@ public:
 std::ostream &operator<<(std::ostream &os, const SourceLocation &object);
 
 } // namespace cqasm::annotations
+
+/**
+ * std::ostream support via fmt (uses operator<<).
+ */
+template <> struct fmt::formatter<cqasm::annotations::SourceLocation> : ostream_formatter {};

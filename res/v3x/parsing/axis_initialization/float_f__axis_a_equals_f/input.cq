@@ -1,0 +1,4 @@
+version 3
+
+float f
+axis a = f

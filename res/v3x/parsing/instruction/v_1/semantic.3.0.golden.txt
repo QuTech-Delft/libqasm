@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:3:1..2: failed to resolve instruction 'v'
+Error at input.cq:3:1..2: failed to resolve 'v'

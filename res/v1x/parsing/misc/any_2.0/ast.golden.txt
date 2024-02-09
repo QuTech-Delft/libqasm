@@ -1,2 +1,2 @@
 ERROR
-detected version 2.0
+Error: detected version 2.0

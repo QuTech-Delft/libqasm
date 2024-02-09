@@ -1,2 +1,2 @@
 ERROR
-input.cq:3:2: no viable alternative at input 'x\n'
+Error at input.cq:3:2..3: no viable alternative at input 'x\n'
