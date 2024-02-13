@@ -73,7 +73,16 @@ public:
 
     std::any visitFunctionDeclaration(CqasmParser::FunctionDeclarationContext *context) override;
     std::any visitFunctionParameters(CqasmParser::FunctionParametersContext *context) override;
-    std::any visitStatementBlock(CqasmParser::StatementBlockContext *context) override;
+    std::any visitParameters(CqasmParser::ParametersContext *context) override;
+    std::any visitVoidReturnType(CqasmParser::VoidReturnTypeContext *context) override;
+    std::any visitQubitReturnType(CqasmParser::QubitReturnTypeContext *context) override;
+    std::any visitBitReturnType(CqasmParser::BitReturnTypeContext *context) override;
+    std::any visitAxisReturnType(CqasmParser::AxisReturnTypeContext *context) override;
+    std::any visitBoolReturnType(CqasmParser::BoolReturnTypeContext *context) override;
+    std::any visitIntReturnType(CqasmParser::IntReturnTypeContext *context) override;
+    std::any visitFloatReturnType(CqasmParser::FloatReturnTypeContext *context) override;
+    std::any visitFunctionBlock(CqasmParser::FunctionBlockContext *context) override;
+    std::any visitReturnStatement(CqasmParser::ReturnStatementContext *context) override;
 
     std::any visitArraySizeDeclaration(CqasmParser::ArraySizeDeclarationContext *context) override;
 

@@ -81,6 +81,7 @@ OPEN_PARENS: '(';
 CLOSE_PARENS: ')';
 PLUS: '+';  // this token is shared by UNARY_PLUS_OP and PLUS_OP
 MINUS: '-';  // this token is shared by UNARY_MINUS_OP and MINUS_OP
+ARROW: '->';
 
 // Operators
 // UNARY_PLUS_OP: '+';
@@ -119,6 +120,8 @@ BOOL_TYPE: 'bool';
 INT_TYPE: 'int';
 FLOAT_TYPE: 'float';
 FUNCTION: 'def';
+VOID: 'void';
+RETURN: 'return';
 
 // Numeric literals
 BOOLEAN_LITERAL: 'true' | 'false';

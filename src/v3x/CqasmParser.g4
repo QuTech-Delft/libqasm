@@ -49,11 +49,27 @@ variableInitialization:
     | FLOAT_TYPE arraySizeDeclaration? IDENTIFIER EQUALS expression  # floatTypeInitialization
     ;
 
-functionDeclaration: FUNCTION IDENTIFIER OPEN_PARENS functionParameters? CLOSE_PARENS statementBlock;
+functionDeclaration: FUNCTION IDENTIFIER functionParameters CLOSE_PARENS ARROW functionReturnType functionBlock;
 
-functionParameters: variableDefinition (statementSeparator* COMMA statementSeparator* variableDefinition)*;
+functionParameters: OPEN_PARENS parameters? CLOSE_PARENS;
 
-statementBlock: OPEN_BRACE blockStatement* CLOSE_BRACE;
+parameters: variableDefinition (statementSeparator* COMMA statementSeparator* variableDefinition)*;
+
+functionReturnType:
+    VOID  # voidReturnType
+    | QUBIT_TYPE arraySizeDeclaration?  # qubitReturnType
+    | BIT_TYPE arraySizeDeclaration?  # bitReturnType
+    | AXIS_TYPE  # axisReturnType
+    | BOOL_TYPE arraySizeDeclaration?  # boolReturnType
+    | INT_TYPE arraySizeDeclaration?  # intReturnType
+    | FLOAT_TYPE arraySizeDeclaration?  # floatReturnType
+    ;
+
+// Current implementation only allows a return statement at the end of the function block
+// Control flow structures should change this in the future (e.g. allowing a return within an if block)
+functionBlock: OPEN_BRACE blockStatement* returnStatement? CLOSE_BRACE;
+
+returnStatement: RETURN expression;
 
 instruction:
     expression EQUALS MEASURE expression  # measureInstruction

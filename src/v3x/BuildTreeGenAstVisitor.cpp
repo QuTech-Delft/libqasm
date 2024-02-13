@@ -303,7 +303,43 @@ std::any BuildTreeGenAstVisitor::visitFunctionParameters(CqasmParser::FunctionPa
     throw std::runtime_error{ "unimplemented" };
 }
 
-std::any BuildTreeGenAstVisitor::visitStatementBlock(CqasmParser::StatementBlockContext */*context*/) {
+std::any BuildTreeGenAstVisitor::visitParameters(CqasmParser::ParametersContext */*context*/) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any BuildTreeGenAstVisitor::visitVoidReturnType(CqasmParser::VoidReturnTypeContext */*context*/) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any BuildTreeGenAstVisitor::visitQubitReturnType(CqasmParser::QubitReturnTypeContext */*context*/) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any BuildTreeGenAstVisitor::visitBitReturnType(CqasmParser::BitReturnTypeContext */*context*/) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any BuildTreeGenAstVisitor::visitAxisReturnType(CqasmParser::AxisReturnTypeContext */*context*/) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any BuildTreeGenAstVisitor::visitBoolReturnType(CqasmParser::BoolReturnTypeContext */*context*/) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any BuildTreeGenAstVisitor::visitIntReturnType(CqasmParser::IntReturnTypeContext */*context*/) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any BuildTreeGenAstVisitor::visitFloatReturnType(CqasmParser::FloatReturnTypeContext */*context*/) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any BuildTreeGenAstVisitor::visitFunctionBlock(CqasmParser::FunctionBlockContext */*context*/) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any BuildTreeGenAstVisitor::visitReturnStatement(CqasmParser::ReturnStatementContext */*context*/) {
     throw std::runtime_error{ "unimplemented" };
 }
 

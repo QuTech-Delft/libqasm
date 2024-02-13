@@ -1,0 +1,5 @@
+version 3
+
+def f() -> void {}
+
+f()
