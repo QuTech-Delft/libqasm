@@ -32,15 +32,6 @@ class  BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
     std::int64_t get_int_value(antlr4::tree::TerminalNode *node) const ;
     double get_float_value(antlr4::tree::TerminalNode *node) const;
 
-    std::any visitAxisTypeDefinition(CqasmParser::AxisTypeDeclarationContext *context);
-    std::any visitAxisTypeInitialization(CqasmParser::AxisTypeDeclarationContext *context);
-    std::any visitBoolTypeDefinition(CqasmParser::BoolTypeDeclarationContext *context);
-    std::any visitBoolTypeInitialization(CqasmParser::BoolTypeDeclarationContext *context);
-    std::any visitIntTypeDefinition(CqasmParser::IntTypeDeclarationContext *context);
-    std::any visitIntTypeInitialization(CqasmParser::IntTypeDeclarationContext *context);
-    std::any visitFloatTypeDefinition(CqasmParser::FloatTypeDeclarationContext *context);
-    std::any visitFloatTypeInitialization(CqasmParser::FloatTypeDeclarationContext *context);
-
     template <typename RetExpressionType, typename Context>
     std::any visitBinaryExpression(Context *context, antlr4::Token *token) {
         auto ret = tree::make<RetExpressionType>(
@@ -51,20 +42,44 @@ class  BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
         return tree::One<cqasm::v3x::ast::Expression>{ ret };
     }
 
+    tree::One<ast::IntegerLiteral> getArraySize(CqasmParser::ArraySizeDeclarationContext *context);
+
+    tree::One<ast::Statement> visitVariable(
+        const std::string &identifier,
+        const std::string &type,
+        tree::Maybe<ast::IntegerLiteral> size,
+        antlr4::Token* token);
+
 public:
     std::any visitProgram(CqasmParser::ProgramContext *context) override;
     std::any visitVersion(CqasmParser::VersionContext *context) override;
     std::any visitStatements(CqasmParser::StatementsContext *context) override;
     std::any visitStatementSeparator(CqasmParser::StatementSeparatorContext *context) override;
-    std::any visitQubitTypeDeclaration(CqasmParser::QubitTypeDeclarationContext *context) override;
-    std::any visitBitTypeDeclaration(CqasmParser::BitTypeDeclarationContext *context) override;
-    std::any visitAxisTypeDeclaration(CqasmParser::AxisTypeDeclarationContext *context) override;
-    std::any visitBoolTypeDeclaration(CqasmParser::BoolTypeDeclarationContext *context) override;
-    std::any visitIntTypeDeclaration(CqasmParser::IntTypeDeclarationContext *context) override;
-    std::any visitFloatTypeDeclaration(CqasmParser::FloatTypeDeclarationContext *context) override;
+    std::any visitStatement(CqasmParser::StatementContext *context) override;
+    std::any visitBlockStatement(CqasmParser::BlockStatementContext *context) override;
+    std::any visitVariableDeclaration(CqasmParser::VariableDeclarationContext *context) override;
+
+    std::any visitQubitTypeDefinition(CqasmParser::QubitTypeDefinitionContext *context) override;
+    std::any visitBitTypeDefinition(CqasmParser::BitTypeDefinitionContext *context) override;
+    std::any visitAxisTypeDefinition(CqasmParser::AxisTypeDefinitionContext *context) override;
+    std::any visitBoolTypeDefinition(CqasmParser::BoolTypeDefinitionContext *context) override;
+    std::any visitIntTypeDefinition(CqasmParser::IntTypeDefinitionContext *context) override;
+    std::any visitFloatTypeDefinition(CqasmParser::FloatTypeDefinitionContext *context) override;
+
+    std::any visitAxisTypeInitialization(CqasmParser::AxisTypeInitializationContext *context) override;
+    std::any visitBoolTypeInitialization(CqasmParser::BoolTypeInitializationContext *context) override;
+    std::any visitIntTypeInitialization(CqasmParser::IntTypeInitializationContext *context) override;
+    std::any visitFloatTypeInitialization(CqasmParser::FloatTypeInitializationContext *context) override;
+
+    std::any visitFunctionDeclaration(CqasmParser::FunctionDeclarationContext *context) override;
+    std::any visitFunctionParameters(CqasmParser::FunctionParametersContext *context) override;
+    std::any visitStatementBlock(CqasmParser::StatementBlockContext *context) override;
+
     std::any visitArraySizeDeclaration(CqasmParser::ArraySizeDeclarationContext *context) override;
+
     std::any visitMeasureInstruction(CqasmParser::MeasureInstructionContext *context) override;
-    std::any visitInstruction(CqasmParser::InstructionContext *context) override;
+    std::any visitGate(CqasmParser::GateContext *context) override;
+
     std::any visitExpressionList(CqasmParser::ExpressionListContext *context) override;
     std::any visitIndexList(CqasmParser::IndexListContext *context) override;
     std::any visitIndexItem(CqasmParser::IndexItemContext *context) override;

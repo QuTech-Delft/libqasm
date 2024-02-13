@@ -118,6 +118,7 @@ AXIS_TYPE: 'axis';
 BOOL_TYPE: 'bool';
 INT_TYPE: 'int';
 FLOAT_TYPE: 'float';
+FUNCTION: 'def';
 
 // Numeric literals
 BOOLEAN_LITERAL: 'true' | 'false';

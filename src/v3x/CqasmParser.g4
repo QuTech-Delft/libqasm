@@ -19,14 +19,45 @@ statements: (statementSeparator+ statement)*;
 statementSeparator: NEW_LINE | SEMICOLON;
 
 statement:
-    QUBIT_TYPE arraySizeDeclaration? IDENTIFIER  # qubitTypeDeclaration
-    | BIT_TYPE arraySizeDeclaration? IDENTIFIER  # bitTypeDeclaration
-    | AXIS_TYPE IDENTIFIER (EQUALS expression)?  # axisTypeDeclaration
-    | BOOL_TYPE arraySizeDeclaration? IDENTIFIER (EQUALS expression)?  # boolTypeDeclaration
-    | INT_TYPE arraySizeDeclaration? IDENTIFIER (EQUALS expression)?  # intTypeDeclaration
-    | FLOAT_TYPE arraySizeDeclaration? IDENTIFIER (EQUALS expression)?  # floatTypeDeclaration
-    | expression EQUALS MEASURE expression  # measureInstruction
-    | IDENTIFIER expressionList  # instruction
+    blockStatement
+    | functionDeclaration
+    ;
+
+blockStatement:    
+    variableDeclaration
+    | instruction
+    ;
+
+variableDeclaration:
+    variableDefinition
+    | variableInitialization
+    ;
+
+variableDefinition:
+    QUBIT_TYPE arraySizeDeclaration? IDENTIFIER  # qubitTypeDefinition
+    | BIT_TYPE arraySizeDeclaration? IDENTIFIER  # bitTypeDefinition
+    | AXIS_TYPE IDENTIFIER  # axisTypeDefinition
+    | BOOL_TYPE arraySizeDeclaration? IDENTIFIER  # boolTypeDefinition
+    | INT_TYPE arraySizeDeclaration? IDENTIFIER  # intTypeDefinition
+    | FLOAT_TYPE arraySizeDeclaration? IDENTIFIER  # floatTypeDefinition
+    ;
+
+variableInitialization:
+    AXIS_TYPE IDENTIFIER EQUALS expression  # axisTypeInitialization
+    | BOOL_TYPE arraySizeDeclaration? IDENTIFIER EQUALS expression  # boolTypeInitialization
+    | INT_TYPE arraySizeDeclaration? IDENTIFIER EQUALS expression  # intTypeInitialization
+    | FLOAT_TYPE arraySizeDeclaration? IDENTIFIER EQUALS expression  # floatTypeInitialization
+    ;
+
+functionDeclaration: FUNCTION IDENTIFIER OPEN_PARENS functionParameters? CLOSE_PARENS statementBlock;
+
+functionParameters: variableDefinition (statementSeparator* COMMA statementSeparator* variableDefinition)*;
+
+statementBlock: OPEN_BRACE blockStatement* CLOSE_BRACE;
+
+instruction:
+    expression EQUALS MEASURE expression  # measureInstruction
+    | IDENTIFIER expressionList  # gate
     ;
 
 arraySizeDeclaration: OPEN_BRACKET INTEGER_LITERAL CLOSE_BRACKET;
@@ -42,6 +73,8 @@ indexEntry:
     | expression COLON expression  # indexRange
     ;
 
+// Current implementation of the semantic parser will expect constants
+// for all the expressions of the arithmetic operators
 expression:
     OPEN_PARENS expression CLOSE_PARENS  # parensExpression
     | <assoc=right> (PLUS | MINUS) expression  # unaryPlusMinusExpression

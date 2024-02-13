@@ -29,7 +29,7 @@ public:
     std::any visit_initialization(ast::Initialization &node) override;
     std::any visit_assignment_instruction(ast::AssignmentInstruction &node) override;
     std::any visit_measure_instruction(ast::MeasureInstruction &node) override;
-    std::any visit_instruction(ast::Instruction &node) override;
+    std::any visit_gate(ast::Gate &node) override;
     std::any visit_expression(ast::Expression &node) override;
     std::any visit_unary_minus_expression(ast::UnaryMinusExpression &node) override;
     std::any visit_bitwise_not_expression(ast::BitwiseNotExpression &node) override;

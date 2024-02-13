@@ -52,7 +52,7 @@ annotated {
             # When there is no condition, this is a constant boolean set to true.
             condition: external One<cqasm::v3x::values::Node>;
 
-            # A regular instruction (gate).
+            # A regular instruction (a gate, or a measure instruction).
             instruction {
                 # Instruction type as registered through the API.
                 instruction: cqasm::v3x::instruction::InstructionRef;

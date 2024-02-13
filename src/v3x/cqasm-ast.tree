@@ -176,9 +176,8 @@ annotated {
             rhs: One<expression>;
         }
 
-        instruction_base {
-            # A gate.
-            instruction {
+        instruction {
+            gate {
                 name: One<identifier>;
                 condition: Maybe<expression>;
                 operands: One<expression_list>;

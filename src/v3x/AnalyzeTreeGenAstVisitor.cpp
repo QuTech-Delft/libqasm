@@ -231,7 +231,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_measure_instruction(ast::MeasureInstruc
     return ret;
 }
 
-std::any AnalyzeTreeGenAstVisitor::visit_instruction(ast::Instruction &node) {
+std::any AnalyzeTreeGenAstVisitor::visit_gate(ast::Gate &node) {
     auto ret = tree::Maybe<semantic::Instruction>();
     try {
         // Set operand list
