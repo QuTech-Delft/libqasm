@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:3:5..6: missing IDENTIFIER at '\n'
+Error at input.cq:3:5..6: no viable alternative at input 'axis\n'

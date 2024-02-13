@@ -8,7 +8,7 @@ Program(
   statements: <
     StatementList(
       items: [
-        Instruction( # input.cq:3:1..6
+        Gate( # input.cq:3:1..6
           name: <
             Identifier(
               name: QUBIT

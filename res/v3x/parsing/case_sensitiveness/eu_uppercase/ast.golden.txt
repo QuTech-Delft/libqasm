@@ -22,7 +22,7 @@ Program(
           size: -
           annotations: []
         )
-        Instruction( # input.cq:4:1..3
+        Gate( # input.cq:4:1..3
           name: <
             Identifier(
               name: rx

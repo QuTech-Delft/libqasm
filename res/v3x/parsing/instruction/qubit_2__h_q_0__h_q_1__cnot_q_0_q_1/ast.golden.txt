@@ -26,7 +26,7 @@ Program(
           >
           annotations: []
         )
-        Instruction( # input.cq:5:1..2
+        Gate( # input.cq:5:1..2
           name: <
             Identifier(
               name: h
@@ -61,7 +61,7 @@ Program(
           >
           annotations: []
         )
-        Instruction( # input.cq:6:1..2
+        Gate( # input.cq:6:1..2
           name: <
             Identifier(
               name: h
@@ -96,7 +96,7 @@ Program(
           >
           annotations: []
         )
-        Instruction( # input.cq:7:1..5
+        Gate( # input.cq:7:1..5
           name: <
             Identifier(
               name: cnot

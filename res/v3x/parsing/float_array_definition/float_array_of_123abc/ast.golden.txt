@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:3:10..13: extraneous input 'abc' expecting ']'
+Error at input.cq:3:10..13: no viable alternative at input 'float[123abc'

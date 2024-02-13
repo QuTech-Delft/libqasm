@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:3:6..7: mismatched input '1' expecting {'[', IDENTIFIER}
+Error at input.cq:3:6..7: no viable alternative at input 'bool1'

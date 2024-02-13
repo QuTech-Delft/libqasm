@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:3:6..10: mismatched input '3.14' expecting INTEGER_LITERAL
+Error at input.cq:3:6..10: no viable alternative at input 'bool[3.14'
