@@ -42,7 +42,7 @@ class  BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
         return tree::One<cqasm::v3x::ast::Expression>{ ret };
     }
 
-    tree::One<ast::IntegerLiteral> getArraySize(CqasmParser::ArraySizeDeclarationContext *context);
+    tree::Maybe<ast::IntegerLiteral> getArraySize(CqasmParser::ArraySizeDeclarationContext *context);
 
     tree::One<ast::Statement> visitVariable(
         const std::string &identifier,
@@ -74,7 +74,6 @@ public:
     std::any visitFunctionDeclaration(CqasmParser::FunctionDeclarationContext *context) override;
     std::any visitFunctionParameters(CqasmParser::FunctionParametersContext *context) override;
     std::any visitParameters(CqasmParser::ParametersContext *context) override;
-    std::any visitVoidReturnType(CqasmParser::VoidReturnTypeContext *context) override;
     std::any visitQubitReturnType(CqasmParser::QubitReturnTypeContext *context) override;
     std::any visitBitReturnType(CqasmParser::BitReturnTypeContext *context) override;
     std::any visitAxisReturnType(CqasmParser::AxisReturnTypeContext *context) override;

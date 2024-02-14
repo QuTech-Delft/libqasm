@@ -168,35 +168,37 @@ static void mat_size(std::ostream &os, tree::signed_size_t nrows, tree::signed_s
 std::ostream &operator<<(std::ostream &os, const Type &type) {
     if (type.empty()) {
         os << "!EMPTY";
-    } else if (type->as_bool()) {
-        os << "bool/bit";
-    } else if (type->as_axis()) {
-        os << "axis";
-    } else if (type->as_int()) {
-        os << "int";
-    } else if (type->as_real()) {
-        os << "real";
-    } else if (type->as_complex()) {
-        os << "complex";
-    } else if (auto real_mat = type->as_real_matrix()) {
-        os << "real ";
-        mat_size(os, real_mat->num_rows, real_mat->num_cols);
-    } else if (auto complex_mat = type->as_complex_matrix()) {
-        os << "complex ";
-        mat_size(os, complex_mat->num_rows, complex_mat->num_cols);
-    } else if (type->as_string()) {
-        os << "string";
-    } else if (type->as_json()) {
-        os << "json";
     } else if (type->as_qubit()) {
-        os << "qubit";
+        os << types::qubit_type_name;
+    } else if (type->as_bool()) {
+        os << types::bool_type_name << "/" << types::bit_type_name;
+    } else if (type->as_axis()) {
+        os << types::axis_type_name;
+    } else if (type->as_int()) {
+        os << types::integer_type_name;
+    } else if (type->as_real()) {
+        os << types::real_type_name;
+    } else if (type->as_complex()) {
+        os << types::complex_type_name;
+    } else if (auto rm = type->as_real_matrix()) {
+        os << types::real_type_name << " ";
+        mat_size(os, rm->num_rows, rm->num_cols);
+    } else if (auto cm = type->as_complex_matrix()) {
+        os << types::complex_type_name << " ";
+        mat_size(os, cm->num_rows, cm->num_cols);
+    } else if (type->as_string()) {
+        os << types::string_type_name;
+    } else if (type->as_json()) {
+        os << types::json_type_name;
     } else {
         // Fallback when no friendly repr is known.
         return os << *type;
     }
+
     if (type->assignable) {
         os << " reference";
     }
+
     return os;
 }
 

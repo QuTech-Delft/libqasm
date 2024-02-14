@@ -57,7 +57,7 @@ expression {
     }
 
     float_literal {
-        value: cqasm::v3x::primitives::Real;
+        value: cqasm::v3x::primitives::Float;
     }
 
     index {
@@ -157,50 +157,70 @@ annotation_data {
     operands: One<expression_list>;
 }
 
+type {
+    name: One<keyword>;
+    size: Maybe<integer_literal>;
+}
+
 # Represents a node that carries annotation data
 annotated {
     # Zero or more annotations attached to this object.
     annotations: Any<annotation_data>;
 
     statement {
-        # One variable declaration of some type.
-        variable {
-            name: One<identifier>;
-            typ: One<keyword>;
-            size: Maybe<integer_literal>;
-        }
-
-        # An initialization is a variable declaration plus an assignment instruction.
-        initialization {
-            var: One<variable>;
-            rhs: One<expression>;
-        }
-
-        instruction {
-            gate {
+        block_statement {
+            # One variable declaration of some type.
+            variable {
                 name: One<identifier>;
-                condition: Maybe<expression>;
-                operands: One<expression_list>;
+                typ: One<type>;
             }
 
-            assignment_instruction {
-                condition: Maybe<expression>;
-                lhs: One<expression>;
+            # An initialization is a variable declaration plus an assignment instruction.
+            initialization {
+                var: One<variable>;
                 rhs: One<expression>;
             }
 
-            # For some instructions, like the measure instruction,
-            # we want to differentiate between left hand side and right and side operands.
-            # For a measure instruction, the right hand side operand should be a qubit,
-            # and the left hand side operand a bit.
-            measure_instruction {
-                name: One<identifier>;
-                condition: Maybe<expression>;
-                lhs: One<expression>;
-                rhs: One<expression>;
+            instruction {
+                gate {
+                    name: One<identifier>;
+                    condition: Maybe<expression>;
+                    operands: One<expression_list>;
+                }
+
+                assignment_instruction {
+                    condition: Maybe<expression>;
+                    lhs: One<expression>;
+                    rhs: One<expression>;
+                }
+
+                # For some instructions, like the measure instruction,
+                # we want to differentiate between left hand side and right and side operands.
+                # For a measure instruction, the right hand side operand should be a qubit,
+                # and the left hand side operand a bit.
+                measure_instruction {
+                    name: One<identifier>;
+                    condition: Maybe<expression>;
+                    lhs: One<expression>;
+                    rhs: One<expression>;
+                }
             }
+        }
+
+        function {
+            parameters: One<variable_list>;
+            return_type: One<type>;
+            statements: One<statement_list>;
+        }
+
+        return_statement {
+            return_value: One<expression>;
         }
     }
+}
+
+variable_list {
+    items: Any<variable>;
 }
 
 statement_list {

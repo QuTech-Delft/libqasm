@@ -73,29 +73,29 @@ struct tf_cp : public f_cp<ParamType, ParamType, F> {
     }
 };
 
-constexpr auto op_neg_r = uf_cp<values::ConstReal, values::ConstReal, std::negate<double>{}>{};
+constexpr auto op_neg_f = uf_cp<values::ConstFloat, values::ConstFloat, std::negate<double>{}>{};
 constexpr auto op_neg_i = uf_cp<values::ConstInt, values::ConstInt, std::negate{}>{};
 
-constexpr auto op_add_rr = bf_cp<values::ConstReal, values::ConstReal, std::plus{}>{};
+constexpr auto op_add_ff = bf_cp<values::ConstFloat, values::ConstFloat, std::plus{}>{};
 constexpr auto op_add_ii = bf_cp<values::ConstInt, values::ConstInt, std::plus{}>{};
-constexpr auto op_sub_rr = bf_cp<values::ConstReal, values::ConstReal, std::minus{}>{};
+constexpr auto op_sub_ff = bf_cp<values::ConstFloat, values::ConstFloat, std::minus{}>{};
 constexpr auto op_sub_ii = bf_cp<values::ConstInt, values::ConstInt, std::minus{}>{};
 
-constexpr auto op_mul_rr = bf_cp<values::ConstReal, values::ConstReal, std::multiplies{}>{};
+constexpr auto op_mul_ff = bf_cp<values::ConstFloat, values::ConstFloat, std::multiplies{}>{};
 constexpr auto op_mul_ii = bf_cp<values::ConstInt, values::ConstInt, std::multiplies{}>{};
-constexpr auto op_div_rr = bf_cp<values::ConstReal, values::ConstReal, std::divides{}>{};
+constexpr auto op_div_ff = bf_cp<values::ConstFloat, values::ConstFloat, std::divides{}>{};
 constexpr auto op_div_ii = bf_cp<values::ConstInt, values::ConstInt, std::divides{}>{};
 constexpr auto op_mod_ii = bf_cp<values::ConstInt, values::ConstInt, std::modulus{}>{};
 
 constexpr auto pow = [](auto base, auto exp) { return std::pow(base, exp); };
-constexpr auto op_pow_rr = bf_cp<values::ConstReal, values::ConstReal, pow>{};
+constexpr auto op_pow_ff = bf_cp<values::ConstFloat, values::ConstFloat, pow>{};
 
-constexpr auto op_eq_rr = bf_cp<values::ConstBool, values::ConstReal, std::equal_to{}>{};
-constexpr auto op_ne_rr = bf_cp<values::ConstBool, values::ConstReal, std::not_equal_to{}>{};
-constexpr auto op_ge_rr = bf_cp<values::ConstBool, values::ConstReal, std::greater_equal{}>{};
-constexpr auto op_gt_rr = bf_cp<values::ConstBool, values::ConstReal, std::greater{}>{};
-constexpr auto op_le_rr = bf_cp<values::ConstBool, values::ConstReal, std::less_equal{}>{};
-constexpr auto op_lt_rr = bf_cp<values::ConstBool, values::ConstReal, std::less{}>{};
+constexpr auto op_eq_ff = bf_cp<values::ConstBool, values::ConstFloat, std::equal_to{}>{};
+constexpr auto op_ne_ff = bf_cp<values::ConstBool, values::ConstFloat, std::not_equal_to{}>{};
+constexpr auto op_ge_ff = bf_cp<values::ConstBool, values::ConstFloat, std::greater_equal{}>{};
+constexpr auto op_gt_ff = bf_cp<values::ConstBool, values::ConstFloat, std::greater{}>{};
+constexpr auto op_le_ff = bf_cp<values::ConstBool, values::ConstFloat, std::less_equal{}>{};
+constexpr auto op_lt_ff = bf_cp<values::ConstBool, values::ConstFloat, std::less{}>{};
 
 constexpr auto op_eq_ii = bf_cp<values::ConstBool, values::ConstInt, std::equal_to{}>{};
 constexpr auto op_ne_ii = bf_cp<values::ConstBool, values::ConstInt, std::not_equal_to{}>{};
@@ -128,42 +128,42 @@ constexpr auto op_lxor_bb = bf_cp<values::ConstBool, values::ConstBool, lxor>{};
 constexpr auto op_lor_bb = bf_cp<values::ConstBool, values::ConstBool, std::logical_or{}>{};
 
 constexpr auto tcnd = [](bool condition, auto if_true, auto if_false) { return condition ? if_true : if_false; };
-constexpr auto op_tcnd_brr = tf_cp<values::ConstReal, tcnd>{};
+constexpr auto op_tcnd_bff = tf_cp<values::ConstFloat, tcnd>{};
 constexpr auto op_tcnd_bii = tf_cp<values::ConstInt, tcnd>{};
 constexpr auto op_tcnd_bbb = tf_cp<values::ConstBool, tcnd>{};
 
 constexpr auto sqrt = [](auto num) { return std::sqrt(num); };
-constexpr auto fn_sqrt_r = uf_cp<values::ConstReal, values::ConstReal, sqrt>{};
+constexpr auto fn_sqrt_f = uf_cp<values::ConstFloat, values::ConstFloat, sqrt>{};
 constexpr auto exp = [](auto num) { return std::exp(num); };
-constexpr auto fn_exp_r = uf_cp<values::ConstReal, values::ConstReal, exp>{};
+constexpr auto fn_exp_f = uf_cp<values::ConstFloat, values::ConstFloat, exp>{};
 constexpr auto log = [](auto num) { return std::log(num); };
-constexpr auto fn_log_r = uf_cp<values::ConstReal, values::ConstReal, log>{};
+constexpr auto fn_log_f = uf_cp<values::ConstFloat, values::ConstFloat, log>{};
 constexpr auto sin = [](auto num) { return std::sin(num); };
-constexpr auto fn_sin_r = uf_cp<values::ConstReal, values::ConstReal, sin>{};
+constexpr auto fn_sin_f = uf_cp<values::ConstFloat, values::ConstFloat, sin>{};
 constexpr auto cos = [](auto num) { return std::cos(num); };
-constexpr auto fn_cos_r = uf_cp<values::ConstReal, values::ConstReal, cos>{};
+constexpr auto fn_cos_f = uf_cp<values::ConstFloat, values::ConstFloat, cos>{};
 constexpr auto tan = [](auto num) { return std::tan(num); };
-constexpr auto fn_tan_r = uf_cp<values::ConstReal, values::ConstReal, tan>{};
+constexpr auto fn_tan_f = uf_cp<values::ConstFloat, values::ConstFloat, tan>{};
 constexpr auto sinh = [](auto num) { return std::sinh(num); };
-constexpr auto fn_sinh_r = uf_cp<values::ConstReal, values::ConstReal, sinh>{};
+constexpr auto fn_sinh_f = uf_cp<values::ConstFloat, values::ConstFloat, sinh>{};
 constexpr auto cosh = [](auto num) { return std::cosh(num); };
-constexpr auto fn_cosh_r = uf_cp<values::ConstReal, values::ConstReal, cosh>{};
+constexpr auto fn_cosh_f = uf_cp<values::ConstFloat, values::ConstFloat, cosh>{};
 constexpr auto tanh = [](auto num) { return std::tanh(num); };
-constexpr auto fn_tanh_r = uf_cp<values::ConstReal, values::ConstReal, tanh>{};
+constexpr auto fn_tanh_f = uf_cp<values::ConstFloat, values::ConstFloat, tanh>{};
 constexpr auto asin = [](auto num) { return std::asin(num); };
-constexpr auto fn_asin_r = uf_cp<values::ConstReal, values::ConstReal, asin>{};
+constexpr auto fn_asin_f = uf_cp<values::ConstFloat, values::ConstFloat, asin>{};
 constexpr auto acos = [](auto num) { return std::acos(num); };
-constexpr auto fn_acos_r = uf_cp<values::ConstReal, values::ConstReal, acos>{};
+constexpr auto fn_acos_f = uf_cp<values::ConstFloat, values::ConstFloat, acos>{};
 constexpr auto atan = [](auto num) { return std::atan(num); };
-constexpr auto fn_atan_r = uf_cp<values::ConstReal, values::ConstReal, atan>{};
+constexpr auto fn_atan_f = uf_cp<values::ConstFloat, values::ConstFloat, atan>{};
 constexpr auto asinh = [](auto num) { return std::asinh(num); };
-constexpr auto fn_asinh_r = uf_cp<values::ConstReal, values::ConstReal, asinh>{};
+constexpr auto fn_asinh_f = uf_cp<values::ConstFloat, values::ConstFloat, asinh>{};
 constexpr auto acosh = [](auto num) { return std::acosh(num); };
-constexpr auto fn_acosh_r = uf_cp<values::ConstReal, values::ConstReal, acosh>{};
+constexpr auto fn_acosh_f = uf_cp<values::ConstFloat, values::ConstFloat, acosh>{};
 constexpr auto atanh = [](auto num) { return std::atanh(num); };
-constexpr auto fn_atanh_r = uf_cp<values::ConstReal, values::ConstReal, atanh>{};
+constexpr auto fn_atanh_f = uf_cp<values::ConstFloat, values::ConstFloat, atanh>{};
 constexpr auto abs = [](auto num) { return std::abs(num); };
-constexpr auto fn_abs_r = uf_cp<values::ConstReal, values::ConstReal, abs>{};
+constexpr auto fn_abs_f = uf_cp<values::ConstFloat, values::ConstFloat, abs>{};
 constexpr auto fn_abs_i = uf_cp<values::ConstInt, values::ConstInt, abs>{};
 
 /**

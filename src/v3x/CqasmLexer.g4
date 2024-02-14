@@ -120,7 +120,6 @@ BOOL_TYPE: 'bool';
 INT_TYPE: 'int';
 FLOAT_TYPE: 'float';
 FUNCTION: 'def';
-VOID: 'void';
 RETURN: 'return';
 
 // Numeric literals

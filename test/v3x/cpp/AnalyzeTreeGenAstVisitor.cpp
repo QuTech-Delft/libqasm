@@ -33,7 +33,7 @@ protected:
  * visit_function_call(name, arguments) is a private method, but we can test it through visit_function_call(node)
  */
 TEST_F(VisitFunctionCallTest, analyzer_call_function_returns_a_non_empty_value) {
-    const auto &function_return_value = values::Value{ cqasm::tree::make<values::ConstReal>(0) };
+    const auto &function_return_value = values::Value{ cqasm::tree::make<values::ConstFloat>(0) };
     ExpectAnalyzerCallFunctionCall(function_return_value);
 
     auto name = cqasm::tree::make<ast::Identifier>("function_that_returns_a_non_empty_value");

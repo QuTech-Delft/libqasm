@@ -1384,15 +1384,15 @@ void AnalyzerHelper::analyze_variables(const ast::Variables &variables) {
         // Figure out what type the variables should have.
         auto type_name = utils::to_lowercase(variables.typ->name);
         types::Type type{};
-        if (type_name == "qubit") {
+        if (type_name == types::qubit_type_name) {
             type = tree::make<types::Qubit>();
-        } else if (type_name == "bool" || type_name == "bit") {
+        } else if (type_name == types::bit_type_name || type_name == types::bool_type_name) {
             type = tree::make<types::Bool>();
-        } else if (type_name == "int") {
+        } else if (type_name == types::integer_type_name) {
             type = tree::make<types::Int>();
-        } else if (type_name == "real") {
+        } else if (type_name == types::real_type_name) {
             type = tree::make<types::Real>();
-        } else if (type_name == "complex") {
+        } else if (type_name == types::complex_type_name) {
             type = tree::make<types::Complex>();
         } else {
             throw error::AnalysisError("unknown type \"" + type_name + "\"");

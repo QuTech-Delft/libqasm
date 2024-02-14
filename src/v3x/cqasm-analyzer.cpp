@@ -36,9 +36,9 @@ void Analyzer::register_default_mappings() {
     register_mapping("z", tree::make<values::ConstAxis>(primitives::Axis{ 0, 0, 1 }));
     register_mapping("true", tree::make<values::ConstBool>(true));
     register_mapping("false", tree::make<values::ConstBool>(false));
-    register_mapping("pi", tree::make<values::ConstReal>(std::numbers::pi));
-    register_mapping("eu", tree::make<values::ConstReal>(std::numbers::e));
-    register_mapping("tau", tree::make<values::ConstReal>(tau));
+    register_mapping("pi", tree::make<values::ConstFloat>(std::numbers::pi));
+    register_mapping("eu", tree::make<values::ConstFloat>(std::numbers::e));
+    register_mapping("tau", tree::make<values::ConstFloat>(tau));
     register_mapping("im", tree::make<values::ConstComplex>(primitives::Complex(0.0, 1.0)));
 }
 

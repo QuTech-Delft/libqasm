@@ -40,8 +40,8 @@ constant {
         value: cqasm::v3x::primitives::Int;
     }
 
-    const_real {
-        value: cqasm::v3x::primitives::Real;
+    const_float {
+        value: cqasm::v3x::primitives::Float;
     }
 
     const_complex {
@@ -56,8 +56,8 @@ constant {
         value: Many<const_int>;
     }
 
-    const_real_array {
-        value: Many<const_real>;
+    const_float_array {
+        value: Many<const_float>;
     }
 }
 

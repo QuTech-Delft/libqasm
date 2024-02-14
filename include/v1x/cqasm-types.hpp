@@ -16,6 +16,16 @@
  */
 namespace cqasm::v1x::types {
 
+constexpr const char *qubit_type_name = "qubit";
+constexpr const char *bit_type_name = "bit";
+constexpr const char *axis_type_name = "axis";
+constexpr const char *bool_type_name = "bool";
+constexpr const char *integer_type_name = "int";
+constexpr const char *real_type_name = "real";
+constexpr const char *complex_type_name = "complex";
+constexpr const char *string_type_name = "string";
+constexpr const char *json_type_name = "json";
+
 /**
  * A cQASM type.
  */

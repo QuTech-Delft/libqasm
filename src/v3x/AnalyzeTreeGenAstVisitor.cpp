@@ -4,6 +4,7 @@
 
 #include <algorithm>  // for_each, transform
 #include <any>
+#include <cassert>  // assert
 #include <range/v3/view/tail.hpp>  // tail
 #include <string_view>
 
@@ -110,10 +111,12 @@ template <typename T, typename TArray>
 types::Type AnalyzeTreeGenAstVisitor::visit_variable_type(const ast::Variable &variable_ast,
     std::string_view type_name) const {
 
-    if (variable_ast.size.empty()) {
+    auto variable_type = variable_ast.typ;
+    assert(!variable_type.empty());
+    if (variable_type->size.empty()) {
         return tree::make<T>(1);
-    } else if (variable_ast.size->value > 0) {
-        return tree::make<TArray>(variable_ast.size->value);
+    } else if (variable_type->size->value > 0) {
+        return tree::make<TArray>(variable_type->size->value);
     } else {
         throw error::AnalysisError{ fmt::format("declaring {} array of size <= 0", type_name) };
     }
@@ -122,20 +125,23 @@ types::Type AnalyzeTreeGenAstVisitor::visit_variable_type(const ast::Variable &v
 std::any AnalyzeTreeGenAstVisitor::visit_variable(ast::Variable &node) {
     auto ret = tree::make<semantic::Variable>();
     try {
-        auto type_name = node.typ->name;
+        assert(!node.typ.empty());
+        auto node_type = node.typ->name;
+        assert(!node_type.empty());
+        auto type_name = node_type->name;
         types::Type type{};
-        if (type_name == "qubit") {
-            type = visit_variable_type<types::Qubit, types::QubitArray>(node, "qubit");
-        } else if (type_name == "bit") {
-            type = visit_variable_type<types::Bit, types::BitArray>(node, "bit");
-        } else if (type_name == "axis") {
+        if (type_name == types::qubit_type_name) {
+            type = visit_variable_type<types::Qubit, types::QubitArray>(node, types::qubit_type_name);
+        } else if (type_name == types::bit_type_name) {
+            type = visit_variable_type<types::Bit, types::BitArray>(node, types::bit_type_name);
+        } else if (type_name == types::axis_type_name) {
             type = tree::make<types::Axis>(3);
-        } else if (type_name == "bool") {
-            type = visit_variable_type<types::Bool, types::BoolArray>(node, "bool");
-        } else if (type_name == "int") {
-            type = visit_variable_type<types::Int, types::IntArray>(node, "int");
-        } else if (type_name == "float") {
-            type = visit_variable_type<types::Real, types::RealArray>(node, "real");
+        } else if (type_name == types::bool_type_name) {
+            type = visit_variable_type<types::Bool, types::BoolArray>(node, types::bool_type_name);
+        } else if (type_name == types::integer_type_name) {
+            type = visit_variable_type<types::Int, types::IntArray>(node, types::integer_type_name);
+        } else if (type_name == types::float_type_name) {
+            type = visit_variable_type<types::Float, types::FloatArray>(node, types::float_type_name);
         } else {
             throw error::AnalysisError("unknown type \"" + type_name + "\"");
         }
@@ -628,7 +634,7 @@ template <typename ConstTypeArray>
 /*
  * Transform an input array into a const array of Type
  * Pre conditions:
- *   Type can only be Bool, Int, or Real
+ *   Type can only be Bool, Int, or Float
  *   All the values in the input array can be promoted to Type
  */
 /* static */ values::Value AnalyzeTreeGenAstVisitor::build_value_from_promoted_values(
@@ -638,10 +644,10 @@ template <typename ConstTypeArray>
         return build_array_value_from_promoted_values<values::ConstBoolArray>(values, type);
     } else if (types::type_check(type, tree::make<types::Int>())) {
         return build_array_value_from_promoted_values<values::ConstIntArray>(values, type);
-    } else if (types::type_check(type, tree::make<types::Real>())) {
-        return build_array_value_from_promoted_values<values::ConstRealArray>(values, type);
+    } else if (types::type_check(type, tree::make<types::Float>())) {
+        return build_array_value_from_promoted_values<values::ConstFloatArray>(values, type);
     } else {
-        throw error::AnalysisError{ "expecting Bool, Int, or Real type in initialization list" };
+        throw error::AnalysisError{ "expecting Bool, Int, or Float type in initialization list" };
     }
 }
 
@@ -649,8 +655,8 @@ template <typename ConstTypeArray>
  * If any element of the initialization list is not a const boolean, const int, or const float, throw an error
  */
 void check_initialization_list_element_type(const values::Value &value) {
-    if (!(value->as_const_bool() || value->as_const_int() || value->as_const_real())) {
-        throw error::AnalysisError{ "expecting a const bool, const int, or const real value" };
+    if (!(value->as_const_bool() || value->as_const_int() || value->as_const_float())) {
+        throw error::AnalysisError{ "expecting a const bool, const int, or const float value" };
     }
 }
 
@@ -706,7 +712,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_integer_literal(ast::IntegerLiteral &no
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_float_literal(ast::FloatLiteral &node) {
-    auto ret = tree::make<values::ConstReal>(node.value);
+    auto ret = tree::make<values::ConstFloat>(node.value);
     return values::Value{ ret };
 }
 

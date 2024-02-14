@@ -104,8 +104,8 @@ bool check_all_of_array_values(const Value &value, Pred&& pred) {
         return std::all_of(const_bool_array->value.begin(), const_bool_array->value.end(), pred);
     } else if (const auto &const_int_array = value->as_const_int_array()) {
         return std::all_of(const_int_array->value.begin(), const_int_array->value.end(), pred);
-    } else if (const auto &const_real_array = value->as_const_real_array()) {
-        return std::all_of(const_real_array->value.begin(), const_real_array->value.end(), pred);
+    } else if (const auto &const_float_array = value->as_const_float_array()) {
+        return std::all_of(const_float_array->value.begin(), const_float_array->value.end(), pred);
     } else {
         return false;
     }

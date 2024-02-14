@@ -91,15 +91,15 @@ template <>
 Int deserialize(const ::tree::cbor::MapReader &map);
 
 /**
- * Real number primitive used within the AST and semantic trees.
+ * Float number primitive used within the AST and semantic trees.
  */
-using Real = double;
+using Float = double;
 template <>
-Real initialize<Real>();
+Float initialize<Float>();
 template <>
-void serialize(const Real &obj, ::tree::cbor::MapWriter &map);
+void serialize(const Float &obj, ::tree::cbor::MapWriter &map);
 template <>
-Real deserialize(const ::tree::cbor::MapReader &map);
+Float deserialize(const ::tree::cbor::MapReader &map);
 
 /**
  * Complex number primitive used within the semantic trees.
