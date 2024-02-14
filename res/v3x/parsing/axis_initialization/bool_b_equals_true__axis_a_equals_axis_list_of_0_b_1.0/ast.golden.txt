@@ -17,11 +17,15 @@ Program(
                 )
               >
               typ: <
-                Keyword(
-                  name: bool
+                Type(
+                  name: <
+                    Keyword(
+                      name: bool
+                    )
+                  >
+                  size: -
                 )
               >
-              size: -
               annotations: []
             )
           >
@@ -41,13 +45,17 @@ Program(
                 )
               >
               typ: <
-                Keyword(
-                  name: axis
-                )
-              >
-              size: <
-                IntegerLiteral(
-                  value: 3
+                Type(
+                  name: <
+                    Keyword(
+                      name: axis
+                    )
+                  >
+                  size: <
+                    IntegerLiteral(
+                      value: 3
+                    )
+                  >
                 )
               >
               annotations: []

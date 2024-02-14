@@ -15,11 +15,15 @@ Program(
             )
           >
           typ: <
-            Keyword(
-              name: float
+            Type(
+              name: <
+                Keyword(
+                  name: float
+                )
+              >
+              size: -
             )
           >
-          size: -
           annotations: []
         )
       ]

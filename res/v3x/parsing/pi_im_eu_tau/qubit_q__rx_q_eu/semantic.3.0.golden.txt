@@ -8,7 +8,7 @@ Program(
   >
   statements: [
     Instruction(
-      instruction: rx(qubit, real)
+      instruction: rx(qubit, float)
       name: rx
       operands: [
         VariableRef(
@@ -24,7 +24,7 @@ Program(
             )
           >
         )
-        ConstReal(
+        ConstFloat(
           value: 2.71828
         )
       ]

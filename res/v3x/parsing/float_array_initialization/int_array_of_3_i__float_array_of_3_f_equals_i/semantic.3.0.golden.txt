@@ -14,7 +14,7 @@ Program(
             Variable(
               name: f
               typ: <
-                RealArray(
+                FloatArray(
                   size: 3
                 )
               >
@@ -59,7 +59,7 @@ Program(
     Variable(
       name: f
       typ: <
-        RealArray(
+        FloatArray(
           size: 3
         )
       >

@@ -15,11 +15,15 @@ Program(
             )
           >
           typ: <
-            Keyword(
-              name: qubit
+            Type(
+              name: <
+                Keyword(
+                  name: qubit
+                )
+              >
+              size: -
             )
           >
-          size: -
           annotations: []
         )
       ]

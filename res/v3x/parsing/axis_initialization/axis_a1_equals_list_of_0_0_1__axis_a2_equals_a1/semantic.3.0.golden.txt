@@ -24,15 +24,15 @@ Program(
         )
       >
       rhs: <
-        ConstRealArray(
+        ConstFloatArray(
           value: [
-            ConstReal(
+            ConstFloat(
               value: 0
             )
-            ConstReal(
+            ConstFloat(
               value: 0
             )
-            ConstReal(
+            ConstFloat(
               value: 1
             )
           ]

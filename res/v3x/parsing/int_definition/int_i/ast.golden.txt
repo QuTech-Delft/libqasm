@@ -15,11 +15,15 @@ Program(
             )
           >
           typ: <
-            Keyword(
-              name: int
+            Type(
+              name: <
+                Keyword(
+                  name: int
+                )
+              >
+              size: -
             )
           >
-          size: -
           annotations: []
         )
       ]

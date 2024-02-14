@@ -17,11 +17,15 @@ Program(
                 )
               >
               typ: <
-                Keyword(
-                  name: bool
+                Type(
+                  name: <
+                    Keyword(
+                      name: bool
+                    )
+                  >
+                  size: -
                 )
               >
-              size: -
               annotations: []
             )
           >

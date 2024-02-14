@@ -15,13 +15,17 @@ Program(
             )
           >
           typ: <
-            Keyword(
-              name: float
-            )
-          >
-          size: <
-            IntegerLiteral(
-              value: 17
+            Type(
+              name: <
+                Keyword(
+                  name: float
+                )
+              >
+              size: <
+                IntegerLiteral(
+                  value: 17
+                )
+              >
             )
           >
           annotations: []
@@ -33,13 +37,17 @@ Program(
             )
           >
           typ: <
-            Keyword(
-              name: float
-            )
-          >
-          size: <
-            IntegerLiteral(
-              value: 17
+            Type(
+              name: <
+                Keyword(
+                  name: float
+                )
+              >
+              size: <
+                IntegerLiteral(
+                  value: 17
+                )
+              >
             )
           >
           annotations: []

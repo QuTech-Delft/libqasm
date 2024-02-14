@@ -17,13 +17,17 @@ Program(
                 )
               >
               typ: <
-                Keyword(
-                  name: int
-                )
-              >
-              size: <
-                IntegerLiteral(
-                  value: 3
+                Type(
+                  name: <
+                    Keyword(
+                      name: int
+                    )
+                  >
+                  size: <
+                    IntegerLiteral(
+                      value: 3
+                    )
+                  >
                 )
               >
               annotations: []

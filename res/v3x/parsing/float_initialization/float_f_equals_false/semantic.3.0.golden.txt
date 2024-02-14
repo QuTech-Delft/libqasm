@@ -14,7 +14,7 @@ Program(
             Variable(
               name: f
               typ: <
-                Real(
+                Float(
                   size: 1
                 )
               >
@@ -24,7 +24,7 @@ Program(
         )
       >
       rhs: <
-        ConstReal(
+        ConstFloat(
           value: 0
         )
       >
@@ -40,7 +40,7 @@ Program(
     Variable(
       name: f
       typ: <
-        Real(
+        Float(
           size: 1
         )
       >

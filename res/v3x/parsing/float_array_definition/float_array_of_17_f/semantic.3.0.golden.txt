@@ -11,7 +11,7 @@ Program(
     Variable(
       name: f
       typ: <
-        RealArray(
+        FloatArray(
           size: 17
         )
       >

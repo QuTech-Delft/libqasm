@@ -15,13 +15,17 @@ Program(
             )
           >
           typ: <
-            Keyword(
-              name: qubit
-            )
-          >
-          size: <
-            IntegerLiteral(
-              value: 2
+            Type(
+              name: <
+                Keyword(
+                  name: qubit
+                )
+              >
+              size: <
+                IntegerLiteral(
+                  value: 2
+                )
+              >
             )
           >
           annotations: []

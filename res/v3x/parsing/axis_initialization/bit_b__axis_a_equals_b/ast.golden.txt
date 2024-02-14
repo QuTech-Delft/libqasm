@@ -15,11 +15,15 @@ Program(
             )
           >
           typ: <
-            Keyword(
-              name: bit
+            Type(
+              name: <
+                Keyword(
+                  name: bit
+                )
+              >
+              size: -
             )
           >
-          size: -
           annotations: []
         )
         Initialization( # input.cq:4:8..9
@@ -31,13 +35,17 @@ Program(
                 )
               >
               typ: <
-                Keyword(
-                  name: axis
-                )
-              >
-              size: <
-                IntegerLiteral(
-                  value: 3
+                Type(
+                  name: <
+                    Keyword(
+                      name: axis
+                    )
+                  >
+                  size: <
+                    IntegerLiteral(
+                      value: 3
+                    )
+                  >
                 )
               >
               annotations: []

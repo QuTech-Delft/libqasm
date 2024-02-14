@@ -15,11 +15,15 @@ Program(
             )
           >
           typ: <
-            Keyword(
-              name: qubit
+            Type(
+              name: <
+                Keyword(
+                  name: qubit
+                )
+              >
+              size: -
             )
           >
-          size: -
           annotations: []
         )
         Initialization( # input.cq:4:8..9
@@ -31,11 +35,15 @@ Program(
                 )
               >
               typ: <
-                Keyword(
-                  name: bool
+                Type(
+                  name: <
+                    Keyword(
+                      name: bool
+                    )
+                  >
+                  size: -
                 )
               >
-              size: -
               annotations: []
             )
           >

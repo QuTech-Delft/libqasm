@@ -15,11 +15,15 @@ Program(
             )
           >
           typ: <
-            Keyword(
-              name: qubit
+            Type(
+              name: <
+                Keyword(
+                  name: qubit
+                )
+              >
+              size: -
             )
           >
-          size: -
           annotations: []
         )
         Variable( # input.cq:4:8..9
@@ -29,13 +33,17 @@ Program(
             )
           >
           typ: <
-            Keyword(
-              name: bit
-            )
-          >
-          size: <
-            IntegerLiteral(
-              value: 3
+            Type(
+              name: <
+                Keyword(
+                  name: bit
+                )
+              >
+              size: <
+                IntegerLiteral(
+                  value: 3
+                )
+              >
             )
           >
           annotations: []
