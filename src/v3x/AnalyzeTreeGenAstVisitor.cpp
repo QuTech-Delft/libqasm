@@ -220,9 +220,6 @@ std::any AnalyzeTreeGenAstVisitor::visit_measure_instruction(ast::MeasureInstruc
             }
         }
 
-        // Set condition code
-        ret->condition.set(tree::make<values::ConstBool>(true));
-
         // Copy annotation data
         ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
         ret->copy_annotation<parser::SourceLocation>(node);
@@ -248,9 +245,6 @@ std::any AnalyzeTreeGenAstVisitor::visit_gate(ast::Gate &node) {
 
         // Resolve the instruction
         ret.set(analyzer_.resolve_instruction(node.name->name, operands));
-
-        // Set condition code
-        ret->condition.set(tree::make<values::ConstBool>(true));
 
         // Copy annotation data
         ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
@@ -281,7 +275,7 @@ values::Value promote_or_error(const values::Value &rhs_value, const types::Type
 }
 
 void do_assignment(
-    tree::Maybe<semantic::AssignmentInstruction> &assignment_instruction,
+    tree::Maybe<semantic::AssignmentStatement> &assignment_statement,
     const values::Value &lhs_value,
     const values::Value &rhs_value) {
 
@@ -306,11 +300,11 @@ void do_assignment(
         }
     }
 
-    assignment_instruction.emplace(lhs_value, promoted_rhs_value);
+    assignment_statement.emplace(lhs_value, promoted_rhs_value);
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_initialization(ast::Initialization &node) {
-    auto ret = tree::Maybe<semantic::AssignmentInstruction>();
+    auto ret = tree::Maybe<semantic::AssignmentStatement>();
     try {
         // Analyze the right-hand side operand
         //
@@ -328,9 +322,6 @@ std::any AnalyzeTreeGenAstVisitor::visit_initialization(ast::Initialization &nod
         // Perform assignment
         do_assignment(ret, lhs_value, rhs_value);
 
-        // Set condition code
-        ret->condition.set(tree::make<values::ConstBool>(true));
-
         // Copy annotation data
         ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
         ret->copy_annotation<parser::SourceLocation>(node);
@@ -345,8 +336,8 @@ std::any AnalyzeTreeGenAstVisitor::visit_initialization(ast::Initialization &nod
     return ret;
 }
 
-std::any AnalyzeTreeGenAstVisitor::visit_assignment_instruction(ast::AssignmentInstruction &node) {
-    auto ret = tree::Maybe<semantic::AssignmentInstruction>();
+std::any AnalyzeTreeGenAstVisitor::visit_assignment_statement(ast::AssignmentStatement &node) {
+    auto ret = tree::Maybe<semantic::AssignmentStatement>();
     try {
         // Analyze the operands
         const auto lhs_value = std::any_cast<values::Value>(visit_expression(*node.lhs));
@@ -362,9 +353,6 @@ std::any AnalyzeTreeGenAstVisitor::visit_assignment_instruction(ast::AssignmentI
         // Perform assignment
         do_assignment(ret, lhs_value, rhs_value);
 
-        // Set condition code
-        ret->condition.set(tree::make<values::ConstBool>(true));
-
         // Copy annotation data
         ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
         ret->copy_annotation<parser::SourceLocation>(node);
@@ -377,6 +365,26 @@ std::any AnalyzeTreeGenAstVisitor::visit_assignment_instruction(ast::AssignmentI
         ret.reset();
     }
     return ret;
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_function(ast::Function &/*node*/) {
+    throw std::runtime_error{ "unimplemented" };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_variable_list(ast::VariableList &node) {
+    for (const auto &variable_ast : node.items) {
+        try {
+            variable_ast->visit(*this);
+        } catch (error::AnalysisError &err) {
+            err.context(node);
+            result_.errors.push_back(std::move(err));
+        }
+    }
+    return {};
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_return_statement(ast::ReturnStatement &/*node*/) {
+    throw std::runtime_error{ "unimplemented" };
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_expression(ast::Expression &node) {

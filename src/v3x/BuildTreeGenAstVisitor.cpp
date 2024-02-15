@@ -12,6 +12,7 @@
 #include <regex>
 #include <stdexcept>  // runtime_error
 #include <string>  // stod, stoll
+#include <utility>  // pair
 
 
 namespace cqasm::v3x::parser {
@@ -183,7 +184,7 @@ One<Statement> BuildTreeGenAstVisitor::visitVariable(
     const std::string &identifier,
     const std::string &type,
     tree::Maybe<ast::IntegerLiteral> size,
-    antlr4::Token* token) {
+    antlr4::Token* token) const {
 
     auto ret = cqasm::tree::make<Variable>(
         One<Identifier>{ cqasm::tree::make<Identifier>(identifier) },
@@ -285,7 +286,6 @@ std::any BuildTreeGenAstVisitor::visitArraySizeDeclaration(CqasmParser::ArraySiz
 std::any BuildTreeGenAstVisitor::visitMeasureInstruction(CqasmParser::MeasureInstructionContext *context) {
     auto ret = cqasm::tree::make<MeasureInstruction>();
     ret->name = cqasm::tree::make<Identifier>(context->MEASURE()->getText());
-    ret->condition = cqasm::tree::Maybe<Expression>{};
     ret->lhs = std::any_cast<One<Expression>>(context->expression(0)->accept(this));
     ret->rhs = std::any_cast<One<Expression>>(context->expression(1)->accept(this));
     const auto token = context->MEASURE()->getSymbol();
@@ -295,13 +295,15 @@ std::any BuildTreeGenAstVisitor::visitMeasureInstruction(CqasmParser::MeasureIns
 
 std::any BuildTreeGenAstVisitor::visitFunctionDeclaration(CqasmParser::FunctionDeclarationContext *context) {
     auto ret = cqasm::tree::make<Function>();
+    ret->name = cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText());
     ret->parameters = std::any_cast<One<VariableList>>(context->functionParameters()->accept(this));
-    if (context->functionReturnType()) {
-        ret->return_type = std::any_cast<One<Type>>(context->functionReturnType()->accept(this));
-    } else {
-        ret->return_type = cqasm::tree::make<Type>(cqasm::tree::make<Keyword>("void"), tree::Maybe<IntegerLiteral>{});
-    }
-    ret->statements = std::any_cast<One<StatementList>>(context->functionBlock()->accept(this));
+    ret->return_type = context->functionReturnType()
+        ? tree::Maybe<Type>{ std::any_cast<One<Type>>(context->functionReturnType()->accept(this)) }
+        : tree::Maybe<Type>{};
+    const auto &function_block = std::any_cast<std::pair<One<StatementList>, Maybe<ReturnStatement>>>(
+        context->functionBlock()->accept(this));
+    ret->statements = function_block.first;
+    ret->return_statement = function_block.second;
     return One<Statement>{ ret };
 }
 
@@ -356,14 +358,16 @@ std::any BuildTreeGenAstVisitor::visitFloatReturnType(CqasmParser::FloatReturnTy
 }
 
 std::any BuildTreeGenAstVisitor::visitFunctionBlock(CqasmParser::FunctionBlockContext *context) {
-    auto ret = cqasm::tree::make<StatementList>();
+    auto ret = std::pair<One<StatementList>, Maybe<ReturnStatement>>{ cqasm::tree::make<StatementList>(), {} };
+    auto &statements = ret.first->items;
     const auto &block_statements = context->blockStatement();
     std::for_each(block_statements.begin(), block_statements.end(),
-        [this, &ret](const auto &block_statement_ctx) {
-            ret->items.add(std::any_cast<One<Statement>>(block_statement_ctx->accept(this)));
+        [this, &statements](const auto &block_statement_ctx) {
+            statements.add(std::any_cast<One<Statement>>(block_statement_ctx->accept(this)));
     });
     if (context->returnStatement()) {
-        ret->items.add(std::any_cast<One<Statement>>(context->returnStatement()->accept(this)));
+        auto &return_statement = ret.second;
+        return_statement = std::any_cast<One<Statement>>(context->returnStatement()->accept(this));
     }
     return ret;
 }
@@ -377,7 +381,6 @@ std::any BuildTreeGenAstVisitor::visitReturnStatement(CqasmParser::ReturnStateme
 std::any BuildTreeGenAstVisitor::visitGate(CqasmParser::GateContext *context) {
     auto ret = cqasm::tree::make<Gate>();
     ret->name = cqasm::tree::make<Identifier>(context->IDENTIFIER()->getText());
-    ret->condition = cqasm::tree::Maybe<Expression>{};
     ret->operands = std::any_cast<One<ExpressionList>>(visitExpressionList(context->expressionList()));
     const auto token = context->IDENTIFIER()->getSymbol();
     setNodeAnnotation(ret, token);

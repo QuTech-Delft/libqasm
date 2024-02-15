@@ -27,9 +27,12 @@ public:
     std::any visit_statement_list(ast::StatementList &node) override;
     std::any visit_variable(ast::Variable &node) override;
     std::any visit_initialization(ast::Initialization &node) override;
-    std::any visit_assignment_instruction(ast::AssignmentInstruction &node) override;
+    std::any visit_assignment_statement(ast::AssignmentStatement &node) override;
     std::any visit_measure_instruction(ast::MeasureInstruction &node) override;
     std::any visit_gate(ast::Gate &node) override;
+    std::any visit_function(ast::Function &node) override;
+    std::any visit_variable_list(ast::VariableList &node) override;
+    std::any visit_return_statement(ast::ReturnStatement &node) override;
     std::any visit_expression(ast::Expression &node) override;
     std::any visit_unary_minus_expression(ast::UnaryMinusExpression &node) override;
     std::any visit_bitwise_not_expression(ast::BitwiseNotExpression &node) override;

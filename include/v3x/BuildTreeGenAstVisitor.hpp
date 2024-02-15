@@ -48,7 +48,7 @@ class  BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
         const std::string &identifier,
         const std::string &type,
         tree::Maybe<ast::IntegerLiteral> size,
-        antlr4::Token* token);
+        antlr4::Token* token) const;
 
 public:
     std::any visitProgram(CqasmParser::ProgramContext *context) override;
