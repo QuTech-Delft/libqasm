@@ -2,6 +2,7 @@
 set(CQASM_V1X_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-analysis-result.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-analyzer.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-analyzer-helper.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-error-model.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-functions.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-instruction.cpp"
@@ -10,6 +11,7 @@ set(CQASM_V1X_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-primitives.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-py.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-resolver.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-scope.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-types.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-values.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm.cpp"

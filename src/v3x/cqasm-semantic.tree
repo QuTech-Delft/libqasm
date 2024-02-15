@@ -103,4 +103,7 @@ program {
 
     # The list of variables.
     variables: Any<variable>;
+
+    # The list of functions.
+    functions: Any<function>;
 }
