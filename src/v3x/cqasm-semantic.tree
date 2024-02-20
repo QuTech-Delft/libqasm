@@ -78,15 +78,19 @@ annotated {
     }
 
     function {
-        parameters: Any<variable>;
+        name: cqasm::v3x::primitives::Str;
         return_type: external Maybe<cqasm::v3x::types::Node>;
-        statements: Any<statement>;
-        return_statement: Maybe<return_statement>;
+        block: One<block>;
+        variables: Any<variable>;
     }
 }
 
 version {
     items: cqasm::v3x::primitives::Version;
+}
+
+block {
+    statements: Any<statement>;
 }
 
 program {
@@ -98,12 +102,12 @@ program {
     # File version.
     version: One<version>;
 
-    # The list of statements.
-    statements: Any<statement>;
-
-    # The list of variables.
-    variables: Any<variable>;
+    # The global scope block.
+    block: One<block>;
 
     # The list of functions.
     functions: Any<function>;
+
+    # The list of variables.
+    variables: Any<variable>;
 }

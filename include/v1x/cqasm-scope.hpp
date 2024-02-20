@@ -1,6 +1,8 @@
 #pragma once
 
+#include "cqasm-tree.hpp"
 #include "v1x/cqasm-resolver.hpp"
+#include "v1x/cqasm-semantic-gen.hpp"
 
 
 namespace cqasm::v1x::analyzer {
@@ -8,8 +10,7 @@ namespace cqasm::v1x::analyzer {
 /**
  * Scope information.
  */
-class Scope {
-public:
+struct Scope {
     /**
      * The mappings visible within this scope.
      */
@@ -40,7 +41,7 @@ public:
     bool within_loop;
 
     /**
-     * Creates the global scope.
+     * Creates a scope from a table of mappings, functions, and an instruction set.
      */
     Scope(
         resolver::MappingTable mappings,

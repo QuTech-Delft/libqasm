@@ -39,7 +39,7 @@ static std::int64_t div_floor(std::int64_t a, std::int64_t b) {
     return res - corr;
 }
     
-/*
+/**
  * Function with constant parameters 
  */
 template <typename ReturnType, typename ParamType, auto F>
@@ -48,7 +48,7 @@ struct f_cp {
     using param_type = ParamType;
 };
 
-/*
+/**
  * Unary function with constant parameter
  */
 template <typename ReturnType, typename ParamType, auto F>
@@ -60,7 +60,7 @@ struct uf_cp : public f_cp<ReturnType, ParamType, F> {
     }
 };
 
-/*
+/**
  * Binary function with constant parameters 
  */
 template <typename ReturnType, typename ParamType, auto F>
@@ -73,7 +73,7 @@ struct bf_cp : public f_cp<ReturnType, ParamType, F> {
     }
 };
 
-/*
+/**
  * Ternary function with constant parameters 
  */
 template <typename ParamType, auto F>

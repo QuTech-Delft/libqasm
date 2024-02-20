@@ -14,8 +14,10 @@
 #include "cqasm-parse-helper.hpp"
 #include "cqasm-resolver.hpp"
 #include "cqasm-semantic.hpp"
+#include "v3x/cqasm-scope.hpp"
 
 #include <functional>
+#include <list>
 #include <optional>
 #include <string>
 
@@ -28,22 +30,23 @@ namespace cqasm::v3x::analyzer {
 /**
  * Main class used for analyzing cQASM files.
  *
- * Construction of this class is the entry point for libqasm whenever you need
- * to modify the default instruction set, have a different set of supported
- * error models, or want to add additional initial mappings, operators, or
- * functions. The process is simple:
+ * Construction of this class is the entry point for libqasm
+ * whenever you need to modify the default instruction set,
+ * have a different set of supported error models,
+ * or want to add additional initial mappings, operators, or functions.
+ * The process is simple:
  *
  *  - Construct an Analyzer object with the default constructor.
- *  - Use zero or more of the various `register_*()` methods to configure the
- *    Analyzer.
- *  - Use one or more of the `analyze*()` methods to analyze cQASM files or
- *    string representations thereof.
+ *  - Use zero or more of the various `register_*()` methods to configure the Analyzer.
+ *  - Use one or more of the `analyze*()` methods to analyze cQASM files
+ *    or string representations thereof.
  *
- * Note that the only state maintained by the Analyzer object is its
- * configuration, and the `analyze*()` functions never change this state
- * (hence they are const).
+ * Note that the only state maintained by the Analyzer object is its configuration,
+ * and the `analyze*()` functions never change this state (hence they are const).
  */
 class Analyzer {
+    friend class AnalyzeTreeGenAstVisitor;
+
 public:
     /**
      * The maximum cQASM version that this analyzer supports.
@@ -51,23 +54,14 @@ public:
     primitives::Version api_version;
 
 private:
-    /**
-     * The set of "mappings" that the parser starts out with.
-     */
-    resolver::MappingTable mappings;
+    std::list<Scope> scope_stack_;
 
-    /**
-     * The functions visible to the analyzer.
-     */
-    resolver::FunctionTable functions;
-
-    /**
-     * The supported set of quantum/classical/mixed instructions,
-     * appearing in the cQASM file as assembly-like commands.
-     * Instructions have a case-sensitively matched name, and
-     * a signature for the types of parameters it expects.
-     */
-    resolver::InstructionTable instruction_set;
+    [[nodiscard]] Scope &global_scope();
+    [[nodiscard]] const Scope &global_scope() const;
+    [[nodiscard]] Scope &current_scope();
+    [[nodiscard]] tree::One<semantic::Block> current_block();
+    [[nodiscard]] tree::Any<semantic::Variable> &current_variables();
+    [[nodiscard]] tree::Any<semantic::Function> &global_functions();
 
 public:
     /**
@@ -123,21 +117,46 @@ public:
         const std::string &data, const std::optional<std::string> &file_name);
 
     /**
-     * Resolves a mapping.
-     * Throws NameResolutionFailure if no mapping by the given name exists.
+     * Pushes a new empty scope to the top of the scope stack.
      */
-    [[nodiscard]] virtual values::Value resolve_mapping(const std::string &name) const;
+    void push_scope();
 
     /**
-     * Registers a mapping.
+     * Pops a scope from the top of the scope stack.
      */
-    virtual void register_mapping(const std::string &name, const values::Value &value);
+    void pop_scope();
+
+    /**
+     * Adds a statement to the current scope.
+     */
+    virtual void add_statement_to_current_scope(const tree::One<semantic::Statement> &statement);
+
+    /**
+     * Adds a variable to the current scope.
+     */
+    virtual void add_variable_to_current_scope(const tree::One<semantic::Variable> &variable);
+
+    /**
+     * Adds a function to the global scope.
+     */
+    virtual void add_function_to_global_scope(const tree::One<semantic::Function> &function);
+
+    /**
+     * Resolves a variable.
+     * Throws NameResolutionFailure if no variable by the given name exists.
+     */
+    [[nodiscard]] virtual values::Value resolve_variable(const std::string &name) const;
+
+    /**
+     * Registers a variable.
+     */
+    virtual void register_variable(const std::string &name, const values::Value &value);
 
     /**
      * Calls a function.
      * Throws NameResolutionFailure if no function by the given name exists,
-     * OverloadResolutionFailure if no overload of the function exists for the given arguments, or otherwise
-     * returns the value returned by the function.
+     * OverloadResolutionFailure if no overload of the function exists for the given arguments,
+     * or otherwise returns the value returned by the function.
      */
     [[nodiscard]] virtual values::Value call_function(const std::string &name, const values::Values &args) const;
 
@@ -162,8 +181,8 @@ public:
     /**
      * Resolves an instruction.
      * Throws NameResolutionFailure if no instruction by the given name exists,
-     * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
-     * returns the resolved instruction node.
+     * OverloadResolutionFailure if no overload exists for the given arguments,
+     * or otherwise returns the resolved instruction node.
      * Annotation data, line number information, and the condition still need to be set by the caller.
      */
     [[nodiscard]] virtual tree::One<semantic::Instruction> resolve_instruction(
@@ -178,7 +197,7 @@ public:
      * Convenience method for registering an instruction type.
      * The arguments are passed straight to instruction::Instruction's constructor.
      */
-    virtual void register_instruction(const std::string &name, const std::string &param_types = "");
+    virtual void register_instruction(const std::string &name, const std::optional<std::string> &param_types);
 };
 
 } // namespace cqasm::v3x::analyzer

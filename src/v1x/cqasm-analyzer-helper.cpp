@@ -244,18 +244,18 @@ tree::Maybe<semantic::Block> AnalyzerHelper::get_current_block(
 /**
  * Adds an analyzed statement to the current block (1.2+).
  */
-void AnalyzerHelper::add_to_current_block(const tree::Maybe<semantic::Statement> &stmt) {
+void AnalyzerHelper::add_to_current_block(const tree::Maybe<semantic::Statement> &statement) {
     // Add the statement to the current block.
-    auto block = get_current_block(*stmt);
-    block->statements.add(stmt);
+    auto block = get_current_block(*statement);
+    block->statements.add(statement);
 
     // Expand the source location annotation of the block to include the statement.
-    if (auto stmt_loc = stmt->get_annotation_ptr<parser::SourceLocation>()) {
+    if (auto statement_loc = statement->get_annotation_ptr<parser::SourceLocation>()) {
         if (auto block_loc = block->get_annotation_ptr<parser::SourceLocation>()) {
-            block_loc->expand_to_include(stmt_loc->first_line, stmt_loc->first_column);
-            block_loc->expand_to_include(stmt_loc->last_line, stmt_loc->last_column);
+            block_loc->expand_to_include(statement_loc->first_line, statement_loc->first_column);
+            block_loc->expand_to_include(statement_loc->last_line, statement_loc->last_column);
         } else {
-            block->set_annotation<parser::SourceLocation>(*stmt_loc);
+            block->set_annotation<parser::SourceLocation>(*statement_loc);
         }
     }
 }
@@ -265,21 +265,21 @@ void AnalyzerHelper::add_to_current_block(const tree::Maybe<semantic::Statement>
  * adding the analyzed statements to the current subcircuit (API 1.0/1.1) or block (API 1.2+).
  */
 void AnalyzerHelper::analyze_statements(const ast::StatementList &statements) {
-    for (const auto &stmt : statements.items) {
+    for (const auto &statement : statements.items) {
         try {
-            if (auto bundle = stmt->as_bundle()) {
+            if (auto bundle = statement->as_bundle()) {
                 if (analyzer.api_version >= "1.2") {
                     analyze_bundle_ext(*bundle);
                 } else {
                     analyze_bundle(*bundle);
                 }
-            } else if (auto mapping = stmt->as_mapping()) {
+            } else if (auto mapping = statement->as_mapping()) {
                 analyze_mapping(*mapping);
-            } else if (auto variables = stmt->as_variables()) {
+            } else if (auto variables = statement->as_variables()) {
                 analyze_variables(*variables);
-            } else if (auto subcircuit = stmt->as_subcircuit()) {
+            } else if (auto subcircuit = statement->as_subcircuit()) {
                 analyze_subcircuit(*subcircuit);
-            } else if (auto structured = stmt->as_structured()) {
+            } else if (auto structured = statement->as_structured()) {
                 if (result.root->version->items < "1.2") {
                     throw error::AnalysisError{ "structured control-flow is not supported (need version 1.2+)" };
                 }
@@ -288,7 +288,7 @@ void AnalyzerHelper::analyze_statements(const ast::StatementList &statements) {
                 throw std::runtime_error("unexpected statement node");
             }
         } catch (error::AnalysisError &err) {
-            err.context(*stmt);
+            err.context(*statement);
             result.errors.push_back(std::move(err));
         }
     }
@@ -1005,8 +1005,8 @@ tree::Maybe<semantic::IfElse> AnalyzerHelper::analyze_if_else(
     // If no branches remain, optimize the entire statement away.
     if (node->branches.empty()) {
         if (!node->otherwise.empty()) {
-            for (const auto &stmt : node->otherwise->statements) {
-                add_to_current_block(stmt);
+            for (const auto &statement : node->otherwise->statements) {
+                add_to_current_block(statement);
             }
         }
         return {};
@@ -1137,8 +1137,8 @@ tree::Maybe<semantic::RepeatUntilLoop> AnalyzerHelper::analyze_repeat_until_loop
     // If the condition is constant true, optimize away.
     if (auto cond = node->condition->as_const_bool()) {
         if (cond->value) {
-            for (const auto &stmt : node->body->statements) {
-                add_to_current_block(stmt);
+            for (const auto &statement : node->body->statements) {
+                add_to_current_block(statement);
             }
             return {};
         }

@@ -29,7 +29,7 @@ protected:
 };
 
 
-/*
+/**
  * visit_function_call(name, arguments) is a private method, but we can test it through visit_function_call(node)
  */
 TEST_F(VisitFunctionCallTest, analyzer_call_function_returns_a_non_empty_value) {

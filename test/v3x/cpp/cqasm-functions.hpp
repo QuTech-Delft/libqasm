@@ -5,7 +5,7 @@
 namespace values = cqasm::v3x::values;
 
 
-/*
+/**
  * Convenience function templates for invoking operators and functions:
  *
  * - F is the operator or function being invoked.

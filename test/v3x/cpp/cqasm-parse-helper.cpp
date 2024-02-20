@@ -46,8 +46,8 @@ protected:
     }
     void ExpectScannerParseReturnsWellFormedRoot() {
         auto one_version = tree::make<ast::Version>( version_3_0 );
-        auto one_statement_list = tree::make<ast::StatementList>();
-        auto one_program = tree::make<ast::Program>(one_version, one_statement_list);
+        auto one_global_block = tree::make<ast::GlobalBlock>();
+        auto one_program = tree::make<ast::Program>(one_version, one_global_block);
         auto parse_result = ParseResult{ one_program, error::ParseErrors{} };
         EXPECT_CALL(*scanner_up, parse())
             .WillOnce(::testing::Return(parse_result));

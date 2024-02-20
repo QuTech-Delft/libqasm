@@ -74,3 +74,17 @@ reference {
         variable: external Link<cqasm::v3x::semantic::Variable>;
     }
 }
+
+# This can be returned by user-defined functions as a placeholder value
+# for something that needs to be evaluated at runtime rather than during constant propagation.
+# Annotations should be used to attach semantic information.
+function {
+    # Name of the function as it appears or should appear in the cQASM file.
+    name: cqasm::v3x::primitives::Str;
+
+    # Operands for the function.
+    operands: external Any<cqasm::v3x::values::Node>;
+
+    # Operands for the function.
+    return_type: external One<cqasm::v3x::types::Node>;
+}

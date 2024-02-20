@@ -10,23 +10,24 @@ options {
 // The use of alternative labels simplifies the visitor classes
 // by removing the need to implement some methods,
 // which would otherwise contain boilerplate code (e.g. 'statement' and 'expression')
-program: statementSeparator* version statements statementSeparator* EOF;
 
-version: VERSION VERSION_NUMBER;
-
-statements: (statementSeparator+ statement)*;
+program: statementSeparator* version globalBlock? statementSeparator* EOF;
 
 statementSeparator: NEW_LINE | SEMICOLON;
 
-statement:
-    blockStatement
+version: VERSION VERSION_NUMBER;
+
+globalBlock: (statementSeparator+ globalBlockStatement)+;
+
+globalBlockStatement:
+    localBlockStatement
     | functionDeclaration
-    | returnStatement
     ;
 
-blockStatement:    
+localBlockStatement:
     variableDeclaration
     | instruction
+    | returnStatement
     ;
 
 variableDeclaration:
@@ -34,42 +35,30 @@ variableDeclaration:
     | variableInitialization
     ;
 
-variableDefinition:
-    QUBIT_TYPE arraySizeDeclaration? IDENTIFIER  # qubitTypeDefinition
-    | BIT_TYPE arraySizeDeclaration? IDENTIFIER  # bitTypeDefinition
-    | AXIS_TYPE IDENTIFIER  # axisTypeDefinition
-    | BOOL_TYPE arraySizeDeclaration? IDENTIFIER  # boolTypeDefinition
-    | INT_TYPE arraySizeDeclaration? IDENTIFIER  # intTypeDefinition
-    | FLOAT_TYPE arraySizeDeclaration? IDENTIFIER  # floatTypeDefinition
-    ;
-
-variableInitialization:
-    AXIS_TYPE IDENTIFIER EQUALS expression  # axisTypeInitialization
-    | BOOL_TYPE arraySizeDeclaration? IDENTIFIER EQUALS expression  # boolTypeInitialization
-    | INT_TYPE arraySizeDeclaration? IDENTIFIER EQUALS expression  # intTypeInitialization
-    | FLOAT_TYPE arraySizeDeclaration? IDENTIFIER EQUALS expression  # floatTypeInitialization
-    ;
-
-returnStatement: RETURN expression;
-
-functionDeclaration: FUNCTION IDENTIFIER functionParameters CLOSE_PARENS (ARROW functionReturnType)? functionBlock;
-
-functionParameters: OPEN_PARENS parameters? CLOSE_PARENS;
+functionDeclaration: FUNCTION IDENTIFIER OPEN_PARENS parameters? CLOSE_PARENS (ARROW type)?
+    OPEN_BRACE localBlock? CLOSE_BRACE;
 
 parameters: variableDefinition (statementSeparator* COMMA statementSeparator* variableDefinition)*;
 
-functionReturnType:
-    QUBIT_TYPE arraySizeDeclaration?  # qubitReturnType
-    | BIT_TYPE arraySizeDeclaration?  # bitReturnType
-    | AXIS_TYPE  # axisReturnType
-    | BOOL_TYPE arraySizeDeclaration?  # boolReturnType
-    | INT_TYPE arraySizeDeclaration?  # intReturnType
-    | FLOAT_TYPE arraySizeDeclaration?  # floatReturnType
+type: quantumType | classicalType;
+
+quantumType:
+    QUBIT_TYPE arraySizeDeclaration?  # qubitType
+    | BIT_TYPE arraySizeDeclaration?  # bitType
     ;
 
-// Current implementation only allows a return statement at the end of the function block
-// Control flow structures should change this in the future (e.g. allowing a return within an if block)
-functionBlock: OPEN_BRACE blockStatement* returnStatement? CLOSE_BRACE;
+classicalType:
+    AXIS_TYPE  # axisType
+    | BOOL_TYPE arraySizeDeclaration?  # boolType
+    | INT_TYPE arraySizeDeclaration?  # intType
+    | FLOAT_TYPE arraySizeDeclaration?  # floatType
+    ;
+
+localBlock: (statementSeparator+ localBlockStatement)+;
+
+variableDefinition: type IDENTIFIER;
+
+variableInitialization: classicalType IDENTIFIER EQUALS expression;
 
 instruction:
     expression EQUALS MEASURE expression  # measureInstruction
@@ -118,3 +107,5 @@ expression:
     | INTEGER_LITERAL  # integerLiteral
     | FLOAT_LITERAL  # floatLiteral
     ;
+
+returnStatement: RETURN expression;

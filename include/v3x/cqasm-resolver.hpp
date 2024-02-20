@@ -34,6 +34,11 @@ CQASM_ANALYSIS_ERROR(NameResolutionFailure);
  */
 CQASM_ANALYSIS_ERROR(OverloadResolutionFailure);
 
+/**
+ * Exception for failed resolutions.
+ */
+CQASM_ANALYSIS_ERROR(ResolutionFailure);
+
 template <class T>
 struct OverloadedNameResolver : public cqasm::overload::OverloadedNameResolver<T, types::TypeBase, values::Node> {
     virtual ~OverloadedNameResolver() = default;
@@ -56,20 +61,20 @@ struct OverloadedNameResolver : public cqasm::overload::OverloadedNameResolver<T
 };
 
 /**
- * Table of all mappings within a certain scope.
+ * Table of all variables within a certain scope.
  */
-class MappingTable {
+class VariableTable {
     std::unordered_map<std::string, values::Value> table;
 
 public:
     /**
-     * Adds a mapping.
+     * Adds a variable.
      */
     void add(const std::string &name, const values::Value &value);
 
     /**
-     * Resolves a mapping.
-     * Throws NameResolutionFailure if no mapping by the given name exists.
+     * Resolves a variable.
+     * Throws NameResolutionFailure if no variable by the given name exists.
      */
     values::Value resolve(const std::string &name) const;
 

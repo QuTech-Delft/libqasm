@@ -212,8 +212,7 @@ annotated {
             name: One<identifier>;
             parameters: One<variable_list>;
             return_type: Maybe<type>;
-            statements: One<statement_list>;
-            return_statement: Maybe<return_statement>;
+            block: One<local_block>;
         }
     }
 }
@@ -230,9 +229,19 @@ version {
     items: cqasm::v3x::primitives::Version;
 }
 
+block {
+    global_block {
+        statements: Any<statement>;
+    }
+
+    local_block {
+        statements: Any<block_statement>;
+    }
+}
+
 root {
     program {
         version: One<version>;
-        statements: One<statement_list>;
+        block: One<global_block>;
     }
 }

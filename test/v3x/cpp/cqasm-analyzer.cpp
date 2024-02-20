@@ -26,8 +26,8 @@ protected:
         version_parser = [this]() { return version_3_0; };
         parser = [this]() {
             auto one_version = tree::make<ast::Version>( version_3_0 );
-            auto one_statement_list = tree::make<ast::StatementList>();
-            auto one_program = tree::make<ast::Program>(one_version, one_statement_list);
+            auto one_global_block = tree::make<ast::GlobalBlock>();
+            auto one_program = tree::make<ast::Program>(one_version, one_global_block);
             return parser::ParseResult{ one_program, error::ParseErrors{} };
         };
     }

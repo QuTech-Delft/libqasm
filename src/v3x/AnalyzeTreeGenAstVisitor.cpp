@@ -3,17 +3,18 @@
 #include "v3x/cqasm-analyzer.hpp"
 
 #include <algorithm>  // for_each, transform
+#include <algorithm>  // any_of
 #include <any>
 #include <cassert>  // assert
 #include <range/v3/view/tail.hpp>  // tail
-#include <string_view>
 
 
 namespace cqasm::v3x::analyzer {
 
 AnalyzeTreeGenAstVisitor::AnalyzeTreeGenAstVisitor(Analyzer &analyzer)
 : analyzer_{ analyzer }
-, result_{} {}
+, result_{}
+{}
 
 std::any AnalyzeTreeGenAstVisitor::visit_node(ast::Node &/* node */) {
     throw error::AnalysisError{ "unimplemented" };
@@ -22,8 +23,11 @@ std::any AnalyzeTreeGenAstVisitor::visit_node(ast::Node &/* node */) {
 std::any AnalyzeTreeGenAstVisitor::visit_program(ast::Program &program_ast) {
     result_.root = tree::make<semantic::Program>();
     result_.root->api_version = analyzer_.api_version;
-    visit_version(*program_ast.version);
-    visit_statement_list(*program_ast.statements);
+    result_.root->version = std::any_cast<tree::One<semantic::Version>>(visit_version(*program_ast.version));
+    auto [block, variables, functions] = std::any_cast<GlobalBlockReturnT>(visit_global_block(*program_ast.block));
+    result_.root->block = block;
+    result_.root->variables = variables;
+    result_.root->functions = functions;
     return result_;
 }
 
@@ -53,23 +57,20 @@ std::any AnalyzeTreeGenAstVisitor::visit_version(ast::Version &node) {
         ret->items = analyzer_.api_version;
     }
     ret->copy_annotation<parser::SourceLocation>(node);
-
-    // Update program's version
-    result_.root->version = ret;
-
     return ret;
 }
 
-std::any AnalyzeTreeGenAstVisitor::visit_statement_list(ast::StatementList &node) {
-    for (const auto &statement_ast : node.items) {
-        try {
-            statement_ast->visit(*this);
-        } catch (error::AnalysisError &err) {
-            err.context(node);
-            result_.errors.push_back(std::move(err));
-        }
-    }
-    return {};
+std::any AnalyzeTreeGenAstVisitor::visit_global_block(ast::GlobalBlock &node) {
+    visit_block(node);
+    return std::make_tuple(analyzer_.current_block(), analyzer_.current_variables(), analyzer_.global_functions());
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_local_block(ast::LocalBlock &node) {
+    analyzer_.push_scope();
+    visit_block(node);
+    auto ret = std::make_pair(analyzer_.current_block(), analyzer_.current_variables());
+    analyzer_.pop_scope();
+    return ret;
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_annotated(ast::Annotated &node) {
@@ -102,49 +103,11 @@ std::any AnalyzeTreeGenAstVisitor::visit_annotation_data(ast::AnnotationData &no
     return ret;
 }
 
-/*
- * Build a semantic type
- * It can be a simple type T, of size 1,
- * or an array type TArray, which size is given by the syntactic type
- */
-template <typename T, typename TArray>
-types::Type AnalyzeTreeGenAstVisitor::visit_variable_type(const ast::Variable &variable_ast,
-    std::string_view type_name) const {
-
-    auto variable_type = variable_ast.typ;
-    assert(!variable_type.empty());
-    if (variable_type->size.empty()) {
-        return tree::make<T>(1);
-    } else if (variable_type->size->value > 0) {
-        return tree::make<TArray>(variable_type->size->value);
-    } else {
-        throw error::AnalysisError{ fmt::format("declaring {} array of size <= 0", type_name) };
-    }
-}
-
 std::any AnalyzeTreeGenAstVisitor::visit_variable(ast::Variable &node) {
     auto ret = tree::make<semantic::Variable>();
     try {
-        assert(!node.typ.empty());
-        auto node_type = node.typ->name;
-        assert(!node_type.empty());
-        auto type_name = node_type->name;
-        types::Type type{};
-        if (type_name == types::qubit_type_name) {
-            type = visit_variable_type<types::Qubit, types::QubitArray>(node, types::qubit_type_name);
-        } else if (type_name == types::bit_type_name) {
-            type = visit_variable_type<types::Bit, types::BitArray>(node, types::bit_type_name);
-        } else if (type_name == types::axis_type_name) {
-            type = tree::make<types::Axis>(3);
-        } else if (type_name == types::bool_type_name) {
-            type = visit_variable_type<types::Bool, types::BoolArray>(node, types::bool_type_name);
-        } else if (type_name == types::integer_type_name) {
-            type = visit_variable_type<types::Int, types::IntArray>(node, types::integer_type_name);
-        } else if (type_name == types::float_type_name) {
-            type = visit_variable_type<types::Float, types::FloatArray>(node, types::float_type_name);
-        } else {
-            throw error::AnalysisError("unknown type \"" + type_name + "\"");
-        }
+        // Build semantic type from syntactic type
+        auto type = build_semantic_type(node.typ);
 
         // Construct variable
         // Use the location tag of the identifier to record where the variable was defined
@@ -154,10 +117,11 @@ std::any AnalyzeTreeGenAstVisitor::visit_variable(ast::Variable &node) {
         ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
         ret->copy_annotation<parser::SourceLocation>(*identifier);
 
-        // Update program's variables
-        // And register mapping
-        result_.root->variables.add(ret);
-        analyzer_.register_mapping(identifier->name, tree::make<values::VariableRef>(ret));
+        // Add the variable to the current scope
+        analyzer_.add_variable_to_current_scope(ret);
+
+        // Register variable name in the current scope
+        analyzer_.register_variable(identifier->name, tree::make<values::VariableRef>(ret));
     } catch (error::AnalysisError &err) {
         err.context(node);
         result_.errors.push_back(std::move(err));
@@ -224,8 +188,8 @@ std::any AnalyzeTreeGenAstVisitor::visit_measure_instruction(ast::MeasureInstruc
         ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
         ret->copy_annotation<parser::SourceLocation>(node);
 
-        // Update program's statements
-        result_.root->statements.add(ret);
+        // Add the statement to the current scope
+        analyzer_.add_statement_to_current_scope(ret);
     } catch (error::AnalysisError &err) {
         err.context(node);
         result_.errors.push_back(std::move(err));
@@ -250,8 +214,8 @@ std::any AnalyzeTreeGenAstVisitor::visit_gate(ast::Gate &node) {
         ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
         ret->copy_annotation<parser::SourceLocation>(node);
 
-        // Update program's statements
-        result_.root->statements.add(ret);
+        // Add the statement to the current scope
+        analyzer_.add_statement_to_current_scope(ret);
     } catch (error::AnalysisError &err) {
         err.context(node);
         result_.errors.push_back(std::move(err));
@@ -261,7 +225,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_gate(ast::Gate &node) {
     return ret;
 }
 
-/*
+/**
  * Promote a value to a given type,
  * or error if the promotion is not valid
  */
@@ -326,8 +290,8 @@ std::any AnalyzeTreeGenAstVisitor::visit_initialization(ast::Initialization &nod
         ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
         ret->copy_annotation<parser::SourceLocation>(node);
 
-        // Update program's statements
-        result_.root->statements.add(ret);
+        // Add the statement to the current scope
+        analyzer_.add_statement_to_current_scope(ret);
     } catch (error::AnalysisError &err) {
         err.context(node);
         result_.errors.push_back(std::move(err));
@@ -357,8 +321,8 @@ std::any AnalyzeTreeGenAstVisitor::visit_assignment_statement(ast::AssignmentSta
         ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
         ret->copy_annotation<parser::SourceLocation>(node);
 
-        // Update program's statements
-        result_.root->statements.add(ret);
+        // Add the statement to the current scope
+        analyzer_.add_statement_to_current_scope(ret);
     } catch (error::AnalysisError &err) {
         err.context(node);
         result_.errors.push_back(std::move(err));
@@ -367,8 +331,87 @@ std::any AnalyzeTreeGenAstVisitor::visit_assignment_statement(ast::AssignmentSta
     return ret;
 }
 
-std::any AnalyzeTreeGenAstVisitor::visit_function(ast::Function &/*node*/) {
-    throw std::runtime_error{ "unimplemented" };
+bool AnalyzeTreeGenAstVisitor::current_block_has_return_statement() {
+    return std::any_of(analyzer_.current_block()->statements.begin(), analyzer_.current_block()->statements.end(),
+        [](const auto &statement) { return statement->as_return_statement(); });
+}
+
+void AnalyzeTreeGenAstVisitor::current_block_return_statements_promote_or_error(const tree::Maybe<types::Node> &return_type) {
+    std::for_each(analyzer_.current_block()->statements.begin(), analyzer_.current_block()->statements.end(),
+        [&return_type](const auto &statement) {
+            if (auto return_statement = statement->as_return_statement(); return_statement) {
+                assert(!return_statement->return_value.empty());
+                const auto promoted_return_value = promote_or_error(return_statement->return_value, return_type);
+                return_statement->return_value.set(promoted_return_value);
+            }
+    });
+}
+
+/**
+ * Convenience function for extracting the types of a list of variables.
+ */
+types::Types types_of(const tree::Any<semantic::Variable> &variables) {
+    types::Types types{};
+    std::for_each(variables.begin(), variables.end(), [&types](const auto variable) { types.add(variable->typ); });
+    for (const auto &variable : variables) {
+        types.add(variable->typ);
+    }
+    return types;
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_function(ast::Function &node) {
+    auto ret = tree::make<semantic::Function>();
+    try {
+        // Name
+        const auto identifier = node.name;
+        ret->name = identifier->name;
+
+        // Return type
+        if (!node.return_type.empty()) {
+            ret->return_type = build_semantic_type(node.return_type);
+        }
+
+        // Parameters
+        ret->variables = std::any_cast<const tree::Any<semantic::Variable> &>(visit_variable_list(*node.parameters));
+        auto parameter_types = types_of(ret->variables);
+
+        // Block
+        auto [block, variables] = std::any_cast<LocalBlockReturnT>(visit_local_block(*node.block));
+        ret->block = block;
+        ret->variables.extend(variables);
+
+        // Return statement and return type checks
+        if (current_block_has_return_statement() && node.return_type.empty()) {
+            throw error::AnalysisError{ "found return statement but function does not have a return type" };
+        } else if (!current_block_has_return_statement() && !node.return_type.empty()) {
+            throw error::AnalysisError{ "function has a return type but return statement was not found" };
+        } else if (current_block_has_return_statement() && !node.return_type.empty()) {
+            current_block_return_statements_promote_or_error(ret->return_type);
+        }
+
+        // Add the function to the current scope
+        analyzer_.add_function_to_global_scope(ret);
+
+        // Register function
+        // TODO:
+        //   instruction::Instruction is a class with a name and a list of types
+        //   register_instruction has the form (name, tag = instruction, operand types)
+        //   For a function, at this point, we know name and parameter types
+        //   We may need to create a function::Function{ name, parameter types }
+        //   That function::Function should be serialized as well
+        //   Notice that, as in C++, the return type does not participate in the function overloading
+//        auto function = function::Function{ name, parameter_types };
+//        analyzer_.register_function(ret->name, function, parameter_types);
+
+        // Copy annotation data
+        ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
+        ret->copy_annotation<parser::SourceLocation>(node);
+    } catch (error::AnalysisError &err) {
+        err.context(node);
+        result_.errors.push_back(std::move(err));
+        ret.reset();
+    }
+    return ret;
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_variable_list(ast::VariableList &node) {
@@ -383,8 +426,9 @@ std::any AnalyzeTreeGenAstVisitor::visit_variable_list(ast::VariableList &node) 
     return {};
 }
 
-std::any AnalyzeTreeGenAstVisitor::visit_return_statement(ast::ReturnStatement &/*node*/) {
-    throw std::runtime_error{ "unimplemented" };
+std::any AnalyzeTreeGenAstVisitor::visit_return_statement(ast::ReturnStatement &node) {
+    return tree::make<semantic::ReturnStatement>(
+        std::any_cast<values::Value>(visit_expression(*node.return_value)));
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_expression(ast::Expression &node) {
@@ -398,7 +442,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_expression(ast::Expression &node) {
     }
 }
 
-/*
+/**
  * Convenience function for visiting a function call given the function's name and arguments
  */
 values::Value AnalyzeTreeGenAstVisitor::visit_function_call(
@@ -422,7 +466,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_function_call(ast::FunctionCall &node) 
     return visit_function_call(node.name, node.arguments);
 }
 
-/*
+/**
  * Convenience function for visiting unary operators
  */
 std::any AnalyzeTreeGenAstVisitor::visit_unary_operator(
@@ -435,7 +479,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_unary_operator(
     );
 }
 
-/*
+/**
  * Convenience function for visiting binary operators
  */
 std::any AnalyzeTreeGenAstVisitor::visit_binary_operator(
@@ -548,7 +592,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_ternary_conditional_expression(ast::Ter
     );
 }
 
-/*
+/**
  * Check out of range accesses from any index in an input list to an array of a given size
  */
 void check_out_of_range(const IndexListT &indices, primitives::Int size) {
@@ -619,27 +663,10 @@ std::any AnalyzeTreeGenAstVisitor::visit_index_range(ast::IndexRange &index_rang
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_identifier(ast::Identifier &node) {
-    return analyzer_.resolve_mapping(node.name);
+    return analyzer_.resolve_variable(node.name);
 }
 
-/*
- * Transform an input array of values into an array of a given Type
- * Pre condition: all the values in the input array can be promoted to Type
- */
-template <typename ConstTypeArray>
-/* static */ tree::One<ConstTypeArray> AnalyzeTreeGenAstVisitor::build_array_value_from_promoted_values(
-    const values::Values &values, const types::Type &type) {
-
-    auto ret = tree::make<ConstTypeArray>();
-    ret->value.get_vec().resize(values.size());
-    std::transform(values.begin(), values.end(), ret->value.begin(),
-       [&type](const auto const_value) {
-            return values::promote(const_value, type);
-    });
-    return ret;
-}
-
-/*
+/**
  * Transform an input array into a const array of Type
  * Pre conditions:
  *   Type can only be Bool, Int, or Float
@@ -659,7 +686,7 @@ template <typename ConstTypeArray>
     }
 }
 
-/*
+/**
  * If any element of the initialization list is not a const boolean, const int, or const float, throw an error
  */
 void check_initialization_list_element_type(const values::Value &value) {
@@ -722,16 +749,6 @@ std::any AnalyzeTreeGenAstVisitor::visit_integer_literal(ast::IntegerLiteral &no
 std::any AnalyzeTreeGenAstVisitor::visit_float_literal(ast::FloatLiteral &node) {
     auto ret = tree::make<values::ConstFloat>(node.value);
     return values::Value{ ret };
-}
-
-/**
- * Shorthand for parsing an expression and promoting it to the given type,
- * constructed in-place with the type_args parameter pack.
- * Returns empty when the cast fails.
- */
-template <class Type, class... TypeArgs>
-values::Value AnalyzeTreeGenAstVisitor::analyze_as(ast::Expression &expression, TypeArgs... type_args) {
-    return values::promote(std::any_cast<values::Value>(expression.visit(*this)), tree::make<Type>(type_args...));
 }
 
 /**

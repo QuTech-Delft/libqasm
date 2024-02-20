@@ -19,9 +19,9 @@ using Value = values::Value;
 using Values = values::Values;
 
 /**
- * Adds a mapping.
+ * Adds a variable.
  */
-void MappingTable::add(const std::string &name, const Value &value) {
+void VariableTable::add(const std::string &name, const Value &value) {
     if (auto it = table.find(name); it != table.end()) {
         table.erase(it);
     }
@@ -29,12 +29,12 @@ void MappingTable::add(const std::string &name, const Value &value) {
 }
 
 /**
- * Resolves a mapping.
- * Throws NameResolutionFailure if no mapping by the given name exists.
+ * Resolves a variable.
+ * Throws NameResolutionFailure if no variable by the given name exists.
  */
-Value MappingTable::resolve(const std::string &name) const {
+Value VariableTable::resolve(const std::string &name) const {
     if (auto entry = table.find(name); entry == table.end()) {
-        throw NameResolutionFailure{ fmt::format("failed to resolve mapping '{}'", name) };
+        throw NameResolutionFailure{ fmt::format("failed to resolve variable '{}'", name) };
     } else {
         return Value(entry->second->clone());
     }
@@ -43,7 +43,7 @@ Value MappingTable::resolve(const std::string &name) const {
 /**
  * Grants read access to the underlying map.
  */
-const std::unordered_map<std::string, Value> &MappingTable::get_table() const {
+const std::unordered_map<std::string, Value> &VariableTable::get_table() const {
     return table;
 }
 

@@ -10,7 +10,7 @@
 namespace primitives = cqasm::v3x::primitives;
 
 
-/*
+/**
  * Changes regarding v1:
  *
  * - There are not functions operating on complex types yet
@@ -25,7 +25,7 @@ namespace primitives = cqasm::v3x::primitives;
 
 namespace cqasm::v3x::functions {
     
-/*
+/**
  * Function with constant parameters 
  */
 template <typename ReturnType, typename ParamType, auto F>
@@ -34,7 +34,7 @@ struct f_cp {
     using param_type = ParamType;
 };
 
-/*
+/**
  * Unary function with constant parameter
  */
 template <typename ReturnType, typename ParamType, auto F>
@@ -46,7 +46,7 @@ struct uf_cp : public f_cp<ReturnType, ParamType, F> {
     }
 };
 
-/*
+/**
  * Binary function with constant parameters 
  */
 template <typename ReturnType, typename ParamType, auto F>
@@ -59,7 +59,7 @@ struct bf_cp : public f_cp<ReturnType, ParamType, F> {
     }
 };
 
-/*
+/**
  * Ternary function with constant parameters 
  */
 template <typename ParamType, auto F>

@@ -1,7 +1,7 @@
-#include "v1x/cqasm-scope.hpp"
+#include "v3x/cqasm-scope.hpp"
 
 
-namespace cqasm::v1x::analyzer {
+namespace cqasm::v3x::analyzer {
 
 /**
  * Creates a scope from a table of mappings, functions, and an instruction set.
@@ -9,12 +9,12 @@ namespace cqasm::v1x::analyzer {
 Scope::Scope(
     resolver::MappingTable mappings,
     resolver::FunctionTable functions,
-    resolver::InstructionTable instruction_set)
+    resolver::InstructionTable instruction_set,
+    tree::One<semantic::Block> block)
 : mappings{ std::move(mappings) }
 , functions{ std::move(functions) }
 , instruction_set{ std::move(instruction_set) }
-, block{}
-, within_loop{ false }
+, block{ std::move(block) }
 {}
 
-} // namespace cqasm::v1x::analyzer
+} // namespace cqasm::v3x::analyzer
