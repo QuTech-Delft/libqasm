@@ -49,37 +49,34 @@ annotated {
     statement {
         # A regular instruction (a gate, or a measure instruction).
         instruction {
-            # Instruction type as registered through the API.
             instruction: cqasm::v3x::instruction::InstructionRef;
-
-            # Name as it appears in the cQASM file.
             name: cqasm::v3x::primitives::Str;
-
-            # Operands for the instruction.
-            operands: external Any<cqasm::v3x::values::Node>;
+            operands: external Any<cqasm::v3x::values::ValueBase>;
         }
 
         assignment_statement {
-            # The assignment target.
-            lhs: external One<cqasm::v3x::values::Node>;
-
-            # The value to assign.
-            rhs: external One<cqasm::v3x::values::Node>;
+            lhs: external One<cqasm::v3x::values::ValueBase>;
+            rhs: external One<cqasm::v3x::values::ValueBase>;
         }
 
         return_statement {
-            return_value: external One<cqasm::v3x::values::Node>;
+            return_value: external One<cqasm::v3x::values::ValueBase>;
+        }
+
+        function_call_statement {
+            name: cqasm::v3x::primitives::Str;
+            arguments: external Any<cqasm::v3x::values::ValueBase>;
         }
     }
 
     variable {
         name: cqasm::v3x::primitives::Str;
-        typ: external One<cqasm::v3x::types::Node>;
+        typ: external One<cqasm::v3x::types::TypeBase>;
     }
 
     function {
         name: cqasm::v3x::primitives::Str;
-        return_type: external Maybe<cqasm::v3x::types::Node>;
+        return_type: external Maybe<cqasm::v3x::types::TypeBase>;
         block: One<block>;
         variables: Any<variable>;
     }

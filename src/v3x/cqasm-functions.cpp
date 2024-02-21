@@ -5,7 +5,7 @@ namespace cqasm::v3x::functions {
 /**
  * Registers a bunch of functions usable during constant propagation into the given function table.
  */
-void register_default_functions_into(resolver::FunctionTable &table) {
+void register_default_functions_into(resolver::FunctionImplTable &table) {
     table.add("operator-", types::from_spec("f"), op_neg_f);
     table.add("operator-", types::from_spec("i"), op_neg_i);
 

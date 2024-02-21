@@ -57,7 +57,7 @@ void Analyzer::register_default_mappings() {
  * Registers a number of default functions, such as the operator functions, and the usual trigonometric functions.
  */
 void Analyzer::register_default_functions() {
-    functions::register_default_functions_into(global_scope().function_table);
+    functions::register_default_functions_into(global_scope().function_impl_table);
 }
 
 /**
@@ -205,37 +205,63 @@ void Analyzer::register_variable(const std::string &name, const values::Value &v
 }
 
 /**
- * Calls a function.
+ * Resolves a function implementation.
  * Throws NameResolutionFailure if no function by the given name exists,
- * OverloadResolutionFailure if no overload of the function exists for the given arguments, or otherwise
- * returns the value returned by the function.
+ * OverloadResolutionFailure if no overload of the function exists for the given arguments,
+ * or otherwise returns the value returned by the function.
  */
-values::Value Analyzer::call_function(const std::string &name, const values::Values &args) const {
-    return global_scope().function_table.call(name, args);
+values::Value Analyzer::resolve_function_impl(const std::string &name, const values::Values &args) const {
+    return global_scope().function_impl_table.resolve(name, args);
 }
 
 /**
- * Registers a function, usable within expressions.
+ * Resolves a function.
+ * Tries to call a function implementation first.
+ * If it doesn't succeed, tries to call a function.
+ * Throws NameResolutionFailure if no function by the given name exists,
+ * OverloadResolutionFailure if no overload of the function exists for the given arguments,
+ * or otherwise returns the value returned by the function.
  */
-void Analyzer::register_function(
+values::Value Analyzer::resolve_function(const std::string &name, const values::Values &args) const {
+    try {
+        return global_scope().function_impl_table.resolve(name, args);
+    } catch (const error::AnalysisError &) {}
+    return global_scope().function_table.resolve(name, args);
+}
+
+/**
+ * Registers a function implementation, usable within expressions.
+ */
+void Analyzer::register_function_impl(
     const std::string &name,
     const types::Types &param_types,
     const resolver::FunctionImpl &impl) {
 
-    global_scope().function_table.add(name, param_types, impl);
+    global_scope().function_impl_table.add(name, param_types, impl);
 }
 
 /**
- * Convenience method for registering a function.
+ * Convenience method for registering a function implementation.
  * The param_types are specified as a string,
  * converted to types::Types for the other overload using types::from_spec.
  */
-void Analyzer::register_function(
+void Analyzer::register_function_impl(
     const std::string &name,
     const std::string &param_types,
     const resolver::FunctionImpl &impl) {
 
-    global_scope().function_table.add(name, types::from_spec(param_types), impl);
+    global_scope().function_impl_table.add(name, types::from_spec(param_types), impl);
+}
+
+/**
+ * Convenience method for registering a function.
+ */
+void Analyzer::register_function(
+    const std::string &name,
+    const types::Types &param_types,
+    const values::Value &value) {
+
+    global_scope().function_table.add(name, param_types, value);
 }
 
 /**

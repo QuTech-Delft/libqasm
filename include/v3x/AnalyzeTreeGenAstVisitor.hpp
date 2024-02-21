@@ -28,18 +28,6 @@ class AnalyzeTreeGenAstVisitor : public ast::Visitor<std::any> {
     Analyzer &analyzer_;
     AnalysisResult result_;
 
-    template <typename Block>
-    void visit_block(Block &block) {
-        for (const auto &statement_ast : block.statements) {
-            try {
-                statement_ast->visit(*this);
-            } catch (error::AnalysisError &err) {
-                err.context(block);
-                result_.errors.push_back(std::move(err));
-            }
-        }
-    }
-
 public:
     explicit AnalyzeTreeGenAstVisitor(Analyzer &analyzer);
 
@@ -141,28 +129,6 @@ private:
     }
 
     /**
-     * Convenience function for visiting a function call given the function's name and arguments
-     */
-    values::Value visit_function_call(
-        const tree::One<ast::Identifier> &name,
-        const tree::One<ast::ExpressionList> &arguments);
-
-    /**
-     * Convenience function for visiting unary operators
-     */
-    std::any visit_unary_operator(
-        const std::string &name,
-        const tree::One<ast::Expression> &expression);
-
-    /**
-     * Convenience function for visiting binary operators
-     */
-    std::any visit_binary_operator(
-        const std::string &name,
-        const tree::One<ast::Expression> &lhs,
-        const tree::One<ast::Expression> &rhs);
-
-    /**
      * Transform an input array of values into an array of a given Type
      * Pre condition: all the values in the input array can be promoted to Type
      */
@@ -189,12 +155,49 @@ private:
         const values::Values &values, const types::Type &type);
 
     /**
+     * Convenience function for visiting a global or a local block
+     */
+    template <typename Block>
+    void visit_block(Block &block) {
+        for (const auto &statement_ast : block.statements) {
+            try {
+                statement_ast->visit(*this);
+            } catch (error::AnalysisError &err) {
+                err.context(block);
+                result_.errors.push_back(std::move(err));
+            }
+        }
+    }
+
+    /**
+     * Convenience function for visiting a function call given the function's name and arguments
+     */
+    values::Value visit_function_call(
+        const tree::One<ast::Identifier> &name,
+        const tree::One<ast::ExpressionList> &arguments);
+
+    /**
+     * Convenience function for visiting unary operators
+     */
+    std::any visit_unary_operator(
+        const std::string &name,
+        const tree::One<ast::Expression> &expression);
+
+    /**
+     * Convenience function for visiting binary operators
+     */
+    std::any visit_binary_operator(
+        const std::string &name,
+        const tree::One<ast::Expression> &lhs,
+        const tree::One<ast::Expression> &rhs);
+
+    /**
      * Shorthand for parsing an expression and promoting it to the given type,
      * constructed in-place with the type_args parameter pack.
      * Returns empty when the cast fails
      */
     template <class Type, class... TypeArgs>
-    values::Value analyze_as(ast::Expression &expression, TypeArgs... type_args) {
+    values::Value visit_as(ast::Expression &expression, TypeArgs... type_args) {
         return values::promote(std::any_cast<values::Value>(expression.visit(*this)), tree::make<Type>(type_args...));
     }
 

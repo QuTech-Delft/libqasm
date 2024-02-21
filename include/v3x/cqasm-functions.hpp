@@ -169,6 +169,6 @@ constexpr auto fn_abs_i = uf_cp<values::ConstInt, values::ConstInt, abs>{};
 /**
  * Registers a bunch of functions usable during constant propagation into the given function table.
  */
-void register_default_functions_into(resolver::FunctionTable &table);
+void register_default_functions_into(resolver::FunctionImplTable &table);
 
 } // namespace functions

@@ -4,16 +4,18 @@
 namespace cqasm::v3x::analyzer {
 
 /**
- * Creates a scope from a table of mappings, functions, and an instruction set.
+ * Creates a scope from a table of variables, functions, and instructions.
  */
 Scope::Scope(
-    resolver::MappingTable mappings,
-    resolver::FunctionTable functions,
-    resolver::InstructionTable instruction_set,
+    resolver::VariableTable variable_table,
+    resolver::FunctionImplTable function_impl_table,
+    resolver::FunctionTable function_table,
+    resolver::InstructionTable instruction_table,
     tree::One<semantic::Block> block)
-: mappings{ std::move(mappings) }
-, functions{ std::move(functions) }
-, instruction_set{ std::move(instruction_set) }
+: variable_table{ std::move(variable_table) }
+, function_impl_table{ std::move(function_impl_table) }
+, function_table{ std::move(function_table) }
+, instruction_table{ std::move(instruction_table) }
 , block{ std::move(block) }
 {}
 

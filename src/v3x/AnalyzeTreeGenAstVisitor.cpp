@@ -2,8 +2,7 @@
 #include "v3x/cqasm-ast-gen.hpp"
 #include "v3x/cqasm-analyzer.hpp"
 
-#include <algorithm>  // for_each, transform
-#include <algorithm>  // any_of
+#include <algorithm>  // any_of, for_each
 #include <any>
 #include <cassert>  // assert
 #include <range/v3/view/tail.hpp>  // tail
@@ -389,23 +388,15 @@ std::any AnalyzeTreeGenAstVisitor::visit_function(ast::Function &node) {
             current_block_return_statements_promote_or_error(ret->return_type);
         }
 
+        // Copy annotation data
+        ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
+        ret->copy_annotation<parser::SourceLocation>(node);
+
         // Add the function to the current scope
         analyzer_.add_function_to_global_scope(ret);
 
         // Register function
-        // TODO:
-        //   instruction::Instruction is a class with a name and a list of types
-        //   register_instruction has the form (name, tag = instruction, operand types)
-        //   For a function, at this point, we know name and parameter types
-        //   We may need to create a function::Function{ name, parameter types }
-        //   That function::Function should be serialized as well
-        //   Notice that, as in C++, the return type does not participate in the function overloading
-//        auto function = function::Function{ name, parameter_types };
-//        analyzer_.register_function(ret->name, function, parameter_types);
-
-        // Copy annotation data
-        ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
-        ret->copy_annotation<parser::SourceLocation>(node);
+        analyzer_.register_function(ret->name, parameter_types, tree::make<values::FunctionRef>(ret));
     } catch (error::AnalysisError &err) {
         err.context(node);
         result_.errors.push_back(std::move(err));
@@ -455,7 +446,7 @@ values::Value AnalyzeTreeGenAstVisitor::visit_function_call(
             function_arguments.add(std::any_cast<values::Value>(visit_expression(*node_argument)));
     });
     const auto function_name = name->name;
-    auto ret = analyzer_.call_function(function_name, function_arguments);
+    auto ret = analyzer_.resolve_function(function_name, function_arguments);
     if (ret.empty()) {
         throw error::AnalysisError{ "function implementation returned empty value" };
     }
@@ -755,7 +746,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_float_literal(ast::FloatLiteral &node) 
  * Shorthand for parsing an expression to a constant integer.
  */
 primitives::Int AnalyzeTreeGenAstVisitor::visit_const_int(ast::Expression &expression) {
-    if (auto int_value = analyze_as<types::Int>(expression); !int_value.empty()) {
+    if (auto int_value = visit_as<types::Int>(expression); !int_value.empty()) {
         if (auto const_int_value = int_value->as_const_int()) {
             return const_int_value->value;
         }

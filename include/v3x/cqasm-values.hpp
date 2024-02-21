@@ -24,12 +24,12 @@ namespace cqasm::v3x::values {
 /**
  * A cQASM value, either known at compile-time or an expression for something only known at runtime.
  */
-using Value = tree::One<Node>;
+using Value = tree::One<ValueBase>;
 
 /**
  * Zero or more cQASM values.
  */
-using Values = tree::Any<Node>;
+using Values = tree::Any<ValueBase>;
 
 /**
  * Promotes a value of array of Type to a value of array of PromotedType.

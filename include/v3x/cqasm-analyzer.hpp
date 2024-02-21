@@ -153,30 +153,48 @@ public:
     virtual void register_variable(const std::string &name, const values::Value &value);
 
     /**
-     * Calls a function.
+     * Resolves a function implementation.
      * Throws NameResolutionFailure if no function by the given name exists,
      * OverloadResolutionFailure if no overload of the function exists for the given arguments,
      * or otherwise returns the value returned by the function.
      */
-    [[nodiscard]] virtual values::Value call_function(const std::string &name, const values::Values &args) const;
+    [[nodiscard]] virtual values::Value resolve_function_impl(const std::string &name, const values::Values &args) const;
 
     /**
-     * Registers a function, usable within expressions.
+     * Resolves a function.
+     * Tries to call a function implementation first.
+     * If it doesn't succeed, tries to call a function.
+     * Throws NameResolutionFailure if no function by the given name exists,
+     * OverloadResolutionFailure if no overload of the function exists for the given arguments,
+     * or otherwise returns the value returned by the function.
      */
-    virtual void register_function(
+    [[nodiscard]] virtual values::Value resolve_function(const std::string &name, const values::Values &args) const;
+
+    /**
+     * Registers a function implementation, usable within expressions.
+     */
+    virtual void register_function_impl(
         const std::string &name,
         const types::Types &param_types,
         const resolver::FunctionImpl &impl);
 
     /**
-     * Convenience method for registering a function.
+     * Convenience method for registering a function implementation.
      * The param_types are specified as a string,
      * converted to types::Types for the other overload using types::from_spec.
      */
-    virtual void register_function(
+    virtual void register_function_impl(
         const std::string &name,
         const std::string &param_types,
         const resolver::FunctionImpl &impl);
+
+    /**
+     * Convenience method for registering a function.
+     */
+    virtual void register_function(
+        const std::string &name,
+        const types::Types &param_types,
+        const values::Value &value);
 
     /**
      * Resolves an instruction.

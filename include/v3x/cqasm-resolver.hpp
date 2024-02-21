@@ -1,6 +1,6 @@
 /** \file
  * Contains \ref cqasm::v3x::resolver::MappingTable "MappingTable",
- * \ref cqasm::v3x::resolver::FunctionTable "FunctionTable", and
+ * \ref cqasm::v3x::resolver::FunctionImplTable "FunctionImplTable", and
  * \ref cqasm::v3x::resolver::ErrorModelTable "ErrorModelTable", representing the
  * various cQASM namespaces and their members in scope at some instant.
  */
@@ -24,6 +24,10 @@
  */
 namespace cqasm::v3x::resolver {
 
+//-----------------//
+// Analysis errors //
+//-----------------//
+
 /**
  * Exception for failed name resolutions.
  */
@@ -39,17 +43,22 @@ CQASM_ANALYSIS_ERROR(OverloadResolutionFailure);
  */
 CQASM_ANALYSIS_ERROR(ResolutionFailure);
 
+
+//------------------------//
+// OverloadedNameResolver //
+//------------------------//
+
 template <class T>
-struct OverloadedNameResolver : public cqasm::overload::OverloadedNameResolver<T, types::TypeBase, values::Node> {
+struct OverloadedNameResolver : public cqasm::overload::OverloadedNameResolver<T, types::TypeBase, values::ValueBase> {
     virtual ~OverloadedNameResolver() = default;
 
     void add_overload(const std::string &name, const T &tag, const types::Types &param_types) override {
-        cqasm::overload::OverloadedNameResolver<T, types::TypeBase, values::Node>::add_overload(name, tag, param_types);
+        cqasm::overload::OverloadedNameResolver<T, types::TypeBase, values::ValueBase>::add_overload(name, tag, param_types);
     }
 
     [[nodiscard]] std::pair<T, values::Values> resolve(const std::string &name, const values::Values &args) override {
         try {
-            return cqasm::overload::OverloadedNameResolver<T, types::TypeBase, values::Node>::resolve(name, args);
+            return cqasm::overload::OverloadedNameResolver<T, types::TypeBase, values::ValueBase>::resolve(name, args);
         } catch (const cqasm::overload::NameResolutionFailure &) {
             throw NameResolutionFailure{ fmt::format("failed to resolve '{}'", name) };
         } catch (const cqasm::overload::OverloadResolutionFailure &) {
@@ -59,6 +68,11 @@ struct OverloadedNameResolver : public cqasm::overload::OverloadedNameResolver<T
         }
     }
 };
+
+
+//---------------//
+// VariableTable //
+//---------------//
 
 /**
  * Table of all variables within a certain scope.
@@ -77,23 +91,66 @@ public:
      * Throws NameResolutionFailure if no variable by the given name exists.
      */
     values::Value resolve(const std::string &name) const;
-
-    /**
-     * Grants read access to the underlying map.
-     */
-    const std::unordered_map<std::string, values::Value> &get_table() const;
 };
 
+
+//-------------------//
+// FunctionImplTable //
+//-------------------//
+
 /**
- * C++ function representing (one of the overloads of) a function usable in cQASM constant expressions.
+ * C++ function representing one of the overloads of a function for which we have a C++ implementation.
+ * This can be a function accepting only constant arguments, or both constant and variable arguments.
  */
 using FunctionImpl = std::function<values::Value(const values::Values&)>;
 
 /**
  * Table of all overloads of all constant propagation functions.
  */
-class FunctionTable {
+class FunctionImplTable {
     std::unique_ptr<OverloadedNameResolver<FunctionImpl>> resolver;
+
+public:
+    FunctionImplTable();
+    ~FunctionImplTable();
+    FunctionImplTable(const FunctionImplTable& t);
+    FunctionImplTable(FunctionImplTable&& t) noexcept;
+    FunctionImplTable& operator=(const FunctionImplTable& t);
+    FunctionImplTable& operator=(FunctionImplTable&& t) noexcept;
+
+    /**
+     * Registers a function.
+     * Matching will be done case-sensitively.
+     * The param_types variadic specifies the amount and types of the parameters that
+     * this particular overload of the function expects.
+     * The C++ implementation of the function can assume that
+     * the value list it gets is of the right size and the values are of the right types.
+     *
+     * This method does not contain any intelligence to override previously added overloads.
+     * However, the overload resolution engine will always use the last applicable overload it finds,
+     * so adding does have the effect of overriding.
+     */
+    void add(const std::string &name, const types::Types &param_types, const FunctionImpl &impl);
+
+    /**
+     * Resolves a function.
+     * Throws NameResolutionFailure if no function by the given name exists,
+     * OverloadResolutionFailure if no overload of the function exists for the given arguments, or otherwise
+     * returns the value returned by the function.
+     */
+    [[nodiscard]] values::Value resolve(const std::string &name, const values::Values &args) const;
+};
+
+
+//---------------//
+// FunctionTable //
+//---------------//
+
+/**
+ * Table of all overloads of all constant propagation functions.
+ */
+class FunctionTable {
+    std::unique_ptr<OverloadedNameResolver<values::Value>> resolver;
 
 public:
     FunctionTable();
@@ -107,24 +164,28 @@ public:
      * Registers a function.
      * Matching will be done case-sensitively.
      * The param_types variadic specifies the amount and types of the parameters that
-     * (this particular overload of) the function expects.
-     * The C++ implementation of the function can assume that
-     * the value list it gets is of the right size and the values are of the right types.
+     * this particular overload of the function expects.
+     * value should be of type values::FunctionRef.
      *
      * This method does not contain any intelligence to override previously added overloads.
      * However, the overload resolution engine will always use the last applicable overload it finds,
      * so adding does have the effect of overriding.
      */
-    void add(const std::string &name, const types::Types &param_types, const FunctionImpl &impl);
+    void add(const std::string &name, const types::Types &param_types, const values::Value &value);
 
     /**
-     * Calls a function.
+     * Resolves a function.
      * Throws NameResolutionFailure if no function by the given name exists,
      * OverloadResolutionFailure if no overload of the function exists for the given arguments, or otherwise
      * returns the value returned by the function.
      */
-    [[nodiscard]] values::Value call(const std::string &name, const values::Values &args) const;
+    [[nodiscard]] values::Value resolve(const std::string &name, const values::Values &args) const;
 };
+
+
+//------------------//
+// InstructionTable //
+//------------------//
 
 /**
  * Table of the supported instructions and their overloads.
@@ -151,10 +212,7 @@ public:
      * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
      * returns the resolved instruction node.
      */
-    [[nodiscard]] tree::One<semantic::Instruction> resolve(
-        const std::string &name,
-        const values::Values &args
-    ) const;
+    [[nodiscard]] tree::One<semantic::Instruction> resolve(const std::string &name, const values::Values &args) const;
 };
 
 } // namespace cqasm::v3x::resolver

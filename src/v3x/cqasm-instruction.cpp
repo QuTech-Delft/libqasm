@@ -54,7 +54,7 @@ void serialize(const instruction::InstructionRef &obj, ::tree::cbor::MapWriter &
     map.append_string("n", obj->name);
     auto aw = map.append_array("t");
     for (const auto &t : obj->param_types) {
-        aw.append_binary(::tree::base::serialize(t));
+        aw.append_binary(::tree::base::serialize(::tree::base::Maybe<types::TypeBase>{ t.get_ptr() }));
     }
     aw.close();
 }

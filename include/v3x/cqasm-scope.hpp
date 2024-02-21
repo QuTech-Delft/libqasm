@@ -17,7 +17,14 @@ struct Scope {
     resolver::VariableTable variable_table;
 
     /**
-     * The functions visible within this scope.
+     * The list of function implementations.
+     * That is, functions for which we have a C++ implementation.
+     */
+    resolver::FunctionImplTable function_impl_table;
+
+    /**
+     * The list of functions, other than function implementations.
+     * That is, functions defined in the cQASM file.
      */
     resolver::FunctionTable function_table;
 
@@ -39,7 +46,7 @@ struct Scope {
     tree::Any<semantic::Variable> variables;
 
     /**
-     * The list of functions declared in the global scope.
+     * The list of functions defined in the global scope.
      */
     tree::Any<semantic::Function> functions;
 
@@ -50,12 +57,13 @@ struct Scope {
     Scope& operator=(Scope &&other) noexcept = default;
 
     /**
-     * Creates a scope from a table of variables, functions, and an instruction set.
+     * Creates a scope from a table of variables, functions, and instructions.
      */
     Scope(
         resolver::VariableTable variable_table,
-        resolver::FunctionTable functions,
-        resolver::InstructionTable instruction_set,
+        resolver::FunctionImplTable function_impl_table,
+        resolver::FunctionTable function_table,
+        resolver::InstructionTable instruction_table,
         tree::One<semantic::Block> block);
 };
 

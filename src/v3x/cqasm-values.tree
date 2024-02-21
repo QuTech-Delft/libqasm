@@ -25,66 +25,63 @@ namespace cqasm
 namespace v3x
 namespace values
 
-# Constant value
-constant {
-    # Represents an axis value (x, y, and z vectors).
-    const_axis {
-        value: cqasm::v3x::primitives::Axis;
+value_base {
+    # Constant value
+    constant {
+        # Represents an axis value (x, y, and z vectors).
+        const_axis {
+            value: cqasm::v3x::primitives::Axis;
+        }
+
+        const_bool {
+            value: cqasm::v3x::primitives::Bool;
+        }
+
+        const_int {
+            value: cqasm::v3x::primitives::Int;
+        }
+
+        const_float {
+            value: cqasm::v3x::primitives::Float;
+        }
+
+        const_complex {
+            value: cqasm::v3x::primitives::Complex;
+        }
+
+        const_bool_array {
+            value: Many<const_bool>;
+        }
+
+        const_int_array {
+            value: Many<const_int>;
+        }
+
+        const_float_array {
+            value: Many<const_float>;
+        }
     }
 
-    const_bool {
-        value: cqasm::v3x::primitives::Bool;
+    # Reference to some storage location
+    reference {
+        # Represents an index for single-gate-multiple-qubit notation.
+        # The indices must not repeat.
+        index_ref {
+            variable: external Link<cqasm::v3x::semantic::Variable>;
+            indices: Many<const_int>;
+        }
+
+        variable_ref {
+            variable: external Link<cqasm::v3x::semantic::Variable>;
+        }
+
+        function_ref {
+            function: external Link<cqasm::v3x::semantic::Function>;
+        }
     }
 
-    const_int {
-        value: cqasm::v3x::primitives::Int;
+    function_call {
+        function: One<function_ref>;
+        arguments: Any<value_base>;
     }
-
-    const_float {
-        value: cqasm::v3x::primitives::Float;
-    }
-
-    const_complex {
-        value: cqasm::v3x::primitives::Complex;
-    }
-
-    const_bool_array {
-        value: Many<const_bool>;
-    }
-
-    const_int_array {
-        value: Many<const_int>;
-    }
-
-    const_float_array {
-        value: Many<const_float>;
-    }
-}
-
-# Reference to some storage location
-reference {
-    # Represents an index for single-gate-multiple-qubit notation.
-    # The indices must not repeat.
-    index_ref {
-        variable: external Link<cqasm::v3x::semantic::Variable>;
-        indices: Many<const_int>;
-    }
-
-    variable_ref {
-        variable: external Link<cqasm::v3x::semantic::Variable>;
-    }
-}
-
-# This can be returned by user-defined functions as a placeholder value
-# for something that needs to be evaluated at runtime rather than during constant propagation.
-# Annotations should be used to attach semantic information.
-function {
-    # Name of the function as it appears or should appear in the cQASM file.
-    name: cqasm::v3x::primitives::Str;
-
-    # Operands for the function.
-    operands: external Any<cqasm::v3x::values::Node>;
-
-    # Operands for the function.
-    return_type: external One<cqasm::v3x::types::Node>;
 }
