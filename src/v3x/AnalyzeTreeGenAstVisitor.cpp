@@ -61,12 +61,12 @@ std::any AnalyzeTreeGenAstVisitor::visit_version(ast::Version &node) {
 
 std::any AnalyzeTreeGenAstVisitor::visit_global_block(ast::GlobalBlock &node) {
     visit_block(node);
-    return std::make_tuple(analyzer_.current_block(), analyzer_.current_variables(), analyzer_.global_functions());
+    return GlobalBlockReturnT{ analyzer_.current_block(), analyzer_.current_variables(), analyzer_.global_functions() };
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_local_block(ast::LocalBlock &node) {
     visit_block(node);
-    return std::make_pair(analyzer_.current_block(), analyzer_.current_variables());
+    return LocalBlockReturnT{ analyzer_.current_block(), analyzer_.current_variables() };
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_annotated(ast::Annotated &node) {
@@ -306,8 +306,6 @@ std::any AnalyzeTreeGenAstVisitor::visit_assignment_statement(ast::AssignmentSta
         // Check assignability of the left-hand side
         if (bool assignable = lhs_value->as_reference(); !assignable) {
             throw error::AnalysisError{ "left-hand side of assignment statement must be assignable" };
-        } else {
-            ret->lhs = lhs_value;
         }
 
         // Perform assignment
@@ -348,7 +346,6 @@ void AnalyzeTreeGenAstVisitor::current_block_return_statements_promote_or_error(
  */
 types::Types types_of(const tree::Any<semantic::Variable> &variables) {
     types::Types types{};
-    std::for_each(variables.begin(), variables.end(), [&types](const auto variable) { types.add(variable->typ); });
     for (const auto &variable : variables) {
         types.add(variable->typ);
     }
@@ -370,14 +367,13 @@ std::any AnalyzeTreeGenAstVisitor::visit_function(ast::Function &node) {
         }
 
         // Parameters
-        auto [_, parameters] = std::any_cast<LocalBlockReturnT>(visit_local_block(*node.parameters));
-        ret->variables = std::move(parameters);
-        auto parameter_types = types_of(ret->variables);
+        const auto &parameters = std::any_cast<LocalBlockReturnT>(visit_local_block(*node.parameters)).second;
+        auto parameter_types = types_of(parameters);
 
         // Block
         auto [block, variables] = std::any_cast<LocalBlockReturnT>(visit_local_block(*node.block));
         ret->block = block;
-        ret->variables.extend(variables);
+        ret->variables = variables;
 
         // Return statement and return type checks
         if (current_block_has_return_statement() && node.return_type.empty()) {
@@ -404,13 +400,21 @@ std::any AnalyzeTreeGenAstVisitor::visit_function(ast::Function &node) {
     }
 
     analyzer_.pop_scope();
-
     return ret;
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_return_statement(ast::ReturnStatement &node) {
-    return tree::make<semantic::ReturnStatement>(
+    auto ret = tree::make<semantic::ReturnStatement>(
         std::any_cast<values::Value>(visit_expression(*node.return_value)));
+
+    // Copy annotation data
+    ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
+    ret->copy_annotation<parser::SourceLocation>(node);
+
+    // Add the statement to the current scope
+    analyzer_.add_statement_to_current_scope(ret);
+
+    return ret;
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_expression(ast::Expression &node) {

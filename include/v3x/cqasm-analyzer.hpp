@@ -57,11 +57,15 @@ private:
     std::list<Scope> scope_stack_;
 
     [[nodiscard]] Scope &global_scope();
-    [[nodiscard]] const Scope &global_scope() const;
     [[nodiscard]] Scope &current_scope();
     [[nodiscard]] tree::One<semantic::Block> current_block();
     [[nodiscard]] tree::Any<semantic::Variable> &current_variables();
     [[nodiscard]] tree::Any<semantic::Function> &global_functions();
+
+    [[nodiscard]] const Scope &global_scope() const;
+    [[nodiscard]] const Scope &current_scope() const;
+    [[nodiscard]] const tree::Any<semantic::Variable> &current_variables() const;
+    [[nodiscard]] const tree::Any<semantic::Function> &global_functions() const;
 
 public:
     /**

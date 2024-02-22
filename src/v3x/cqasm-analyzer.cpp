@@ -31,11 +31,15 @@ Analyzer::Analyzer(const primitives::Version &api_version)
 }
 
 [[nodiscard]] Scope &Analyzer::global_scope() { return scope_stack_.back(); }
-[[nodiscard]] const Scope &Analyzer::global_scope() const { return scope_stack_.back(); }
 [[nodiscard]] Scope &Analyzer::current_scope() { return scope_stack_.front(); }
 [[nodiscard]] tree::One<semantic::Block> Analyzer::current_block() { return current_scope().block; }
 [[nodiscard]] tree::Any<semantic::Variable> &Analyzer::current_variables() { return current_scope().variables; }
 [[nodiscard]] tree::Any<semantic::Function> &Analyzer::global_functions() { return global_scope().functions; }
+
+[[nodiscard]] const Scope &Analyzer::global_scope() const { return scope_stack_.back(); }
+[[nodiscard]] const Scope &Analyzer::current_scope() const { return scope_stack_.front(); }
+[[nodiscard]] const tree::Any<semantic::Variable> &Analyzer::current_variables() const { return current_scope().variables; }
+[[nodiscard]] const tree::Any<semantic::Function> &Analyzer::global_functions() const { return global_scope().functions; }
 
 /**
  * Registers mappings for pi, eu (aka e, 2.718...), tau and im (imaginary unit).

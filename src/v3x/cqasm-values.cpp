@@ -34,17 +34,18 @@ Value promote(const Value &value, const types::Type &type) {
     if (type->as_int()) {
         if (const auto &const_bool = value->as_const_bool()) {
             ret = tree::make<values::ConstInt>(static_cast<ConstInt>(const_bool->value));
-        } else if (const auto variable_ref = value->as_variable_ref(); variable_ref &&
-            types::type_check(variable_ref->variable->typ, tree::make<types::Bool>())) {
-            ret = value;
+        } else if (value->as_variable_ref() || value->as_function_call()) {
+            if (types::type_check(type_of(value), tree::make<types::Bool>())) {
+                ret = value;
+            }
         }
     }
     // Boolean arrays promote to integer arrays
     if (type->as_int_array()) {
         if (const auto &const_bool_array = value->as_const_bool_array()) {
             ret = promote_array_value_to_array_type<ConstBoolArray, ConstIntArray, types::Int>(const_bool_array);
-        } else if (const auto variable_ref = value->as_variable_ref(); variable_ref) {
-            if (types::type_check(variable_ref->variable->typ, tree::make<types::BoolArray>())) {
+        } else if (value->as_variable_ref() || value->as_function_call()) {
+            if (types::type_check(type_of(value), tree::make<types::BoolArray>())) {
                 ret = value;
             }
         }
@@ -56,9 +57,9 @@ Value promote(const Value &value, const types::Type &type) {
             ret = tree::make<values::ConstFloat>(static_cast<ConstFloat>(const_bool->value));
         } else if (const auto &const_int = value->as_const_int()) {
             ret = tree::make<values::ConstFloat>(static_cast<ConstFloat>(static_cast<double>(const_int->value)));
-        } else if (const auto variable_ref = value->as_variable_ref(); variable_ref) {
-            if (types::type_check(variable_ref->variable->typ, tree::make<types::Bool>()) ||
-                types::type_check(variable_ref->variable->typ, tree::make<types::Int>())) {
+        } else if (value->as_variable_ref() || value->as_function_call()) {
+            if (types::type_check(type_of(value), tree::make<types::Bool>()) ||
+                types::type_check(type_of(value), tree::make<types::Int>())) {
                 ret = value;
             }
         }
@@ -69,9 +70,9 @@ Value promote(const Value &value, const types::Type &type) {
             ret = promote_array_value_to_array_type<ConstBoolArray, ConstFloatArray, types::Float>(const_bool_array);
         } else if (const auto &const_int_array = value->as_const_int_array()) {
             ret = promote_array_value_to_array_type<ConstIntArray, ConstFloatArray, types::Float>(const_int_array);
-        } else if (const auto variable_ref = value->as_variable_ref(); variable_ref) {
-            if (types::type_check(variable_ref->variable->typ, tree::make<types::BoolArray>()) ||
-                types::type_check(variable_ref->variable->typ, tree::make<types::IntArray>())) {
+        } else if (value->as_variable_ref() || value->as_function_call()) {
+            if (types::type_check(type_of(value), tree::make<types::BoolArray>()) ||
+                types::type_check(type_of(value), tree::make<types::IntArray>())) {
                 ret = value;
             }
         }
@@ -85,10 +86,10 @@ Value promote(const Value &value, const types::Type &type) {
             ret = tree::make<values::ConstComplex>(static_cast<ConstComplex>(static_cast<double>(const_int->value)));
         } else if (const auto &const_float = value->as_const_float()) {
             ret = tree::make<values::ConstComplex>(static_cast<ConstComplex>(const_float->value));
-        } else if (const auto variable_ref = value->as_variable_ref(); variable_ref) {
-            if (types::type_check(variable_ref->variable->typ, tree::make<types::Bool>()) ||
-                types::type_check(variable_ref->variable->typ, tree::make<types::Int>()) ||
-                types::type_check(variable_ref->variable->typ, tree::make<types::Float>())) {
+        } else if (value->as_variable_ref() || value->as_function_call()) {
+            if (types::type_check(type_of(value), tree::make<types::Bool>()) ||
+                types::type_check(type_of(value), tree::make<types::Int>()) ||
+                types::type_check(type_of(value), tree::make<types::Float>())) {
                 ret = value;
             }
         }
@@ -105,11 +106,11 @@ Value promote(const Value &value, const types::Type &type) {
         } else if(const auto &const_float_array = value->as_const_float_array()) {
             assert(const_float_array->value.size() == 3);
             ret = tree::make<values::ConstFloatArray>(const_float_array->value);
-        } else if (const auto variable_ref = value->as_variable_ref(); variable_ref) {
-            if (types::type_check(variable_ref->variable->typ, tree::make<types::BoolArray>()) ||
-                types::type_check(variable_ref->variable->typ, tree::make<types::IntArray>()) ||
-                types::type_check(variable_ref->variable->typ, tree::make<types::FloatArray>())) {
-                assert(types::size_of(variable_ref->variable->typ) == 3);
+        } else if (value->as_variable_ref() || value->as_function_call()) {
+            if (types::type_check(type_of(value), tree::make<types::BoolArray>()) ||
+                types::type_check(type_of(value), tree::make<types::IntArray>()) ||
+                types::type_check(type_of(value), tree::make<types::FloatArray>())) {
+                assert(types::size_of(type_of(value)) == 3);
                 ret = value;
             }
         }
@@ -189,6 +190,11 @@ types::Type type_of(const Value &value) {
         }
     } else if (auto var = value->as_variable_ref()) {
         return var->variable->typ;
+    } else if (auto function_ref_ptr = value->as_function_ref()) {
+        return function_ref_ptr->function->return_type;
+    } else if (auto function_call = value->as_function_call()) {
+        auto function_ref = function_call->function;
+        return function_ref->function->return_type;
     } else {
         throw std::runtime_error("unknown type!");
     }
@@ -223,6 +229,17 @@ primitives::Int size_of(const Value &value) {
         return static_cast<primitives::Int>(index->indices.size());
     } else if (auto var = value->as_variable_ref()) {
         return types::size_of(var->variable->typ);
+    } else if (auto function_ref_ptr = value->as_function_ref()) {
+        auto return_type = function_ref_ptr->function->return_type;
+        return !return_type.empty()
+            ? types::size_of(return_type)
+            : primitives::Int{ 0 };
+    } else if (auto function_call = value->as_function_call()) {
+        auto function_ref = function_call->function;
+        auto return_type = function_ref->function->return_type;
+        return !return_type.empty()
+            ? types::size_of(return_type)
+            : primitives::Int{ 0 };
     } else {
         throw std::runtime_error("unknown type!");
     }
