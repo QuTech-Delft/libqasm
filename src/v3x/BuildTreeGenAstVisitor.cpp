@@ -196,6 +196,14 @@ std::any BuildTreeGenAstVisitor::visitMeasureInstruction(CqasmParser::MeasureIns
     return One<Statement>{ ret };
 }
 
+std::any BuildTreeGenAstVisitor::visitAssignmentStatement(CqasmParser::AssignmentStatementContext *context) {
+    auto ret = tree::make<AssignmentStatement>();
+    ret->lhs = std::any_cast<One<Expression>>(context->expression(0)->accept(this));
+    ret->rhs = std::any_cast<One<Expression>>(context->expression(1)->accept(this));
+    setNodeAnnotation(ret, context->EQUALS()->getSymbol());
+    return One<Statement>{ ret };
+}
+
 std::any BuildTreeGenAstVisitor::visitReturnStatement(CqasmParser::ReturnStatementContext *context) {
     auto ret = tree::make<ReturnStatement>();
     ret->return_value = std::any_cast<One<Expression>>(context->expression()->accept(this));

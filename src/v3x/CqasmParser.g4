@@ -27,6 +27,7 @@ globalBlockStatement:
 localBlockStatement:
     variableDeclaration
     | instruction
+    | assignmentStatement
     | returnStatement
     ;
 
@@ -107,5 +108,7 @@ expression:
     | INTEGER_LITERAL  # integerLiteral
     | FLOAT_LITERAL  # floatLiteral
     ;
+
+assignmentStatement: expression EQUALS expression;
 
 returnStatement: RETURN expression;

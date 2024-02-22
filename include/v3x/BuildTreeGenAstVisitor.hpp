@@ -77,6 +77,7 @@ public:
     std::any visitVariableInitialization(CqasmParser::VariableInitializationContext *context) override;
     std::any visitGate(CqasmParser::GateContext *context) override;
     std::any visitMeasureInstruction(CqasmParser::MeasureInstructionContext *context) override;
+    std::any visitAssignmentStatement(CqasmParser::AssignmentStatementContext *context) override;
     std::any visitReturnStatement(CqasmParser::ReturnStatementContext *context) override;
     std::any visitFunctionDeclaration(CqasmParser::FunctionDeclarationContext *context) override;
     std::any visitParameters(CqasmParser::ParametersContext *context) override;
