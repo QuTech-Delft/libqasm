@@ -202,27 +202,21 @@ annotated {
                 lhs: One<expression>;
                 rhs: One<expression>;
             }
+
+            return_statement {
+                return_value: One<expression>;
+            }
         }
 
-        return_statement {
-            return_value: One<expression>;
-        }
-
+        # Parameters will actually be a list of variables
+        # But that is already enforced at the grammar level
         function {
             name: One<identifier>;
-            parameters: One<variable_list>;
+            parameters: One<local_block>;
             return_type: Maybe<type>;
             block: One<local_block>;
         }
     }
-}
-
-variable_list {
-    items: Any<variable>;
-}
-
-statement_list {
-    items: Any<statement>;
 }
 
 version {

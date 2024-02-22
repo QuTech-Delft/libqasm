@@ -44,7 +44,6 @@ public:
     std::any visit_measure_instruction(ast::MeasureInstruction &node) override;
     std::any visit_gate(ast::Gate &node) override;
     std::any visit_function(ast::Function &node) override;
-    std::any visit_variable_list(ast::VariableList &node) override;
     std::any visit_return_statement(ast::ReturnStatement &node) override;
     std::any visit_expression(ast::Expression &node) override;
     std::any visit_unary_minus_expression(ast::UnaryMinusExpression &node) override;

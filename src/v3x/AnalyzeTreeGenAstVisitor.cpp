@@ -65,11 +65,8 @@ std::any AnalyzeTreeGenAstVisitor::visit_global_block(ast::GlobalBlock &node) {
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_local_block(ast::LocalBlock &node) {
-    analyzer_.push_scope();
     visit_block(node);
-    auto ret = std::make_pair(analyzer_.current_block(), analyzer_.current_variables());
-    analyzer_.pop_scope();
-    return ret;
+    return std::make_pair(analyzer_.current_block(), analyzer_.current_variables());
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_annotated(ast::Annotated &node) {
@@ -361,6 +358,8 @@ types::Types types_of(const tree::Any<semantic::Variable> &variables) {
 std::any AnalyzeTreeGenAstVisitor::visit_function(ast::Function &node) {
     auto ret = tree::make<semantic::Function>();
     try {
+        analyzer_.push_scope();
+
         // Name
         const auto identifier = node.name;
         ret->name = identifier->name;
@@ -371,7 +370,8 @@ std::any AnalyzeTreeGenAstVisitor::visit_function(ast::Function &node) {
         }
 
         // Parameters
-        ret->variables = std::any_cast<const tree::Any<semantic::Variable> &>(visit_variable_list(*node.parameters));
+        auto [_, parameters] = std::any_cast<LocalBlockReturnT>(visit_local_block(*node.parameters));
+        ret->variables = std::move(parameters);
         auto parameter_types = types_of(ret->variables);
 
         // Block
@@ -402,19 +402,10 @@ std::any AnalyzeTreeGenAstVisitor::visit_function(ast::Function &node) {
         result_.errors.push_back(std::move(err));
         ret.reset();
     }
-    return ret;
-}
 
-std::any AnalyzeTreeGenAstVisitor::visit_variable_list(ast::VariableList &node) {
-    for (const auto &variable_ast : node.items) {
-        try {
-            variable_ast->visit(*this);
-        } catch (error::AnalysisError &err) {
-            err.context(node);
-            result_.errors.push_back(std::move(err));
-        }
-    }
-    return {};
+    analyzer_.pop_scope();
+
+    return ret;
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_return_statement(ast::ReturnStatement &node) {

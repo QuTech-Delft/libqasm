@@ -37,7 +37,7 @@ variableDeclaration:
     ;
 
 functionDeclaration: FUNCTION IDENTIFIER OPEN_PARENS parameters? CLOSE_PARENS (ARROW type)?
-    OPEN_BRACE localBlock? CLOSE_BRACE;
+    OPEN_BRACE localBlock? statementSeparator* CLOSE_BRACE;
 
 parameters: variableDefinition (statementSeparator* COMMA statementSeparator* variableDefinition)*;
 

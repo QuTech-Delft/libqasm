@@ -154,9 +154,14 @@ std::any BuildTreeGenAstVisitor::visitGlobalBlockStatement(CqasmParser::GlobalBl
 std::any BuildTreeGenAstVisitor::visitLocalBlockStatement(CqasmParser::LocalBlockStatementContext *context) {
     if (auto variable_declaration_ctx = context->variableDeclaration(); variable_declaration_ctx) {
         return variable_declaration_ctx->accept(this);
+    } else if (auto instruction_ctx = context->instruction(); instruction_ctx) {
+        return instruction_ctx->accept(this);
+    } else if (auto assignment_statement_ctx = context->assignmentStatement(); assignment_statement_ctx) {
+        return assignment_statement_ctx->accept(this);
+    } else if (auto return_statement_ctx = context->returnStatement(); return_statement_ctx) {
+        return return_statement_ctx->accept(this);
     }
-    assert(context->instruction());
-    return context->instruction()->accept(this);
+    throw error::AnalysisError{ "unknown local block statement type" };
 }
 
 std::any BuildTreeGenAstVisitor::visitVariableDeclaration(CqasmParser::VariableDeclarationContext *context) {
@@ -214,7 +219,9 @@ std::any BuildTreeGenAstVisitor::visitReturnStatement(CqasmParser::ReturnStateme
 std::any BuildTreeGenAstVisitor::visitFunctionDeclaration(CqasmParser::FunctionDeclarationContext *context) {
     auto ret = tree::make<Function>();
     ret->name = tree::make<Identifier>(context->IDENTIFIER()->getText());
-    ret->parameters = std::any_cast<One<VariableList>>(context->parameters()->accept(this));
+    ret->parameters = context->parameters()
+        ? std::any_cast<One<LocalBlock>>(context->parameters()->accept(this))
+        : tree::make<LocalBlock>();
     ret->return_type = context->type()
         ? tree::Maybe<Type>{ std::any_cast<One<Type>>(context->type()->accept(this)).get_ptr() }
         : tree::Maybe<Type>{};
@@ -226,11 +233,11 @@ std::any BuildTreeGenAstVisitor::visitFunctionDeclaration(CqasmParser::FunctionD
 }
 
 std::any BuildTreeGenAstVisitor::visitParameters(CqasmParser::ParametersContext *context) {
-    auto ret = tree::make<VariableList>();
+    auto ret = tree::make<LocalBlock>();
     const auto &variable_definitions = context->variableDefinition();
     std::for_each(variable_definitions.begin(), variable_definitions.end(),
         [this, &ret](const auto &variable_definition_ctx) {
-            ret->items.add(std::any_cast<One<Variable>>(variable_definition_ctx->accept(this)));
+            ret->statements.add(std::any_cast<One<Statement>>(variable_definition_ctx->accept(this)));
     });
     return ret;
 }
