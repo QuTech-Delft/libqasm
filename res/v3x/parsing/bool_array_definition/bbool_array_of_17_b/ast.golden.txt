@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:3:10..11: no viable alternative at input 'Bool[17]b'
+Error at input.cq:3:10..11: extraneous input 'b' expecting {<EOF>, NEW_LINE, ';'}

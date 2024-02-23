@@ -42,12 +42,14 @@ SourceLocation::SourceLocation(
 void SourceLocation::expand_to_include(std::uint32_t line, std::uint32_t column) {
     if (line < first_line) {
         first_line = line;
-    } else if (line == first_line && column < first_column) {
+    }
+    if (line == first_line && column < first_column) {
         first_column = column;
     }
     if (line > last_line) {
         last_line = line;
-    } else if (line == last_line && column > last_column) {
+    }
+    if (line == last_line && column > last_column) {
         last_column = column;
     }
 }

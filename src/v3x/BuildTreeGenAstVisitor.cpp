@@ -160,6 +160,8 @@ std::any BuildTreeGenAstVisitor::visitLocalBlockStatement(CqasmParser::LocalBloc
         return assignment_statement_ctx->accept(this);
     } else if (auto return_statement_ctx = context->returnStatement(); return_statement_ctx) {
         return return_statement_ctx->accept(this);
+    } else if (auto expression_statement_ctx = context->expressionStatement(); expression_statement_ctx) {
+        return expression_statement_ctx->accept(this);
     }
     throw error::AnalysisError{ "unknown local block statement type" };
 }
@@ -181,38 +183,6 @@ std::any BuildTreeGenAstVisitor::visitVariableInitialization(CqasmParser::Variab
     ret->var = visitClassicalVariable(context);
     ret->rhs = std::any_cast<One<Expression>>(context->expression()->accept(this));
     setNodeAnnotation(ret, context->EQUALS()->getSymbol());
-    return One<Statement>{ ret };
-}
-
-std::any BuildTreeGenAstVisitor::visitGate(CqasmParser::GateContext *context) {
-    auto ret = tree::make<Gate>();
-    ret->name = tree::make<Identifier>(context->IDENTIFIER()->getText());
-    ret->operands = std::any_cast<One<ExpressionList>>(visitExpressionList(context->expressionList()));
-    setNodeAnnotation(ret, context->IDENTIFIER()->getSymbol());
-    return One<Statement>{ ret };
-}
-
-std::any BuildTreeGenAstVisitor::visitMeasureInstruction(CqasmParser::MeasureInstructionContext *context) {
-    auto ret = tree::make<MeasureInstruction>();
-    ret->name = tree::make<Identifier>(context->MEASURE()->getText());
-    ret->lhs = std::any_cast<One<Expression>>(context->expression(0)->accept(this));
-    ret->rhs = std::any_cast<One<Expression>>(context->expression(1)->accept(this));
-    setNodeAnnotation(ret, context->MEASURE()->getSymbol());
-    return One<Statement>{ ret };
-}
-
-std::any BuildTreeGenAstVisitor::visitAssignmentStatement(CqasmParser::AssignmentStatementContext *context) {
-    auto ret = tree::make<AssignmentStatement>();
-    ret->lhs = std::any_cast<One<Expression>>(context->expression(0)->accept(this));
-    ret->rhs = std::any_cast<One<Expression>>(context->expression(1)->accept(this));
-    setNodeAnnotation(ret, context->EQUALS()->getSymbol());
-    return One<Statement>{ ret };
-}
-
-std::any BuildTreeGenAstVisitor::visitReturnStatement(CqasmParser::ReturnStatementContext *context) {
-    auto ret = tree::make<ReturnStatement>();
-    ret->return_value = std::any_cast<One<Expression>>(context->expression()->accept(this));
-    setNodeAnnotation(ret, context->RETURN()->getSymbol());
     return One<Statement>{ ret };
 }
 
@@ -240,6 +210,45 @@ std::any BuildTreeGenAstVisitor::visitParameters(CqasmParser::ParametersContext 
             ret->statements.add(std::any_cast<One<Statement>>(variable_definition_ctx->accept(this)));
     });
     return ret;
+}
+
+std::any BuildTreeGenAstVisitor::visitAssignmentStatement(CqasmParser::AssignmentStatementContext *context) {
+    auto ret = tree::make<AssignmentStatement>();
+    ret->lhs = std::any_cast<One<Expression>>(context->expression(0)->accept(this));
+    ret->rhs = std::any_cast<One<Expression>>(context->expression(1)->accept(this));
+    setNodeAnnotation(ret, context->EQUALS()->getSymbol());
+    return One<Statement>{ ret };
+}
+
+std::any BuildTreeGenAstVisitor::visitReturnStatement(CqasmParser::ReturnStatementContext *context) {
+    auto ret = tree::make<ReturnStatement>();
+    ret->return_value = std::any_cast<One<Expression>>(context->expression()->accept(this));
+    setNodeAnnotation(ret, context->RETURN()->getSymbol());
+    return One<Statement>{ ret };
+}
+
+std::any BuildTreeGenAstVisitor::visitExpressionStatement(CqasmParser::ExpressionStatementContext *context) {
+    auto ret = tree::make<ExpressionStatement>();
+    ret->expression = std::any_cast<One<Expression>>(context->expression()->accept(this));
+    // Expression statements get the source location information from their expressions
+    return One<Statement>{ ret };
+}
+
+std::any BuildTreeGenAstVisitor::visitGate(CqasmParser::GateContext *context) {
+    auto ret = tree::make<Gate>();
+    ret->name = tree::make<Identifier>(context->IDENTIFIER()->getText());
+    ret->operands = std::any_cast<One<ExpressionList>>(visitExpressionList(context->expressionList()));
+    setNodeAnnotation(ret, context->IDENTIFIER()->getSymbol());
+    return One<Statement>{ ret };
+}
+
+std::any BuildTreeGenAstVisitor::visitMeasureInstruction(CqasmParser::MeasureInstructionContext *context) {
+    auto ret = tree::make<MeasureInstruction>();
+    ret->name = tree::make<Identifier>(context->MEASURE()->getText());
+    ret->lhs = std::any_cast<One<Expression>>(context->expression(0)->accept(this));
+    ret->rhs = std::any_cast<One<Expression>>(context->expression(1)->accept(this));
+    setNodeAnnotation(ret, context->MEASURE()->getSymbol());
+    return One<Statement>{ ret };
 }
 
 std::any BuildTreeGenAstVisitor::visitType(CqasmParser::TypeContext *context) {
@@ -462,7 +471,9 @@ std::any BuildTreeGenAstVisitor::visitTernaryConditionalExpression(CqasmParser::
 std::any BuildTreeGenAstVisitor::visitFunctionCall(CqasmParser::FunctionCallContext *context) {
     auto ret = tree::make<FunctionCall>();
     ret->name = tree::make<Identifier>(context->IDENTIFIER()->getText());
-    ret->arguments = std::any_cast<One<ExpressionList>>(context->expressionList()->accept(this));
+    ret->arguments = context->expressionList()
+        ? Maybe<ExpressionList>{ std::any_cast<One<ExpressionList>>(context->expressionList()->accept(this)).get_ptr() }
+        : Maybe<ExpressionList>{};
     setNodeAnnotation(ret, context->IDENTIFIER()->getSymbol());
     return One<Expression>{ ret };
 }

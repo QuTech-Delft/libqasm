@@ -24,16 +24,32 @@ globalBlockStatement:
     | functionDeclaration
     ;
 
+// Current implementation of the semantic parser will only allow function call expressions as expression statements
+// Notice expression statements are checked for before instructions
+// This way, code like h(q[0]) is parsed as a function call to a function h with a q[0] parameter
+// And not like a gate h with a (q[0]) expression
 localBlockStatement:
     variableDeclaration
-    | instruction
     | assignmentStatement
     | returnStatement
+    | expressionStatement
+    | instruction
     ;
 
 variableDeclaration:
     variableDefinition
     | variableInitialization
+    ;
+
+assignmentStatement: expression EQUALS expression;
+
+returnStatement: RETURN expression;
+
+expressionStatement: expression;
+
+instruction:
+    expression EQUALS MEASURE expression  # measureInstruction
+    | IDENTIFIER expressionList  # gate
     ;
 
 functionDeclaration: FUNCTION IDENTIFIER OPEN_PARENS parameters? CLOSE_PARENS (ARROW type)?
@@ -60,11 +76,6 @@ localBlock: (statementSeparator+ localBlockStatement)+;
 variableDefinition: type IDENTIFIER;
 
 variableInitialization: classicalType IDENTIFIER EQUALS expression;
-
-instruction:
-    expression EQUALS MEASURE expression  # measureInstruction
-    | IDENTIFIER expressionList  # gate
-    ;
 
 arraySizeDeclaration: OPEN_BRACKET INTEGER_LITERAL CLOSE_BRACKET;
 
@@ -108,7 +119,3 @@ expression:
     | INTEGER_LITERAL  # integerLiteral
     | FLOAT_LITERAL  # floatLiteral
     ;
-
-assignmentStatement: expression EQUALS expression;
-
-returnStatement: RETURN expression;

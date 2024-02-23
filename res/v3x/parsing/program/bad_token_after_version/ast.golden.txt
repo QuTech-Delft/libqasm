@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:3:4..7: no viable alternative at input '123abc'
+Error at input.cq:3:4..7: extraneous input 'abc' expecting {<EOF>, NEW_LINE, ';'}

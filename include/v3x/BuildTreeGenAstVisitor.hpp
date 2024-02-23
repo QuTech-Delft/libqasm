@@ -75,12 +75,13 @@ public:
     std::any visitVariableDeclaration(CqasmParser::VariableDeclarationContext *context) override;
     std::any visitVariableDefinition(CqasmParser::VariableDefinitionContext *context) override;
     std::any visitVariableInitialization(CqasmParser::VariableInitializationContext *context) override;
-    std::any visitGate(CqasmParser::GateContext *context) override;
-    std::any visitMeasureInstruction(CqasmParser::MeasureInstructionContext *context) override;
-    std::any visitAssignmentStatement(CqasmParser::AssignmentStatementContext *context) override;
-    std::any visitReturnStatement(CqasmParser::ReturnStatementContext *context) override;
     std::any visitFunctionDeclaration(CqasmParser::FunctionDeclarationContext *context) override;
     std::any visitParameters(CqasmParser::ParametersContext *context) override;
+    std::any visitAssignmentStatement(CqasmParser::AssignmentStatementContext *context) override;
+    std::any visitReturnStatement(CqasmParser::ReturnStatementContext *context) override;
+    std::any visitExpressionStatement(CqasmParser::ExpressionStatementContext *context) override;
+    std::any visitGate(CqasmParser::GateContext *context) override;
+    std::any visitMeasureInstruction(CqasmParser::MeasureInstructionContext *context) override;
     std::any visitType(CqasmParser::TypeContext *context) override;
     std::any visitQubitType(CqasmParser::QubitTypeContext *context) override;
     std::any visitBitType(CqasmParser::BitTypeContext *context) override;

@@ -75,7 +75,7 @@ expression {
 
     function_call {
         name: One<identifier>;
-        arguments: One<expression_list>;
+        arguments: Maybe<expression_list>;
     }
 
     unary_expression {
@@ -205,6 +205,10 @@ annotated {
 
             return_statement {
                 return_value: One<expression>;
+            }
+
+            expression_statement {
+                expression: One<expression>;
             }
         }
 

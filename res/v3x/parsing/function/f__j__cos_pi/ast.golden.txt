@@ -69,16 +69,16 @@ Program(
           block: <
             LocalBlock(
               statements: [
-                ReturnStatement( # input.cq:8:5..11
+                ReturnStatement( # input.cq:11:5..11
                   return_value: <
-                    ProductExpression( # input.cq:8:14..15
+                    ProductExpression( # input.cq:11:14..15
                       lhs: <
-                        IntegerLiteral( # input.cq:8:12..13
+                        IntegerLiteral( # input.cq:11:12..13
                           value: 2
                         )
                       >
                       rhs: <
-                        IntegerLiteral( # input.cq:8:16..17
+                        FloatLiteral( # input.cq:11:16..19
                           value: 3
                         )
                       >
@@ -91,16 +91,16 @@ Program(
           >
           annotations: []
         )
-        Initialization( # input.cq:11:7..8
+        Initialization( # input.cq:14:7..8
           var: <
-            Variable( # input.cq:11:5..6
+            Variable( # input.cq:14:5..6
               name: <
                 Identifier(
                   name: i
                 )
               >
               typ: <
-                Type( # input.cq:11:1..4
+                Type( # input.cq:14:1..4
                   name: <
                     Keyword(
                       name: int
@@ -113,22 +113,22 @@ Program(
             )
           >
           rhs: <
-            IntegerLiteral( # input.cq:11:9..10
+            IntegerLiteral( # input.cq:14:9..10
               value: 3
             )
           >
           annotations: []
         )
-        Initialization( # input.cq:12:7..8
+        Initialization( # input.cq:15:7..8
           var: <
-            Variable( # input.cq:12:5..6
+            Variable( # input.cq:15:5..6
               name: <
                 Identifier(
                   name: j
                 )
               >
               typ: <
-                Type( # input.cq:12:1..4
+                Type( # input.cq:15:1..4
                   name: <
                     Keyword(
                       name: int
@@ -141,35 +141,35 @@ Program(
             )
           >
           rhs: <
-            Identifier( # input.cq:12:9..10
+            Identifier( # input.cq:15:9..10
               name: i
             )
           >
           annotations: []
         )
-        AssignmentStatement( # input.cq:15:3..4
+        AssignmentStatement( # input.cq:18:3..4
           lhs: <
-            Identifier( # input.cq:15:1..2
+            Identifier( # input.cq:18:1..2
               name: i
             )
           >
           rhs: <
-            IntegerLiteral( # input.cq:15:5..6
+            IntegerLiteral( # input.cq:18:5..6
               value: 5
             )
           >
           annotations: []
         )
-        Initialization( # input.cq:21:9..10
+        Initialization( # input.cq:24:9..10
           var: <
-            Variable( # input.cq:21:7..8
+            Variable( # input.cq:24:7..8
               name: <
                 Identifier(
                   name: f
                 )
               >
               typ: <
-                Type( # input.cq:21:1..6
+                Type( # input.cq:24:1..6
                   name: <
                     Keyword(
                       name: float
@@ -182,7 +182,7 @@ Program(
             )
           >
           rhs: <
-            FunctionCall( # input.cq:21:11..12
+            FunctionCall( # input.cq:24:11..12
               name: <
                 Identifier(
                   name: f
@@ -191,10 +191,10 @@ Program(
               arguments: <
                 ExpressionList(
                   items: [
-                    Identifier( # input.cq:21:13..14
+                    Identifier( # input.cq:24:13..14
                       name: j
                     )
-                    FunctionCall( # input.cq:21:16..19
+                    FunctionCall( # input.cq:24:16..19
                       name: <
                         Identifier(
                           name: cos
@@ -203,7 +203,7 @@ Program(
                       arguments: <
                         ExpressionList(
                           items: [
-                            Identifier( # input.cq:21:20..22
+                            Identifier( # input.cq:24:20..22
                               name: pi
                             )
                           ]

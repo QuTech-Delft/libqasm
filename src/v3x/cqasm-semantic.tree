@@ -64,8 +64,7 @@ annotated {
         }
 
         function_call_statement {
-            name: cqasm::v3x::primitives::Str;
-            arguments: external Any<cqasm::v3x::values::ValueBase>;
+            return_value: external Maybe<cqasm::v3x::values::ValueBase>;
         }
     }
 

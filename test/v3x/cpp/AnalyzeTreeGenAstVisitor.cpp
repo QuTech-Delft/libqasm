@@ -17,11 +17,11 @@ class VisitFunctionCallTest : public ::testing::Test {
 protected:
     void SetUp() override {}
     void ExpectAnalyzerCallFunctionCall(const values::Value &function_return_value) {
-        EXPECT_CALL(analyzer, call_function(::testing::_, ::testing::_))
+        EXPECT_CALL(analyzer, resolve_function(::testing::_, ::testing::_))
             .WillOnce(::testing::Return(function_return_value));
     }
     void ExpectAnalyzerCallFunctionThrow(const std::string& error_message) {
-        EXPECT_CALL(analyzer, call_function(::testing::_, ::testing::_))
+        EXPECT_CALL(analyzer, resolve_function(::testing::_, ::testing::_))
             .WillRepeatedly(::testing::Throw(std::runtime_error{ error_message.c_str() }));
     }
     analyzer::MockAnalyzer analyzer;

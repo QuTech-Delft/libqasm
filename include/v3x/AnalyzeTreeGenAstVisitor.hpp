@@ -40,11 +40,12 @@ public:
     std::any visit_local_block(ast::LocalBlock &node) override;
     std::any visit_variable(ast::Variable &node) override;
     std::any visit_initialization(ast::Initialization &node) override;
-    std::any visit_assignment_statement(ast::AssignmentStatement &node) override;
-    std::any visit_measure_instruction(ast::MeasureInstruction &node) override;
-    std::any visit_gate(ast::Gate &node) override;
     std::any visit_function(ast::Function &node) override;
+    std::any visit_assignment_statement(ast::AssignmentStatement &node) override;
     std::any visit_return_statement(ast::ReturnStatement &node) override;
+    std::any visit_expression_statement(ast::ExpressionStatement &node) override;
+    std::any visit_gate(ast::Gate &node) override;
+    std::any visit_measure_instruction(ast::MeasureInstruction &node) override;
     std::any visit_expression(ast::Expression &node) override;
     std::any visit_unary_minus_expression(ast::UnaryMinusExpression &node) override;
     std::any visit_bitwise_not_expression(ast::BitwiseNotExpression &node) override;
@@ -173,7 +174,7 @@ private:
      */
     values::Value visit_function_call(
         const tree::One<ast::Identifier> &name,
-        const tree::One<ast::ExpressionList> &arguments);
+        const tree::Maybe<ast::ExpressionList> &arguments);
 
     /**
      * Convenience function for visiting unary operators

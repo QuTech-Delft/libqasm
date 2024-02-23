@@ -1,0 +1,55 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  block: <
+    Block(
+      statements: [
+        FunctionCallStatement(
+          return_value: <
+            FunctionCall(
+              function: <
+                FunctionRef(
+                  function --> <
+                    Function(
+                      name: f
+                      return_type: -
+                      block: <
+                        Block(
+                          statements: []
+                        )
+                      >
+                      variables: []
+                      annotations: []
+                    )
+                  >
+                )
+              >
+              arguments: []
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+  functions: [
+    Function(
+      name: f
+      return_type: -
+      block: <
+        Block(
+          statements: []
+        )
+      >
+      variables: []
+      annotations: []
+    )
+  ]
+  variables: []
+)
+

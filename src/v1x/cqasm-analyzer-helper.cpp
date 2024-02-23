@@ -1106,7 +1106,7 @@ tree::Maybe<semantic::WhileLoop> AnalyzerHelper::analyze_while_loop(
     node->body = analyze_subblock(*while_loop.body, true);
 
     // If the condition is constant false, optimize away.
-    if (auto cond = node->condition->as_const_bool(); !cond->value) {
+    if (auto cond = node->condition->as_const_bool(); cond && !cond->value) {
         return {};
     }
 
