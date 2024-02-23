@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:4:7..10: failed to resolve mapping 'TAU'
+Error at input.cq:4:7..10: failed to resolve variable 'TAU'

@@ -1,2 +1,28 @@
-ERROR
-Error at input.cq:3:7..11: missing 'measure' at 'true'
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  block: <
+    GlobalBlock(
+      statements: [
+        AssignmentStatement( # input.cq:3:5..6
+          lhs: <
+            FloatLiteral( # input.cq:3:1..4
+              value: 1
+            )
+          >
+          rhs: <
+            BooleanLiteral( # input.cq:3:7..11
+              value: 1
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

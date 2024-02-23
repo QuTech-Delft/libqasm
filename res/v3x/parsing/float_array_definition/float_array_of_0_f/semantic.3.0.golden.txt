@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:3:10..11: declaring float array of size <= 0
+Error at input.cq:3:10..11: found float array of size <= 0

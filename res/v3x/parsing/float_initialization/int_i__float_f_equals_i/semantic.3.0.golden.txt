@@ -6,46 +6,46 @@ Program(
       items: 3
     )
   >
-  statements: [
-    AssignmentInstruction(
-      lhs: <
-        VariableRef(
-          variable --> <
-            Variable(
-              name: f
-              typ: <
-                Float(
-                  size: 1
+  block: <
+    Block(
+      statements: [
+        AssignmentStatement(
+          lhs: <
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: f
+                  typ: <
+                    Float(
+                      size: 1
+                    )
+                  >
+                  annotations: []
                 )
               >
-              annotations: []
             )
           >
-        )
-      >
-      rhs: <
-        VariableRef(
-          variable --> <
-            Variable(
-              name: i
-              typ: <
-                Int(
-                  size: 1
+          rhs: <
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: i
+                  typ: <
+                    Int(
+                      size: 1
+                    )
+                  >
+                  annotations: []
                 )
               >
-              annotations: []
             )
           >
+          annotations: []
         )
-      >
-      condition: <
-        ConstBool(
-          value: 1
-        )
-      >
-      annotations: []
+      ]
     )
-  ]
+  >
+  functions: []
   variables: [
     Variable(
       name: i

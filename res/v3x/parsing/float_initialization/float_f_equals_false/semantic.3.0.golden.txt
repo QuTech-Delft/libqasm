@@ -6,36 +6,36 @@ Program(
       items: 3
     )
   >
-  statements: [
-    AssignmentInstruction(
-      lhs: <
-        VariableRef(
-          variable --> <
-            Variable(
-              name: f
-              typ: <
-                Float(
-                  size: 1
+  block: <
+    Block(
+      statements: [
+        AssignmentStatement(
+          lhs: <
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: f
+                  typ: <
+                    Float(
+                      size: 1
+                    )
+                  >
+                  annotations: []
                 )
               >
-              annotations: []
             )
           >
+          rhs: <
+            ConstFloat(
+              value: 0
+            )
+          >
+          annotations: []
         )
-      >
-      rhs: <
-        ConstFloat(
-          value: 0
-        )
-      >
-      condition: <
-        ConstBool(
-          value: 1
-        )
-      >
-      annotations: []
+      ]
     )
-  ]
+  >
+  functions: []
   variables: [
     Variable(
       name: f

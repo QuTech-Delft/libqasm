@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:3:11..12: mismatched input 'f' expecting '='
+Error at input.cq:3:11..12: no viable alternative at input 'Float[17]f'

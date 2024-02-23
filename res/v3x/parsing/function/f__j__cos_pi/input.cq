@@ -5,7 +5,10 @@ version 3
 // Parameter f is called like function f
 // i should have a value of 3 at this point
 def f(int i, float f) -> float {
-    return 2 * 3
+    // TODO: this test requires that the product arithmetic operator works on variables
+    // return i * f
+    // So, at the moment, just work on constant values
+    return 2 * 3.0
 }
 
 int i = 3

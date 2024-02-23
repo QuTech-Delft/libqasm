@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:3:8..9: declaring bit array of size <= 0
+Error at input.cq:3:8..9: found bit array of size <= 0

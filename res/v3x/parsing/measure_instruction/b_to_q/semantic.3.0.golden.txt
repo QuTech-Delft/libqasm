@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:6:5..12: failed to resolve overload for 'measure' with argument pack (qubit, bit)
+Error at input.cq:6:5..12: failed to resolve 'measure' with argument pack (qubit, bit)

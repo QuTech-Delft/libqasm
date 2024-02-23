@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:3:9..10: declaring bool array of size <= 0
+Error at input.cq:3:9..10: found bool array of size <= 0

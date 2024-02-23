@@ -6,63 +6,63 @@ Program(
       items: 3
     )
   >
-  statements: [
-    Instruction(
-      instruction: measure(bit array, qubit array)
-      name: measure
-      operands: [
-        IndexRef(
-          variable --> <
-            Variable(
-              name: b
-              typ: <
-                BitArray(
-                  size: 9
+  block: <
+    Block(
+      statements: [
+        Instruction(
+          instruction: measure(bit array, qubit array)
+          name: measure
+          operands: [
+            IndexRef(
+              variable --> <
+                Variable(
+                  name: b
+                  typ: <
+                    BitArray(
+                      size: 9
+                    )
+                  >
+                  annotations: []
                 )
               >
-              annotations: []
+              indices: [
+                ConstInt(
+                  value: 2
+                )
+                ConstInt(
+                  value: 3
+                )
+                ConstInt(
+                  value: 4
+                )
+                ConstInt(
+                  value: 5
+                )
+                ConstInt(
+                  value: 6
+                )
+              ]
             )
-          >
-          indices: [
-            ConstInt(
-              value: 2
-            )
-            ConstInt(
-              value: 3
-            )
-            ConstInt(
-              value: 4
-            )
-            ConstInt(
-              value: 5
-            )
-            ConstInt(
-              value: 6
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: q
+                  typ: <
+                    QubitArray(
+                      size: 5
+                    )
+                  >
+                  annotations: []
+                )
+              >
             )
           ]
-        )
-        VariableRef(
-          variable --> <
-            Variable(
-              name: q
-              typ: <
-                QubitArray(
-                  size: 5
-                )
-              >
-              annotations: []
-            )
-          >
+          annotations: []
         )
       ]
-      condition: <
-        ConstBool(
-          value: 1
-        )
-      >
-      annotations: []
     )
-  ]
+  >
+  functions: []
   variables: [
     Variable(
       name: q

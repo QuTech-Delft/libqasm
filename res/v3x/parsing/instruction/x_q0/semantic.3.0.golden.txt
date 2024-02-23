@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:3:3..4: failed to resolve mapping 'q'
+Error at input.cq:3:3..4: failed to resolve variable 'q'

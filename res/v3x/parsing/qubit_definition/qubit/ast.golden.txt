@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:3:6..7: mismatched input '\n' expecting {'[', IDENTIFIER}
+Error at input.cq:3:6..7: missing IDENTIFIER at '\n'
