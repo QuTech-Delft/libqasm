@@ -53,7 +53,7 @@ public:
      */
     primitives::Version api_version;
 
-private:
+protected:
     std::list<Scope> scope_stack_;
 
     [[nodiscard]] Scope &global_scope();

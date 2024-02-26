@@ -105,7 +105,7 @@ public:
 using FunctionImpl = std::function<values::Value(const values::Values&)>;
 
 /**
- * Table of all overloads of all constant propagation functions.
+ * Table of all overloads of all functions for which we have a C++ implementation.
  */
 class FunctionImplTable {
     std::unique_ptr<OverloadedNameResolver<FunctionImpl>> resolver;
@@ -147,7 +147,7 @@ public:
 //---------------//
 
 /**
- * Table of all overloads of all constant propagation functions.
+ * Table of all overloads of all functions defined in the cQASM file.
  */
 class FunctionTable {
     std::unique_ptr<OverloadedNameResolver<values::Value>> resolver;

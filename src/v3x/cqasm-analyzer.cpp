@@ -61,7 +61,7 @@ void Analyzer::register_default_mappings() {
  * Registers a number of default functions, such as the operator functions, and the usual trigonometric functions.
  */
 void Analyzer::register_default_functions() {
-    functions::register_default_functions_into(global_scope().function_impl_table);
+    functions::register_default_function_impls_into(global_scope().function_impl_table);
 }
 
 /**
@@ -88,9 +88,8 @@ AnalysisResult Analyzer::analyze(parser::ParseResult &&parse_result) {
         AnalysisResult result;
         result.errors = std::move(parse_result.errors);
         return result;
-    } else {
-        return analyze(*parse_result.root->as_program());
     }
+    return analyze(*parse_result.root->as_program());
 }
 
 /**
@@ -162,12 +161,12 @@ void Analyzer::add_statement_to_current_scope(const tree::One<semantic::Statemen
     current_block()->statements.add(statement);
 
     // Expand the source location annotation of the block to include the statement
-    if (auto statement_loc = statement->get_annotation_ptr<parser::SourceLocation>()) {
-        if (auto block_loc = current_block()->get_annotation_ptr<parser::SourceLocation>()) {
-            block_loc->expand_to_include(statement_loc->first_line, statement_loc->first_column);
-            block_loc->expand_to_include(statement_loc->last_line, statement_loc->last_column);
+    if (auto statement_sl = statement->get_annotation_ptr<parser::SourceLocation>()) {
+        if (auto block_sl = current_block()->get_annotation_ptr<parser::SourceLocation>()) {
+            block_sl->expand_to_include(statement_sl->first_line, statement_sl->first_column);
+            block_sl->expand_to_include(statement_sl->last_line, statement_sl->last_column);
         } else {
-            current_block()->set_annotation<parser::SourceLocation>(*statement_loc);
+            current_block()->set_annotation<parser::SourceLocation>(*statement_sl);
         }
     }
 }
@@ -286,7 +285,7 @@ void Analyzer::register_function(
         }
     }
     throw resolver::ResolutionFailure{
-        fmt::format("failed to resolve '{}' with argument pack {}", name, values::types_of(args)) };
+        fmt::format("failed to resolve instruction '{}' with argument pack {}", name, values::types_of(args)) };
 }
 
 /**

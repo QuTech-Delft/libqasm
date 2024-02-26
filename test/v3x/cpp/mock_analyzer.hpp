@@ -9,9 +9,24 @@
 
 namespace cqasm::v3x::analyzer {
 
-class MockAnalyzer : public Analyzer {
+struct MockAnalyzer : public Analyzer {
 public:
+    MOCK_METHOD((AnalysisResult), analyze, (const std::function<version::Version()> &version_parser, const std::function<parser::ParseResult()> &parser));
     MOCK_METHOD((values::Value), resolve_function, (const std::string &name, const values::Values &args), (const));
+
+public:
+    [[nodiscard]] std::list<Scope> &scope_stack() { return scope_stack_; }
+
+    [[nodiscard]] Scope &global_scope() { return Analyzer::global_scope(); }
+    [[nodiscard]] Scope &current_scope() { return Analyzer::current_scope(); }
+    [[nodiscard]] tree::One<semantic::Block> current_block() { return Analyzer::current_block(); }
+    [[nodiscard]] tree::Any<semantic::Variable> &current_variables() { return Analyzer::current_variables(); }
+    [[nodiscard]] tree::Any<semantic::Function> &global_functions() { return Analyzer::global_functions(); }
+
+    [[nodiscard]] const Scope &global_scope() const { return Analyzer::global_scope(); }
+    [[nodiscard]] const Scope &current_scope() const { return Analyzer::current_scope(); }
+    [[nodiscard]] const tree::Any<semantic::Variable> &current_variables() const { return Analyzer::current_variables(); }
+    [[nodiscard]] const tree::Any<semantic::Function> &global_functions() const { return Analyzer::global_functions(); }
 };
 
 } // namespace cqasm::v3x::analyzer

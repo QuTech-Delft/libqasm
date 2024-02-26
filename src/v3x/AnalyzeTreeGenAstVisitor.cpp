@@ -116,7 +116,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_variable(ast::Variable &node) {
         // Add the variable to the current scope
         analyzer_.add_variable_to_current_scope(ret);
 
-        // Register variable name in the current scope
+        // Register the variable
         analyzer_.register_variable(identifier->name, tree::make<values::VariableRef>(ret));
     } catch (error::AnalysisError &err) {
         err.context(node);
@@ -264,10 +264,10 @@ std::any AnalyzeTreeGenAstVisitor::visit_function(ast::Function &node) {
         ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
         ret->copy_annotation<parser::SourceLocation>(node);
 
-        // Add the function to the current scope
+        // Add the function to the global scope
         analyzer_.add_function_to_global_scope(ret);
 
-        // Register function
+        // Register the function
         analyzer_.register_function(ret->name, parameter_types, tree::make<values::FunctionRef>(ret));
     } catch (error::AnalysisError &err) {
         err.context(node);

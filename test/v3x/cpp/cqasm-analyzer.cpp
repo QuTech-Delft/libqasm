@@ -1,6 +1,7 @@
 #include "cqasm-error.hpp"
 #include "cqasm-tree.hpp"
 #include "cqasm-version.hpp"
+#include "mock_analyzer.hpp"
 #include "v3x/cqasm-analyzer.hpp"
 #include "v3x/cqasm-ast.hpp"
 #include "v3x/cqasm-parse-result.hpp"
@@ -79,6 +80,69 @@ TEST_F(AnalyzerAnalyzeTest, parser_throws) {
     auto analyzer = Analyzer{};
     EXPECT_THAT([&]() { (void) analyzer.analyze(version_parser, parser); },
         ThrowsMessage<error::ParseError>(::testing::HasSubstr(parser_error_message)));
+}
+
+TEST(Analyzer, constructor) {
+    MockAnalyzer analyzer{};
+    EXPECT_EQ(analyzer.scope_stack().size(), 1);
+    EXPECT_FALSE(analyzer.current_block().empty());
+    EXPECT_TRUE(analyzer.current_variables().empty());
+    EXPECT_TRUE(analyzer.global_functions().empty());
+}
+TEST(Analyzer, push_scope) {
+    MockAnalyzer analyzer{};
+    analyzer.push_scope();
+    EXPECT_EQ(analyzer.scope_stack().size(), 2);
+}
+TEST(Analyzer, pop_scope) {
+    MockAnalyzer analyzer{};
+    analyzer.pop_scope();
+    EXPECT_TRUE(analyzer.scope_stack().empty());
+}
+TEST(Analyzer, add_statement_to_current_scope) {
+    MockAnalyzer analyzer{};
+    auto statement = tree::make<semantic::ReturnStatement>(tree::make<values::ConstInt>(42));
+    analyzer.add_statement_to_current_scope(statement);
+    EXPECT_EQ(analyzer.current_block()->statements.size(), 1);
+}
+TEST(Analyzer, add_statement_with_source_location_information_to_current_scope) {
+    MockAnalyzer analyzer{};
+    auto statement = tree::make<semantic::ReturnStatement>(tree::make<values::ConstInt>(42));
+    const auto &statement_source_location = annotations::SourceLocation{ "input.cq", 10, 20, 11, 10 };
+    statement->set_annotation(statement_source_location);
+    analyzer.add_statement_to_current_scope(statement);
+    EXPECT_EQ(analyzer.current_block()->statements.size(), 1);
+    const auto &block_source_location = analyzer.current_block()->get_annotation<annotations::SourceLocation>();
+    EXPECT_EQ(block_source_location.file_name, statement_source_location.file_name);
+    EXPECT_EQ(block_source_location.first_line, statement_source_location.first_line);
+    EXPECT_EQ(block_source_location.first_column, statement_source_location.first_column);
+    EXPECT_EQ(block_source_location.last_line, statement_source_location.last_line);
+    EXPECT_EQ(block_source_location.last_column, statement_source_location.last_column);
+}
+TEST(Analyzer, add_statement_with_source_location_information_to_current_scope_and_block_has_source_location_information) {
+    MockAnalyzer analyzer{};
+    //     10 15 20 25 30
+    //  5      <
+    //  8               >
+    const auto &block_initial_source_location = annotations::SourceLocation{ "input.cq", 5, 15, 8, 30 };
+    analyzer.current_block()->set_annotation(block_initial_source_location);
+    auto statement = tree::make<semantic::ReturnStatement>(tree::make<values::ConstInt>(42));
+    //     10 15 20 25 30
+    // 10   <
+    // 11         >
+    const auto &statement_source_location = annotations::SourceLocation{ "input.cq", 10, 10, 11, 20 };
+    statement->set_annotation(statement_source_location);
+    analyzer.add_statement_to_current_scope(statement);
+    EXPECT_EQ(analyzer.current_block()->statements.size(), 1);
+    //     10 15 20 25 30
+    //  5      <
+    // 11         >
+    const auto &block_final_source_location = analyzer.current_block()->get_annotation<annotations::SourceLocation>();
+    EXPECT_EQ(block_final_source_location.file_name, "input.cq");
+    EXPECT_EQ(block_final_source_location.first_line, 5);
+    EXPECT_EQ(block_final_source_location.first_column, 15);
+    EXPECT_EQ(block_final_source_location.last_line, 11);
+    EXPECT_EQ(block_final_source_location.last_column, 20);
 }
 
 }  // namespace cqasm::v3x::analyzer
