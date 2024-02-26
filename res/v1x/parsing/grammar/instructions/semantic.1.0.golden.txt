@@ -159,7 +159,7 @@ Program( # input.cq:1:1..18:1
             )
           ]
         )
-        Bundle( # input.cq:14:1..17:26
+        Bundle( # input.cq:14:1..17:15
           items: [
             Instruction( # input.cq:15:5..26
               instruction: x(qubit reference)

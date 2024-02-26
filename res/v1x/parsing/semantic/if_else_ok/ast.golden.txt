@@ -11,7 +11,7 @@ Program( # input.cq:1:1..12:1
     )
   >
   statements: <
-    StatementList( # input.cq:2:1..12:13
+    StatementList( # input.cq:2:10..12:1
       items: [
         Variables( # input.cq:4:1..12
           names: [
@@ -48,7 +48,7 @@ Program( # input.cq:1:1..12:1
                 )
               >
               body: <
-                StatementList( # input.cq:7:5..9:8
+                StatementList( # input.cq:7:8..9:2
                   items: [
                     Bundle( # input.cq:8:5..8
                       items: [
@@ -79,7 +79,7 @@ Program( # input.cq:1:1..12:1
             )
           ]
           otherwise: <
-            StatementList( # input.cq:9:5..11:8
+            StatementList( # input.cq:9:8..11:2
               items: [
                 Bundle( # input.cq:10:5..8
                   items: [

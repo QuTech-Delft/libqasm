@@ -11,7 +11,7 @@ Program( # input.cq:1:1..38:1
     )
   >
   statements: <
-    StatementList( # input.cq:2:1..38:33
+    StatementList( # input.cq:2:10..38:1
       items: [
         Bundle( # input.cq:5:1..7
           items: [
@@ -183,7 +183,7 @@ Program( # input.cq:1:1..38:1
               >
               condition: -
               operands: <
-                ExpressionList( # input.cq:17:3..20:7
+                ExpressionList( # input.cq:17:3..20:2
                   items: [
                     Index( # input.cq:17:3..7
                       expr: <
@@ -205,7 +205,7 @@ Program( # input.cq:1:1..38:1
                         )
                       >
                     )
-                    MatrixLiteral( # input.cq:17:5..20:9
+                    MatrixLiteral( # input.cq:17:9..20:2
                       rows: [
                         ExpressionList( # input.cq:18:5..9
                           items: [
@@ -465,7 +465,7 @@ Program( # input.cq:1:1..38:1
         )
         Bundle( # input.cq:35:1..37:4
           items: [
-            Instruction( # input.cq:35:1..37:8
+            Instruction( # input.cq:35:1..37:4
               name: <
                 Identifier( # input.cq:35:1..8
                   name: display
@@ -478,7 +478,7 @@ Program( # input.cq:1:1..38:1
                 )
               >
               annotations: [
-                AnnotationData( # input.cq:35:10..37:33
+                AnnotationData( # input.cq:35:10..37:4
                   interface: <
                     Identifier( # input.cq:35:10..23
                       name: an_annotation

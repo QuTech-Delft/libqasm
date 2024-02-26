@@ -35,7 +35,7 @@ Program( # input.cq:1:1..11:1
                         )
                       ]
                     )
-                    ConstComplexMatrix( # input.cq:5:1..7:6
+                    ConstComplexMatrix( # input.cq:5:9..7:6
                       value: [(1,0), (0,0); (2,0), (3,0)]
                     )
                   ]
