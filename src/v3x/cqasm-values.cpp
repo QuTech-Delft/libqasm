@@ -8,7 +8,6 @@
 #include "v3x/cqasm-types.hpp"
 #include "v3x/cqasm-semantic.hpp"
 
-#include <cassert>
 #include <fmt/format.h>
 #include <ostream>
 #include <stdexcept>  // runtime_error
@@ -20,8 +19,12 @@ namespace cqasm::v3x::values {
  * Type-checks and (if necessary) promotes the given value to the given type.
  * Returns null if the check/promotion fails,
  * otherwise returns the constructed value by way of a smart pointer.
+ *
  * If the type was an exact match, this may return the given value without modification or a clone thereof.
- */
+ *
+ * For a variable or a return value, a promotion is just a check.
+ * If the check is successful, the variable or return value is returned
+*/
 Value promote(const Value &value, const types::Type &type) {
     // If the types match exactly, just return the original value
     if (types::type_check(type, type_of(value))) {
@@ -96,22 +99,28 @@ Value promote(const Value &value, const types::Type &type) {
     }
 
     // Boolean, integer, and float arrays promote to axis
+    // But the returned value is a float array
+    // TODO: why cannot we just return an axis?
     if (type->as_axis()) {
         if (const auto &const_bool_array = value->as_const_bool_array()) {
-            assert(const_bool_array->value.size() == 3);
-            ret = promote_array_value_to_array_type<ConstBoolArray, ConstFloatArray, types::Float>(const_bool_array);
+            if (const_bool_array->value.size() == 3) {
+                ret = promote_array_value_to_array_type<ConstBoolArray, ConstFloatArray, types::Float>(const_bool_array);
+            }
         } else if(const auto &const_int_array = value->as_const_int_array()) {
-            assert(const_int_array->value.size() == 3);
-            ret = promote_array_value_to_array_type<ConstIntArray, ConstFloatArray, types::Float>(const_int_array);
+            if (const_int_array->value.size() == 3) {
+                ret = promote_array_value_to_array_type<ConstIntArray, ConstFloatArray, types::Float>(const_int_array);
+            }
         } else if(const auto &const_float_array = value->as_const_float_array()) {
-            assert(const_float_array->value.size() == 3);
-            ret = tree::make<values::ConstFloatArray>(const_float_array->value);
+            if (const_float_array->value.size() == 3) {
+                ret = tree::make<values::ConstFloatArray>(const_float_array->value);
+            }
         } else if (value->as_variable_ref() || value->as_function_call()) {
             if (types::type_check(type_of(value), tree::make<types::BoolArray>()) ||
                 types::type_check(type_of(value), tree::make<types::IntArray>()) ||
                 types::type_check(type_of(value), tree::make<types::FloatArray>())) {
-                assert(types::size_of(type_of(value)) == 3);
-                ret = value;
+                if (types::size_of(type_of(value)) == 3) {
+                    ret = value;
+                }
             }
         }
     }

@@ -55,7 +55,7 @@ Str deserialize(const ::tree::cbor::MapReader &map);
  * Axis primitive used within the semantic trees.
  */
 struct Axis {
-    double x = 0.0;
+    double x = 1.0;
     double y = 0.0;
     double z = 0.0;
 
