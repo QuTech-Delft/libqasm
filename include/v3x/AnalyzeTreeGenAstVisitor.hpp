@@ -25,6 +25,7 @@ using LocalBlockReturnT = std::pair<
     const tree::Any<semantic::Variable> &>;
 
 class AnalyzeTreeGenAstVisitor : public ast::Visitor<std::any> {
+protected:
     Analyzer &analyzer_;
     AnalysisResult result_;
 

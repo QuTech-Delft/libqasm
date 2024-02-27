@@ -230,9 +230,9 @@ types::Types types_of(const tree::Any<semantic::Variable> &variables) {
 
 std::any AnalyzeTreeGenAstVisitor::visit_function(ast::Function &node) {
     auto ret = tree::make<semantic::Function>();
-    try {
-        analyzer_.push_scope();
+    analyzer_.push_scope();
 
+    try {
         // Name
         const auto identifier = node.name;
         ret->name = identifier->name;
