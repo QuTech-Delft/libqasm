@@ -56,28 +56,26 @@ class LibqasmConan(ConanFile):
     exports_sources = "CMakeLists.txt", "include/*", "python/*", "res/*", "scripts/*", "src/*", "test/*"
 
     def build_requirements(self):
-        if not self.options.build_emscripten:
-            self.tool_requires("m4/1.4.19")
+        self.tool_requires("m4/1.4.19")
+        self.tool_requires("tree-gen/1.0.4")
+        if self.settings.arch != "armv8":
             if self.settings.os == "Windows":
                 self.tool_requires("winflexbison/2.5.24")
             else:
-                if self.settings.arch != "armv8":
-                    self.tool_requires("flex/2.6.4")
-                    self.tool_requires("bison/3.8.2")
-            if self.settings.arch != "armv8":
-                self.tool_requires("zulu-openjdk/11.0.19")
-            if self.options.build_tests:
-                self.requires("gtest/1.14.0")
-        else:
+                self.tool_requires("flex/2.6.4")
+                self.tool_requires("bison/3.8.2")
+            self.tool_requires("zulu-openjdk/11.0.19")
+        if self.options.build_tests:
+            self.test_requires("gtest/1.14.0")
+        if self.options.build_emscripten:
             self.tool_requires("emsdk/3.1.49")
 
     def requirements(self):
-        self.requires("fmt/10.1.1")
+        self.requires("fmt/10.2.1")
         self.requires("range-v3/0.12.0")
+        self.requires("tree-gen/1.0.4")
         if not self.options.build_emscripten:
             self.requires("antlr4-cppruntime/4.13.1")
-            if self.options.build_tests:
-                self.requires("gtest/1.14.0")
 
     def config_options(self):
         if self.settings.os == "Windows":
