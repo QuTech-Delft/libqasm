@@ -109,16 +109,9 @@ AnalyzerHelper::AnalyzerHelper(const Analyzer &analyzer, const ast::Program &ast
         std::sort(
             result.root->mappings.begin(), result.root->mappings.end(),
             [](const tree::One<semantic::Mapping> &lhs, const tree::One<semantic::Mapping> &rhs) -> bool {
-                if (auto lhsa = lhs->get_annotation_ptr<parser::SourceLocation>()) {
-                    if (auto rhsa = rhs->get_annotation_ptr<parser::SourceLocation>()) {
-                        if (lhsa->file_name < rhsa->file_name) return true;
-                        if (rhsa->file_name < lhsa->file_name) return false;
-                        if (lhsa->first_line < rhsa->first_line) return true;
-                        if (rhsa->first_line < lhsa->first_line) return false;
-                        return lhsa->first_column < rhsa->first_column;
-                    }
-                }
-                return false;
+                auto lhs_source_location = lhs->get_annotation_ptr<parser::SourceLocation>();
+                auto rhs_source_location = rhs->get_annotation_ptr<parser::SourceLocation>();
+                return lhs_source_location && rhs_source_location && *lhs_source_location < *rhs_source_location;
             });
 
     } catch (error::AnalysisError &err) {
@@ -252,8 +245,8 @@ void AnalyzerHelper::add_to_current_block(const tree::Maybe<semantic::Statement>
     // Expand the source location annotation of the block to include the statement.
     if (auto statement_loc = statement->get_annotation_ptr<parser::SourceLocation>()) {
         if (auto block_loc = block->get_annotation_ptr<parser::SourceLocation>()) {
-            block_loc->expand_to_include(statement_loc->first_line, statement_loc->first_column);
-            block_loc->expand_to_include(statement_loc->last_line, statement_loc->last_column);
+            block_loc->expand_to_include(statement_loc->range.first);
+            block_loc->expand_to_include(statement_loc->range.last);
         } else {
             block->set_annotation<parser::SourceLocation>(*statement_loc);
         }

@@ -109,24 +109,20 @@ private:
     template <typename SyntacticT>
     types::Type build_semantic_type(const SyntacticT &type) const {
         assert(!type.empty() && !type->name.empty());
-        types::Type ret;
         auto type_name = type->name->name;
         if (type_name == types::qubit_type_name) {
-            ret = build_semantic_type<types::Qubit, types::QubitArray>(*type, types::qubit_type_name);
-        } else if (type_name == types::bit_type_name) {
-            ret = build_semantic_type<types::Bit, types::BitArray>(*type, types::bit_type_name);
-        } else if (type_name == types::axis_type_name) {
-            ret = tree::make<types::Axis>(3);
-        } else if (type_name == types::bool_type_name) {
-            ret = build_semantic_type<types::Bool, types::BoolArray>(*type, types::bool_type_name);
-        } else if (type_name == types::integer_type_name) {
-            ret = build_semantic_type<types::Int, types::IntArray>(*type, types::integer_type_name);
-        } else if (type_name == types::float_type_name) {
-            ret = build_semantic_type<types::Float, types::FloatArray>(*type, types::float_type_name);
-        } else {
-            throw error::AnalysisError("unknown type \"" + type_name + "\"");
-        }
-        return ret;
+            return build_semantic_type<types::Qubit, types::QubitArray>(*type, types::qubit_type_name); }
+        if (type_name == types::bit_type_name) {
+            return build_semantic_type<types::Bit, types::BitArray>(*type, types::bit_type_name); }
+        if (type_name == types::axis_type_name) {
+            return tree::make<types::Axis>(3); }
+        if (type_name == types::bool_type_name) {
+            return build_semantic_type<types::Bool, types::BoolArray>(*type, types::bool_type_name); }
+        if (type_name == types::integer_type_name) {
+            return build_semantic_type<types::Int, types::IntArray>(*type, types::integer_type_name); }
+        if (type_name == types::float_type_name) {
+            return build_semantic_type<types::Float, types::FloatArray>(*type, types::float_type_name); }
+        throw error::AnalysisError("unknown type \"" + type_name + "\"");
     }
 
     /**

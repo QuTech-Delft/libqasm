@@ -44,19 +44,18 @@ void BuildTreeGenAstVisitor::setNodeAnnotation(const ast::One<ast::Node> &node, 
     auto token_size = token->getStopIndex() - token->getStartIndex() + 1;
     node->set_annotation(annotations::SourceLocation{
         file_name_,
-        static_cast<std::uint32_t>(token->getLine()),
-        static_cast<std::uint32_t>(token->getCharPositionInLine() + 1),
-        static_cast<std::uint32_t>(token->getLine()),
-        static_cast<std::uint32_t>(token->getCharPositionInLine() + 1 + token_size)
+        { { static_cast<std::uint32_t>(token->getLine()), static_cast<std::uint32_t>(token->getCharPositionInLine() + 1) },
+          { static_cast<std::uint32_t>(token->getLine()), static_cast<std::uint32_t>(token->getCharPositionInLine() + 1 + token_size) } }
     });
 }
 
 void BuildTreeGenAstVisitor::expandNodeAnnotation(const One<Node> &node, antlr4::Token *token) const {
     auto token_size = token->getStopIndex() - token->getStartIndex() + 1;
     if (auto source_location = node->get_annotation_ptr<annotations::SourceLocation>()) {
-        source_location->expand_to_include(
+        source_location->expand_to_include(annotations::SourceLocation::Index{
             static_cast<std::uint32_t>(token->getLine()),
-            static_cast<std::uint32_t>(token->getCharPositionInLine() + 1 + token_size));
+            static_cast<std::uint32_t>(token->getCharPositionInLine() + 1 + token_size)
+        });
     }
 }
 

@@ -15,48 +15,57 @@ namespace cqasm::annotations {
 /**
  * Source location annotation object, containing source file line numbers etc.
  */
-class SourceLocation {
-public:
+struct SourceLocation {
+    struct Index {
+        std::uint32_t line = 0;
+        std::uint32_t column = 0;
+
+        bool operator==(const Index &other) const = default;
+        auto operator<=>(const Index &other) const = default;
+    };
+
+    struct Range {
+        Index first;
+        Index last;
+
+        Range() = default;
+        Range(const Index &f, const Index &l) : first{ f } , last{ l } { last = std::max<Index>(last, first); }
+        Range(const Range &other) = default;
+        Range(Range &&other) noexcept = default;
+        Range& operator=(const Range &other) = default;
+        Range& operator=(Range &&other) noexcept = default;
+
+        bool operator==(const Range &other) const = default;
+        auto operator<=>(const Range &other) const = default;
+    };
+
     /**
      * The name of the source file.
      */
     std::optional<std::string> file_name;
 
     /**
-     * The first line of the range, or 0 if unknown.
+     * The source location range.
      */
-    std::uint32_t first_line;
-
-    /**
-     * The first column of the range, or 0 if unknown.
-     */
-    std::uint32_t first_column;
-
-    /**
-     * The last line of the range, or 0 if unknown.
-     */
-    std::uint32_t last_line;
-
-    /**
-     * The last column of the range, or 0 if unknown.
-     */
-    std::uint32_t last_column;
+    Range range;
 
     /**
      * Constructs a source location object.
      */
-    explicit SourceLocation(
-        const std::optional<std::string> &file_name,
-        std::uint32_t first_line = 0,
-        std::uint32_t first_column = 0,
-        std::uint32_t last_line = 0,
-        std::uint32_t last_column = 0
-    );
+    SourceLocation() = default;
+    explicit SourceLocation(const std::optional<std::string> &file_name, const Range &range);
+    SourceLocation(const SourceLocation &other) = default;
+    SourceLocation(SourceLocation &&other) noexcept = default;
+    SourceLocation& operator=(const SourceLocation &other) = default;
+    SourceLocation& operator=(SourceLocation &&other) noexcept = default;
+
+    bool operator==(const SourceLocation &other) const = default;
+    auto operator<=>(const SourceLocation &other) const = default;
 
     /**
      * Expands the location range to contain the given location in the source file.
      */
-    void expand_to_include(std::uint32_t line, std::uint32_t column = 1);
+    void expand_to_include(const Index &last);
 };
 
 /**

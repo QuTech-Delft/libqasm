@@ -163,8 +163,8 @@ void Analyzer::add_statement_to_current_scope(const tree::One<semantic::Statemen
     // Expand the source location annotation of the block to include the statement
     if (auto statement_sl = statement->get_annotation_ptr<parser::SourceLocation>()) {
         if (auto block_sl = current_block()->get_annotation_ptr<parser::SourceLocation>()) {
-            block_sl->expand_to_include(statement_sl->first_line, statement_sl->first_column);
-            block_sl->expand_to_include(statement_sl->last_line, statement_sl->last_column);
+            block_sl->expand_to_include(statement_sl->range.first);
+            block_sl->expand_to_include(statement_sl->range.last);
         } else {
             current_block()->set_annotation<parser::SourceLocation>(*statement_sl);
         }

@@ -27,13 +27,7 @@ protected:
     }
     void ExpectScannerParseThrowsParseError() {
         EXPECT_CALL(*scanner_up, parse())
-            .WillRepeatedly(::testing::Throw(ParseError{
-                parse_error_message,
-                file_name,
-                first_line,
-                first_column,
-                last_line,
-                last_column }));
+            .WillRepeatedly(::testing::Throw(ParseError{ parse_error_message, file_name, range }));
     }
     void ExpectScannerParseThrowsRuntimeError() {
         EXPECT_CALL(*scanner_up, parse())
@@ -54,10 +48,7 @@ protected:
     }
 
     std::string file_name = "input.cq";
-    std::uint32_t first_line = 10;
-    std::uint32_t first_column = 12;
-    std::uint32_t last_line = 10;
-    std::uint32_t last_column = 15;
+    annotations::SourceLocation::Range range{ { 10, 12 }, { 10, 15 } };
 
     std::string parse_error_message = "parse error";
     std::string runtime_error_message = "runtime error";
@@ -78,9 +69,9 @@ TEST_F(ParseHelperParseTest, scanner_parse_throws_parse_error) {
         fmt::format("{}", errors[0]),
         fmt::format("Error at {}:{}:{}..{}: {}",
             file_name,
-            first_line,
-            first_column,
-            last_column,
+            range.first.line,
+            range.first.column,
+            range.last.column,
             parse_error_message)
     );
 }

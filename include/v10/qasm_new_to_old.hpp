@@ -335,7 +335,7 @@ static void handle_parse_result(QasmRepresentation &qasm, cq1x::parser::ParseRes
         if (!subcircuit->name.empty()) {
             int line_number = 0;
             if (auto loc = subcircuit->get_annotation_ptr<cq1x::parser::SourceLocation>()) {
-                line_number = static_cast<int>(loc->first_line);
+                line_number = static_cast<int>(loc->range.first.line);
             }
             auto subcircuit_sp{ std::make_shared<SubCircuit>(
                 subcircuit->name.c_str(),
@@ -368,7 +368,7 @@ static void handle_parse_result(QasmRepresentation &qasm, cq1x::parser::ParseRes
                 if (!opclus) {
                     int line_number = 0;
                     if (auto loc = instruction->get_annotation_ptr<cq1x::parser::SourceLocation>()) {
-                        line_number = static_cast<int>(loc->first_line);
+                        line_number = static_cast<int>(loc->range.first.line);
                     }
                     opclus = std::make_shared<OperationsCluster>(op, line_number);
                 } else {
