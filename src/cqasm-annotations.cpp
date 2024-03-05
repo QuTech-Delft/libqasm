@@ -11,6 +11,11 @@
 
 namespace cqasm::annotations {
 
+SourceLocation::Range::Range(const Index &f, const Index &l)
+: first{ f } , last{ l } {
+    last = std::max<Index>(last, first);
+}
+
 /**
  * Constructs a source location object.
  */
