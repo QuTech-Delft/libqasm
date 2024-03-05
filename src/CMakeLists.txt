@@ -60,11 +60,12 @@ endif()
 
 # fmt
 find_package(fmt)
-if(NOT fmt_FOUND)
+if(NOT fmt_FOUND OR LIBQASM_BUILD_EMSCRIPTEN)
     message(STATUS "Fetching fmt")
     FetchContent_Declare(fmt
         GIT_REPOSITORY https://github.com/fmtlib/fmt.git
         GIT_TAG "e69e5f977d458f2650bb346dadf2ad30c5320281"
+        SOURCE_SUBDIR this-directory-does-not-exist
     )
     FetchContent_MakeAvailable(fmt)
 endif()
@@ -85,16 +86,16 @@ find_package(tree-gen 1.0.6 REQUIRED)
 find_program(TREE_GEN_EXECUTABLE tree-gen REQUIRED)
 message(STATUS "TREE_GEN_EXECUTABLE: ${TREE_GEN_EXECUTABLE}")
 
-## tree-gen library
-#if(NOT tree-gen_FOUND OR LIBQASM_BUILD_EMSCRIPTEN)
-#    message(STATUS "Fetching tree-gen")
-#    FetchContent_Declare(tree-gen
-#        GIT_REPOSITORY https://github.com/QuTech-Delft/tree-gen
-#        GIT_TAG "0fb905a4b2d013ae280b4e9d5561f1244e9a6e1a"
-#        SOURCE_SUBDIR this-directory-does-not-exist
-#    )
-#    FetchContent_MakeAvailable(tree-gen)
-#endif()
+# tree-gen library
+if(NOT tree-gen_FOUND OR LIBQASM_BUILD_EMSCRIPTEN)
+    message(STATUS "Fetching tree-gen")
+    FetchContent_Declare(tree-gen
+        GIT_REPOSITORY https://github.com/QuTech-Delft/tree-gen
+        GIT_TAG "0fb905a4b2d013ae280b4e9d5561f1244e9a6e1a"
+        SOURCE_SUBDIR this-directory-does-not-exist
+    )
+    FetchContent_MakeAvailable(tree-gen)
+endif()
 
 #-------------------------------------------------------------------------------
 # cQASM common code generation and inclusion
@@ -296,24 +297,24 @@ if(LIBQASM_BUILD_EMSCRIPTEN)
         "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/tree/pattern/*.cpp"
         "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/tree/xpath/*.cpp"
     )
-#    file(GLOB TREE_GEN_SOURCES
-#        "${tree-gen_SOURCE_DIR}/include/*"
-#        "${tree-gen_SOURCE_DIR}/src/*"
-#    )
-#    file(GLOB FMT_SOURCES
-#        "${fmt_SOURCE_DIR}/src/*"
-#    )
+    file(GLOB TREE_GEN_SOURCES
+        "${tree-gen_SOURCE_DIR}/include/*"
+        "${tree-gen_SOURCE_DIR}/src/*"
+    )
+    file(GLOB FMT_SOURCES
+        "${fmt_SOURCE_DIR}/src/*"
+    )
     target_sources(cqasm-lib-obj
         PRIVATE "${ANTLR4_CPP_RUNTIME_SOURCES}"
-#        PRIVATE "${TREE_GEN_SOURCES}"
-#        PRIVATE "${FMT_SOURCES}"
+        PRIVATE "${TREE_GEN_SOURCES}"
+        PRIVATE "${FMT_SOURCES}"
     )
 endif()
 
 if(LIBQASM_BUILD_EMSCRIPTEN)
     set(antlr4-runtime_INCLUDE_DIRS "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src")
-#    set(tree-gen_INCLUDE_DIRS "${tree-gen_SOURCE_DIR}/include")
-#    set(fmt_INCLUDE_DIRS "${fmt_SOURCE_DIR}/include")
+    set(fmt_INCLUDE_DIRS "${fmt_SOURCE_DIR}/include")
+    set(tree-gen_INCLUDE_DIRS "${tree-gen_SOURCE_DIR}/include")
 endif()
 target_include_directories(cqasm-lib-obj
     # Do not remove the ending '/' since
@@ -323,26 +324,26 @@ target_include_directories(cqasm-lib-obj
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include/"
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include/"
     PUBLIC "${antlr4-runtime_INCLUDE_DIRS}/"
-    PUBLIC "${tree-gen_INCLUDE_DIRS}/"
     PUBLIC "${fmt_INCLUDE_DIRS}/"
+    PUBLIC "${tree-gen_INCLUDE_DIRS}/"
 )
 
 target_compile_features(cqasm-lib-obj PUBLIC
     cxx_std_20
 )
 
-target_link_libraries(cqasm-lib-obj
-    PRIVATE fmt::fmt
-    PRIVATE range-v3::range-v3
-    PRIVATE tree-gen::tree-gen
-)
-#if(LIBQASM_BUILD_EMSCRIPTEN)
-##    target_link_libraries(cqasm-lib-obj PRIVATE tree-lib-obj)
-#    target_link_libraries(cqasm-lib-obj PRIVATE tree-gen::tree-gen)
-#else()
-#    target_link_libraries(cqasm-lib-obj PRIVATE antlr4_static)
-#    target_link_libraries(cqasm-lib-obj PRIVATE fmt::fmt)
-#endif()
+if(LIBQASM_BUILD_EMSCRIPTEN)
+    target_link_libraries(cqasm-lib-obj
+        PRIVATE range-v3::range-v3
+    )
+else()
+    target_link_libraries(cqasm-lib-obj
+        PRIVATE antlr4_static
+        PRIVATE fmt::fmt
+        PRIVATE range-v3::range-v3
+        PRIVATE tree-gen::tree-gen
+    )
+endif()
 
 # fPIC: otherwise some weirdness happens with pthreads or something when linking statically.
 if(CMAKE_COMPILER_IS_GNUCXX)
@@ -404,8 +405,8 @@ message(STATUS
     "      CMAKE_CURRENT_SOURCE_DIR/../include/: ${CMAKE_CURRENT_SOURCE_DIR}/../include/\n"
     "      CMAKE_CURRENT_BINARY_DIR/../include/: ${CMAKE_CURRENT_BINARY_DIR}/../include/\n"
     "      antlr4-runtime_INCLUDE_DIRS: ${antlr4-runtime_INCLUDE_DIRS}\n"
-    "      tree-gen_INCLUDE_DIRS: ${tree-gen_INCLUDE_DIRS}\n"
     "      fmt_INCLUDE_DIRS: ${fmt_INCLUDE_DIRS}\n"
+    "      tree-gen_INCLUDE_DIRS: ${tree-gen_INCLUDE_DIRS}\n"
 )
 
 #-------------------------------------------------------------------------------
