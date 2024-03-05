@@ -6,36 +6,36 @@ Program(
       items: 3
     )
   >
-  statements: [
-    AssignmentInstruction(
-      lhs: <
-        VariableRef(
-          variable --> <
-            Variable(
-              name: i
-              typ: <
-                Int(
-                  size: 1
+  block: <
+    Block(
+      statements: [
+        AssignmentStatement(
+          lhs: <
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: i
+                  typ: <
+                    Int(
+                      size: 1
+                    )
+                  >
+                  annotations: []
                 )
               >
-              annotations: []
             )
           >
+          rhs: <
+            ConstInt(
+              value: 15
+            )
+          >
+          annotations: []
         )
-      >
-      rhs: <
-        ConstInt(
-          value: 15
-        )
-      >
-      condition: <
-        ConstBool(
-          value: 1
-        )
-      >
-      annotations: []
+      ]
     )
-  ]
+  >
+  functions: []
   variables: [
     Variable(
       name: i

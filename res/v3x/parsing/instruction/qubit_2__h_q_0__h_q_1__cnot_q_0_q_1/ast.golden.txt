@@ -5,9 +5,9 @@ Program(
       items: 3
     )
   >
-  statements: <
-    StatementList(
-      items: [
+  block: <
+    GlobalBlock(
+      statements: [
         Variable( # input.cq:3:10..11
           name: <
             Identifier(
@@ -15,24 +15,27 @@ Program(
             )
           >
           typ: <
-            Keyword(
-              name: qubit
-            )
-          >
-          size: <
-            IntegerLiteral(
-              value: 2
+            Type( # input.cq:3:1..9
+              name: <
+                Keyword(
+                  name: qubit
+                )
+              >
+              size: <
+                IntegerLiteral(
+                  value: 2
+                )
+              >
             )
           >
           annotations: []
         )
-        Instruction( # input.cq:5:1..2
+        Gate( # input.cq:5:1..2
           name: <
             Identifier(
               name: h
             )
           >
-          condition: -
           operands: <
             ExpressionList(
               items: [
@@ -61,13 +64,12 @@ Program(
           >
           annotations: []
         )
-        Instruction( # input.cq:6:1..2
+        Gate( # input.cq:6:1..2
           name: <
             Identifier(
               name: h
             )
           >
-          condition: -
           operands: <
             ExpressionList(
               items: [
@@ -96,13 +98,12 @@ Program(
           >
           annotations: []
         )
-        Instruction( # input.cq:7:1..5
+        Gate( # input.cq:7:1..5
           name: <
             Identifier(
               name: cnot
             )
           >
-          condition: -
           operands: <
             ExpressionList(
               items: [

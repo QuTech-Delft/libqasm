@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:3:10..11: missing IDENTIFIER at '='
+Error at input.cq:3:10..11: no viable alternative at input 'bool[17]='

@@ -25,7 +25,7 @@ Program( # input.cq:1:1..6:1
               >
               operands: []
               annotations: [
-                AnnotationData( # input.cq:4:10..5:19
+                AnnotationData( # input.cq:4:10..5:11
                   interface: test
                   operation: test
                   operands: [

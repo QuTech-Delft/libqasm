@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:3:11..12: mismatched input 'f' expecting '='
+Error at input.cq:3:11..12: extraneous input 'f' expecting {<EOF>, NEW_LINE, ';'}

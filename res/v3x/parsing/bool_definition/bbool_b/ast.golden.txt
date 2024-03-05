@@ -5,16 +5,15 @@ Program(
       items: 3
     )
   >
-  statements: <
-    StatementList(
-      items: [
-        Instruction( # input.cq:3:1..5
+  block: <
+    GlobalBlock(
+      statements: [
+        Gate( # input.cq:3:1..5
           name: <
             Identifier(
               name: Bool
             )
           >
-          condition: -
           operands: <
             ExpressionList(
               items: [

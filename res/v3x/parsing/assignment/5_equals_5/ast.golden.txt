@@ -1,2 +1,28 @@
-ERROR
-Error at input.cq:3:5..6: missing 'measure' at '5'
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  block: <
+    GlobalBlock(
+      statements: [
+        AssignmentStatement( # input.cq:3:3..4
+          lhs: <
+            IntegerLiteral( # input.cq:3:1..2
+              value: 5
+            )
+          >
+          rhs: <
+            IntegerLiteral( # input.cq:3:5..6
+              value: 5
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

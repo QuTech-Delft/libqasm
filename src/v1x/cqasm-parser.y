@@ -43,13 +43,12 @@ void free_string(char *s) {
     /**
      * Attaches a source location annotation object to the given node pointer.
      */
-    #define ADD_SOURCE_LOCATION(v)                              \
-        v->set_annotation(cqasm::annotations::SourceLocation(   \
-            helper.file_name,                                   \
-            yyloc.first_line,                                   \
-            yyloc.first_column,                                 \
-            yyloc.last_line,                                    \
-            yyloc.last_column))
+    #define ADD_SOURCE_LOCATION(v)                                                                               \
+        v->set_annotation(cqasm::annotations::SourceLocation(                                                    \
+            helper.file_name,                                                                                    \
+            { { static_cast<std::uint32_t>(yyloc.first_line), static_cast<std::uint32_t>(yyloc.first_column) },  \
+              { static_cast<std::uint32_t>(yyloc.last_line), static_cast<std::uint32_t>(yyloc.last_column) } }   \
+        ))
 
     /**
      * Constructs an empty, new node of type T and places it into v. v is almost
@@ -67,16 +66,20 @@ void free_string(char *s) {
      * location annotation of the object to the extents of whatever rule is
      * being matched.
      */
-    #define FROM(t, s)                                                                  \
-        t = s;                                                                          \
-        {                                                                               \
-            auto *loc = t->get_annotation_ptr<cqasm::annotations::SourceLocation>();    \
-            if (!loc) {                                                                 \
-                ADD_SOURCE_LOCATION(t);                                                 \
-            } else {                                                                    \
-                loc->expand_to_include(yyloc.first_line, yyloc.first_column);           \
-                loc->expand_to_include(yyloc.last_line, yyloc.last_column);             \
-            }                                                                           \
+    #define FROM(t, s)                                                                                                \
+        t = s;                                                                                                        \
+        {                                                                                                             \
+            auto *loc = t->get_annotation_ptr<cqasm::annotations::SourceLocation>();                                  \
+            if (!loc) {                                                                                               \
+                ADD_SOURCE_LOCATION(t);                                                                               \
+            } else {                                                                                                  \
+                loc->expand_to_include(                                                                               \
+                    { static_cast<std::uint32_t>(yyloc.first_line), static_cast<std::uint32_t>(yyloc.first_column) }  \
+                );                                                                                                    \
+                loc->expand_to_include(                                                                               \
+                    { static_cast<std::uint32_t>(yyloc.last_line), static_cast<std::uint32_t>(yyloc.last_column) }    \
+                );                                                                                                    \
+            }                                                                                                         \
         }
 
 }
@@ -679,9 +682,7 @@ void yyerror(YYLTYPE* yyllocp, yyscan_t unused, cqasm::v1x::parser::ParseHelper 
     (void)unused;
     helper.push_error(
         std::string(msg),
-        yyllocp->first_line,
-        yyllocp->first_column,
-        yyllocp->last_line,
-        yyllocp->last_column
+        { { static_cast<std::uint32_t>(yyllocp->first_line), static_cast<std::uint32_t>(yyllocp->first_column) },
+          { static_cast<std::uint32_t>(yyllocp->last_line), static_cast<std::uint32_t>(yyllocp->last_column) } }
     );
 }

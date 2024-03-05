@@ -8,7 +8,6 @@
 #include "v3x/cqasm-types.hpp"
 #include "v3x/cqasm-semantic.hpp"
 
-#include <cassert>
 #include <fmt/format.h>
 #include <ostream>
 #include <stdexcept>  // runtime_error
@@ -20,8 +19,12 @@ namespace cqasm::v3x::values {
  * Type-checks and (if necessary) promotes the given value to the given type.
  * Returns null if the check/promotion fails,
  * otherwise returns the constructed value by way of a smart pointer.
+ *
  * If the type was an exact match, this may return the given value without modification or a clone thereof.
- */
+ *
+ * For a variable or a return value, a promotion is just a check.
+ * If the check is successful, the variable or return value is returned
+*/
 Value promote(const Value &value, const types::Type &type) {
     // If the types match exactly, just return the original value
     if (types::type_check(type, type_of(value))) {
@@ -34,83 +37,90 @@ Value promote(const Value &value, const types::Type &type) {
     if (type->as_int()) {
         if (const auto &const_bool = value->as_const_bool()) {
             ret = tree::make<values::ConstInt>(static_cast<ConstInt>(const_bool->value));
-        } else if (const auto variable_ref = value->as_variable_ref(); variable_ref &&
-            types::type_check(variable_ref->variable->typ, tree::make<types::Bool>())) {
-            ret = value;
+        } else if (value->as_variable_ref() || value->as_function_call()) {
+            if (types::type_check(type_of(value), tree::make<types::Bool>())) {
+                ret = value;
+            }
         }
     }
     // Boolean arrays promote to integer arrays
     if (type->as_int_array()) {
         if (const auto &const_bool_array = value->as_const_bool_array()) {
             ret = promote_array_value_to_array_type<ConstBoolArray, ConstIntArray, types::Int>(const_bool_array);
-        } else if (const auto variable_ref = value->as_variable_ref(); variable_ref) {
-            if (types::type_check(variable_ref->variable->typ, tree::make<types::BoolArray>())) {
+        } else if (value->as_variable_ref() || value->as_function_call()) {
+            if (types::type_check(type_of(value), tree::make<types::BoolArray>())) {
                 ret = value;
             }
         }
     }
 
-    // Booleans and integers promote to real
-    if (type->as_real()) {
+    // Booleans and integers promote to float
+    if (type->as_float()) {
         if (const auto &const_bool = value->as_const_bool()) {
-            ret = tree::make<values::ConstReal>(static_cast<ConstReal>(const_bool->value));
+            ret = tree::make<values::ConstFloat>(static_cast<ConstFloat>(const_bool->value));
         } else if (const auto &const_int = value->as_const_int()) {
-            ret = tree::make<values::ConstReal>(static_cast<ConstReal>(static_cast<double>(const_int->value)));
-        } else if (const auto variable_ref = value->as_variable_ref(); variable_ref) {
-            if (types::type_check(variable_ref->variable->typ, tree::make<types::Bool>()) ||
-                types::type_check(variable_ref->variable->typ, tree::make<types::Int>())) {
+            ret = tree::make<values::ConstFloat>(static_cast<ConstFloat>(static_cast<double>(const_int->value)));
+        } else if (value->as_variable_ref() || value->as_function_call()) {
+            if (types::type_check(type_of(value), tree::make<types::Bool>()) ||
+                types::type_check(type_of(value), tree::make<types::Int>())) {
                 ret = value;
             }
         }
     }
-    // Boolean and integer arrays promote to real arrays
-    if (type->as_real_array()) {
+    // Boolean and integer arrays promote to float arrays
+    if (type->as_float_array()) {
         if (const auto &const_bool_array = value->as_const_bool_array()) {
-            ret = promote_array_value_to_array_type<ConstBoolArray, ConstRealArray, types::Real>(const_bool_array);
+            ret = promote_array_value_to_array_type<ConstBoolArray, ConstFloatArray, types::Float>(const_bool_array);
         } else if (const auto &const_int_array = value->as_const_int_array()) {
-            ret = promote_array_value_to_array_type<ConstIntArray, ConstRealArray, types::Real>(const_int_array);
-        } else if (const auto variable_ref = value->as_variable_ref(); variable_ref) {
-            if (types::type_check(variable_ref->variable->typ, tree::make<types::BoolArray>()) ||
-                types::type_check(variable_ref->variable->typ, tree::make<types::IntArray>())) {
+            ret = promote_array_value_to_array_type<ConstIntArray, ConstFloatArray, types::Float>(const_int_array);
+        } else if (value->as_variable_ref() || value->as_function_call()) {
+            if (types::type_check(type_of(value), tree::make<types::BoolArray>()) ||
+                types::type_check(type_of(value), tree::make<types::IntArray>())) {
                 ret = value;
             }
         }
     }
 
-    // Booleans, integers and reals promote to complex
+    // Booleans, integers and floats promote to complex
     if (type->as_complex()) {
         if (const auto &const_bool = value->as_const_bool()) {
             ret = tree::make<values::ConstComplex>(static_cast<ConstComplex>(const_bool->value));
         } else if (const auto &const_int = value->as_const_int()) {
             ret = tree::make<values::ConstComplex>(static_cast<ConstComplex>(static_cast<double>(const_int->value)));
-        } else if (const auto &const_real = value->as_const_real()) {
-            ret = tree::make<values::ConstComplex>(static_cast<ConstComplex>(const_real->value));
-        } else if (const auto variable_ref = value->as_variable_ref(); variable_ref) {
-            if (types::type_check(variable_ref->variable->typ, tree::make<types::Bool>()) ||
-                types::type_check(variable_ref->variable->typ, tree::make<types::Int>()) ||
-                types::type_check(variable_ref->variable->typ, tree::make<types::Real>())) {
+        } else if (const auto &const_float = value->as_const_float()) {
+            ret = tree::make<values::ConstComplex>(static_cast<ConstComplex>(const_float->value));
+        } else if (value->as_variable_ref() || value->as_function_call()) {
+            if (types::type_check(type_of(value), tree::make<types::Bool>()) ||
+                types::type_check(type_of(value), tree::make<types::Int>()) ||
+                types::type_check(type_of(value), tree::make<types::Float>())) {
                 ret = value;
             }
         }
     }
 
-    // Boolean, integer, and real arrays promote to axis
+    // Boolean, integer, and float arrays promote to axis
+    // But the returned value is a float array
+    // TODO: why cannot we just return an axis?
     if (type->as_axis()) {
         if (const auto &const_bool_array = value->as_const_bool_array()) {
-            assert(const_bool_array->value.size() == 3);
-            ret = promote_array_value_to_array_type<ConstBoolArray, ConstRealArray, types::Real>(const_bool_array);
+            if (const_bool_array->value.size() == 3) {
+                ret = promote_array_value_to_array_type<ConstBoolArray, ConstFloatArray, types::Float>(const_bool_array);
+            }
         } else if(const auto &const_int_array = value->as_const_int_array()) {
-            assert(const_int_array->value.size() == 3);
-            ret = promote_array_value_to_array_type<ConstIntArray, ConstRealArray, types::Real>(const_int_array);
-        } else if(const auto &const_real_array = value->as_const_real_array()) {
-            assert(const_real_array->value.size() == 3);
-            ret = tree::make<values::ConstRealArray>(const_real_array->value);
-        } else if (const auto variable_ref = value->as_variable_ref(); variable_ref) {
-            if (types::type_check(variable_ref->variable->typ, tree::make<types::BoolArray>()) ||
-                types::type_check(variable_ref->variable->typ, tree::make<types::IntArray>()) ||
-                types::type_check(variable_ref->variable->typ, tree::make<types::RealArray>())) {
-                assert(types::size_of(variable_ref->variable->typ) == 3);
-                ret = value;
+            if (const_int_array->value.size() == 3) {
+                ret = promote_array_value_to_array_type<ConstIntArray, ConstFloatArray, types::Float>(const_int_array);
+            }
+        } else if(const auto &const_float_array = value->as_const_float_array()) {
+            if (const_float_array->value.size() == 3) {
+                ret = tree::make<values::ConstFloatArray>(const_float_array->value);
+            }
+        } else if (value->as_variable_ref() || value->as_function_call()) {
+            if (types::type_check(type_of(value), tree::make<types::BoolArray>()) ||
+                types::type_check(type_of(value), tree::make<types::IntArray>()) ||
+                types::type_check(type_of(value), tree::make<types::FloatArray>())) {
+                if (types::size_of(type_of(value)) == 3) {
+                    ret = value;
+                }
             }
         }
     }
@@ -130,10 +140,10 @@ bool check_promote(const types::Type &from_type, const types::Type &to_type) {
     if (types::type_check(from_type, to_type)) {
         return true;
     } else if (from_type->as_bool()) {
-        return to_type->as_int() || to_type->as_real() || to_type->as_complex();
+        return to_type->as_int() || to_type->as_float() || to_type->as_complex();
     } else if  (from_type->as_int()) {
-        return to_type->as_real() || to_type->as_complex();
-    } else if (from_type->as_real()) {
+        return to_type->as_float() || to_type->as_complex();
+    } else if (from_type->as_float()) {
         return to_type->as_complex();
     }
     return false;
@@ -152,8 +162,8 @@ types::Type element_type_of(const types::Type &type) {
         return tree::make<types::Bool>();
     } else if (types::type_check(type, tree::make<types::IntArray>())) {
         return tree::make<types::Int>();
-    } else if (types::type_check(type, tree::make<types::RealArray>())) {
-        return tree::make<types::Real>();
+    } else if (types::type_check(type, tree::make<types::FloatArray>())) {
+        return tree::make<types::Float>();
     } else {
         throw std::runtime_error{ fmt::format("type ({}) is not of array type", type) };
     }
@@ -169,16 +179,16 @@ types::Type type_of(const Value &value) {
         return tree::make<types::Bool>();
     } else if (value->as_const_int()) {
         return tree::make<types::Int>();
-    } else if (value->as_const_real()) {
-        return tree::make<types::Real>();
+    } else if (value->as_const_float()) {
+        return tree::make<types::Float>();
     } else if (value->as_const_complex()) {
         return tree::make<types::Complex>();
     } else if (value->as_const_bool_array()) {
         return tree::make<types::BoolArray>();
     } else if (value->as_const_int_array()) {
         return tree::make<types::IntArray>();
-    } else if (value->as_const_real_array()) {
-        return tree::make<types::RealArray>();
+    } else if (value->as_const_float_array()) {
+        return tree::make<types::FloatArray>();
     } else if (auto index = value->as_index_ref()) {
         // If the size of the index is 1, return the type of the element (qubit, bit, bool...)
         // Otherwise, return the type of the variable it refers to (qubit array, bit array, bool array...)
@@ -189,6 +199,11 @@ types::Type type_of(const Value &value) {
         }
     } else if (auto var = value->as_variable_ref()) {
         return var->variable->typ;
+    } else if (auto function_ref_ptr = value->as_function_ref()) {
+        return function_ref_ptr->function->return_type;
+    } else if (auto function_call = value->as_function_call()) {
+        auto function_ref = function_call->function;
+        return function_ref->function->return_type;
     } else {
         throw std::runtime_error("unknown type!");
     }
@@ -211,18 +226,29 @@ types::Types types_of(const Values &values) {
 primitives::Int size_of(const Value &value) {
     if (value->as_const_axis()) {
         return 3;
-    } else if (value->as_const_bool() || value->as_const_int() || value->as_const_real() || value->as_const_complex()) {
+    } else if (value->as_const_bool() || value->as_const_int() || value->as_const_float() || value->as_const_complex()) {
         return 1;
     } else if (auto bool_array = value->as_const_bool_array()) {
         return static_cast<primitives::Int>(bool_array->value.size());
     } else if (auto int_array = value->as_const_int_array()) {
         return static_cast<primitives::Int>(int_array->value.size());
-    } else if (auto real_array = value->as_const_real_array()) {
-        return static_cast<primitives::Int>(real_array->value.size());
+    } else if (auto float_array = value->as_const_float_array()) {
+        return static_cast<primitives::Int>(float_array->value.size());
     } else if (auto index = value->as_index_ref()) {
         return static_cast<primitives::Int>(index->indices.size());
     } else if (auto var = value->as_variable_ref()) {
         return types::size_of(var->variable->typ);
+    } else if (auto function_ref_ptr = value->as_function_ref()) {
+        auto return_type = function_ref_ptr->function->return_type;
+        return !return_type.empty()
+            ? types::size_of(return_type)
+            : primitives::Int{ 0 };
+    } else if (auto function_call = value->as_function_call()) {
+        auto function_ref = function_call->function;
+        auto return_type = function_ref->function->return_type;
+        return !return_type.empty()
+            ? types::size_of(return_type)
+            : primitives::Int{ 0 };
     } else {
         throw std::runtime_error("unknown type!");
     }

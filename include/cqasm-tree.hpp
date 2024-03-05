@@ -7,12 +7,11 @@
 #include "tree-annotatable.hpp"
 #include "tree-base.hpp"
 
-namespace cqasm {
 
 /**
  * Namespace for wrapping tree-gen's support library.
  */
-namespace tree {
+namespace cqasm::tree {
 
 using signed_size_t = ::tree::signed_size_t;
 
@@ -45,5 +44,4 @@ One<T> make(Args... args) {
     return One<T>(std::make_shared<T>(args...));
 }
 
-} // namespace tree
-} // namespace cqasm
+} // namespace cqasm::tree

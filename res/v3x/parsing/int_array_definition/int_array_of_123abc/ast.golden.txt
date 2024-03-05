@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:3:8..11: extraneous input 'abc' expecting ']'
+Error at input.cq:3:8..11: no viable alternative at input 'int[123abc'

@@ -6,36 +6,36 @@ Program(
       items: 3
     )
   >
-  statements: [
-    Instruction(
-      instruction: rx(qubit, real)
-      name: rx
-      operands: [
-        VariableRef(
-          variable --> <
-            Variable(
-              name: q
-              typ: <
-                Qubit(
-                  size: 1
+  block: <
+    Block(
+      statements: [
+        Instruction(
+          instruction: rx(qubit, float)
+          name: rx
+          operands: [
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: q
+                  typ: <
+                    Qubit(
+                      size: 1
+                    )
+                  >
+                  annotations: []
                 )
               >
-              annotations: []
             )
-          >
-        )
-        ConstReal(
-          value: 3.14159
+            ConstFloat(
+              value: 3.14159
+            )
+          ]
+          annotations: []
         )
       ]
-      condition: <
-        ConstBool(
-          value: 1
-        )
-      >
-      annotations: []
     )
-  ]
+  >
+  functions: []
   variables: [
     Variable(
       name: q

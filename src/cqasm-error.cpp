@@ -38,18 +38,10 @@ Error::Error(const std::string &message, std::shared_ptr<annotations::SourceLoca
 Error::Error(
     const std::string &message,
     const std::optional<std::string> &file_name,
-    std::uint32_t first_line,
-    std::uint32_t first_column,
-    std::uint32_t last_line,
-    std::uint32_t last_column)
+    const annotations::SourceLocation::Range &range)
 : std::runtime_error{ !message.empty() ? message.c_str() : unknown_error_message }
 , message_{ !message.empty() ? message : unknown_error_message }
-, location_{ std::make_shared<annotations::SourceLocation>(
-    file_name,
-    first_line,
-    first_column,
-    last_line,
-    last_column) }
+, location_{ std::make_shared<annotations::SourceLocation>(file_name, range) }
 {}
 
 /**
@@ -128,10 +120,10 @@ std::string Error::to_json() const {
             R"(,"severity":{5})"
             R"({6})"
         R"(}})",
-        location_ ? location_->first_line : 0,
-        location_ ? location_->first_column : 0,
-        location_ ? location_->last_line : 0,
-        location_ ? location_->last_column : 0,
+        location_ ? location_->range.first.line : 0,
+        location_ ? location_->range.first.column : 0,
+        location_ ? location_->range.last.line : 0,
+        location_ ? location_->range.last.column : 0,
         cqasm::utils::json_encode(message_),
         1,
         related_information

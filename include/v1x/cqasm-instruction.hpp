@@ -9,6 +9,10 @@
 #include "cqasm-types.hpp"
 #include "cqasm-values.hpp"
 
+#include <fmt/ostream.h>
+#include <optional>
+
+
 namespace cqasm::v1x {
 
 /**
@@ -18,33 +22,29 @@ namespace cqasm::v1x {
 namespace instruction {
 
 /**
- * Representation of an available instruction (also known as gate) in the
- * instruction set, without parameters bound to it (note that libqasm cannot
- * match instructions based on which qubits are used; you'll need to do that on
- * your own).
+ * Representation of an available instruction (also known as gate) in the instruction set,
+ * without parameters bound to it
+ * (note that libqasm cannot match instructions based on which qubits are used;
+ * you'll need to do that on your own).
  *
- * A number of these can be registered into libqasm by the program or library
- * using it through \ref cqasm::analyzer::Analyzer::register_instruction(const instruction::Instruction&)
- * "register_instruction()", to inform libqasm of the supported instruction set.
- * For each instruction, libqasm needs to know its name, which parameters it
- * expects, and a few extra flags in order to be able to resolve the
- * instruction and check for errors in the cQASM file. The resolved instruction
- * type is part of the cqasm::semantic::Instruction node present in the
- * semantic tree returned through the parse result structure.
+ * A number of these can be registered into libqasm by the program or library using it through
+ * \ref cqasm::analyzer::Analyzer::register_instruction(const instruction::Instruction&) "register_instruction()",
+ * to inform libqasm of the supported instruction set.
+ * For each instruction, libqasm needs to know its name, which parameters it expects,
+ * and a few extra flags in order to be able to resolve the instruction and check for errors in the cQASM file.
+ * The resolved instruction type is part of the cqasm::semantic::Instruction node present in the semantic tree
+ * returned through the parse result structure.
  *
- * Note that it is legal to have multiple instructions with the same name, as
- * long as they can be distinguished through their parameter types (i.e.
- * instructions can be overloaded).
+ * Note that it is legal to have multiple instructions with the same name,
+ * as long as they can be distinguished through their parameter types (i.e. instructions can be overloaded).
  *
  * You can add any data you like to these through the
- * \ref cqasm::annotatable::Annotatable "Annotatable" interface
- * for your own bookkeeping, so you don't have to maintain an additional map
- * from this error model structure to your own internal structure if you're
- * okay with using this one.
+ * \ref cqasm::annotatable::Annotatable "Annotatable" interface for your own bookkeeping,
+ * so you don't have to maintain an additional map from this error model structure to your own internal structure
+ * if you're okay with using this one.
  */
 class Instruction : public tree::Base {
 public:
-
     /**
      * The name of the instruction. Names are matched case insensitively.
      */
@@ -56,47 +56,47 @@ public:
     types::Types param_types;
 
     /**
-     * Whether this instruction supports conditional execution by means of the
-     * c- notation. This is normally true.
+     * Whether this instruction supports conditional execution by means of the c- notation.
+     * This is normally true.
      */
     bool allow_conditional;
 
     /**
-     * Whether this instruction can be used in a bundle. This is normally true.
+     * Whether this instruction can be used in a bundle.
+     * This is normally true.
      */
     bool allow_parallel;
 
     /**
-     * Whether to allow usage of the same qubit in different arguments. This is
-     * normally false, as this makes no sense in QM, in which case libqasm will
-     * report an error to the user if a qubit is reused. Setting this to true
-     * just disables that check.
+     * Whether to allow usage of the same qubit in different arguments.
+     * This is normally false, as this makes no sense in QM,
+     * in which case libqasm will report an error to the user if a qubit is reused.
+     * Setting this to true just disables that check.
      */
     bool allow_reused_qubits;
 
     /**
-     * Whether different index sizes are allowed. This is normally false, as
-     * index lists are normally used to designate parallel instructions, and it
-     * makes no sense for the lists to mismatch in that case.
+     * Whether different index sizes are allowed.
+     * This is normally false, as index lists are normally used to designate parallel instructions,
+     * and it makes no sense for the lists to mismatch in that case.
      */
     bool allow_different_index_sizes;
 
     /**
-     * Creates a new instruction. param_types is a shorthand type specification
-     * string as parsed by cqasm::types::from_spec(). If you need more control,
-     * you can also manipulate param_types directly.
+     * Creates a new instruction.
+     * param_types is a shorthand type specification string as parsed by cqasm::types::from_spec().
+     * If you need more control, you can also manipulate param_types directly.
      *
-     * allow_conditional specifies whether the instruction can be made
-     * conditional with c- notation. allow_parallel specifies whether it may
-     * appear bundled with other instructions. allow_reused_qubits specifies
-     * whether it is legal for the instruction to use a qubit more than once in
-     * its parameter list. allow_different_index_sizes specifies whether it's
-     * legal to have different "index sizes" for different parameters, for
-     * instance q[1,2] in one parameter and q[1,2,3,4,5] in another.
+     * allow_conditional specifies whether the instruction can be made conditional with c- notation.
+     * allow_parallel specifies whether it may appear bundled with other instructions.
+     * allow_reused_qubits specifies whether it is legal for the instruction
+     * to use a qubit more than once in its parameter list.
+     * allow_different_index_sizes specifies whether it's legal to have different "index sizes" for different parameters,
+     * for instance q[1,2] in one parameter and q[1,2,3,4,5] in another.
      */
-    explicit Instruction(
-        const std::string &name,
-        const std::string &param_types = "",
+    Instruction(
+        std::string name,
+        const std::optional<std::string> &param_types,
         bool allow_conditional = true,
         bool allow_parallel = true,
         bool allow_reused_qubits = false,
@@ -145,3 +145,8 @@ instruction::InstructionRef deserialize(const ::tree::cbor::MapReader &map);
 } // namespace primitives
 
 } // namespace cqasm::v1x
+
+/**
+ * std::ostream support via fmt (uses operator<<).
+ */
+template <> struct fmt::formatter<cqasm::v1x::instruction::Instruction> : ostream_formatter {};

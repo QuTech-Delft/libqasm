@@ -11,24 +11,24 @@ class TestV3xAnalyzer(unittest.TestCase):
 
         self.assertEqual(ast.version.items[0], 3)
         
-        qubit_array = ast.statements.items[0] 
+        qubit_array = ast.block.statements[0]
         self.assertEqual(qubit_array.name.name, "b'q'")
-        self.assertEqual(qubit_array.typ.name, "b'qubit'")
-        self.assertEqual(qubit_array.size.value, 5)
+        self.assertEqual(qubit_array.typ.name.name, "b'qubit'")
+        self.assertEqual(qubit_array.typ.size.value, 5)
         
-        bit_array = ast.statements.items[1]
+        bit_array = ast.block.statements[1]
         self.assertEqual(bit_array.name.name, "b'b'")
-        self.assertEqual(bit_array.typ.name, "b'bit'")
-        self.assertEqual(bit_array.size.value, 5)
+        self.assertEqual(bit_array.typ.name.name, "b'bit'")
+        self.assertEqual(bit_array.typ.size.value, 5)
         
-        h_instruction = ast.statements.items[2] 
+        h_instruction = ast.block.statements[2]
         self.assertEqual(h_instruction.name.name, "b'h'")
         h_operand = h_instruction.operands.items[0]
         self.assertEqual(h_operand.expr.name, "b'q'")
         self.assertEqual(h_operand.indices.items[0].first.value, 0)
         self.assertEqual(h_operand.indices.items[0].last.value, 4)
 
-        measure_instruction = ast.statements.items[3]
+        measure_instruction = ast.block.statements[3]
         self.assertEqual(measure_instruction.name.name, "b'measure'")
         self.assertEqual(measure_instruction.lhs.name, "b'b'")
         self.assertEqual(measure_instruction.rhs.name, "b'q'")
@@ -47,7 +47,7 @@ class TestV3xAnalyzer(unittest.TestCase):
 
         self.assertEqual(ast.version.items[0], 3)
 
-        h_instruction = ast.statements[0]
+        h_instruction = ast.block.statements[0]
         self.assertEqual(h_instruction.name, "b'h'")
         h_operand = h_instruction.operands[0]
         self.assertEqual(h_operand.variable.name, "b'q'")
@@ -59,7 +59,7 @@ class TestV3xAnalyzer(unittest.TestCase):
         self.assertEqual(h_operand.indices[3].value, 3)
         self.assertEqual(h_operand.indices[4].value, 4)
 
-        measure_instruction = ast.statements[1]
+        measure_instruction = ast.block.statements[1]
         self.assertEqual(measure_instruction.name, "b'measure'")
         measure_bit_operand = measure_instruction.operands[0]
         self.assertEqual(measure_bit_operand.variable.name, "b'b'")

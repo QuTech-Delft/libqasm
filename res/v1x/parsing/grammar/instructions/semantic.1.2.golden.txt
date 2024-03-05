@@ -15,7 +15,7 @@ Program( # input.cq:1:1..18:1
       bundles: []
       annotations: []
       body: <
-        Block( # input.cq:5:1..17:60
+        Block( # input.cq:5:1..17:15
           statements: [
             BundleExt( # input.cq:5:1..20
               items: [
@@ -163,7 +163,7 @@ Program( # input.cq:1:1..18:1
                 )
               ]
             )
-            BundleExt( # input.cq:14:1..17:26
+            BundleExt( # input.cq:14:1..17:15
               items: [
                 Instruction( # input.cq:15:5..26
                   instruction: x(qubit reference)

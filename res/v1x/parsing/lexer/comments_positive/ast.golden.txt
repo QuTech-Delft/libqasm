@@ -11,7 +11,7 @@ Program( # input.cq:1:1..11:1
     )
   >
   statements: <
-    StatementList( # input.cq:2:1..11:40
+    StatementList( # input.cq:2:10..11:1
       items: [
         Bundle( # input.cq:5:1..7:6
           items: [
@@ -23,7 +23,7 @@ Program( # input.cq:1:1..11:1
               >
               condition: -
               operands: <
-                ExpressionList( # input.cq:5:3..7:7
+                ExpressionList( # input.cq:5:3..7:6
                   items: [
                     Index( # input.cq:5:3..7
                       expr: <
@@ -45,7 +45,7 @@ Program( # input.cq:1:1..11:1
                         )
                       >
                     )
-                    MatrixLiteral( # input.cq:5:1..7:6
+                    MatrixLiteral( # input.cq:5:9..7:6
                       rows: [
                         ExpressionList( # input.cq:6:1..5
                           items: [

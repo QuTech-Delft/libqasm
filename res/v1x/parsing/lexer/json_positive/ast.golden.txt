@@ -11,11 +11,11 @@ Program( # input.cq:1:1..12:1
     )
   >
   statements: <
-    StatementList( # input.cq:2:1..12:4
+    StatementList( # input.cq:2:10..12:1
       items: [
         Bundle( # input.cq:4:1..11:4
           items: [
-            Instruction( # input.cq:4:1..11:8
+            Instruction( # input.cq:4:1..11:4
               name: <
                 Identifier( # input.cq:4:1..8
                   name: display
@@ -28,7 +28,7 @@ Program( # input.cq:1:1..12:1
                 )
               >
               annotations: [
-                AnnotationData( # input.cq:4:10..11:19
+                AnnotationData( # input.cq:4:10..11:4
                   interface: <
                     Identifier( # input.cq:4:10..14
                       name: test

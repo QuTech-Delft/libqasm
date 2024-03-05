@@ -65,10 +65,7 @@ public:
     Error(
         const std::string &message,
         const std::optional<std::string> &file_name,
-        std::uint32_t first_line,
-        std::uint32_t first_column,
-        std::uint32_t last_line,
-        std::uint32_t last_column);
+        const annotations::SourceLocation::Range &range);
 
     /**
      * Sets the context of this error to the SourceLocation annotation of the given node,

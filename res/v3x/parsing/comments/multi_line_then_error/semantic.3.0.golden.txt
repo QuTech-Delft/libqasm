@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:5:1..5: expression statement is not of function call type

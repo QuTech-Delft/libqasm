@@ -19,7 +19,7 @@ Program( # input.cq:1:1..12:1
           statements: [
             BundleExt( # input.cq:4:1..11:4
               items: [
-                Instruction( # input.cq:4:1..11:8
+                Instruction( # input.cq:4:1..11:4
                   instruction: display()
                   name: display
                   condition: <
@@ -29,7 +29,7 @@ Program( # input.cq:1:1..12:1
                   >
                   operands: []
                   annotations: [
-                    AnnotationData( # input.cq:4:10..11:19
+                    AnnotationData( # input.cq:4:10..11:4
                       interface: test
                       operation: test
                       operands: [

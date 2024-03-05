@@ -11,7 +11,7 @@ Program( # input.cq:1:1..9:1
     )
   >
   statements: <
-    StatementList( # input.cq:2:1..9:17
+    StatementList( # input.cq:2:9..9:1
       items: [
         Variables( # input.cq:4:1..11
           names: [
@@ -28,7 +28,7 @@ Program( # input.cq:1:1..9:1
         )
         RepeatUntilLoop( # input.cq:6:1..8:17
           body: <
-            StatementList( # input.cq:6:5..8:8
+            StatementList( # input.cq:6:8..8:2
               items: [
                 Bundle( # input.cq:7:5..8
                   items: [

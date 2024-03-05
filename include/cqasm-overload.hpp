@@ -19,6 +19,11 @@ namespace cqasm::overload {
 struct NameResolutionFailure : public std::exception {};
 struct OverloadResolutionFailure : public std::exception {};
 
+
+//----------//
+// Overload //
+//----------//
+
 /**
  * Represents a possible overload for the parameter types of a function, gate, or error model.
  * T is some tag type identifying the overload.
@@ -59,6 +64,11 @@ public:
         return param_types.at(index);
     }
 };
+
+
+//------------------//
+// OverloadResolver //
+//------------------//
 
 /**
  * Represents a set of possible overloads for the parameter types of a function, gate, or error model.
@@ -116,6 +126,11 @@ public:
     }
 };
 
+
+//----------------------//
+// OverloadNameResolver //
+//----------------------//
+
 /**
  * Table of overloaded callables with case-sensitive identifier matching.
  * T is the tag type of the callable/overload pair.
@@ -141,8 +156,7 @@ public:
      * so more specific overloads should always be added last.
      */
     virtual void add_overload(const std::string &name, const T &tag, const Types &param_types) {
-        auto entry = table.find(name);
-        if (entry == table.end()) {
+        if (auto entry = table.find(name); entry == table.end()) {
             auto resolver = OverloadResolver<T, TypeBase, Node>();
             resolver.add_overload(tag, param_types);
             table.insert(std::pair<std::string, OverloadResolver<T, TypeBase, Node>>(name, std::move(resolver)));
@@ -159,12 +173,10 @@ public:
      * the appropriately promoted vector of value pointers.
      */
     [[nodiscard]] virtual std::pair<T, Values> resolve(const std::string &name, const Values &args) {
-        auto entry = table.find(name);
-        if (entry == table.end()) {
-            throw NameResolutionFailure{};
-        } else {
+        if (auto entry = table.find(name); entry != table.end()) {
             return entry->second.resolve(args);
         }
+        throw NameResolutionFailure{};
     }
 };
 

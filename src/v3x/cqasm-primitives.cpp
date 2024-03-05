@@ -77,18 +77,18 @@ Int deserialize(const ::tree::cbor::MapReader &map) {
 }
 
 /**
- * Real
+ * Float
  */
 template <>
-Real initialize<Real>() { return 0.0; }
+Float initialize<Float>() { return 0.0; }
 
 template <>
-void serialize(const Real &obj, ::tree::cbor::MapWriter &map) {
+void serialize(const Float &obj, ::tree::cbor::MapWriter &map) {
     map.append_float("x", obj);
 }
 
 template <>
-Real deserialize(const ::tree::cbor::MapReader &map) {
+Float deserialize(const ::tree::cbor::MapReader &map) {
     return map.at("x").as_float();
 }
 

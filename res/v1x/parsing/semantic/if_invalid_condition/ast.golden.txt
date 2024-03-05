@@ -7,7 +7,7 @@ Program( # input.cq:1:1..6:1
   >
   num_qubits: -
   statements: <
-    StatementList( # input.cq:1:1..6:2
+    StatementList( # input.cq:1:12..6:1
       items: [
         IfElse( # input.cq:3:1..5:2
           branches: [
@@ -18,7 +18,7 @@ Program( # input.cq:1:1..6:1
                 )
               >
               body: <
-                StatementList( # input.cq:3:5..5:8
+                StatementList( # input.cq:3:10..5:2
                   items: [
                     Bundle( # input.cq:4:5..8
                       items: [

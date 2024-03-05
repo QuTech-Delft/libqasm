@@ -7,7 +7,7 @@ Program( # input.cq:1:1..13:1
   >
   num_qubits: -
   statements: <
-    StatementList( # input.cq:1:1..13:13
+    StatementList( # input.cq:1:12..13:1
       items: [
         Variables( # input.cq:3:1..12
           names: [
@@ -44,7 +44,7 @@ Program( # input.cq:1:1..13:1
                 )
               >
               body: <
-                StatementList( # input.cq:6:5..8:8
+                StatementList( # input.cq:6:8..8:2
                   items: [
                     Bundle( # input.cq:7:5..8
                       items: [
@@ -80,7 +80,7 @@ Program( # input.cq:1:1..13:1
                 )
               >
               body: <
-                StatementList( # input.cq:8:5..10:8
+                StatementList( # input.cq:8:19..10:2
                   items: [
                     Bundle( # input.cq:9:5..8
                       items: [
@@ -111,7 +111,7 @@ Program( # input.cq:1:1..13:1
             )
           ]
           otherwise: <
-            StatementList( # input.cq:10:5..12:8
+            StatementList( # input.cq:10:8..12:2
               items: [
                 Bundle( # input.cq:11:5..8
                   items: [

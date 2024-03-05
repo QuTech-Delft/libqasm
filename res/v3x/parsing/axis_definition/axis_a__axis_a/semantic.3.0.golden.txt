@@ -6,7 +6,12 @@ Program(
       items: 3
     )
   >
-  statements: []
+  block: <
+    Block(
+      statements: []
+    )
+  >
+  functions: []
   variables: [
     Variable(
       name: a

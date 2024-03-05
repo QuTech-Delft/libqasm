@@ -6,12 +6,17 @@ Program(
       items: 3
     )
   >
-  statements: []
+  block: <
+    Block(
+      statements: []
+    )
+  >
+  functions: []
   variables: [
     Variable(
       name: f
       typ: <
-        Real(
+        Float(
           size: 1
         )
       >
@@ -20,7 +25,7 @@ Program(
     Variable(
       name: f
       typ: <
-        Real(
+        Float(
           size: 1
         )
       >

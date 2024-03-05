@@ -111,12 +111,7 @@ public:
     /**
      * Builds and pushes an error.
      */
-    void push_error(
-        const std::string &message,
-        int first_line,
-        int first_column,
-        int last_line,
-        int last_column);
+    void push_error(const std::string &message, const annotations::SourceLocation::Range &range);
 };
 
 } // namespace cqasm::v1x::parser

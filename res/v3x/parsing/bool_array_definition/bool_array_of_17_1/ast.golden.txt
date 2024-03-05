@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:3:10..11: mismatched input '1' expecting IDENTIFIER
+Error at input.cq:3:10..11: no viable alternative at input 'bool[17]1'

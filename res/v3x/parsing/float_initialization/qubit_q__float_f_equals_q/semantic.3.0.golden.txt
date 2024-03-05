@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:4:9..10: type of right-hand side (qubit) could not be coerced to left-hand side (real)
+Error at input.cq:4:9..10: type of right-hand side (qubit) could not be coerced to left-hand side (float)

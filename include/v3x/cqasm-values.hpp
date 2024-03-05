@@ -24,12 +24,12 @@ namespace cqasm::v3x::values {
 /**
  * A cQASM value, either known at compile-time or an expression for something only known at runtime.
  */
-using Value = tree::One<Node>;
+using Value = tree::One<ValueBase>;
 
 /**
  * Zero or more cQASM values.
  */
-using Values = tree::Any<Node>;
+using Values = tree::Any<ValueBase>;
 
 /**
  * Promotes a value of array of Type to a value of array of PromotedType.
@@ -104,8 +104,8 @@ bool check_all_of_array_values(const Value &value, Pred&& pred) {
         return std::all_of(const_bool_array->value.begin(), const_bool_array->value.end(), pred);
     } else if (const auto &const_int_array = value->as_const_int_array()) {
         return std::all_of(const_int_array->value.begin(), const_int_array->value.end(), pred);
-    } else if (const auto &const_real_array = value->as_const_real_array()) {
-        return std::all_of(const_real_array->value.begin(), const_real_array->value.end(), pred);
+    } else if (const auto &const_float_array = value->as_const_float_array()) {
+        return std::all_of(const_float_array->value.begin(), const_float_array->value.end(), pred);
     } else {
         return false;
     }
