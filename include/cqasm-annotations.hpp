@@ -71,11 +71,11 @@ struct SourceLocation {
     // Some versions of clang still do not implement operator<=> for std::optional
     // So we have to provide an implementation for operator<=> on file_name
     auto operator<=>(const SourceLocation &other) const {
-        if (file_name && other.file_name) {
-            if (*file_name == *other.file_name) {
+        if (file_name.has_value() && other.file_name.has_value()) {
+            if (file_name.value() == other.file_name.value()) {
                 return range <=> other.range;
             }
-            return *file_name <=> *other.file_name;
+            return file_name.value() <=> other.file_name.value();
         }
         return file_name.has_value() <=> other.file_name.has_value();
     }
