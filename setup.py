@@ -89,8 +89,8 @@ class build_ext(_build_ext):
 
             cmd = (local['conan']['create']['.']
                 ['--version'][get_version()]
-                ['-s:h']['compiler.cppstd=20']
-                ['-s:h']["libqasm/*:build_type=" + build_type]
+                ['-s:a']['compiler.cppstd=20']
+                ['-s:a']["libqasm/*:build_type=" + build_type]
 
                 ['-o']['libqasm/*:build_python=True']
                 ['-o']['libqasm/*:build_tests=True']
