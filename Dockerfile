@@ -8,9 +8,12 @@ RUN apt-get -qq update && \
 ADD . /libqasm-copy
 
 WORKDIR /libqasm-copy
-RUN npm install n -g
-RUN n stable
-RUN ln -sf $(find /usr/local/n/versions/node/ -type f -name node | head -1) /usr/bin/node
-RUN conan profile detect --force
-RUN conan build . -pr=conan/profiles/emscripten -pr:b=conan/profiles/release -b missing
-RUN ls -hl build/Release/emscripten
+
+RUN npm install n -g && \
+    n stable && \
+    ln -sf $(find /usr/local/n/versions/node/ -type f -name node | head -1) /usr/bin/node && \
+    nodejs --version
+
+RUN conan profile detect --force && \
+    conan build . -pr=conan/profiles/emscripten -pr:b=conan/profiles/release -b missing && \
+    ls -hl build/Release/emscripten
