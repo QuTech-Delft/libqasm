@@ -134,7 +134,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Install conan
         run: python3 -m pip install --upgrade pip conan
-        shell: ${{ inputs.shell }}
+        shell: bash
       - name: Get latest CMake
         uses: lukka/get-cmake@latest
         # We clean the Conan cache as a preventive measure for our runs in self-hosted runners
@@ -145,7 +145,7 @@ jobs:
           conan profile detect --force
           conan remove -c "*/*"
           conan build . -pr=conan/profiles/emscripten -pr:b=conan/profiles/release -b missing
-        shell: ${{ inputs.shell }}
+        shell: bash
 
   python-linux-x64:
     name: "Python tests (Linux/x64)"
