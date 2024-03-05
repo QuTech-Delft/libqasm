@@ -64,7 +64,7 @@ class LibqasmConan(ConanFile):
             self.tool_requires("bison/3.8.2")
         self.tool_requires("zulu-openjdk/11.0.19")
         if self.settings.arch == "wasm":
-            self.tool_requires("emsdk/3.1.49")
+            self.tool_requires("emsdk/3.1.50")
         if self.options.build_tests:
             self.test_requires("gtest/1.14.0")
 
