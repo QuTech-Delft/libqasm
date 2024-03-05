@@ -69,15 +69,12 @@ struct SourceLocation {
 
     bool operator==(const SourceLocation &other) const = default;
     // Some versions of clang still do not implement operator<=> for std::optional
-    // So we have to provide an implementation for operator<=> on file_name
+    // So they will complain if we try to define a default operator<=> on a struct that contains a std::optional
+    // This implementation just does not check the optional file_name
+    // Instead, it just assumes that, when comparing source locations, the file_name will be the same
+    // This will always be the case if we are just parsing or analyzing a file or a string
     auto operator<=>(const SourceLocation &other) const {
-        if (file_name.has_value() && other.file_name.has_value()) {
-            if (file_name.value() == other.file_name.value()) {
-                return range <=> other.range;
-            }
-            return file_name.value() <=> other.file_name.value();
-        }
-        return file_name.has_value() <=> other.file_name.has_value();
+        return range <=> other.range;
     }
 
     /**
