@@ -4,6 +4,3 @@ os=Emscripten
 build_type=Release
 compiler=clang
 compiler.version=14
-
-[options]
-libqasm/*:build_emscripten=True
