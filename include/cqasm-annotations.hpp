@@ -16,6 +16,10 @@ namespace cqasm::annotations {
  * Source location annotation object, containing source file line numbers etc.
  */
 struct SourceLocation {
+    /**
+     * An index within a source location.
+     * An index is defined by a line and a column.
+     */
     struct Index {
         std::uint32_t line = 0;
         std::uint32_t column = 0;
@@ -24,12 +28,16 @@ struct SourceLocation {
         auto operator<=>(const Index &other) const = default;
     };
 
+    /**
+     * A range within a source location.
+     * A range is defined by a first and a last index.
+     */
     struct Range {
         Index first;
         Index last;
 
         Range() = default;
-        Range(const Index &f, const Index &l) : first{ f } , last{ l } { last = std::max<Index>(last, first); }
+        Range(const Index &f, const Index &l);
         Range(const Range &other) = default;
         Range(Range &&other) noexcept = default;
         Range& operator=(const Range &other) = default;
@@ -60,7 +68,17 @@ struct SourceLocation {
     SourceLocation& operator=(SourceLocation &&other) noexcept = default;
 
     bool operator==(const SourceLocation &other) const = default;
-    auto operator<=>(const SourceLocation &other) const = default;
+    // Some versions of clang still do not implement operator<=> for std::optional
+    // So we have to provide an implementation for operator<=> on file_name
+    auto operator<=>(const SourceLocation &other) const {
+        if (file_name && other.file_name) {
+            if (*file_name == *other.file_name) {
+                return range <=> other.range;
+            }
+            return *file_name <=> *other.file_name;
+        }
+        return file_name.has_value() <=> other.file_name.has_value();
+    }
 
     /**
      * Expands the location range to contain the given location in the source file.
