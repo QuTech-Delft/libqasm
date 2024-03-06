@@ -5,13 +5,13 @@ add_executable(${PROJECT_NAME}_emscripten
 )
 
 target_link_libraries(${PROJECT_NAME}_emscripten
-    cqasm
+    PRIVATE cqasm
 )
 
-target_compile_options(${PROJECT_NAME}_emscripten PUBLIC
-    -fwasm-exceptions
+target_compile_options(${PROJECT_NAME}_emscripten
+    PUBLIC -fwasm-exceptions
 )
 
-target_link_options(${PROJECT_NAME}_emscripten PUBLIC
-    -lembind -fwasm-exceptions --profiling-funcs -sASSERTIONS=1 -sMODULARIZE=1
+target_link_options(${PROJECT_NAME}_emscripten
+    PUBLIC -lembind -fwasm-exceptions --profiling-funcs -sASSERTIONS=1 -sMODULARIZE=1
 )
