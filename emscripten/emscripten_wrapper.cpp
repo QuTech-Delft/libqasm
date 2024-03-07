@@ -16,26 +16,32 @@ std::string EmscriptenWrapper::get_version() {
 
 
 /**
- * Parses the given string.
- * The file must be in v3.x syntax.
+ * Parses a data string containing a v3.x program.
+ * The file_name is only used when reporting errors.
  * No version check or conversion is performed.
- * Returns a vector of strings,
- * of which the first is reserved for the CBOR serialization of the v3.x AST.
- * Any additional strings represent error messages.
- * The filename is only used when reporting errors.
+ * Returns a string.
+ * If the parsing was successful, that string contains a v3.x syntactic AST.
+ * Otherwise, it will contain a list of errors.
+ * The JSON representation of each error follows the Language Server Protocol (LSP) specification.
+ * Every error is mapped to an LSP Diagnostic structure:
+ * severity is hardcoded to 1 at the moment (value corresponding to an Error level).
  */
-std::string EmscriptenWrapper::parse_string_to_json(const std::string &data, const std::string &filename) {
-    return V3xAnalyzer::parse_string_to_json(data, filename);
+std::string EmscriptenWrapper::parse_string_to_json(const std::string &data, const std::string &file_name) {
+    return V3xAnalyzer::parse_string_to_json(data, file_name);
 }
 
 
 /**
- * Parses and analyzes the given string.
- * Returns a vector of strings,
- * of which the first is reserved for the CBOR serialization of the v3.x semantic tree.
- * Any additional strings represent error messages.
- * The filename is only used when reporting errors.
+ * Parses and analyzes a data string containing a v3.x program.
+ * The file_name is only used when reporting errors.
+ * No version check or conversion is performed.
+ * Returns a string.
+ * If the parsing was successful, that string contains a v3.x semantic AST.
+ * Otherwise, it will contain a list of errors.
+ * The JSON representation of each error follows the Language Server Protocol (LSP) specification.
+ * Every error is mapped to an LSP Diagnostic structure:
+ * severity is hardcoded to 1 at the moment (value corresponding to an Error level).
  */
-std::string EmscriptenWrapper::analyze_string_to_json(const std::string &data, const std::string &filename) {
-    return V3xAnalyzer{}.analyze_string_to_json(data, filename);
+std::string EmscriptenWrapper::analyze_string_to_json(const std::string &data, const std::string &file_name) {
+    return V3xAnalyzer{}.analyze_string_to_json(data, file_name);
 }
