@@ -73,5 +73,5 @@ wrapper().then(function(result) {
     } else {
         console.log("\nError: returning", ret_code.toString(16), "\n")
     }
-    return process.exit(1)
+    return process.exit(ret_code)
 });
