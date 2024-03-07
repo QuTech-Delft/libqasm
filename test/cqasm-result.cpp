@@ -24,7 +24,7 @@ TEST(to_json, v1x_parser_ast) {
     auto ast_result = cqasm::v1x::parser::parse_file(input_file_path.generic_string());
     auto json_result = to_json(ast_result);
     auto expected_json_result = std::string{
-        R"delim({"Program":{"version":{"Version":{"items":"1.0","source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:1:9..12"}},"num_qubits":{"IntegerLiteral":{"value":"2","source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:2:8..9"}},"statements":{"StatementList":{"items":[{"Bundle":{"items":[{"Instruction":{"name":{"Identifier":{"name":"wait","source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:4:1..5"}},"condition":"-","operands":{"ExpressionList":{"items":[{"IntegerLiteral":{"value":"1","source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:4:6..7"}}],"source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:4:6..7"}},"annotations":"[]","source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:4:1..7"}}],"annotations":"[]","source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:4:1..7"}}],"source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:2:1..5:7"}},"source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:1:1..5:1"}})delim"
+        R"delim({"Program":{"version":{"Version":{"items":"1.0","source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:1:9..12"}},"num_qubits":{"IntegerLiteral":{"value":"2","source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:2:8..9"}},"statements":{"StatementList":{"items":[{"Bundle":{"items":[{"Instruction":{"name":{"Identifier":{"name":"wait","source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:4:1..5"}},"condition":"-","operands":{"ExpressionList":{"items":[{"IntegerLiteral":{"value":"1","source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:4:6..7"}}],"source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:4:6..7"}},"annotations":"[]","source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:4:1..7"}}],"annotations":"[]","source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:4:1..7"}}],"source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:2:9..5:1"}},"source_location":"res/v1x/parsing/misc/wait_not_ok_1/input.cq:1:1..5:1"}})delim"
     };
     EXPECT_EQ(json_result, expected_json_result);
 }
@@ -62,7 +62,7 @@ TEST(to_json, v3x_parser_ast) {
     auto ast_result = cqasm::v3x::parser::parse_file(input_file_path.generic_string(), std::nullopt);
     auto json_result = to_json(ast_result);
     auto expected_json_result = std::string{
-        R"delim({"Program":{"version":{"Version":{"items":"3","source_location":"<unknown file name>:1:9..10"}},"statements":{"StatementList":{"items":[{"Variable":{"name":{"Identifier":{"name":"b"}},"typ":{"Keyword":{"name":"bit"}},"size":{"IntegerLiteral":{"value":"0"}},"annotations":"[]","source_location":"<unknown file name>:3:8..9"}}]}}}})delim"
+        R"delim({"Program":{"version":{"Version":{"items":"3","source_location":"<unknown file name>:1:9..10"}},"block":{"GlobalBlock":{"statements":[{"Variable":{"name":{"Identifier":{"name":"b"}},"typ":{"Type":{"name":{"Keyword":{"name":"bit"}},"size":{"IntegerLiteral":{"value":"0"}},"source_location":"<unknown file name>:3:1..7"}},"annotations":"[]","source_location":"<unknown file name>:3:8..9"}}]}}}})delim"
     };
     EXPECT_EQ(json_result, expected_json_result);
 }
@@ -71,7 +71,7 @@ TEST(to_json, v3x_analyzer_errors) {
     auto semantic_ast_result = cqasm::v3x::default_analyzer().analyze_file(input_file_path.generic_string());
     auto json_result = to_json(semantic_ast_result);
     auto expected_json_result = std::string{
-        R"delim({"errors":[{"range":{"start":{"line":3,"character":8},"end":{"line":3,"character":9}},"message":"declaring bit array of size <= 0","severity":1,"relatedInformation":[{"location":{"uri":"file:///res%2Fv3x%2Fparsing%2Fbit_array_definition%2Fbit_array_of_0_b%2Finput.cq","range":{"start":{"line":0,"character":0},"end":{"line":0,"character":0}}},"message":"<unknown error message>"}]}]})delim"
+        R"delim({"errors":[{"range":{"start":{"line":3,"character":8},"end":{"line":3,"character":9}},"message":"found bit array of size <= 0","severity":1,"relatedInformation":[{"location":{"uri":"file:///res%2Fv3x%2Fparsing%2Fbit_array_definition%2Fbit_array_of_0_b%2Finput.cq","range":{"start":{"line":0,"character":0},"end":{"line":0,"character":0}}},"message":"<unknown error message>"}]}]})delim"
     };
     EXPECT_EQ(json_result, expected_json_result);
 }
@@ -80,7 +80,7 @@ TEST(to_json, v3x_analyzer_ast) {
     auto semantic_ast_result = cqasm::v3x::default_analyzer().analyze_file(input_file_path.generic_string());
     auto json_result = to_json(semantic_ast_result);
     auto expected_json_result = std::string{
-        R"delim({"Program":{"api_version":"3.0","version":{"Version":{"items":"3"}},"statements":"[]","variables":[{"Variable":{"name":"b","typ":{"BitArray":{"size":"17"}},"annotations":"[]"}}]}})delim"
+        R"delim({"Program":{"api_version":"3.0","version":{"Version":{"items":"3"}},"block":{"Block":{"statements":"[]"}},"functions":"[]","variables":[{"Variable":{"name":"b","typ":{"BitArray":{"size":"17"}},"annotations":"[]"}}]}})delim"
     };
     EXPECT_EQ(json_result, expected_json_result);
 }

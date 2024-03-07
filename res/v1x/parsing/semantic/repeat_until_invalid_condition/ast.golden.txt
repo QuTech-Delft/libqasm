@@ -11,11 +11,11 @@ Program( # input.cq:1:1..7:1
     )
   >
   statements: <
-    StatementList( # input.cq:2:1..7:18
+    StatementList( # input.cq:2:9..7:1
       items: [
         RepeatUntilLoop( # input.cq:4:1..6:18
           body: <
-            StatementList( # input.cq:4:5..6:8
+            StatementList( # input.cq:4:8..6:2
               items: [
                 Bundle( # input.cq:5:5..8
                   items: [

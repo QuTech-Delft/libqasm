@@ -11,7 +11,7 @@ Program( # input.cq:1:1..6:1
     )
   >
   statements: <
-    StatementList( # input.cq:2:1..6:11
+    StatementList( # input.cq:2:10..6:1
       items: [
         Bundle( # input.cq:4:1..5:11
           items: [
@@ -28,7 +28,7 @@ Program( # input.cq:1:1..6:1
                 )
               >
               annotations: [
-                AnnotationData( # input.cq:4:10..5:19
+                AnnotationData( # input.cq:4:10..5:11
                   interface: <
                     Identifier( # input.cq:4:10..14
                       name: test
@@ -40,7 +40,7 @@ Program( # input.cq:1:1..6:1
                     )
                   >
                   operands: <
-                    ExpressionList( # input.cq:4:20..5:46
+                    ExpressionList( # input.cq:4:20..5:10
                       items: [
                         StringLiteral( # input.cq:4:20..26
                           value: test

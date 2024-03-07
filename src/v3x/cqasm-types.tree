@@ -34,8 +34,8 @@ type_base {
     # Type of an integer (signed 64-bit).
     int {}
 
-    # Type of a real number (IEEE double).
-    real {}
+    # Type of a float number (IEEE double).
+    float {}
 
     # Type of a complex number (2x IEEE double).
     complex {}
@@ -45,7 +45,7 @@ type_base {
 
     bool_array {}
     int_array {}
-    real_array {}
+    float_array {}
     bit_array {}
     qubit_array {}
 }

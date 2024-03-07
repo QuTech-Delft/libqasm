@@ -1,0 +1,130 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  block: <
+    GlobalBlock(
+      statements: [
+        Function( # input.cq:3:5..9
+          name: <
+            Identifier(
+              name: area
+            )
+          >
+          parameters: <
+            LocalBlock(
+              statements: [
+                Variable( # input.cq:3:16..17
+                  name: <
+                    Identifier(
+                      name: r
+                    )
+                  >
+                  typ: <
+                    Type( # input.cq:3:10..15
+                      name: <
+                        Keyword(
+                          name: float
+                        )
+                      >
+                      size: -
+                    )
+                  >
+                  annotations: []
+                )
+              ]
+            )
+          >
+          return_type: <
+            Type( # input.cq:3:22..27
+              name: <
+                Keyword(
+                  name: float
+                )
+              >
+              size: -
+            )
+          >
+          block: <
+            LocalBlock(
+              statements: [
+                ReturnStatement( # input.cq:7:5..11
+                  return_value: <
+                    ProductExpression( # input.cq:7:19..20
+                      lhs: <
+                        ProductExpression( # input.cq:7:14..15
+                          lhs: <
+                            IntegerLiteral( # input.cq:7:12..13
+                              value: 2
+                            )
+                          >
+                          rhs: <
+                            Identifier( # input.cq:7:16..18
+                              name: pi
+                            )
+                          >
+                        )
+                      >
+                      rhs: <
+                        FloatLiteral( # input.cq:7:21..24
+                          value: 1
+                        )
+                      >
+                    )
+                  >
+                  annotations: []
+                )
+              ]
+            )
+          >
+          annotations: []
+        )
+        Initialization( # input.cq:10:9..10
+          var: <
+            Variable( # input.cq:10:7..8
+              name: <
+                Identifier(
+                  name: f
+                )
+              >
+              typ: <
+                Type( # input.cq:10:1..6
+                  name: <
+                    Keyword(
+                      name: float
+                    )
+                  >
+                  size: -
+                )
+              >
+              annotations: []
+            )
+          >
+          rhs: <
+            FunctionCall( # input.cq:10:11..15
+              name: <
+                Identifier(
+                  name: area
+                )
+              >
+              arguments: <
+                ExpressionList(
+                  items: [
+                    FloatLiteral( # input.cq:10:16..18
+                      value: 1
+                    )
+                  ]
+                )
+              >
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

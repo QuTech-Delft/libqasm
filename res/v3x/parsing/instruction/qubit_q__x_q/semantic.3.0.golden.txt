@@ -6,33 +6,33 @@ Program(
       items: 3
     )
   >
-  statements: [
-    Instruction(
-      instruction: x(qubit)
-      name: x
-      operands: [
-        VariableRef(
-          variable --> <
-            Variable(
-              name: q
-              typ: <
-                Qubit(
-                  size: 1
+  block: <
+    Block(
+      statements: [
+        Instruction(
+          instruction: x(qubit)
+          name: x
+          operands: [
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: q
+                  typ: <
+                    Qubit(
+                      size: 1
+                    )
+                  >
+                  annotations: []
                 )
               >
-              annotations: []
             )
-          >
+          ]
+          annotations: []
         )
       ]
-      condition: <
-        ConstBool(
-          value: 1
-        )
-      >
-      annotations: []
     )
-  ]
+  >
+  functions: []
   variables: [
     Variable(
       name: q

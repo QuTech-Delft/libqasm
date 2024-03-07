@@ -11,6 +11,7 @@
     #include <cstdio>
     #include <cstdint>
     #include <string>
+    #include "cqasm-annotations.hpp"
     #include "cqasm-error.hpp"
     #include "cqasm-version.hpp"
     using namespace cqasm::version;
@@ -67,9 +68,7 @@ void yyerror(YYLTYPE* yyllocp, yyscan_t unused, const std::string &file_name, cq
     throw cqasm::error::ParseError(
         std::string(msg),
         file_name,
-        yyllocp->first_line,
-        yyllocp->first_column,
-        yyllocp->last_line,
-        yyllocp->last_column
+        { { static_cast<std::uint32_t>(yyllocp->first_line), static_cast<std::uint32_t>(yyllocp->first_column) },
+          { static_cast<std::uint32_t>(yyllocp->last_line), static_cast<std::uint32_t>(yyllocp->last_column) } }
     );
 }

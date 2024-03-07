@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:3:9..10: missing IDENTIFIER at '\n'
+Error at input.cq:3:9..10: no viable alternative at input 'bool[17]\n'

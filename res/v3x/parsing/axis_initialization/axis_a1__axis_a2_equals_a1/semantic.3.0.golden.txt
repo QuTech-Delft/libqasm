@@ -6,46 +6,46 @@ Program(
       items: 3
     )
   >
-  statements: [
-    AssignmentInstruction(
-      lhs: <
-        VariableRef(
-          variable --> <
-            Variable(
-              name: a2
-              typ: <
-                Axis(
-                  size: 3
+  block: <
+    Block(
+      statements: [
+        AssignmentStatement(
+          lhs: <
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: a2
+                  typ: <
+                    Axis(
+                      size: 3
+                    )
+                  >
+                  annotations: []
                 )
               >
-              annotations: []
             )
           >
-        )
-      >
-      rhs: <
-        VariableRef(
-          variable --> <
-            Variable(
-              name: a1
-              typ: <
-                Axis(
-                  size: 3
+          rhs: <
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: a1
+                  typ: <
+                    Axis(
+                      size: 3
+                    )
+                  >
+                  annotations: []
                 )
               >
-              annotations: []
             )
           >
+          annotations: []
         )
-      >
-      condition: <
-        ConstBool(
-          value: 1
-        )
-      >
-      annotations: []
+      ]
     )
-  ]
+  >
+  functions: []
   variables: [
     Variable(
       name: a1

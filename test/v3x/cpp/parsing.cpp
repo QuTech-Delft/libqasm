@@ -73,7 +73,7 @@ public:
 
             analyzer.register_instruction("cnot", "QQ");
             analyzer.register_instruction("cnot", "VV");
-            analyzer.register_instruction("cr", "QQr");
+            analyzer.register_instruction("cr", "QQf");
             analyzer.register_instruction("crk", "QQi");
             analyzer.register_instruction("cz", "QQ");
             analyzer.register_instruction("h", "Q");
@@ -85,9 +85,9 @@ public:
             analyzer.register_instruction("measure", "WQ");  // bit array = qubit
             analyzer.register_instruction("mx90", "Q");
             analyzer.register_instruction("my90", "Q");
-            analyzer.register_instruction("rx", "Qr");
-            analyzer.register_instruction("ry", "Qr");
-            analyzer.register_instruction("rz", "Qr");
+            analyzer.register_instruction("rx", "Qf");
+            analyzer.register_instruction("ry", "Qf");
+            analyzer.register_instruction("rz", "Qf");
             analyzer.register_instruction("s", "Q");
             analyzer.register_instruction("sdag", "Q");
             analyzer.register_instruction("x", "Q");

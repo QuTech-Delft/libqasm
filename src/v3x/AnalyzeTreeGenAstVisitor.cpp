@@ -2,17 +2,18 @@
 #include "v3x/cqasm-ast-gen.hpp"
 #include "v3x/cqasm-analyzer.hpp"
 
-#include <algorithm>  // for_each, transform
+#include <algorithm>  // any_of, for_each
 #include <any>
+#include <cassert>  // assert
 #include <range/v3/view/tail.hpp>  // tail
-#include <string_view>
 
 
 namespace cqasm::v3x::analyzer {
 
 AnalyzeTreeGenAstVisitor::AnalyzeTreeGenAstVisitor(Analyzer &analyzer)
 : analyzer_{ analyzer }
-, result_{} {}
+, result_{}
+{}
 
 std::any AnalyzeTreeGenAstVisitor::visit_node(ast::Node &/* node */) {
     throw error::AnalysisError{ "unimplemented" };
@@ -21,8 +22,11 @@ std::any AnalyzeTreeGenAstVisitor::visit_node(ast::Node &/* node */) {
 std::any AnalyzeTreeGenAstVisitor::visit_program(ast::Program &program_ast) {
     result_.root = tree::make<semantic::Program>();
     result_.root->api_version = analyzer_.api_version;
-    visit_version(*program_ast.version);
-    visit_statement_list(*program_ast.statements);
+    result_.root->version = std::any_cast<tree::One<semantic::Version>>(visit_version(*program_ast.version));
+    auto [block, variables, functions] = std::any_cast<GlobalBlockReturnT>(visit_global_block(*program_ast.block));
+    result_.root->block = block;
+    result_.root->variables = variables;
+    result_.root->functions = functions;
     return result_;
 }
 
@@ -52,23 +56,17 @@ std::any AnalyzeTreeGenAstVisitor::visit_version(ast::Version &node) {
         ret->items = analyzer_.api_version;
     }
     ret->copy_annotation<parser::SourceLocation>(node);
-
-    // Update program's version
-    result_.root->version = ret;
-
     return ret;
 }
 
-std::any AnalyzeTreeGenAstVisitor::visit_statement_list(ast::StatementList &node) {
-    for (const auto &statement_ast : node.items) {
-        try {
-            statement_ast->visit(*this);
-        } catch (error::AnalysisError &err) {
-            err.context(node);
-            result_.errors.push_back(std::move(err));
-        }
-    }
-    return {};
+std::any AnalyzeTreeGenAstVisitor::visit_global_block(ast::GlobalBlock &node) {
+    visit_block(node);
+    return GlobalBlockReturnT{ analyzer_.current_block(), analyzer_.current_variables(), analyzer_.global_functions() };
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_local_block(ast::LocalBlock &node) {
+    visit_block(node);
+    return LocalBlockReturnT{ analyzer_.current_block(), analyzer_.current_variables() };
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_annotated(ast::Annotated &node) {
@@ -101,44 +99,11 @@ std::any AnalyzeTreeGenAstVisitor::visit_annotation_data(ast::AnnotationData &no
     return ret;
 }
 
-/*
- * Build a semantic type
- * It can be a simple type T, of size 1,
- * or an array type TArray, which size is given by the syntactic type
- */
-template <typename T, typename TArray>
-types::Type AnalyzeTreeGenAstVisitor::visit_variable_type(const ast::Variable &variable_ast,
-    std::string_view type_name) const {
-
-    if (variable_ast.size.empty()) {
-        return tree::make<T>(1);
-    } else if (variable_ast.size->value > 0) {
-        return tree::make<TArray>(variable_ast.size->value);
-    } else {
-        throw error::AnalysisError{ fmt::format("declaring {} array of size <= 0", type_name) };
-    }
-}
-
 std::any AnalyzeTreeGenAstVisitor::visit_variable(ast::Variable &node) {
     auto ret = tree::make<semantic::Variable>();
     try {
-        auto type_name = node.typ->name;
-        types::Type type{};
-        if (type_name == "qubit") {
-            type = visit_variable_type<types::Qubit, types::QubitArray>(node, "qubit");
-        } else if (type_name == "bit") {
-            type = visit_variable_type<types::Bit, types::BitArray>(node, "bit");
-        } else if (type_name == "axis") {
-            type = tree::make<types::Axis>(3);
-        } else if (type_name == "bool") {
-            type = visit_variable_type<types::Bool, types::BoolArray>(node, "bool");
-        } else if (type_name == "int") {
-            type = visit_variable_type<types::Int, types::IntArray>(node, "int");
-        } else if (type_name == "float") {
-            type = visit_variable_type<types::Real, types::RealArray>(node, "real");
-        } else {
-            throw error::AnalysisError("unknown type \"" + type_name + "\"");
-        }
+        // Build semantic type from syntactic type
+        auto type = build_semantic_type(node.typ);
 
         // Construct variable
         // Use the location tag of the identifier to record where the variable was defined
@@ -148,12 +113,235 @@ std::any AnalyzeTreeGenAstVisitor::visit_variable(ast::Variable &node) {
         ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
         ret->copy_annotation<parser::SourceLocation>(*identifier);
 
-        // Update program's variables
-        // And register mapping
-        result_.root->variables.add(ret);
-        analyzer_.register_mapping(identifier->name, tree::make<values::VariableRef>(ret));
+        // Add the variable to the current scope
+        analyzer_.add_variable_to_current_scope(ret);
+
+        // Register the variable
+        analyzer_.register_variable(identifier->name, tree::make<values::VariableRef>(ret));
     } catch (error::AnalysisError &err) {
         err.context(node);
+        result_.errors.push_back(std::move(err));
+        ret.reset();
+    }
+    return ret;
+}
+
+/**
+ * Promote a value to a given type,
+ * or error if the promotion is not valid
+ */
+values::Value promote_or_error(const values::Value &rhs_value, const types::Type &lhs_type) {
+    if (auto rhs_promoted_value = values::promote(rhs_value, lhs_type); !rhs_promoted_value.empty()) {
+        return rhs_promoted_value;
+    }
+    throw error::AnalysisError{ fmt::format(
+        "type of right-hand side ({}) could not be coerced to left-hand side ({})",
+        values::type_of(rhs_value), lhs_type) };
+}
+
+void do_assignment(
+    tree::Maybe<semantic::AssignmentStatement> &assignment_statement,
+    const values::Value &lhs_value,
+    const values::Value &rhs_value) {
+
+    // Check left and right-hand sides have the same size
+    auto rhs_size = values::size_of(rhs_value);
+    auto lhs_size = values::size_of(lhs_value);
+    if (rhs_size != lhs_size) {
+        throw error::AnalysisError{ fmt::format(
+            "trying to initialize a lhs of size {} with a rhs of size {}",
+            lhs_size, rhs_size) };
+    }
+
+    // Check if right-hand side operand needs be promoted
+    const auto lhs_type = values::type_of(lhs_value);
+    const auto promoted_rhs_value = promote_or_error(rhs_value, lhs_type);
+
+    // Check axis types are not assigned [0, 0, 0]
+    if (lhs_type->as_axis()) {
+        if (values::check_all_of_array_values(rhs_value,
+                [](const auto e){ return static_cast<double>(e->value) == 0.0; })) {
+            throw error::AnalysisError{ "cannot set an axis variable type to [0.0, 0.0, 0.0]" };
+        }
+    }
+
+    assignment_statement.emplace(lhs_value, promoted_rhs_value);
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_initialization(ast::Initialization &node) {
+    auto ret = tree::Maybe<semantic::AssignmentStatement>();
+    try {
+        // Analyze the right-hand side operand
+        //
+        // Initialization instructions check the right-hand side operand first
+        // In order to avoid code such as 'int i = i' being correct
+        const auto rhs_value = std::any_cast<values::Value>(visit_expression(*node.rhs));
+
+        // Add the variable declaration
+        visit_variable(*node.var);
+
+        // Analyze the left-hand side operand
+        // Left-hand side is always assignable for an initialization
+        const auto lhs_value = std::any_cast<values::Value>(visit_expression(*node.var->name));
+
+        // Perform assignment
+        do_assignment(ret, lhs_value, rhs_value);
+
+        // Copy annotation data
+        ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
+        ret->copy_annotation<parser::SourceLocation>(node);
+
+        // Add the statement to the current scope
+        analyzer_.add_statement_to_current_scope(ret);
+    } catch (error::AnalysisError &err) {
+        err.context(node);
+        result_.errors.push_back(std::move(err));
+        ret.reset();
+    }
+    return ret;
+}
+
+bool AnalyzeTreeGenAstVisitor::current_block_has_return_statement() {
+    return std::any_of(analyzer_.current_block()->statements.begin(), analyzer_.current_block()->statements.end(),
+        [](const auto &statement) { return statement->as_return_statement(); });
+}
+
+void AnalyzeTreeGenAstVisitor::current_block_return_statements_promote_or_error(const tree::Maybe<types::Node> &return_type) {
+    std::for_each(analyzer_.current_block()->statements.begin(), analyzer_.current_block()->statements.end(),
+        [&return_type](const auto &statement) {
+            if (auto return_statement = statement->as_return_statement(); return_statement) {
+                assert(!return_statement->return_value.empty());
+                const auto promoted_return_value = promote_or_error(return_statement->return_value, return_type);
+                return_statement->return_value.set(promoted_return_value);
+            }
+    });
+}
+
+/**
+ * Convenience function for extracting the types of a list of variables.
+ */
+types::Types types_of(const tree::Any<semantic::Variable> &variables) {
+    types::Types types{};
+    for (const auto &variable : variables) {
+        types.add(variable->typ);
+    }
+    return types;
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_function(ast::Function &node) {
+    auto ret = tree::make<semantic::Function>();
+    analyzer_.push_scope();
+
+    try {
+        // Name
+        const auto identifier = node.name;
+        ret->name = identifier->name;
+
+        // Return type
+        if (!node.return_type.empty()) {
+            ret->return_type = build_semantic_type(node.return_type);
+        }
+
+        // Parameters
+        const auto &parameters = std::any_cast<LocalBlockReturnT>(visit_local_block(*node.parameters)).second;
+        auto parameter_types = types_of(parameters);
+
+        // Block
+        auto [block, variables] = std::any_cast<LocalBlockReturnT>(visit_local_block(*node.block));
+        ret->block = block;
+        ret->variables = variables;
+
+        // Return statement and return type checks
+        if (current_block_has_return_statement() && node.return_type.empty()) {
+            throw error::AnalysisError{ "found return statement but function does not have a return type" };
+        } else if (!current_block_has_return_statement() && !node.return_type.empty()) {
+            throw error::AnalysisError{ "function has a return type but return statement was not found" };
+        } else if (current_block_has_return_statement() && !node.return_type.empty()) {
+            current_block_return_statements_promote_or_error(ret->return_type);
+        }
+
+        // Copy annotation data
+        ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
+        ret->copy_annotation<parser::SourceLocation>(node);
+
+        // Add the function to the global scope
+        analyzer_.add_function_to_global_scope(ret);
+
+        // Register the function
+        analyzer_.register_function(ret->name, parameter_types, tree::make<values::FunctionRef>(ret));
+    } catch (error::AnalysisError &err) {
+        err.context(node);
+        result_.errors.push_back(std::move(err));
+        ret.reset();
+    }
+
+    analyzer_.pop_scope();
+    return ret;
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_assignment_statement(ast::AssignmentStatement &node) {
+    auto ret = tree::Maybe<semantic::AssignmentStatement>();
+    try {
+        // Analyze the operands
+        const auto lhs_value = std::any_cast<values::Value>(visit_expression(*node.lhs));
+        const auto rhs_value = std::any_cast<values::Value>(visit_expression(*node.rhs));
+
+        // Check assignability of the left-hand side
+        if (bool assignable = lhs_value->as_reference(); !assignable) {
+            throw error::AnalysisError{ "left-hand side of assignment statement must be assignable" };
+        }
+
+        // Perform assignment
+        do_assignment(ret, lhs_value, rhs_value);
+
+        // Copy annotation data
+        ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
+        ret->copy_annotation<parser::SourceLocation>(node);
+
+        // Add the statement to the current scope
+        analyzer_.add_statement_to_current_scope(ret);
+    } catch (error::AnalysisError &err) {
+        err.context(node);
+        result_.errors.push_back(std::move(err));
+        ret.reset();
+    }
+    return ret;
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_return_statement(ast::ReturnStatement &node) {
+    auto ret = tree::make<semantic::ReturnStatement>(
+        std::any_cast<values::Value>(visit_expression(*node.return_value)));
+
+    // Copy annotation data
+    ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
+    ret->copy_annotation<parser::SourceLocation>(node);
+
+    // Add the statement to the current scope
+    analyzer_.add_statement_to_current_scope(ret);
+
+    return ret;
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_expression_statement(ast::ExpressionStatement &node) {
+    auto ret = tree::make<semantic::FunctionCallStatement>();
+    try {
+        if (auto function_call = node.expression->as_function_call(); function_call) {
+            ret->return_value = std::any_cast<values::Value>(visit_function_call(*function_call)).get_ptr();
+
+            // Copy annotation data
+            ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(
+                visit_annotated(*node.as_annotated()));
+            // Expression statements get the source location information from their expressions
+            ret->copy_annotation<parser::SourceLocation>(*node.expression);
+
+            // Add the statement to the current scope
+            analyzer_.add_statement_to_current_scope(ret);
+        } else {
+            throw error::AnalysisError{ "expression statement is not of function call type" };
+        }
+    } catch (error::AnalysisError &err) {
+        // Expression statements get the source location information from their expressions
+        err.context(*node.expression);
         result_.errors.push_back(std::move(err));
         ret.reset();
     }
@@ -191,6 +379,33 @@ bool check_qubit_and_bit_indices_have_same_size(const values::Values &operands) 
     return qubit_indices_size == bit_indices_size;
 }
 
+std::any AnalyzeTreeGenAstVisitor::visit_gate(ast::Gate &node) {
+    auto ret = tree::Maybe<semantic::Instruction>();
+    try {
+        // Set operand list
+        auto operands = values::Values();
+        for (const auto &operand_expr : node.operands->items) {
+            operands.add(std::any_cast<values::Value>(visit_expression(*operand_expr)));
+        }
+
+        // Resolve the instruction
+        ret.set(analyzer_.resolve_instruction(node.name->name, operands));
+
+        // Copy annotation data
+        ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
+        ret->copy_annotation<parser::SourceLocation>(node);
+
+        // Add the statement to the current scope
+        analyzer_.add_statement_to_current_scope(ret);
+    } catch (error::AnalysisError &err) {
+        err.context(node);
+        result_.errors.push_back(std::move(err));
+        ret.reset();
+    }
+
+    return ret;
+}
+
 std::any AnalyzeTreeGenAstVisitor::visit_measure_instruction(ast::MeasureInstruction &node) {
     auto ret = tree::Maybe<semantic::Instruction>();
     try {
@@ -214,157 +429,12 @@ std::any AnalyzeTreeGenAstVisitor::visit_measure_instruction(ast::MeasureInstruc
             }
         }
 
-        // Set condition code
-        ret->condition.set(tree::make<values::ConstBool>(true));
-
         // Copy annotation data
         ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
         ret->copy_annotation<parser::SourceLocation>(node);
 
-        // Update program's statements
-        result_.root->statements.add(ret);
-    } catch (error::AnalysisError &err) {
-        err.context(node);
-        result_.errors.push_back(std::move(err));
-        ret.reset();
-    }
-    return ret;
-}
-
-std::any AnalyzeTreeGenAstVisitor::visit_instruction(ast::Instruction &node) {
-    auto ret = tree::Maybe<semantic::Instruction>();
-    try {
-        // Set operand list
-        auto operands = values::Values();
-        for (const auto &operand_expr : node.operands->items) {
-            operands.add(std::any_cast<values::Value>(visit_expression(*operand_expr)));
-        }
-
-        // Resolve the instruction
-        ret.set(analyzer_.resolve_instruction(node.name->name, operands));
-
-        // Set condition code
-        ret->condition.set(tree::make<values::ConstBool>(true));
-
-        // Copy annotation data
-        ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
-        ret->copy_annotation<parser::SourceLocation>(node);
-
-        // Update program's statements
-        result_.root->statements.add(ret);
-    } catch (error::AnalysisError &err) {
-        err.context(node);
-        result_.errors.push_back(std::move(err));
-        ret.reset();
-    }
-
-    return ret;
-}
-
-/*
- * Promote a value to a given type,
- * or error if the promotion is not valid
- */
-values::Value promote_or_error(const values::Value &rhs_value, const types::Type &lhs_type) {
-    if (auto rhs_promoted_value = values::promote(rhs_value, lhs_type); !rhs_promoted_value.empty()) {
-        return rhs_promoted_value;
-    }
-    throw error::AnalysisError{ fmt::format(
-        "type of right-hand side ({}) could not be coerced to left-hand side ({})",
-        values::type_of(rhs_value), lhs_type) };
-}
-
-void do_assignment(
-    tree::Maybe<semantic::AssignmentInstruction> &assignment_instruction,
-    const values::Value &lhs_value,
-    const values::Value &rhs_value) {
-
-    // Check left and right-hand sides have the same size
-    auto rhs_size = values::size_of(rhs_value);
-    auto lhs_size = values::size_of(lhs_value);
-    if (rhs_size != lhs_size) {
-        throw error::AnalysisError{ fmt::format(
-            "trying to initialize a lhs of size {} with a rhs of size {}",
-            lhs_size, rhs_size) };
-    }
-
-    // Check if right-hand side operand needs be promoted
-    const auto lhs_type = values::type_of(lhs_value);
-    const auto promoted_rhs_value = promote_or_error(rhs_value, lhs_type);
-
-    // Check axis types are not assigned [0, 0, 0]
-    if (lhs_type->as_axis()) {
-        if (values::check_all_of_array_values(rhs_value,
-                [](const auto e){ return static_cast<double>(e->value) == 0.0; })) {
-            throw error::AnalysisError{ "cannot set an axis variable type to [0.0, 0.0, 0.0]" };
-        }
-    }
-
-    assignment_instruction.emplace(lhs_value, promoted_rhs_value);
-}
-
-std::any AnalyzeTreeGenAstVisitor::visit_initialization(ast::Initialization &node) {
-    auto ret = tree::Maybe<semantic::AssignmentInstruction>();
-    try {
-        // Analyze the right-hand side operand
-        //
-        // Initialization instructions check the right-hand side operand first
-        // In order to avoid code such as 'int i = i' being correct
-        const auto rhs_value = std::any_cast<values::Value>(visit_expression(*node.rhs));
-
-        // Add the variable declaration
-        visit_variable(*node.var);
-
-        // Analyze the left-hand side operand
-        // Left-hand side is always assignable for an initialization
-        const auto lhs_value = std::any_cast<values::Value>(visit_expression(*node.var->name));
-
-        // Perform assignment
-        do_assignment(ret, lhs_value, rhs_value);
-
-        // Set condition code
-        ret->condition.set(tree::make<values::ConstBool>(true));
-
-        // Copy annotation data
-        ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
-        ret->copy_annotation<parser::SourceLocation>(node);
-
-        // Update program's statements
-        result_.root->statements.add(ret);
-    } catch (error::AnalysisError &err) {
-        err.context(node);
-        result_.errors.push_back(std::move(err));
-        ret.reset();
-    }
-    return ret;
-}
-
-std::any AnalyzeTreeGenAstVisitor::visit_assignment_instruction(ast::AssignmentInstruction &node) {
-    auto ret = tree::Maybe<semantic::AssignmentInstruction>();
-    try {
-        // Analyze the operands
-        const auto lhs_value = std::any_cast<values::Value>(visit_expression(*node.lhs));
-        const auto rhs_value = std::any_cast<values::Value>(visit_expression(*node.rhs));
-
-        // Check assignability of the left-hand side
-        if (bool assignable = lhs_value->as_reference(); !assignable) {
-            throw error::AnalysisError{ "left-hand side of assignment statement must be assignable" };
-        } else {
-            ret->lhs = lhs_value;
-        }
-
-        // Perform assignment
-        do_assignment(ret, lhs_value, rhs_value);
-
-        // Set condition code
-        ret->condition.set(tree::make<values::ConstBool>(true));
-
-        // Copy annotation data
-        ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
-        ret->copy_annotation<parser::SourceLocation>(node);
-
-        // Update program's statements
-        result_.root->statements.add(ret);
+        // Add the statement to the current scope
+        analyzer_.add_statement_to_current_scope(ret);
     } catch (error::AnalysisError &err) {
         err.context(node);
         result_.errors.push_back(std::move(err));
@@ -384,20 +454,22 @@ std::any AnalyzeTreeGenAstVisitor::visit_expression(ast::Expression &node) {
     }
 }
 
-/*
+/**
  * Convenience function for visiting a function call given the function's name and arguments
  */
 values::Value AnalyzeTreeGenAstVisitor::visit_function_call(
     const tree::One<ast::Identifier> &name,
-    const tree::One<ast::ExpressionList> &arguments) {
+    const tree::Maybe<ast::ExpressionList> &arguments) {
 
     auto function_arguments = values::Values();
-    std::for_each(arguments->items.begin(), arguments->items.end(),
-        [&function_arguments, this](const auto node_argument) {
-            function_arguments.add(std::any_cast<values::Value>(visit_expression(*node_argument)));
-    });
+    if (!arguments.empty()) {
+        std::for_each(arguments->items.begin(), arguments->items.end(),
+            [&function_arguments, this](const auto node_argument) {
+                function_arguments.add(std::any_cast<values::Value>(visit_expression(*node_argument)));
+        });
+    }
     const auto function_name = name->name;
-    auto ret = analyzer_.call_function(function_name, function_arguments);
+    auto ret = analyzer_.resolve_function(function_name, function_arguments);
     if (ret.empty()) {
         throw error::AnalysisError{ "function implementation returned empty value" };
     }
@@ -408,7 +480,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_function_call(ast::FunctionCall &node) 
     return visit_function_call(node.name, node.arguments);
 }
 
-/*
+/**
  * Convenience function for visiting unary operators
  */
 std::any AnalyzeTreeGenAstVisitor::visit_unary_operator(
@@ -417,11 +489,12 @@ std::any AnalyzeTreeGenAstVisitor::visit_unary_operator(
 
     return visit_function_call(
         tree::make<ast::Identifier>(std::string{ "operator" } + name),
-        tree::make<ast::ExpressionList>(tree::Any<ast::Expression>{ expression })
+        tree::Maybe<ast::ExpressionList>{
+            tree::make<ast::ExpressionList>(tree::Any<ast::Expression>{ expression }).get_ptr() }
     );
 }
 
-/*
+/**
  * Convenience function for visiting binary operators
  */
 std::any AnalyzeTreeGenAstVisitor::visit_binary_operator(
@@ -431,7 +504,8 @@ std::any AnalyzeTreeGenAstVisitor::visit_binary_operator(
 
     return visit_function_call(
         tree::make<ast::Identifier>(std::string{ "operator" } + name),
-        tree::make<ast::ExpressionList>(tree::Any<ast::Expression>{ lhs, rhs })
+        tree::Maybe<ast::ExpressionList>{
+            tree::make<ast::ExpressionList>(tree::Any<ast::Expression>{ lhs, rhs }).get_ptr() }
     );
 }
 
@@ -534,7 +608,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_ternary_conditional_expression(ast::Ter
     );
 }
 
-/*
+/**
  * Check out of range accesses from any index in an input list to an array of a given size
  */
 void check_out_of_range(const IndexListT &indices, primitives::Int size) {
@@ -605,30 +679,13 @@ std::any AnalyzeTreeGenAstVisitor::visit_index_range(ast::IndexRange &index_rang
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_identifier(ast::Identifier &node) {
-    return analyzer_.resolve_mapping(node.name);
+    return analyzer_.resolve_variable(node.name);
 }
 
-/*
- * Transform an input array of values into an array of a given Type
- * Pre condition: all the values in the input array can be promoted to Type
- */
-template <typename ConstTypeArray>
-/* static */ tree::One<ConstTypeArray> AnalyzeTreeGenAstVisitor::build_array_value_from_promoted_values(
-    const values::Values &values, const types::Type &type) {
-
-    auto ret = tree::make<ConstTypeArray>();
-    ret->value.get_vec().resize(values.size());
-    std::transform(values.begin(), values.end(), ret->value.begin(),
-       [&type](const auto const_value) {
-            return values::promote(const_value, type);
-    });
-    return ret;
-}
-
-/*
+/**
  * Transform an input array into a const array of Type
  * Pre conditions:
- *   Type can only be Bool, Int, or Real
+ *   Type can only be Bool, Int, or Float
  *   All the values in the input array can be promoted to Type
  */
 /* static */ values::Value AnalyzeTreeGenAstVisitor::build_value_from_promoted_values(
@@ -638,19 +695,19 @@ template <typename ConstTypeArray>
         return build_array_value_from_promoted_values<values::ConstBoolArray>(values, type);
     } else if (types::type_check(type, tree::make<types::Int>())) {
         return build_array_value_from_promoted_values<values::ConstIntArray>(values, type);
-    } else if (types::type_check(type, tree::make<types::Real>())) {
-        return build_array_value_from_promoted_values<values::ConstRealArray>(values, type);
+    } else if (types::type_check(type, tree::make<types::Float>())) {
+        return build_array_value_from_promoted_values<values::ConstFloatArray>(values, type);
     } else {
-        throw error::AnalysisError{ "expecting Bool, Int, or Real type in initialization list" };
+        throw error::AnalysisError{ "expecting Bool, Int, or Float type in initialization list" };
     }
 }
 
-/*
+/**
  * If any element of the initialization list is not a const boolean, const int, or const float, throw an error
  */
 void check_initialization_list_element_type(const values::Value &value) {
-    if (!(value->as_const_bool() || value->as_const_int() || value->as_const_real())) {
-        throw error::AnalysisError{ "expecting a const bool, const int, or const real value" };
+    if (!(value->as_const_bool() || value->as_const_int() || value->as_const_float())) {
+        throw error::AnalysisError{ "expecting a const bool, const int, or const float value" };
     }
 }
 
@@ -706,25 +763,15 @@ std::any AnalyzeTreeGenAstVisitor::visit_integer_literal(ast::IntegerLiteral &no
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_float_literal(ast::FloatLiteral &node) {
-    auto ret = tree::make<values::ConstReal>(node.value);
+    auto ret = tree::make<values::ConstFloat>(node.value);
     return values::Value{ ret };
-}
-
-/**
- * Shorthand for parsing an expression and promoting it to the given type,
- * constructed in-place with the type_args parameter pack.
- * Returns empty when the cast fails.
- */
-template <class Type, class... TypeArgs>
-values::Value AnalyzeTreeGenAstVisitor::analyze_as(ast::Expression &expression, TypeArgs... type_args) {
-    return values::promote(std::any_cast<values::Value>(expression.visit(*this)), tree::make<Type>(type_args...));
 }
 
 /**
  * Shorthand for parsing an expression to a constant integer.
  */
 primitives::Int AnalyzeTreeGenAstVisitor::visit_const_int(ast::Expression &expression) {
-    if (auto int_value = analyze_as<types::Int>(expression); !int_value.empty()) {
+    if (auto int_value = visit_as<types::Int>(expression); !int_value.empty()) {
         if (auto const_int_value = int_value->as_const_int()) {
             return const_int_value->value;
         }

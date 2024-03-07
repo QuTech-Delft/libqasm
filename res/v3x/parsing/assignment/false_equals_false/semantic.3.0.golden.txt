@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:3:7..8: left-hand side of assignment statement must be assignable

@@ -1,2 +1,28 @@
-ERROR
-Error at input.cq:3:8..12: missing 'measure' at '3.14'
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  block: <
+    GlobalBlock(
+      statements: [
+        AssignmentStatement( # input.cq:3:6..7
+          lhs: <
+            FloatLiteral( # input.cq:3:1..5
+              value: 3.14
+            )
+          >
+          rhs: <
+            FloatLiteral( # input.cq:3:8..12
+              value: 3.14
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

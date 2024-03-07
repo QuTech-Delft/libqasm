@@ -8,6 +8,9 @@
 #include "cqasm-types.hpp"
 #include "cqasm-values.hpp"
 
+#include <fmt/ostream.h>
+#include <optional>
+
 
 namespace cqasm::v3x {
 
@@ -48,7 +51,7 @@ public:
      * param_types is a shorthand type specification string as parsed by cqasm::types::from_spec().
      * If you need more control, you can also manipulate param_types directly.
      */
-    explicit Instruction(const std::string &name, const std::string &param_types = "");
+    Instruction(std::string name, const std::optional<std::string> &param_types);
 
     bool operator==(const Instruction& rhs) const;
     inline bool operator!=(const Instruction& rhs) const {
@@ -65,12 +68,12 @@ using InstructionRef = tree::Maybe<Instruction>;
 /**
  * Stream << overload for instructions.
  */
-std::ostream &operator<<(std::ostream &os, const Instruction &insn);
+std::ostream &operator<<(std::ostream &os, const Instruction &instruction);
 
 /**
  * Stream << overload for instruction references.
  */
-std::ostream &operator<<(std::ostream &os, const InstructionRef &insn);
+std::ostream &operator<<(std::ostream &os, const InstructionRef &instruction);
 
 } // namespace instruction
 
@@ -85,3 +88,8 @@ instruction::InstructionRef deserialize(const ::tree::cbor::MapReader &map);
 } // namespace primitives
 
 } // namespace cqasm::v3x
+
+/**
+ * std::ostream support via fmt (uses operator<<).
+ */
+template <> struct fmt::formatter<cqasm::v3x::instruction::Instruction> : ostream_formatter {};

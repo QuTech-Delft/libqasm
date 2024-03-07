@@ -11,32 +11,31 @@ namespace cqasm::v1x {
 namespace instruction {
 
 /**
- * Creates a new instruction. param_types is a shorthand type specification
- * string as parsed by cqasm::types::from_spec(). If you need more control,
- * you can also manipulate param_types directly.
+ * Creates a new instruction.
+ * param_types is a shorthand type specification string as parsed by cqasm::types::from_spec().
+ * If you need more control, you can also manipulate param_types directly.
  *
- * allow_conditional specifies whether the instruction can be made
- * conditional with c- notation. allow_parallel specifies whether it may
- * appear bundled with other instructions. allow_reused_qubits specifies
- * whether it is legal for the instruction to use a qubit more than once in
- * its parameter list. allow_different_index_sizes specifies whether it's legal
- * to have different "index sizes" for different parameters, for instance
- * q[1,2] in one parameter and q[1,2,3,4,5] in another.
+ * allow_conditional specifies whether the instruction can be made conditional with c- notation.
+ * allow_parallel specifies whether it may appear bundled with other instructions.
+ * allow_reused_qubits specifies whether it is legal for the instruction
+ * to use a qubit more than once in its parameter list.
+ * allow_different_index_sizes specifies whether it's legal to have different "index sizes" for different parameters,
+ * for instance q[1,2] in one parameter and q[1,2,3,4,5] in another.
  */
 Instruction::Instruction(
-    const std::string &name,
-    const std::string &param_types,
+    std::string name,
+    const std::optional<std::string> &param_types,
     bool allow_conditional,
     bool allow_parallel,
     bool allow_reused_qubits,
     bool allow_different_index_sizes
 ) :
-    name(name),
-    param_types(types::from_spec(param_types)),
-    allow_conditional(allow_conditional),
-    allow_parallel(allow_parallel),
-    allow_reused_qubits(allow_reused_qubits),
-    allow_different_index_sizes(allow_different_index_sizes)
+    name{ std::move(name) },
+    param_types{ types::from_spec(param_types.value_or("")) },
+    allow_conditional{ allow_conditional },
+    allow_parallel{ allow_parallel },
+    allow_reused_qubits{ allow_reused_qubits },
+    allow_different_index_sizes{ allow_different_index_sizes }
 {}
 
 /**
@@ -53,21 +52,15 @@ bool Instruction::operator==(const Instruction& rhs) const {
 /**
  * Stream << overload for instructions.
  */
-std::ostream &operator<<(std::ostream &os, const Instruction &insn) {
-    os << insn.name << insn.param_types;
-    return os;
+std::ostream &operator<<(std::ostream &os, const Instruction &instruction) {
+    return os << instruction.name << instruction.param_types;
 }
 
 /**
  * Stream << overload for instruction references.
  */
-std::ostream &operator<<(std::ostream &os, const InstructionRef &insn) {
-    if (insn.empty()) {
-        os << "unresolved";
-    } else {
-        os << *insn;
-    }
-    return os;
+std::ostream &operator<<(std::ostream &os, const InstructionRef &instruction) {
+    return instruction.empty() ? os << "unresolved" : os << *instruction;
 }
 
 }  // namespace instruction
@@ -97,7 +90,7 @@ instruction::InstructionRef deserialize(const ::tree::cbor::MapReader &map) {
     if (!map.count("n")) {
         return {};
     }
-    auto insn = tree::make<instruction::Instruction>(
+    auto instruction = tree::make<instruction::Instruction>(
         map.at("n").as_string(),
         "",
         map.at("c").as_bool(),
@@ -107,9 +100,9 @@ instruction::InstructionRef deserialize(const ::tree::cbor::MapReader &map) {
     );
     auto ar = map.at("t").as_array();
     for (const auto &element : ar) {
-        insn->param_types.add(::tree::base::deserialize<types::Node>(element.as_binary()));
+        instruction->param_types.add(::tree::base::deserialize<types::Node>(element.as_binary()));
     }
-    return insn;
+    return instruction;
 }
 
 }  // namespace primitives

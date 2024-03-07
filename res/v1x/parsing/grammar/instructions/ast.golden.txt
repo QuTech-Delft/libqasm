@@ -11,7 +11,7 @@ Program( # input.cq:1:1..18:1
     )
   >
   statements: <
-    StatementList( # input.cq:2:1..18:60
+    StatementList( # input.cq:2:10..18:1
       items: [
         Bundle( # input.cq:5:1..20
           items: [
@@ -311,7 +311,7 @@ Program( # input.cq:1:1..18:1
             )
           ]
         )
-        Bundle( # input.cq:14:1..17:26
+        Bundle( # input.cq:14:1..17:15
           items: [
             Instruction( # input.cq:15:5..26
               name: <

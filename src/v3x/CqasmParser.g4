@@ -10,24 +10,72 @@ options {
 // The use of alternative labels simplifies the visitor classes
 // by removing the need to implement some methods,
 // which would otherwise contain boilerplate code (e.g. 'statement' and 'expression')
-program: statementSeparator* version statements statementSeparator* EOF;
 
-version: VERSION VERSION_NUMBER;
-
-statements: (statementSeparator+ statement)*;
+program: statementSeparator* version globalBlock? statementSeparator* EOF;
 
 statementSeparator: NEW_LINE | SEMICOLON;
 
-statement:
-    QUBIT_TYPE arraySizeDeclaration? IDENTIFIER  # qubitTypeDeclaration
-    | BIT_TYPE arraySizeDeclaration? IDENTIFIER  # bitTypeDeclaration
-    | AXIS_TYPE IDENTIFIER (EQUALS expression)?  # axisTypeDeclaration
-    | BOOL_TYPE arraySizeDeclaration? IDENTIFIER (EQUALS expression)?  # boolTypeDeclaration
-    | INT_TYPE arraySizeDeclaration? IDENTIFIER (EQUALS expression)?  # intTypeDeclaration
-    | FLOAT_TYPE arraySizeDeclaration? IDENTIFIER (EQUALS expression)?  # floatTypeDeclaration
-    | expression EQUALS MEASURE expression  # measureInstruction
-    | IDENTIFIER expressionList  # instruction
+version: VERSION VERSION_NUMBER;
+
+globalBlock: (statementSeparator+ globalBlockStatement)+;
+
+globalBlockStatement:
+    localBlockStatement
+    | functionDeclaration
     ;
+
+// Current implementation of the semantic parser will only allow function call expressions as expression statements
+// Notice expression statements are checked for before instructions
+// This way, code like h(q[0]) is parsed as a function call to a function h with a q[0] parameter
+// And not like a gate h with a (q[0]) expression
+localBlockStatement:
+    variableDeclaration
+    | assignmentStatement
+    | returnStatement
+    | expressionStatement
+    | instruction
+    ;
+
+variableDeclaration:
+    variableDefinition
+    | variableInitialization
+    ;
+
+assignmentStatement: expression EQUALS expression;
+
+returnStatement: RETURN expression;
+
+expressionStatement: expression;
+
+instruction:
+    expression EQUALS MEASURE expression  # measureInstruction
+    | IDENTIFIER expressionList  # gate
+    ;
+
+functionDeclaration: FUNCTION IDENTIFIER OPEN_PARENS parameters? CLOSE_PARENS (ARROW type)?
+    OPEN_BRACE localBlock? statementSeparator* CLOSE_BRACE;
+
+parameters: variableDefinition (statementSeparator* COMMA statementSeparator* variableDefinition)*;
+
+type: quantumType | classicalType;
+
+quantumType:
+    QUBIT_TYPE arraySizeDeclaration?  # qubitType
+    | BIT_TYPE arraySizeDeclaration?  # bitType
+    ;
+
+classicalType:
+    AXIS_TYPE  # axisType
+    | BOOL_TYPE arraySizeDeclaration?  # boolType
+    | INT_TYPE arraySizeDeclaration?  # intType
+    | FLOAT_TYPE arraySizeDeclaration?  # floatType
+    ;
+
+localBlock: (statementSeparator+ localBlockStatement)+;
+
+variableDefinition: type IDENTIFIER;
+
+variableInitialization: classicalType IDENTIFIER EQUALS expression;
 
 arraySizeDeclaration: OPEN_BRACKET INTEGER_LITERAL CLOSE_BRACKET;
 
@@ -42,6 +90,8 @@ indexEntry:
     | expression COLON expression  # indexRange
     ;
 
+// Current implementation of the semantic parser will expect constants
+// for all the expressions of the arithmetic operators
 expression:
     OPEN_PARENS expression CLOSE_PARENS  # parensExpression
     | <assoc=right> (PLUS | MINUS) expression  # unaryPlusMinusExpression

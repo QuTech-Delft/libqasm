@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:3:6..10: mismatched input '3.14' expecting IDENTIFIER
+Error at input.cq:3:6..10: no viable alternative at input 'axis3.14'

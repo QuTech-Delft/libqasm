@@ -179,8 +179,7 @@ annotated {
                 # The condition for starting another iteration.
                 condition: external One<cqasm::v1x::values::Node>;
 
-                # The updating assignment, done at the end of the loop body and upon
-                # continue.
+                # The updating assignment, done at the end of the loop body and upon continue.
                 update: Maybe<set_instruction>;
 
                 # The loop body.

@@ -5,9 +5,9 @@ Program(
       items: 3
     )
   >
-  statements: <
-    StatementList(
-      items: [
+  block: <
+    GlobalBlock(
+      statements: [
         Variable( # input.cq:1:18..19
           name: <
             Identifier(
@@ -15,11 +15,15 @@ Program(
             )
           >
           typ: <
-            Keyword(
-              name: qubit
+            Type( # input.cq:1:12..17
+              name: <
+                Keyword(
+                  name: qubit
+                )
+              >
+              size: -
             )
           >
-          size: -
           annotations: []
         )
       ]

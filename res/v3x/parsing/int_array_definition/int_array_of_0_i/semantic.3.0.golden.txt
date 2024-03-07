@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:3:8..9: declaring int array of size <= 0
+Error at input.cq:3:8..9: found int array of size <= 0

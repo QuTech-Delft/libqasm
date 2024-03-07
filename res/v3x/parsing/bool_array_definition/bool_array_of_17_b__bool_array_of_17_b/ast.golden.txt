@@ -5,9 +5,9 @@ Program(
       items: 3
     )
   >
-  statements: <
-    StatementList(
-      items: [
+  block: <
+    GlobalBlock(
+      statements: [
         Variable( # input.cq:3:10..11
           name: <
             Identifier(
@@ -15,13 +15,17 @@ Program(
             )
           >
           typ: <
-            Keyword(
-              name: bool
-            )
-          >
-          size: <
-            IntegerLiteral(
-              value: 17
+            Type( # input.cq:3:1..9
+              name: <
+                Keyword(
+                  name: bool
+                )
+              >
+              size: <
+                IntegerLiteral(
+                  value: 17
+                )
+              >
             )
           >
           annotations: []
@@ -33,13 +37,17 @@ Program(
             )
           >
           typ: <
-            Keyword(
-              name: bool
-            )
-          >
-          size: <
-            IntegerLiteral(
-              value: 17
+            Type( # input.cq:4:1..9
+              name: <
+                Keyword(
+                  name: bool
+                )
+              >
+              size: <
+                IntegerLiteral(
+                  value: 17
+                )
+              >
             )
           >
           annotations: []

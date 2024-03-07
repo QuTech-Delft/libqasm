@@ -127,7 +127,7 @@ Program( # input.cq:1:1..38:1
                     )
                   ]
                 )
-                ConstComplexMatrix( # input.cq:17:5..20:9
+                ConstComplexMatrix( # input.cq:17:9..20:2
                   value: [(0,0), (1,0); (1,0), (0,0)]
                 )
               ]
@@ -242,7 +242,7 @@ Program( # input.cq:1:1..38:1
         )
         Bundle( # input.cq:35:1..37:4
           items: [
-            Instruction( # input.cq:35:1..37:8
+            Instruction( # input.cq:35:1..37:4
               instruction: display()
               name: display
               condition: <
@@ -252,7 +252,7 @@ Program( # input.cq:1:1..38:1
               >
               operands: []
               annotations: [
-                AnnotationData( # input.cq:35:10..37:33
+                AnnotationData( # input.cq:35:10..37:4
                   interface: an_annotation
                   operation: with_json
                   operands: [

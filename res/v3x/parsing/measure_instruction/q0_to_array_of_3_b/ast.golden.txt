@@ -5,9 +5,9 @@ Program(
       items: 3
     )
   >
-  statements: <
-    StatementList(
-      items: [
+  block: <
+    GlobalBlock(
+      statements: [
         Variable( # input.cq:3:7..9
           name: <
             Identifier(
@@ -15,11 +15,15 @@ Program(
             )
           >
           typ: <
-            Keyword(
-              name: qubit
+            Type( # input.cq:3:1..6
+              name: <
+                Keyword(
+                  name: qubit
+                )
+              >
+              size: -
             )
           >
-          size: -
           annotations: []
         )
         Variable( # input.cq:4:8..9
@@ -29,13 +33,17 @@ Program(
             )
           >
           typ: <
-            Keyword(
-              name: bit
-            )
-          >
-          size: <
-            IntegerLiteral(
-              value: 3
+            Type( # input.cq:4:1..7
+              name: <
+                Keyword(
+                  name: bit
+                )
+              >
+              size: <
+                IntegerLiteral(
+                  value: 3
+                )
+              >
             )
           >
           annotations: []
@@ -46,7 +54,6 @@ Program(
               name: measure
             )
           >
-          condition: -
           lhs: <
             Identifier( # input.cq:6:1..2
               name: b

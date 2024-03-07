@@ -5,9 +5,9 @@ Program(
       items: 3
     )
   >
-  statements: <
-    StatementList(
-      items: []
+  block: <
+    GlobalBlock(
+      statements: []
     )
   >
 )

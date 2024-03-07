@@ -18,13 +18,13 @@ namespace cqasm::v3x::types {
  *  - a = axis (x, y, and z vectors)
  *  - b = bool
  *  - i = int
- *  - r = real
+ *  - f = float
  *  - c = complex
  *  - V = qubit array
  *  - W = bit array
  *  - X = bool array
  *  - Y = int array
- *  - Z = real array
+ *  - Z = float array
  */
 Types from_spec(const std::string &spec) {
     Types types;
@@ -35,13 +35,13 @@ Types from_spec(const std::string &spec) {
             case 'a': types.add_raw(new types::Axis()); break;
             case 'b': types.add_raw(new types::Bool()); break;
             case 'i': types.add_raw(new types::Int()); break;
-            case 'r': types.add_raw(new types::Real()); break;
+            case 'f': types.add_raw(new types::Float()); break;
             case 'c': types.add_raw(new types::Complex()); break;
             case 'V': types.add_raw(new types::QubitArray()); break;
             case 'W': types.add_raw(new types::BitArray()); break;
             case 'X': types.add_raw(new types::BoolArray()); break;
             case 'Y': types.add_raw(new types::IntArray()); break;
-            case 'Z': types.add_raw(new types::RealArray()); break;
+            case 'Z': types.add_raw(new types::FloatArray()); break;
             default: throw std::invalid_argument("unknown type code encountered");
         }
     }
@@ -67,18 +67,18 @@ primitives::Int size_of(const Type &type) {
  */
 std::ostream &operator<<(std::ostream &os, const Type &type) {
     if (type.empty()) { os << "!EMPTY"; }
-    else if (type->as_qubit()) { os << "qubit"; }
-    else if (type->as_bit()) { os << "bit"; }
-    else if (type->as_axis()) { os << "axis"; }
-    else if (type->as_bool()) { os << "bool"; }
-    else if (type->as_int()) { os << "int"; }
-    else if (type->as_real()) { os << "real"; }
-    else if (type->as_complex()) { os << "complex"; }
-    else if (type->as_qubit_array()) { os << "qubit array"; }
-    else if (type->as_bit_array()) { os << "bit array"; }
-    else if (type->as_bool_array()) { os << "bool array"; }
-    else if (type->as_int_array()) { os << "int array"; }
-    else if (type->as_real_array()) { os << "real array"; }
+    else if (type->as_qubit()) { os << types::qubit_type_name; }
+    else if (type->as_bit()) { os << types::bit_type_name; }
+    else if (type->as_axis()) { os << types::axis_type_name; }
+    else if (type->as_bool()) { os << types::bool_type_name; }
+    else if (type->as_int()) { os << types::integer_type_name; }
+    else if (type->as_float()) { os << types::float_type_name; }
+    else if (type->as_complex()) { os << types::complex_type_name; }
+    else if (type->as_qubit_array()) { os << types::qubit_array_type_name; }
+    else if (type->as_bit_array()) { os << types::bit_array_type_name; }
+    else if (type->as_bool_array()) { os << types::bool_array_type_name; }
+    else if (type->as_int_array()) { os << types::integer_array_type_name; }
+    else if (type->as_float_array()) { os << types::float_array_type_name; }
     else {
         // Fallback when no friendly repr is known
         return os << *type;

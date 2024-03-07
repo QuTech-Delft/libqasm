@@ -14,7 +14,7 @@ namespace cqasm::v3x::parser { class CustomErrorListener; }
 
 namespace cqasm::v3x::parser {
 
-class  BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
+class BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
     /**
      * Name of the file being parsed.
      */
@@ -32,39 +32,65 @@ class  BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
     std::int64_t get_int_value(antlr4::tree::TerminalNode *node) const ;
     double get_float_value(antlr4::tree::TerminalNode *node) const;
 
-    std::any visitAxisTypeDefinition(CqasmParser::AxisTypeDeclarationContext *context);
-    std::any visitAxisTypeInitialization(CqasmParser::AxisTypeDeclarationContext *context);
-    std::any visitBoolTypeDefinition(CqasmParser::BoolTypeDeclarationContext *context);
-    std::any visitBoolTypeInitialization(CqasmParser::BoolTypeDeclarationContext *context);
-    std::any visitIntTypeDefinition(CqasmParser::IntTypeDeclarationContext *context);
-    std::any visitIntTypeInitialization(CqasmParser::IntTypeDeclarationContext *context);
-    std::any visitFloatTypeDefinition(CqasmParser::FloatTypeDeclarationContext *context);
-    std::any visitFloatTypeInitialization(CqasmParser::FloatTypeDeclarationContext *context);
+    tree::Maybe<ast::IntegerLiteral> getArraySize(CqasmParser::ArraySizeDeclarationContext *context);
+
+    template <typename Context>
+    tree::One<ast::Variable> visitVariable(Context *context) {
+        auto ret = tree::make<ast::Variable>(
+            tree::One<ast::Identifier>{ tree::make<ast::Identifier>(context->IDENTIFIER()->getText()) },
+            std::any_cast<tree::One<ast::Type>>(context->type()->accept(this))
+        );
+        setNodeAnnotation(ret, context->IDENTIFIER()->getSymbol());
+        return ret;
+    }
+
+    template <typename Context>
+    tree::One<ast::Variable> visitClassicalVariable(Context *context) {
+        auto ret = tree::make<ast::Variable>(
+            tree::One<ast::Identifier>{ tree::make<ast::Identifier>(context->IDENTIFIER()->getText()) },
+            std::any_cast<tree::One<ast::Type>>(context->classicalType()->accept(this))
+        );
+        setNodeAnnotation(ret, context->IDENTIFIER()->getSymbol());
+        return ret;
+    }
 
     template <typename RetExpressionType, typename Context>
     std::any visitBinaryExpression(Context *context, antlr4::Token *token) {
         auto ret = tree::make<RetExpressionType>(
-            std::any_cast<tree::One<cqasm::v3x::ast::Expression>>(context->expression(0)->accept(this)),
-            std::any_cast<tree::One<cqasm::v3x::ast::Expression>>(context->expression(1)->accept(this))
+            std::any_cast<tree::One<ast::Expression>>(context->expression(0)->accept(this)),
+            std::any_cast<tree::One<ast::Expression>>(context->expression(1)->accept(this))
         );
         setNodeAnnotation(ret, token);
-        return tree::One<cqasm::v3x::ast::Expression>{ ret };
+        return tree::One<ast::Expression>{ ret };
     }
 
 public:
     std::any visitProgram(CqasmParser::ProgramContext *context) override;
-    std::any visitVersion(CqasmParser::VersionContext *context) override;
-    std::any visitStatements(CqasmParser::StatementsContext *context) override;
     std::any visitStatementSeparator(CqasmParser::StatementSeparatorContext *context) override;
-    std::any visitQubitTypeDeclaration(CqasmParser::QubitTypeDeclarationContext *context) override;
-    std::any visitBitTypeDeclaration(CqasmParser::BitTypeDeclarationContext *context) override;
-    std::any visitAxisTypeDeclaration(CqasmParser::AxisTypeDeclarationContext *context) override;
-    std::any visitBoolTypeDeclaration(CqasmParser::BoolTypeDeclarationContext *context) override;
-    std::any visitIntTypeDeclaration(CqasmParser::IntTypeDeclarationContext *context) override;
-    std::any visitFloatTypeDeclaration(CqasmParser::FloatTypeDeclarationContext *context) override;
-    std::any visitArraySizeDeclaration(CqasmParser::ArraySizeDeclarationContext *context) override;
+    std::any visitVersion(CqasmParser::VersionContext *context) override;
+    std::any visitGlobalBlock(CqasmParser::GlobalBlockContext *context) override;
+    std::any visitLocalBlock(CqasmParser::LocalBlockContext *context) override;
+    std::any visitGlobalBlockStatement(CqasmParser::GlobalBlockStatementContext *context) override;
+    std::any visitLocalBlockStatement(CqasmParser::LocalBlockStatementContext *context) override;
+    std::any visitVariableDeclaration(CqasmParser::VariableDeclarationContext *context) override;
+    std::any visitVariableDefinition(CqasmParser::VariableDefinitionContext *context) override;
+    std::any visitVariableInitialization(CqasmParser::VariableInitializationContext *context) override;
+    std::any visitFunctionDeclaration(CqasmParser::FunctionDeclarationContext *context) override;
+    std::any visitParameters(CqasmParser::ParametersContext *context) override;
+    std::any visitAssignmentStatement(CqasmParser::AssignmentStatementContext *context) override;
+    std::any visitReturnStatement(CqasmParser::ReturnStatementContext *context) override;
+    std::any visitExpressionStatement(CqasmParser::ExpressionStatementContext *context) override;
+    std::any visitGate(CqasmParser::GateContext *context) override;
     std::any visitMeasureInstruction(CqasmParser::MeasureInstructionContext *context) override;
-    std::any visitInstruction(CqasmParser::InstructionContext *context) override;
+    std::any visitType(CqasmParser::TypeContext *context) override;
+    std::any visitQubitType(CqasmParser::QubitTypeContext *context) override;
+    std::any visitBitType(CqasmParser::BitTypeContext *context) override;
+    std::any visitAxisType(CqasmParser::AxisTypeContext *context) override;
+    std::any visitBoolType(CqasmParser::BoolTypeContext *context) override;
+    std::any visitIntType(CqasmParser::IntTypeContext *context) override;
+    std::any visitFloatType(CqasmParser::FloatTypeContext *context) override;
+    std::any visitArraySizeDeclaration(CqasmParser::ArraySizeDeclarationContext *context) override;
+
     std::any visitExpressionList(CqasmParser::ExpressionListContext *context) override;
     std::any visitIndexList(CqasmParser::IndexListContext *context) override;
     std::any visitIndexItem(CqasmParser::IndexItemContext *context) override;
@@ -99,6 +125,7 @@ public:
     void addErrorListener(CustomErrorListener *errorListener) override;
     void syntaxError(size_t line, size_t char_position_in_line, const std::string &text) const override;
     void setNodeAnnotation(const ast::One<ast::Node> &node, antlr4::Token *token) const override;
+    void expandNodeAnnotation(const ast::One<ast::Node> &node, antlr4::Token *token) const override;
 };
 
 }  // namespace cqasm::v3x::parser

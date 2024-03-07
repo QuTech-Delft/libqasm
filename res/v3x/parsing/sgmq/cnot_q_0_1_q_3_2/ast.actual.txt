@@ -15,18 +15,22 @@ Program(
             )
           >
           typ: <
-            Keyword(
-              name: qubit
-            )
-          >
-          size: <
-            IntegerLiteral(
-              value: 4
+            Type(
+              name: <
+                Keyword(
+                  name: qubit
+                )
+              >
+              size: <
+                IntegerLiteral(
+                  value: 4
+                )
+              >
             )
           >
           annotations: []
         )
-        Instruction( # input.cq:5:1..5
+        Gate( # input.cq:5:1..5
           name: <
             Identifier(
               name: cnot

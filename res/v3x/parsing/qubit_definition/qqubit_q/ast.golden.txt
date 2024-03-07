@@ -5,16 +5,15 @@ Program(
       items: 3
     )
   >
-  statements: <
-    StatementList(
-      items: [
-        Instruction( # input.cq:3:1..6
+  block: <
+    GlobalBlock(
+      statements: [
+        Gate( # input.cq:3:1..6
           name: <
             Identifier(
               name: Qubit
             )
           >
-          condition: -
           operands: <
             ExpressionList(
               items: [

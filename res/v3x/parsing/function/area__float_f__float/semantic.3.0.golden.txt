@@ -1,0 +1,130 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  block: <
+    Block(
+      statements: [
+        AssignmentStatement(
+          lhs: <
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: f
+                  typ: <
+                    Float(
+                      size: 1
+                    )
+                  >
+                  annotations: []
+                )
+              >
+            )
+          >
+          rhs: <
+            FunctionCall(
+              function: <
+                FunctionRef(
+                  function --> <
+                    Function(
+                      name: area
+                      return_type: <
+                        Float(
+                          size: 1
+                        )
+                      >
+                      block: <
+                        Block(
+                          statements: [
+                            ReturnStatement(
+                              return_value: <
+                                ConstFloat(
+                                  value: 6.28319
+                                )
+                              >
+                              annotations: []
+                            )
+                          ]
+                        )
+                      >
+                      variables: [
+                        Variable(
+                          name: r
+                          typ: <
+                            Float(
+                              size: 1
+                            )
+                          >
+                          annotations: []
+                        )
+                      ]
+                      annotations: []
+                    )
+                  >
+                )
+              >
+              arguments: [
+                ConstFloat(
+                  value: 1
+                )
+              ]
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+  functions: [
+    Function(
+      name: area
+      return_type: <
+        Float(
+          size: 1
+        )
+      >
+      block: <
+        Block(
+          statements: [
+            ReturnStatement(
+              return_value: <
+                ConstFloat(
+                  value: 6.28319
+                )
+              >
+              annotations: []
+            )
+          ]
+        )
+      >
+      variables: [
+        Variable(
+          name: r
+          typ: <
+            Float(
+              size: 1
+            )
+          >
+          annotations: []
+        )
+      ]
+      annotations: []
+    )
+  ]
+  variables: [
+    Variable(
+      name: f
+      typ: <
+        Float(
+          size: 1
+        )
+      >
+      annotations: []
+    )
+  ]
+)
+

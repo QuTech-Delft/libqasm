@@ -6,46 +6,46 @@ Program(
       items: 3
     )
   >
-  statements: [
-    Instruction(
-      instruction: measure(bit array, qubit array)
-      name: measure
-      operands: [
-        VariableRef(
-          variable --> <
-            Variable(
-              name: b
-              typ: <
-                BitArray(
-                  size: 5
+  block: <
+    Block(
+      statements: [
+        Instruction(
+          instruction: measure(bit array, qubit array)
+          name: measure
+          operands: [
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: b
+                  typ: <
+                    BitArray(
+                      size: 5
+                    )
+                  >
+                  annotations: []
                 )
               >
-              annotations: []
             )
-          >
-        )
-        VariableRef(
-          variable --> <
-            Variable(
-              name: q
-              typ: <
-                QubitArray(
-                  size: 5
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: q
+                  typ: <
+                    QubitArray(
+                      size: 5
+                    )
+                  >
+                  annotations: []
                 )
               >
-              annotations: []
             )
-          >
+          ]
+          annotations: []
         )
       ]
-      condition: <
-        ConstBool(
-          value: 1
-        )
-      >
-      annotations: []
     )
-  ]
+  >
+  functions: []
   variables: [
     Variable(
       name: q

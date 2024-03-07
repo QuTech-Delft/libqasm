@@ -47,41 +47,46 @@ annotated {
     annotations: Any<annotation_data>;
 
     statement {
-        instruction_base {
-            # Condition (C- notation).
-            # When there is no condition, this is a constant boolean set to true.
-            condition: external One<cqasm::v3x::values::Node>;
+        # A regular instruction (a gate, or a measure instruction).
+        instruction {
+            instruction: cqasm::v3x::instruction::InstructionRef;
+            name: cqasm::v3x::primitives::Str;
+            operands: external Any<cqasm::v3x::values::ValueBase>;
+        }
 
-            # A regular instruction (gate).
-            instruction {
-                # Instruction type as registered through the API.
-                instruction: cqasm::v3x::instruction::InstructionRef;
+        assignment_statement {
+            lhs: external One<cqasm::v3x::values::ValueBase>;
+            rhs: external One<cqasm::v3x::values::ValueBase>;
+        }
 
-                # Name as it appears in the cQASM file.
-                name: cqasm::v3x::primitives::Str;
+        return_statement {
+            return_value: external One<cqasm::v3x::values::ValueBase>;
+        }
 
-                # Operands for the instruction.
-                operands: external Any<cqasm::v3x::values::Node>;
-            }
-
-            assignment_instruction {
-                # The assignment target.
-                lhs: external One<cqasm::v3x::values::Node>;
-
-                # The value to assign.
-                rhs: external One<cqasm::v3x::values::Node>;
-            }
+        function_call_statement {
+            return_value: external Maybe<cqasm::v3x::values::ValueBase>;
         }
     }
 
     variable {
         name: cqasm::v3x::primitives::Str;
-        typ: external One<cqasm::v3x::types::Node>;
+        typ: external One<cqasm::v3x::types::TypeBase>;
+    }
+
+    function {
+        name: cqasm::v3x::primitives::Str;
+        return_type: external Maybe<cqasm::v3x::types::TypeBase>;
+        block: One<block>;
+        variables: Any<variable>;
     }
 }
 
 version {
     items: cqasm::v3x::primitives::Version;
+}
+
+block {
+    statements: Any<statement>;
 }
 
 program {
@@ -93,8 +98,11 @@ program {
     # File version.
     version: One<version>;
 
-    # The list of statements.
-    statements: Any<statement>;
+    # The global scope block.
+    block: One<block>;
+
+    # The list of functions.
+    functions: Any<function>;
 
     # The list of variables.
     variables: Any<variable>;

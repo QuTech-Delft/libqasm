@@ -5,53 +5,34 @@
 #include "cqasm-annotations.hpp"
 #include "cqasm-annotations-constants.hpp"
 
+#include <algorithm>  // min, max
 #include <iostream>
 
 
 namespace cqasm::annotations {
 
+SourceLocation::Range::Range(const Index &f, const Index &l)
+: first{ f } , last{ l } {
+    last = std::max<Index>(last, first);
+}
+
 /**
  * Constructs a source location object.
  */
-SourceLocation::SourceLocation(
-    const std::optional<std::string> &file_name_,
-    std::uint32_t first_line_,
-    std::uint32_t first_column_,
-    std::uint32_t last_line_,
-    std::uint32_t last_column_)
+SourceLocation::SourceLocation(const std::optional<std::string> &file_name_, const Range &range_)
 : file_name{ file_name_ }
-, first_line{ first_line_ }
-, first_column{ first_column_ }
-, last_line{ last_line_ }
-, last_column{ last_column_ } {
-
+, range{ range_ } {
     if (file_name.has_value() && file_name.value().empty()) {
         file_name = std::nullopt;
-    }
-    if (last_line < first_line) {
-        last_line = first_line;
-    }
-    if (last_line == first_line && last_column < first_column) {
-        last_column = first_column;
     }
 }
 
 /**
  * Expands the location range to contain the given location in the source file.
  */
-void SourceLocation::expand_to_include(std::uint32_t line, std::uint32_t column) {
-    if (line < first_line) {
-        first_line = line;
-    }
-    if (line == first_line && column < first_column) {
-        first_column = column;
-    }
-    if (line > last_line) {
-        last_line = line;
-    }
-    if (line == last_line && column > last_column) {
-        last_column = column;
-    }
+void SourceLocation::expand_to_include(const Index &index) {
+    range.first = std::min<Index>(range.first, index);
+    range.last = std::max<Index>(range.last, index);
 }
 
 /**
@@ -62,33 +43,33 @@ std::ostream &operator<<(std::ostream &os, const SourceLocation &object) {
     os << object.file_name.value_or(unknown_file_name);
 
     // Special case for when only the source file name is known.
-    if (!object.first_line) {
+    if (!object.range.first.line) {
         return os;
     }
 
     // Print line number.
-    os << ":" << object.first_line;
+    os << ":" << object.range.first.line;
 
     // Special case for when only line numbers are known.
-    if (!object.first_column) {
+    if (!object.range.first.column) {
         // Print last line too, if greater.
-        if (object.last_line > object.first_line) {
-            os << ".." << object.last_line;
+        if (object.range.last.line > object.range.first.line) {
+            os << ".." << object.range.last.line;
         }
         return os;
     }
 
     // Print column.
-    os << ":" << object.first_column;
+    os << ":" << object.range.first.column;
 
-    if (object.last_line == object.first_line) {
+    if (object.range.last.line == object.range.first.line) {
         // Range is on a single line. Only repeat the column number.
-        if (object.last_column > object.first_column) {
-            os << ".." << object.last_column;
+        if (object.range.last.column > object.range.first.column) {
+            os << ".." << object.range.last.column;
         }
-    } else if (object.last_line > object.first_line) {
+    } else if (object.range.last.line > object.range.first.line) {
         // Range is on multiple lines. Repeat both line and column number.
-        os << ".." << object.last_line << ":" << object.last_column;
+        os << ".." << object.range.last.line << ":" << object.range.last.column;
     }
 
     return os;

@@ -6,74 +6,69 @@ Program(
       items: 3
     )
   >
-  statements: [
-    AssignmentInstruction(
-      lhs: <
-        VariableRef(
-          variable --> <
-            Variable(
-              name: i
-              typ: <
-                Int(
-                  size: 1
+  block: <
+    Block(
+      statements: [
+        AssignmentStatement(
+          lhs: <
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: i
+                  typ: <
+                    Int(
+                      size: 1
+                    )
+                  >
+                  annotations: []
                 )
               >
-              annotations: []
             )
           >
+          rhs: <
+            ConstInt(
+              value: 42
+            )
+          >
+          annotations: []
         )
-      >
-      rhs: <
-        ConstInt(
-          value: 42
+        AssignmentStatement(
+          lhs: <
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: j
+                  typ: <
+                    Int(
+                      size: 1
+                    )
+                  >
+                  annotations: []
+                )
+              >
+            )
+          >
+          rhs: <
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: i
+                  typ: <
+                    Int(
+                      size: 1
+                    )
+                  >
+                  annotations: []
+                )
+              >
+            )
+          >
+          annotations: []
         )
-      >
-      condition: <
-        ConstBool(
-          value: 1
-        )
-      >
-      annotations: []
+      ]
     )
-    AssignmentInstruction(
-      lhs: <
-        VariableRef(
-          variable --> <
-            Variable(
-              name: j
-              typ: <
-                Int(
-                  size: 1
-                )
-              >
-              annotations: []
-            )
-          >
-        )
-      >
-      rhs: <
-        VariableRef(
-          variable --> <
-            Variable(
-              name: i
-              typ: <
-                Int(
-                  size: 1
-                )
-              >
-              annotations: []
-            )
-          >
-        )
-      >
-      condition: <
-        ConstBool(
-          value: 1
-        )
-      >
-      annotations: []
-    )
-  ]
+  >
+  functions: []
   variables: [
     Variable(
       name: i

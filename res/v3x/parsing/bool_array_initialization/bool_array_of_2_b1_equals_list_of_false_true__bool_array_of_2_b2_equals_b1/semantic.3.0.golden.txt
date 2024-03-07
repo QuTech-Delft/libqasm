@@ -6,81 +6,76 @@ Program(
       items: 3
     )
   >
-  statements: [
-    AssignmentInstruction(
-      lhs: <
-        VariableRef(
-          variable --> <
-            Variable(
-              name: b1
-              typ: <
-                BoolArray(
-                  size: 2
+  block: <
+    Block(
+      statements: [
+        AssignmentStatement(
+          lhs: <
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: b1
+                  typ: <
+                    BoolArray(
+                      size: 2
+                    )
+                  >
+                  annotations: []
                 )
               >
-              annotations: []
             )
           >
-        )
-      >
-      rhs: <
-        ConstBoolArray(
-          value: [
-            ConstBool(
-              value: 0
+          rhs: <
+            ConstBoolArray(
+              value: [
+                ConstBool(
+                  value: 0
+                )
+                ConstBool(
+                  value: 1
+                )
+              ]
             )
-            ConstBool(
-              value: 1
+          >
+          annotations: []
+        )
+        AssignmentStatement(
+          lhs: <
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: b2
+                  typ: <
+                    BoolArray(
+                      size: 2
+                    )
+                  >
+                  annotations: []
+                )
+              >
             )
-          ]
+          >
+          rhs: <
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: b1
+                  typ: <
+                    BoolArray(
+                      size: 2
+                    )
+                  >
+                  annotations: []
+                )
+              >
+            )
+          >
+          annotations: []
         )
-      >
-      condition: <
-        ConstBool(
-          value: 1
-        )
-      >
-      annotations: []
+      ]
     )
-    AssignmentInstruction(
-      lhs: <
-        VariableRef(
-          variable --> <
-            Variable(
-              name: b2
-              typ: <
-                BoolArray(
-                  size: 2
-                )
-              >
-              annotations: []
-            )
-          >
-        )
-      >
-      rhs: <
-        VariableRef(
-          variable --> <
-            Variable(
-              name: b1
-              typ: <
-                BoolArray(
-                  size: 2
-                )
-              >
-              annotations: []
-            )
-          >
-        )
-      >
-      condition: <
-        ConstBool(
-          value: 1
-        )
-      >
-      annotations: []
-    )
-  ]
+  >
+  functions: []
   variables: [
     Variable(
       name: b1

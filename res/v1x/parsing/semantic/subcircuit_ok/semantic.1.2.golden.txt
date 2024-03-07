@@ -51,7 +51,7 @@ Program( # input.cq:1:1..13:1
       bundles: []
       annotations: []
       body: <
-        Block( # input.cq:7:1..9:15
+        Block( # input.cq:7:1..9:11
           statements: [
             BundleExt( # input.cq:8:5..11
               items: [
@@ -111,7 +111,7 @@ Program( # input.cq:1:1..13:1
       bundles: []
       annotations: []
       body: <
-        Block( # input.cq:11:1..12:14
+        Block( # input.cq:11:1..12:11
           statements: [
             BundleExt( # input.cq:12:5..11
               items: [

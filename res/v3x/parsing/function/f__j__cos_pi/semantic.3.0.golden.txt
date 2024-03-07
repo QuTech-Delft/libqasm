@@ -1,0 +1,258 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  block: <
+    Block(
+      statements: [
+        AssignmentStatement(
+          lhs: <
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: i
+                  typ: <
+                    Int(
+                      size: 1
+                    )
+                  >
+                  annotations: []
+                )
+              >
+            )
+          >
+          rhs: <
+            ConstInt(
+              value: 3
+            )
+          >
+          annotations: []
+        )
+        AssignmentStatement(
+          lhs: <
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: j
+                  typ: <
+                    Int(
+                      size: 1
+                    )
+                  >
+                  annotations: []
+                )
+              >
+            )
+          >
+          rhs: <
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: i
+                  typ: <
+                    Int(
+                      size: 1
+                    )
+                  >
+                  annotations: []
+                )
+              >
+            )
+          >
+          annotations: []
+        )
+        AssignmentStatement(
+          lhs: <
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: i
+                  typ: <
+                    Int(
+                      size: 1
+                    )
+                  >
+                  annotations: []
+                )
+              >
+            )
+          >
+          rhs: <
+            ConstInt(
+              value: 5
+            )
+          >
+          annotations: []
+        )
+        AssignmentStatement(
+          lhs: <
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: f
+                  typ: <
+                    Float(
+                      size: 1
+                    )
+                  >
+                  annotations: []
+                )
+              >
+            )
+          >
+          rhs: <
+            FunctionCall(
+              function: <
+                FunctionRef(
+                  function --> <
+                    Function(
+                      name: f
+                      return_type: <
+                        Float(
+                          size: 1
+                        )
+                      >
+                      block: <
+                        Block(
+                          statements: [
+                            ReturnStatement(
+                              return_value: <
+                                ConstFloat(
+                                  value: 6
+                                )
+                              >
+                              annotations: []
+                            )
+                          ]
+                        )
+                      >
+                      variables: [
+                        Variable(
+                          name: i
+                          typ: <
+                            Int(
+                              size: 1
+                            )
+                          >
+                          annotations: []
+                        )
+                        Variable(
+                          name: f
+                          typ: <
+                            Float(
+                              size: 1
+                            )
+                          >
+                          annotations: []
+                        )
+                      ]
+                      annotations: []
+                    )
+                  >
+                )
+              >
+              arguments: [
+                VariableRef(
+                  variable --> <
+                    Variable(
+                      name: j
+                      typ: <
+                        Int(
+                          size: 1
+                        )
+                      >
+                      annotations: []
+                    )
+                  >
+                )
+                ConstFloat(
+                  value: -1
+                )
+              ]
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+  functions: [
+    Function(
+      name: f
+      return_type: <
+        Float(
+          size: 1
+        )
+      >
+      block: <
+        Block(
+          statements: [
+            ReturnStatement(
+              return_value: <
+                ConstFloat(
+                  value: 6
+                )
+              >
+              annotations: []
+            )
+          ]
+        )
+      >
+      variables: [
+        Variable(
+          name: i
+          typ: <
+            Int(
+              size: 1
+            )
+          >
+          annotations: []
+        )
+        Variable(
+          name: f
+          typ: <
+            Float(
+              size: 1
+            )
+          >
+          annotations: []
+        )
+      ]
+      annotations: []
+    )
+  ]
+  variables: [
+    Variable(
+      name: i
+      typ: <
+        Int(
+          size: 1
+        )
+      >
+      annotations: []
+    )
+    Variable(
+      name: j
+      typ: <
+        Int(
+          size: 1
+        )
+      >
+      annotations: []
+    )
+    Variable(
+      name: f
+      typ: <
+        Float(
+          size: 1
+        )
+      >
+      annotations: []
+    )
+  ]
+)
+

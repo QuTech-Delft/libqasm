@@ -166,7 +166,7 @@ int main() {
   ]
 )
 )");
-    assert(clone->get_annotation<cq1x::parser::SourceLocation>().filename == "../../res/grover.cq");
+    assert(clone->get_annotation<cq1x::parser::SourceLocation>().file_name == "../../res/grover.cq");
     struct MyAnnotationType {
         int number;
     };
@@ -181,7 +181,7 @@ int main() {
     assert(clone->has_annotation<MyAnnotationType>());
     assert(clone->get_annotation_ptr<MyAnnotationType>()->number == 42);
     assert(clone->get_annotation<MyAnnotationType>().number == 42);
-    assert(clone->get_annotation<cq1x::parser::SourceLocation>().filename == "../../res/grover.cq");
+    assert(clone->get_annotation<cq1x::parser::SourceLocation>().file_name == "../../res/grover.cq");
 
     say_hello();
 }
