@@ -132,6 +132,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Install node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16.20
       - name: Install conan
         run: python3 -m pip install --upgrade pip conan
         shell: bash
