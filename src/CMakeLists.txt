@@ -297,17 +297,17 @@ if(LIBQASM_BUILD_EMSCRIPTEN)
         "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/tree/pattern/*.cpp"
         "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/tree/xpath/*.cpp"
     )
+    file(GLOB FMT_SOURCES
+        "${fmt_SOURCE_DIR}/src/*"
+    )
     file(GLOB TREE_GEN_SOURCES
         "${tree-gen_SOURCE_DIR}/include/*"
         "${tree-gen_SOURCE_DIR}/src/*"
     )
-    file(GLOB FMT_SOURCES
-        "${fmt_SOURCE_DIR}/src/*"
-    )
     target_sources(cqasm-lib-obj
         PRIVATE "${ANTLR4_CPP_RUNTIME_SOURCES}"
-        PRIVATE "${TREE_GEN_SOURCES}"
         PRIVATE "${FMT_SOURCES}"
+        PRIVATE "${TREE_GEN_SOURCES}"
     )
 endif()
 
