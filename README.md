@@ -61,7 +61,7 @@ The installation of dependencies, as well as the compilation, can be done in one
 git clone https://github.com/QuTech-Delft/libqasm.git
 cd libqasm
 conan profile detect
-conan build . -pr=conan/profiles/tests-debug -b missing
+conan build . -pr:a=conan/profiles/tests-debug -b missing
 ```
 
 Notice:
@@ -106,13 +106,6 @@ Install from the project root directory as follows:
 python3 -m pip install --verbose .
 ```
 
-or if you'd rather use conda:
-
-```
-conda build python/conda
-conda install libqasm --use-local
-```
-
 You can test if it works by running:
 
 ```
@@ -124,7 +117,7 @@ python3 -m pytest
 The `CMakeLists.txt` file in the root directory includes install targets:
 
 ```
-conan create --version 0.4.1 . -pr=tests-debug -b missing
+conan create --version 0.5.2 . -pr=tests-debug -b missing
 ```
 
 You can test if it works by doing:
@@ -182,17 +175,10 @@ git clone --config core.autocrlf=input git@github.com:QuTech-Delft/libqasm.git
 
 ## Emscripten
 
-We need a multi-stage build for cross-platform builds of `libqasm`:
-- First, we generate intermediate binaries with a host platform format (e.g., `tree-gen`).
-- Then, we run those intermediate binaries to generate source files (e.g., `tree-gen` classes).
-And we generate the target platform binaries (e.g., `cqasm_emscripten`).
+The generation of emscripten binaries has been tested as a cross-compilation from an ubuntu/x64 platform.
 
 ```
-rm -fr build
-conan build . -pr=conan/profiles/release -b missing
-rm -fr build/Release/{CMake*,cmake_install.cmake,Makefile,generators,metadata}
 conan build . -pr=conan/profiles/emscripten -pr:b=conan/profiles/release -b missing
-ls -hl build/Release/emscripten
 ```
 
 The output of this build lives in `build/Release/emscripten`:
