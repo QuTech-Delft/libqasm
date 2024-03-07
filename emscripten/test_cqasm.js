@@ -73,5 +73,6 @@ wrapper().then(function(result) {
     } else {
         console.log("\nError: returning", ret_code.toString(16), "\n")
     }
-    return ret_code
+    // return ret_code
+    return 1
 });
