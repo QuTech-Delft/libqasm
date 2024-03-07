@@ -134,7 +134,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Install nodejs
         run: |
-          apt-get update && apt-get install nodejs
+          apt-get install nodejs
         shell: bash
       - name: Install conan
         run: python3 -m pip install --upgrade pip conan
