@@ -152,7 +152,7 @@ jobs:
         shell: bash
       - name: Test
         working-directory: emscripten
-        run: node test_cqasm.js
+        run: node --experimental-wasm-eh test_cqasm.js
         shell: bash
 
 #  python-linux-x64:
