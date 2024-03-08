@@ -23,7 +23,7 @@ wrapper().then(function(result) {
     try {
         var program_1 = "version 3;qubit[5] q;bit[5] b;h q[0:4];b = measure"
         output = cqasm.parse_string_to_json(program_1, "shor.cq")
-        expected_output = String.raw`{"errors":[{"range":{"start":{"line":1,"character":51},"end":{"line":1,"character":56}},"message":"mismatched input '<EOF>' expecting {'[', '{', '(', '+', '-', '~', '!', BOOLEAN_LITERAL, INTEGER_LITERAL, FLOAT_LITERAL, IDENTIFIER}","severity":1,"relatedInformation":[{"location":{"uri":"file:///shor.cq","range":{"start":{"line":0,"character":0},"end":{"line":0,"character":0}}},"message":"<unknown error message>"}]}]}`
+        expected_output = String.raw`{"errors":[{"range":{"start":{"line":1,"character":51},"end":{"line":1,"character":51}},"message":"mismatched input '<EOF>' expecting {'[', '{', '(', '+', '-', '~', '!', BOOLEAN_LITERAL, INTEGER_LITERAL, FLOAT_LITERAL, IDENTIFIER}","severity":1,"relatedInformation":[{"location":{"uri":"file:///shor.cq","range":{"start":{"line":0,"character":0},"end":{"line":0,"character":0}}},"message":"<unknown error message>"}]}]}`
         console.log( "\nExample 1:", program_1, "\n\tCalling parse_string_to_json...", "\n\tOutput:", output)
         if (output !== expected_output) {
             console.log("\tExpected output:", expected_output)
