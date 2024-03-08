@@ -84,13 +84,19 @@ if(ASAN_ENABLED)
         string(REGEX REPLACE "/RTC(su|[1su])" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
         message(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}\n")
 
-        # /MTd is needed to link clang_rt.asan-i386.lib statically
-        # Otherwise the path to clang_rt.asan-i386.dll should be provided
+        # /MTd is needed to link clang_rt.asan-i386.lib statically.
+        # Otherwise the path to clang_rt.asan-i386.dll should be provided.
         add_compile_options(/fsanitize=address /MTd)
     elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
         add_compile_options(-fsanitize=address,undefined -fno-omit-frame-pointer)
         add_link_options(-fsanitize=address,undefined)
     endif()
+endif()
+
+# emscripten
+if(LIBQASM_BUILD_EMSCRIPTEN)
+    add_compile_options(-fwasm-exceptions)
+    add_link_options(-fwasm-exceptions --profiling-funcs -sASSERTIONS=1 -sMODULARIZE=1)
 endif()
 
 # Jump to where the new API and the core of libqasm lives.
@@ -122,6 +128,11 @@ endif()
 # Include the tests directory if requested.
 if(LIBQASM_BUILD_PYTHON)
     add_subdirectory(python)
+endif()
+
+# Add the emscripten directory.
+if(LIBQASM_BUILD_EMSCRIPTEN)
+    add_subdirectory(emscripten)
 endif()
 
 endif()  # NOT TARGET cqasm

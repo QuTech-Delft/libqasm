@@ -65,7 +65,14 @@ public:
     static std::vector<std::string> parse_file(const std::string &file_name);
 
     /**
-     * Counterpart of parse_file that returns a string with a JSON representation of the ParseResult.
+     * Parses a file containing a v3.x program.
+     * No version check or conversion is performed.
+     * Returns a string.
+     * If the parsing was successful, that string contains a v3.x syntactic AST.
+     * Otherwise, it will contain a list of errors.
+     * The JSON representation of each error follows the Language Server Protocol (LSP) specification.
+     * Every error is mapped to an LSP Diagnostic structure:
+     * severity is hardcoded to 1 at the moment (value corresponding to an Error level).
      */
     static std::string parse_file_to_json(const std::string &file_name);
 
@@ -76,7 +83,15 @@ public:
     static std::vector<std::string> parse_string(const std::string &data, const std::string &file_name = "");
 
     /**
-     * Counterpart of parse_string that returns a string with a JSON representation of the ParseResult.
+     * Parses a data string containing a v3.x program.
+     * The file_name is only used when reporting errors.
+     * No version check or conversion is performed.
+     * Returns a string.
+     * If the parsing was successful, that string contains a v3.x syntactic AST.
+     * Otherwise, it will contain a list of errors.
+     * The JSON representation of each error follows the Language Server Protocol (LSP) specification.
+     * Every error is mapped to an LSP Diagnostic structure:
+     * severity is hardcoded to 1 at the moment (value corresponding to an Error level).
      */
     static std::string parse_string_to_json(const std::string &data, const std::string &file_name = "");
 
@@ -92,7 +107,14 @@ public:
     std::vector<std::string> analyze_file(const std::string &file_name) const;
 
     /**
-     * Counterpart of analyze_file that returns a string with a JSON representation of the AnalysisResult.
+     * Parses and analyzes a file containing a v3.x program.
+     * No version check or conversion is performed.
+     * Returns a string.
+     * If the parsing was successful, that string contains a v3.x semantic AST.
+     * Otherwise, it will contain a list of errors.
+     * The JSON representation of each error follows the Language Server Protocol (LSP) specification.
+     * Every error is mapped to an LSP Diagnostic structure:
+     * severity is hardcoded to 1 at the moment (value corresponding to an Error level).
      */
     std::string analyze_file_to_json(const std::string &file_name) const;
 
@@ -103,7 +125,15 @@ public:
     std::vector<std::string> analyze_string(const std::string &data, const std::string &file_name = "") const;
 
     /**
-     * Counterpart of analyze_string that returns a string with a JSON representation of the AnalysisResult.
+     * Parses and analyzes a data string containing a v3.x program.
+     * The file_name is only used when reporting errors.
+     * No version check or conversion is performed.
+     * Returns a string.
+     * If the parsing was successful, that string contains a v3.x semantic AST.
+     * Otherwise, it will contain a list of errors.
+     * The JSON representation of each error follows the Language Server Protocol (LSP) specification.
+     * Every error is mapped to an LSP Diagnostic structure:
+     * severity is hardcoded to 1 at the moment (value corresponding to an Error level).
      */
     std::string analyze_string_to_json(const std::string &data, const std::string &file_name = "") const;
 };
