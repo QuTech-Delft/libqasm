@@ -4,9 +4,6 @@
 #include "version.hpp"
 
 
-EmscriptenWrapper::EmscriptenWrapper() {}
-
-
 /**
  * Returns libqasm version.
  */

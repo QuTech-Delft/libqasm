@@ -5,7 +5,7 @@
 
 
 struct EmscriptenWrapper {
-    EmscriptenWrapper();
+    EmscriptenWrapper() = default;
 
     /**
      * Returns libqasm version.
