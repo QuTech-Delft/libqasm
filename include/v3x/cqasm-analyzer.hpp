@@ -180,7 +180,7 @@ public:
     virtual void register_function_impl(
         const std::string &name,
         const types::Types &param_types,
-        const resolver::FunctionImpl &impl);
+        const resolver::ConstEvalFunction &impl);
 
     /**
      * Convenience method for registering a function implementation.
@@ -190,7 +190,7 @@ public:
     virtual void register_function_impl(
         const std::string &name,
         const std::string &param_types,
-        const resolver::FunctionImpl &impl);
+        const resolver::ConstEvalFunction &impl);
 
     /**
      * Convenience method for registering a function.

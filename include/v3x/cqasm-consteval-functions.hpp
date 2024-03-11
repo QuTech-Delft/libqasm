@@ -167,8 +167,8 @@ constexpr auto fn_abs_f = uf_cp<values::ConstFloat, values::ConstFloat, abs>{};
 constexpr auto fn_abs_i = uf_cp<values::ConstInt, values::ConstInt, abs>{};
 
 /**
- * Registers a bunch of functions for which we have a C++ implementation into the given function table.
+ * Registers a bunch of functions that can be evaluated at compile time.
  */
-void register_default_function_impls_into(resolver::FunctionImplTable &table);
+void register_default_consteval_functions_into(resolver::ConstEvalFunctionTable &table);
 
 } // namespace functions

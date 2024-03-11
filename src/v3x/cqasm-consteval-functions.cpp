@@ -1,11 +1,11 @@
-#include "v3x/cqasm-functions.hpp"
+#include "v3x/cqasm-consteval-functions.hpp"
 
 namespace cqasm::v3x::functions {
 
 /**
- * Registers a bunch of functions for which we have a C++ implementation into the given function table.
+ * Registers a bunch of functions that can be evaluated at compile time.
  */
-void register_default_function_impls_into(resolver::FunctionImplTable &table) {
+void register_default_consteval_functions_into(resolver::ConstEvalFunctionTable &table) {
     table.add("operator-", types::from_spec("f"), op_neg_f);
     table.add("operator-", types::from_spec("i"), op_neg_i);
 

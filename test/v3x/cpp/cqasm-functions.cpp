@@ -1,5 +1,5 @@
 #include "cqasm-functions.hpp"
-#include "v3x/cqasm-functions.hpp"
+#include "v3x/cqasm-consteval-functions.hpp"
 #include "v3x/cqasm-primitives.hpp"
 
 #include <gmock/gmock.h>

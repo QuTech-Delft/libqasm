@@ -5,7 +5,7 @@
 #include "cqasm-error.hpp"
 #include "v3x/AnalyzeTreeGenAstVisitor.hpp"
 #include "v3x/cqasm-analyzer.hpp"
-#include "v3x/cqasm-functions.hpp"
+#include "v3x/cqasm-consteval-functions.hpp"
 #include "v3x/cqasm-parse-helper.hpp"
 
 #include <fmt/format.h>
@@ -61,7 +61,7 @@ void Analyzer::register_default_mappings() {
  * Registers a number of default functions, such as the operator functions, and the usual trigonometric functions.
  */
 void Analyzer::register_default_functions() {
-    functions::register_default_function_impls_into(global_scope().function_impl_table);
+        functions::register_default_consteval_functions_into(global_scope().function_impl_table);
 }
 
 /**
@@ -238,7 +238,7 @@ values::Value Analyzer::resolve_function(const std::string &name, const values::
 void Analyzer::register_function_impl(
     const std::string &name,
     const types::Types &param_types,
-    const resolver::FunctionImpl &impl) {
+    const resolver::ConstEvalFunction &impl) {
 
     global_scope().function_impl_table.add(name, param_types, impl);
 }
@@ -251,7 +251,7 @@ void Analyzer::register_function_impl(
 void Analyzer::register_function_impl(
     const std::string &name,
     const std::string &param_types,
-    const resolver::FunctionImpl &impl) {
+    const resolver::ConstEvalFunction &impl) {
 
     global_scope().function_impl_table.add(name, types::from_spec(param_types), impl);
 }

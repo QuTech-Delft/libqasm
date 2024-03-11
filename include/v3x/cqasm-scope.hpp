@@ -20,7 +20,7 @@ struct Scope {
      * The list of function implementations.
      * That is, functions for which we have a C++ implementation.
      */
-    resolver::FunctionImplTable function_impl_table;
+    resolver::ConstEvalFunctionTable function_impl_table;
 
     /**
      * The list of functions, other than function implementations.
@@ -61,7 +61,7 @@ struct Scope {
      */
     Scope(
         resolver::VariableTable variable_table,
-        resolver::FunctionImplTable function_impl_table,
+        resolver::ConstEvalFunctionTable function_impl_table,
         resolver::FunctionTable function_table,
         resolver::InstructionTable instruction_table,
         tree::One<semantic::Block> block);

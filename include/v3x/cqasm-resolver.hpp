@@ -1,6 +1,6 @@
 /** \file
  * Contains \ref cqasm::v3x::resolver::MappingTable "MappingTable",
- * \ref cqasm::v3x::resolver::FunctionImplTable "FunctionImplTable", and
+ * \ref cqasm::v3x::resolver::ConstEvalFunctionTable "ConstEvalFunctionTable", and
  * \ref cqasm::v3x::resolver::ErrorModelTable "ErrorModelTable", representing the
  * various cQASM namespaces and their members in scope at some instant.
  */
@@ -94,29 +94,29 @@ public:
 };
 
 
-//-------------------//
-// FunctionImplTable //
-//-------------------//
+//------------------------//
+// ConstEvalFunctionTable //
+//------------------------//
 
 /**
- * C++ function representing one of the overloads of a function for which we have a C++ implementation.
- * This can be a function accepting only constant arguments, or both constant and variable arguments.
+ * C++ function representing one of the overloads of a function that can can be evaluated at compile time.
+ * This has to be a function accepting only constant arguments, and for which we have a C++ implementation.
  */
-using FunctionImpl = std::function<values::Value(const values::Values&)>;
+using ConstEvalFunction = std::function<values::Value(const values::Values&)>;
 
 /**
- * Table of all overloads of all functions for which we have a C++ implementation.
+ * Table of all overloads of all functions that can be evaluated at compile time.
  */
-class FunctionImplTable {
-    std::unique_ptr<OverloadedNameResolver<FunctionImpl>> resolver;
+class ConstEvalFunctionTable {
+    std::unique_ptr<OverloadedNameResolver<ConstEvalFunction>> resolver;
 
 public:
-    FunctionImplTable();
-    ~FunctionImplTable();
-    FunctionImplTable(const FunctionImplTable& t);
-    FunctionImplTable(FunctionImplTable&& t) noexcept;
-    FunctionImplTable& operator=(const FunctionImplTable& t);
-    FunctionImplTable& operator=(FunctionImplTable&& t) noexcept;
+    ConstEvalFunctionTable();
+    ~ConstEvalFunctionTable();
+    ConstEvalFunctionTable(const ConstEvalFunctionTable& t);
+    ConstEvalFunctionTable(ConstEvalFunctionTable&& t) noexcept;
+    ConstEvalFunctionTable& operator=(const ConstEvalFunctionTable& t);
+    ConstEvalFunctionTable& operator=(ConstEvalFunctionTable&& t) noexcept;
 
     /**
      * Registers a function.
@@ -130,7 +130,7 @@ public:
      * However, the overload resolution engine will always use the last applicable overload it finds,
      * so adding does have the effect of overriding.
      */
-    void add(const std::string &name, const types::Types &param_types, const FunctionImpl &impl);
+    void add(const std::string &name, const types::Types &param_types, const ConstEvalFunction &impl);
 
     /**
      * Resolves a function.
@@ -147,7 +147,8 @@ public:
 //---------------//
 
 /**
- * Table of all overloads of all functions defined in the cQASM file.
+ * Table of all overloads of all functions that cannot be evaluated at compile time.
+ * For example, those defined by the user in the cQASM file.
  */
 class FunctionTable {
     std::unique_ptr<OverloadedNameResolver<values::Value>> resolver;

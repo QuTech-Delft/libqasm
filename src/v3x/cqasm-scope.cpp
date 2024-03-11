@@ -8,7 +8,7 @@ namespace cqasm::v3x::analyzer {
  */
 Scope::Scope(
     resolver::VariableTable variable_table,
-    resolver::FunctionImplTable function_impl_table,
+    resolver::ConstEvalFunctionTable function_impl_table,
     resolver::FunctionTable function_table,
     resolver::InstructionTable instruction_table,
     tree::One<semantic::Block> block)

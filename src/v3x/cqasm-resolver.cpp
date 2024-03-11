@@ -43,23 +43,23 @@ Value VariableTable::resolve(const std::string &name) const {
 }
 
 
-//-------------------//
-// FunctionImplTable //
-//-------------------//
+//------------------------//
+// ConstEvalFunctionTable //
+//------------------------//
 
-FunctionImplTable::FunctionImplTable()
-: resolver(std::make_unique<OverloadedNameResolver<FunctionImpl>>()) {}
-FunctionImplTable::~FunctionImplTable() = default;
-FunctionImplTable::FunctionImplTable(const FunctionImplTable& t)
-: resolver(std::make_unique<OverloadedNameResolver<FunctionImpl>>(*t.resolver)) {}
-FunctionImplTable::FunctionImplTable(FunctionImplTable&& t) noexcept
+ConstEvalFunctionTable::ConstEvalFunctionTable()
+: resolver(std::make_unique<OverloadedNameResolver<ConstEvalFunction>>()) {}
+ConstEvalFunctionTable::~ConstEvalFunctionTable() = default;
+ConstEvalFunctionTable::ConstEvalFunctionTable(const ConstEvalFunctionTable& t)
+: resolver(std::make_unique<OverloadedNameResolver<ConstEvalFunction>>(*t.resolver)) {}
+ConstEvalFunctionTable::ConstEvalFunctionTable(ConstEvalFunctionTable&& t) noexcept
 : resolver(std::move(t.resolver)) {}
-FunctionImplTable& FunctionImplTable::operator=(const FunctionImplTable& t) {
-    resolver = std::make_unique<OverloadedNameResolver<FunctionImpl>>(
-        OverloadedNameResolver<FunctionImpl>(*t.resolver));
+ConstEvalFunctionTable& ConstEvalFunctionTable::operator=(const ConstEvalFunctionTable& t) {
+    resolver = std::make_unique<OverloadedNameResolver<ConstEvalFunction>>(
+        OverloadedNameResolver<ConstEvalFunction>(*t.resolver));
     return *this;
 }
-FunctionImplTable& FunctionImplTable::operator=(FunctionImplTable&& t) noexcept {
+ConstEvalFunctionTable& ConstEvalFunctionTable::operator=(ConstEvalFunctionTable&& t) noexcept {
     resolver = std::move(t.resolver);
     return *this;
 }
@@ -75,7 +75,7 @@ FunctionImplTable& FunctionImplTable::operator=(FunctionImplTable&& t) noexcept 
  * However, the overload resolution engine will always use the last applicable overload it finds,
  * so adding does have the effect of overriding.
  */
-void FunctionImplTable::add(const std::string &name, const Types &param_types, const FunctionImpl &impl) {
+void ConstEvalFunctionTable::add(const std::string &name, const Types &param_types, const ConstEvalFunction &impl) {
     resolver->add_overload(name, impl, param_types);
 }
 
@@ -85,7 +85,7 @@ void FunctionImplTable::add(const std::string &name, const Types &param_types, c
  * OverloadResolutionFailure if no overload of the function exists for the given arguments, or otherwise
  * returns the value returned by the function.
  */
-Value FunctionImplTable::resolve(const std::string &name, const Values &args) const {
+Value ConstEvalFunctionTable::resolve(const std::string &name, const Values &args) const {
     // Resolve the function and type-check/promote the argument list.
     auto resolution = resolver->resolve(name, args);
 
