@@ -70,31 +70,7 @@ public:
 
             analyzer.register_default_mappings();
             analyzer.register_default_functions();
-
-            analyzer.register_instruction("cnot", "QQ");
-            analyzer.register_instruction("cnot", "VV");
-            analyzer.register_instruction("cr", "QQf");
-            analyzer.register_instruction("crk", "QQi");
-            analyzer.register_instruction("cz", "QQ");
-            analyzer.register_instruction("h", "Q");
-            analyzer.register_instruction("h", "V");
-            analyzer.register_instruction("i", "Q");
-            analyzer.register_instruction("measure", "BQ");  // bit = qubit
-            analyzer.register_instruction("measure", "WV");  // bit array = qubit array
-            analyzer.register_instruction("measure", "BV");  // bit = qubit array
-            analyzer.register_instruction("measure", "WQ");  // bit array = qubit
-            analyzer.register_instruction("mx90", "Q");
-            analyzer.register_instruction("my90", "Q");
-            analyzer.register_instruction("rx", "Qf");
-            analyzer.register_instruction("ry", "Qf");
-            analyzer.register_instruction("rz", "Qf");
-            analyzer.register_instruction("s", "Q");
-            analyzer.register_instruction("sdag", "Q");
-            analyzer.register_instruction("x", "Q");
-            analyzer.register_instruction("x90", "Q");
-            analyzer.register_instruction("y", "Q");
-            analyzer.register_instruction("y90", "Q");
-            analyzer.register_instruction("z", "Q");
+            analyzer.register_default_instructions();
 
             // Run the actual semantic analysis
             auto analysis_result = analyzer.analyze(*parse_result.root->as_program());

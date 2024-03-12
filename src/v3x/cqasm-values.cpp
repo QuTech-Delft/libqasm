@@ -169,6 +169,17 @@ types::Type element_type_of(const types::Type &type) {
     }
 }
 
+types::Type get_function_ref_return_type(auto function_ref_ptr) {
+    auto semantic_function = function_ref_ptr->function;
+    if (auto semantic_core_function_ptr = semantic_function->as_core_function()) {
+        return semantic_core_function_ptr->core_function_ref->return_type;
+    } else if (auto semantic_function_ptr = semantic_function->as_function()) {
+        return semantic_function_ptr->return_type;
+    } else {
+        throw std::runtime_error("unknown type!");
+    }
+}
+
 /**
  * Returns the type of the given value.
  */
@@ -199,11 +210,10 @@ types::Type type_of(const Value &value) {
         }
     } else if (auto var = value->as_variable_ref()) {
         return var->variable->typ;
-    } else if (auto function_ref_ptr = value->as_function_ref()) {
-        return function_ref_ptr->function->return_type;
+    } else if (auto value_function_ref_ptr = value->as_function_ref()) {
+        return get_function_ref_return_type(value_function_ref_ptr);
     } else if (auto function_call = value->as_function_call()) {
-        auto function_ref = function_call->function;
-        return function_ref->function->return_type;
+        return get_function_ref_return_type(function_call->function);
     } else {
         throw std::runtime_error("unknown type!");
     }
@@ -239,13 +249,12 @@ primitives::Int size_of(const Value &value) {
     } else if (auto var = value->as_variable_ref()) {
         return types::size_of(var->variable->typ);
     } else if (auto function_ref_ptr = value->as_function_ref()) {
-        auto return_type = function_ref_ptr->function->return_type;
+        auto return_type = get_function_ref_return_type(function_ref_ptr);
         return !return_type.empty()
             ? types::size_of(return_type)
             : primitives::Int{ 0 };
     } else if (auto function_call = value->as_function_call()) {
-        auto function_ref = function_call->function;
-        auto return_type = function_ref->function->return_type;
+        auto return_type = get_function_ref_return_type(function_call->function);
         return !return_type.empty()
             ? types::size_of(return_type)
             : primitives::Int{ 0 };

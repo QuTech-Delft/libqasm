@@ -8,12 +8,14 @@ namespace cqasm::v3x::analyzer {
  */
 Scope::Scope(
     resolver::VariableTable variable_table,
-    resolver::ConstEvalFunctionTable function_impl_table,
+    resolver::ConstEvalCoreFunctionTable consteval_core_function_table,
+    resolver::CoreFunctionTable core_function_table,
     resolver::FunctionTable function_table,
     resolver::InstructionTable instruction_table,
     tree::One<semantic::Block> block)
 : variable_table{ std::move(variable_table) }
-, function_impl_table{ std::move(function_impl_table) }
+, consteval_core_function_table{ std::move(consteval_core_function_table) }
+, core_function_table{ std::move(core_function_table) }
 , function_table{ std::move(function_table) }
 , instruction_table{ std::move(instruction_table) }
 , block{ std::move(block) }

@@ -244,7 +244,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_function(ast::Function &node) {
 
         // Parameters
         const auto &parameters = std::any_cast<LocalBlockReturnT>(visit_local_block(*node.parameters)).second;
-        auto parameter_types = types_of(parameters);
+        ret->param_types = types_of(parameters);
 
         // Block
         auto [block, variables] = std::any_cast<LocalBlockReturnT>(visit_local_block(*node.block));
@@ -268,7 +268,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_function(ast::Function &node) {
         analyzer_.add_function_to_global_scope(ret);
 
         // Register the function
-        analyzer_.register_function(ret->name, parameter_types, tree::make<values::FunctionRef>(ret));
+        analyzer_.register_function(ret->name, ret->param_types, tree::make<values::FunctionRef>(ret));
     } catch (error::AnalysisError &err) {
         err.context(node);
         result_.errors.push_back(std::move(err));
@@ -326,7 +326,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_expression_statement(ast::ExpressionSta
     auto ret = tree::make<semantic::FunctionCallStatement>();
     try {
         if (auto function_call = node.expression->as_function_call(); function_call) {
-            ret->return_value = std::any_cast<values::Value>(visit_function_call(*function_call)).get_ptr();
+            ret->function_call_value = std::any_cast<values::Value>(visit_function_call(*function_call)).get_ptr();
 
             // Copy annotation data
             ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(
@@ -423,7 +423,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_measure_instruction(ast::MeasureInstruc
         ret.set(analyzer_.resolve_instruction(node.name->name, operands));
 
         // Check qubit and bit indices have the same size
-        if (!ret->instruction.empty()) {
+        if (!ret->instruction_ref.empty()) {
             if (!check_qubit_and_bit_indices_have_same_size(operands)) {
                 throw error::AnalysisError{ "qubit and bit indices have different sizes" };
             }

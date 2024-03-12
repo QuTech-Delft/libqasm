@@ -103,7 +103,7 @@ void serialize(const Complex &obj, ::tree::cbor::MapWriter &map) {
 
 template <>
 Complex deserialize(const ::tree::cbor::MapReader &map) {
-    return {map.at("r").as_float(), map.at("i").as_float()};
+    return { map.at("r").as_float(), map.at("i").as_float() };
 }
 
 /**

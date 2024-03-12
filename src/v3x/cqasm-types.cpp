@@ -26,24 +26,28 @@ namespace cqasm::v3x::types {
  *  - Y = int array
  *  - Z = float array
  */
+Type from_spec(const char c) {
+    switch (c) {
+        case 'Q': return tree::make<types::Qubit>();
+        case 'B': return tree::make<types::Bit>();
+        case 'a': return tree::make<types::Axis>();
+        case 'b': return tree::make<types::Bool>();
+        case 'i': return tree::make<types::Int>();
+        case 'f': return tree::make<types::Float>();
+        case 'c': return tree::make<types::Complex>();
+        case 'V': return tree::make<types::QubitArray>();
+        case 'W': return tree::make<types::BitArray>();
+        case 'X': return tree::make<types::BoolArray>();
+        case 'Y': return tree::make<types::IntArray>();
+        case 'Z': return tree::make<types::FloatArray>();
+        default: throw std::invalid_argument("unknown type code encountered");
+    }
+}
+
 Types from_spec(const std::string &spec) {
     Types types;
     for (auto c : spec) {
-        switch (c) {
-            case 'Q': types.add_raw(new types::Qubit()); break;
-            case 'B': types.add_raw(new types::Bit()); break;
-            case 'a': types.add_raw(new types::Axis()); break;
-            case 'b': types.add_raw(new types::Bool()); break;
-            case 'i': types.add_raw(new types::Int()); break;
-            case 'f': types.add_raw(new types::Float()); break;
-            case 'c': types.add_raw(new types::Complex()); break;
-            case 'V': types.add_raw(new types::QubitArray()); break;
-            case 'W': types.add_raw(new types::BitArray()); break;
-            case 'X': types.add_raw(new types::BoolArray()); break;
-            case 'Y': types.add_raw(new types::IntArray()); break;
-            case 'Z': types.add_raw(new types::FloatArray()); break;
-            default: throw std::invalid_argument("unknown type code encountered");
-        }
+        types.add(from_spec(c));
     }
     return types;
 }

@@ -76,7 +76,7 @@ value_base {
         }
 
         function_ref {
-            function: external Link<cqasm::v3x::semantic::Function>;
+            function: external Link<cqasm::v3x::semantic::FunctionBase>;
         }
     }
 
