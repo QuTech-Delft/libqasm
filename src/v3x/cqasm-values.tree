@@ -81,7 +81,7 @@ value_base {
     }
 
     function_call {
-        function: One<function_ref>;
+        function_ref: One<function_ref>;
         arguments: Any<value_base>;
     }
 }

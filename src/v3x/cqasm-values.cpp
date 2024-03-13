@@ -213,7 +213,7 @@ types::Type type_of(const Value &value) {
     } else if (auto value_function_ref_ptr = value->as_function_ref()) {
         return get_function_ref_return_type(value_function_ref_ptr);
     } else if (auto function_call = value->as_function_call()) {
-        return get_function_ref_return_type(function_call->function);
+        return get_function_ref_return_type(function_call->function_ref);
     } else {
         throw std::runtime_error("unknown type!");
     }
@@ -254,7 +254,7 @@ primitives::Int size_of(const Value &value) {
             ? types::size_of(return_type)
             : primitives::Int{ 0 };
     } else if (auto function_call = value->as_function_call()) {
-        auto return_type = get_function_ref_return_type(function_call->function);
+        auto return_type = get_function_ref_return_type(function_call->function_ref);
         return !return_type.empty()
             ? types::size_of(return_type)
             : primitives::Int{ 0 };
