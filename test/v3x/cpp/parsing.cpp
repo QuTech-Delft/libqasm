@@ -88,18 +88,18 @@ public:
 
             // Check the JSON dump of the analysis result
             if (analysis_result.errors.empty()) {
-                if (auto json_golden_file_path = path_ / fmt::format("semantic.{}.golden.json", api_version);
-                    fs::exists(json_golden_file_path)) {
-                    auto json_actual_file_path = path_ / fmt::format("semantic.{}.actual.json", api_version);
-                    std::string json_actual_file_contents{};
-                    std::string json_golden_file_contents{};
+                if (auto semantic_json_golden_file_path = path_ / fmt::format("semantic.{}.golden.json", api_version);
+                    fs::exists(semantic_json_golden_file_path)) {
+                    auto semantic_json_actual_file_path = path_ / fmt::format("semantic.{}.actual.json", api_version);
+                    std::string semantic_json_actual_file_contents{};
+                    std::string semantic_json_golden_file_contents{};
                     {
-                        std::ofstream json_actual_ofs{ json_actual_file_path };
-                        analysis_result.root->dump_json(json_actual_ofs);
+                        std::ofstream semantic_json_actual_ofs{ semantic_json_actual_file_path };
+                        analysis_result.root->dump_json(semantic_json_actual_ofs);
                     }
-                    EXPECT_TRUE(cqasm::test::read_file(json_actual_file_path, json_actual_file_contents));
-                    EXPECT_TRUE(cqasm::test::read_file(json_golden_file_path, json_golden_file_contents));
-                    EXPECT_TRUE(json_actual_file_contents == json_golden_file_contents);
+                    EXPECT_TRUE(cqasm::test::read_file(semantic_json_actual_file_path, semantic_json_actual_file_contents));
+                    EXPECT_TRUE(cqasm::test::read_file(semantic_json_golden_file_path, semantic_json_golden_file_contents));
+                    EXPECT_TRUE(semantic_json_actual_file_contents == semantic_json_golden_file_contents);
                 }
             }
 
