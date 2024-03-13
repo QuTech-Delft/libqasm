@@ -6,62 +6,62 @@ Program(
       items: 3
     )
   >
-  statements: [
-    Instruction(
-      instruction: measure(bit array, qubit array)
-      name: measure
-      operands: [
-        IndexRef(
-          variable --> <
-            Variable(
-              name: b
-              typ: <
-                BitArray(
-                  size: 5
+  block: <
+    Block(
+      statements: [
+        Instruction(
+          instruction_ref: measure(bit array, qubit array)
+          name: measure
+          operands: [
+            IndexRef(
+              variable --> <
+                Variable(
+                  name: b
+                  typ: <
+                    BitArray(
+                      size: 5
+                    )
+                  >
+                  annotations: []
                 )
               >
-              annotations: []
+              indices: [
+                ConstInt(
+                  value: 1
+                )
+                ConstInt(
+                  value: 2
+                )
+              ]
             )
-          >
-          indices: [
-            ConstInt(
-              value: 1
-            )
-            ConstInt(
-              value: 2
-            )
-          ]
-        )
-        IndexRef(
-          variable --> <
-            Variable(
-              name: q
-              typ: <
-                QubitArray(
-                  size: 5
+            IndexRef(
+              variable --> <
+                Variable(
+                  name: q
+                  typ: <
+                    QubitArray(
+                      size: 5
+                    )
+                  >
+                  annotations: []
                 )
               >
-              annotations: []
-            )
-          >
-          indices: [
-            ConstInt(
-              value: 2
-            )
-            ConstInt(
-              value: 4
+              indices: [
+                ConstInt(
+                  value: 2
+                )
+                ConstInt(
+                  value: 4
+                )
+              ]
             )
           ]
+          annotations: []
         )
       ]
-      condition: <
-        ConstBool(
-          value: 1
-        )
-      >
-      annotations: []
     )
-  ]
+  >
+  functions: []
   variables: [
     Variable(
       name: q

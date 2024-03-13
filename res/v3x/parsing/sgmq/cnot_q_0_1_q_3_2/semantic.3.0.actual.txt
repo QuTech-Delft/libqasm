@@ -6,62 +6,62 @@ Program(
       items: 3
     )
   >
-  statements: [
-    Instruction(
-      instruction: cnot(qubit array, qubit array)
-      name: cnot
-      operands: [
-        IndexRef(
-          variable --> <
-            Variable(
-              name: q
-              typ: <
-                QubitArray(
-                  size: 4
+  block: <
+    Block(
+      statements: [
+        Instruction(
+          instruction_ref: cnot(qubit array, qubit array)
+          name: cnot
+          operands: [
+            IndexRef(
+              variable --> <
+                Variable(
+                  name: q
+                  typ: <
+                    QubitArray(
+                      size: 4
+                    )
+                  >
+                  annotations: []
                 )
               >
-              annotations: []
+              indices: [
+                ConstInt(
+                  value: 0
+                )
+                ConstInt(
+                  value: 1
+                )
+              ]
             )
-          >
-          indices: [
-            ConstInt(
-              value: 0
-            )
-            ConstInt(
-              value: 1
-            )
-          ]
-        )
-        IndexRef(
-          variable --> <
-            Variable(
-              name: q
-              typ: <
-                QubitArray(
-                  size: 4
+            IndexRef(
+              variable --> <
+                Variable(
+                  name: q
+                  typ: <
+                    QubitArray(
+                      size: 4
+                    )
+                  >
+                  annotations: []
                 )
               >
-              annotations: []
-            )
-          >
-          indices: [
-            ConstInt(
-              value: 3
-            )
-            ConstInt(
-              value: 2
+              indices: [
+                ConstInt(
+                  value: 3
+                )
+                ConstInt(
+                  value: 2
+                )
+              ]
             )
           ]
+          annotations: []
         )
       ]
-      condition: <
-        ConstBool(
-          value: 1
-        )
-      >
-      annotations: []
     )
-  ]
+  >
+  functions: []
   variables: [
     Variable(
       name: q
