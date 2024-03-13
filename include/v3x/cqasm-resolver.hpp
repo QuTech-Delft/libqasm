@@ -134,7 +134,7 @@ public:
      * However, the overload resolution engine will always use the last applicable overload it finds,
      * so adding does have the effect of overriding.
      */
-    void add(const std::string &name, const types::Types &param_types, const ConstEvalCoreFunction &impl);
+    void add(const std::string &name, const types::Types &param_types, const ConstEvalCoreFunction &function);
 
     /**
      * Resolves a function.
@@ -155,7 +155,7 @@ public:
  * This has to be a function accepting at least one variable argument.
  */
 class CoreFunctionTable {
-    using resolver_t = OverloadedNameResolver<function::CoreFunctionRef>;
+    using resolver_t = OverloadedNameResolver<tree::One<semantic::CoreFunction>>;
 
     std::unique_ptr<resolver_t> resolver;
 

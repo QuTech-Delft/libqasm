@@ -178,7 +178,7 @@ public:
     virtual void register_consteval_core_function(
         const std::string &name,
         const types::Types &param_types,
-        const resolver::ConstEvalCoreFunction &impl);
+        const resolver::ConstEvalCoreFunction &function);
 
     /**
      * Convenience method for registering a consteval core function.
@@ -188,7 +188,7 @@ public:
     virtual void register_consteval_core_function(
         const std::string &name,
         const std::string &param_types,
-        const resolver::ConstEvalCoreFunction &impl);
+        const resolver::ConstEvalCoreFunction &function);
 
     /**
      * Registers a core function.

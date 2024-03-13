@@ -241,9 +241,9 @@ values::Value Analyzer::resolve_function(const std::string &name, const values::
 void Analyzer::register_consteval_core_function(
     const std::string &name,
     const types::Types &param_types,
-    const resolver::ConstEvalCoreFunction &impl) {
+    const resolver::ConstEvalCoreFunction &function) {
 
-    global_scope().consteval_core_function_table.add(name, param_types, impl);
+    global_scope().consteval_core_function_table.add(name, param_types, function);
 }
 
 /**
@@ -254,9 +254,9 @@ void Analyzer::register_consteval_core_function(
 void Analyzer::register_consteval_core_function(
     const std::string &name,
     const std::string &param_types,
-    const resolver::ConstEvalCoreFunction &impl) {
+    const resolver::ConstEvalCoreFunction &function) {
 
-    global_scope().consteval_core_function_table.add(name, types::from_spec(param_types), impl);
+    global_scope().consteval_core_function_table.add(name, types::from_spec(param_types), function);
 }
 
 /**
