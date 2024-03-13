@@ -3,7 +3,7 @@ name: Test
 on:
   push:
     branches:
-    - 200-frontend-errors-at-eof-are-reported-with-an-incorrect-range
+    - develop
   pull_request:
 
 jobs:
