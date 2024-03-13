@@ -1,10 +1,7 @@
 version 3
 
 def area(float r) -> float {
-    // TODO: this test requires that the product arithmetic operator works on variables
-    // return 2 * pi * r
-    // So, at the moment, just work on constant values
-    return 2 * pi * 1.0
+     return 2 * pi * r
 }
 
 float f = area(1.)
