@@ -10,7 +10,7 @@ Program(
     Block(
       statements: [
         Instruction(
-          instruction: h(qubit)
+          instruction_ref: h(qubit)
           name: h
           operands: [
             IndexRef(
@@ -35,7 +35,7 @@ Program(
           annotations: []
         )
         Instruction(
-          instruction: h(qubit)
+          instruction_ref: h(qubit)
           name: h
           operands: [
             IndexRef(
@@ -60,7 +60,7 @@ Program(
           annotations: []
         )
         Instruction(
-          instruction: cnot(qubit, qubit)
+          instruction_ref: cnot(qubit, qubit)
           name: cnot
           operands: [
             IndexRef(
