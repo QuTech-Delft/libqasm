@@ -4,12 +4,9 @@ source
 # Header file for the semantic tree node classes.
 header "v3x/cqasm-semantic-gen.hpp"
 
-// Include tree base classes
 include "cqasm-tree.hpp"
 tree_namespace cqasm::tree
 
-// Include primitive types
-include "v3x/cqasm-core-function.hpp"
 include "v3x/cqasm-instruction.hpp"
 include "v3x/cqasm-primitives.hpp"
 include "v3x/cqasm-types.hpp"
@@ -74,20 +71,13 @@ annotated {
         typ: external One<cqasm::v3x::types::TypeBase>;
     }
 
-    function_base {
-        # Functions supported by the language
-        core_function {
-            core_function_ref: cqasm::v3x::function::CoreFunctionRef;
-        }
-
-        # User defined functions
-        function {
-            name: cqasm::v3x::primitives::Str;
-            param_types: external Any<cqasm::v3x::types::TypeBase>;
-            return_type: external Maybe<cqasm::v3x::types::TypeBase>;
-            block: One<block>;
-            variables: Any<variable>;
-        }
+    # User defined functions
+    function {
+        name: cqasm::v3x::primitives::Str;
+        param_types: external Any<cqasm::v3x::types::TypeBase>;
+        return_type: external Maybe<cqasm::v3x::types::TypeBase>;
+        block: One<block>;
+        variables: Any<variable>;
     }
 }
 

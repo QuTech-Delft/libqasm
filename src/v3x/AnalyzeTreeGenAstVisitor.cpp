@@ -223,7 +223,7 @@ void AnalyzeTreeGenAstVisitor::current_block_return_statements_promote_or_error(
 types::Types types_of(const tree::Any<semantic::Variable> &variables) {
     types::Types types{};
     for (const auto &variable : variables) {
-        types.add(variable->typ);
+        types.add(variable->typ.clone());
     }
     return types;
 }

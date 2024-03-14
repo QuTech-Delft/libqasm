@@ -119,9 +119,7 @@ CoreFunctionTable& CoreFunctionTable::operator=(CoreFunctionTable&& t) noexcept 
  * Registers a core function type.
  */
 void CoreFunctionTable::add(const function::CoreFunction &type) {
-    auto core_function_ref = tree::make<function::CoreFunction>(type);
-    auto semantic_core_function_ptr = tree::make<semantic::CoreFunction>(core_function_ref);
-    resolver->add_overload(type.name, semantic_core_function_ptr, type.param_types);
+    resolver->add_overload(type.name, tree::make<function::CoreFunction>(type), type.param_types);
 }
 
 /**
@@ -132,8 +130,8 @@ void CoreFunctionTable::add(const function::CoreFunction &type) {
  * Annotation data, line number information, and the condition still need to be set by the caller.
  */
 Value CoreFunctionTable::resolve(const std::string &name, const Values &args) const {
-    auto [semantic_core_function_ptr, promoted_args] = resolver->resolve(name, args);
-    auto value_function_ref = tree::make<values::FunctionRef>(semantic_core_function_ptr);
+    auto [core_function_ref, promoted_args] = resolver->resolve(name, args);
+    auto value_function_ref = tree::make<values::CoreFunctionRef>(core_function_ref);
     return tree::make<values::FunctionCall>(value_function_ref, promoted_args);
 }
 

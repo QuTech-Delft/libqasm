@@ -13,6 +13,6 @@ namespace cqasm::v3x::semantic {
 // It's possible to get rid of this kludge by merging the value (and type) trees into the semantic tree,
 // as probably should have been done initially, but a lot of refactoring would result.
 class Variable;
-class FunctionBase;
+class Function;
 
 } // namespace cqasm::v3x::semantic

@@ -12,7 +12,7 @@ Program(
         FunctionCallStatement(
           function_call_value: <
             FunctionCall(
-              function: <
+              function_ref: <
                 FunctionRef(
                   function --> <
                     Function(

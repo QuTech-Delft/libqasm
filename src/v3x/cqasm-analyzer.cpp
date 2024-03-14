@@ -80,10 +80,13 @@ void Analyzer::register_default_instructions() {
 AnalysisResult Analyzer::analyze(ast::Program &ast) {
     auto analyze_visitor_up = std::make_unique<AnalyzeTreeGenAstVisitor>(*this);
     auto result = std::any_cast<AnalysisResult>(analyze_visitor_up->visit_program(ast));
-    if (result.errors.empty() && !result.root.is_well_formed()) {
-        std::cerr << *result.root;
-        throw std::runtime_error{ "internal error: no semantic errors returned, but semantic tree is incomplete."
-            " Tree was dumped." };
+    if (result.errors.empty()) {
+        try {
+            result.root.check_well_formed();
+        } catch (const std::runtime_error &err) {
+            fmt::print("Error: {}\n\nDumping semantic AST...\n---\n{}\n---\n", err.what(), *result.root);
+            throw std::runtime_error{ "no semantic errors returned, but semantic tree is incomplete." };
+        }
     }
     return result;
 }

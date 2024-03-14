@@ -155,7 +155,7 @@ public:
  * This has to be a function accepting at least one variable argument.
  */
 class CoreFunctionTable {
-    using resolver_t = OverloadedNameResolver<tree::One<semantic::CoreFunction>>;
+    using resolver_t = OverloadedNameResolver<function::CoreFunctionRef>;
 
     std::unique_ptr<resolver_t> resolver;
 

@@ -8,6 +8,7 @@
 #include "v3x/cqasm-types.hpp"
 #include "v3x/cqasm-semantic.hpp"
 
+#include <cassert>
 #include <fmt/format.h>
 #include <ostream>
 #include <stdexcept>  // runtime_error
@@ -169,14 +170,22 @@ types::Type element_type_of(const types::Type &type) {
     }
 }
 
-types::Type get_function_ref_return_type(auto function_ref_ptr) {
-    auto semantic_function = function_ref_ptr->function;
-    if (auto semantic_core_function_ptr = semantic_function->as_core_function()) {
-        return semantic_core_function_ptr->core_function_ref->return_type;
-    } else if (auto semantic_function_ptr = semantic_function->as_function()) {
-        return semantic_function_ptr->return_type;
+/**
+ * Returns the type of a FunctionRefBase node.
+ * That will be the value returned by the function.
+ */
+types::Type get_function_ref_base_return_type(const FunctionRefBase *function_ref_base_ptr) {
+    assert(function_ref_base_ptr);
+    if (auto core_function_ref_ptr = function_ref_base_ptr->as_core_function_ref()) {
+        assert(!core_function_ref_ptr->function.empty());
+        return core_function_ref_ptr->function->return_type;
+    } else if (auto function_ref_ptr = function_ref_base_ptr->as_function_ref()) {
+        assert(!function_ref_ptr->function.empty());
+        auto semantic_function_link = function_ref_ptr->function;
+        assert(!semantic_function_link.empty());
+        return semantic_function_link->return_type;
     } else {
-        throw std::runtime_error("unknown type!");
+        throw std::runtime_error("get_function_ref_base_return_type of unknown FunctionRefBase type!");
     }
 }
 
@@ -210,12 +219,13 @@ types::Type type_of(const Value &value) {
         }
     } else if (auto var = value->as_variable_ref()) {
         return var->variable->typ;
-    } else if (auto value_function_ref_ptr = value->as_function_ref()) {
-        return get_function_ref_return_type(value_function_ref_ptr);
+    } else if (auto function_ref_base_ptr = value->as_function_ref_base()) {
+        return get_function_ref_base_return_type(function_ref_base_ptr);
     } else if (auto function_call = value->as_function_call()) {
-        return get_function_ref_return_type(function_call->function_ref);
+        function_ref_base_ptr = function_call->function_ref->as_function_ref_base();
+        return get_function_ref_base_return_type(function_ref_base_ptr);
     } else {
-        throw std::runtime_error("unknown type!");
+        throw std::runtime_error("type_of unknown Value type!");
     }
 }
 
@@ -248,18 +258,19 @@ primitives::Int size_of(const Value &value) {
         return static_cast<primitives::Int>(index->indices.size());
     } else if (auto var = value->as_variable_ref()) {
         return types::size_of(var->variable->typ);
-    } else if (auto function_ref_ptr = value->as_function_ref()) {
-        auto return_type = get_function_ref_return_type(function_ref_ptr);
+    } else if (auto function_ref_base_ptr = value->as_function_ref_base()) {
+        auto return_type = get_function_ref_base_return_type(function_ref_base_ptr);
         return !return_type.empty()
             ? types::size_of(return_type)
             : primitives::Int{ 0 };
     } else if (auto function_call = value->as_function_call()) {
-        auto return_type = get_function_ref_return_type(function_call->function_ref);
+        function_ref_base_ptr = function_call->function_ref->as_function_ref_base();
+        auto return_type = get_function_ref_base_return_type(function_ref_base_ptr);
         return !return_type.empty()
             ? types::size_of(return_type)
             : primitives::Int{ 0 };
     } else {
-        throw std::runtime_error("unknown type!");
+        throw std::runtime_error("size_of unknown Value type!");
     }
 }
 
