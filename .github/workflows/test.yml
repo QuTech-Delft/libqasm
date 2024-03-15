@@ -64,6 +64,8 @@ jobs:
           conan_profile: tests-${{ matrix.build_type }}-msvc-windows-x64
           shell: bash
 
+  # We are having problems when using pipx with the Linux/ARM64 self-hosted runner
+  # So we don't use the actions/cpp-test action for this job
   cpp-linux-arm64:
     name: "C++ tests (gcc/Linux/ARM64)"
     runs-on: [self-hosted, ARM64, Linux]
@@ -83,13 +85,25 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get update
-          apt-get install -y bison flex default-jre pipx
-          pipx ensurepath
-      - uses: ./.github/actions/cpp-tests
-        with:
-          build_type: ${{ matrix.build_type }}
-          conan_profile: tests-${{ matrix.build_type }}-gcc-linux-arm64
-          shell: bash
+          apt-get install -y bison flex default-jre
+          python3 -m pip install --upgrade pip conan
+      - name: Get latest CMake
+        uses: lukka/get-cmake@latest
+        # We clean the Conan cache as a preventive measure for our runs in self-hosted runners
+        # Self-hosted runners use containers that cache Conan packages from previous runs,
+        # and that can cause different type of problems
+      - name: Configure and build
+        run: |
+          conan profile detect --force
+          conan remove -c "*/*"
+          conan_profile=tests-${{ matrix.build_type }}-gcc-linux-arm64
+          lowercase_conan_profile=$(echo ${conan_profile} | tr '[:upper:]' '[:lower:]')
+          conan build . -pr:a=conan/profiles/${lowercase_conan_profile} -b missing
+        shell: bash
+      - name: Test
+        working-directory: build/${{ matrix.build_type }}
+        run: ctest -C ${{ matrix.build_type }} --output-on-failure --parallel 10
+        shell: bash
 
   cpp-macos-arm64:
     name: "C++ tests (clang/macos/ARM64)"
