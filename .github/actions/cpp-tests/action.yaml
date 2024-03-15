@@ -35,7 +35,7 @@ runs:
         lowercase_prh=$(echo ${prh} | tr '[:upper:]' '[:lower:]')
         prb=${{ inputs.conan_profile_build }}
         lowercase_prb=$(echo ${prb} | tr '[:upper:]' '[:lower:]')
-        conan build . -pr:h=conan/profiles/${lowercase_prh} -pr:b=conan/profiles/${lowercase_prb} -b missing
+        conan build . -pr:h=${lowercase_prh} -pr:b=${lowercase_prb} -b missing
       shell: ${{ inputs.shell }}
     - name: Test
       working-directory: build/${{ inputs.build_type }}
