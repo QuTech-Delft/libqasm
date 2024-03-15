@@ -62,6 +62,7 @@ jobs:
         with:
           build_type: ${{ matrix.build_type }}
           conan_profile_host: conan/profiles/tests-${{ matrix.build_type }}-msvc-windows-x64
+          conan_profile_build: conan/profiles/tests-${{ matrix.build_type }}-msvc-windows-x64
           shell: bash
 
   # We are having problems when using pipx with the Linux/ARM64 self-hosted runner
@@ -98,7 +99,7 @@ jobs:
           conan remove -c "*/*"
           prh=conan/profiles/tests-${{ matrix.build_type }}-gcc-linux-arm64
           lowercase_prh=$(echo ${prh} | tr '[:upper:]' '[:lower:]')
-          conan build . -pr:h=${lowercase_conan_profile} -pr:b=default -b missing
+          conan build . -pr:h=${lowercase_prh} -pr:b=default -b missing
         shell: bash
       - name: Test
         working-directory: build/${{ matrix.build_type }}
