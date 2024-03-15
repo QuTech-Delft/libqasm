@@ -24,6 +24,7 @@ runs:
       # and that can cause different type of problems
     - name: Configure and build
       run: |
+        pipx ensurepath
         conan profile detect --force
         conan remove -c "*/*"
         conan_profile=${{ inputs.conan_profile }}
