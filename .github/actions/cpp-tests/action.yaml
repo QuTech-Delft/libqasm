@@ -15,7 +15,9 @@ runs:
   using: composite
   steps:
     - name: Install conan
-      run: pipx install conan
+      run: |
+        pipx install conan
+        echo "$(dirname $(which conan))" >> $GITHUB_PATH
       shell: ${{ inputs.shell }}
     - name: Get latest CMake
       uses: lukka/get-cmake@latest
@@ -24,7 +26,6 @@ runs:
       # and that can cause different type of problems
     - name: Configure and build
       run: |
-        pipx ensurepath
         conan profile detect --force
         conan remove -c "*/*"
         conan_profile=${{ inputs.conan_profile }}
