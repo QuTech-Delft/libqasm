@@ -25,12 +25,12 @@ void CustomErrorListener::syntaxError(
     // ANTLR provides a zero-based character position in line
     // We change it here to a one-based index, which is the more human-readable,
     // and the common option in text editors
-    auto start_column{ charPositionInLine + 1 };
+    auto start_column = charPositionInLine + 1;
 
     // Special case for EOF token
     // EOF token has a "<EOF>" text, so we avoid calculating the size of EOF from its text
     // Instead, we just return a zero size
-    auto token_size = (offendingSymbol && offendingSymbol->getType() != antlr4::Token::EOF)
+    size_t token_size = (offendingSymbol && offendingSymbol->getType() != antlr4::Token::EOF)
         ? offendingSymbol->getText().size()
         : 0;
     auto end_column = start_column + token_size;
