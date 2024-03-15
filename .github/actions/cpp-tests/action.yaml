@@ -4,9 +4,13 @@ inputs:
   build_type:
     required: true
     description: Is the build a debug or release version
-  conan_profile:
+  conan_profile_host:
     required: true
-    description: Which conan profile to use
+    description: Which conan profile host to use
+  conan_profile_build:
+    required: false
+    description: Which conan profile build to use
+    default: 'default'
   shell:
     required: true
     description: Which shell to use for the `run` command
@@ -27,11 +31,13 @@ runs:
       run: |
         conan profile detect --force
         conan remove -c "*/*"
-        conan_profile=${{ inputs.conan_profile }}
-        lowercase_conan_profile=$(echo ${conan_profile} | tr '[:upper:]' '[:lower:]')
-        conan build . -pr:a=conan/profiles/${lowercase_conan_profile} -b missing
+        prh=${{ inputs.conan_profile_host }}
+        lowercase_prh=$(echo ${prh} | tr '[:upper:]' '[:lower:]')
+        prb=${{ inputs.conan_profile_build }}
+        lowercase_prb=$(echo ${prb} | tr '[:upper:]' '[:lower:]')
+        conan build . -pr:h=conan/profiles/${lowercase_prh} -pr:b=conan/profiles/${lowercase_prb} -b missing
       shell: ${{ inputs.shell }}
     - name: Test
       working-directory: build/${{ inputs.build_type }}
-      run: ctest -C ${{ inputs.build_type }} --output-on-failure
+      run: ctest -C ${{ inputs.build_type }} --output-on-failure --parallel 10
       shell: ${{ inputs.shell }}

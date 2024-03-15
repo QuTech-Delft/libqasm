@@ -25,7 +25,7 @@ jobs:
       - uses: ./.github/actions/cpp-tests
         with:
           build_type: ${{ matrix.build_type }}
-          conan_profile: tests-${{ matrix.build_type }}-${{ matrix.compiler }}-linux-x64
+          conan_profile_host: tests-${{ matrix.build_type }}-${{ matrix.compiler }}-linux-x64
           shell: bash
 
 #  cpp-macos-x64:
