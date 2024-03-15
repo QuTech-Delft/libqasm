@@ -86,8 +86,10 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get update
-          apt-get install -y bison flex default-jre pipx
-          echo $(which pipx)
+          apt-get install -y bison flex default-jre
+          apt-get remove -y pipx
+          rm -fr $/.local/pipx
+          apt-get install -y pipx
           pipx ensurepath
       - uses: ./.github/actions/cpp-tests
         with:
