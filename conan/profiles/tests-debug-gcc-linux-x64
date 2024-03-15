@@ -1,1 +1,4 @@
 include(tests-debug)
+
+[options]
+libqasm/*:asan_enabled=False
