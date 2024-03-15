@@ -87,6 +87,8 @@ jobs:
           apt-get update
           apt-get install -y bison flex default-jre
           python3 -m pip install --upgrade pip conan
+      - name: Get latest CMake
+        uses: lukka/get-cmake@latest
         # We clean the Conan cache as a preventive measure for our runs in self-hosted runners
         # Self-hosted runners use containers that cache Conan packages from previous runs,
         # and that can cause different type of problems
