@@ -87,8 +87,6 @@ jobs:
         run: |
           apt-get update
           apt-get install -y bison flex default-jre pipx
-          pipx ensurepath
-          echo "root/.local/bin" >> $GITHUB_PATH 
           echo "${HOME}/.local/bin" >> $GITHUB_PATH
       - uses: ./.github/actions/cpp-tests
         with:
