@@ -93,7 +93,7 @@ jobs:
       - uses: ./.github/actions/cpp-tests
         with:
           build_type: ${{ matrix.build_type }}
-          conan_profile_host: conan/profiles/tests-${{ matrix.build_type }}-apple_clang-macos-x64
+          conan_profile_host: conan/profiles/tests-${{ matrix.build_type }}-gcc-linux-arm64
           shell: bash
 
 #  cpp-macos-arm64:
