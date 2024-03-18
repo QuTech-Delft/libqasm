@@ -13,5 +13,5 @@ target_compile_options(${PROJECT_NAME}_emscripten
 )
 
 target_link_options(${PROJECT_NAME}_emscripten
-    PUBLIC -lembind -fwasm-exceptions --profiling-funcs -sASSERTIONS=1 -sMODULARIZE=1
+    PUBLIC -lembind -fwasm-exceptions -sMODULARIZE=1 -sEXPORT_ES6=1 -Os -sENVIRONMENT=web -sFILESYSTEM=0
 )
