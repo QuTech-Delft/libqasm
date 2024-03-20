@@ -20,7 +20,7 @@ runs:
   steps:
     - name: Install conan
       run: |
-        pipx install conan
+        pipx install conan setuptools
       shell: ${{ inputs.shell }}
     - name: Get latest CMake
       uses: lukka/get-cmake@latest
