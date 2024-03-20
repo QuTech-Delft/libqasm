@@ -79,10 +79,11 @@ if(NOT range-v3_FOUND)
         GIT_TAG "a81477931a8aa2ad025c6bda0609f38e09e4d7ec"
     )
     FetchContent_MakeAvailable(range-v3)
+    add_library(range-v3::range-v3 ALIAS range-v3)
 endif()
 
 # tree-gen executable
-find_package(tree-gen 1.0.6 REQUIRED)
+find_package(tree-gen REQUIRED)
 find_program(TREE_GEN_EXECUTABLE tree-gen REQUIRED)
 message(STATUS "TREE_GEN_EXECUTABLE: ${TREE_GEN_EXECUTABLE}")
 
@@ -91,7 +92,7 @@ if(NOT tree-gen_FOUND OR LIBQASM_BUILD_EMSCRIPTEN)
     message(STATUS "Fetching tree-gen")
     FetchContent_Declare(tree-gen
         GIT_REPOSITORY https://github.com/QuTech-Delft/tree-gen
-        GIT_TAG "0fb905a4b2d013ae280b4e9d5561f1244e9a6e1a"
+        GIT_TAG "4e50a87d05be88ad190e0a8be2d711faf9d1bce6"
         SOURCE_SUBDIR this-directory-does-not-exist
     )
     FetchContent_MakeAvailable(tree-gen)

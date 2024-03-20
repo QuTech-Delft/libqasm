@@ -1,7 +1,9 @@
 /** \file
- * Contains \ref cqasm::v3x::resolver::MappingTable "MappingTable",
- * \ref cqasm::v3x::resolver::ConstEvalCoreFunctionTable "ConstEvalCoreFunctionTable", and
- * \ref cqasm::v3x::resolver::ErrorModelTable "ErrorModelTable", representing the
+ * Contains \ref cqasm::v3x::resolver::VariableTable "VariableTable",
+ * \ref cqasm::v3x::resolver::ConstEvalCoreFunctionTable "ConstEvalCoreFunctionTable",
+ * \ref cqasm::v3x::resolver::CoreFunctionTable "CoreFunctionTable",
+ * \ref cqasm::v3x::resolver::FunctionTable "FunctionTable", and
+ * \ref cqasm::v3x::resolver::InstructionTable "InstructionTable", representing the
  * various cQASM namespaces and their members in scope at some instant.
  */
 
@@ -190,7 +192,7 @@ public:
  * Table of overloads of functions defined by the user in the cQASM file.
  */
 class FunctionTable {
-    using resolver_t = OverloadedNameResolver<values::Value>;
+    using resolver_t = OverloadedNameResolver<tree::One<values::FunctionRef>>;
 
     std::unique_ptr<resolver_t> resolver;
 
@@ -207,13 +209,12 @@ public:
      * Matching will be done case-sensitively.
      * The param_types variadic specifies the amount and types of the parameters that
      * this particular overload of the function expects.
-     * value should be of type values::FunctionRef.
      *
      * This method does not contain any intelligence to override previously added overloads.
      * However, the overload resolution engine will always use the last applicable overload it finds,
      * so adding does have the effect of overriding.
      */
-    void add(const std::string &name, const types::Types &param_types, const values::Value &value);
+    void add(const std::string &name, const types::Types &param_types, const values::FunctionRef &value);
 
     /**
      * Resolves a function.

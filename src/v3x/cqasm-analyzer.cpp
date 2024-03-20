@@ -84,7 +84,9 @@ AnalysisResult Analyzer::analyze(ast::Program &ast) {
         try {
             result.root.check_well_formed();
         } catch (const std::runtime_error &err) {
-            fmt::print("Error: {}\n\nDumping semantic AST...\n---\n{}\n---\n", err.what(), *result.root);
+            fmt::print("Error: {}\nDumping semantic AST...\n---\n", err.what());
+            result.root->dump_raw_pointers();
+            fmt::print("---\n");
             throw std::runtime_error{ "no semantic errors returned, but semantic tree is incomplete." };
         }
     }
@@ -287,7 +289,7 @@ void Analyzer::register_core_function(
 void Analyzer::register_function(
     const std::string &name,
     const types::Types &param_types,
-    const values::Value &value) {
+    const values::FunctionRef &value) {
 
     global_scope().function_table.add(name, param_types, value);
 }

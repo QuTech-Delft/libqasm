@@ -141,7 +141,7 @@ Value CoreFunctionTable::resolve(const std::string &name, const Values &args) co
 //---------------//
 
 FunctionTable::FunctionTable()
-: resolver{ std::make_unique<OverloadedNameResolver<values::Value>>() } {}
+: resolver{ std::make_unique<resolver_t>() } {}
 FunctionTable::~FunctionTable() = default;
 FunctionTable::FunctionTable(const FunctionTable& t)
 : resolver{ std::make_unique<resolver_t>(*t.resolver) } {}
@@ -160,14 +160,13 @@ FunctionTable& FunctionTable::operator=(FunctionTable&& t) noexcept {
  * Registers a function.
  * The param_types variadic specifies the amount and types of the parameters that
  * this particular overload of the function expects.
- * value should be of type values::FunctionRef.
  *
  * This method does not contain any intelligence to override previously added overloads.
  * However, the overload resolution engine will always use the last applicable overload it finds,
  * so adding does have the effect of overriding.
  */
-void FunctionTable::add(const std::string &name, const Types &param_types, const values::Value &value) {
-    resolver->add_overload(name, value, param_types);
+void FunctionTable::add(const std::string &name, const Types &param_types, const values::FunctionRef &value) {
+    resolver->add_overload(name, tree::make<values::FunctionRef>(value), param_types);
 }
 
 /**
@@ -187,7 +186,7 @@ Value FunctionTable::resolve(const std::string &name, const Values &args) const 
 //------------------//
 
 InstructionTable::InstructionTable()
-: resolver{ std::make_unique<OverloadedNameResolver<instruction::InstructionRef>>() } {}
+: resolver{ std::make_unique<resolver_t>() } {}
 InstructionTable::~InstructionTable() = default;
 InstructionTable::InstructionTable(const InstructionTable& t)
 : resolver{ std::make_unique<resolver_t>(*t.resolver) } {}

@@ -18,10 +18,10 @@ namespace cqasm::v3x::function {
  * Representation of a function supported by the language.
  *
  * A number of these can be registered into libqasm by the program or library using it through
- * \ref cqasm::analyzer::Analyzer::register_instruction(const function::CoreFunction&) "register_instruction()",
+ * \ref cqasm::analyzer::Analyzer::register_instruction(const function::CoreFunction&) "register_instruction",
  * to inform libqasm of the supported functions.
  * For each function, libqasm needs to know its name and which parameters it expects.
- * The resolved function type is part of the cqasm::semantic::Function node present in the semantic tree
+ * The resolved function type is part of the cqasm::values::FunctionCall node present in the semantic tree
  * returned through the parse result structure.
  *
  * Note that it is legal to have multiple functions with the same name,

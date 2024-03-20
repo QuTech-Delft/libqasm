@@ -81,12 +81,13 @@ jobs:
         # We are having problems when using the m4 and zulu-opendjk Conan packages on an armv8 architecture
         # m4 is required by flex/bison and zulu-openjdk provides the Java JRE required by the ANTLR generator
         # So, for the time being, we are installing flex/bison and java manually for this platform
-        #
-        # Add Conan path (even before it is installed)
       - name: Install dependencies
         run: |
           apt-get update
           apt-get install -y bison flex default-jre pipx
+        # Add Conan to path (even before it is installed)
+      - name: Add Conan to path
+        run: |
           echo "${HOME}/.local/bin" >> $GITHUB_PATH
       - uses: ./.github/actions/cpp-tests
         with:

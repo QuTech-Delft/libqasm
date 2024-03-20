@@ -210,7 +210,7 @@ public:
     virtual void register_function(
         const std::string &name,
         const types::Types &param_types,
-        const values::Value &value);
+        const values::FunctionRef &value);
 
     /**
      * Resolves an instruction.
