@@ -1,6 +1,6 @@
 #include "cqasm-functions.hpp"
-#include "v3x/register-consteval-core-functions.hpp"
 #include "v3x/cqasm-primitives.hpp"
+#include "v3x/register-consteval-core-functions.hpp"
 
 #include <gmock/gmock.h>
 

@@ -21,7 +21,7 @@ namespace error_model {
  * Representation of an error model. A number of these can be registered into
  * libqasm by the program or library using it through
  * \ref cqasm::analyzer::Analyzer::register_error_model(const error_model::ErrorModel&)
- * "register_error_model()", to inform libqasm about which
+ * "register_error_model", to inform libqasm about which
  * error models are supported. libqasm needs to know its name and which
  * parameters it expects in order to be able to resolve the error model
  * information specified in the cQASM file. The resolved error model (if any
