@@ -21,6 +21,7 @@ runs:
     - name: Install setuptools
       run: |
         pip3 install setuptools
+      shell: ${{ inputs.shell }}
     - name: Install conan
       run: |
         pipx install conan
