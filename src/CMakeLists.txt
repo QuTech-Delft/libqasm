@@ -68,6 +68,7 @@ if(NOT fmt_FOUND OR LIBQASM_BUILD_EMSCRIPTEN)
         SOURCE_SUBDIR this-directory-does-not-exist
     )
     FetchContent_MakeAvailable(fmt)
+    add_library(fmt::fmt ALIAS fmt)
 endif()
 
 # range-v3
@@ -79,6 +80,7 @@ if(NOT range-v3_FOUND)
         GIT_TAG "a81477931a8aa2ad025c6bda0609f38e09e4d7ec"
     )
     FetchContent_MakeAvailable(range-v3)
+    add_library(range-v3::range-v3 ALIAS range-v3)
 endif()
 
 # tree-gen executable
