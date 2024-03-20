@@ -52,23 +52,6 @@ struct Scope {
      * The list of functions defined in the global scope.
      */
     tree::Any<semantic::Function> functions;
-
-    Scope() = default;
-    Scope(const Scope &other) = default;
-    Scope(Scope &&other) noexcept = default;
-    Scope& operator=(const Scope &other) = default;
-    Scope& operator=(Scope &&other) noexcept = default;
-
-    /**
-     * Creates a scope from a table of variables, functions, and instructions.
-     */
-    Scope(
-        resolver::VariableTable variable_table,
-        resolver::ConstEvalCoreFunctionTable function_impl_table,
-        resolver::CoreFunctionTable core_function_table,
-        resolver::FunctionTable function_table,
-        resolver::InstructionTable instruction_table,
-        tree::One<semantic::Block> block);
 };
 
 } // namespace cqasm::v3x::analyzer
