@@ -268,7 +268,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_function(ast::Function &node) {
         analyzer_.add_function_to_global_scope(ret);
 
         // Register the function
-        analyzer_.register_function(ret->name, ret->param_types, tree::make<values::FunctionRef>(ret));
+        analyzer_.register_function(ret->name, ret->param_types, values::FunctionRef{ ret });
     } catch (error::AnalysisError &err) {
         err.context(node);
         result_.errors.push_back(std::move(err));
