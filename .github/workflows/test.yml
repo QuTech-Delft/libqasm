@@ -40,6 +40,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          python3 -m pip install setuptools
       - uses: ./.github/actions/cpp-tests
         with:
           build_type: ${{ matrix.build_type }}
