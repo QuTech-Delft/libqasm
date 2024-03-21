@@ -71,7 +71,7 @@ class LibqasmConan(ConanFile):
     def requirements(self):
         self.requires("fmt/10.2.1")
         self.requires("range-v3/0.12.0")
-        self.requires("tree-gen/1.0.6")
+        self.requires("tree-gen/1.0.7")
         if not self.settings.arch == "wasm":
             self.requires("antlr4-cppruntime/4.13.1")
 

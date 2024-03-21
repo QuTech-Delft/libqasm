@@ -329,8 +329,8 @@ target_include_directories(cqasm-lib-obj
     PUBLIC "${tree-gen_INCLUDE_DIRS}/"
 )
 
-target_compile_features(cqasm-lib-obj PUBLIC
-    cxx_std_20
+target_compile_features(cqasm-lib-obj
+    PUBLIC cxx_std_20
 )
 
 if(LIBQASM_BUILD_EMSCRIPTEN)

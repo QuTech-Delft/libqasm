@@ -89,19 +89,21 @@ class build_ext(_build_ext):
 
             cmd = (local['conan']['create']['.']
                 ['--version'][get_version()]
-                ['-s:a']['compiler.cppstd=20']
-                ['-s:a']["libqasm/*:build_type=" + build_type]
+                ['-s:h']['compiler.cppstd=20']
+                ['-s:b']['compiler.cppstd=20']
+                ['-s:h']['libqasm/*:build_type=' + build_type]
+                ['-s:b']['libqasm/*:build_type=' + build_type]
 
                 ['-o']['libqasm/*:build_python=True']
                 ['-o']['libqasm/*:build_tests=True']
                 # The Python library needs the compatibility headers
-                ['-o']["libqasm/*:compat=True"]
+                ['-o']['libqasm/*:compat=True']
                 ['-o']['libqasm/*:cqasm_python_dir=' + re.escape(os.path.dirname(cqasm_target))]
                 ['-o']['libqasm/*:python_dir=' + re.escape(os.path.dirname(target))]
                 ['-o']['libqasm/*:python_ext=' + re.escape(os.path.basename(target))]
                 # (Ab)use static libs for the intermediate libraries
                 # to avoid dealing with R(UN)PATH nonsense on Linux/OSX as much as possible
-                ['-o']["libqasm/*:shared=False"]
+                ['-o']['libqasm/*:shared=False']
 
                 ['-b']['missing']
                 ['-tf']['']
