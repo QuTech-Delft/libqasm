@@ -104,15 +104,7 @@ public:
      * If there are parse errors, they are moved into the AnalysisResult error list,
      * and the root node will be empty.
      */
-    [[nodiscard]] virtual AnalysisResult analyze(parser::ParseResult &&parse_result);
-
-    /**
-     * Parses and analyzes using the given version and parser closures.
-     */
-    [[nodiscard]] virtual AnalysisResult analyze(
-        const std::function<version::Version()> &version_parser,
-        const std::function<parser::ParseResult()> &parser
-    );
+    [[nodiscard]] virtual AnalysisResult analyze(const parser::ParseResult &parse_result);
 
     /**
      * Parses and analyzes the given file.

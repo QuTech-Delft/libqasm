@@ -98,44 +98,20 @@ AnalysisResult Analyzer::analyze(ast::Program &ast) {
  * If there are parse errors, they are moved into the AnalysisResult error list,
  * and the root node will be empty.
  */
-AnalysisResult Analyzer::analyze(parser::ParseResult &&parse_result) {
+AnalysisResult Analyzer::analyze(const parser::ParseResult &parse_result) {
     if (!parse_result.errors.empty()) {
         AnalysisResult result;
-        result.errors = std::move(parse_result.errors);
+        result.errors = parse_result.errors;
         return result;
     }
     return analyze(*parse_result.root->as_program());
 }
 
 /**
- * Parses and analyzes using the given version and parser closures.
- */
-AnalysisResult Analyzer::analyze(
-    const std::function<version::Version()> &version_parser,
-    const std::function<parser::ParseResult()> &parser) {
-
-    AnalysisResult result;
-    try {
-        if (auto version = version_parser(); version > api_version) {
-            result.errors.emplace_back(fmt::format(
-                "cQASM file version is {}, but at most {} is supported here", version, api_version));
-            return result;
-        }
-    } catch (error::AnalysisError &err) {
-        result.errors.push_back(std::move(err));
-        return result;
-    }
-    return analyze(parser());
-}
-
-/**
  * Parses and analyzes the given file.
  */
 AnalysisResult Analyzer::analyze_file(const std::string &file_name) {
-    return analyze(
-        [=](){ return version::parse_file(file_name); },
-        [=](){ return parser::parse_file(file_name, file_name); }
-    );
+    return analyze(parser::parse_file(file_name, file_name));
 }
 
 /**
@@ -143,10 +119,7 @@ AnalysisResult Analyzer::analyze_file(const std::string &file_name) {
  * The optional file_name argument will be used only for error messages.
  */
 AnalysisResult Analyzer::analyze_string(const std::string &data, const std::optional<std::string> &file_name) {
-    return analyze(
-        [=](){ return version::parse_string(data, file_name); },
-        [=](){ return parser::parse_string(data, file_name); }
-    );
+    return analyze(parser::parse_string(data, file_name));
 }
 
 /**

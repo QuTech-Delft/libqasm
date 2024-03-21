@@ -17,69 +17,31 @@ namespace cqasm::v3x::analyzer {
 class AnalyzerAnalyzeTest : public ::testing::Test {
 protected:
     void SetUp() override {}
-    void ExpectVersionParserReturnsVersionBiggerThanApiVersion() {
-        version_parser = [this]() { return version_4_0; };
-    }
-    void ExpectVersionParserThrows() {
-        version_parser = [this]() -> version::Version { throw error::ParseError{ version_parser_error_message }; };
-    }
-    void ExpectParserReturnsParseResult() {
-        version_parser = [this]() { return version_3_0; };
-        parser = [this]() {
-            auto one_version = tree::make<ast::Version>( version_3_0 );
-            auto one_global_block = tree::make<ast::GlobalBlock>();
-            auto one_program = tree::make<ast::Program>(one_version, one_global_block);
-            return parser::ParseResult{ one_program, error::ParseErrors{} };
-        };
-    }
-    void ExpectParserThrows() {
-        version_parser = [this]() { return version_3_0; };
-        parser = [this]() -> parser::ParseResult { throw error::ParseError{ parser_error_message }; };
-    }
-
-    std::function<version::Version()> version_parser;
-    std::function<parser::ParseResult()> parser;
 
     version::Version version_3_0 = "3.0";
-    version::Version version_4_0 = "4.0";
 
-    std::string version_parser_error_message = "version parser error";
-    std::string parser_error_message = "parser error";
+    tree::One<ast::Version> version = tree::make<ast::Version>(version_3_0);
+    tree::One<ast::GlobalBlock> global_block = tree::make<ast::GlobalBlock>();
+    tree::One<ast::Program> program = tree::make<ast::Program>(version, global_block);
+    parser::ParseResult parse_result_ok = parser::ParseResult{ program, error::ParseErrors{} };
+
+    std::string parse_error_message{ "parse error" };
+    error::ParseErrors parse_errors{ error::ParseError{ parse_error_message } };
+    parser::ParseResult parse_result_errors = parser::ParseResult{ tree::make<ast::Program>(), parse_errors };
 };
 
-TEST_F(AnalyzerAnalyzeTest, version_parser_returns_version_bigger_than_api_version) {
-    ExpectVersionParserReturnsVersionBiggerThanApiVersion();
-    auto analyzer = Analyzer{};
-    auto analysis_result = analyzer.analyze(version_parser, parser);
-    const auto &errors = analysis_result.errors;
-    EXPECT_TRUE(errors.size() == 1);
-    EXPECT_EQ(
-        fmt::format("{}", errors[0]),
-        fmt::format("Error: cQASM file version is {}, but at most {} is supported here",
-            version_4_0, analyzer.api_version)
-    );
-}
-TEST_F(AnalyzerAnalyzeTest, version_parser_throws) {
-    ExpectVersionParserThrows();
-    auto analyzer = Analyzer{};
-    auto analysis_result = analyzer.analyze(version_parser, parser);
-    const auto &errors = analysis_result.errors;
-    EXPECT_TRUE(errors.size() == 1);
-    EXPECT_EQ(fmt::format("{}", errors[0]), fmt::format("Error: {}", version_parser_error_message));
-}
 TEST_F(AnalyzerAnalyzeTest, parser_returns_parse_result) {
-    ExpectParserReturnsParseResult();
     auto analyzer = Analyzer{};
-    auto analysis_result = analyzer.analyze(version_parser, parser);
+    const auto &analysis_result = analyzer.analyze(parse_result_ok);
     auto program = analysis_result.root->as_program();
     const auto &version = program->version->items;
     EXPECT_EQ(version, version_3_0);
 }
 TEST_F(AnalyzerAnalyzeTest, parser_throws) {
-    ExpectParserThrows();
     auto analyzer = Analyzer{};
-    EXPECT_THAT([&]() { (void) analyzer.analyze(version_parser, parser); },
-        ThrowsMessage<error::ParseError>(::testing::HasSubstr(parser_error_message)));
+    const auto &analysis_result = analyzer.analyze(parse_result_errors);
+    const auto &error = analysis_result.errors[0];
+    EXPECT_THAT(error.what(), ::testing::HasSubstr(parse_error_message));
 }
 
 TEST(Analyzer, constructor) {

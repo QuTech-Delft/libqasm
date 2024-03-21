@@ -55,11 +55,6 @@ class LibqasmConan(ConanFile):
     def build_requirements(self):
         self.tool_requires("m4/1.4.19")
         self.tool_requires("tree-gen/1.0.7")
-        if self.settings.os == "Windows":
-            self.tool_requires("winflexbison/2.5.24")
-        else:
-            self.tool_requires("flex/2.6.4")
-            self.tool_requires("bison/3.8.2")
         self.tool_requires("zulu-openjdk/11.0.19")
         if self.settings.arch == "wasm":
             self.tool_requires("emsdk/3.1.50")
