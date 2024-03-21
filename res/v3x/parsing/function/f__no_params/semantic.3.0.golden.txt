@@ -10,13 +10,14 @@ Program(
     Block(
       statements: [
         FunctionCallStatement(
-          return_value: <
+          function_call_value: <
             FunctionCall(
-              function: <
+              function_ref: <
                 FunctionRef(
                   function --> <
                     Function(
                       name: f
+                      param_types: []
                       return_type: -
                       block: <
                         Block(
@@ -40,6 +41,7 @@ Program(
   functions: [
     Function(
       name: f
+      param_types: []
       return_type: -
       block: <
         Block(

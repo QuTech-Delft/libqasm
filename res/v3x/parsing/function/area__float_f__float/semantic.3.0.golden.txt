@@ -27,11 +27,16 @@ Program(
           >
           rhs: <
             FunctionCall(
-              function: <
+              function_ref: <
                 FunctionRef(
                   function --> <
                     Function(
                       name: area
+                      param_types: [
+                        Float(
+                          size: 1
+                        )
+                      ]
                       return_type: <
                         Float(
                           size: 1
@@ -42,8 +47,30 @@ Program(
                           statements: [
                             ReturnStatement(
                               return_value: <
-                                ConstFloat(
-                                  value: 6.28319
+                                FunctionCall(
+                                  function_ref: <
+                                    CoreFunctionRef(
+                                      function: operator*(float, float)
+                                    )
+                                  >
+                                  arguments: [
+                                    ConstFloat(
+                                      value: 6.28319
+                                    )
+                                    VariableRef(
+                                      variable --> <
+                                        Variable(
+                                          name: r
+                                          typ: <
+                                            Float(
+                                              size: 1
+                                            )
+                                          >
+                                          annotations: []
+                                        )
+                                      >
+                                    )
+                                  ]
                                 )
                               >
                               annotations: []
@@ -82,6 +109,11 @@ Program(
   functions: [
     Function(
       name: area
+      param_types: [
+        Float(
+          size: 1
+        )
+      ]
       return_type: <
         Float(
           size: 1
@@ -92,8 +124,30 @@ Program(
           statements: [
             ReturnStatement(
               return_value: <
-                ConstFloat(
-                  value: 6.28319
+                FunctionCall(
+                  function_ref: <
+                    CoreFunctionRef(
+                      function: operator*(float, float)
+                    )
+                  >
+                  arguments: [
+                    ConstFloat(
+                      value: 6.28319
+                    )
+                    VariableRef(
+                      variable --> <
+                        Variable(
+                          name: r
+                          typ: <
+                            Float(
+                              size: 1
+                            )
+                          >
+                          annotations: []
+                        )
+                      >
+                    )
+                  ]
                 )
               >
               annotations: []

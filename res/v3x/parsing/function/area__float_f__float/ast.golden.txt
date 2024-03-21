@@ -51,26 +51,26 @@ Program(
           block: <
             LocalBlock(
               statements: [
-                ReturnStatement( # input.cq:7:5..11
+                ReturnStatement( # input.cq:4:6..12
                   return_value: <
-                    ProductExpression( # input.cq:7:19..20
+                    ProductExpression( # input.cq:4:20..21
                       lhs: <
-                        ProductExpression( # input.cq:7:14..15
+                        ProductExpression( # input.cq:4:15..16
                           lhs: <
-                            IntegerLiteral( # input.cq:7:12..13
+                            IntegerLiteral( # input.cq:4:13..14
                               value: 2
                             )
                           >
                           rhs: <
-                            Identifier( # input.cq:7:16..18
+                            Identifier( # input.cq:4:17..19
                               name: pi
                             )
                           >
                         )
                       >
                       rhs: <
-                        FloatLiteral( # input.cq:7:21..24
-                          value: 1
+                        Identifier( # input.cq:4:22..23
+                          name: r
                         )
                       >
                     )
@@ -82,16 +82,16 @@ Program(
           >
           annotations: []
         )
-        Initialization( # input.cq:10:9..10
+        Initialization( # input.cq:7:9..10
           var: <
-            Variable( # input.cq:10:7..8
+            Variable( # input.cq:7:7..8
               name: <
                 Identifier(
                   name: f
                 )
               >
               typ: <
-                Type( # input.cq:10:1..6
+                Type( # input.cq:7:1..6
                   name: <
                     Keyword(
                       name: float
@@ -104,7 +104,7 @@ Program(
             )
           >
           rhs: <
-            FunctionCall( # input.cq:10:11..15
+            FunctionCall( # input.cq:7:11..15
               name: <
                 Identifier(
                   name: area
@@ -113,7 +113,7 @@ Program(
               arguments: <
                 ExpressionList(
                   items: [
-                    FloatLiteral( # input.cq:10:16..18
+                    FloatLiteral( # input.cq:7:16..18
                       value: 1
                     )
                   ]

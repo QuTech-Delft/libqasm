@@ -25,7 +25,7 @@ jobs:
       - uses: ./.github/actions/cpp-tests
         with:
           build_type: ${{ matrix.build_type }}
-          conan_profile: tests-${{ matrix.build_type }}-${{ matrix.compiler }}-linux-x64
+          conan_profile_host: conan/profiles/tests-${{ matrix.build_type }}-${{ matrix.compiler }}-linux-x64
           shell: bash
 
   cpp-macos-x64:
@@ -43,7 +43,7 @@ jobs:
       - uses: ./.github/actions/cpp-tests
         with:
           build_type: ${{ matrix.build_type }}
-          conan_profile: tests-${{ matrix.build_type }}-apple_clang-macos-x64
+          conan_profile_host: conan/profiles/tests-${{ matrix.build_type }}-apple_clang-macos-x64
           shell: bash
 
   cpp-windows-x64:
@@ -61,7 +61,8 @@ jobs:
       - uses: ./.github/actions/cpp-tests
         with:
           build_type: ${{ matrix.build_type }}
-          conan_profile: tests-${{ matrix.build_type }}-msvc-windows-x64
+          conan_profile_host: conan/profiles/tests-${{ matrix.build_type }}-msvc-windows-x64
+          conan_profile_build: conan/profiles/tests-${{ matrix.build_type }}-msvc-windows-x64
           shell: bash
 
   cpp-linux-arm64:
@@ -77,20 +78,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Add Python symlink
-        run: ln -sf /usr/local/bin/python3.11 /usr/bin/python3
-        shell: bash
         # We are having problems when using the m4 and zulu-opendjk Conan packages on an armv8 architecture
         # m4 is required by flex/bison and zulu-openjdk provides the Java JRE required by the ANTLR generator
         # So, for the time being, we are installing flex/bison and java manually for this platform
       - name: Install dependencies
         run: |
           apt-get update
-          apt-get install -y bison flex default-jre
+          apt-get install -y bison flex default-jre pipx
+        # Add Conan to path (even before it is installed)
+      - name: Add Conan to path
+        run: |
+          echo "${HOME}/.local/bin" >> $GITHUB_PATH
       - uses: ./.github/actions/cpp-tests
         with:
           build_type: ${{ matrix.build_type }}
-          conan_profile: tests-${{ matrix.build_type }}-gcc-linux-arm64
+          conan_profile_host: conan/profiles/tests-${{ matrix.build_type }}-gcc-linux-arm64
           shell: bash
 
   cpp-macos-arm64:
@@ -118,7 +120,7 @@ jobs:
       - uses: ./.github/actions/cpp-tests
         with:
           build_type: ${{ matrix.build_type }}
-          conan_profile: tests-${{ matrix.build_type }}-apple_clang-macos-arm64
+          conan_profile_host: conan/profiles/tests-${{ matrix.build_type }}-apple_clang-macos-arm64
           shell: bash
 
   js-emscripten-wasm:
@@ -211,11 +213,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
       - name: Build without pushing
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           push: false
           tags: libqasm:latest

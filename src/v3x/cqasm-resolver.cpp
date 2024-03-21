@@ -43,39 +43,40 @@ Value VariableTable::resolve(const std::string &name) const {
 }
 
 
-//-------------------//
-// FunctionImplTable //
-//-------------------//
+//----------------------------//
+// ConstEvalCoreFunctionTable //
+//----------------------------//
 
-FunctionImplTable::FunctionImplTable()
-: resolver(std::make_unique<OverloadedNameResolver<FunctionImpl>>()) {}
-FunctionImplTable::~FunctionImplTable() = default;
-FunctionImplTable::FunctionImplTable(const FunctionImplTable& t)
-: resolver(std::make_unique<OverloadedNameResolver<FunctionImpl>>(*t.resolver)) {}
-FunctionImplTable::FunctionImplTable(FunctionImplTable&& t) noexcept
-: resolver(std::move(t.resolver)) {}
-FunctionImplTable& FunctionImplTable::operator=(const FunctionImplTable& t) {
-    resolver = std::make_unique<OverloadedNameResolver<FunctionImpl>>(
-        OverloadedNameResolver<FunctionImpl>(*t.resolver));
+ConstEvalCoreFunctionTable::ConstEvalCoreFunctionTable()
+: resolver{ std::make_unique<resolver_t>() } {}
+ConstEvalCoreFunctionTable::~ConstEvalCoreFunctionTable() = default;
+ConstEvalCoreFunctionTable::ConstEvalCoreFunctionTable(const ConstEvalCoreFunctionTable& t)
+: resolver{ std::make_unique<resolver_t>(*t.resolver) } {}
+ConstEvalCoreFunctionTable::ConstEvalCoreFunctionTable(ConstEvalCoreFunctionTable&& t) noexcept
+: resolver{ std::move(t.resolver) } {}
+ConstEvalCoreFunctionTable& ConstEvalCoreFunctionTable::operator=(const ConstEvalCoreFunctionTable& t) {
+    resolver = std::make_unique<resolver_t>(resolver_t{ *t.resolver });
     return *this;
 }
-FunctionImplTable& FunctionImplTable::operator=(FunctionImplTable&& t) noexcept {
+ConstEvalCoreFunctionTable& ConstEvalCoreFunctionTable::operator=(ConstEvalCoreFunctionTable&& t) noexcept {
     resolver = std::move(t.resolver);
     return *this;
 }
 
 /**
  * Registers a function.
+ * Matching will be done case-sensitively.
  * The param_types variadic specifies the amount and types of the parameters that
  * this particular overload of the function expects.
- * The C++ implementation of the function can assume that
- * the value list it gets is of the right size and the values are of the right types.
+ * The implementation of the function can assume that:
+ * - the value list it gets is of the right size, and
+ * - the values are of the right types.
  *
  * This method does not contain any intelligence to override previously added overloads.
  * However, the overload resolution engine will always use the last applicable overload it finds,
  * so adding does have the effect of overriding.
  */
-void FunctionImplTable::add(const std::string &name, const Types &param_types, const FunctionImpl &impl) {
+void ConstEvalCoreFunctionTable::add(const std::string &name, const Types &param_types, const ConstEvalCoreFunction &impl) {
     resolver->add_overload(name, impl, param_types);
 }
 
@@ -85,7 +86,7 @@ void FunctionImplTable::add(const std::string &name, const Types &param_types, c
  * OverloadResolutionFailure if no overload of the function exists for the given arguments, or otherwise
  * returns the value returned by the function.
  */
-Value FunctionImplTable::resolve(const std::string &name, const Values &args) const {
+Value ConstEvalCoreFunctionTable::resolve(const std::string &name, const Values &args) const {
     // Resolve the function and type-check/promote the argument list.
     auto resolution = resolver->resolve(name, args);
 
@@ -94,20 +95,60 @@ Value FunctionImplTable::resolve(const std::string &name, const Values &args) co
 }
 
 
+//-------------------//
+// CoreFunctionTable //
+//-------------------//
+
+CoreFunctionTable::CoreFunctionTable()
+: resolver{ std::make_unique<resolver_t>() } {}
+CoreFunctionTable::~CoreFunctionTable() = default;
+CoreFunctionTable::CoreFunctionTable(const CoreFunctionTable& t)
+: resolver{ std::make_unique<resolver_t>(*t.resolver) } {}
+CoreFunctionTable::CoreFunctionTable(CoreFunctionTable&& t) noexcept
+: resolver{ std::move(t.resolver) } {}
+CoreFunctionTable& CoreFunctionTable::operator=(const CoreFunctionTable& t) {
+    resolver = std::make_unique<resolver_t>(resolver_t{ *t.resolver });
+    return *this;
+}
+CoreFunctionTable& CoreFunctionTable::operator=(CoreFunctionTable&& t) noexcept {
+    resolver = std::move(t.resolver);
+    return *this;
+}
+
+/**
+ * Registers a core function type.
+ */
+void CoreFunctionTable::add(const function::CoreFunction &type) {
+    resolver->add_overload(type.name, tree::make<function::CoreFunction>(type), type.param_types);
+}
+
+/**
+ * Resolves a core function.
+ * Throws NameResolutionFailure if no function by the given name exists,
+ * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
+ * returns the resolved function node.
+ * Annotation data, line number information, and the condition still need to be set by the caller.
+ */
+Value CoreFunctionTable::resolve(const std::string &name, const Values &args) const {
+    auto [core_function_ref, promoted_args] = resolver->resolve(name, args);
+    auto value_function_ref = tree::make<values::CoreFunctionRef>(core_function_ref);
+    return tree::make<values::FunctionCall>(value_function_ref, promoted_args);
+}
+
+
 //---------------//
 // FunctionTable //
 //---------------//
 
 FunctionTable::FunctionTable()
-: resolver(std::make_unique<OverloadedNameResolver<values::Value>>()) {}
+: resolver{ std::make_unique<resolver_t>() } {}
 FunctionTable::~FunctionTable() = default;
 FunctionTable::FunctionTable(const FunctionTable& t)
-: resolver(std::make_unique<OverloadedNameResolver<values::Value>>(*t.resolver)) {}
+: resolver{ std::make_unique<resolver_t>(*t.resolver) } {}
 FunctionTable::FunctionTable(FunctionTable&& t) noexcept
-: resolver(std::move(t.resolver)) {}
+: resolver{ std::move(t.resolver) } {}
 FunctionTable& FunctionTable::operator=(const FunctionTable& t) {
-    resolver = std::make_unique<OverloadedNameResolver<values::Value>>(
-        OverloadedNameResolver<values::Value>(*t.resolver));
+    resolver = std::make_unique<resolver_t>(resolver_t{ *t.resolver });
     return *this;
 }
 FunctionTable& FunctionTable::operator=(FunctionTable&& t) noexcept {
@@ -119,14 +160,13 @@ FunctionTable& FunctionTable::operator=(FunctionTable&& t) noexcept {
  * Registers a function.
  * The param_types variadic specifies the amount and types of the parameters that
  * this particular overload of the function expects.
- * value should be of type values::FunctionRef.
  *
  * This method does not contain any intelligence to override previously added overloads.
  * However, the overload resolution engine will always use the last applicable overload it finds,
  * so adding does have the effect of overriding.
  */
-void FunctionTable::add(const std::string &name, const Types &param_types, const values::Value &value) {
-    resolver->add_overload(name, value, param_types);
+void FunctionTable::add(const std::string &name, const Types &param_types, const values::FunctionRef &value) {
+    resolver->add_overload(name, tree::make<values::FunctionRef>(value), param_types);
 }
 
 /**
@@ -136,11 +176,8 @@ void FunctionTable::add(const std::string &name, const Types &param_types, const
  * returns the value returned by the function.
  */
 Value FunctionTable::resolve(const std::string &name, const Values &args) const {
-    // Resolve the function and type-check/promote the argument list.
-    auto [function_ref, promoted_args] = resolver->resolve(name, args);
-
-    // Call the function with the type-checked/promoted argument list, and return its result.
-    return tree::make<values::FunctionCall>(function_ref, promoted_args);
+    auto [value_function_ref, promoted_args] = resolver->resolve(name, args);
+    return tree::make<values::FunctionCall>(value_function_ref, promoted_args);
 }
 
 
@@ -149,15 +186,14 @@ Value FunctionTable::resolve(const std::string &name, const Values &args) const 
 //------------------//
 
 InstructionTable::InstructionTable()
-: resolver(std::make_unique<OverloadedNameResolver<instruction::Instruction>>()) {}
+: resolver{ std::make_unique<resolver_t>() } {}
 InstructionTable::~InstructionTable() = default;
 InstructionTable::InstructionTable(const InstructionTable& t)
-: resolver(std::make_unique<OverloadedNameResolver<instruction::Instruction>>(*t.resolver)) {}
+: resolver{ std::make_unique<resolver_t>(*t.resolver) } {}
 InstructionTable::InstructionTable(InstructionTable&& t) noexcept
-: resolver(std::move(t.resolver)) {}
+: resolver{ std::move(t.resolver) } {}
 InstructionTable& InstructionTable::operator=(const InstructionTable& t) {
-    resolver = std::make_unique<OverloadedNameResolver<instruction::Instruction>>(
-        OverloadedNameResolver<instruction::Instruction>(*t.resolver));
+    resolver = std::make_unique<resolver_t>(resolver_t{ *t.resolver });
     return *this;
 }
 InstructionTable& InstructionTable::operator=(InstructionTable&& t) noexcept {
@@ -169,7 +205,7 @@ InstructionTable& InstructionTable::operator=(InstructionTable&& t) noexcept {
  * Registers an instruction type.
  */
 void InstructionTable::add(const instruction::Instruction &type) {
-    resolver->add_overload(type.name, type, type.param_types);
+    resolver->add_overload(type.name, tree::make<instruction::Instruction>(type), type.param_types);
 }
 
 /**
@@ -180,9 +216,8 @@ void InstructionTable::add(const instruction::Instruction &type) {
  * Annotation data, line number information, and the condition still need to be set by the caller.
  */
 tree::One<semantic::Instruction> InstructionTable::resolve(const std::string &name, const Values &args) const {
-    auto resolved = resolver->resolve(name, args);
-    return tree::make<semantic::Instruction>(
-        tree::make<instruction::Instruction>(resolved.first), name, resolved.second);
+    auto [instruction_ref, promoted_args] = resolver->resolve(name, args);
+    return tree::make<semantic::Instruction>(instruction_ref, name, promoted_args);
 }
 
 } // namespace cqasm::v3x::resolver

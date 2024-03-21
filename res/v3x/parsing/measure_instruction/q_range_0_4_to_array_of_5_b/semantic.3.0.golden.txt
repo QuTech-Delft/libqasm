@@ -10,7 +10,7 @@ Program(
     Block(
       statements: [
         Instruction(
-          instruction: measure(bit array, qubit array)
+          instruction_ref: measure(bit array, qubit array)
           name: measure
           operands: [
             VariableRef(

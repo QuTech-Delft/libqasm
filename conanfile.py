@@ -56,7 +56,7 @@ class LibqasmConan(ConanFile):
 
     def build_requirements(self):
         self.tool_requires("m4/1.4.19")
-        self.tool_requires("tree-gen/1.0.6")
+        self.tool_requires("tree-gen/1.0.7")
         if self.settings.os == "Windows":
             self.tool_requires("winflexbison/2.5.24")
         else:

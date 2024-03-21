@@ -1,12 +1,15 @@
 /** \file
- * Contains \ref cqasm::v3x::resolver::MappingTable "MappingTable",
- * \ref cqasm::v3x::resolver::FunctionImplTable "FunctionImplTable", and
- * \ref cqasm::v3x::resolver::ErrorModelTable "ErrorModelTable", representing the
+ * Contains \ref cqasm::v3x::resolver::VariableTable "VariableTable",
+ * \ref cqasm::v3x::resolver::ConstEvalCoreFunctionTable "ConstEvalCoreFunctionTable",
+ * \ref cqasm::v3x::resolver::CoreFunctionTable "CoreFunctionTable",
+ * \ref cqasm::v3x::resolver::FunctionTable "FunctionTable", and
+ * \ref cqasm::v3x::resolver::InstructionTable "InstructionTable", representing the
  * various cQASM namespaces and their members in scope at some instant.
  */
 
 #pragma once
 
+#include "cqasm-core-function.hpp"
 #include "cqasm-error.hpp"
 #include "cqasm-instruction.hpp"
 #include "cqasm-overload.hpp"
@@ -94,43 +97,46 @@ public:
 };
 
 
-//-------------------//
-// FunctionImplTable //
-//-------------------//
+//----------------------------//
+// ConstEvalCoreFunctionTable //
+//----------------------------//
 
 /**
- * C++ function representing one of the overloads of a function for which we have a C++ implementation.
- * This can be a function accepting only constant arguments, or both constant and variable arguments.
+ * An overload of a function supported by the language, and that can can be evaluated at compile time.
+ * This has to be a function accepting only constant arguments.
  */
-using FunctionImpl = std::function<values::Value(const values::Values&)>;
+using ConstEvalCoreFunction = std::function<values::Value(const values::Values&)>;
 
 /**
- * Table of all overloads of all functions for which we have a C++ implementation.
+ * Table of overloads of functions supported by the language, and that can be evaluated at compile time.
  */
-class FunctionImplTable {
-    std::unique_ptr<OverloadedNameResolver<FunctionImpl>> resolver;
+class ConstEvalCoreFunctionTable {
+    using resolver_t = OverloadedNameResolver<ConstEvalCoreFunction>;
+
+    std::unique_ptr<resolver_t> resolver;
 
 public:
-    FunctionImplTable();
-    ~FunctionImplTable();
-    FunctionImplTable(const FunctionImplTable& t);
-    FunctionImplTable(FunctionImplTable&& t) noexcept;
-    FunctionImplTable& operator=(const FunctionImplTable& t);
-    FunctionImplTable& operator=(FunctionImplTable&& t) noexcept;
+    ConstEvalCoreFunctionTable();
+    ~ConstEvalCoreFunctionTable();
+    ConstEvalCoreFunctionTable(const ConstEvalCoreFunctionTable& t);
+    ConstEvalCoreFunctionTable(ConstEvalCoreFunctionTable&& t) noexcept;
+    ConstEvalCoreFunctionTable& operator=(const ConstEvalCoreFunctionTable& t);
+    ConstEvalCoreFunctionTable& operator=(ConstEvalCoreFunctionTable&& t) noexcept;
 
     /**
      * Registers a function.
      * Matching will be done case-sensitively.
      * The param_types variadic specifies the amount and types of the parameters that
      * this particular overload of the function expects.
-     * The C++ implementation of the function can assume that
-     * the value list it gets is of the right size and the values are of the right types.
+     * The implementation of the function can assume that:
+     * - the value list it gets is of the right size, and
+     * - the values are of the right types.
      *
      * This method does not contain any intelligence to override previously added overloads.
      * However, the overload resolution engine will always use the last applicable overload it finds,
      * so adding does have the effect of overriding.
      */
-    void add(const std::string &name, const types::Types &param_types, const FunctionImpl &impl);
+    void add(const std::string &name, const types::Types &param_types, const ConstEvalCoreFunction &function);
 
     /**
      * Resolves a function.
@@ -142,15 +148,53 @@ public:
 };
 
 
+//-------------------//
+// CoreFunctionTable //
+//-------------------//
+
+/**
+ * Table of overloads of functions supported functions, and that cannot be evaluated at compile time.
+ * This has to be a function accepting at least one variable argument.
+ */
+class CoreFunctionTable {
+    using resolver_t = OverloadedNameResolver<function::CoreFunctionRef>;
+
+    std::unique_ptr<resolver_t> resolver;
+
+public:
+    CoreFunctionTable();
+    ~CoreFunctionTable();
+    CoreFunctionTable(const CoreFunctionTable& t);
+    CoreFunctionTable(CoreFunctionTable&& t) noexcept;
+    CoreFunctionTable& operator=(const CoreFunctionTable& t);
+    CoreFunctionTable& operator=(CoreFunctionTable&& t) noexcept;
+
+    /**
+     * Registers a core function type.
+     */
+    void add(const function::CoreFunction &type);
+
+    /**
+     * Resolves a core function.
+     * Throws NameResolutionFailure if no function by the given name exists,
+     * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
+     * returns the resolved function node.
+     */
+    [[nodiscard]] values::Value resolve(const std::string &name, const values::Values &args) const;
+};
+
+
 //---------------//
 // FunctionTable //
 //---------------//
 
 /**
- * Table of all overloads of all functions defined in the cQASM file.
+ * Table of overloads of functions defined by the user in the cQASM file.
  */
 class FunctionTable {
-    std::unique_ptr<OverloadedNameResolver<values::Value>> resolver;
+    using resolver_t = OverloadedNameResolver<tree::One<values::FunctionRef>>;
+
+    std::unique_ptr<resolver_t> resolver;
 
 public:
     FunctionTable();
@@ -165,13 +209,12 @@ public:
      * Matching will be done case-sensitively.
      * The param_types variadic specifies the amount and types of the parameters that
      * this particular overload of the function expects.
-     * value should be of type values::FunctionRef.
      *
      * This method does not contain any intelligence to override previously added overloads.
      * However, the overload resolution engine will always use the last applicable overload it finds,
      * so adding does have the effect of overriding.
      */
-    void add(const std::string &name, const types::Types &param_types, const values::Value &value);
+    void add(const std::string &name, const types::Types &param_types, const values::FunctionRef &value);
 
     /**
      * Resolves a function.
@@ -188,10 +231,12 @@ public:
 //------------------//
 
 /**
- * Table of the supported instructions and their overloads.
+ * Table of overloads of instructions supported by the language.
  */
 class InstructionTable {
-    std::unique_ptr<OverloadedNameResolver<instruction::Instruction>> resolver;
+    using resolver_t = OverloadedNameResolver<instruction::InstructionRef>;
+
+    std::unique_ptr<resolver_t> resolver;
 
 public:
     InstructionTable();

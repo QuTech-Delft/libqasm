@@ -1,11 +1,12 @@
 #pragma once
 
+#include "v3x/cqasm-analyzer.hpp"
 #include "v3x/cqasm-primitives.hpp"
-#include "v3x/cqasm-resolver.hpp"
 
 #include <cmath>
 #include <functional>
 #include <numeric>
+
 
 namespace primitives = cqasm::v3x::primitives;
 
@@ -23,53 +24,53 @@ namespace primitives = cqasm::v3x::primitives;
  * - op_srl_ii (shift right logic) has been dropped
  */
 
-namespace cqasm::v3x::functions {
+namespace cqasm::v3x::function {
     
 /**
  * Function with constant parameters 
  */
-template <typename ReturnType, typename ParamType, auto F>
+template <typename ReturnValue, typename ParamValue, auto F>
 struct f_cp {
-    using return_type = ReturnType;
-    using param_type = ParamType;
+    using return_value = ReturnValue;
+    using param_value = ParamValue;
 };
 
 /**
  * Unary function with constant parameter
  */
-template <typename ReturnType, typename ParamType, auto F>
-struct uf_cp : public f_cp<ReturnType, ParamType, F> {
+template <typename ReturnValue, typename ParamValue, auto F>
+struct uf_cp : public f_cp<ReturnValue, ParamValue, F> {
     values::Value operator()(const values::Values &vs) const {
         values::check_const(vs);
-        auto arg = vs[0].as<ParamType>()->value;
-        return tree::make<ReturnType>(F(arg));
+        auto arg = vs[0].as<ParamValue>()->value;
+        return tree::make<ReturnValue>(F(arg));
     }
 };
 
 /**
  * Binary function with constant parameters 
  */
-template <typename ReturnType, typename ParamType, auto F>
-struct bf_cp : public f_cp<ReturnType, ParamType, F> {
+template <typename ReturnValue, typename ParamValue, auto F>
+struct bf_cp : public f_cp<ReturnValue, ParamValue, F> {
     values::Value operator()(const values::Values &vs) const {
         values::check_const(vs);
-        auto a = vs[0].as<ParamType>()->value;
-        auto b = vs[1].as<ParamType>()->value;
-        return tree::make<ReturnType>(F(a, b));
+        auto a = vs[0].as<ParamValue>()->value;
+        auto b = vs[1].as<ParamValue>()->value;
+        return tree::make<ReturnValue>(F(a, b));
     }
 };
 
 /**
  * Ternary function with constant parameters 
  */
-template <typename ParamType, auto F>
-struct tf_cp : public f_cp<ParamType, ParamType, F> {
+template <typename ParamValue, auto F>
+struct tf_cp : public f_cp<ParamValue, ParamValue, F> {
     values::Value operator()(const values::Values &vs) const {
         values::check_const(vs);
         auto condition = vs[0]->as_const_bool()->value;
-        auto if_true = vs[1].as<ParamType>()->value;
-        auto if_false = vs[2].as<ParamType>()->value;
-        return tree::make<ParamType>(F(condition, if_true, if_false));
+        auto if_true = vs[1].as<ParamValue>()->value;
+        auto if_false = vs[2].as<ParamValue>()->value;
+        return tree::make<ParamValue>(F(condition, if_true, if_false));
     }
 };
 
@@ -167,8 +168,10 @@ constexpr auto fn_abs_f = uf_cp<values::ConstFloat, values::ConstFloat, abs>{};
 constexpr auto fn_abs_i = uf_cp<values::ConstInt, values::ConstInt, abs>{};
 
 /**
- * Registers a bunch of functions for which we have a C++ implementation into the given function table.
+ * Registers a bunch of consteval core functions.
+ * That is, functions supported by the language, and that can be evaluated at compile time.
+ * For functions supported by the language that cannot be evaluated at compile time, see CoreFunction.
  */
-void register_default_function_impls_into(resolver::FunctionImplTable &table);
+void register_consteval_core_functions(analyzer::Analyzer *analyzer);
 
-} // namespace functions
+} // namespace function

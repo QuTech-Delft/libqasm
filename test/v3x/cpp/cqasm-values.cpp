@@ -64,11 +64,14 @@ static const auto index_2_to_5_value = tree::make<values::IndexRef>(bool_array_o
 static const auto index_2_4_6_value = tree::make<values::IndexRef>(bool_array_of_10_variable,
     tree::Many<values::ConstInt>{ int_2_value, int_4_value, int_6_value });
 
+// empty parameters
+static const auto empty_parameter_list = tree::Any<types::TypeBase>{};
+
 // Semantic function returning bool
-static const auto function_returning_bool = tree::make<semantic::Function>("fb", bool_type);
+static const auto function_returning_bool = tree::make<semantic::Function>("fb", empty_parameter_list, bool_type);
 
 // Semantic function returning bool array
-static const auto function_returning_bool_array_of_3 = tree::make<semantic::Function>("fba", bool_array_of_3_type);
+static const auto function_returning_bool_array_of_3 = tree::make<semantic::Function>("fba", empty_parameter_list, bool_array_of_3_type);
 
 // Function returning bool value
 static const values::Value function_returning_bool_value = tree::make<values::FunctionRef>(function_returning_bool);

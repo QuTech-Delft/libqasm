@@ -56,6 +56,7 @@ using Types = tree::Any<TypeBase>;
  *  - Y = int array
  *  - Z = float array
  */
+Type from_spec(const char spec);
 Types from_spec(const std::string &spec);
 
 /**

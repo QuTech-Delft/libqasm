@@ -1,1 +1,6 @@
 include(tests-release)
+
+[options]
+# Disable ASAN for Linux/x64 because we are having problems with gtest and address sanitizer
+# Possible hints: libc++ ABI compatibility, small string optimization
+libqasm/*:asan_enabled=False

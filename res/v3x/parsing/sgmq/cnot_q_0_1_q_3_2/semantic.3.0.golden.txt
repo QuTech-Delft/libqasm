@@ -10,7 +10,7 @@ Program(
     Block(
       statements: [
         Instruction(
-          instruction: cnot(qubit array, qubit array)
+          instruction_ref: cnot(qubit array, qubit array)
           name: cnot
           operands: [
             IndexRef(
