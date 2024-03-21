@@ -10,7 +10,7 @@ Program(
     Block(
       statements: [
         Instruction(
-          instruction: rx(qubit, float)
+          instruction_ref: rx(qubit, float)
           name: rx
           operands: [
             VariableRef(

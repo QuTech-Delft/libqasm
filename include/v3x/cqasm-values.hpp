@@ -68,6 +68,12 @@ bool check_promote(const types::Type &from_type, const types::Type &to_type);
 types::Type element_type_of(const types::Type &type);
 
 /**
+ * Returns the type of a FunctionRefBase node.
+ * That will be the value returned by the function.
+ */
+types::Type get_function_ref_base_return_type(const FunctionRefBase *function_ref_base_ptr);
+
+/**
  * Returns the type of the given value.
  */
 types::Type type_of(const Value &value);

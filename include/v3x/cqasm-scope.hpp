@@ -17,14 +17,17 @@ struct Scope {
     resolver::VariableTable variable_table;
 
     /**
-     * The list of function implementations.
-     * That is, functions for which we have a C++ implementation.
+     * The list of function supported by the language, and that can be evaluated at compile time.
      */
-    resolver::FunctionImplTable function_impl_table;
+    resolver::ConstEvalCoreFunctionTable consteval_core_function_table;
 
     /**
-     * The list of functions, other than function implementations.
-     * That is, functions defined in the cQASM file.
+     * The list of function supported by the language, and that can be evaluated at compile time.
+     */
+    resolver::CoreFunctionTable core_function_table;
+
+    /**
+     * The list of functions defined in the cQASM file.
      */
     resolver::FunctionTable function_table;
 
@@ -49,22 +52,6 @@ struct Scope {
      * The list of functions defined in the global scope.
      */
     tree::Any<semantic::Function> functions;
-
-    Scope() = default;
-    Scope(const Scope &other) = default;
-    Scope(Scope &&other) noexcept = default;
-    Scope& operator=(const Scope &other) = default;
-    Scope& operator=(Scope &&other) noexcept = default;
-
-    /**
-     * Creates a scope from a table of variables, functions, and instructions.
-     */
-    Scope(
-        resolver::VariableTable variable_table,
-        resolver::FunctionImplTable function_impl_table,
-        resolver::FunctionTable function_table,
-        resolver::InstructionTable instruction_table,
-        tree::One<semantic::Block> block);
 };
 
 } // namespace cqasm::v3x::analyzer

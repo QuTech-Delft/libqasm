@@ -11,10 +11,11 @@
 #include "cqasm-analysis-result.hpp"
 #include "cqasm-analyzer.hpp"
 #include "cqasm-ast.hpp"
+#include "cqasm-core-function.hpp"
 #include "cqasm-parse-helper.hpp"
 #include "cqasm-resolver.hpp"
+#include "cqasm-scope.hpp"
 #include "cqasm-semantic.hpp"
-#include "v3x/cqasm-scope.hpp"
 
 #include <functional>
 #include <list>
@@ -89,6 +90,11 @@ public:
     virtual void register_default_functions();
 
     /**
+     * Registers the cQASM 3.0 instruction set.
+     */
+    virtual void register_default_instructions();
+
+    /**
      * Analyzes the given program AST node.
      */
     [[nodiscard]] virtual AnalysisResult analyze(ast::Program &program);
@@ -157,14 +163,6 @@ public:
     virtual void register_variable(const std::string &name, const values::Value &value);
 
     /**
-     * Resolves a function implementation.
-     * Throws NameResolutionFailure if no function by the given name exists,
-     * OverloadResolutionFailure if no overload of the function exists for the given arguments,
-     * or otherwise returns the value returned by the function.
-     */
-    [[nodiscard]] virtual values::Value resolve_function_impl(const std::string &name, const values::Values &args) const;
-
-    /**
      * Resolves a function.
      * Tries to call a function implementation first.
      * If it doesn't succeed, tries to call a function.
@@ -175,22 +173,36 @@ public:
     [[nodiscard]] virtual values::Value resolve_function(const std::string &name, const values::Values &args) const;
 
     /**
-     * Registers a function implementation, usable within expressions.
+     * Registers a consteval core function.
      */
-    virtual void register_function_impl(
+    virtual void register_consteval_core_function(
         const std::string &name,
         const types::Types &param_types,
-        const resolver::FunctionImpl &impl);
+        const resolver::ConstEvalCoreFunction &function);
 
     /**
-     * Convenience method for registering a function implementation.
+     * Convenience method for registering a consteval core function.
      * The param_types are specified as a string,
      * converted to types::Types for the other overload using types::from_spec.
      */
-    virtual void register_function_impl(
+    virtual void register_consteval_core_function(
         const std::string &name,
         const std::string &param_types,
-        const resolver::FunctionImpl &impl);
+        const resolver::ConstEvalCoreFunction &function);
+
+    /**
+     * Registers a core function.
+     */
+    virtual void register_core_function(const function::CoreFunction &function);
+
+    /**
+     * Convenience method for registering a core function type.
+     * The arguments are passed straight to function::CoreFunction's constructor.
+     */
+    virtual void register_core_function(
+        const std::string &name,
+        const std::string &param_types,
+        const char return_type);
 
     /**
      * Convenience method for registering a function.
@@ -198,7 +210,7 @@ public:
     virtual void register_function(
         const std::string &name,
         const types::Types &param_types,
-        const values::Value &value);
+        const values::FunctionRef &value);
 
     /**
      * Resolves an instruction.

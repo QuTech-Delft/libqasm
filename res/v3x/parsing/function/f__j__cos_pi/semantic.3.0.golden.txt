@@ -106,11 +106,19 @@ Program(
           >
           rhs: <
             FunctionCall(
-              function: <
+              function_ref: <
                 FunctionRef(
                   function --> <
                     Function(
                       name: f
+                      param_types: [
+                        Int(
+                          size: 1
+                        )
+                        Float(
+                          size: 1
+                        )
+                      ]
                       return_type: <
                         Float(
                           size: 1
@@ -121,8 +129,40 @@ Program(
                           statements: [
                             ReturnStatement(
                               return_value: <
-                                ConstFloat(
-                                  value: 6
+                                FunctionCall(
+                                  function_ref: <
+                                    CoreFunctionRef(
+                                      function: operator*(float, float)
+                                    )
+                                  >
+                                  arguments: [
+                                    VariableRef(
+                                      variable --> <
+                                        Variable(
+                                          name: i
+                                          typ: <
+                                            Int(
+                                              size: 1
+                                            )
+                                          >
+                                          annotations: []
+                                        )
+                                      >
+                                    )
+                                    VariableRef(
+                                      variable --> <
+                                        Variable(
+                                          name: f
+                                          typ: <
+                                            Float(
+                                              size: 1
+                                            )
+                                          >
+                                          annotations: []
+                                        )
+                                      >
+                                    )
+                                  ]
                                 )
                               >
                               annotations: []
@@ -183,6 +223,14 @@ Program(
   functions: [
     Function(
       name: f
+      param_types: [
+        Int(
+          size: 1
+        )
+        Float(
+          size: 1
+        )
+      ]
       return_type: <
         Float(
           size: 1
@@ -193,8 +241,40 @@ Program(
           statements: [
             ReturnStatement(
               return_value: <
-                ConstFloat(
-                  value: 6
+                FunctionCall(
+                  function_ref: <
+                    CoreFunctionRef(
+                      function: operator*(float, float)
+                    )
+                  >
+                  arguments: [
+                    VariableRef(
+                      variable --> <
+                        Variable(
+                          name: i
+                          typ: <
+                            Int(
+                              size: 1
+                            )
+                          >
+                          annotations: []
+                        )
+                      >
+                    )
+                    VariableRef(
+                      variable --> <
+                        Variable(
+                          name: f
+                          typ: <
+                            Float(
+                              size: 1
+                            )
+                          >
+                          annotations: []
+                        )
+                      >
+                    )
+                  ]
                 )
               >
               annotations: []

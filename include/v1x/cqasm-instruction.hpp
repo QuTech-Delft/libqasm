@@ -28,7 +28,7 @@ namespace instruction {
  * you'll need to do that on your own).
  *
  * A number of these can be registered into libqasm by the program or library using it through
- * \ref cqasm::analyzer::Analyzer::register_instruction(const instruction::Instruction&) "register_instruction()",
+ * \ref cqasm::analyzer::Analyzer::register_instruction(const instruction::Instruction&) "register_instruction",
  * to inform libqasm of the supported instruction set.
  * For each instruction, libqasm needs to know its name, which parameters it expects,
  * and a few extra flags in order to be able to resolve the instruction and check for errors in the cQASM file.

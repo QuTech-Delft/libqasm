@@ -70,31 +70,7 @@ public:
 
             analyzer.register_default_mappings();
             analyzer.register_default_functions();
-
-            analyzer.register_instruction("cnot", "QQ");
-            analyzer.register_instruction("cnot", "VV");
-            analyzer.register_instruction("cr", "QQf");
-            analyzer.register_instruction("crk", "QQi");
-            analyzer.register_instruction("cz", "QQ");
-            analyzer.register_instruction("h", "Q");
-            analyzer.register_instruction("h", "V");
-            analyzer.register_instruction("i", "Q");
-            analyzer.register_instruction("measure", "BQ");  // bit = qubit
-            analyzer.register_instruction("measure", "WV");  // bit array = qubit array
-            analyzer.register_instruction("measure", "BV");  // bit = qubit array
-            analyzer.register_instruction("measure", "WQ");  // bit array = qubit
-            analyzer.register_instruction("mx90", "Q");
-            analyzer.register_instruction("my90", "Q");
-            analyzer.register_instruction("rx", "Qf");
-            analyzer.register_instruction("ry", "Qf");
-            analyzer.register_instruction("rz", "Qf");
-            analyzer.register_instruction("s", "Q");
-            analyzer.register_instruction("sdag", "Q");
-            analyzer.register_instruction("x", "Q");
-            analyzer.register_instruction("x90", "Q");
-            analyzer.register_instruction("y", "Q");
-            analyzer.register_instruction("y90", "Q");
-            analyzer.register_instruction("z", "Q");
+            analyzer.register_default_instructions();
 
             // Run the actual semantic analysis
             auto analysis_result = analyzer.analyze(*parse_result.root->as_program());
@@ -112,18 +88,18 @@ public:
 
             // Check the JSON dump of the analysis result
             if (analysis_result.errors.empty()) {
-                if (auto json_golden_file_path = path_ / fmt::format("semantic.{}.golden.json", api_version);
-                    fs::exists(json_golden_file_path)) {
-                    auto json_actual_file_path = path_ / fmt::format("semantic.{}.actual.json", api_version);
-                    std::string json_actual_file_contents{};
-                    std::string json_golden_file_contents{};
+                if (auto semantic_json_golden_file_path = path_ / fmt::format("semantic.{}.golden.json", api_version);
+                    fs::exists(semantic_json_golden_file_path)) {
+                    auto semantic_json_actual_file_path = path_ / fmt::format("semantic.{}.actual.json", api_version);
+                    std::string semantic_json_actual_file_contents{};
+                    std::string semantic_json_golden_file_contents{};
                     {
-                        std::ofstream json_actual_ofs{ json_actual_file_path };
-                        analysis_result.root->dump_json(json_actual_ofs);
+                        std::ofstream semantic_json_actual_ofs{ semantic_json_actual_file_path };
+                        analysis_result.root->dump_json(semantic_json_actual_ofs);
                     }
-                    EXPECT_TRUE(cqasm::test::read_file(json_actual_file_path, json_actual_file_contents));
-                    EXPECT_TRUE(cqasm::test::read_file(json_golden_file_path, json_golden_file_contents));
-                    EXPECT_TRUE(json_actual_file_contents == json_golden_file_contents);
+                    EXPECT_TRUE(cqasm::test::read_file(semantic_json_actual_file_path, semantic_json_actual_file_contents));
+                    EXPECT_TRUE(cqasm::test::read_file(semantic_json_golden_file_path, semantic_json_golden_file_contents));
+                    EXPECT_TRUE(semantic_json_actual_file_contents == semantic_json_golden_file_contents);
                 }
             }
 

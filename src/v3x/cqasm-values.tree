@@ -4,11 +4,10 @@ source
 # Header file for the various classes representing constants, references, and dynamic expressions in cQASM 3.0
 header "v3x/cqasm-values-gen.hpp"
 
-// Include tree base classes.
 include "cqasm-tree.hpp"
 tree_namespace cqasm::tree
 
-// Include primitive types.
+include "v3x/cqasm-core-function.hpp"
 include "v3x/cqasm-primitives.hpp"
 include "v3x/cqasm-semantic-helper.hpp"
 src_include "v3x/cqasm-semantic.hpp"
@@ -75,13 +74,21 @@ value_base {
             variable: external Link<cqasm::v3x::semantic::Variable>;
         }
 
-        function_ref {
-            function: external Link<cqasm::v3x::semantic::Function>;
+        function_ref_base {
+            # Functions supported by the language
+            core_function_ref {
+                function: cqasm::v3x::function::CoreFunctionRef;
+            }
+
+            # User defined functions
+            function_ref {
+                function: external Link<cqasm::v3x::semantic::Function>;
+            }
         }
     }
 
     function_call {
-        function: One<function_ref>;
+        function_ref: One<function_ref_base>;
         arguments: Any<value_base>;
     }
 }

@@ -5,8 +5,11 @@
 #include "cqasm-error.hpp"
 #include "v3x/AnalyzeTreeGenAstVisitor.hpp"
 #include "v3x/cqasm-analyzer.hpp"
-#include "v3x/cqasm-functions.hpp"
+#include "v3x/cqasm-core-function.hpp"
 #include "v3x/cqasm-parse-helper.hpp"
+#include "v3x/register-consteval-core-functions.hpp"
+#include "v3x/register-core-functions.hpp"
+#include "v3x/register-instructions.hpp"
 
 #include <fmt/format.h>
 #include <memory>  // make_unique
@@ -22,8 +25,7 @@ namespace cqasm::v3x::analyzer {
  */
 Analyzer::Analyzer(const primitives::Version &api_version)
 : api_version{ api_version }
-, scope_stack_{ Scope{} }
-{
+, scope_stack_{ Scope{} } {
     if (api_version != "3.0") {
         throw std::invalid_argument{ "this analyzer only supports cQASM 3.0" };
     }
@@ -61,7 +63,15 @@ void Analyzer::register_default_mappings() {
  * Registers a number of default functions, such as the operator functions, and the usual trigonometric functions.
  */
 void Analyzer::register_default_functions() {
-    functions::register_default_function_impls_into(global_scope().function_impl_table);
+    function::register_consteval_core_functions(this);
+    function::register_core_functions(this);
+}
+
+/**
+ * Registers the cQASM 3.0 instruction set.
+ */
+void Analyzer::register_default_instructions() {
+    instruction::register_instructions(this);
 }
 
 /**
@@ -70,10 +80,15 @@ void Analyzer::register_default_functions() {
 AnalysisResult Analyzer::analyze(ast::Program &ast) {
     auto analyze_visitor_up = std::make_unique<AnalyzeTreeGenAstVisitor>(*this);
     auto result = std::any_cast<AnalysisResult>(analyze_visitor_up->visit_program(ast));
-    if (result.errors.empty() && !result.root.is_well_formed()) {
-        std::cerr << *result.root;
-        throw std::runtime_error{ "internal error: no semantic errors returned, but semantic tree is incomplete."
-            " Tree was dumped." };
+    if (result.errors.empty()) {
+        try {
+            result.root.check_well_formed();
+        } catch (const std::runtime_error &err) {
+            fmt::print("Error: {}\nDumping semantic AST...\n---\n", err.what());
+            result.root->dump_raw_pointers();
+            fmt::print("---\n");
+            throw std::runtime_error{ "no semantic errors returned, but semantic tree is incomplete." };
+        }
     }
     return result;
 }
@@ -208,16 +223,6 @@ void Analyzer::register_variable(const std::string &name, const values::Value &v
 }
 
 /**
- * Resolves a function implementation.
- * Throws NameResolutionFailure if no function by the given name exists,
- * OverloadResolutionFailure if no overload of the function exists for the given arguments,
- * or otherwise returns the value returned by the function.
- */
-values::Value Analyzer::resolve_function_impl(const std::string &name, const values::Values &args) const {
-    return global_scope().function_impl_table.resolve(name, args);
-}
-
-/**
  * Resolves a function.
  * Tries to call a function implementation first.
  * If it doesn't succeed, tries to call a function.
@@ -227,33 +232,55 @@ values::Value Analyzer::resolve_function_impl(const std::string &name, const val
  */
 values::Value Analyzer::resolve_function(const std::string &name, const values::Values &args) const {
     try {
-        return global_scope().function_impl_table.resolve(name, args);
+        return global_scope().consteval_core_function_table.resolve(name, args);
+    } catch (const error::AnalysisError &) {}
+    try {
+        return global_scope().core_function_table.resolve(name, args);
     } catch (const error::AnalysisError &) {}
     return global_scope().function_table.resolve(name, args);
 }
 
 /**
- * Registers a function implementation, usable within expressions.
+ * Registers a consteval core function.
  */
-void Analyzer::register_function_impl(
+void Analyzer::register_consteval_core_function(
     const std::string &name,
     const types::Types &param_types,
-    const resolver::FunctionImpl &impl) {
+    const resolver::ConstEvalCoreFunction &function) {
 
-    global_scope().function_impl_table.add(name, param_types, impl);
+    global_scope().consteval_core_function_table.add(name, param_types, function);
 }
 
 /**
- * Convenience method for registering a function implementation.
+ * Convenience method for registering a consteval core function.
  * The param_types are specified as a string,
  * converted to types::Types for the other overload using types::from_spec.
  */
-void Analyzer::register_function_impl(
+void Analyzer::register_consteval_core_function(
     const std::string &name,
     const std::string &param_types,
-    const resolver::FunctionImpl &impl) {
+    const resolver::ConstEvalCoreFunction &function) {
 
-    global_scope().function_impl_table.add(name, types::from_spec(param_types), impl);
+    global_scope().consteval_core_function_table.add(name, types::from_spec(param_types), function);
+}
+
+/**
+ * Registers a core function.
+ */
+void Analyzer::register_core_function(const function::CoreFunction &function) {
+    global_scope().core_function_table.add(function);
+}
+
+/**
+ * Convenience method for registering a core function type.
+ * The arguments are passed straight to function::CoreFunction's constructor.
+ */
+void Analyzer::register_core_function(
+    const std::string &name,
+    const std::string &param_types,
+    const char return_type) {
+
+    register_core_function(function::CoreFunction{ name, param_types, return_type });
 }
 
 /**
@@ -262,7 +289,7 @@ void Analyzer::register_function_impl(
 void Analyzer::register_function(
     const std::string &name,
     const types::Types &param_types,
-    const values::Value &value) {
+    const values::FunctionRef &value) {
 
     global_scope().function_table.add(name, param_types, value);
 }
@@ -300,7 +327,7 @@ void Analyzer::register_instruction(const instruction::Instruction &instruction)
  * The arguments are passed straight to instruction::Instruction's constructor.
  */
 void Analyzer::register_instruction(const std::string &name, const std::optional<std::string> &param_types) {
-    register_instruction(instruction::Instruction(name, param_types));
+    register_instruction(instruction::Instruction{ name, param_types });
 }
 
 } // namespace cqasm::v3x::analyzer

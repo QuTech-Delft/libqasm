@@ -4,11 +4,9 @@ source
 # Header file for the semantic tree node classes.
 header "v3x/cqasm-semantic-gen.hpp"
 
-// Include tree base classes
 include "cqasm-tree.hpp"
 tree_namespace cqasm::tree
 
-// Include primitive types
 include "v3x/cqasm-instruction.hpp"
 include "v3x/cqasm-primitives.hpp"
 include "v3x/cqasm-types.hpp"
@@ -47,9 +45,9 @@ annotated {
     annotations: Any<annotation_data>;
 
     statement {
-        # A regular instruction (a gate, or a measure instruction).
+        # Regular instruction (a gate, or a measure instruction).
         instruction {
-            instruction: cqasm::v3x::instruction::InstructionRef;
+            instruction_ref: cqasm::v3x::instruction::InstructionRef;
             name: cqasm::v3x::primitives::Str;
             operands: external Any<cqasm::v3x::values::ValueBase>;
         }
@@ -64,7 +62,7 @@ annotated {
         }
 
         function_call_statement {
-            return_value: external Maybe<cqasm::v3x::values::ValueBase>;
+            function_call_value: external Maybe<cqasm::v3x::values::ValueBase>;
         }
     }
 
@@ -73,8 +71,10 @@ annotated {
         typ: external One<cqasm::v3x::types::TypeBase>;
     }
 
+    # User defined functions
     function {
         name: cqasm::v3x::primitives::Str;
+        param_types: external Any<cqasm::v3x::types::TypeBase>;
         return_type: external Maybe<cqasm::v3x::types::TypeBase>;
         block: One<block>;
         variables: Any<variable>;
