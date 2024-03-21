@@ -95,8 +95,9 @@ endif()
 
 # emscripten
 if(LIBQASM_BUILD_EMSCRIPTEN)
-    add_compile_options(-fwasm-exceptions)
-    add_link_options(-fwasm-exceptions --profiling-funcs -sASSERTIONS=1 -sMODULARIZE=1)
+    # --no-entry is needed by -sSTRICT
+    add_compile_options(-fwasm-exceptions -Os -sSTRICT)
+    add_link_options(-fwasm-exceptions -Os --no-entry --profiling-funcs -sASSERTIONS=1 -sMODULARIZE=1 -sSTRICT)
 endif()
 
 # Jump to where the new API and the core of libqasm lives.
