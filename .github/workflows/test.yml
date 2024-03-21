@@ -40,32 +40,32 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install dependencies
-        run: |
-          python3 -m pip install --upgrade conan pip setuptools
-        shell: bash
-#      - uses: ./.github/actions/cpp-tests
-#        with:
-#          build_type: ${{ matrix.build_type }}
-#          conan_profile_host: conan/profiles/tests-${{ matrix.build_type }}-apple_clang-macos-x64
-#          shell: bash
-      - name: Get latest CMake
-        uses: lukka/get-cmake@latest
-        # We clean the Conan cache as a preventive measure for our runs in self-hosted runners
-        # Self-hosted runners use containers that cache Conan packages from previous runs,
-        # and that can cause different type of problems
-      - name: Configure and build
-        run: |
-          conan profile detect --force
-          conan remove -c "*/*"
-          pr=conan/profiles/tests-${{ matrix.build_type }}-apple_clang-macos-x64
-          lowercase_pr=$(echo ${pr} | tr '[:upper:]' '[:lower:]')
-          conan build . -pr:h=${lowercase_pr} -pr:b=${lowercase_pr} -b missing
-        shell: bash
-      - name: Test
-        working-directory: build/${{ matrix.build_type }}
-        run: ctest -C ${{ matrix.build_type }} --output-on-failure --parallel 10
-        shell: bash
+#      - name: Install dependencies
+#        run: |
+#          python3 -m pip install --upgrade conan pip setuptools
+#        shell: bash
+      - uses: ./.github/actions/cpp-tests
+        with:
+          build_type: ${{ matrix.build_type }}
+          conan_profile_host: conan/profiles/tests-${{ matrix.build_type }}-apple_clang-macos-x64
+          shell: bash
+#      - name: Get latest CMake
+#        uses: lukka/get-cmake@latest
+#        # We clean the Conan cache as a preventive measure for our runs in self-hosted runners
+#        # Self-hosted runners use containers that cache Conan packages from previous runs,
+#        # and that can cause different type of problems
+#      - name: Configure and build
+#        run: |
+#          conan profile detect --force
+#          conan remove -c "*/*"
+#          pr=conan/profiles/tests-${{ matrix.build_type }}-apple_clang-macos-x64
+#          lowercase_pr=$(echo ${pr} | tr '[:upper:]' '[:lower:]')
+#          conan build . -pr:h=${lowercase_pr} -pr:b=${lowercase_pr} -b missing
+#        shell: bash
+#      - name: Test
+#        working-directory: build/${{ matrix.build_type }}
+#        run: ctest -C ${{ matrix.build_type }} --output-on-failure --parallel 10
+#        shell: bash
 
 #  cpp-windows-x64:
 #    name: "C++ tests (msvc/Windows/x64)"
