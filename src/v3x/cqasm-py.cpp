@@ -57,7 +57,8 @@ void V3xAnalyzer::register_instruction(const std::string &name, const std::strin
  * Notice that the AST and error messages won't be available at the same time.
  */
 std::vector<std::string> V3xAnalyzer::parse_file(const std::string &file_name) {
-    return v3x::parser::parse_file(file_name, std::nullopt).to_strings();
+    const auto &parse_result = v3x::parser::parse_file(file_name, std::nullopt);
+    return parse_result.to_strings();
 }
 
 /**
@@ -71,7 +72,8 @@ std::vector<std::string> V3xAnalyzer::parse_file(const std::string &file_name) {
  * severity is hardcoded to 1 at the moment (value corresponding to an Error level).
  */
 std::string V3xAnalyzer::parse_file_to_json(const std::string &file_name) {
-    return v3x::parser::parse_file(file_name, std::nullopt).to_json();
+    const auto &parse_result = v3x::parser::parse_file(file_name, std::nullopt);
+    return parse_result.to_json();
 }
 
 /**
@@ -80,7 +82,8 @@ std::string V3xAnalyzer::parse_file_to_json(const std::string &file_name) {
  */
 std::vector<std::string> V3xAnalyzer::parse_string(const std::string &data, const std::string &file_name) {
     auto file_name_op = !file_name.empty() ? std::optional<std::string>{ file_name } : std::nullopt;
-    return v3x::parser::parse_string(data, file_name_op).to_strings();
+    const auto &parse_result = v3x::parser::parse_string(data, file_name_op);
+    return parse_result.to_strings();
 }
 
 /**
@@ -96,7 +99,8 @@ std::vector<std::string> V3xAnalyzer::parse_string(const std::string &data, cons
  */
 std::string V3xAnalyzer::parse_string_to_json(const std::string &data, const std::string &file_name) {
     auto file_name_op = !file_name.empty() ? std::optional<std::string>{ file_name } : std::nullopt;
-    return v3x::parser::parse_string(data, file_name_op).to_json();
+    const auto &parse_result = v3x::parser::parse_string(data, file_name_op);
+    return parse_result.to_json();
 }
 
 /**
@@ -109,10 +113,8 @@ std::string V3xAnalyzer::parse_string_to_json(const std::string &data, const std
  * Notice that the AST and error messages won't be available at the same time.
  */
 std::vector<std::string> V3xAnalyzer::analyze_file(const std::string &file_name) const {
-    return analyzer->analyze(
-        [=](){ return cqasm::version::parse_file(file_name); },
-        [=](){ return v3x::parser::parse_file(file_name, std::nullopt); }
-    ).to_strings();
+    const auto &parse_result = v3x::parser::parse_file(file_name, std::nullopt);
+    return analyzer->analyze(parse_result).to_strings();
 }
 
 /**
@@ -126,10 +128,8 @@ std::vector<std::string> V3xAnalyzer::analyze_file(const std::string &file_name)
  * severity is hardcoded to 1 at the moment (value corresponding to an Error level).
  */
 [[nodiscard]] std::string V3xAnalyzer::analyze_file_to_json(const std::string &file_name) const {
-    return analyzer->analyze(
-        [=](){ return cqasm::version::parse_file(file_name); },
-        [=](){ return v3x::parser::parse_file(file_name, std::nullopt); }
-    ).to_json();
+    const auto &parse_result = v3x::parser::parse_file(file_name, std::nullopt);
+    return analyzer->analyze(parse_result).to_json();
 }
 
 /**
@@ -140,10 +140,8 @@ std::vector<std::string> V3xAnalyzer::analyze_string(
     const std::string &data, const std::string &file_name) const {
 
     auto file_name_op = !file_name.empty() ? std::optional<std::string>{ file_name } : std::nullopt;
-    return analyzer->analyze(
-        [=](){ return cqasm::version::parse_string(data, file_name_op); },
-        [=](){ return v3x::parser::parse_string(data, file_name_op); }
-    ).to_strings();
+    const auto &parse_result = v3x::parser::parse_string(data, file_name_op);
+    return analyzer->analyze(parse_result).to_strings();
 }
 
 /**
@@ -161,8 +159,6 @@ std::vector<std::string> V3xAnalyzer::analyze_string(
     const std::string &data, const std::string &file_name) const {
 
     auto file_name_op = !file_name.empty() ? std::optional<std::string>{ file_name } : std::nullopt;
-    return analyzer->analyze(
-        [=](){ return cqasm::version::parse_string(data, file_name_op); },
-        [=](){ return v3x::parser::parse_string(data, file_name_op); }
-    ).to_json();
+    const auto &parse_result = v3x::parser::parse_string(data, file_name_op);
+    return analyzer->analyze(parse_result).to_json();
 }

@@ -30,14 +30,6 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 include(FetchContent)
 
-find_package(BISON 3.0)
-find_package(FLEX 2.6.4)
-if(WIN32)
-    set(flex_win_compat --wincompat)
-else()
-    set(flex_win_compat)
-endif()
-
 find_package(Python3 REQUIRED)
 
 # antlr4-runtime
@@ -84,7 +76,7 @@ endif()
 
 # tree-gen executable
 find_package(tree-gen REQUIRED)
-find_program(TREE_GEN_EXECUTABLE tree-gen REQUIRED)
+find_program(TREE_GEN_EXECUTABLE /home/rturrado/.conan2/p/b/tree-44ec45b91a823/b/build/Release/tree-gen REQUIRED)
 message(STATUS "TREE_GEN_EXECUTABLE: ${TREE_GEN_EXECUTABLE}")
 
 # tree-gen library
@@ -110,30 +102,6 @@ set(CQASM_COMMON_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-utils.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-version.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/version.cpp"
-)
-
-# Generate the version lexer.
-flex_target(cqasm-version-lexer
-    "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-version-lexer.l"
-    "${CMAKE_CURRENT_BINARY_DIR}/cqasm-version-lexer.cpp"
-    COMPILE_FLAGS
-        "--header-file=${CMAKE_CURRENT_BINARY_DIR}/cqasm-version-lexer.hpp ${flex_win_compat}"
-)
-list(APPEND CQASM_COMMON_SOURCES ${FLEX_cqasm-version-lexer_OUTPUTS})
-
-# Generate the version parser.
-bison_target(cqasm-version-parser
-    "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-version-parser.y"
-    "${CMAKE_CURRENT_BINARY_DIR}/cqasm-version-parser.cpp"
-    COMPILE_FLAGS
-        "-rall --report-file=${CMAKE_CURRENT_BINARY_DIR}/cqasm-version-parser.txt -Werror=conflicts-sr -Werror=conflicts-rr"
-)
-list(APPEND CQASM_COMMON_SOURCES ${BISON_cqasm-version-parser_OUTPUTS})
-
-# Dependency between lexer and parser.
-add_flex_bison_dependency(
-    cqasm-version-lexer
-    cqasm-version-parser
 )
 
 #-------------------------------------------------------------------------------
