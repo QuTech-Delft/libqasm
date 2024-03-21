@@ -7,4 +7,3 @@ libqasm/*:build_type=Release
 [options]
 libqasm/*:asan_enabled=False
 libqasm/*:build_tests=False
-libqasm/*:compat=False

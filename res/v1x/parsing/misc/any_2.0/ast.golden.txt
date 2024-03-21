@@ -1,2 +1,0 @@
-ERROR
-Error: detected version 2.0

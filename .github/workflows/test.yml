@@ -3,7 +3,7 @@ name: Test
 on:
   push:
     branches:
-    - develop
+    - remove-v1x
   pull_request:
 
 jobs:

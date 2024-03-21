@@ -1,3 +1,0 @@
-ERROR
-Error at input.cq:4:20..22: syntax error, unexpected BAD_NUMBER
-Error at input.cq:4:30..32: syntax error, unexpected BAD_NUMBER

@@ -1,5 +1,0 @@
-version 1.0
-qubits 10
-
-# note; differening lengths between condition and parameters are allowed
-cond (b[0:3]) x q[4:5]

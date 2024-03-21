@@ -32,7 +32,6 @@ class LibqasmConan(ConanFile):
         "asan_enabled": [True, False],
         "build_python": [True, False],
         "build_tests": [True, False],
-        "compat": [True, False],
         "cqasm_python_dir": [None, "ANY"],
         "python_dir": [None, "ANY"],
         "python_ext": [None, "ANY"],
@@ -44,7 +43,6 @@ class LibqasmConan(ConanFile):
         "asan_enabled": False,
         "build_python": False,
         "build_tests": False,
-        "compat": False,
         "cqasm_python_dir": None,
         "python_dir": None,
         "python_ext": None,
@@ -103,7 +101,6 @@ class LibqasmConan(ConanFile):
         tc.variables["LIBQASM_BUILD_EMSCRIPTEN"] = self.settings.arch == "wasm"
         tc.variables["LIBQASM_BUILD_PYTHON"] = self.options.build_python
         tc.variables["LIBQASM_BUILD_TESTS"] = self.options.build_tests
-        tc.variables["LIBQASM_COMPAT"] = self.options.compat
         tc.variables["LIBQASM_CQASM_PYTHON_DIR"] = self.options.cqasm_python_dir
         tc.variables["LIBQASM_PYTHON_DIR"] = self.options.python_dir
         tc.variables["LIBQASM_PYTHON_EXT"] = self.options.python_ext

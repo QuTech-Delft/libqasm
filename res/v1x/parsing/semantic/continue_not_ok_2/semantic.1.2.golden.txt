@@ -1,2 +1,0 @@
-ERROR
-Error at input.cq:5:5..13: cannot use continue outside of a structured loop

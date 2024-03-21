@@ -1,4 +1,0 @@
-ERROR
-Error at input.cq:6:5..11: goto instruction operand must be a subcircuit identifier
-Error at input.cq:7:5..14: goto instruction must have a single operand
-Error at input.cq:5:5..13: failed to resolve subcircuit "foo"

@@ -1,2 +1,0 @@
-ERROR
-Error at input.cq:6:1..8:2: foreach loop variable must be an assignable integer

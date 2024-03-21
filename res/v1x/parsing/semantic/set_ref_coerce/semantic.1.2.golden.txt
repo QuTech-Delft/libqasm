@@ -1,2 +1,0 @@
-ERROR
-Error at input.cq:7:1..10: type of right-hand side (int reference) could not be coerced to left-hand side (real reference)

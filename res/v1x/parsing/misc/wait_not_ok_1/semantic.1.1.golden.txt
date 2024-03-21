@@ -1,2 +1,0 @@
-ERROR
-Error at input.cq:4:1..7: failed to resolve overload for 'wait' with argument pack (int)

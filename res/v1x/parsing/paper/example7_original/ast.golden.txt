@@ -1,2 +1,0 @@
-ERROR
-Error at input.cq:13:15..19: syntax error, unexpected FLOAT_LITERAL, expecting '}'

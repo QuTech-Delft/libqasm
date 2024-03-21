@@ -1,7 +1,0 @@
-ERROR
-Error at input.cq:4:21..22: syntax error, unexpected ','
-Error at input.cq:4:31..32: syntax error, unexpected ','
-Error at input.cq:4:37..38: syntax error, unexpected ')', expecting ']'
-Error at input.cq:4:61..62: syntax error, unexpected ','
-Error at input.cq:4:67..68: syntax error, unexpected ')', expecting ',' or ']'
-Error: failed to parse 'input.cq'
