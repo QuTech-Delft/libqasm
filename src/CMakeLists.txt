@@ -76,7 +76,7 @@ endif()
 
 # tree-gen executable
 find_package(tree-gen REQUIRED)
-find_program(TREE_GEN_EXECUTABLE tree-gen REQUIRED)
+find_program(TREE_GEN_EXECUTABLE /home/rturrado/.conan2/p/b/tree-44ec45b91a823/b/build/Release/tree-gen REQUIRED)
 message(STATUS "TREE_GEN_EXECUTABLE: ${TREE_GEN_EXECUTABLE}")
 
 # tree-gen library
