@@ -21,7 +21,7 @@ RUN version=3.28 && \
     url="https://cmake.org/files/v$version/cmake-$version.$build-linux-x86_64.sh" && \
     mkdir /temp && \
     cd /temp && \
-    wget $url && \
+    wget --no-verbose $url && \
     mkdir /opt/cmake && \
     sh cmake-$version.$build-linux-x86_64.sh --prefix=/opt/cmake --skip-license && \
     ln -s /opt/cmake/bin/cmake /usr/local/bin/cmake
