@@ -13,7 +13,7 @@
 
 
 /**
- * Namespace for the "new" cQASM 3.x API.
+ * Namespace for the cQASM v3x API.
  * Its contents are pulled into the main cQASM namespace when you include "cqasm.hpp" for compatibility.
  */
 namespace cqasm::v3x {

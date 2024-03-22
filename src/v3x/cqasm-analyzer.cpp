@@ -100,9 +100,7 @@ AnalysisResult Analyzer::analyze(ast::Program &ast) {
  */
 AnalysisResult Analyzer::analyze(const parser::ParseResult &parse_result) {
     if (!parse_result.errors.empty()) {
-        AnalysisResult result;
-        result.errors = parse_result.errors;
-        return result;
+        return AnalysisResult{ {} , parse_result.errors };
     }
     return analyze(*parse_result.root->as_program());
 }

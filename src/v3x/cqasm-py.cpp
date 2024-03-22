@@ -114,7 +114,8 @@ std::string V3xAnalyzer::parse_string_to_json(const std::string &data, const std
  */
 std::vector<std::string> V3xAnalyzer::analyze_file(const std::string &file_name) const {
     const auto &parse_result = v3x::parser::parse_file(file_name, std::nullopt);
-    return analyzer->analyze(parse_result).to_strings();
+    const auto &analysis_result = analyzer->analyze(parse_result);
+    return analysis_result.to_strings();
 }
 
 /**
@@ -129,7 +130,8 @@ std::vector<std::string> V3xAnalyzer::analyze_file(const std::string &file_name)
  */
 [[nodiscard]] std::string V3xAnalyzer::analyze_file_to_json(const std::string &file_name) const {
     const auto &parse_result = v3x::parser::parse_file(file_name, std::nullopt);
-    return analyzer->analyze(parse_result).to_json();
+    const auto &analysis_result = analyzer->analyze(parse_result);
+    return analysis_result.to_json();
 }
 
 /**
@@ -141,7 +143,8 @@ std::vector<std::string> V3xAnalyzer::analyze_string(
 
     auto file_name_op = !file_name.empty() ? std::optional<std::string>{ file_name } : std::nullopt;
     const auto &parse_result = v3x::parser::parse_string(data, file_name_op);
-    return analyzer->analyze(parse_result).to_strings();
+    const auto &analysis_result = analyzer->analyze(parse_result);
+    return analysis_result.to_strings();
 }
 
 /**
@@ -160,5 +163,6 @@ std::vector<std::string> V3xAnalyzer::analyze_string(
 
     auto file_name_op = !file_name.empty() ? std::optional<std::string>{ file_name } : std::nullopt;
     const auto &parse_result = v3x::parser::parse_string(data, file_name_op);
-    return analyzer->analyze(parse_result).to_json();
+    const auto &analysis_result = analyzer->analyze(parse_result);
+    return analysis_result.to_json();
 }

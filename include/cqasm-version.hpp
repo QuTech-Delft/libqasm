@@ -1,5 +1,5 @@
 /** \file
- * Defines utilities for detecting and dealing with cQASM language versions.
+ * Contains the Version class.
  */
 
 #pragma once

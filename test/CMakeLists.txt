@@ -47,7 +47,7 @@ elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     )
 elseif(MSVC)
     target_compile_options(${PROJECT_NAME}_test PRIVATE
-        /W3 /WX /w34996
+        /WX
         /D_CONSOLE /DCONSOLE
         /D_CRT_NONSTDC_NO_DEPRECATE
         /D_CRT_SECURE_NO_WARNINGS
