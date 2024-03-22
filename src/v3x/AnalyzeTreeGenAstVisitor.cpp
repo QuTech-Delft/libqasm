@@ -39,9 +39,9 @@ std::any AnalyzeTreeGenAstVisitor::visit_version(ast::Version &node) {
                 throw error::AnalysisError("invalid version component");
             }
         }
-        if (node.items > analyzer_.api_version) {
+        if (node.items != analyzer_.api_version) {
             throw error::AnalysisError(fmt::format(
-                "the maximum cQASM version supported is {}, but the cQASM file is version {}",
+                "the only cQASM version supported is {}, but the cQASM file is version {}",
                 analyzer_.api_version,
                 node.items
             ));

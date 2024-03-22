@@ -37,7 +37,7 @@ TEST_F(AnalyzerAnalyzeTest, parser_returns_parse_result) {
     const auto &version = program->version->items;
     EXPECT_EQ(version, version_3_0);
 }
-TEST_F(AnalyzerAnalyzeTest, parser_throws) {
+TEST_F(AnalyzerAnalyzeTest, parser_returns_errors) {
     auto analyzer = Analyzer{};
     const auto &analysis_result = analyzer.analyze(parse_result_errors);
     const auto &error = analysis_result.errors[0];
