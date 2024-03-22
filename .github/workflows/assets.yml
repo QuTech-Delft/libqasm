@@ -28,9 +28,6 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Install dependencies
         run: |
-          brew install bison flex
-          echo "/usr/local/opt/bison/bin" >> $GITHUB_PATH
-          echo "/usr/local/opt/flex/bin" >> $GITHUB_PATH
           python -m pip install --upgrade pip conan setuptools wheel
       - name: Build wheel
         run: python setup.py bdist_wheel
@@ -115,8 +112,6 @@ jobs:
       - "Linux"
     container: quay.io/pypa/manylinux${{ matrix.manylinux }}_aarch64:latest
     env:
-      BISON_VERSION: ${{ matrix.bison_version }}
-      FLEX_VERSION: ${{ matrix.flex_version }}
       JAVA_VERSION: ${{ matrix.java_version }}
       SWIG_VERSION: ${{ matrix.swig_version }}
     strategy:
@@ -129,13 +124,11 @@ jobs:
           - "cp310-cp310"
           - "cp311-cp311"
           - "cp312-cp312"
-        # We are having problems when using the m4 and zulu-opendjk Conan packages on an armv8 architecture
-        # m4 is required by flex/bison and zulu-openjdk provides the Java JRE required by the ANTLR generator
-        # So, for the time being, we are installing flex/bison and java manually for this platform
+        # We are having problems when zulu-opendjk Conan package on an armv8 architecture.
+        # zulu-openjdk provides the Java JRE required by the ANTLR generator.
+        # So, for the time being, we are installing Java manually for this platform
         include:
           - manylinux: _2_28
-            bison_version: 'bison-3.0.4-10.el8'
-            flex_version: 'flex-2.6.1-9.el8'
             java_version: 'java-11-openjdk-11.0.21.0.9-2.el8'
             swig_version: 'swig-3.0.12-19.module_el8.4.0+2254+838326ab'
     steps:
@@ -143,7 +136,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Install dependencies
         run: |
-          dnf install -y $BISON_VERSION $FLEX_VERSION $JAVA_VERSION $SWIG_VERSION
+          dnf install -y $JAVA_VERSION $SWIG_VERSION
           export PATH="/opt/python/${{ matrix.cpython_version }}/bin:$PATH"
           python -m pip install --upgrade pip conan wheel auditwheel
       - name: Build wheel

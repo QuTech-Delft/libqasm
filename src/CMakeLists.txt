@@ -264,7 +264,7 @@ elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     )
 elseif(MSVC)
     target_compile_options(cqasm-lib-obj PRIVATE
-        /W3 /w34996  # not using /WX at the moment because the flex generated code has some warnings
+        /WX
         /D_CRT_NONSTDC_NO_DEPRECATE
         /D_CRT_SECURE_NO_WARNINGS
         /D_UNICODE /DUNICODE

@@ -78,13 +78,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        # We are having problems when using the m4 and zulu-opendjk Conan packages on an armv8 architecture
-        # m4 is required by flex/bison and zulu-openjdk provides the Java JRE required by the ANTLR generator
-        # So, for the time being, we are installing flex/bison and java manually for this platform
+        # We are having problems when using zulu-opendjk Conan package on an armv8 architecture.
+        # zulu-openjdk provides the Java JRE required by the ANTLR generator.
+        # So, for the time being, we are installing Java manually for this platform
       - name: Install dependencies
         run: |
           apt-get update
-          apt-get install -y bison flex default-jre pipx
+          apt-get install -y default-jre pipx
         # Add Conan to path (even before it is installed)
       - name: Add Conan to path
         run: |
@@ -107,14 +107,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        # We are having problems when using the m4 and zulu-opendjk Conan packages on an armv8 architecture
-        # m4 is required by flex/bison and zulu-openjdk provides the Java JRE required by the ANTLR generator
-        # So, for the time being, we are installing flex/bison and java manually for this platform
-      - name: Install bison, flex and java
+        # We are having problems when using zulu-opendjk Conan package on an armv8 architecture.
+        # zulu-openjdk provides the Java JRE required by the ANTLR generator.
+        # So, for the time being, we are installing Java manually for this platform
+      - name: Install dependencies
         run: |
-          brew install bison flex java
-          echo "$(brew --prefix bison)/bin" >> $GITHUB_PATH
-          echo "$(brew --prefix flex)/bin" >> $GITHUB_PATH
+          brew install java
           echo "$(brew --prefix java)/bin" >> $GITHUB_PATH
         shell: bash
       - uses: ./.github/actions/cpp-tests

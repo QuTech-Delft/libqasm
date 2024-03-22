@@ -36,12 +36,10 @@ Build outputs may go into:
   
 ### ARM specific dependencies
 
-We are having problems when using the `m4` and `zulu-opendjk` Conan packages on an ARMv8 architecture.
-`m4` is required by Flex/Bison and `zulu-openjdk` provides the Java JRE required by the ANTLR generator.
-So, for the time being, we are installing Flex/Bison and Java manually for this platform.
+We are having problems when using the `zulu-opendjk` Conan package on an ARMv8 architecture.
+`zulu-openjdk` provides the Java JRE required by the ANTLR generator.
+So, for the time being, we are installing Java manually for this platform.
 
-* `Flex` >= 2.6.4
-* `Bison` >= 3.0
 * `Java JRE` >= 11
 
 ## Build
@@ -78,16 +76,14 @@ All the profiles set the C++ standard to 20. All the `tests` profiles enable Add
 Profiles are a shorthand for command line options. The command above could be written as well as: 
 
 ```
-conan build . -s:h compiler.cppstd=20 -s:h libqasm/*:build_type=Debug -o libqasm/*:asan_enabled=True -o libqasm/*:build_tests=True -o libqasm/*:compat=False -b missing
+conan build . -s:h compiler.cppstd=20 -s:h libqasm/*:build_type=Debug -o libqasm/*:build_tests=True -o libqasm/*:asan_enabled=True -b missing
 ```
 
 These are the list of options that could be specified whether in a profile or in the command line:
 
+- `libqasm/*:asan_enabled={True,False}`: enables Address Sanitizer.
 - `libqasm/*:build_tests={True,False}`: builds tests or not.
 - `libqasm/*:build_type={Debug,Release}`: builds in debug or release mode.
-- `libqasm/*:asan_enabled={True,False}`: enables Address Sanitizer.
-- `libqasm/*:compat={True,False}`: enables installation of the headers for the original API,
-on top of the ones for the new API.
 - `libqasm/*:shared={True,False}`: builds a shared object library instead of a static library, if applicable.
 
 ## Install
@@ -143,10 +139,8 @@ target_include_directories(<your target> SYSTEM PRIVATE "${cqasm_SOURCE_DIR}/inc
 target_link_libraries(<your target> PUBLIC cqasm)
 ```
 
-Note that the following dependencies are required for `libqasm` to build:
+Note that the following dependency is required for `libqasm` to build:
 
-* `Flex` >= 2.6.4
-* `Bison` >= 3.0
 * `Java JRE` >= 11
 
 The original API headers are *not* included by default.
