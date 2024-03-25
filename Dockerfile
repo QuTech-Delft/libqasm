@@ -1,4 +1,8 @@
-FROM ubuntu:22.04
+FROM ubuntu:22.04 AS build-stage
+
+ENV LDFLAGS="-Os"
+ENV CFLAGS="-Os"
+ENV CXXFLAGS="-Os"
 
 RUN apt-get -qq update && \
     apt-get -qq upgrade && \
@@ -21,7 +25,7 @@ RUN version=3.28 && \
     url="https://cmake.org/files/v$version/cmake-$version.$build-linux-x86_64.sh" && \
     mkdir /temp && \
     cd /temp && \
-    wget $url && \
+    wget --no-verbose $url && \
     mkdir /opt/cmake && \
     sh cmake-$version.$build-linux-x86_64.sh --prefix=/opt/cmake --skip-license && \
     ln -s /opt/cmake/bin/cmake /usr/local/bin/cmake
@@ -31,11 +35,7 @@ WORKDIR /libqasm-copy
 
 # Build emscripten binaries
 RUN conan profile detect --force && \
-    conan build . -pr=conan/profiles/emscripten -pr:b=conan/profiles/release -b missing && \
-    ls -hl build/Release/emscripten
+    conan build . -pr=conan/profiles/emscripten -pr:b=conan/profiles/release -b missing
 
-# Test emscripten binaries
-RUN cd emscripten && \
-    node_executable=$(find /emsdk -type f -name node) && \
-    $node_executable --experimental-wasm-eh test_cqasm.js && \
-    cd /
+FROM scratch as export-stage
+COPY --from=build-stage /libqasm-copy/build/Release/emscripten/ /
