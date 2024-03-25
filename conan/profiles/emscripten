@@ -4,3 +4,6 @@ os=Emscripten
 build_type=Release
 compiler=clang
 compiler.version=14
+
+[replace_requires]
+nodejs/*: nodejs/16.20.0

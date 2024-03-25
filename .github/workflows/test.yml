@@ -130,16 +130,12 @@ jobs:
         build_type:
           - Release
     steps:
-      - name: Install latest emsdk
-        run: |
-          git clone https://github.com/emscripten-core/emsdk.git
-          cd emsdk
-          git pull
-          ./emsdk install latest
-          ./emsdk activate latest
-        shell: bash
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Install node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16.20.0
       - name: Install conan
         run: |
           pipx install conan
@@ -158,8 +154,7 @@ jobs:
       - name: Test
         working-directory: emscripten
         run: |
-          echo "node_executable=$(find /emsdk -type f -name node)" >> $GITHUB_ENV
-          ${{  env.node_executable }} --experimental-wasm-eh test_cqasm.js
+          node --experimental-wasm-eh test_cqasm.js
         shell: bash
 
   python-linux-x64:
