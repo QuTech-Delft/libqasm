@@ -65,6 +65,7 @@ class LibqasmConan(ConanFile):
         self.requires("fmt/10.2.1")
         self.requires("range-v3/0.12.0")
         self.requires("tree-gen/1.0.7")
+        self.require("nodejs/16.20.0", override=True)
         if not self.settings.arch == "wasm":
             self.requires("antlr4-cppruntime/4.13.1")
 

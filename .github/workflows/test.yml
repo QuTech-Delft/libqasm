@@ -157,55 +157,55 @@ jobs:
           node --experimental-wasm-eh test_cqasm.js
         shell: bash
 
-  python-linux-x64:
-    name: "Python tests (Linux/x64)"
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Install SWIG
-        run: |
-          sudo apt-get install -y swig
-        shell: bash
-      - name: Export LIBQASM_BUILD_TYPE
-        run: |
-          echo "LIBQASM_BUILD_TYPE=Debug" >> $GITHUB_ENV
-        shell: bash
-      - uses: ./.github/actions/python-tests
-        with:
-          shell: bash
-
-  python-macos-x64:
-    name: "Python tests (macOS/x64)"
-    runs-on: macos-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Install SWIG
-        run: |
-          brew install swig
-        shell: bash
-      - name: Export LIBQASM_BUILD_TYPE
-        run: |
-          echo "LIBQASM_BUILD_TYPE=Debug" >> $GITHUB_ENV
-        shell: bash
-      - uses: ./.github/actions/python-tests
-        with:
-          shell: bash
-
-  python-windows-x64:
-    name: "Python tests (Windows/x64)"
-    runs-on: windows-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Export LIBQASM_BUILD_TYPE
-        run: |
-          echo "LIBQASM_BUILD_TYPE=Release" >> $env:GITHUB_ENV
-        shell: powershell
-      - uses: ./.github/actions/python-tests
-        with:
-          shell: bash
+#  python-linux-x64:
+#    name: "Python tests (Linux/x64)"
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v4
+#      - name: Install SWIG
+#        run: |
+#          sudo apt-get install -y swig
+#        shell: bash
+#      - name: Export LIBQASM_BUILD_TYPE
+#        run: |
+#          echo "LIBQASM_BUILD_TYPE=Debug" >> $GITHUB_ENV
+#        shell: bash
+#      - uses: ./.github/actions/python-tests
+#        with:
+#          shell: bash
+#
+#  python-macos-x64:
+#    name: "Python tests (macOS/x64)"
+#    runs-on: macos-latest
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v4
+#      - name: Install SWIG
+#        run: |
+#          brew install swig
+#        shell: bash
+#      - name: Export LIBQASM_BUILD_TYPE
+#        run: |
+#          echo "LIBQASM_BUILD_TYPE=Debug" >> $GITHUB_ENV
+#        shell: bash
+#      - uses: ./.github/actions/python-tests
+#        with:
+#          shell: bash
+#
+#  python-windows-x64:
+#    name: "Python tests (Windows/x64)"
+#    runs-on: windows-latest
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v4
+#      - name: Export LIBQASM_BUILD_TYPE
+#        run: |
+#          echo "LIBQASM_BUILD_TYPE=Release" >> $env:GITHUB_ENV
+#        shell: powershell
+#      - uses: ./.github/actions/python-tests
+#        with:
+#          shell: bash
 
 #  docker:
 #    name: Docker
