@@ -121,42 +121,42 @@ jobs:
 #          conan_profile_host: conan/profiles/tests-${{ matrix.build_type }}-apple_clang-macos-arm64
 #          shell: bash
 #
-  js-emscripten-wasm:
-    name: "JS tests (em++/emscripten/wasm)"
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        build_type:
-          - Release
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Install node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 16.20.2
-      - name: Install conan
-        run: |
-          pipx install conan
-        shell: bash
-      - name: Get latest CMake
-        uses: lukka/get-cmake@latest
-        # We clean the Conan cache as a preventive measure for our runs in self-hosted runners
-        # Self-hosted runners use containers that cache Conan packages from previous runs,
-        # and that can cause different type of problems
-      - name: Configure and build
-        run: |
-          conan profile detect --force
-          conan remove -c "*/*"
-          conan build . -pr=conan/profiles/emscripten -pr:b=conan/profiles/release -b missing
-        shell: bash
-      - name: Test
-        working-directory: emscripten
-        run: |
-          node --experimental-wasm-eh test_cqasm.js
-        shell: bash
-
+#  js-emscripten-wasm:
+#    name: "JS tests (em++/emscripten/wasm)"
+#    runs-on: ubuntu-latest
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#        build_type:
+#          - Release
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v4
+#      - name: Install node
+#        uses: actions/setup-node@v4
+#        with:
+#          node-version: 16.20.2
+#      - name: Install conan
+#        run: |
+#          pipx install conan
+#        shell: bash
+#      - name: Get latest CMake
+#        uses: lukka/get-cmake@latest
+#        # We clean the Conan cache as a preventive measure for our runs in self-hosted runners
+#        # Self-hosted runners use containers that cache Conan packages from previous runs,
+#        # and that can cause different type of problems
+#      - name: Configure and build
+#        run: |
+#          conan profile detect --force
+#          conan remove -c "*/*"
+#          conan build . -pr=conan/profiles/emscripten -pr:b=conan/profiles/release -b missing
+#        shell: bash
+#      - name: Test
+#        working-directory: emscripten
+#        run: |
+#          node --experimental-wasm-eh test_cqasm.js
+#        shell: bash
+#
 #  python-linux-x64:
 #    name: "Python tests (Linux/x64)"
 #    runs-on: ubuntu-latest
@@ -175,23 +175,23 @@ jobs:
 #        with:
 #          shell: bash
 #
-#  python-macos-x64:
-#    name: "Python tests (macOS/x64)"
-#    runs-on: macos-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v4
-#      - name: Install SWIG
-#        run: |
-#          brew install swig
-#        shell: bash
-#      - name: Export LIBQASM_BUILD_TYPE
-#        run: |
-#          echo "LIBQASM_BUILD_TYPE=Debug" >> $GITHUB_ENV
-#        shell: bash
-#      - uses: ./.github/actions/python-tests
-#        with:
-#          shell: bash
+  python-macos-x64:
+    name: "Python tests (macOS/x64)"
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install SWIG
+        run: |
+          brew install swig
+        shell: bash
+      - name: Export LIBQASM_BUILD_TYPE
+        run: |
+          echo "LIBQASM_BUILD_TYPE=Debug" >> $GITHUB_ENV
+        shell: bash
+      - uses: ./.github/actions/python-tests
+        with:
+          shell: bash
 #
 #  python-windows-x64:
 #    name: "Python tests (Windows/x64)"
