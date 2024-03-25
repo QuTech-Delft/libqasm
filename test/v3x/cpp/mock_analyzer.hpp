@@ -10,7 +10,7 @@
 namespace cqasm::v3x::analyzer {
 
 struct MockAnalyzer : public Analyzer {
-    MOCK_METHOD((AnalysisResult), analyze, (const std::function<version::Version()> &version_parser, const std::function<parser::ParseResult()> &parser));
+    MOCK_METHOD((AnalysisResult), analyze, (const parser::ParseResult &parse_result));
     MOCK_METHOD((values::Value), resolve_function, (const std::string &name, const values::Values &args), (const));
 
     [[nodiscard]] std::list<Scope> &scope_stack() { return scope_stack_; }

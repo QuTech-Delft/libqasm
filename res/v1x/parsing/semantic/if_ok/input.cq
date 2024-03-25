@@ -1,9 +1,0 @@
-version 1.2
-qubits 10
-
-var a: bool
-var q: qubit
-
-if (a) {
-    x q
-}
