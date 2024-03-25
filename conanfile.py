@@ -58,6 +58,7 @@ class LibqasmConan(ConanFile):
         self.tool_requires("zulu-openjdk/11.0.19")
         if self.settings.arch == "wasm":
             self.tool_requires("emsdk/3.1.50")
+            self.tool_requires("nodejs/16.20.0", override=True)
         if self.options.build_tests:
             self.test_requires("gtest/1.14.0")
 
@@ -65,7 +66,6 @@ class LibqasmConan(ConanFile):
         self.requires("fmt/10.2.1")
         self.requires("range-v3/0.12.0")
         self.requires("tree-gen/1.0.7")
-        self.requires("nodejs/16.20.0", override=True)
         if not self.settings.arch == "wasm":
             self.requires("antlr4-cppruntime/4.13.1")
 
