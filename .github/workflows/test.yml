@@ -121,40 +121,46 @@ jobs:
 #          conan_profile_host: conan/profiles/tests-${{ matrix.build_type }}-apple_clang-macos-arm64
 #          shell: bash
 #
-#  js-emscripten-wasm:
-#    name: "JS tests (em++/emscripten/wasm)"
-#    runs-on: ubuntu-latest
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        build_type:
-#          - Release
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v4
-#      - name: Install node
-#        uses: actions/setup-node@v4
-#        with:
-#          node-version: 16.20.0
-#      - name: Install conan
-#        run: python3 -m pip install --upgrade pip conan
-#        shell: bash
-#      - name: Get latest CMake
-#        uses: lukka/get-cmake@latest
-#        # We clean the Conan cache as a preventive measure for our runs in self-hosted runners
-#        # Self-hosted runners use containers that cache Conan packages from previous runs,
-#        # and that can cause different type of problems
-#      - name: Configure and build
-#        run: |
-#          conan profile detect --force
-#          conan remove -c "*/*"
-#          conan build . -pr=conan/profiles/emscripten -pr:b=conan/profiles/release -b missing
-#        shell: bash
-#      - name: Test
-#        working-directory: emscripten
-#        run: |
-#          node --experimental-wasm-eh test_cqasm.js
-#        shell: bash
+  js-emscripten-wasm:
+    name: "JS tests (em++/emscripten/wasm)"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type:
+          - Release
+    steps:
+      - name: Install latest emsdk
+        run: |
+          git clone https://github.com/emscripten-core/emsdk.git
+          cd emsdk
+          git pull
+          ./emsdk install latest
+          ./emsdk activate latest
+        shell: bash
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install conan
+        run: |
+          pipx install conan
+        shell: bash
+      - name: Get latest CMake
+        uses: lukka/get-cmake@latest
+        # We clean the Conan cache as a preventive measure for our runs in self-hosted runners
+        # Self-hosted runners use containers that cache Conan packages from previous runs,
+        # and that can cause different type of problems
+      - name: Configure and build
+        run: |
+          conan profile detect --force
+          conan remove -c "*/*"
+          conan build . -pr=conan/profiles/emscripten -pr:b=conan/profiles/release -b missing
+        shell: bash
+      - name: Test
+        working-directory: emscripten
+        run: |
+          node_executable=$(find /emsdk -type f -name node) 
+          ${{ node_executable }} --experimental-wasm-eh test_cqasm.js
+        shell: bash
 
   python-linux-x64:
     name: "Python tests (Linux/x64)"
