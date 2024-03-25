@@ -7,3 +7,6 @@ libqasm/*:build_type=Release
 [options]
 libqasm/*:asan_enabled=False
 libqasm/*:build_tests=False
+
+[replace_requires]
+nodejs/*: nodejs/16.20.0
