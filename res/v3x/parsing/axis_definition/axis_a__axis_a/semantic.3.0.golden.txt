@@ -1,0 +1,36 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  block: <
+    Block(
+      statements: []
+    )
+  >
+  functions: []
+  variables: [
+    Variable(
+      name: a
+      typ: <
+        Axis(
+          size: 3
+        )
+      >
+      annotations: []
+    )
+    Variable(
+      name: a
+      typ: <
+        Axis(
+          size: 3
+        )
+      >
+      annotations: []
+    )
+  ]
+)
+

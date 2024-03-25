@@ -1,0 +1,23 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..12
+      items: 3.0
+    )
+  >
+  block: <
+    GlobalBlock(
+      statements: [
+        ExpressionStatement(
+          expression: <
+            Identifier( # input.cq:5:1..5
+              name: blah
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

@@ -1,0 +1,4 @@
+version 3
+
+bool[2] b1 = { false, true }
+bool[2] b2 = b1

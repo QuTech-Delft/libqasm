@@ -1,4 +1,0 @@
-version 1.0
-qubits 10
-
-c-measure b[0], q[1]

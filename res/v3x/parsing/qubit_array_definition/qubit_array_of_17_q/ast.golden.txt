@@ -1,0 +1,37 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  block: <
+    GlobalBlock(
+      statements: [
+        Variable( # input.cq:3:11..12
+          name: <
+            Identifier(
+              name: q
+            )
+          >
+          typ: <
+            Type( # input.cq:3:1..10
+              name: <
+                Keyword(
+                  name: qubit
+                )
+              >
+              size: <
+                IntegerLiteral(
+                  value: 17
+                )
+              >
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

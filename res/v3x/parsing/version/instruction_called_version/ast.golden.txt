@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:1:9: token recognition error at: 'q'

@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:3:10..14: no viable alternative at input 'bool[17]3.14'

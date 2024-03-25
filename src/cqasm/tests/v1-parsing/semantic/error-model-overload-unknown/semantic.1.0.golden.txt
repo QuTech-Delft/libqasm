@@ -1,2 +1,0 @@
-ERROR
-Error at input.cq:4:1..41: failed to resolve overload for depolarizing_channel with argument pack (string)

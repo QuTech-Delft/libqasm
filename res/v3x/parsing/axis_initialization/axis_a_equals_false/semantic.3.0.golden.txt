@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:3:8..9: trying to initialize a lhs of size 3 with a rhs of size 1

@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:3:13: token recognition error at: '#'

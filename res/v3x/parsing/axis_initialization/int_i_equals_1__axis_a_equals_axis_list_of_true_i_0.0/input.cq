@@ -1,0 +1,4 @@
+version 3
+
+int i = 1
+axis a = [true, i, 0.0]

@@ -1,2 +1,0 @@
-ERROR
-input.cq:4:22: syntax error, unexpected ']'

@@ -1,3 +1,0 @@
-ERROR
-Error at input.cq:6:1..16: type of right-hand side (string) could not be coerced to left-hand side (int reference)
-Error at input.cq:7:1..10: left-hand side of assignment statement must be assignable

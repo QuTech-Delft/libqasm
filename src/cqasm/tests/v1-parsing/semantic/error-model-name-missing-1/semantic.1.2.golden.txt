@@ -1,2 +1,0 @@
-ERROR
-Error at input.cq:4:1..20: first argument of an error model must be its name as an identifier

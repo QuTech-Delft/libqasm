@@ -1,0 +1,17 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3.0
+    )
+  >
+  block: <
+    Block(
+      statements: []
+    )
+  >
+  functions: []
+  variables: []
+)
+

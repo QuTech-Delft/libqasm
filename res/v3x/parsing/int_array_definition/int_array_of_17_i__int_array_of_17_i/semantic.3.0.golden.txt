@@ -1,0 +1,36 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  block: <
+    Block(
+      statements: []
+    )
+  >
+  functions: []
+  variables: [
+    Variable(
+      name: i
+      typ: <
+        IntArray(
+          size: 17
+        )
+      >
+      annotations: []
+    )
+    Variable(
+      name: i
+      typ: <
+        IntArray(
+          size: 17
+        )
+      >
+      annotations: []
+    )
+  ]
+)
+

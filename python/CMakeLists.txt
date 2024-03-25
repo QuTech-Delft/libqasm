@@ -1,7 +1,9 @@
-cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
+
 if(POLICY CMP0078)
     cmake_policy(SET CMP0078 OLD)
 endif()
+
 if(POLICY CMP0086)
     cmake_policy(SET CMP0086 OLD)
 endif()
@@ -13,20 +15,19 @@ endif()
 # Python development headers --------------------------------------------------
 
 # CMake's Python-finding logic is dodgy at best at dealing with venvs, and
-# venvs themselves are dodgy at best at dealing with the development headers
-# and so on. "If you want something done, do it yourself," I guess.
+# venvs themselves are dodgy at best at dealing with the development headers and so on.
+# "If you want something done, do it yourself," I guess.
 
-# If there is no override, look for the Python executable first. If there's
-# a virtualenv, look in it first and foremost. PYTHON_EXECUTABLE can also be
-# overridden with -DPYTHON_EXECUTABLE= outright.
+# If there is no override, look for the Python executable first.
+# If there's a virtualenv, look in it first and foremost.
+# PYTHON_EXECUTABLE can also be overridden with -DPYTHON_EXECUTABLE= outright.
 if(DEFINED ENV{VIRTUAL_ENV})
     find_program(PYTHON_EXECUTABLE python3 HINTS "$ENV{VIRTUAL_ENV}/bin")
 else()
     find_program(PYTHON_EXECUTABLE python3)
 endif()
 
-# If we found it, we can ask it where its include directory is, using the
-# sysconfig module.
+# If we found it, we can ask it where its include directory is, using the sysconfig module.
 if(PYTHON_EXECUTABLE)
     execute_process(
         COMMAND "${PYTHON_EXECUTABLE}" -c "import sysconfig; print(sysconfig.get_paths()[\"include\"])"
@@ -34,9 +35,8 @@ if(PYTHON_EXECUTABLE)
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 
-    # On Windows, we need to explicitly link against the Python library as
-    # well. Unfortunately we can't ask Python directly where this is, but
-    # we can figure it out
+    # On Windows, we need to explicitly link against the Python library as well.
+    # Unfortunately we can't ask Python directly where this is, but we can figure it out
     if(WIN32)
         execute_process(
             COMMAND "${PYTHON_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/python_lib.py" "${CMAKE_BUILD_TYPE}"
@@ -46,8 +46,7 @@ if(PYTHON_EXECUTABLE)
     endif()
 endif()
 
-# If we failed to find the headers ourselves, fall back to CMake's internal
-# logic.
+# If we failed to find the headers ourselves, fall back to CMake's internal logic.
 if(NOT PYTHON_INCLUDE_DIRS)
     message(WARNING "Could NOT find python3 include directory with custom logic, falling back to CMake internal")
     unset(PYTHON_INCLUDE_DIRS)
@@ -72,48 +71,22 @@ message(STATUS "Found python3 include directory at ${PYTHON_INCLUDE_DIRS}")
 # Look for SWIG.
 find_package(SWIG REQUIRED)
 
-# Include the support module, providing swig_add_module/library and
-# swig_link_libraries.
-# Unfortunately, prior to CMake 3.12, there appears to be *no way whatsoever*
-# to get the result of an include dir generator expression in the form of SWIG
-# include dirs, due to the omission of COMMAND_EXPAND_LISTS in UseSWIG (and the
-# non-existence of that directive prior to 3.8). While it's possible to use
-# $<JOIN...> to insert -I into the list to turn them into flags, it's not
-# possible to make those actually separate arguments as SWIG (sanely)
-# expects them to be, because spaces are escaped, because generator
-# expressions cannot return multiple arguments as they are in double
-# quotes. Basically, the only way to use SWIG before 3.12 is to use
-# globally scoped include_directories directives everywhere, scoping and
-# transitive dependencies be damned. It's complicated and above all insane.
-# So, for versions before 3.12, a patched module is provided in the compat
-# directory. This wraps the actual SWIG command in a Python script that does
-# the list expansion CMake 3.12- is so woefully incapable of.
-if("${CMAKE_VERSION}" VERSION_LESS "3.12.0")
-    include("${CMAKE_CURRENT_SOURCE_DIR}/compat/UseSWIG.cmake")
-else()
-    include(${SWIG_USE_FILE})
-endif()
+include(${SWIG_USE_FILE})
 
 
 #=============================================================================#
 # CMake configuration                                                         #
 #=============================================================================#
 
-# Windows weirdness: need a .lib file to link against a DLL at compile-time
-# (I think), but only the .dll is generated when there are no exported symbols.
+# Windows weirdness: need a .lib file to link against a DLL at compile-time (I think),
+# but only the .dll is generated when there are no exported symbols.
 # This sort of fixes that (https://stackoverflow.com/questions/1941443)
 SET(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-# Require C++11 compiler support.
-if(CMAKE_VERSION VERSION_LESS "3.1")
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
-    endif()
-else()
-    set(CMAKE_CXX_STANDARD 11)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
-    set(CMAKE_CXX_EXTENSIONS OFF)
-endif()
+# Require C++20 compiler support
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 
 #=============================================================================#
@@ -121,27 +94,25 @@ endif()
 #=============================================================================#
 
 # Configure SWIG.
-set(SWIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/libQasm.i")
+set(SWIG_FILE
+    "${CMAKE_CURRENT_SOURCE_DIR}/libQasm.i"
+)
 
 set_source_files_properties("${SWIG_FILE}" PROPERTIES
     CPLUSPLUS ON
-    INCLUDE_DIRECTORIES "$<TARGET_PROPERTY:cqasm_objlib,INTERFACE_INCLUDE_DIRECTORIES>;${PYTHON_INCLUDE_DIRS}"
+    INCLUDE_DIRECTORIES "$<TARGET_PROPERTY:cqasm-lib-obj,INTERFACE_INCLUDE_DIRECTORIES>;${PYTHON_INCLUDE_DIRS}"
     SWIG_FLAGS "-castmode"
 )
 
 set(CMAKE_SWIG_OUTDIR "${CMAKE_CURRENT_BINARY_DIR}")
 
 # Run SWIG to generated the C++ source file and Python wrapper module.
-if(${CMAKE_VERSION} VERSION_LESS "3.12.0")
-    swig_add_module(libQasm python "${SWIG_FILE}")
-else()
-    swig_add_library(
-        libQasm
-        TYPE MODULE
-        LANGUAGE python
-        SOURCES "${SWIG_FILE}"
-    )
-endif()
+swig_add_library(
+    libQasm
+    TYPE MODULE
+    LANGUAGE python
+    SOURCES "${SWIG_FILE}"
+)
 
 # Compile the C++ source file and link it against the cqasm library.
 if(WIN32)
@@ -179,22 +150,22 @@ install(
     DESTINATION "${LIBQASM_PYTHON_DIR}"
 )
 install(
-    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/cqasm-v1-ast-gen.py"
-    DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v1"
+    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/cqasm-ast-gen.py"
+    DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v3x"
     RENAME "ast.py"
 )
 install(
-    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/cqasm-v1-semantic-gen.py"
-    DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v1"
+    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/cqasm-semantic-gen.py"
+    DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v3x"
     RENAME "semantic.py"
 )
 install(
-    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/cqasm-v1-types-gen.py"
-    DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v1"
+    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/cqasm-types-gen.py"
+    DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v3x"
     RENAME "types.py"
 )
 install(
-    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/cqasm-v1-values-gen.py"
-    DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v1"
+    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/cqasm-values-gen.py"
+    DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v3x"
     RENAME "values.py"
 )

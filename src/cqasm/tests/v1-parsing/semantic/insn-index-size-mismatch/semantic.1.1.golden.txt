@@ -1,3 +1,0 @@
-ERROR
-Error at input.cq:4:14..20: the number of indices (3) doesn't match previously found number of indices (2) at input.cq:4:6..12
-Error at input.cq:6:14..20: the number of indices (3) doesn't match previously found number of indices (4) at input.cq:6:6..12

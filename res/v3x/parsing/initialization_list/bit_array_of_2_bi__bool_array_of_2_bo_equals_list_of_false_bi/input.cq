@@ -1,0 +1,4 @@
+version 3
+
+bit[2] bi
+bool[2] bo = { false, bi }

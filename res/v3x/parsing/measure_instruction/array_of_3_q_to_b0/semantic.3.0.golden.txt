@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:6:6..13: qubit and bit indices have different sizes

@@ -1,0 +1,4 @@
+version 3
+
+axis a1
+axis a2 = a1

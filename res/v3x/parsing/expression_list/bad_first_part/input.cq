@@ -1,0 +1,7 @@
+version 3
+
+qubit[3] q
+
+h q[0]
+h q[1]
+cnot 123abc, q[0]

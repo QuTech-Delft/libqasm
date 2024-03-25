@@ -1,2 +1,0 @@
-ERROR
-Error at input.cq:4:1..13: variables are only supported from cQASM 1.1 onwards

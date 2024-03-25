@@ -1,0 +1,37 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  block: <
+    GlobalBlock(
+      statements: [
+        Variable( # input.cq:3:8..9
+          name: <
+            Identifier(
+              name: b
+            )
+          >
+          typ: <
+            Type( # input.cq:3:1..7
+              name: <
+                Keyword(
+                  name: bit
+                )
+              >
+              size: <
+                IntegerLiteral(
+                  value: 0
+                )
+              >
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

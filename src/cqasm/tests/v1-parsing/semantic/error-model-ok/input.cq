@@ -1,4 +1,0 @@
-version 1.0
-qubits 10
-
-error_model depolarizing_channel, 1, 2, 3 @annot.first

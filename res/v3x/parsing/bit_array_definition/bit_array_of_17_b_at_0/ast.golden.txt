@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:3:10..11: mismatched input '[' expecting {<EOF>, NEW_LINE, ';'}
