@@ -167,17 +167,10 @@ setup(
 
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
-
         'Operating System :: POSIX :: Linux',
         'Operating System :: MacOS',
         'Operating System :: Microsoft :: Windows',
-
         'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.9',
-        'Programming Language :: Python :: 3.10',
-        'Programming Language :: Python :: 3.11',
-        'Programming Language :: Python :: 3.12',
-
         'Topic :: Scientific/Engineering'
     ],
 

@@ -3,7 +3,7 @@ name: Test
 on:
   push:
     branches:
-    - fix-git-hub-actions-for-develop
+    - develop
   pull_request:
 
 jobs:
