@@ -96,8 +96,6 @@ class build_ext(_build_ext):
 
                 ['-o']['libqasm/*:build_python=True']
                 ['-o']['libqasm/*:build_tests=True']
-                # The Python library needs the compatibility headers
-                ['-o']['libqasm/*:compat=True']
                 ['-o']['libqasm/*:cqasm_python_dir=' + re.escape(os.path.dirname(cqasm_target))]
                 ['-o']['libqasm/*:python_dir=' + re.escape(os.path.dirname(target))]
                 ['-o']['libqasm/*:python_ext=' + re.escape(os.path.basename(target))]
@@ -181,10 +179,10 @@ setup(
         'Operating System :: Microsoft :: Windows',
 
         'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
 
         'Topic :: Scientific/Engineering'
     ],
