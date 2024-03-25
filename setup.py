@@ -96,8 +96,6 @@ class build_ext(_build_ext):
 
                 ['-o']['libqasm/*:build_python=True']
                 ['-o']['libqasm/*:build_tests=True']
-                # The Python library needs the compatibility headers
-                ['-o']['libqasm/*:compat=True']
                 ['-o']['libqasm/*:cqasm_python_dir=' + re.escape(os.path.dirname(cqasm_target))]
                 ['-o']['libqasm/*:python_dir=' + re.escape(os.path.dirname(target))]
                 ['-o']['libqasm/*:python_ext=' + re.escape(os.path.basename(target))]
@@ -144,12 +142,6 @@ class bdist_wheel(_bdist_wheel):
         if platform.system() == "Darwin":
             os.environ['MACOSX_DEPLOYMENT_TARGET'] = '10.10'
         _bdist_wheel.run(self)
-        impl_tag, abi_tag, plat_tag = self.get_tag()
-        archive_basename = "{}-{}-{}-{}".format(self.wheel_dist_name, impl_tag, abi_tag, plat_tag)
-        wheel_path = os.path.join(self.dist_dir, archive_basename + '.whl')
-        if platform.system() == "Darwin":
-            from delocate.delocating import delocate_wheel
-            delocate_wheel(wheel_path)
 
 
 class sdist(_sdist):
@@ -175,17 +167,10 @@ setup(
 
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
-
         'Operating System :: POSIX :: Linux',
         'Operating System :: MacOS',
         'Operating System :: Microsoft :: Windows',
-
         'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
-
         'Topic :: Scientific/Engineering'
     ],
 
