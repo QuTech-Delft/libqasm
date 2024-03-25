@@ -158,7 +158,7 @@ jobs:
       - name: Test
         working-directory: emscripten
         run: |
-          node_executable=$(find /emsdk -type f -name node) 
+          echo "node_executable=$(find /emsdk -type f -name node)" >> $GITHUB_ENV
           ${{ node_executable }} --experimental-wasm-eh test_cqasm.js
         shell: bash
 
