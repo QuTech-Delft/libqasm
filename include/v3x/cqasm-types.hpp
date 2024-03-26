@@ -44,17 +44,10 @@ using Types = tree::Any<TypeBase>;
  * In it, each character represents one type. The supported characters are as follows:
  *
  *  - Q = qubit
- *  - B = bit (measurement register)
- *  - a = axis (x, y, or z)
  *  - b = bool
  *  - i = int
  *  - f = float
- *  - c = complex
  *  - V = qubit array
- *  - W = bit array
- *  - X = bool array
- *  - Y = int array
- *  - Z = float array
  */
 Type from_spec(const char spec);
 Types from_spec(const std::string &spec);

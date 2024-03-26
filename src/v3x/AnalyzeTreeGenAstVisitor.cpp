@@ -23,10 +23,9 @@ std::any AnalyzeTreeGenAstVisitor::visit_program(ast::Program &program_ast) {
     result_.root = tree::make<semantic::Program>();
     result_.root->api_version = analyzer_.api_version;
     result_.root->version = std::any_cast<tree::One<semantic::Version>>(visit_version(*program_ast.version));
-    auto [block, variables, functions] = std::any_cast<GlobalBlockReturnT>(visit_global_block(*program_ast.block));
+    auto [block, variables] = std::any_cast<GlobalBlockReturnT>(visit_global_block(*program_ast.block));
     result_.root->block = block;
-    result_.root->variables = variables;
-    result_.root->functions = functions;
+    result_.root->qubit_variable_declaration = variables[0];
     return result_;
 }
 
@@ -60,13 +59,22 @@ std::any AnalyzeTreeGenAstVisitor::visit_version(ast::Version &node) {
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_global_block(ast::GlobalBlock &node) {
-    visit_block(node);
-    return GlobalBlockReturnT{ analyzer_.current_block(), analyzer_.current_variables(), analyzer_.global_functions() };
-}
+    visit_variable(*node.qubit_variable_declaration);
 
-std::any AnalyzeTreeGenAstVisitor::visit_local_block(ast::LocalBlock &node) {
-    visit_block(node);
-    return LocalBlockReturnT{ analyzer_.current_block(), analyzer_.current_variables() };
+    for (const auto &gate_ast : node.gates) {
+        try {
+            visit_gate(*gate_ast);
+        } catch (error::AnalysisError &err) {
+            err.context(node);
+            result_.errors.push_back(std::move(err));
+        }
+    }
+
+    if (!node.measure_instruction.empty()) {
+        visit_measure_instruction(*node.measure_instruction);
+    }
+
+    return GlobalBlockReturnT{ analyzer_.current_block(), analyzer_.current_variables() };
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_annotated(ast::Annotated &node) {
@@ -139,84 +147,6 @@ values::Value promote_or_error(const values::Value &rhs_value, const types::Type
         values::type_of(rhs_value), lhs_type) };
 }
 
-void do_assignment(
-    tree::Maybe<semantic::AssignmentStatement> &assignment_statement,
-    const values::Value &lhs_value,
-    const values::Value &rhs_value) {
-
-    // Check left and right-hand sides have the same size
-    auto rhs_size = values::size_of(rhs_value);
-    auto lhs_size = values::size_of(lhs_value);
-    if (rhs_size != lhs_size) {
-        throw error::AnalysisError{ fmt::format(
-            "trying to initialize a lhs of size {} with a rhs of size {}",
-            lhs_size, rhs_size) };
-    }
-
-    // Check if right-hand side operand needs be promoted
-    const auto lhs_type = values::type_of(lhs_value);
-    const auto promoted_rhs_value = promote_or_error(rhs_value, lhs_type);
-
-    // Check axis types are not assigned [0, 0, 0]
-    if (lhs_type->as_axis()) {
-        if (values::check_all_of_array_values(rhs_value,
-                [](const auto e){ return static_cast<double>(e->value) == 0.0; })) {
-            throw error::AnalysisError{ "cannot set an axis variable type to [0.0, 0.0, 0.0]" };
-        }
-    }
-
-    assignment_statement.emplace(lhs_value, promoted_rhs_value);
-}
-
-std::any AnalyzeTreeGenAstVisitor::visit_initialization(ast::Initialization &node) {
-    auto ret = tree::Maybe<semantic::AssignmentStatement>();
-    try {
-        // Analyze the right-hand side operand
-        //
-        // Initialization instructions check the right-hand side operand first
-        // In order to avoid code such as 'int i = i' being correct
-        const auto rhs_value = std::any_cast<values::Value>(visit_expression(*node.rhs));
-
-        // Add the variable declaration
-        visit_variable(*node.var);
-
-        // Analyze the left-hand side operand
-        // Left-hand side is always assignable for an initialization
-        const auto lhs_value = std::any_cast<values::Value>(visit_expression(*node.var->name));
-
-        // Perform assignment
-        do_assignment(ret, lhs_value, rhs_value);
-
-        // Copy annotation data
-        ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
-        ret->copy_annotation<parser::SourceLocation>(node);
-
-        // Add the statement to the current scope
-        analyzer_.add_statement_to_current_scope(ret);
-    } catch (error::AnalysisError &err) {
-        err.context(node);
-        result_.errors.push_back(std::move(err));
-        ret.reset();
-    }
-    return ret;
-}
-
-bool AnalyzeTreeGenAstVisitor::current_block_has_return_statement() {
-    return std::any_of(analyzer_.current_block()->statements.begin(), analyzer_.current_block()->statements.end(),
-        [](const auto &statement) { return statement->as_return_statement(); });
-}
-
-void AnalyzeTreeGenAstVisitor::current_block_return_statements_promote_or_error(const tree::Maybe<types::Node> &return_type) {
-    std::for_each(analyzer_.current_block()->statements.begin(), analyzer_.current_block()->statements.end(),
-        [&return_type](const auto &statement) {
-            if (auto return_statement = statement->as_return_statement(); return_statement) {
-                assert(!return_statement->return_value.empty());
-                const auto promoted_return_value = promote_or_error(return_statement->return_value, return_type);
-                return_statement->return_value.set(promoted_return_value);
-            }
-    });
-}
-
 /**
  * Convenience function for extracting the types of a list of variables.
  */
@@ -226,157 +156,6 @@ types::Types types_of(const tree::Any<semantic::Variable> &variables) {
         types.add(variable->typ.clone());
     }
     return types;
-}
-
-std::any AnalyzeTreeGenAstVisitor::visit_function(ast::Function &node) {
-    auto ret = tree::make<semantic::Function>();
-    analyzer_.push_scope();
-
-    try {
-        // Name
-        const auto identifier = node.name;
-        ret->name = identifier->name;
-
-        // Return type
-        if (!node.return_type.empty()) {
-            ret->return_type = build_semantic_type(node.return_type);
-        }
-
-        // Parameters
-        const auto &parameters = std::any_cast<LocalBlockReturnT>(visit_local_block(*node.parameters)).second;
-        ret->param_types = types_of(parameters);
-
-        // Block
-        auto [block, variables] = std::any_cast<LocalBlockReturnT>(visit_local_block(*node.block));
-        ret->block = block;
-        ret->variables = variables;
-
-        // Return statement and return type checks
-        if (current_block_has_return_statement() && node.return_type.empty()) {
-            throw error::AnalysisError{ "found return statement but function does not have a return type" };
-        } else if (!current_block_has_return_statement() && !node.return_type.empty()) {
-            throw error::AnalysisError{ "function has a return type but return statement was not found" };
-        } else if (current_block_has_return_statement() && !node.return_type.empty()) {
-            current_block_return_statements_promote_or_error(ret->return_type);
-        }
-
-        // Copy annotation data
-        ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
-        ret->copy_annotation<parser::SourceLocation>(node);
-
-        // Add the function to the global scope
-        analyzer_.add_function_to_global_scope(ret);
-
-        // Register the function
-        analyzer_.register_function(ret->name, ret->param_types, values::FunctionRef{ ret });
-    } catch (error::AnalysisError &err) {
-        err.context(node);
-        result_.errors.push_back(std::move(err));
-        ret.reset();
-    }
-
-    analyzer_.pop_scope();
-    return ret;
-}
-
-std::any AnalyzeTreeGenAstVisitor::visit_assignment_statement(ast::AssignmentStatement &node) {
-    auto ret = tree::Maybe<semantic::AssignmentStatement>();
-    try {
-        // Analyze the operands
-        const auto lhs_value = std::any_cast<values::Value>(visit_expression(*node.lhs));
-        const auto rhs_value = std::any_cast<values::Value>(visit_expression(*node.rhs));
-
-        // Check assignability of the left-hand side
-        if (bool assignable = lhs_value->as_reference(); !assignable) {
-            throw error::AnalysisError{ "left-hand side of assignment statement must be assignable" };
-        }
-
-        // Perform assignment
-        do_assignment(ret, lhs_value, rhs_value);
-
-        // Copy annotation data
-        ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
-        ret->copy_annotation<parser::SourceLocation>(node);
-
-        // Add the statement to the current scope
-        analyzer_.add_statement_to_current_scope(ret);
-    } catch (error::AnalysisError &err) {
-        err.context(node);
-        result_.errors.push_back(std::move(err));
-        ret.reset();
-    }
-    return ret;
-}
-
-std::any AnalyzeTreeGenAstVisitor::visit_return_statement(ast::ReturnStatement &node) {
-    auto ret = tree::make<semantic::ReturnStatement>(
-        std::any_cast<values::Value>(visit_expression(*node.return_value)));
-
-    // Copy annotation data
-    ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
-    ret->copy_annotation<parser::SourceLocation>(node);
-
-    // Add the statement to the current scope
-    analyzer_.add_statement_to_current_scope(ret);
-
-    return ret;
-}
-
-std::any AnalyzeTreeGenAstVisitor::visit_expression_statement(ast::ExpressionStatement &node) {
-    auto ret = tree::make<semantic::FunctionCallStatement>();
-    try {
-        if (auto function_call = node.expression->as_function_call(); function_call) {
-            ret->function_call_value = std::any_cast<values::Value>(visit_function_call(*function_call)).get_ptr();
-
-            // Copy annotation data
-            ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(
-                visit_annotated(*node.as_annotated()));
-            // Expression statements get the source location information from their expressions
-            ret->copy_annotation<parser::SourceLocation>(*node.expression);
-
-            // Add the statement to the current scope
-            analyzer_.add_statement_to_current_scope(ret);
-        } else {
-            throw error::AnalysisError{ "expression statement is not of function call type" };
-        }
-    } catch (error::AnalysisError &err) {
-        // Expression statements get the source location information from their expressions
-        err.context(*node.expression);
-        result_.errors.push_back(std::move(err));
-        ret.reset();
-    }
-    return ret;
-}
-
-bool check_qubit_and_bit_indices_have_same_size(const values::Values &operands) {
-    size_t qubit_indices_size{};
-    size_t bit_indices_size{};
-    // Instruction operands can be, whether variables references or index references
-    // Variables can be of type qubit, bit, qubit array, or bit array
-    // Qubits and bits have a single index, arrays have a size
-    // Index references point to a qubit array or bit array
-    for (const auto &operand : operands) {
-        if (auto variable_ref = operand->as_variable_ref()) {
-            const auto &variable = *variable_ref->variable;
-            if (variable.typ->as_qubit()) {
-                qubit_indices_size += 1;
-            } else if (auto qubit_array = variable.typ->as_qubit_array()) {
-                qubit_indices_size += qubit_array->size;
-            } else if (variable.typ->as_bit()) {
-                bit_indices_size += 1;
-            } else if (auto bit_array = variable.typ->as_bit_array()) {
-                bit_indices_size += bit_array->size;
-            }
-        } else if (auto index_ref = operand->as_index_ref()) {
-            const auto &variable = *index_ref->variable;
-            if (variable.typ->as_qubit() || variable.typ->as_qubit_array()) {
-                qubit_indices_size += index_ref->indices.size();
-            } else if (variable.typ->as_bit() || variable.typ->as_bit_array()) {
-                bit_indices_size += index_ref->indices.size();
-            }
-        }
-    }
-    return qubit_indices_size == bit_indices_size;
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_gate(ast::Gate &node) {
@@ -412,22 +191,10 @@ std::any AnalyzeTreeGenAstVisitor::visit_measure_instruction(ast::MeasureInstruc
         // Set operand list
         // Notice operands have to be added in this order
         // Otherwise instruction resolution would fail
-        auto operands = values::Values();
-        operands.add(std::any_cast<values::Value>(visit_expression(*node.lhs)));
-        operands.add(std::any_cast<values::Value>(visit_expression(*node.rhs)));
+        auto operands = std::any_cast<values::Values>(visit_expression_list(*node.operands));
 
         // Resolve the instruction
-        // For a measure instruction, this resolution will check that
-        // the first operand is of bit type, and that
-        // the second operand is of qubit type
         ret.set(analyzer_.resolve_instruction(node.name->name, operands));
-
-        // Check qubit and bit indices have the same size
-        if (!ret->instruction_ref.empty()) {
-            if (!check_qubit_and_bit_indices_have_same_size(operands)) {
-                throw error::AnalysisError{ "qubit and bit indices have different sizes" };
-            }
-        }
 
         // Copy annotation data
         ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
@@ -625,7 +392,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_index(ast::Index &node) {
         auto variable_ref_ptr = expression->as_variable_ref();
         const auto variable_link = variable_ref_ptr->variable;
         const auto variable_type = variable_link->typ;
-        if (variable_type->as_qubit_array() || variable_type->as_bit_array()) {
+        if (variable_type->as_qubit_array()) {
             auto indices = std::any_cast<IndexListT>(visit_index_list(*node.indices));
             check_out_of_range(indices, types::size_of(variable_type));
             auto ret = tree::make<values::IndexRef>(variable_link, indices);
@@ -683,72 +450,11 @@ std::any AnalyzeTreeGenAstVisitor::visit_identifier(ast::Identifier &node) {
 }
 
 /**
- * Transform an input array into a const array of Type
- * Pre conditions:
- *   Type can only be Bool, Int, or Float
- *   All the values in the input array can be promoted to Type
- */
-/* static */ values::Value AnalyzeTreeGenAstVisitor::build_value_from_promoted_values(
-    const values::Values &values, const types::Type &type) {
-
-    if (types::type_check(type, tree::make<types::Bool>())) {
-        return build_array_value_from_promoted_values<values::ConstBoolArray>(values, type);
-    } else if (types::type_check(type, tree::make<types::Int>())) {
-        return build_array_value_from_promoted_values<values::ConstIntArray>(values, type);
-    } else if (types::type_check(type, tree::make<types::Float>())) {
-        return build_array_value_from_promoted_values<values::ConstFloatArray>(values, type);
-    } else {
-        throw error::AnalysisError{ "expecting Bool, Int, or Float type in initialization list" };
-    }
-}
-
-/**
  * If any element of the initialization list is not a const boolean, const int, or const float, throw an error
  */
 void check_initialization_list_element_type(const values::Value &value) {
     if (!(value->as_const_bool() || value->as_const_int() || value->as_const_float())) {
         throw error::AnalysisError{ "expecting a const bool, const int, or const float value" };
-    }
-}
-
-std::any AnalyzeTreeGenAstVisitor::visit_initialization_list(ast::InitializationList &node) {
-    try {
-        // If initialization list is empty, throw an error
-        const auto &expressions_ast = node.expr_list->items.get_vec();
-        if (expressions_ast.empty()) {
-            throw error::AnalysisError{ "initialization list is empty" };
-        }
-
-        // Set expression's highest type to the type of the first expression
-        const auto first_value = std::any_cast<values::Value>(expressions_ast[0]->visit(*this));
-        check_initialization_list_element_type(first_value);
-        auto expressions_highest_type = values::type_of(first_value);
-
-        // Build a list of expression values,
-        // keeping the highest type to which we can promote (e.g., for a list of booleans and integers, integer)
-        auto expressions_values = values::Values();
-        expressions_values.add(first_value);
-        for (const auto &current_expression_ast : ranges::views::tail(expressions_ast)) {
-            const auto current_value = std::any_cast<values::Value>(visit_expression(*current_expression_ast));
-            check_initialization_list_element_type(current_value);
-            expressions_values.add(current_value);
-            if (const auto current_value_type = values::type_of(current_value);
-                values::check_promote(current_value_type, expressions_highest_type)) {
-                continue;
-            } else if (values::check_promote(expressions_highest_type, current_value_type)) {
-                expressions_highest_type.set(current_value_type);
-            } else {
-                throw error::AnalysisError{
-                    fmt::format("cannot perform a promotion between these two types: ({}) and ({})",
-                        current_value_type, expressions_highest_type) };
-            }
-        }
-
-        // Then return a Const<Type>Array value, where <Type> is the highest type to which we can promote
-        return build_value_from_promoted_values(expressions_values, expressions_highest_type);
-    } catch (error::AnalysisError &err) {
-        err.context(node);
-        throw;
     }
 }
 

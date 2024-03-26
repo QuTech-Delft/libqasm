@@ -97,11 +97,58 @@ double BuildTreeGenAstVisitor::get_float_value(antlr4::tree::TerminalNode *node)
 
 std::any BuildTreeGenAstVisitor::visitProgram(CqasmParser::ProgramContext *context) {
     auto ret = tree::make<Program>();
-    ret->version = std::any_cast<One<Version>>(visitVersion(context->version()));
-    ret->block = context->globalBlock()
-        ? std::any_cast<One<GlobalBlock>>(visitGlobalBlock(context->globalBlock()))
-        : tree::make<GlobalBlock>();
+    ret->version = std::any_cast<One<Version>>(visitVersionSection(context->versionSection()));
+    ret->block = std::any_cast<Maybe<Block>>(visitBodySection(context->bodySection()));
     return ret;
+}
+
+std::any BuildTreeGenAstVisitor::visitVersionSection(CqasmParser::VersionSectionContext *context) {
+    return visitVersion(context->version());
+}
+
+std::any BuildTreeGenAstVisitor::visitBodySection(CqasmParser::BodySectionContext *context) {
+    auto ret = tree::make<GlobalBlock>();
+    ret->qubit_variable_declaration = std::any_cast<One<Variable>>(
+        visitVariableDeclarationSection(context->variableDeclarationSection()));
+    auto [gates, measure_instruction] = std::any_cast<InstructionsSectionT>(
+        visitInstructionsSection(context->instructionsSection()));
+    ret->gates = std::move(gates);
+    ret->measure_instruction = std::move(measure_instruction);
+    return ret;
+}
+
+std::any BuildTreeGenAstVisitor::visitEofSection(CqasmParser::EofSectionContext *) {
+    return {};
+}
+
+std::any BuildTreeGenAstVisitor::visitVariableDeclarationSection(CqasmParser::VariableDeclarationSectionContext *context) {
+    return visitVariableDeclaration(context->variableDeclaration());
+}
+
+std::any BuildTreeGenAstVisitor::visitInstructionsSection(CqasmParser::InstructionsSectionContext *context) {
+    auto gates = Any<Gate>{};
+    if (context->gatesSection()) {
+        gates = std::any_cast<Any<Gate>>(visitGatesSection(context->gatesSection()));
+    }
+    auto measure_instruction = Maybe<MeasureInstruction>{};
+    if (context->measureInstructionSection()) {
+        measure_instruction = std::any_cast<Maybe<MeasureInstruction>>(
+            visitMeasureInstructionSection(context->measureInstructionSection()));
+    }
+    return InstructionsSectionT{ gates, measure_instruction };
+}
+
+std::any BuildTreeGenAstVisitor::visitGatesSection(CqasmParser::GatesSectionContext *context) {
+    auto ret = tree::Any<Gate>{};
+    const auto &gates = context->gate();
+    std::for_each(gates.begin(), gates.end(), [this, &ret](const auto &gate_ctx) {
+        ret.add(std::any_cast<One<Gate>>(gate_ctx->accept(this)));
+    });
+    return ret;
+}
+
+std::any BuildTreeGenAstVisitor::visitMeasureInstructionSection(CqasmParser::MeasureInstructionSectionContext *context) {
+    return visitMeasureInstruction(context->measureInstruction());
 }
 
 std::any BuildTreeGenAstVisitor::visitStatementSeparator(CqasmParser::StatementSeparatorContext *) {
@@ -124,119 +171,21 @@ std::any BuildTreeGenAstVisitor::visitVersion(CqasmParser::VersionContext *conte
     return ret;
 }
 
-std::any BuildTreeGenAstVisitor::visitGlobalBlock(CqasmParser::GlobalBlockContext *context) {
-    auto ret = tree::make<GlobalBlock>();
-    const auto &statements = context->globalBlockStatement();
-    std::for_each(statements.begin(), statements.end(), [this, &ret](const auto &statement_ctx) {
-        ret->statements.add(std::any_cast<One<Statement>>(statement_ctx->accept(this)));
-    });
-    return ret;
-}
-
-std::any BuildTreeGenAstVisitor::visitLocalBlock(CqasmParser::LocalBlockContext *context) {
-    auto ret = tree::make<LocalBlock>();
-    const auto &statements = context->localBlockStatement();
-    std::for_each(statements.begin(), statements.end(), [this, &ret](const auto &statement_ctx) {
-        ret->statements.add(std::any_cast<One<Statement>>(statement_ctx->accept(this)));
-    });
-    return ret;
-}
-
-std::any BuildTreeGenAstVisitor::visitGlobalBlockStatement(CqasmParser::GlobalBlockStatementContext *context) {
-    if (auto local_block_statement_ctx = context->localBlockStatement(); local_block_statement_ctx) {
-        return local_block_statement_ctx->accept(this);
-    }
-    assert(context->functionDeclaration());
-    return context->functionDeclaration()->accept(this);
-}
-
-std::any BuildTreeGenAstVisitor::visitLocalBlockStatement(CqasmParser::LocalBlockStatementContext *context) {
-    if (auto variable_declaration_ctx = context->variableDeclaration(); variable_declaration_ctx) {
-        return variable_declaration_ctx->accept(this);
-    } else if (auto instruction_ctx = context->instruction(); instruction_ctx) {
-        return instruction_ctx->accept(this);
-    } else if (auto assignment_statement_ctx = context->assignmentStatement(); assignment_statement_ctx) {
-        return assignment_statement_ctx->accept(this);
-    } else if (auto return_statement_ctx = context->returnStatement(); return_statement_ctx) {
-        return return_statement_ctx->accept(this);
-    } else if (auto expression_statement_ctx = context->expressionStatement(); expression_statement_ctx) {
-        return expression_statement_ctx->accept(this);
-    }
-    throw error::AnalysisError{ "unknown local block statement type" };
-}
-
 std::any BuildTreeGenAstVisitor::visitVariableDeclaration(CqasmParser::VariableDeclarationContext *context) {
-    if (auto variable_definition_ctx = context->variableDefinition(); variable_definition_ctx) {
-        return variable_definition_ctx->accept(this);
-    }
-    assert(context->variableInitialization());
-    return context->variableInitialization()->accept(this);
+    return visitVariableDefinition(context->variableDefinition());
 }
 
 std::any BuildTreeGenAstVisitor::visitVariableDefinition(CqasmParser::VariableDefinitionContext *context) {
     return One<Statement>{ visitVariable(context) };
 }
 
-std::any BuildTreeGenAstVisitor::visitVariableInitialization(CqasmParser::VariableInitializationContext *context) {
-    auto ret = tree::make<Initialization>();
-    ret->var = visitClassicalVariable(context);
-    ret->rhs = std::any_cast<One<Expression>>(context->expression()->accept(this));
-    setNodeAnnotation(ret, context->EQUALS()->getSymbol());
-    return One<Statement>{ ret };
-}
-
-std::any BuildTreeGenAstVisitor::visitFunctionDeclaration(CqasmParser::FunctionDeclarationContext *context) {
-    auto ret = tree::make<Function>();
-    ret->name = tree::make<Identifier>(context->IDENTIFIER()->getText());
-    ret->parameters = context->parameters()
-        ? std::any_cast<One<LocalBlock>>(context->parameters()->accept(this))
-        : tree::make<LocalBlock>();
-    ret->return_type = context->type()
-        ? tree::Maybe<Type>{ std::any_cast<One<Type>>(context->type()->accept(this)).get_ptr() }
-        : tree::Maybe<Type>{};
-    ret->block = context->localBlock()
-        ? std::any_cast<One<LocalBlock>>(context->localBlock()->accept(this))
-        : tree::make<LocalBlock>();
-    setNodeAnnotation(ret, context->IDENTIFIER()->getSymbol());
-    return One<Statement>{ ret };
-}
-
-std::any BuildTreeGenAstVisitor::visitParameters(CqasmParser::ParametersContext *context) {
-    auto ret = tree::make<LocalBlock>();
-    const auto &variable_definitions = context->variableDefinition();
-    std::for_each(variable_definitions.begin(), variable_definitions.end(),
-        [this, &ret](const auto &variable_definition_ctx) {
-            ret->statements.add(std::any_cast<One<Statement>>(variable_definition_ctx->accept(this)));
-    });
-    return ret;
-}
-
-std::any BuildTreeGenAstVisitor::visitAssignmentStatement(CqasmParser::AssignmentStatementContext *context) {
-    auto ret = tree::make<AssignmentStatement>();
-    ret->lhs = std::any_cast<One<Expression>>(context->expression(0)->accept(this));
-    ret->rhs = std::any_cast<One<Expression>>(context->expression(1)->accept(this));
-    setNodeAnnotation(ret, context->EQUALS()->getSymbol());
-    return One<Statement>{ ret };
-}
-
-std::any BuildTreeGenAstVisitor::visitReturnStatement(CqasmParser::ReturnStatementContext *context) {
-    auto ret = tree::make<ReturnStatement>();
-    ret->return_value = std::any_cast<One<Expression>>(context->expression()->accept(this));
-    setNodeAnnotation(ret, context->RETURN()->getSymbol());
-    return One<Statement>{ ret };
-}
-
-std::any BuildTreeGenAstVisitor::visitExpressionStatement(CqasmParser::ExpressionStatementContext *context) {
-    auto ret = tree::make<ExpressionStatement>();
-    ret->expression = std::any_cast<One<Expression>>(context->expression()->accept(this));
-    // Expression statements get the source location information from their expressions
-    return One<Statement>{ ret };
-}
-
 std::any BuildTreeGenAstVisitor::visitGate(CqasmParser::GateContext *context) {
     auto ret = tree::make<Gate>();
     ret->name = tree::make<Identifier>(context->IDENTIFIER()->getText());
     ret->operands = std::any_cast<One<ExpressionList>>(visitExpressionList(context->expressionList()));
+    if (context->expression()) {
+        ret->operands->items.add(std::any_cast<One<Expression>>(context->expression()->accept(this)));
+    }
     setNodeAnnotation(ret, context->IDENTIFIER()->getSymbol());
     return One<Statement>{ ret };
 }
@@ -244,18 +193,13 @@ std::any BuildTreeGenAstVisitor::visitGate(CqasmParser::GateContext *context) {
 std::any BuildTreeGenAstVisitor::visitMeasureInstruction(CqasmParser::MeasureInstructionContext *context) {
     auto ret = tree::make<MeasureInstruction>();
     ret->name = tree::make<Identifier>(context->MEASURE()->getText());
-    ret->lhs = std::any_cast<One<Expression>>(context->expression(0)->accept(this));
-    ret->rhs = std::any_cast<One<Expression>>(context->expression(1)->accept(this));
+    ret->operands = std::any_cast<One<ExpressionList>>(visitExpressionList(context->expressionList()));
     setNodeAnnotation(ret, context->MEASURE()->getSymbol());
     return One<Statement>{ ret };
 }
 
 std::any BuildTreeGenAstVisitor::visitType(CqasmParser::TypeContext *context) {
-    if (auto quantum_type_ctx = context->quantumType(); quantum_type_ctx) {
-        return quantum_type_ctx->accept(this);
-    }
-    assert(context->classicalType());
-    return context->classicalType()->accept(this);
+    return context->quantumType()->accept(this);
 }
 
 std::any BuildTreeGenAstVisitor::visitQubitType(CqasmParser::QubitTypeContext *context) {
@@ -263,58 +207,6 @@ std::any BuildTreeGenAstVisitor::visitQubitType(CqasmParser::QubitTypeContext *c
         tree::make<Keyword>(types::qubit_type_name),
         getArraySize(context->arraySizeDeclaration()));
     setNodeAnnotation(ret, context->QUBIT_TYPE()->getSymbol());
-    if (context->arraySizeDeclaration()) {
-        expandNodeAnnotation(ret, context->arraySizeDeclaration()->CLOSE_BRACKET()->getSymbol());
-    }
-    return ret;
-}
-
-std::any BuildTreeGenAstVisitor::visitBitType(CqasmParser::BitTypeContext *context) {
-    auto ret = tree::make<Type>(
-        tree::make<Keyword>(types::bit_type_name),
-        getArraySize(context->arraySizeDeclaration()));
-    setNodeAnnotation(ret, context->BIT_TYPE()->getSymbol());
-    if (context->arraySizeDeclaration()) {
-        expandNodeAnnotation(ret, context->arraySizeDeclaration()->CLOSE_BRACKET()->getSymbol());
-    }
-    return ret;
-}
-
-std::any BuildTreeGenAstVisitor::visitAxisType(CqasmParser::AxisTypeContext *context) {
-    auto ret = tree::make<Type>(
-        tree::make<Keyword>(types::axis_type_name),
-        tree::Maybe<IntegerLiteral>{ tree::make<IntegerLiteral>(3) });
-    setNodeAnnotation(ret, context->AXIS_TYPE()->getSymbol());
-    return ret;
-}
-
-std::any BuildTreeGenAstVisitor::visitBoolType(CqasmParser::BoolTypeContext *context) {
-    auto ret = tree::make<Type>(
-        tree::make<Keyword>(types::bool_type_name),
-        getArraySize(context->arraySizeDeclaration()));
-    setNodeAnnotation(ret, context->BOOL_TYPE()->getSymbol());
-    if (context->arraySizeDeclaration()) {
-        expandNodeAnnotation(ret, context->arraySizeDeclaration()->CLOSE_BRACKET()->getSymbol());
-    }
-    return ret;
-}
-
-std::any BuildTreeGenAstVisitor::visitIntType(CqasmParser::IntTypeContext *context) {
-    auto ret = tree::make<Type>(
-        tree::make<Keyword>(types::integer_type_name),
-        getArraySize(context->arraySizeDeclaration()));
-    setNodeAnnotation(ret, context->INT_TYPE()->getSymbol());
-    if (context->arraySizeDeclaration()) {
-        expandNodeAnnotation(ret, context->arraySizeDeclaration()->CLOSE_BRACKET()->getSymbol());
-    }
-    return ret;
-}
-
-std::any BuildTreeGenAstVisitor::visitFloatType(CqasmParser::FloatTypeContext *context) {
-    auto ret = tree::make<Type>(
-        tree::make<Keyword>(types::float_type_name),
-        getArraySize(context->arraySizeDeclaration()));
-    setNodeAnnotation(ret, context->FLOAT_TYPE()->getSymbol());
     if (context->arraySizeDeclaration()) {
         expandNodeAnnotation(ret, context->arraySizeDeclaration()->CLOSE_BRACKET()->getSymbol());
     }
@@ -488,22 +380,6 @@ std::any BuildTreeGenAstVisitor::visitIndex(CqasmParser::IndexContext *context) 
 std::any BuildTreeGenAstVisitor::visitIdentifier(CqasmParser::IdentifierContext *context) {
     auto ret = tree::make<Identifier>(context->IDENTIFIER()->getText());
     setNodeAnnotation(ret, context->IDENTIFIER()->getSymbol());
-    return One<Expression>{ ret };
-}
-
-std::any BuildTreeGenAstVisitor::visitAxisInitializationList(CqasmParser::AxisInitializationListContext *context) {
-    auto expression_list = tree::make<ExpressionList>();
-    const auto &expressions = context->expression();
-    std::for_each(expressions.begin(), expressions.end(), [this, &expression_list](auto &expression_ctx) {
-        expression_list->items.add(std::any_cast<One<Expression>>(expression_ctx->accept(this)));
-    });
-    auto ret = tree::make<InitializationList>(expression_list);
-    return One<Expression>{ ret };
-}
-
-std::any BuildTreeGenAstVisitor::visitInitializationList(CqasmParser::InitializationListContext *context) {
-    auto ret = tree::make<InitializationList>(
-        std::any_cast<One<ExpressionList>>(visitExpressionList(context->expressionList())));
     return One<Expression>{ ret };
 }
 

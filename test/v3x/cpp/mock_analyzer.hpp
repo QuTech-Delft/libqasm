@@ -19,12 +19,10 @@ struct MockAnalyzer : public Analyzer {
     [[nodiscard]] Scope &current_scope() { return Analyzer::current_scope(); }
     [[nodiscard]] tree::One<semantic::Block> current_block() { return Analyzer::current_block(); }
     [[nodiscard]] tree::Any<semantic::Variable> &current_variables() { return Analyzer::current_variables(); }
-    [[nodiscard]] tree::Any<semantic::Function> &global_functions() { return Analyzer::global_functions(); }
 
     [[nodiscard]] const Scope &global_scope() const { return Analyzer::global_scope(); }
     [[nodiscard]] const Scope &current_scope() const { return Analyzer::current_scope(); }
     [[nodiscard]] const tree::Any<semantic::Variable> &current_variables() const { return Analyzer::current_variables(); }
-    [[nodiscard]] const tree::Any<semantic::Function> &global_functions() const { return Analyzer::global_functions(); }
 };
 
 } // namespace cqasm::v3x::analyzer

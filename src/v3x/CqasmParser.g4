@@ -11,71 +11,32 @@ options {
 // by removing the need to implement some methods,
 // which would otherwise contain boilerplate code (e.g. 'statement' and 'expression')
 
-program: statementSeparator* version globalBlock? statementSeparator* EOF;
+program: versionSection bodySection? eofSection;
+versionSection: statementSeparator* version;
+bodySection: variableDeclarationSection instructionsSection;
+variableDeclarationSection: statementSeparator* variableDeclaration;
+instructionsSection: gatesSection? measureInstructionSection?;
+gatesSection: (statementSeparator* gate)+;
+measureInstructionSection: statementSeparator* measureInstruction;
+eofSection: statementSeparator* EOF;
 
 statementSeparator: NEW_LINE | SEMICOLON;
 
 version: VERSION VERSION_NUMBER;
 
-globalBlock: (statementSeparator+ globalBlockStatement)+;
+variableDeclaration: variableDefinition;
 
-globalBlockStatement:
-    localBlockStatement
-    | functionDeclaration
-    ;
+gate: IDENTIFIER (OPEN_PARENS expression CLOSE_PARENS)? expressionList;
 
-// Current implementation of the semantic parser will only allow function call expressions as expression statements
-// Notice expression statements are checked for before instructions
-// This way, code like h(q[0]) is parsed as a function call to a function h with a q[0] parameter
-// And not like a gate h with a (q[0]) expression
-localBlockStatement:
-    variableDeclaration
-    | assignmentStatement
-    | returnStatement
-    | expressionStatement
-    | instruction
-    ;
-
-variableDeclaration:
-    variableDefinition
-    | variableInitialization
-    ;
-
-assignmentStatement: expression EQUALS expression;
-
-returnStatement: RETURN expression;
-
-expressionStatement: expression;
-
-instruction:
-    expression EQUALS MEASURE expression  # measureInstruction
-    | IDENTIFIER expressionList  # gate
-    ;
-
-functionDeclaration: FUNCTION IDENTIFIER OPEN_PARENS parameters? CLOSE_PARENS (ARROW type)?
-    OPEN_BRACE localBlock? statementSeparator* CLOSE_BRACE;
-
-parameters: variableDefinition (statementSeparator* COMMA statementSeparator* variableDefinition)*;
-
-type: quantumType | classicalType;
-
-quantumType:
-    QUBIT_TYPE arraySizeDeclaration?  # qubitType
-    | BIT_TYPE arraySizeDeclaration?  # bitType
-    ;
-
-classicalType:
-    AXIS_TYPE  # axisType
-    | BOOL_TYPE arraySizeDeclaration?  # boolType
-    | INT_TYPE arraySizeDeclaration?  # intType
-    | FLOAT_TYPE arraySizeDeclaration?  # floatType
-    ;
-
-localBlock: (statementSeparator+ localBlockStatement)+;
+measureInstruction: MEASURE expressionList;
 
 variableDefinition: type IDENTIFIER;
 
-variableInitialization: classicalType IDENTIFIER EQUALS expression;
+type: quantumType;
+
+quantumType:
+    QUBIT_TYPE arraySizeDeclaration?  # qubitType
+    ;
 
 arraySizeDeclaration: OPEN_BRACKET INTEGER_LITERAL CLOSE_BRACKET;
 
@@ -113,8 +74,6 @@ expression:
     | IDENTIFIER OPEN_PARENS expressionList? CLOSE_PARENS  # functionCall
     | IDENTIFIER OPEN_BRACKET indexList CLOSE_BRACKET  # index
     | IDENTIFIER  # identifier
-    | OPEN_BRACKET expression COMMA expression COMMA expression CLOSE_BRACKET  # axisInitializationList
-    | OPEN_BRACE expressionList CLOSE_BRACE  # initializationList
     | BOOLEAN_LITERAL  # booleanLiteral
     | INTEGER_LITERAL  # integerLiteral
     | FLOAT_LITERAL  # floatLiteral

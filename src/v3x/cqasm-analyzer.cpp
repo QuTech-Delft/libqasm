@@ -8,7 +8,6 @@
 #include "v3x/cqasm-core-function.hpp"
 #include "v3x/cqasm-parse-helper.hpp"
 #include "v3x/register-consteval-core-functions.hpp"
-#include "v3x/register-core-functions.hpp"
 #include "v3x/register-instructions.hpp"
 
 #include <fmt/format.h>
@@ -36,27 +35,21 @@ Analyzer::Analyzer(const primitives::Version &api_version)
 [[nodiscard]] Scope &Analyzer::current_scope() { return scope_stack_.front(); }
 [[nodiscard]] tree::One<semantic::Block> Analyzer::current_block() { return current_scope().block; }
 [[nodiscard]] tree::Any<semantic::Variable> &Analyzer::current_variables() { return current_scope().variables; }
-[[nodiscard]] tree::Any<semantic::Function> &Analyzer::global_functions() { return global_scope().functions; }
 
 [[nodiscard]] const Scope &Analyzer::global_scope() const { return scope_stack_.back(); }
 [[nodiscard]] const Scope &Analyzer::current_scope() const { return scope_stack_.front(); }
 [[nodiscard]] const tree::Any<semantic::Variable> &Analyzer::current_variables() const { return current_scope().variables; }
-[[nodiscard]] const tree::Any<semantic::Function> &Analyzer::global_functions() const { return global_scope().functions; }
 
 /**
  * Registers mappings for pi, eu (aka e, 2.718...), tau and im (imaginary unit).
  */
 void Analyzer::register_default_mappings() {
     static constexpr double tau = 2 * std::numbers::pi;
-    register_variable("x", tree::make<values::ConstAxis>(primitives::Axis{ 1, 0, 0 }));
-    register_variable("y", tree::make<values::ConstAxis>(primitives::Axis{ 0, 1, 0 }));
-    register_variable("z", tree::make<values::ConstAxis>(primitives::Axis{ 0, 0, 1 }));
     register_variable("true", tree::make<values::ConstBool>(true));
     register_variable("false", tree::make<values::ConstBool>(false));
     register_variable("pi", tree::make<values::ConstFloat>(std::numbers::pi));
     register_variable("eu", tree::make<values::ConstFloat>(std::numbers::e));
     register_variable("tau", tree::make<values::ConstFloat>(tau));
-    register_variable("im", tree::make<values::ConstComplex>(primitives::Complex(0.0, 1.0)));
 }
 
 /**
@@ -64,7 +57,6 @@ void Analyzer::register_default_mappings() {
  */
 void Analyzer::register_default_functions() {
     function::register_consteval_core_functions(this);
-    function::register_core_functions(this);
 }
 
 /**
@@ -165,13 +157,6 @@ void Analyzer::add_variable_to_current_scope(const tree::One<semantic::Variable>
 }
 
 /**
- * Adds a function to the global scope.
- */
-void Analyzer::add_function_to_global_scope(const tree::One<semantic::Function> &function) {
-    global_functions().add(function);
-}
-
-/**
  * Resolves a variable.
  * Throws NameResolutionFailure if no variable by the given name exists.
  */
@@ -202,13 +187,7 @@ void Analyzer::register_variable(const std::string &name, const values::Value &v
  * or otherwise returns the value returned by the function.
  */
 values::Value Analyzer::resolve_function(const std::string &name, const values::Values &args) const {
-    try {
-        return global_scope().consteval_core_function_table.resolve(name, args);
-    } catch (const error::AnalysisError &) {}
-    try {
-        return global_scope().core_function_table.resolve(name, args);
-    } catch (const error::AnalysisError &) {}
-    return global_scope().function_table.resolve(name, args);
+    return global_scope().consteval_core_function_table.resolve(name, args);
 }
 
 /**
@@ -233,36 +212,6 @@ void Analyzer::register_consteval_core_function(
     const resolver::ConstEvalCoreFunction &function) {
 
     global_scope().consteval_core_function_table.add(name, types::from_spec(param_types), function);
-}
-
-/**
- * Registers a core function.
- */
-void Analyzer::register_core_function(const function::CoreFunction &function) {
-    global_scope().core_function_table.add(function);
-}
-
-/**
- * Convenience method for registering a core function type.
- * The arguments are passed straight to function::CoreFunction's constructor.
- */
-void Analyzer::register_core_function(
-    const std::string &name,
-    const std::string &param_types,
-    const char return_type) {
-
-    register_core_function(function::CoreFunction{ name, param_types, return_type });
-}
-
-/**
- * Convenience method for registering a function.
- */
-void Analyzer::register_function(
-    const std::string &name,
-    const types::Types &param_types,
-    const values::FunctionRef &value) {
-
-    global_scope().function_table.add(name, param_types, value);
 }
 
 /**

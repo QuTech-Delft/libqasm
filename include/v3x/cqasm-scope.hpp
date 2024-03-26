@@ -22,16 +22,6 @@ struct Scope {
     resolver::ConstEvalCoreFunctionTable consteval_core_function_table;
 
     /**
-     * The list of function supported by the language, and that can be evaluated at compile time.
-     */
-    resolver::CoreFunctionTable core_function_table;
-
-    /**
-     * The list of functions defined in the cQASM file.
-     */
-    resolver::FunctionTable function_table;
-
-    /**
      * The instructions visible within this scope.
      * Instructions have a case-sensitively matched name,
      * and a signature for the types of parameters they expect.
@@ -47,11 +37,6 @@ struct Scope {
      * The list of variables declared in this scope.
      */
     tree::Any<semantic::Variable> variables;
-
-    /**
-     * The list of functions defined in the global scope.
-     */
-    tree::Any<semantic::Function> functions;
 };
 
 } // namespace cqasm::v3x::analyzer

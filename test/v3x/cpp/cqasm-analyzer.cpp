@@ -14,6 +14,10 @@ using namespace ::testing;
 
 namespace cqasm::v3x::analyzer {
 
+//---------------------//
+// AnalyzerAnalyzeTest //
+//---------------------//
+
 class AnalyzerAnalyzeTest : public ::testing::Test {
 protected:
     void SetUp() override {}
@@ -44,32 +48,46 @@ TEST_F(AnalyzerAnalyzeTest, parser_returns_errors) {
     EXPECT_THAT(error.what(), ::testing::HasSubstr(parse_error_message));
 }
 
-TEST(Analyzer, constructor) {
+
+//--------------//
+// AnalyzerTest //
+//--------------//
+
+class AnalyzerTest : public ::testing::Test {
+protected:
+    void SetUp() override {}
+
+    tree::One<instruction::Instruction> instruction = tree::make<instruction::Instruction>("h", "Q");
+    tree::One<semantic::Variable> qubit = tree::make<semantic::Variable>("q", tree::make<types::Qubit>());
+    tree::Link<semantic::Variable> qubit_link{ qubit };
+    tree::One<values::VariableRef> qubit_variable_ref = tree::make<values::VariableRef>(qubit_link);
+    tree::Any<values::ValueBase> operands = tree::Any<values::ValueBase>{ qubit_variable_ref };
+    tree::One<semantic::Instruction> statement = tree::make<semantic::Instruction>(instruction, "H", operands);
+};
+
+TEST_F(AnalyzerTest, constructor) {
     MockAnalyzer analyzer{};
     EXPECT_EQ(analyzer.scope_stack().size(), 1);
     EXPECT_FALSE(analyzer.current_block().empty());
     EXPECT_TRUE(analyzer.current_variables().empty());
-    EXPECT_TRUE(analyzer.global_functions().empty());
 }
-TEST(Analyzer, push_scope) {
+TEST_F(AnalyzerTest, push_scope) {
     MockAnalyzer analyzer{};
     analyzer.push_scope();
     EXPECT_EQ(analyzer.scope_stack().size(), 2);
 }
-TEST(Analyzer, pop_scope) {
+TEST_F(AnalyzerTest, pop_scope) {
     MockAnalyzer analyzer{};
     analyzer.pop_scope();
     EXPECT_TRUE(analyzer.scope_stack().empty());
 }
-TEST(Analyzer, add_statement_to_current_scope) {
+TEST_F(AnalyzerTest, add_statement_to_current_scope) {
     MockAnalyzer analyzer{};
-    auto statement = tree::make<semantic::ReturnStatement>(tree::make<values::ConstInt>(42));
     analyzer.add_statement_to_current_scope(statement);
     EXPECT_EQ(analyzer.current_block()->statements.size(), 1);
 }
-TEST(Analyzer, add_statement_with_source_location_information_to_current_scope) {
+TEST_F(AnalyzerTest, add_statement_with_source_location_information_to_current_scope) {
     MockAnalyzer analyzer{};
-    auto statement = tree::make<semantic::ReturnStatement>(tree::make<values::ConstInt>(42));
     const auto &statement_source_location = annotations::SourceLocation{ "input.cq", { { 10, 20 }, { 11, 10 } } };
     statement->set_annotation(statement_source_location);
     analyzer.add_statement_to_current_scope(statement);
@@ -78,14 +96,13 @@ TEST(Analyzer, add_statement_with_source_location_information_to_current_scope) 
     EXPECT_EQ(block_source_location.file_name, statement_source_location.file_name);
     EXPECT_EQ(block_source_location.range, statement_source_location.range);
 }
-TEST(Analyzer, add_statement_with_source_location_information_to_current_scope_and_block_has_source_location_information) {
+TEST_F(AnalyzerTest, add_statement_with_source_location_information_to_current_scope_and_block_has_source_location_information) {
     MockAnalyzer analyzer{};
     //     10 15 20 25 30
     //  5      <
     //  8               >
     const auto &block_initial_source_location = annotations::SourceLocation{ "input.cq", { { 5, 15 }, { 8, 30 } } };
     analyzer.current_block()->set_annotation(block_initial_source_location);
-    auto statement = tree::make<semantic::ReturnStatement>(tree::make<values::ConstInt>(42));
     //     10 15 20 25 30
     // 10   <
     // 11         >

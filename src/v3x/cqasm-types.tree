@@ -25,9 +25,6 @@ namespace types
 type_base {
     size: cqasm::v3x::primitives::Int;
 
-    # Type of an axis (x, y, and z vectors).
-    axis {}
-
     # Type of a boolean.
     bool {}
 
@@ -37,15 +34,7 @@ type_base {
     # Type of a float number (IEEE double).
     float {}
 
-    # Type of a complex number (2x IEEE double).
-    complex {}
-
-    bit {}
     qubit {}
 
-    bool_array {}
-    int_array {}
-    float_array {}
-    bit_array {}
     qubit_array {}
 }

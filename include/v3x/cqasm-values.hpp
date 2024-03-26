@@ -32,22 +32,6 @@ using Value = tree::One<ValueBase>;
 using Values = tree::Any<ValueBase>;
 
 /**
- * Promotes a value of array of Type to a value of array of PromotedType.
- * For example, given an array of bool, and a promoted type of float, returns an array of float.
- * It doesn't perform any checks on the value returned by the promote function.
- */
-template <typename ConstTypeArray, typename ConstPromotedTypeArray, typename PromotedType>
-Value promote_array_value_to_array_type(const ConstTypeArray *array_value) {
-    const auto &array_value_items = array_value->value.get_vec();
-    auto promoted_array_value = cqasm::tree::make<ConstPromotedTypeArray>();
-    std::for_each(array_value_items.begin(), array_value_items.end(),
-        [&promoted_array_value](const auto &item) {
-            promoted_array_value->value.add(promote(item, tree::make<PromotedType>()));
-    });
-    return promoted_array_value;
-}
-
-/**
  * Type-checks and (if necessary) promotes the given value to the given type.
  * Also checks assignability of the value if the type says the value must be assignable.
  * Returns null if the check/promotion fails,
@@ -66,12 +50,6 @@ bool check_promote(const types::Type &from_type, const types::Type &to_type);
  * Throws an error if the given type is not of array type.
  */
 types::Type element_type_of(const types::Type &type);
-
-/**
- * Returns the type of a FunctionRefBase node.
- * That will be the value returned by the function.
- */
-types::Type get_function_ref_base_return_type(const FunctionRefBase *function_ref_base_ptr);
 
 /**
  * Returns the type of the given value.
@@ -99,23 +77,6 @@ void check_const(const Value &value);
  * i.e. if it doesn't have a known value at this time.
  */
 void check_const(const Values &values);
-
-/**
- * Checks all the elements of a value satisfy a predicate.
- * This is only checked when the value is a boolean, integer or real array.
- */
-template <typename Pred>
-bool check_all_of_array_values(const Value &value, Pred&& pred) {
-    if (const auto &const_bool_array = value->as_const_bool_array()) {
-        return std::all_of(const_bool_array->value.begin(), const_bool_array->value.end(), pred);
-    } else if (const auto &const_int_array = value->as_const_int_array()) {
-        return std::all_of(const_int_array->value.begin(), const_int_array->value.end(), pred);
-    } else if (const auto &const_float_array = value->as_const_float_array()) {
-        return std::all_of(const_float_array->value.begin(), const_float_array->value.end(), pred);
-    } else {
-        return false;
-    }
-}
 
 /**
  * Stream << overload for a single value.

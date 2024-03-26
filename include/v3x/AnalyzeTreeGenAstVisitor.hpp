@@ -17,11 +17,6 @@ using IndexListT = tree::Many<IndexT>;
 
 using GlobalBlockReturnT = std::tuple<
     tree::One<semantic::Block>,
-    const tree::Any<semantic::Variable> &,
-    const tree::Any<semantic::Function> &>;
-
-using LocalBlockReturnT = std::pair<
-    tree::One<semantic::Block>,
     const tree::Any<semantic::Variable> &>;
 
 class AnalyzeTreeGenAstVisitor : public ast::Visitor<std::any> {
@@ -38,13 +33,7 @@ public:
     std::any visit_annotated(ast::Annotated &node) override;
     std::any visit_annotation_data(ast::AnnotationData &node) override;
     std::any visit_global_block(ast::GlobalBlock &node) override;
-    std::any visit_local_block(ast::LocalBlock &node) override;
     std::any visit_variable(ast::Variable &node) override;
-    std::any visit_initialization(ast::Initialization &node) override;
-    std::any visit_function(ast::Function &node) override;
-    std::any visit_assignment_statement(ast::AssignmentStatement &node) override;
-    std::any visit_return_statement(ast::ReturnStatement &node) override;
-    std::any visit_expression_statement(ast::ExpressionStatement &node) override;
     std::any visit_gate(ast::Gate &node) override;
     std::any visit_measure_instruction(ast::MeasureInstruction &node) override;
     std::any visit_expression(ast::Expression &node) override;
@@ -78,15 +67,11 @@ public:
     std::any visit_index_item(ast::IndexItem &node) override;
     std::any visit_index_range(ast::IndexRange &ast) override;
     std::any visit_identifier(ast::Identifier &node) override;
-    std::any visit_initialization_list(ast::InitializationList &node) override;
     std::any visit_boolean_literal(ast::BooleanLiteral &node) override;
     std::any visit_integer_literal(ast::IntegerLiteral &node) override;
     std::any visit_float_literal(ast::FloatLiteral &node) override;
 
 private:
-    bool current_block_has_return_statement();
-    void current_block_return_statements_promote_or_error(const tree::Maybe<types::Node> &return_type);
-
     /**
      * Build a semantic type
      * It can be a simple type SemanticT, of size 1,
@@ -112,16 +97,6 @@ private:
         auto type_name = type->name->name;
         if (type_name == types::qubit_type_name) {
             return build_semantic_type<types::Qubit, types::QubitArray>(*type, types::qubit_type_name); }
-        if (type_name == types::bit_type_name) {
-            return build_semantic_type<types::Bit, types::BitArray>(*type, types::bit_type_name); }
-        if (type_name == types::axis_type_name) {
-            return tree::make<types::Axis>(3); }
-        if (type_name == types::bool_type_name) {
-            return build_semantic_type<types::Bool, types::BoolArray>(*type, types::bool_type_name); }
-        if (type_name == types::integer_type_name) {
-            return build_semantic_type<types::Int, types::IntArray>(*type, types::integer_type_name); }
-        if (type_name == types::float_type_name) {
-            return build_semantic_type<types::Float, types::FloatArray>(*type, types::float_type_name); }
         throw error::AnalysisError("unknown type \"" + type_name + "\"");
     }
 
@@ -150,21 +125,6 @@ private:
      */
     [[nodiscard]] static values::Value build_value_from_promoted_values(
         const values::Values &values, const types::Type &type);
-
-    /**
-     * Convenience function for visiting a global or a local block
-     */
-    template <typename Block>
-    void visit_block(Block &block) {
-        for (const auto &statement_ast : block.statements) {
-            try {
-                statement_ast->visit(*this);
-            } catch (error::AnalysisError &err) {
-                err.context(block);
-                result_.errors.push_back(std::move(err));
-            }
-        }
-    }
 
     /**
      * Convenience function for visiting a function call given the function's name and arguments

@@ -61,12 +61,10 @@ protected:
     [[nodiscard]] Scope &current_scope();
     [[nodiscard]] tree::One<semantic::Block> current_block();
     [[nodiscard]] tree::Any<semantic::Variable> &current_variables();
-    [[nodiscard]] tree::Any<semantic::Function> &global_functions();
 
     [[nodiscard]] const Scope &global_scope() const;
     [[nodiscard]] const Scope &current_scope() const;
     [[nodiscard]] const tree::Any<semantic::Variable> &current_variables() const;
-    [[nodiscard]] const tree::Any<semantic::Function> &global_functions() const;
 
 public:
     /**
@@ -139,11 +137,6 @@ public:
     virtual void add_variable_to_current_scope(const tree::One<semantic::Variable> &variable);
 
     /**
-     * Adds a function to the global scope.
-     */
-    virtual void add_function_to_global_scope(const tree::One<semantic::Function> &function);
-
-    /**
      * Resolves a variable.
      * Throws NameResolutionFailure if no variable by the given name exists.
      */
@@ -181,28 +174,6 @@ public:
         const std::string &name,
         const std::string &param_types,
         const resolver::ConstEvalCoreFunction &function);
-
-    /**
-     * Registers a core function.
-     */
-    virtual void register_core_function(const function::CoreFunction &function);
-
-    /**
-     * Convenience method for registering a core function type.
-     * The arguments are passed straight to function::CoreFunction's constructor.
-     */
-    virtual void register_core_function(
-        const std::string &name,
-        const std::string &param_types,
-        const char return_type);
-
-    /**
-     * Convenience method for registering a function.
-     */
-    virtual void register_function(
-        const std::string &name,
-        const types::Types &param_types,
-        const values::FunctionRef &value);
 
     /**
      * Resolves an instruction.
