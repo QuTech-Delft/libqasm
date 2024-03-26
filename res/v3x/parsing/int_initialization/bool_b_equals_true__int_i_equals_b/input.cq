@@ -1,4 +1,0 @@
-version 3
-
-bool b = true
-int i = b

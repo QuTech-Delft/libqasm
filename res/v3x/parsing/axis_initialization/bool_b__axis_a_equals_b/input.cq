@@ -1,4 +1,0 @@
-version 3
-
-bool b
-axis a = b

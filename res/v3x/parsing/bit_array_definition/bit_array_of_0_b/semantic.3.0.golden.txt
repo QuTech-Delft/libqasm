@@ -1,2 +1,0 @@
-ERROR
-Error at input.cq:3:8..9: found bit array of size <= 0

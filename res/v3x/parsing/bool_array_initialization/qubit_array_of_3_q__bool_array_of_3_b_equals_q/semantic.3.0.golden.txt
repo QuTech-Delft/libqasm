@@ -1,2 +1,0 @@
-ERROR
-Error at input.cq:4:11..12: type of right-hand side (qubit array) could not be coerced to left-hand side (bool array)
