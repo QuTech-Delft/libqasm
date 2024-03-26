@@ -4,6 +4,7 @@ on:
   push:
     branches:
     - develop
+    - master-beta
   pull_request:
 
 jobs:
