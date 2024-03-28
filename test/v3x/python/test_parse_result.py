@@ -9,8 +9,8 @@ class TestParseResult(unittest.TestCase):
         program_str = "version 3; qubit[3.14]"
         v3x_analyzer = cq.Analyzer()
         actual_errors_json = v3x_analyzer.parse_string_to_json(program_str)
-        expected_errors_json = '''{"errors":["Error at <unknown file name>:1:21..22: declaring qubit array of size <= 0"]}'''
-        self.assertEqual(expected_errors_json, expected_errors_json)
+        expected_errors_json = '''{"errors":[{"range":{"start":{"line":1,"character":18},"end":{"line":1,"character":22}},"message":"mismatched input '3.14' expecting INTEGER_LITERAL","severity":1}]}'''
+        self.assertEqual(actual_errors_json, expected_errors_json)
 
     def test_to_json_with_parser_ast(self):
         # res/v3x/parsing/qubit_array_definition/qubit_array_of_0_b

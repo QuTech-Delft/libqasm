@@ -25,7 +25,7 @@ class TestV3xAnalyzer(unittest.TestCase):
 
         measure_instruction = ast.block.measure_instruction
         self.assertEqual(measure_instruction.name.name, "b'measure'")
-        self.assertEqual(measure_instruction.operands.items[0].name, "b'q'")
+        self.assertEqual(measure_instruction.operand.name, "b'q'")
 
     def test_parse_string_returning_errors(self):
         program_str = "version 3;qubit[5] q;H q[0:4];measure"

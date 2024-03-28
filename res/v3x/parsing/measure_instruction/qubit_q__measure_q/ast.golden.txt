@@ -35,13 +35,9 @@ Program(
               name: measure
             )
           >
-          operands: <
-            ExpressionList(
-              items: [
-                Identifier( # input.cq:4:9..10
-                  name: q
-                )
-              ]
+          operand: <
+            Identifier( # input.cq:4:9..10
+              name: q
             )
           >
           annotations: []

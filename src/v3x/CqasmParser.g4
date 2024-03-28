@@ -28,7 +28,7 @@ variableDeclaration: variableDefinition;
 
 gate: IDENTIFIER (OPEN_PARENS expression CLOSE_PARENS)? expressionList;
 
-measureInstruction: MEASURE expressionList;
+measureInstruction: MEASURE expression;
 
 variableDefinition: type IDENTIFIER;
 

@@ -172,12 +172,15 @@ annotated {
             }
 
             instruction {
-                name: One<identifier>;
-                operands: One<expression_list>;
+                gate {
+                    name: One<identifier>;
+                    operands: One<expression_list>;
+                }
 
-                gate {}
-
-                measure_instruction {}
+                measure_instruction {
+                    name: One<identifier>;
+                    operand: One<expression>;
+                }
             }
         }
     }

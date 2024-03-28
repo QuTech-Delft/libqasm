@@ -190,10 +190,10 @@ std::any AnalyzeTreeGenAstVisitor::visit_gate(ast::Gate &node) {
 std::any AnalyzeTreeGenAstVisitor::visit_measure_instruction(ast::MeasureInstruction &node) {
     auto ret = tree::Maybe<semantic::Instruction>();
     try {
-        // Set operand list
+        // Set operand
         // Notice operands have to be added in this order
         // Otherwise instruction resolution would fail
-        auto operands = std::any_cast<values::Values>(visit_expression_list(*node.operands));
+        auto operands = values::Values{ std::any_cast<values::Value>(visit_expression(*node.operand)) };
 
         // Resolve the instruction
         ret.set(analyzer_.resolve_instruction(node.name->name, operands));

@@ -195,7 +195,7 @@ std::any BuildTreeGenAstVisitor::visitGate(CqasmParser::GateContext *context) {
 std::any BuildTreeGenAstVisitor::visitMeasureInstruction(CqasmParser::MeasureInstructionContext *context) {
     auto ret = tree::make<MeasureInstruction>();
     ret->name = tree::make<Identifier>(context->MEASURE()->getText());
-    ret->operands = std::any_cast<One<ExpressionList>>(visitExpressionList(context->expressionList()));
+    ret->operand = std::any_cast<One<Expression>>(context->expression()->accept(this));
     setNodeAnnotation(ret, context->MEASURE()->getSymbol());
     return ret;
 }
