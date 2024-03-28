@@ -14,5 +14,5 @@ target_compile_options(${PROJECT_NAME}_emscripten
 
 # --no-entry is needed by -sSTRICT
 target_link_options(${PROJECT_NAME}_emscripten
-    PUBLIC -lembind -fwasm-exceptions -Os --no-entry --profiling-funcs -sASSERTIONS=1 -sMODULARIZE=1 -sSTRICT
+    PUBLIC -lembind -fwasm-exceptions -Os --no-entry -sENVIRONMENT=web -sEXPORT_ES6=1 -sFILESYSTEM=0 -sMODULARIZE=1 -sSTRICT
 )
