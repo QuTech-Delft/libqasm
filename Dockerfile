@@ -1,47 +1,41 @@
-FROM centos:6
+FROM ubuntu:22.04
 
-RUN yum install -y centos-release-scl && \
-    yum install -y devtoolset-7 git wget
+RUN apt-get -qq update && \
+    apt-get -qq upgrade && \
+    apt-get -qq -y install bc build-essential git python3 python3-pip swig wget && \
+    python3 -m pip install conan pytest
 
-# Select CMake version with one of the lines below.
-RUN yum install -y cmake
-# RUN wget https://github.com/Kitware/CMake/releases/download/v3.12.0/cmake-3.12.0-Linux-x86_64.sh && chmod +x cmake-3.12.0-Linux-x86_64.sh && ./cmake-3.12.0-Linux-x86_64.sh --skip-license
-# RUN wget https://cmake.org/files/v2.8/cmake-2.8.11.tar.gz && \
-#     tar xvf cmake-2.8.11.tar.gz  && \
-#     cd cmake-2.8.11 && \
-#     /usr/bin/scl enable devtoolset-7 "./configure" && \
-#     /usr/bin/scl enable devtoolset-7 "make -j" && \
-#     /usr/bin/scl enable devtoolset-7 "make install"
+# Install latest emsdk
+RUN git clone https://github.com/emscripten-core/emsdk.git && \
+    cd emsdk && \
+    git pull && \
+    ./emsdk install latest && \
+    ./emsdk activate latest && \
+    cd /
 
-# Add this line to test CMake logic for when an older version of flex/bison is
-# already installed (that is, to make sure it uses the version it built from
-# source rather than defaulting to the system version).
-# RUN yum install -y flex bison
-# RUN wget https://ftp.gnu.org/gnu/m4/m4-1.4.6.tar.gz && \
-#     tar xvf m4-1.4.6.tar.gz && \
-#     cd m4-1.4.6 && \
-#     /usr/bin/scl enable devtoolset-7 "./configure" && \
-#     /usr/bin/scl enable devtoolset-7 "make -j" && \
-#     /usr/bin/scl enable devtoolset-7 "make install"
-# RUN wget https://ftp.gnu.org/gnu/bison/bison-3.0.tar.gz && \
-#     tar xvf bison-3.0.tar.gz && \
-#     cd bison-3.0 && \
-#     /usr/bin/scl enable devtoolset-7 "./configure" && \
-#     /usr/bin/scl enable devtoolset-7 "make -j" && \
-#     /usr/bin/scl enable devtoolset-7 "make install"
-# RUN wget https://github.com/westes/flex/releases/download/v2.6.1/flex-2.6.1.tar.gz && \
-#     tar xvf flex-2.6.1.tar.gz && \
-#     cd flex-2.6.1 && \
-#     /usr/bin/scl enable devtoolset-7 "./configure" && \
-#     /usr/bin/scl enable devtoolset-7 "make -j" && \
-#     /usr/bin/scl enable devtoolset-7 "make install"
+# Install CMake 3.28
+RUN version=3.28 && \
+    build=1 && \
+    limit=3.20 && \
+    result=$(echo "$version >= $limit" | bc -l) && \
+    url="https://cmake.org/files/v$version/cmake-$version.$build-linux-x86_64.sh" && \
+    mkdir /temp && \
+    cd /temp && \
+    wget $url && \
+    mkdir /opt/cmake && \
+    sh cmake-$version.$build-linux-x86_64.sh --prefix=/opt/cmake --skip-license && \
+    ln -s /opt/cmake/bin/cmake /usr/local/bin/cmake
+   
+ADD . /libqasm-copy
+WORKDIR /libqasm-copy
 
+# Build emscripten binaries
+RUN conan profile detect --force && \
+    conan build . -pr=conan/profiles/emscripten -pr:b=conan/profiles/release -b missing && \
+    ls -hl build/Release/emscripten
 
-ADD . /src
-
-WORKDIR /build
-
-RUN /usr/bin/scl enable devtoolset-7 "cmake /src -DLIBQASM_BUILD_TESTS=ON -DLIBQASM_COMPAT=ON -DTREE_GEN_BUILD_TESTS=ON"
-RUN /usr/bin/scl enable devtoolset-7 "make -j"
-RUN CTEST_OUTPUT_ON_FAILURE=1 /usr/bin/scl enable devtoolset-7 "make test"
-RUN CTEST_OUTPUT_ON_FAILURE=1 /usr/bin/scl enable devtoolset-7 "make install"
+# Test emscripten binaries
+RUN cd emscripten && \
+    node_executable=$(find /emsdk -type f -name node) && \
+    $node_executable --experimental-wasm-eh test_cqasm.js && \
+    cd /

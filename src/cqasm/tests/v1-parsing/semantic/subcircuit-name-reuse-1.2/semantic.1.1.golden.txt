@@ -1,3 +1,0 @@
-ERROR
-Error at input.cq:1:9..12: the maximum cQASM version supported is 1.1, but the cQASM file is version 1.2
-Error at input.cq:6:1..9: duplicate subcircuit name "circuit"; previous definition was at input.cq:5:1..9

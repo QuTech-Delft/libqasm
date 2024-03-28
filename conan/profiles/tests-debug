@@ -1,0 +1,9 @@
+include(default)
+
+[settings]
+compiler.cppstd=20
+libqasm/*:build_type=Debug
+
+[options]
+libqasm/*:asan_enabled=True
+libqasm/*:build_tests=True

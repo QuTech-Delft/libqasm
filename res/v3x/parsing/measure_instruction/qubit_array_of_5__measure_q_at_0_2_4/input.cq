@@ -1,0 +1,4 @@
+version 3
+
+qubit[5] q
+measure q[0,2,4]

@@ -1,3 +1,0 @@
-ERROR
-Error at input.cq:4:20..23: failed to resolve a
-Error at input.cq:4:25..35: failed to resolve b

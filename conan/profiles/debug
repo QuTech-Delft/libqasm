@@ -1,0 +1,12 @@
+include(default)
+
+[settings]
+compiler.cppstd=20
+libqasm/*:build_type=Debug
+
+[options]
+libqasm/*:asan_enabled=False
+libqasm/*:build_tests=False
+
+[replace_requires]
+nodejs/*: nodejs/16.20.2

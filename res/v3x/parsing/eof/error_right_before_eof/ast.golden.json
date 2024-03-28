@@ -1,0 +1,1 @@
+{"errors":[{"range":{"start":{"line":5,"character":9},"end":{"line":5,"character":9}},"message":"missing ']' at '<EOF>'","severity":1,"relatedInformation":[{"location":{"uri":"file:///input.cq","range":{"start":{"line":0,"character":0},"end":{"line":0,"character":0}}},"message":"<unknown error message>"}]}]}

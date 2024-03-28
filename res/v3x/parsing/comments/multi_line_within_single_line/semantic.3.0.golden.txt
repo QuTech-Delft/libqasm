@@ -1,0 +1,12 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3.0
+    )
+  >
+  qubit_variable_declaration: -
+  block: -
+)
+

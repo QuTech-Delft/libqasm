@@ -1,0 +1,5 @@
+version 3.0
+
+/* This is a multi-
+// This is a single line comment which ends on the newline.
+line comment block */

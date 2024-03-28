@@ -1,4 +1,0 @@
-version 1.0
-qubits 10
-
-display @test.test([], [1], [1, 2], [1; 2], [1, 2; 3, 4])

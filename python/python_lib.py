@@ -1,12 +1,14 @@
-import sysconfig, sys, os
+import os
+import sys
+import sysconfig
 
 name = 'python' + ''.join(map(str, sys.version_info[0:2]))
 debug = sys.argv[1].lower() == 'debug'
 
-libdir = os.path.join(os.path.dirname(sysconfig.get_paths()['include']), 'libs')
+lib_dir = os.path.join(os.path.dirname(sysconfig.get_paths()['include']), 'libs')
 
 options = []
-for entry in os.listdir(libdir):
+for entry in os.listdir(lib_dir):
     entry = entry.lower()
     if not entry.startswith(name):
         continue
@@ -24,4 +26,4 @@ if not options:
 else:
     # if there are multiple, no idea how to choose which.
     options.sort()
-    print(os.path.join(libdir, options[0]))
+    print(os.path.join(lib_dir, options[0]))
