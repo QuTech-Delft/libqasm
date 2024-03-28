@@ -15,9 +15,8 @@ namespace v3x = cqasm::v3x;
 
 /**
  * Creates a new v3.x semantic analyzer.
- * When without_defaults is specified,
- * the default instruction set and error models are not loaded into the instruction and error model tables,
- * so you have to specify the entire instruction set using register_instruction() and register_error_model().
+ * When without_defaults is specified, the default instruction set are not loaded into the instruction table,
+ * so you have to specify the entire instruction set using register_instruction().
  * Otherwise, those functions only add to the defaults.
  * Unlike the C++ version of the analyzer class,
  * the initial mappings and functions are not configurable at all.
@@ -26,7 +25,7 @@ namespace v3x = cqasm::v3x;
 V3xAnalyzer::V3xAnalyzer(const std::string &max_version, bool without_defaults) {
     if (without_defaults) {
         analyzer = std::make_unique<v3x::analyzer::Analyzer>(max_version);
-        analyzer->register_default_mappings();
+        analyzer->register_default_constants();
         analyzer->register_default_functions();
     } else {
         analyzer = std::make_unique<v3x::analyzer::Analyzer>(v3x::default_analyzer(max_version));

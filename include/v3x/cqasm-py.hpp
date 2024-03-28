@@ -31,9 +31,8 @@ class V3xAnalyzer {
 public:
     /**
      * Creates a new v3.x semantic analyzer.
-     * When without_defaults is specified,
-     * the default instruction set and error models are not loaded into the instruction and error model tables,
-     * so you have to specify the entire instruction set using register_instruction() and register_error_model().
+     * When without_defaults is specified, the default instruction set is not loaded into the instruction table,
+     * so you have to specify the entire instruction set using register_instruction().
      * Otherwise, those functions only add to the defaults.
      * Unlike the C++ version of the analyzer class,
      * the initial mappings and functions are not configurable at all.

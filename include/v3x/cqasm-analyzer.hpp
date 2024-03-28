@@ -33,7 +33,6 @@ namespace cqasm::v3x::analyzer {
  *
  * Construction of this class is the entry point for libqasm
  * whenever you need to modify the default instruction set,
- * have a different set of supported error models,
  * or want to add additional initial mappings, operators, or functions.
  * The process is simple:
  *
@@ -78,9 +77,9 @@ public:
      virtual ~Analyzer() = default;
 
     /**
-     * Registers mappings for pi, eu (aka e, 2.718...), tau and im (imaginary unit).
+     * Registers constants for pi, eu (aka e, 2.718...), tau and im (imaginary unit).
      */
-    virtual void register_default_mappings();
+    virtual void register_default_constants();
 
     /**
      * Registers a number of default functions, such as the operator functions, and the usual trigonometric functions.

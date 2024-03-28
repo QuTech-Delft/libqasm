@@ -98,7 +98,9 @@ double BuildTreeGenAstVisitor::get_float_value(antlr4::tree::TerminalNode *node)
 std::any BuildTreeGenAstVisitor::visitProgram(CqasmParser::ProgramContext *context) {
     auto ret = tree::make<Program>();
     ret->version = std::any_cast<One<Version>>(visitVersionSection(context->versionSection()));
-    ret->block = std::any_cast<Maybe<Block>>(visitBodySection(context->bodySection()));
+    if (context->bodySection()) {
+        ret->block = std::any_cast<One<GlobalBlock>>(visitBodySection(context->bodySection())).get_ptr();
+    }
     return ret;
 }
 
@@ -132,14 +134,14 @@ std::any BuildTreeGenAstVisitor::visitInstructionsSection(CqasmParser::Instructi
     }
     auto measure_instruction = Maybe<MeasureInstruction>{};
     if (context->measureInstructionSection()) {
-        measure_instruction = std::any_cast<Maybe<MeasureInstruction>>(
-            visitMeasureInstructionSection(context->measureInstructionSection()));
+        measure_instruction = std::any_cast<One<MeasureInstruction>>(
+            visitMeasureInstructionSection(context->measureInstructionSection())).get_ptr();
     }
-    return InstructionsSectionT{ gates, measure_instruction };
+    return InstructionsSectionT{ std::move(gates), std::move(measure_instruction) };
 }
 
 std::any BuildTreeGenAstVisitor::visitGatesSection(CqasmParser::GatesSectionContext *context) {
-    auto ret = tree::Any<Gate>{};
+    auto ret = Any<Gate>{};
     const auto &gates = context->gate();
     std::for_each(gates.begin(), gates.end(), [this, &ret](const auto &gate_ctx) {
         ret.add(std::any_cast<One<Gate>>(gate_ctx->accept(this)));
@@ -176,7 +178,7 @@ std::any BuildTreeGenAstVisitor::visitVariableDeclaration(CqasmParser::VariableD
 }
 
 std::any BuildTreeGenAstVisitor::visitVariableDefinition(CqasmParser::VariableDefinitionContext *context) {
-    return One<Statement>{ visitVariable(context) };
+    return visitVariable(context);
 }
 
 std::any BuildTreeGenAstVisitor::visitGate(CqasmParser::GateContext *context) {
@@ -187,7 +189,7 @@ std::any BuildTreeGenAstVisitor::visitGate(CqasmParser::GateContext *context) {
         ret->operands->items.add(std::any_cast<One<Expression>>(context->expression()->accept(this)));
     }
     setNodeAnnotation(ret, context->IDENTIFIER()->getSymbol());
-    return One<Statement>{ ret };
+    return ret;
 }
 
 std::any BuildTreeGenAstVisitor::visitMeasureInstruction(CqasmParser::MeasureInstructionContext *context) {
@@ -195,7 +197,7 @@ std::any BuildTreeGenAstVisitor::visitMeasureInstruction(CqasmParser::MeasureIns
     ret->name = tree::make<Identifier>(context->MEASURE()->getText());
     ret->operands = std::any_cast<One<ExpressionList>>(visitExpressionList(context->expressionList()));
     setNodeAnnotation(ret, context->MEASURE()->getSymbol());
-    return One<Statement>{ ret };
+    return ret;
 }
 
 std::any BuildTreeGenAstVisitor::visitType(CqasmParser::TypeContext *context) {
@@ -213,10 +215,10 @@ std::any BuildTreeGenAstVisitor::visitQubitType(CqasmParser::QubitTypeContext *c
     return ret;
 }
 
-tree::Maybe<ast::IntegerLiteral> BuildTreeGenAstVisitor::getArraySize(CqasmParser::ArraySizeDeclarationContext *context) {
+Maybe<IntegerLiteral> BuildTreeGenAstVisitor::getArraySize(CqasmParser::ArraySizeDeclarationContext *context) {
     return (context)
-        ? tree::Maybe<IntegerLiteral>{ std::any_cast<One<IntegerLiteral>>(context->accept(this)).get_ptr() }
-        : tree::Maybe<IntegerLiteral>{};
+        ? Maybe<IntegerLiteral>{ std::any_cast<One<IntegerLiteral>>(context->accept(this)).get_ptr() }
+        : Maybe<IntegerLiteral>{};
 }
 
 std::any BuildTreeGenAstVisitor::visitArraySizeDeclaration(CqasmParser::ArraySizeDeclarationContext *context) {

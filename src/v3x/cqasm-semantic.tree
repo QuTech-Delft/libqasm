@@ -80,5 +80,5 @@ program {
     qubit_variable_declaration: Maybe<variable>;
 
     # Global scope block.
-    block: One<block>;
+    block: Maybe<block>;
 }

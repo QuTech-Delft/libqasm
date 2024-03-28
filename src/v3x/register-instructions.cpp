@@ -51,14 +51,6 @@ void register_instructions(analyzer::Analyzer *analyzer) {
     analyzer->register_instruction("T", "V");
     analyzer->register_instruction("Tdag", "Q");
     analyzer->register_instruction("Tdag", "V");
-    analyzer->register_instruction("Toffoli", "QQQ");
-    analyzer->register_instruction("Toffoli", "QVV");
-    analyzer->register_instruction("Toffoli", "VQV");
-    analyzer->register_instruction("Toffoli", "VVQ");
-    analyzer->register_instruction("Toffoli", "VQQ");
-    analyzer->register_instruction("Toffoli", "QVQ");
-    analyzer->register_instruction("Toffoli", "QQV");
-    analyzer->register_instruction("Toffoli", "VVV");
     analyzer->register_instruction("X", "Q");
     analyzer->register_instruction("X", "V");
     analyzer->register_instruction("X90", "Q");

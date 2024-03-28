@@ -25,7 +25,7 @@ protected:
     version::Version version_3_0 = "3.0";
 
     tree::One<ast::Version> version = tree::make<ast::Version>(version_3_0);
-    tree::One<ast::GlobalBlock> global_block = tree::make<ast::GlobalBlock>();
+    tree::Maybe<ast::GlobalBlock> global_block{};
     tree::One<ast::Program> program = tree::make<ast::Program>(version, global_block);
     parser::ParseResult parse_result_ok = parser::ParseResult{ program, error::ParseErrors{} };
 

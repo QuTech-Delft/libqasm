@@ -68,7 +68,7 @@ public:
         for (const auto &api_version : std::vector<std::string>( { "3.0" } )) {
             auto analyzer = cq3x::analyzer::Analyzer{ api_version };
 
-            analyzer.register_default_mappings();
+            analyzer.register_default_constants();
             analyzer.register_default_functions();
             analyzer.register_default_instructions();
 

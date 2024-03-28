@@ -2,9 +2,10 @@
 #include "v3x/cqasm-ast-gen.hpp"
 #include "v3x/cqasm-analyzer.hpp"
 
-#include <algorithm>  // any_of, for_each
+#include <algorithm>  // any_of, for_each, transform
 #include <any>
 #include <cassert>  // assert
+#include <iterator>  // back_inserter
 #include <range/v3/view/tail.hpp>  // tail
 
 
@@ -23,9 +24,13 @@ std::any AnalyzeTreeGenAstVisitor::visit_program(ast::Program &program_ast) {
     result_.root = tree::make<semantic::Program>();
     result_.root->api_version = analyzer_.api_version;
     result_.root->version = std::any_cast<tree::One<semantic::Version>>(visit_version(*program_ast.version));
-    auto [block, variables] = std::any_cast<GlobalBlockReturnT>(visit_global_block(*program_ast.block));
-    result_.root->block = block;
-    result_.root->qubit_variable_declaration = variables[0];
+    if (!program_ast.block.empty()) {
+        auto [block, variables] = std::any_cast<GlobalBlockReturnT>(visit_global_block(*program_ast.block));
+        result_.root->block =  std::move(block);
+        if (!variables.empty()) {
+            result_.root->qubit_variable_declaration = tree::Maybe<semantic::Variable>{ variables[0].get_ptr() };
+        }
+    }
     return result_;
 }
 
@@ -162,10 +167,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_gate(ast::Gate &node) {
     auto ret = tree::Maybe<semantic::Instruction>();
     try {
         // Set operand list
-        auto operands = values::Values();
-        for (const auto &operand_expr : node.operands->items) {
-            operands.add(std::any_cast<values::Value>(visit_expression(*operand_expr)));
-        }
+        auto operands = std::any_cast<values::Values>(visit_expression_list(*node.operands));
 
         // Resolve the instruction
         ret.set(analyzer_.resolve_instruction(node.name->name, operands));
@@ -207,6 +209,14 @@ std::any AnalyzeTreeGenAstVisitor::visit_measure_instruction(ast::MeasureInstruc
         result_.errors.push_back(std::move(err));
         ret.reset();
     }
+    return ret;
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_expression_list(ast::ExpressionList &node) {
+    auto ret = values::Values();
+    std::transform(node.items.begin(), node.items.end(), std::back_inserter(ret.get_vec()),
+        [this](const auto &expression_ast) { return std::any_cast<values::Value>(visit_expression(*expression_ast)); }
+    );
     return ret;
 }
 

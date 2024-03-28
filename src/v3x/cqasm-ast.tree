@@ -198,6 +198,6 @@ block {
 root {
     program {
         version: One<version>;
-        block: One<global_block>;
+        block: Maybe<global_block>;
     }
 }

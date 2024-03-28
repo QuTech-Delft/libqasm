@@ -6,12 +6,23 @@ Program(
       items: 3
     )
   >
+  qubit_variable_declaration: <
+    Variable(
+      name: q
+      typ: <
+        QubitArray(
+          size: 4
+        )
+      >
+      annotations: []
+    )
+  >
   block: <
     Block(
       statements: [
         Instruction(
-          instruction_ref: cnot(qubit array, qubit array)
-          name: cnot
+          instruction_ref: CNOT(qubit array, qubit array)
+          name: CNOT
           operands: [
             IndexRef(
               variable --> <
@@ -61,17 +72,5 @@ Program(
       ]
     )
   >
-  functions: []
-  variables: [
-    Variable(
-      name: q
-      typ: <
-        QubitArray(
-          size: 4
-        )
-      >
-      annotations: []
-    )
-  ]
 )
 

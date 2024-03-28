@@ -25,7 +25,7 @@ struct OverloadResolutionFailure : public std::exception {};
 //----------//
 
 /**
- * Represents a possible overload for the parameter types of a function, gate, or error model.
+ * Represents a possible overload for the parameter types of a function, or gate.
  * T is some tag type identifying the overload.
  */
 template <class T, class TypeBase>
@@ -71,7 +71,7 @@ public:
 //------------------//
 
 /**
- * Represents a set of possible overloads for the parameter types of a function, gate, or error model.
+ * Represents a set of possible overloads for the parameter types of a function, or gate.
  * T is some tag type identifying the overload.
  * In case of a function, T would contain at least the return type,
  * but maybe also a lambda to represent the actual function.

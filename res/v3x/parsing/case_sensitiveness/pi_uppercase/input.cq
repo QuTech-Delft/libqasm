@@ -1,4 +1,4 @@
 version 3
 
 qubit q
-rx q, PI
+Rx(PI) q

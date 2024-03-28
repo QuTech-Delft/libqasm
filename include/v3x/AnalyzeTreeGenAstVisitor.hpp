@@ -36,6 +36,7 @@ public:
     std::any visit_variable(ast::Variable &node) override;
     std::any visit_gate(ast::Gate &node) override;
     std::any visit_measure_instruction(ast::MeasureInstruction &node) override;
+    std::any visit_expression_list(ast::ExpressionList &node) override;
     std::any visit_expression(ast::Expression &node) override;
     std::any visit_unary_minus_expression(ast::UnaryMinusExpression &node) override;
     std::any visit_bitwise_not_expression(ast::BitwiseNotExpression &node) override;
@@ -96,35 +97,10 @@ private:
         assert(!type.empty() && !type->name.empty());
         auto type_name = type->name->name;
         if (type_name == types::qubit_type_name) {
-            return build_semantic_type<types::Qubit, types::QubitArray>(*type, types::qubit_type_name); }
+            return build_semantic_type<types::Qubit, types::QubitArray>(*type, types::qubit_type_name);
+        }
         throw error::AnalysisError("unknown type \"" + type_name + "\"");
     }
-
-    /**
-     * Transform an input array of values into an array of a given Type
-     * Pre condition: all the values in the input array can be promoted to Type
-     */
-    template <typename ConstTypeArray>
-    static tree::One<ConstTypeArray> build_array_value_from_promoted_values(
-        const values::Values &values, const types::Type &type) {
-
-        auto ret = tree::make<ConstTypeArray>();
-        ret->value.get_vec().resize(values.size());
-        std::transform(values.begin(), values.end(), ret->value.begin(),
-           [&type](const auto const_value) {
-                return values::promote(const_value, type);
-        });
-        return ret;
-    }
-
-    /**
-     * Transform an input array into a const array of Type
-     * Pre conditions:
-     *   Type can only be Bool, Int, or Real
-     *   All the values in the input array can be promoted to Type
-     */
-    [[nodiscard]] static values::Value build_value_from_promoted_values(
-        const values::Values &values, const types::Type &type);
 
     /**
      * Convenience function for visiting a function call given the function's name and arguments

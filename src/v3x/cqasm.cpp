@@ -48,7 +48,7 @@ tree::One<cqasm::v3x::semantic::Program> analyze_string(
 analyzer::Analyzer default_analyzer(const std::string &api_version) {
     analyzer::Analyzer analyzer{ api_version };
 
-    analyzer.register_default_mappings();
+    analyzer.register_default_constants();
     analyzer.register_default_functions();
     analyzer.register_default_instructions();
 

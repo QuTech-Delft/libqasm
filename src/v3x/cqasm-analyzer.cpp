@@ -41,9 +41,9 @@ Analyzer::Analyzer(const primitives::Version &api_version)
 [[nodiscard]] const tree::Any<semantic::Variable> &Analyzer::current_variables() const { return current_scope().variables; }
 
 /**
- * Registers mappings for pi, eu (aka e, 2.718...), tau and im (imaginary unit).
+ * Registers constants for pi, eu (aka e, 2.718...), tau and im (imaginary unit).
  */
-void Analyzer::register_default_mappings() {
+void Analyzer::register_default_constants() {
     static constexpr double tau = 2 * std::numbers::pi;
     register_variable("true", tree::make<values::ConstBool>(true));
     register_variable("false", tree::make<values::ConstBool>(false));

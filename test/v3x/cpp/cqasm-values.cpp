@@ -22,9 +22,6 @@ static const auto bool_variable = tree::make<semantic::Variable>("b", bool_type)
 // bool variable ref value
 static const values::Value bool_variable_ref = tree::make<values::VariableRef>(bool_variable);
 
-// empty parameters
-static const auto empty_parameter_list = tree::Any<types::TypeBase>{};
-
 TEST(promote, bool_to_bool) { EXPECT_TRUE(promote(bool_true_value, bool_type)->equals(*bool_true_value)); }
 TEST(promote, bool_to_int) { EXPECT_TRUE(promote(bool_true_value, int_type)->equals(*int_1_value)); }
 TEST(promote, bool_to_float) { EXPECT_TRUE(promote(bool_true_value, float_type)->equals(*float_1_0_value)); }
