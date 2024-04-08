@@ -22,8 +22,8 @@ jobs:
           - "3.12"
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+        uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
       - name: Install dependencies
@@ -37,7 +37,7 @@ jobs:
         run: |
           echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_OUTPUT
           echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_ENV
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: pypi-macos-py${{ matrix.python }}
           path: pybuild/dist/${{ env.WHEEL_NAME }}
@@ -72,7 +72,7 @@ jobs:
             swig_version: 'swig-3.0.12-19.module_el8.3.0+6167+838326ab'
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install dependencies
         run: |
           dnf install -y $SWIG_VERSION
@@ -90,9 +90,9 @@ jobs:
         run: |
           echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_OUTPUT
           echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_ENV
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          name: pypi-linux-${{ matrix.cpython_version }}
+          name: pypi-linux-x64-${{ matrix.cpython_version }}
           path: wheelhouse/${{ env.WHEEL_NAME }}
       - uses: actions/upload-release-asset@v1
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
@@ -133,7 +133,7 @@ jobs:
             swig_version: 'swig-3.0.12-19.module_el8.4.0+2254+838326ab'
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install dependencies
         run: |
           dnf install -y $JAVA_VERSION $SWIG_VERSION
@@ -151,9 +151,9 @@ jobs:
         run: |
           echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_OUTPUT
           echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_ENV
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          name: pypi-linux-${{ matrix.cpython_version }}
+          name: pypi-linux-arm64-${{ matrix.cpython_version }}
           path: wheelhouse/${{ env.WHEEL_NAME }}
       - uses: actions/upload-release-asset@v1
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
@@ -178,8 +178,8 @@ jobs:
           - "3.12"
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+        uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
       - name: Install dependencies
@@ -193,7 +193,7 @@ jobs:
           echo "WHEEL_NAME=$(Get-ChildItem -name *.whl)" >> $env:GITHUB_OUTPUT
           echo "WHEEL_NAME=$(Get-ChildItem -name *.whl)" >> $env:GITHUB_ENV
         shell: powershell
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: pypi-windows-py${{ matrix.python }}
           path: pybuild/dist/${{ env.WHEEL_NAME }}
@@ -218,10 +218,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         id: download
       - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@v1.3.1
+        uses: pypa/gh-action-pypi-publish@v1.8.14
         with:
           user: __token__
           password: ${{ secrets.PYPI_TOKEN }}

@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [ 0.6.1 ] - [ 2024-04-08 ]
+
+### Added
+
+### Changed
+
+- Fix Python interface.
+- Update GitHub Actions versions.
+
+### Removed
+
+- `m4` dependency.
+
 ## [ 0.6.0 ] - [ 2024-03-28 ]
 
 ### Added
