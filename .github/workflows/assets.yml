@@ -37,7 +37,7 @@ jobs:
         run: |
           echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_OUTPUT
           echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_ENV
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: pypi-macos-py${{ matrix.python }}
           path: pybuild/dist/${{ env.WHEEL_NAME }}
@@ -90,7 +90,7 @@ jobs:
         run: |
           echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_OUTPUT
           echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_ENV
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: pypi-linux-${{ matrix.cpython_version }}
           path: wheelhouse/${{ env.WHEEL_NAME }}
@@ -151,7 +151,7 @@ jobs:
         run: |
           echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_OUTPUT
           echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_ENV
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: pypi-linux-${{ matrix.cpython_version }}
           path: wheelhouse/${{ env.WHEEL_NAME }}
