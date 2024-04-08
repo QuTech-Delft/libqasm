@@ -53,7 +53,6 @@ class LibqasmConan(ConanFile):
     exports_sources = "CMakeLists.txt", "include/*", "python/*", "res/*", "scripts/*", "src/*", "test/*"
 
     def build_requirements(self):
-        self.tool_requires("m4/1.4.19")
         self.tool_requires("tree-gen/1.0.7")
         self.tool_requires("zulu-openjdk/11.0.19")
         if self.settings.arch == "wasm":

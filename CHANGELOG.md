@@ -14,6 +14,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 
+- `m4` dependency.
+
 ## [ 0.6.0 ] - [ 2024-03-28 ]
 
 ### Added
