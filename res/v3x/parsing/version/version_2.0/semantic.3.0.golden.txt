@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:1:9..12: the only cQASM version supported is 3.0, but the cQASM file is version 2.0

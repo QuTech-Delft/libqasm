@@ -1,3 +1,0 @@
-ERROR
-Error at input.cq:12:1..24: failed to resolve overload for x with argument pack (bool/bit reference, bool/bit reference, qubit reference)
-Error at input.cq:16:1..19: failed to resolve overload for x with argument pack (bool/bit reference, qubit reference)

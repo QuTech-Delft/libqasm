@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:4:1..6: extraneous input 'qubit' expecting {<EOF>, NEW_LINE, ';'}

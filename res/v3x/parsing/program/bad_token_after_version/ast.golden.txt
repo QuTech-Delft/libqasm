@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:3:1..4: no viable alternative at input '\n\n123'

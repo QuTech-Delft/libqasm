@@ -1,4 +1,0 @@
-version 1.0
-qubits 10
-
-not q[0]

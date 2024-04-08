@@ -1,0 +1,10 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..12
+      items: 1.0
+    )
+  >
+  block: -
+)
+

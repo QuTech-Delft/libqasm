@@ -1,4 +1,0 @@
-version 1.0
-qubits 10
-
-display @test.test(q[0], q[0:1], q[0,2,4], q[0,2:3,5,7:8])

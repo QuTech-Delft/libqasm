@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:3:11..12: mismatched input '1' expecting IDENTIFIER

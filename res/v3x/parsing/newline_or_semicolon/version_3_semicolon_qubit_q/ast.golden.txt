@@ -1,0 +1,35 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  block: <
+    GlobalBlock(
+      qubit_variable_declaration: <
+        Variable( # input.cq:1:18..19
+          name: <
+            Identifier(
+              name: q
+            )
+          >
+          typ: <
+            Type( # input.cq:1:12..17
+              name: <
+                Keyword(
+                  name: qubit
+                )
+              >
+              size: -
+            )
+          >
+          annotations: []
+        )
+      >
+      gates: []
+      measure_instruction: -
+    )
+  >
+)
+

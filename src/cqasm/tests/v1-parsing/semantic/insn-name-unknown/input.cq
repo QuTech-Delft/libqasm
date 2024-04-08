@@ -1,4 +1,0 @@
-version 1.0
-qubits 10
-
-invalid_insn q[0]

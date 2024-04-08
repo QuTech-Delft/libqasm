@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:4:3..4: index 3 out of range (size 3)

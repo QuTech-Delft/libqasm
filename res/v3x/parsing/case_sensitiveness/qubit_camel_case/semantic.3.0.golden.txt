@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:3:7..8: failed to resolve variable 'q'

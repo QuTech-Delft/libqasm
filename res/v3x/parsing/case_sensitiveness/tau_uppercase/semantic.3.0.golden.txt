@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:4:4..7: failed to resolve variable 'TAU'
