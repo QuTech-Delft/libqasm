@@ -3,10 +3,10 @@ name: Assets
 on:
   release:
     types:
-    - created
+      - created
   push:
     branches:
-    - 'release**'
+      - "release**"
 
 jobs:
   macos-x64:
@@ -77,7 +77,7 @@ jobs:
         run: |
           dnf install -y $SWIG_VERSION
           export PATH="/opt/python/${{ matrix.cpython_version }}/bin:$PATH"
-          python -m pip install --upgrade conan wheel auditwheel
+          python -m pip install --upgrade pip conan wheel auditwheel
       - name: Build wheel
         run: |
           export PATH="/opt/python/${{ matrix.cpython_version }}/bin:$PATH"
