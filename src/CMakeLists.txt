@@ -101,7 +101,6 @@ set(CQASM_COMMON_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-string-builder.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-utils.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-version.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/version.cpp"
 )
 
 #-------------------------------------------------------------------------------
@@ -220,9 +219,9 @@ target_include_directories(cqasm-lib-obj
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/"
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include/"
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include/"
-    PUBLIC "${antlr4-runtime_INCLUDE_DIRS}/"
-    PUBLIC "${fmt_INCLUDE_DIRS}/"
-    PUBLIC "${tree-gen_INCLUDE_DIRS}/"
+    PRIVATE "${antlr4-runtime_INCLUDE_DIRS}/"
+    PRIVATE "${fmt_INCLUDE_DIRS}/"
+    PRIVATE "${tree-gen_INCLUDE_DIRS}/"
 )
 
 target_compile_features(cqasm-lib-obj
