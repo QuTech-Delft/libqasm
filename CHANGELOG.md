@@ -8,9 +8,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - `.clang-format`.
-- `js-emscripten-wasm` assets job.
+- `emscripten-wasm` assets job.
 
 ### Changed
+
+- Fix shared library build.
 
 ### Removed
 

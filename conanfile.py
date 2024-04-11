@@ -90,6 +90,7 @@ class LibqasmConan(ConanFile):
         deps.generate()
         tc = CMakeToolchain(self)
         tc.variables["ASAN_ENABLED"] = self.options.asan_enabled
+        tc.variables["BUILD_SHARED_LIBS"] = self.options.shared
         tc.variables["LIBQASM_BUILD_EMSCRIPTEN"] = self.settings.arch == "wasm"
         tc.variables["LIBQASM_BUILD_PYTHON"] = self.options.build_python
         tc.variables["LIBQASM_BUILD_TESTS"] = self.options.build_tests

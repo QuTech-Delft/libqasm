@@ -228,17 +228,14 @@ target_compile_features(cqasm-lib-obj
     PUBLIC cxx_std_20
 )
 
-if(LIBQASM_BUILD_EMSCRIPTEN)
-    target_link_libraries(cqasm-lib-obj
-        PRIVATE range-v3::range-v3
-    )
-else()
-    target_link_libraries(cqasm-lib-obj
-        PRIVATE antlr4_static
-        PRIVATE fmt::fmt
-        PRIVATE range-v3::range-v3
-        PRIVATE tree-gen::tree-gen
-    )
+target_link_libraries(cqasm-lib-obj PRIVATE range-v3::range-v3)
+if(NOT LIBQASM_BUILD_EMSCRIPTEN)
+    target_link_libraries(cqasm-lib-obj PRIVATE fmt::fmt tree-gen::tree-gen)
+    if(BUILD_SHARED_LIBS)
+        target_link_libraries(cqasm-lib-obj PRIVATE antlr4_shared)
+    else()
+        target_link_libraries(cqasm-lib-obj PRIVATE antlr4_static)
+    endif()
 endif()
 
 # fPIC: otherwise some weirdness happens with pthreads or something when linking statically.
@@ -247,6 +244,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
         -Wall -Wextra -Werror -Wfatal-errors
         -fPIC
         -Wno-error=deprecated-declarations
+        -Wno-error=maybe-uninitialized
         -Wno-error=restrict
         -Wno-error=sign-compare
         -Wno-error=unused-parameter
