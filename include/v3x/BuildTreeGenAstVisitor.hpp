@@ -1,23 +1,22 @@
 #pragma once
 
-#include "v3x/BuildCustomAstVisitor.hpp"
-#include "v3x/CqasmParser.h"
-#include "v3x/CqasmParserVisitor.h"
-
 #include <antlr4-runtime.h>
+
 #include <any>
 #include <optional>
 #include <tuple>
 
+#include "v3x/BuildCustomAstVisitor.hpp"
+#include "v3x/CqasmParser.h"
+#include "v3x/CqasmParserVisitor.h"
 
-namespace cqasm::v3x::parser { class CustomErrorListener; }
-
+namespace cqasm::v3x::parser {
+class CustomErrorListener;
+}
 
 namespace cqasm::v3x::parser {
 
-using InstructionsSectionT = std::tuple<
-    tree::Any<ast::Gate>,
-    tree::Maybe<ast::MeasureInstruction>>;
+using InstructionsSectionT = std::tuple<tree::Any<ast::Gate>, tree::Maybe<ast::MeasureInstruction>>;
 
 class BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
     /**
@@ -28,13 +27,13 @@ class BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
     /**
      * Error listener.
      */
-    CustomErrorListener* error_listener_p_;
+    CustomErrorListener *error_listener_p_;
 
     [[nodiscard]] std::int64_t get_int_value(size_t line, size_t char_position_in_line, const std::string &text) const;
     [[nodiscard]] double get_float_value(size_t line, size_t char_position_in_line, const std::string &text) const;
 
     bool get_bool_value(antlr4::tree::TerminalNode *node) const;
-    std::int64_t get_int_value(antlr4::tree::TerminalNode *node) const ;
+    std::int64_t get_int_value(antlr4::tree::TerminalNode *node) const;
     double get_float_value(antlr4::tree::TerminalNode *node) const;
 
     tree::Maybe<ast::IntegerLiteral> getArraySize(CqasmParser::ArraySizeDeclarationContext *context);
@@ -43,8 +42,7 @@ class BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
     tree::One<ast::Variable> visitVariable(Context *context) {
         auto ret = tree::make<ast::Variable>(
             tree::One<ast::Identifier>{ tree::make<ast::Identifier>(context->IDENTIFIER()->getText()) },
-            std::any_cast<tree::One<ast::Type>>(context->type()->accept(this))
-        );
+            std::any_cast<tree::One<ast::Type>>(context->type()->accept(this)));
         setNodeAnnotation(ret, context->IDENTIFIER()->getSymbol());
         return ret;
     }
@@ -53,8 +51,7 @@ class BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
     std::any visitBinaryExpression(Context *context, antlr4::Token *token) {
         auto ret = tree::make<RetExpressionType>(
             std::any_cast<tree::One<ast::Expression>>(context->expression(0)->accept(this)),
-            std::any_cast<tree::One<ast::Expression>>(context->expression(1)->accept(this))
-        );
+            std::any_cast<tree::One<ast::Expression>>(context->expression(1)->accept(this)));
         setNodeAnnotation(ret, token);
         return tree::One<ast::Expression>{ ret };
     }

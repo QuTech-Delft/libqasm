@@ -4,13 +4,12 @@
 
 #pragma once
 
-#include "cqasm-annotations.hpp"
-#include "cqasm-error.hpp"
-#include "cqasm-ast.hpp"
-
 #include <string>
 #include <vector>
 
+#include "cqasm-annotations.hpp"
+#include "cqasm-ast.hpp"
+#include "cqasm-error.hpp"
 
 /**
  * Namespace for the parser functions and classes.
@@ -50,4 +49,4 @@ public:
     [[nodiscard]] std::string to_json() const;
 };
 
-} // namespace cqasm::v3x::parser
+}  // namespace cqasm::v3x::parser

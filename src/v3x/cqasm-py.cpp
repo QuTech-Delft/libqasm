@@ -2,14 +2,15 @@
  * Implementation for the internal Python-wrapped functions and classes.
  */
 
-#include "cqasm-version.hpp"
-#include "v3x/cqasm-analyzer.hpp"
-#include "v3x/cqasm-parse-helper.hpp"
 #include "v3x/cqasm-py.hpp"
-#include "v3x/cqasm.hpp"
 
 #include <memory>
 #include <optional>
+
+#include "cqasm-version.hpp"
+#include "v3x/cqasm-analyzer.hpp"
+#include "v3x/cqasm-parse-helper.hpp"
+#include "v3x/cqasm.hpp"
 
 namespace v3x = cqasm::v3x;
 
@@ -137,9 +138,7 @@ std::vector<std::string> V3xAnalyzer::analyze_file(const std::string &file_name)
  * Same as analyze_file(), but instead receives the file contents directly.
  * The file_name, if specified, is only used when reporting errors.
  */
-std::vector<std::string> V3xAnalyzer::analyze_string(
-    const std::string &data, const std::string &file_name) const {
-
+std::vector<std::string> V3xAnalyzer::analyze_string(const std::string &data, const std::string &file_name) const {
     auto file_name_op = !file_name.empty() ? std::optional<std::string>{ file_name } : std::nullopt;
     const auto &parse_result = v3x::parser::parse_string(data, file_name_op);
     const auto &analysis_result = analyzer->analyze(parse_result);
@@ -159,7 +158,6 @@ std::vector<std::string> V3xAnalyzer::analyze_string(
  */
 [[nodiscard]] std::string V3xAnalyzer::analyze_string_to_json(
     const std::string &data, const std::string &file_name) const {
-
     auto file_name_op = !file_name.empty() ? std::optional<std::string>{ file_name } : std::nullopt;
     const auto &parse_result = v3x::parser::parse_string(data, file_name_op);
     const auto &analysis_result = analyzer->analyze(parse_result);

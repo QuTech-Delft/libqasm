@@ -8,6 +8,11 @@
 
 #pragma once
 
+#include <functional>
+#include <list>
+#include <optional>
+#include <string>
+
 #include "cqasm-analysis-result.hpp"
 #include "cqasm-analyzer.hpp"
 #include "cqasm-ast.hpp"
@@ -16,12 +21,6 @@
 #include "cqasm-resolver.hpp"
 #include "cqasm-scope.hpp"
 #include "cqasm-semantic.hpp"
-
-#include <functional>
-#include <list>
-#include <optional>
-#include <string>
-
 
 /**
  * Namespace for the \ref cqasm::analyzer::Analyzer "Analyzer" class and support classes.
@@ -74,7 +73,7 @@ public:
     /**
      * Destroys a semantic analyzer.
      */
-     virtual ~Analyzer() = default;
+    virtual ~Analyzer() = default;
 
     /**
      * Registers constants for pi, eu (aka e, 2.718...), tau and im (imaginary unit).
@@ -160,9 +159,7 @@ public:
      * Registers a consteval core function.
      */
     virtual void register_consteval_core_function(
-        const std::string &name,
-        const types::Types &param_types,
-        const resolver::ConstEvalCoreFunction &function);
+        const std::string &name, const types::Types &param_types, const resolver::ConstEvalCoreFunction &function);
 
     /**
      * Convenience method for registering a consteval core function.
@@ -170,9 +167,7 @@ public:
      * converted to types::Types for the other overload using types::from_spec.
      */
     virtual void register_consteval_core_function(
-        const std::string &name,
-        const std::string &param_types,
-        const resolver::ConstEvalCoreFunction &function);
+        const std::string &name, const std::string &param_types, const resolver::ConstEvalCoreFunction &function);
 
     /**
      * Resolves an instruction.
@@ -196,4 +191,4 @@ public:
     virtual void register_instruction(const std::string &name, const std::optional<std::string> &param_types);
 };
 
-} // namespace cqasm::v3x::analyzer
+}  // namespace cqasm::v3x::analyzer

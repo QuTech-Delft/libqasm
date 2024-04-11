@@ -6,14 +6,13 @@
 
 #pragma once
 
-#include "cqasm-annotations.hpp"
-#include "v3x/cqasm-parse-result.hpp"
-#include "v3x/ScannerAntlr.hpp"
-
 #include <memory>  // unique_ptr
 #include <optional>
 #include <string>
 
+#include "cqasm-annotations.hpp"
+#include "v3x/ScannerAntlr.hpp"
+#include "v3x/cqasm-parse-result.hpp"
 
 namespace cqasm::v3x::parser {
 
@@ -30,7 +29,6 @@ ParseResult parse_file(const std::string &file_path, const std::optional<std::st
  * A file_name may be given in addition for use within error messages.
  */
 ParseResult parse_string(const std::string &data, const std::optional<std::string> &file_name);
-
 
 /**
  * Internal helper class for parsing cQASM files.
@@ -55,4 +53,4 @@ public:
     ParseResult parse();
 };
 
-} // namespace cqasm::v3x::parser
+}  // namespace cqasm::v3x::parser

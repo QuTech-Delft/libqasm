@@ -1,23 +1,20 @@
 #pragma once
 
-#include "v3x/cqasm-analyzer.hpp"
-#include "v3x/cqasm-ast-gen.hpp"
-#include "v3x/cqasm-semantic-gen.hpp"
-
 #include <any>
 #include <string_view>
 #include <tuple>
 #include <utility>  // pair
 
+#include "v3x/cqasm-analyzer.hpp"
+#include "v3x/cqasm-ast-gen.hpp"
+#include "v3x/cqasm-semantic-gen.hpp"
 
 namespace cqasm::v3x::analyzer {
 
 using IndexT = values::ConstInt;
 using IndexListT = tree::Many<IndexT>;
 
-using GlobalBlockReturnT = std::tuple<
-    tree::One<semantic::Block>,
-    const tree::Any<semantic::Variable> &>;
+using GlobalBlockReturnT = std::tuple<tree::One<semantic::Block>, const tree::Any<semantic::Variable> &>;
 
 class AnalyzeTreeGenAstVisitor : public ast::Visitor<std::any> {
 protected:
@@ -106,23 +103,18 @@ private:
      * Convenience function for visiting a function call given the function's name and arguments
      */
     values::Value visit_function_call(
-        const tree::One<ast::Identifier> &name,
-        const tree::Maybe<ast::ExpressionList> &arguments);
+        const tree::One<ast::Identifier> &name, const tree::Maybe<ast::ExpressionList> &arguments);
 
     /**
      * Convenience function for visiting unary operators
      */
-    std::any visit_unary_operator(
-        const std::string &name,
-        const tree::One<ast::Expression> &expression);
+    std::any visit_unary_operator(const std::string &name, const tree::One<ast::Expression> &expression);
 
     /**
      * Convenience function for visiting binary operators
      */
     std::any visit_binary_operator(
-        const std::string &name,
-        const tree::One<ast::Expression> &lhs,
-        const tree::One<ast::Expression> &rhs);
+        const std::string &name, const tree::One<ast::Expression> &lhs, const tree::One<ast::Expression> &rhs);
 
     /**
      * Shorthand for parsing an expression and promoting it to the given type,

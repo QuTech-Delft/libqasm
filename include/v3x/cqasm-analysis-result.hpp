@@ -1,14 +1,13 @@
 #pragma once
 
-#include "cqasm-ast.hpp"
-#include "cqasm-error.hpp"
-#include "cqasm-semantic.hpp"
-
-#include <stdexcept>  // runtime_error
 #include <iosfwd>  // ostream
+#include <stdexcept>  // runtime_error
 #include <string>
 #include <vector>
 
+#include "cqasm-ast.hpp"
+#include "cqasm-error.hpp"
+#include "cqasm-semantic.hpp"
 
 /**
  * Namespace for the \ref cqasm::analyzer::Analyzer "Analyzer" class and support classes.
@@ -20,9 +19,10 @@ using Root = ast::One<semantic::Program>;
 /**
  * Exception thrown by AnalysisResult::unwrap() when the cQASM file fails to parse.
  */
-class AnalysisFailed: public std::runtime_error {
+class AnalysisFailed : public std::runtime_error {
 public:
-    AnalysisFailed() : std::runtime_error{ "cQASM analysis failed" } {};
+    AnalysisFailed()
+    : std::runtime_error{ "cQASM analysis failed" } {};
 };
 
 /**
@@ -79,4 +79,4 @@ public:
     [[nodiscard]] std::string to_json() const;
 };
 
-} // namespace cqasm::v3x::analyzer
+}  // namespace cqasm::v3x::analyzer

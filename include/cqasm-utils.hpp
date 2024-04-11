@@ -6,7 +6,6 @@
 
 #include <string>
 
-
 /**
  * Namespace for various utility functions.
  */
@@ -32,4 +31,4 @@ std::string url_encode(const std::string &str);
  */
 std::string json_encode(const std::string &str);
 
-} // namespace cqasm::utils
+}  // namespace cqasm::utils

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "v3x/cqasm-analyzer.hpp"
-#include "v3x/cqasm-values.hpp"
-
 #include <gmock/gmock.h>
+
 #include <string>
 
+#include "v3x/cqasm-analyzer.hpp"
+#include "v3x/cqasm-values.hpp"
 
 namespace cqasm::v3x::analyzer {
 
@@ -22,7 +22,9 @@ struct MockAnalyzer : public Analyzer {
 
     [[nodiscard]] const Scope &global_scope() const { return Analyzer::global_scope(); }
     [[nodiscard]] const Scope &current_scope() const { return Analyzer::current_scope(); }
-    [[nodiscard]] const tree::Any<semantic::Variable> &current_variables() const { return Analyzer::current_variables(); }
+    [[nodiscard]] const tree::Any<semantic::Variable> &current_variables() const {
+        return Analyzer::current_variables();
+    }
 };
 
-} // namespace cqasm::v3x::analyzer
+}  // namespace cqasm::v3x::analyzer

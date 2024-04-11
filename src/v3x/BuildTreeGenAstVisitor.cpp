@@ -1,18 +1,19 @@
-#include "cqasm-annotations.hpp"
-#include "cqasm-tree.hpp"
-#include "v3x/cqasm-ast.hpp"
-#include "v3x/cqasm-types.hpp"
 #include "v3x/BuildTreeGenAstVisitor.hpp"
-#include "v3x/CustomErrorListener.hpp"
+
+#include <antlr4-runtime.h>
 
 #include <algorithm>  // for_each
-#include <antlr4-runtime.h>
-#include <cassert> // assert
+#include <cassert>  // assert
 #include <cstdint>  // uint32_t
 #include <regex>
 #include <stdexcept>  // runtime_error
 #include <string>  // stod, stoll
 
+#include "cqasm-annotations.hpp"
+#include "cqasm-tree.hpp"
+#include "v3x/CustomErrorListener.hpp"
+#include "v3x/cqasm-ast.hpp"
+#include "v3x/cqasm-types.hpp"
 
 namespace cqasm::v3x::parser {
 
@@ -42,36 +43,37 @@ void BuildTreeGenAstVisitor::syntaxError(size_t line, size_t char_position_in_li
  */
 void BuildTreeGenAstVisitor::setNodeAnnotation(const ast::One<ast::Node> &node, antlr4::Token *token) const {
     auto token_size = token->getStopIndex() - token->getStartIndex() + 1;
-    node->set_annotation(annotations::SourceLocation{
-        file_name_,
-        { { static_cast<std::uint32_t>(token->getLine()), static_cast<std::uint32_t>(token->getCharPositionInLine() + 1) },
-          { static_cast<std::uint32_t>(token->getLine()), static_cast<std::uint32_t>(token->getCharPositionInLine() + 1 + token_size) } }
-    });
+    node->set_annotation(annotations::SourceLocation{ file_name_,
+        { { static_cast<std::uint32_t>(token->getLine()),
+              static_cast<std::uint32_t>(token->getCharPositionInLine() + 1) },
+            { static_cast<std::uint32_t>(token->getLine()),
+                static_cast<std::uint32_t>(token->getCharPositionInLine() + 1 + token_size) } } });
 }
 
 void BuildTreeGenAstVisitor::expandNodeAnnotation(const One<Node> &node, antlr4::Token *token) const {
     auto token_size = token->getStopIndex() - token->getStartIndex() + 1;
     if (auto source_location = node->get_annotation_ptr<annotations::SourceLocation>()) {
-        source_location->expand_to_include(annotations::SourceLocation::Index{
-            static_cast<std::uint32_t>(token->getLine()),
-            static_cast<std::uint32_t>(token->getCharPositionInLine() + 1 + token_size)
-        });
+        source_location->expand_to_include(
+            annotations::SourceLocation::Index{ static_cast<std::uint32_t>(token->getLine()),
+                static_cast<std::uint32_t>(token->getCharPositionInLine() + 1 + token_size) });
     }
 }
 
-std::int64_t BuildTreeGenAstVisitor::get_int_value(size_t line, size_t char_position_in_line, const std::string &text) const {
+std::int64_t BuildTreeGenAstVisitor::get_int_value(
+    size_t line, size_t char_position_in_line, const std::string &text) const {
     try {
         return std::stoll(text);
-    } catch (std::out_of_range&) {
+    } catch (std::out_of_range &) {
         syntaxError(line, char_position_in_line, fmt::format("value '{}' is out of the INTEGER_LITERAL range", text));
     }
     return {};
 }
 
-double BuildTreeGenAstVisitor::get_float_value(size_t line, size_t char_position_in_line, const std::string &text) const {
+double BuildTreeGenAstVisitor::get_float_value(
+    size_t line, size_t char_position_in_line, const std::string &text) const {
     try {
         return std::stod(text);
-    } catch (std::out_of_range&) {
+    } catch (std::out_of_range &) {
         syntaxError(line, char_position_in_line, fmt::format("value '{}' is out of the FLOAT_LITERAL range", text));
     }
     return {};
@@ -110,10 +112,10 @@ std::any BuildTreeGenAstVisitor::visitVersionSection(CqasmParser::VersionSection
 
 std::any BuildTreeGenAstVisitor::visitBodySection(CqasmParser::BodySectionContext *context) {
     auto ret = tree::make<GlobalBlock>();
-    ret->qubit_variable_declaration = std::any_cast<One<Variable>>(
-        visitVariableDeclarationSection(context->variableDeclarationSection()));
-    auto [gates, measure_instruction] = std::any_cast<InstructionsSectionT>(
-        visitInstructionsSection(context->instructionsSection()));
+    ret->qubit_variable_declaration =
+        std::any_cast<One<Variable>>(visitVariableDeclarationSection(context->variableDeclarationSection()));
+    auto [gates, measure_instruction] =
+        std::any_cast<InstructionsSectionT>(visitInstructionsSection(context->instructionsSection()));
     ret->gates = std::move(gates);
     ret->measure_instruction = std::move(measure_instruction);
     return ret;
@@ -123,7 +125,8 @@ std::any BuildTreeGenAstVisitor::visitEofSection(CqasmParser::EofSectionContext 
     return {};
 }
 
-std::any BuildTreeGenAstVisitor::visitVariableDeclarationSection(CqasmParser::VariableDeclarationSectionContext *context) {
+std::any BuildTreeGenAstVisitor::visitVariableDeclarationSection(
+    CqasmParser::VariableDeclarationSectionContext *context) {
     return visitVariableDeclaration(context->variableDeclaration());
 }
 
@@ -134,8 +137,9 @@ std::any BuildTreeGenAstVisitor::visitInstructionsSection(CqasmParser::Instructi
     }
     auto measure_instruction = Maybe<MeasureInstruction>{};
     if (context->measureInstructionSection()) {
-        measure_instruction = std::any_cast<One<MeasureInstruction>>(
-            visitMeasureInstructionSection(context->measureInstructionSection())).get_ptr();
+        measure_instruction =
+            std::any_cast<One<MeasureInstruction>>(visitMeasureInstructionSection(context->measureInstructionSection()))
+                .get_ptr();
     }
     return InstructionsSectionT{ std::move(gates), std::move(measure_instruction) };
 }
@@ -149,7 +153,8 @@ std::any BuildTreeGenAstVisitor::visitGatesSection(CqasmParser::GatesSectionCont
     return ret;
 }
 
-std::any BuildTreeGenAstVisitor::visitMeasureInstructionSection(CqasmParser::MeasureInstructionSectionContext *context) {
+std::any BuildTreeGenAstVisitor::visitMeasureInstructionSection(
+    CqasmParser::MeasureInstructionSectionContext *context) {
     return visitMeasureInstruction(context->measureInstruction());
 }
 
@@ -166,8 +171,8 @@ std::any BuildTreeGenAstVisitor::visitVersion(CqasmParser::VersionContext *conte
     std::regex_match(text, matches, pattern);
     ret->items.push_back(get_int_value(token->getLine(), token->getCharPositionInLine(), matches[1]));
     if (matches[2].matched) {
-        ret->items.push_back(get_int_value(token->getLine(), token->getCharPositionInLine() + matches.position(2),
-            matches[2]));
+        ret->items.push_back(
+            get_int_value(token->getLine(), token->getCharPositionInLine() + matches.position(2), matches[2]));
     }
     setNodeAnnotation(ret, token);
     return ret;
@@ -205,9 +210,8 @@ std::any BuildTreeGenAstVisitor::visitType(CqasmParser::TypeContext *context) {
 }
 
 std::any BuildTreeGenAstVisitor::visitQubitType(CqasmParser::QubitTypeContext *context) {
-    auto ret = tree::make<Type>(
-        tree::make<Keyword>(types::qubit_type_name),
-        getArraySize(context->arraySizeDeclaration()));
+    auto ret =
+        tree::make<Type>(tree::make<Keyword>(types::qubit_type_name), getArraySize(context->arraySizeDeclaration()));
     setNodeAnnotation(ret, context->QUBIT_TYPE()->getSymbol());
     if (context->arraySizeDeclaration()) {
         expandNodeAnnotation(ret, context->arraySizeDeclaration()->CLOSE_BRACKET()->getSymbol());
@@ -216,9 +220,8 @@ std::any BuildTreeGenAstVisitor::visitQubitType(CqasmParser::QubitTypeContext *c
 }
 
 Maybe<IntegerLiteral> BuildTreeGenAstVisitor::getArraySize(CqasmParser::ArraySizeDeclarationContext *context) {
-    return (context)
-        ? Maybe<IntegerLiteral>{ std::any_cast<One<IntegerLiteral>>(context->accept(this)).get_ptr() }
-        : Maybe<IntegerLiteral>{};
+    return (context) ? Maybe<IntegerLiteral>{ std::any_cast<One<IntegerLiteral>>(context->accept(this)).get_ptr() }
+                     : Maybe<IntegerLiteral>{};
 }
 
 std::any BuildTreeGenAstVisitor::visitArraySizeDeclaration(CqasmParser::ArraySizeDeclarationContext *context) {
@@ -246,15 +249,12 @@ std::any BuildTreeGenAstVisitor::visitIndexList(CqasmParser::IndexListContext *c
 
 std::any BuildTreeGenAstVisitor::visitIndexItem(CqasmParser::IndexItemContext *context) {
     return One<IndexEntry>{ tree::make<IndexItem>(
-        std::any_cast<One<Expression>>(context->expression()->accept(this))
-    )};
+        std::any_cast<One<Expression>>(context->expression()->accept(this))) };
 }
 
 std::any BuildTreeGenAstVisitor::visitIndexRange(CqasmParser::IndexRangeContext *context) {
-    return One<IndexEntry>{ tree::make<IndexRange>(
-        std::any_cast<One<Expression>>(context->expression(0)->accept(this)),
-        std::any_cast<One<Expression>>(context->expression(1)->accept(this))
-    )};
+    return One<IndexEntry>{ tree::make<IndexRange>(std::any_cast<One<Expression>>(context->expression(0)->accept(this)),
+        std::any_cast<One<Expression>>(context->expression(1)->accept(this))) };
 }
 
 std::any BuildTreeGenAstVisitor::visitParensExpression(CqasmParser::ParensExpressionContext *context) {
@@ -351,12 +351,12 @@ std::any BuildTreeGenAstVisitor::visitLogicalOrExpression(CqasmParser::LogicalOr
     return visitBinaryExpression<LogicalOrExpression>(context, context->LOGICAL_OR_OP()->getSymbol());
 }
 
-std::any BuildTreeGenAstVisitor::visitTernaryConditionalExpression(CqasmParser::TernaryConditionalExpressionContext *context) {
-    auto ret = tree::make<TernaryConditionalExpression>(
-        std::any_cast<One<Expression>>(context->expression(0)->accept(this)),
-        std::any_cast<One<Expression>>(context->expression(1)->accept(this)),
-        std::any_cast<One<Expression>>(context->expression(2)->accept(this))
-    );
+std::any BuildTreeGenAstVisitor::visitTernaryConditionalExpression(
+    CqasmParser::TernaryConditionalExpressionContext *context) {
+    auto ret =
+        tree::make<TernaryConditionalExpression>(std::any_cast<One<Expression>>(context->expression(0)->accept(this)),
+            std::any_cast<One<Expression>>(context->expression(1)->accept(this)),
+            std::any_cast<One<Expression>>(context->expression(2)->accept(this)));
     setNodeAnnotation(ret, context->TERNARY_CONDITIONAL_OP()->getSymbol());
     return One<Expression>{ ret };
 }

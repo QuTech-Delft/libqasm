@@ -6,14 +6,14 @@
 
 #pragma once
 
-#include "cqasm-ast.hpp"
-#include "cqasm-types.hpp"
-#include "v3x/cqasm-values-gen.hpp"
-
-#include <algorithm>  // all_of, for_each
 #include <fmt/format.h>
 #include <fmt/ostream.h>
 
+#include <algorithm>  // all_of, for_each
+
+#include "cqasm-ast.hpp"
+#include "cqasm-types.hpp"
+#include "v3x/cqasm-values-gen.hpp"
 
 /**
  * Namespace for the classes representing the values
@@ -88,8 +88,9 @@ std::ostream &operator<<(std::ostream &os, const Value &value);
  */
 std::ostream &operator<<(std::ostream &os, const Values &values);
 
-} // namespace cqasm::v3x::values
+}  // namespace cqasm::v3x::values
 
-
-template <> struct fmt::formatter<cqasm::v3x::values::Value> : fmt::ostream_formatter {};
-template <> struct fmt::formatter<cqasm::v3x::values::Values> : fmt::ostream_formatter {};
+template <>
+struct fmt::formatter<cqasm::v3x::values::Value> : fmt::ostream_formatter {};
+template <>
+struct fmt::formatter<cqasm::v3x::values::Values> : fmt::ostream_formatter {};

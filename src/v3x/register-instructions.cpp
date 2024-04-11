@@ -2,7 +2,6 @@
 
 #include <cassert>
 
-
 namespace cqasm::v3x::instruction {
 
 /**
@@ -63,4 +62,4 @@ void register_instructions(analyzer::Analyzer *analyzer) {
     analyzer->register_instruction("Z", "V");
 }
 
-} // namespace cqasm::v3x::instruction
+}  // namespace cqasm::v3x::instruction

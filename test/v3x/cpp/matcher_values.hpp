@@ -1,10 +1,10 @@
 #pragma once
 
-#include "v3x/cqasm-values.hpp"
-
 #include <gmock/gmock.h>
+
 #include <iosfwd>  //ostream
 
+#include "v3x/cqasm-values.hpp"
 
 namespace cqasm::v3x::values {
 
@@ -21,6 +21,6 @@ private:
     const values::Values &expectedValue_;
 };
 
-::testing::Matcher<const values::Values&> ValuesEq(const values::Values &expectedValue);
+::testing::Matcher<const values::Values &> ValuesEq(const values::Values &expectedValue);
 
-} // namespace cqasm::v3x::values
+}  // namespace cqasm::v3x::values

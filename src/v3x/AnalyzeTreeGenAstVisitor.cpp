@@ -1,6 +1,4 @@
 #include "v3x/AnalyzeTreeGenAstVisitor.hpp"
-#include "v3x/cqasm-ast-gen.hpp"
-#include "v3x/cqasm-analyzer.hpp"
 
 #include <algorithm>  // any_of, for_each, transform
 #include <any>
@@ -8,15 +6,16 @@
 #include <iterator>  // back_inserter
 #include <range/v3/view/tail.hpp>  // tail
 
+#include "v3x/cqasm-analyzer.hpp"
+#include "v3x/cqasm-ast-gen.hpp"
 
 namespace cqasm::v3x::analyzer {
 
 AnalyzeTreeGenAstVisitor::AnalyzeTreeGenAstVisitor(Analyzer &analyzer)
 : analyzer_{ analyzer }
-, result_{}
-{}
+, result_{} {}
 
-std::any AnalyzeTreeGenAstVisitor::visit_node(ast::Node &/* node */) {
+std::any AnalyzeTreeGenAstVisitor::visit_node(ast::Node & /* node */) {
     throw error::AnalysisError{ "unimplemented" };
 }
 
@@ -26,7 +25,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_program(ast::Program &program_ast) {
     result_.root->version = std::any_cast<tree::One<semantic::Version>>(visit_version(*program_ast.version));
     if (!program_ast.block.empty()) {
         auto [block, variables] = std::any_cast<GlobalBlockReturnT>(visit_global_block(*program_ast.block));
-        result_.root->block =  std::move(block);
+        result_.root->block = std::move(block);
         if (!variables.empty()) {
             result_.root->qubit_variable_declaration = tree::Maybe<semantic::Variable>{ variables[0].get_ptr() };
         }
@@ -44,11 +43,10 @@ std::any AnalyzeTreeGenAstVisitor::visit_version(ast::Version &node) {
             }
         }
         if (node.items != analyzer_.api_version) {
-            throw error::AnalysisError(fmt::format(
-                "the only cQASM version supported is {}, but the cQASM file is version {}",
-                analyzer_.api_version,
-                node.items
-            ));
+            throw error::AnalysisError(
+                fmt::format("the only cQASM version supported is {}, but the cQASM file is version {}",
+                    analyzer_.api_version,
+                    node.items));
         }
 
         ret->items = node.items;
@@ -147,9 +145,9 @@ values::Value promote_or_error(const values::Value &rhs_value, const types::Type
     if (auto rhs_promoted_value = values::promote(rhs_value, lhs_type); !rhs_promoted_value.empty()) {
         return rhs_promoted_value;
     }
-    throw error::AnalysisError{ fmt::format(
-        "type of right-hand side ({}) could not be coerced to left-hand side ({})",
-        values::type_of(rhs_value), lhs_type) };
+    throw error::AnalysisError{ fmt::format("type of right-hand side ({}) could not be coerced to left-hand side ({})",
+        values::type_of(rhs_value),
+        lhs_type) };
 }
 
 /**
@@ -214,9 +212,10 @@ std::any AnalyzeTreeGenAstVisitor::visit_measure_instruction(ast::MeasureInstruc
 
 std::any AnalyzeTreeGenAstVisitor::visit_expression_list(ast::ExpressionList &node) {
     auto ret = values::Values();
-    std::transform(node.items.begin(), node.items.end(), std::back_inserter(ret.get_vec()),
-        [this](const auto &expression_ast) { return std::any_cast<values::Value>(visit_expression(*expression_ast)); }
-    );
+    std::transform(
+        node.items.begin(), node.items.end(), std::back_inserter(ret.get_vec()), [this](const auto &expression_ast) {
+            return std::any_cast<values::Value>(visit_expression(*expression_ast));
+        });
     return ret;
 }
 
@@ -235,15 +234,13 @@ std::any AnalyzeTreeGenAstVisitor::visit_expression(ast::Expression &node) {
  * Convenience function for visiting a function call given the function's name and arguments
  */
 values::Value AnalyzeTreeGenAstVisitor::visit_function_call(
-    const tree::One<ast::Identifier> &name,
-    const tree::Maybe<ast::ExpressionList> &arguments) {
-
+    const tree::One<ast::Identifier> &name, const tree::Maybe<ast::ExpressionList> &arguments) {
     auto function_arguments = values::Values();
     if (!arguments.empty()) {
-        std::for_each(arguments->items.begin(), arguments->items.end(),
-            [&function_arguments, this](const auto node_argument) {
+        std::for_each(
+            arguments->items.begin(), arguments->items.end(), [&function_arguments, this](const auto node_argument) {
                 function_arguments.add(std::any_cast<values::Value>(visit_expression(*node_argument)));
-        });
+            });
     }
     const auto function_name = name->name;
     auto ret = analyzer_.resolve_function(function_name, function_arguments);
@@ -261,29 +258,20 @@ std::any AnalyzeTreeGenAstVisitor::visit_function_call(ast::FunctionCall &node) 
  * Convenience function for visiting unary operators
  */
 std::any AnalyzeTreeGenAstVisitor::visit_unary_operator(
-    const std::string &name,
-    const tree::One<ast::Expression> &expression) {
-
-    return visit_function_call(
-        tree::make<ast::Identifier>(std::string{ "operator" } + name),
+    const std::string &name, const tree::One<ast::Expression> &expression) {
+    return visit_function_call(tree::make<ast::Identifier>(std::string{ "operator" } + name),
         tree::Maybe<ast::ExpressionList>{
-            tree::make<ast::ExpressionList>(tree::Any<ast::Expression>{ expression }).get_ptr() }
-    );
+            tree::make<ast::ExpressionList>(tree::Any<ast::Expression>{ expression }).get_ptr() });
 }
 
 /**
  * Convenience function for visiting binary operators
  */
 std::any AnalyzeTreeGenAstVisitor::visit_binary_operator(
-    const std::string &name,
-    const tree::One<ast::Expression> &lhs,
-    const tree::One<ast::Expression> &rhs) {
-
-    return visit_function_call(
-        tree::make<ast::Identifier>(std::string{ "operator" } + name),
+    const std::string &name, const tree::One<ast::Expression> &lhs, const tree::One<ast::Expression> &rhs) {
+    return visit_function_call(tree::make<ast::Identifier>(std::string{ "operator" } + name),
         tree::Maybe<ast::ExpressionList>{
-            tree::make<ast::ExpressionList>(tree::Any<ast::Expression>{ lhs, rhs }).get_ptr() }
-    );
+            tree::make<ast::ExpressionList>(tree::Any<ast::Expression>{ lhs, rhs }).get_ptr() });
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_unary_minus_expression(ast::UnaryMinusExpression &node) {
@@ -379,10 +367,8 @@ std::any AnalyzeTreeGenAstVisitor::visit_logical_or_expression(ast::LogicalOrExp
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_ternary_conditional_expression(ast::TernaryConditionalExpression &node) {
-    return visit_function_call(
-        tree::make<ast::Identifier>("operator?:"),
-        tree::make<ast::ExpressionList>(tree::Any<ast::Expression>{ node.cond, node.if_true, node.if_false })
-    );
+    return visit_function_call(tree::make<ast::Identifier>("operator?:"),
+        tree::make<ast::ExpressionList>(tree::Any<ast::Expression>{ node.cond, node.if_true, node.if_false }));
 }
 
 /**
@@ -496,4 +482,4 @@ primitives::Int AnalyzeTreeGenAstVisitor::visit_const_int(ast::Expression &expre
     throw error::AnalysisError{ "expected an integer", &expression };
 }
 
-}  // namespace cqasm::v3x::analyzer`
+}  // namespace cqasm::v3x::analyzer

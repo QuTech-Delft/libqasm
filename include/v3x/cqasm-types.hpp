@@ -5,11 +5,10 @@
 
 #pragma once
 
-#include "v3x/cqasm-types-gen.hpp"
-
 #include <fmt/format.h>
 #include <fmt/ostream.h>
 
+#include "v3x/cqasm-types-gen.hpp"
 
 /**
  * Namespace for the classes representing the types available within cQASM.
@@ -72,8 +71,9 @@ std::ostream &operator<<(std::ostream &os, const Type &type);
  */
 std::ostream &operator<<(std::ostream &os, const Types &types);
 
-} // namespace cqasm::v3x::types
+}  // namespace cqasm::v3x::types
 
-
-template <> struct fmt::formatter<cqasm::v3x::types::Type> : fmt::ostream_formatter {};
-template <> struct fmt::formatter<cqasm::v3x::types::Types> : fmt::ostream_formatter {};
+template <>
+struct fmt::formatter<cqasm::v3x::types::Type> : fmt::ostream_formatter {};
+template <>
+struct fmt::formatter<cqasm::v3x::types::Types> : fmt::ostream_formatter {};

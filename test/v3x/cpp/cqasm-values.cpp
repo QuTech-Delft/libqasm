@@ -1,10 +1,12 @@
-#include "v3x/cqasm-semantic-gen.hpp"
 #include "v3x/cqasm-values.hpp"
 
 #include <gtest/gtest.h>
 
+#include "v3x/cqasm-semantic-gen.hpp"
 
 namespace cqasm::v3x::values {
+
+// clang-format off
 
 // bool, int, float, axis types
 static const types::Type bool_type = tree::make<types::Bool>(1);
@@ -40,5 +42,7 @@ TEST(promote, float_to_int) { EXPECT_TRUE(promote(float_1_0_value, int_type).emp
 TEST(size_of, const_bool) { EXPECT_EQ(size_of(bool_true_value), 1); }
 TEST(size_of, const_int) { EXPECT_EQ(size_of(int_1_value), 1); }
 TEST(size_of, const_float) { EXPECT_EQ(size_of(float_1_0_value), 1); }
+
+// clang-format on
 
 }  // namespace cqasm::v3x::values

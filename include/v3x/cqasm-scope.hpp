@@ -4,7 +4,6 @@
 #include "v3x/cqasm-resolver.hpp"
 #include "v3x/cqasm-semantic-gen.hpp"
 
-
 namespace cqasm::v3x::analyzer {
 
 /**
@@ -39,4 +38,4 @@ struct Scope {
     tree::Any<semantic::Variable> variables;
 };
 
-} // namespace cqasm::v3x::analyzer
+}  // namespace cqasm::v3x::analyzer
