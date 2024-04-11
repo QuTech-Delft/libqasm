@@ -254,6 +254,7 @@ jobs:
       - manylinux-x64
       - manylinux-arm64
       - windows-x64
+      - emscripten-wasm
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
