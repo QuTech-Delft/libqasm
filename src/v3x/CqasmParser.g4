@@ -15,9 +15,9 @@ program: versionSection bodySection? eofSection;
 versionSection: statementSeparator* version;
 bodySection: variableDeclarationSection instructionsSection;
 variableDeclarationSection: statementSeparator* variableDeclaration;
-instructionsSection: gatesSection? measureInstructionSection?;
+instructionsSection: gatesSection? measureInstructionsSection?;
 gatesSection: (statementSeparator* gate)+;
-measureInstructionSection: statementSeparator* measureInstruction;
+measureInstructionsSection: (statementSeparator* measureInstruction)+;
 eofSection: statementSeparator* EOF;
 
 statementSeparator: NEW_LINE | SEMICOLON;

@@ -194,7 +194,7 @@ block {
     global_block {
         qubit_variable_declaration: One<variable>;
         gates: Any<gate>;
-        measure_instruction: Maybe<measure_instruction>;
+        measure_instructions: Any<measure_instruction>;
     }
 }
 

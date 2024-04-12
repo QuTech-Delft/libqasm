@@ -23,7 +23,7 @@ class TestV3xAnalyzer(unittest.TestCase):
         self.assertEqual(h_operand.indices.items[0].first.value, 0)
         self.assertEqual(h_operand.indices.items[0].last.value, 4)
 
-        measure_instruction = ast.block.measure_instruction
+        measure_instruction = ast.block.measure_instructions[0]
         self.assertEqual(measure_instruction.name.name, "b'measure'")
         self.assertEqual(measure_instruction.operand.name, "b'q'")
 

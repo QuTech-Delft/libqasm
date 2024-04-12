@@ -73,8 +73,13 @@ std::any AnalyzeTreeGenAstVisitor::visit_global_block(ast::GlobalBlock &node) {
         }
     }
 
-    if (!node.measure_instruction.empty()) {
-        visit_measure_instruction(*node.measure_instruction);
+    for (const auto &measure_instruction_ast : node.measure_instructions) {
+        try {
+            visit_measure_instruction(*measure_instruction_ast);
+        } catch (error::AnalysisError &err) {
+            err.context(node);
+            result_.errors.push_back(std::move(err));
+        }
     }
 
     return GlobalBlockReturnT{ analyzer_.current_block(), analyzer_.current_variables() };

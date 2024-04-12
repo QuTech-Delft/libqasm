@@ -26,7 +26,7 @@ TEST(to_json, v3x_parser_ast) {
     auto ast_result = cqasm::v3x::parser::parse_file(input_file_path.generic_string(), std::nullopt);
     auto json_result = to_json(ast_result);
     auto expected_json_result = std::string{
-        R"delim({"Program":{"version":{"Version":{"items":"3","source_location":"<unknown file name>:1:9..10"}},"block":{"GlobalBlock":{"qubit_variable_declaration":{"Variable":{"name":{"Identifier":{"name":"q"}},"typ":{"Type":{"name":{"Keyword":{"name":"qubit"}},"size":{"IntegerLiteral":{"value":"0"}},"source_location":"<unknown file name>:3:1..9"}},"annotations":"[]","source_location":"<unknown file name>:3:10..11"}},"gates":"[]","measure_instruction":"-"}}}})delim"
+        R"delim({"Program":{"version":{"Version":{"items":"3","source_location":"<unknown file name>:1:9..10"}},"block":{"GlobalBlock":{"qubit_variable_declaration":{"Variable":{"name":{"Identifier":{"name":"q"}},"typ":{"Type":{"name":{"Keyword":{"name":"qubit"}},"size":{"IntegerLiteral":{"value":"0"}},"source_location":"<unknown file name>:3:1..9"}},"annotations":"[]","source_location":"<unknown file name>:3:10..11"}},"gates":"[]","measure_instructions":"[]"}}}})delim"
     };
     EXPECT_EQ(json_result, expected_json_result);
 }
