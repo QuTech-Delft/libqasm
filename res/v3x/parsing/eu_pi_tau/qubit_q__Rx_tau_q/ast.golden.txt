@@ -49,7 +49,7 @@ Program(
           annotations: []
         )
       ]
-      measure_instruction: -
+      measure_instructions: []
     )
   >
 )
