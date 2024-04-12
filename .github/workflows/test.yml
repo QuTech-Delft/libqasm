@@ -8,8 +8,8 @@ on:
   pull_request:
 
 jobs:
-  cpp-linux-x64-release-shared:
-    name: "C++ tests (gcc/Linux/x64)"
+  cpp-shared:
+    name: "C++ tests (shared)"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
