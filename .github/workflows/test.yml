@@ -240,7 +240,7 @@ jobs:
     # see https://github.community/t/status-check-for-a-matrix-jobs/127354/7
     name: Report status
     needs:
-      - cpp-linux-x64-release-shared
+      - cpp-shared
       - cpp-linux-x64
       - cpp-macos-x64
       - cpp-windows-x64
