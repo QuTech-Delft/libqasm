@@ -23,6 +23,7 @@ ConstructorInitializerIndentWidth: 0
 Cpp11BracedListStyle: false
 DerivePointerAlignment: false
 IndentWidth: 4
+LambdaBodyIndentation: OuterScope
 PackConstructorInitializers: Never
 PointerAlignment: Right
 ReflowComments: false
