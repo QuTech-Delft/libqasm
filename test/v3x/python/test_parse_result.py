@@ -17,5 +17,5 @@ class TestParseResult(unittest.TestCase):
         program_str = "version 3; qubit[0] q"
         v3x_analyzer = cq.Analyzer()
         actual_ast_json = v3x_analyzer.parse_string_to_json(program_str)
-        expected_ast_json = '''{"Program":{"version":{"Version":{"items":"3","source_location":"<unknown file name>:1:9..10"}},"block":{"GlobalBlock":{"qubit_variable_declaration":{"Variable":{"name":{"Identifier":{"name":"q"}},"typ":{"Type":{"name":{"Keyword":{"name":"qubit"}},"size":{"IntegerLiteral":{"value":"0"}},"source_location":"<unknown file name>:1:12..20"}},"annotations":"[]","source_location":"<unknown file name>:1:21..22"}},"gates":"[]","measure_instruction":"-"}}}}'''
+        expected_ast_json = '''{"Program":{"version":{"Version":{"items":"3","source_location":"<unknown file name>:1:9..10"}},"block":{"GlobalBlock":{"qubit_variable_declaration":{"Variable":{"name":{"Identifier":{"name":"q"}},"typ":{"Type":{"name":{"Keyword":{"name":"qubit"}},"size":{"IntegerLiteral":{"value":"0"}},"source_location":"<unknown file name>:1:12..20"}},"annotations":"[]","source_location":"<unknown file name>:1:21..22"}},"gates":"[]","measure_instructions":"[]"}}}}'''
         self.assertEqual(actual_ast_json, expected_ast_json)

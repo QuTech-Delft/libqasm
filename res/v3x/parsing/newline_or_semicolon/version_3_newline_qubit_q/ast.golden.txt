@@ -28,7 +28,7 @@ Program(
         )
       >
       gates: []
-      measure_instruction: -
+      measure_instructions: []
     )
   >
 )

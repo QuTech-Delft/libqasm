@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [ 0.6.3 ] - [ 2024-04-12 ]
+
+### Added
+
+- `cpp-linux-x64-release-shared` test job.
+
+### Changed
+
+- Allow multiple `measure` instructions at the end of a program.
+
+### Removed
+
+
 ## [ 0.6.2 ] - [ 2024-04-09 ]
 
 ### Added

@@ -16,7 +16,7 @@ class CustomErrorListener;
 
 namespace cqasm::v3x::parser {
 
-using InstructionsSectionT = std::tuple<tree::Any<ast::Gate>, tree::Maybe<ast::MeasureInstruction>>;
+using InstructionsSectionT = std::tuple<tree::Any<ast::Gate>, tree::Any<ast::MeasureInstruction>>;
 
 class BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
     /**
@@ -63,7 +63,7 @@ public:
     std::any visitVariableDeclarationSection(CqasmParser::VariableDeclarationSectionContext *context) override;
     std::any visitInstructionsSection(CqasmParser::InstructionsSectionContext *context) override;
     std::any visitGatesSection(CqasmParser::GatesSectionContext *context) override;
-    std::any visitMeasureInstructionSection(CqasmParser::MeasureInstructionSectionContext *context) override;
+    std::any visitMeasureInstructionsSection(CqasmParser::MeasureInstructionsSectionContext *context) override;
     std::any visitEofSection(CqasmParser::EofSectionContext *context) override;
     std::any visitStatementSeparator(CqasmParser::StatementSeparatorContext *context) override;
     std::any visitVersion(CqasmParser::VersionContext *context) override;

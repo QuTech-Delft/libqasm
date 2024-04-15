@@ -114,10 +114,10 @@ std::any BuildTreeGenAstVisitor::visitBodySection(CqasmParser::BodySectionContex
     auto ret = tree::make<GlobalBlock>();
     ret->qubit_variable_declaration =
         std::any_cast<One<Variable>>(visitVariableDeclarationSection(context->variableDeclarationSection()));
-    auto [gates, measure_instruction] =
+    auto [gates, measure_instructions] =
         std::any_cast<InstructionsSectionT>(visitInstructionsSection(context->instructionsSection()));
     ret->gates = std::move(gates);
-    ret->measure_instruction = std::move(measure_instruction);
+    ret->measure_instructions = std::move(measure_instructions);
     return ret;
 }
 
@@ -135,13 +135,12 @@ std::any BuildTreeGenAstVisitor::visitInstructionsSection(CqasmParser::Instructi
     if (context->gatesSection()) {
         gates = std::any_cast<Any<Gate>>(visitGatesSection(context->gatesSection()));
     }
-    auto measure_instruction = Maybe<MeasureInstruction>{};
-    if (context->measureInstructionSection()) {
-        measure_instruction =
-            std::any_cast<One<MeasureInstruction>>(visitMeasureInstructionSection(context->measureInstructionSection()))
-                .get_ptr();
+    auto measure_instructions = Any<MeasureInstruction>{};
+    if (context->measureInstructionsSection()) {
+        measure_instructions = std::any_cast<Any<MeasureInstruction>>(
+            visitMeasureInstructionsSection(context->measureInstructionsSection()));
     }
-    return InstructionsSectionT{ std::move(gates), std::move(measure_instruction) };
+    return InstructionsSectionT{ std::move(gates), std::move(measure_instructions) };
 }
 
 std::any BuildTreeGenAstVisitor::visitGatesSection(CqasmParser::GatesSectionContext *context) {
@@ -153,9 +152,15 @@ std::any BuildTreeGenAstVisitor::visitGatesSection(CqasmParser::GatesSectionCont
     return ret;
 }
 
-std::any BuildTreeGenAstVisitor::visitMeasureInstructionSection(
-    CqasmParser::MeasureInstructionSectionContext *context) {
-    return visitMeasureInstruction(context->measureInstruction());
+std::any BuildTreeGenAstVisitor::visitMeasureInstructionsSection(
+    CqasmParser::MeasureInstructionsSectionContext *context) {
+    auto ret = Any<MeasureInstruction>{};
+    const auto &measure_instructions = context->measureInstruction();
+    std::for_each(measure_instructions.begin(), measure_instructions.end(),
+        [this, &ret](const auto &measure_instruction_ctx) {
+    ret.add(std::any_cast<One<MeasureInstruction>>(measure_instruction_ctx->accept(this)));
+    });
+    return ret;
 }
 
 std::any BuildTreeGenAstVisitor::visitStatementSeparator(CqasmParser::StatementSeparatorContext *) {

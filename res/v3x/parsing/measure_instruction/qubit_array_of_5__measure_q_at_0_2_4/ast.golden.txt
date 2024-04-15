@@ -32,7 +32,7 @@ Program(
         )
       >
       gates: []
-      measure_instruction: <
+      measure_instructions: [
         MeasureInstruction( # input.cq:4:1..8
           name: <
             Identifier(
@@ -77,7 +77,7 @@ Program(
           >
           annotations: []
         )
-      >
+      ]
     )
   >
 )
