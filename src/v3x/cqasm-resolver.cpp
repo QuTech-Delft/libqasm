@@ -2,14 +2,15 @@
  * Implementation for \ref include/v3x/cqasm-resolver.hpp "v3x/cqasm-resolver.hpp".
  */
 
-#include "cqasm-error.hpp"
-#include "cqasm-utils.hpp"
 #include "v3x/cqasm-resolver.hpp"
 
 #include <fmt/format.h>
+
 #include <memory>
 #include <unordered_map>
 
+#include "cqasm-error.hpp"
+#include "cqasm-utils.hpp"
 
 namespace cqasm::v3x::resolver {
 
@@ -17,7 +18,6 @@ using Type = types::Type;
 using Types = types::Types;
 using Value = values::Value;
 using Values = values::Values;
-
 
 //---------------//
 // VariableTable //
@@ -42,7 +42,6 @@ Value VariableTable::resolve(const std::string &name) const {
     throw NameResolutionFailure{ fmt::format("failed to resolve variable '{}'", name) };
 }
 
-
 //----------------------------//
 // ConstEvalCoreFunctionTable //
 //----------------------------//
@@ -50,15 +49,15 @@ Value VariableTable::resolve(const std::string &name) const {
 ConstEvalCoreFunctionTable::ConstEvalCoreFunctionTable()
 : resolver{ std::make_unique<resolver_t>() } {}
 ConstEvalCoreFunctionTable::~ConstEvalCoreFunctionTable() = default;
-ConstEvalCoreFunctionTable::ConstEvalCoreFunctionTable(const ConstEvalCoreFunctionTable& t)
+ConstEvalCoreFunctionTable::ConstEvalCoreFunctionTable(const ConstEvalCoreFunctionTable &t)
 : resolver{ std::make_unique<resolver_t>(*t.resolver) } {}
-ConstEvalCoreFunctionTable::ConstEvalCoreFunctionTable(ConstEvalCoreFunctionTable&& t) noexcept
+ConstEvalCoreFunctionTable::ConstEvalCoreFunctionTable(ConstEvalCoreFunctionTable &&t) noexcept
 : resolver{ std::move(t.resolver) } {}
-ConstEvalCoreFunctionTable& ConstEvalCoreFunctionTable::operator=(const ConstEvalCoreFunctionTable& t) {
+ConstEvalCoreFunctionTable &ConstEvalCoreFunctionTable::operator=(const ConstEvalCoreFunctionTable &t) {
     resolver = std::make_unique<resolver_t>(resolver_t{ *t.resolver });
     return *this;
 }
-ConstEvalCoreFunctionTable& ConstEvalCoreFunctionTable::operator=(ConstEvalCoreFunctionTable&& t) noexcept {
+ConstEvalCoreFunctionTable &ConstEvalCoreFunctionTable::operator=(ConstEvalCoreFunctionTable &&t) noexcept {
     resolver = std::move(t.resolver);
     return *this;
 }
@@ -76,7 +75,8 @@ ConstEvalCoreFunctionTable& ConstEvalCoreFunctionTable::operator=(ConstEvalCoreF
  * However, the overload resolution engine will always use the last applicable overload it finds,
  * so adding does have the effect of overriding.
  */
-void ConstEvalCoreFunctionTable::add(const std::string &name, const Types &param_types, const ConstEvalCoreFunction &impl) {
+void ConstEvalCoreFunctionTable::add(
+    const std::string &name, const Types &param_types, const ConstEvalCoreFunction &impl) {
     resolver->add_overload(name, impl, param_types);
 }
 
@@ -94,7 +94,6 @@ Value ConstEvalCoreFunctionTable::resolve(const std::string &name, const Values 
     return resolution.first(resolution.second);
 }
 
-
 //------------------//
 // InstructionTable //
 //------------------//
@@ -102,15 +101,15 @@ Value ConstEvalCoreFunctionTable::resolve(const std::string &name, const Values 
 InstructionTable::InstructionTable()
 : resolver{ std::make_unique<resolver_t>() } {}
 InstructionTable::~InstructionTable() = default;
-InstructionTable::InstructionTable(const InstructionTable& t)
+InstructionTable::InstructionTable(const InstructionTable &t)
 : resolver{ std::make_unique<resolver_t>(*t.resolver) } {}
-InstructionTable::InstructionTable(InstructionTable&& t) noexcept
+InstructionTable::InstructionTable(InstructionTable &&t) noexcept
 : resolver{ std::move(t.resolver) } {}
-InstructionTable& InstructionTable::operator=(const InstructionTable& t) {
+InstructionTable &InstructionTable::operator=(const InstructionTable &t) {
     resolver = std::make_unique<resolver_t>(resolver_t{ *t.resolver });
     return *this;
 }
-InstructionTable& InstructionTable::operator=(InstructionTable&& t) noexcept {
+InstructionTable &InstructionTable::operator=(InstructionTable &&t) noexcept {
     resolver = std::move(t.resolver);
     return *this;
 }
@@ -134,4 +133,4 @@ tree::One<semantic::Instruction> InstructionTable::resolve(const std::string &na
     return tree::make<semantic::Instruction>(instruction_ref, name, promoted_args);
 }
 
-} // namespace cqasm::v3x::resolver
+}  // namespace cqasm::v3x::resolver

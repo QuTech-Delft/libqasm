@@ -1,16 +1,16 @@
 #pragma once
 
-#define LIBQASM_VERSION "0.6.1"
-#define LIBQASM_RELEASE_YEAR "2024"
-
-#include <string>
-
-
 namespace cqasm {
 
-/**
- * Returns libqasm version.
- */
-std::string get_version();
+static const char *version{ "0.6.2" };
+static const char *release_year{ "2024" };
 
+[[nodiscard]] [[maybe_unused]] static const char *get_version() {
+    return version;
 }
+
+[[nodiscard]] [[maybe_unused]] static const char *get_release_year() {
+    return release_year;
+}
+
+}  // namespace cqasm

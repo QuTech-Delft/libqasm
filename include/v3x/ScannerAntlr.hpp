@@ -1,14 +1,17 @@
 #pragma once
 
-#include "v3x/BuildCustomAstVisitor.hpp"
-#include "v3x/cqasm-parse-result.hpp"
-
 #include <memory>  // unique_ptr
 #include <string>
 
-namespace antlr4 { class ANTLRInputStream; }
-namespace cqasm::v3x::parser { class CustomErrorListener; }
+#include "v3x/BuildCustomAstVisitor.hpp"
+#include "v3x/cqasm-parse-result.hpp"
 
+namespace antlr4 {
+class ANTLRInputStream;
+}
+namespace cqasm::v3x::parser {
+class CustomErrorListener;
+}
 
 namespace cqasm::v3x::parser {
 
@@ -21,6 +24,7 @@ struct ScannerAdaptor {
 class ScannerAntlr : public ScannerAdaptor {
     std::unique_ptr<BuildCustomAstVisitor> build_visitor_up_;
     std::unique_ptr<CustomErrorListener> error_listener_up_;
+
 protected:
     cqasm::v3x::parser::ParseResult parse_(antlr4::ANTLRInputStream &is);
 
@@ -35,10 +39,10 @@ public:
 
 class ScannerAntlrFile : public ScannerAntlr {
     std::string file_path_;
+
 public:
     ScannerAntlrFile(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up,
-        std::unique_ptr<CustomErrorListener> error_listener_up,
-        const std::string &file_path);
+        std::unique_ptr<CustomErrorListener> error_listener_up, const std::string &file_path);
 
     ~ScannerAntlrFile() override;
 
@@ -47,10 +51,10 @@ public:
 
 class ScannerAntlrString : public ScannerAntlr {
     std::string data_;
+
 public:
     ScannerAntlrString(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up,
-        std::unique_ptr<CustomErrorListener> error_listener_up,
-        const std::string &data);
+        std::unique_ptr<CustomErrorListener> error_listener_up, const std::string &data);
 
     ~ScannerAntlrString() override;
 

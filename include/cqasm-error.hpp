@@ -4,14 +4,14 @@
 
 #pragma once
 
-#include "cqasm-tree.hpp"
-#include "cqasm-annotations.hpp"
-
 #include <fmt/ostream.h>
-#include <string>
+
 #include <optional>
+#include <string>
 #include <vector>
 
+#include "cqasm-annotations.hpp"
+#include "cqasm-tree.hpp"
 
 /**
  * Namespace for exceptions used by libqasm.
@@ -25,7 +25,7 @@ using AnalysisError = Error;
 using ParseErrors = std::vector<ParseError>;
 using AnalysisErrors = std::vector<AnalysisError>;
 
-static constexpr const char* unknown_error_message = "<unknown error message>";
+static constexpr const char *unknown_error_message = "<unknown error message>";
 
 /**
  * Exception used for analysis errors.
@@ -62,9 +62,7 @@ public:
     /**
      * Constructs a new error from a message and all the fields of a source location.
      */
-    Error(
-        const std::string &message,
-        const std::optional<std::string> &file_name,
+    Error(const std::string &message, const std::optional<std::string> &file_name,
         const annotations::SourceLocation::Range &range);
 
     /**
@@ -96,20 +94,17 @@ std::ostream &operator<<(std::ostream &os, const Error &error);
 /**
  * Defines a new analysis error class.
  */
-#define CQASM_ANALYSIS_ERROR(Name)                                  \
-    class Name : public ::cqasm::error::AnalysisError {             \
-    public:                                                         \
-        explicit Name(                                              \
-            std::string &&message = "",                             \
-            const tree::Annotatable *node = nullptr                 \
-        ) :                                                         \
-            ::cqasm::error::AnalysisError(std::move(message), node) \
-        {}                                                          \
+#define CQASM_ANALYSIS_ERROR(Name)                                                         \
+    class Name : public ::cqasm::error::AnalysisError {                                    \
+    public:                                                                                \
+        explicit Name(std::string &&message = "", const tree::Annotatable *node = nullptr) \
+        : ::cqasm::error::AnalysisError(std::move(message), node) {}                       \
     }
 
-} // namespace cqasm::error
+}  // namespace cqasm::error
 
 /**
  * std::ostream support via fmt (uses operator<<).
  */
-template <> struct fmt::formatter<cqasm::error::Error> : ostream_formatter {};
+template <>
+struct fmt::formatter<cqasm::error::Error> : ostream_formatter {};

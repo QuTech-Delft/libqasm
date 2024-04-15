@@ -5,12 +5,12 @@
 
 #pragma once
 
-#include "cqasm-types.hpp"
-#include "cqasm-values.hpp"
-
 #include <fmt/ostream.h>
+
 #include <optional>
 
+#include "cqasm-types.hpp"
+#include "cqasm-values.hpp"
 
 namespace cqasm::v3x {
 
@@ -51,10 +51,8 @@ public:
      */
     Instruction(std::string name, const std::optional<std::string> &param_types);
 
-    bool operator==(const Instruction& rhs) const;
-    inline bool operator!=(const Instruction& rhs) const {
-        return !(*this == rhs);
-    }
+    bool operator==(const Instruction &rhs) const;
+    inline bool operator!=(const Instruction &rhs) const { return !(*this == rhs); }
 };
 
 /**
@@ -72,8 +70,7 @@ std::ostream &operator<<(std::ostream &os, const Instruction &instruction);
  */
 std::ostream &operator<<(std::ostream &os, const InstructionRef &instruction);
 
-} // namespace instruction
-
+}  // namespace instruction
 
 namespace primitives {
 
@@ -82,11 +79,12 @@ void serialize(const instruction::InstructionRef &obj, ::tree::cbor::MapWriter &
 template <>
 instruction::InstructionRef deserialize(const ::tree::cbor::MapReader &map);
 
-} // namespace primitives
+}  // namespace primitives
 
-} // namespace cqasm::v3x
+}  // namespace cqasm::v3x
 
 /**
  * std::ostream support via fmt (uses operator<<).
  */
-template <> struct fmt::formatter<cqasm::v3x::instruction::Instruction> : ostream_formatter {};
+template <>
+struct fmt::formatter<cqasm::v3x::instruction::Instruction> : ostream_formatter {};

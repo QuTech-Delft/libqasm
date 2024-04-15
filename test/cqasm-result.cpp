@@ -1,15 +1,17 @@
 #include "cqasm-result.hpp"
-#include "v3x/cqasm.hpp"  // default_analyzer
+
+#include <gtest/gtest.h>
 
 #include <filesystem>
-#include <gtest/gtest.h>
+
+#include "v3x/cqasm.hpp"  // default_analyzer
 
 namespace fs = std::filesystem;
 using namespace cqasm::result;
 
-
 TEST(to_json, v3x_parser_errors) {
-    auto input_file_path = fs::path{"res"}/"v3x"/"parsing"/"qubit_array_definition"/"qubit_array_of_17"/"input.cq";
+    auto input_file_path =
+        fs::path{ "res" } / "v3x" / "parsing" / "qubit_array_definition" / "qubit_array_of_17" / "input.cq";
     cqasm::v3x::analyzer::Analyzer analyzer{};
     auto semantic_ast_result = analyzer.analyze_file(input_file_path.generic_string());
     auto json_result = to_json(semantic_ast_result);
@@ -19,7 +21,8 @@ TEST(to_json, v3x_parser_errors) {
     EXPECT_EQ(json_result, expected_json_result);
 }
 TEST(to_json, v3x_parser_ast) {
-    auto input_file_path = fs::path{"res"}/"v3x"/"parsing"/"qubit_array_definition"/"qubit_array_of_0_q"/"input.cq";
+    auto input_file_path =
+        fs::path{ "res" } / "v3x" / "parsing" / "qubit_array_definition" / "qubit_array_of_0_q" / "input.cq";
     auto ast_result = cqasm::v3x::parser::parse_file(input_file_path.generic_string(), std::nullopt);
     auto json_result = to_json(ast_result);
     auto expected_json_result = std::string{
@@ -28,7 +31,8 @@ TEST(to_json, v3x_parser_ast) {
     EXPECT_EQ(json_result, expected_json_result);
 }
 TEST(to_json, v3x_analyzer_errors) {
-    auto input_file_path = fs::path{"res"}/"v3x"/"parsing"/"qubit_array_definition"/"qubit_array_of_0_q"/"input.cq";
+    auto input_file_path =
+        fs::path{ "res" } / "v3x" / "parsing" / "qubit_array_definition" / "qubit_array_of_0_q" / "input.cq";
     auto semantic_ast_result = cqasm::v3x::default_analyzer().analyze_file(input_file_path.generic_string());
     auto json_result = to_json(semantic_ast_result);
     auto expected_json_result = std::string{
@@ -37,7 +41,8 @@ TEST(to_json, v3x_analyzer_errors) {
     EXPECT_EQ(json_result, expected_json_result);
 }
 TEST(to_json, v3x_analyzer_ast) {
-    auto input_file_path = fs::path{"res"}/"v3x"/"parsing"/"qubit_array_definition"/"qubit_array_of_17_q"/"input.cq";
+    auto input_file_path =
+        fs::path{ "res" } / "v3x" / "parsing" / "qubit_array_definition" / "qubit_array_of_17_q" / "input.cq";
     auto semantic_ast_result = cqasm::v3x::default_analyzer().analyze_file(input_file_path.generic_string());
     auto json_result = to_json(semantic_ast_result);
     auto expected_json_result = std::string{

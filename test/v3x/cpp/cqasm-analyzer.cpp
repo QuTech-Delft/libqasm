@@ -1,16 +1,17 @@
+#include "v3x/cqasm-analyzer.hpp"
+
+#include <gmock/gmock.h>
+
+#include <functional>
+
 #include "cqasm-error.hpp"
 #include "cqasm-tree.hpp"
 #include "cqasm-version.hpp"
 #include "mock_analyzer.hpp"
-#include "v3x/cqasm-analyzer.hpp"
 #include "v3x/cqasm-ast.hpp"
 #include "v3x/cqasm-parse-result.hpp"
 
-#include <functional>
-#include <gmock/gmock.h>
-
 using namespace ::testing;
-
 
 namespace cqasm::v3x::analyzer {
 
@@ -47,7 +48,6 @@ TEST_F(AnalyzerAnalyzeTest, parser_returns_errors) {
     const auto &error = analysis_result.errors[0];
     EXPECT_THAT(error.what(), ::testing::HasSubstr(parse_error_message));
 }
-
 
 //--------------//
 // AnalyzerTest //
@@ -96,7 +96,8 @@ TEST_F(AnalyzerTest, add_statement_with_source_location_information_to_current_s
     EXPECT_EQ(block_source_location.file_name, statement_source_location.file_name);
     EXPECT_EQ(block_source_location.range, statement_source_location.range);
 }
-TEST_F(AnalyzerTest, add_statement_with_source_location_information_to_current_scope_and_block_has_source_location_information) {
+TEST_F(AnalyzerTest,
+    add_statement_with_source_location_information_to_current_scope_and_block_has_source_location_information) {
     MockAnalyzer analyzer{};
     //     10 15 20 25 30
     //  5      <

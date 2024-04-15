@@ -4,9 +4,9 @@
 
 #include "v3x/cqasm-primitives.hpp"
 
-#include <algorithm>  // transform
 #include <fmt/format.h>
 
+#include <algorithm>  // transform
 
 namespace cqasm::v3x::primitives {
 
@@ -14,7 +14,9 @@ namespace cqasm::v3x::primitives {
  * String
  */
 template <>
-Str initialize<Str>() { return ""; }
+Str initialize<Str>() {
+    return "";
+}
 
 template <>
 void serialize(const Str &obj, ::tree::cbor::MapWriter &map) {
@@ -30,7 +32,9 @@ Str deserialize(const ::tree::cbor::MapReader &map) {
  * Axis
  */
 template <>
-Axis initialize<Axis>() { return Axis{ 1.0, 0.0, 0.0 }; }
+Axis initialize<Axis>() {
+    return Axis{ 1.0, 0.0, 0.0 };
+}
 
 template <>
 void serialize(const Axis &obj, ::tree::cbor::MapWriter &map) {
@@ -41,14 +45,16 @@ void serialize(const Axis &obj, ::tree::cbor::MapWriter &map) {
 
 template <>
 Axis deserialize(const ::tree::cbor::MapReader &map) {
-    return {map.at("x").as_float(), map.at("y").as_float(), map.at("z").as_float()};
+    return { map.at("x").as_float(), map.at("y").as_float(), map.at("z").as_float() };
 }
 
 /**
  * Bool
  */
 template <>
-Bool initialize<Bool>() { return false; }
+Bool initialize<Bool>() {
+    return false;
+}
 
 template <>
 void serialize(const Bool &obj, ::tree::cbor::MapWriter &map) {
@@ -64,7 +70,9 @@ Bool deserialize(const ::tree::cbor::MapReader &map) {
  * Int
  */
 template <>
-Int initialize<Int>() { return 0; }
+Int initialize<Int>() {
+    return 0;
+}
 
 template <>
 void serialize(const Int &obj, ::tree::cbor::MapWriter &map) {
@@ -80,7 +88,9 @@ Int deserialize(const ::tree::cbor::MapReader &map) {
  * Float
  */
 template <>
-Float initialize<Float>() { return 0.0; }
+Float initialize<Float>() {
+    return 0.0;
+}
 
 template <>
 void serialize(const Float &obj, ::tree::cbor::MapWriter &map) {
@@ -134,4 +144,4 @@ std::ostream &operator<<(std::ostream &os, const Axis &axis) {
     return os << fmt::format("[{}, {}, {}]", axis.x, axis.y, axis.z);
 }
 
-} // namespace cqasm::v3x::primitives
+}  // namespace cqasm::v3x::primitives

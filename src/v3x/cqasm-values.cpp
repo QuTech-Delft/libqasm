@@ -2,17 +2,18 @@
  * Implementation for \ref include/v3x/cqasm-values.hpp "v3x/cqasm-values.hpp".
  */
 
-#include "cqasm-error.hpp"
-#include "v3x/cqasm-parse-helper.hpp"
 #include "v3x/cqasm-values.hpp"
-#include "v3x/cqasm-types.hpp"
-#include "v3x/cqasm-semantic.hpp"
+
+#include <fmt/format.h>
 
 #include <cassert>
-#include <fmt/format.h>
 #include <ostream>
 #include <stdexcept>  // runtime_error
 
+#include "cqasm-error.hpp"
+#include "v3x/cqasm-parse-helper.hpp"
+#include "v3x/cqasm-semantic.hpp"
+#include "v3x/cqasm-types.hpp"
 
 namespace cqasm::v3x::values {
 
@@ -70,7 +71,7 @@ bool check_promote(const types::Type &from_type, const types::Type &to_type) {
         return true;
     } else if (from_type->as_bool()) {
         return to_type->as_int() || to_type->as_float();
-    } else if  (from_type->as_int()) {
+    } else if (from_type->as_int()) {
         return to_type->as_float();
     }
     return false;
@@ -92,7 +93,7 @@ types::Type element_type_of(const types::Type &type) {
  * Returns the type of the given value.
  */
 types::Type type_of(const Value &value) {
-if (value->as_const_bool()) {
+    if (value->as_const_bool()) {
         return tree::make<types::Bool>();
     } else if (value->as_const_int()) {
         return tree::make<types::Int>();
@@ -163,9 +164,7 @@ void check_const(const Values &values) {
  * Stream << overload for a single value.
  */
 std::ostream &operator<<(std::ostream &os, const Value &value) {
-    return (value.empty())
-        ? os << "NULL"
-        : os << *value;
+    return (value.empty()) ? os << "NULL" : os << *value;
 }
 
 /**
@@ -175,4 +174,4 @@ std::ostream &operator<<(std::ostream &os, const Values &values) {
     return os << fmt::format("[{}]", fmt::join(values, ", "));
 }
 
-} // namespace cqasm::v3x::values
+}  // namespace cqasm::v3x::values

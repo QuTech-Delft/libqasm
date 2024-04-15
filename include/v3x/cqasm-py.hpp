@@ -13,10 +13,9 @@
 #include <string>
 #include <vector>
 
-
 // Forward declarations for internal types.
 namespace cqasm::v3x::analyzer {
-    class Analyzer;
+class Analyzer;
 }
 
 /**

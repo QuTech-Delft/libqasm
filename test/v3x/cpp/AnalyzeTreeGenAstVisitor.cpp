@@ -1,17 +1,17 @@
-#include "cqasm-error.hpp"
-#include "mock_analyzer.hpp"
-#include "v3x/cqasm-ast-gen.hpp"
-#include "v3x/cqasm-values.hpp"
 #include "v3x/AnalyzeTreeGenAstVisitor.hpp"
 
 #include <fmt/format.h>
 #include <gmock/gmock.h>
 
+#include "cqasm-error.hpp"
+#include "mock_analyzer.hpp"
+#include "v3x/cqasm-ast-gen.hpp"
+#include "v3x/cqasm-values.hpp"
+
 namespace analyzer = cqasm::v3x::analyzer;
 namespace ast = cqasm::v3x::ast;
 namespace error = cqasm::error;
 namespace values = cqasm::v3x::values;
-
 
 namespace cqasm::v3x::analyzer {
 
@@ -22,7 +22,7 @@ protected:
         EXPECT_CALL(analyzer, resolve_function(::testing::_, ::testing::_))
             .WillOnce(::testing::Return(function_return_value));
     }
-    void ExpectAnalyzerResolveFunctionThrow(const std::string& error_message) {
+    void ExpectAnalyzerResolveFunctionThrow(const std::string &error_message) {
         EXPECT_CALL(analyzer, resolve_function(::testing::_, ::testing::_))
             .WillRepeatedly(::testing::Throw(std::runtime_error{ error_message.c_str() }));
     }

@@ -34,8 +34,7 @@ class LibqasmConan(ConanFile):
         "build_tests": [True, False],
         "cqasm_python_dir": [None, "ANY"],
         "python_dir": [None, "ANY"],
-        "python_ext": [None, "ANY"],
-        "tree_gen_build_tests": [True, False]
+        "python_ext": [None, "ANY"]
     }
     default_options = {
         "shared": False,
@@ -45,8 +44,7 @@ class LibqasmConan(ConanFile):
         "build_tests": False,
         "cqasm_python_dir": None,
         "python_dir": None,
-        "python_ext": None,
-        "tree_gen_build_tests": False
+        "python_ext": None
     }
 
     exports = "version.py", "include/version.hpp"
@@ -92,6 +90,7 @@ class LibqasmConan(ConanFile):
         deps.generate()
         tc = CMakeToolchain(self)
         tc.variables["ASAN_ENABLED"] = self.options.asan_enabled
+        tc.variables["BUILD_SHARED_LIBS"] = self.options.shared
         tc.variables["LIBQASM_BUILD_EMSCRIPTEN"] = self.settings.arch == "wasm"
         tc.variables["LIBQASM_BUILD_PYTHON"] = self.options.build_python
         tc.variables["LIBQASM_BUILD_TESTS"] = self.options.build_tests
@@ -99,7 +98,6 @@ class LibqasmConan(ConanFile):
         tc.variables["LIBQASM_PYTHON_DIR"] = self.options.python_dir
         tc.variables["LIBQASM_PYTHON_EXT"] = self.options.python_ext
         tc.variables["PYTHON_EXECUTABLE"] = re.escape(sys.executable)
-        tc.variables["TREE_GEN_BUILD_TESTS"] = self.options.tree_gen_build_tests
         tc.generate()
         env = VirtualBuildEnv(self)
         env.generate()

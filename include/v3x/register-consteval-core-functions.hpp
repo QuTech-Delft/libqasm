@@ -1,15 +1,13 @@
 #pragma once
 
-#include "v3x/cqasm-analyzer.hpp"
-#include "v3x/cqasm-primitives.hpp"
-
 #include <cmath>
 #include <functional>
 #include <numeric>
 
+#include "v3x/cqasm-analyzer.hpp"
+#include "v3x/cqasm-primitives.hpp"
 
 namespace primitives = cqasm::v3x::primitives;
-
 
 /**
  * Changes regarding v1:
@@ -25,7 +23,7 @@ namespace primitives = cqasm::v3x::primitives;
  */
 
 namespace cqasm::v3x::function {
-    
+
 /**
  * Function with constant parameters 
  */
@@ -174,4 +172,4 @@ constexpr auto fn_abs_i = uf_cp<values::ConstInt, values::ConstInt, abs>{};
  */
 void register_consteval_core_functions(analyzer::Analyzer *analyzer);
 
-} // namespace function
+}  // namespace cqasm::v3x::function

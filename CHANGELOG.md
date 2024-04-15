@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [ 0.6.2 ] - [ 2024-04-09 ]
+
+### Added
+
+- `.clang-format`.
+- `emscripten-wasm` assets job.
+
+### Changed
+
+- Fix shared library build.
+
+### Removed
+
+- `TREEN_GEN_BUILD_TESTS` option.
+
 ## [ 0.6.1 ] - [ 2024-04-08 ]
 
 ### Added

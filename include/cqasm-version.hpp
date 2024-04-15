@@ -4,17 +4,17 @@
 
 #pragma once
 
-#include "cqasm-error.hpp"
+#include <fmt/ostream.h>
 
 #include <cstdint>  // int64_t
 #include <cstdio>  // FILE*
-#include <fmt/ostream.h>
 #include <memory>  // unique_ptr
 #include <optional>
 #include <ostream>
 #include <string>
 #include <vector>
 
+#include "cqasm-error.hpp"
 
 /**
  * Namespace for detecting and dealing with cQASM language versions.
@@ -52,12 +52,8 @@ public:
      */
     Version(const char *version);
 
-    [[nodiscard]] auto operator==(const Version &rhs) const {
-        return compare(rhs) == 0;
-    }
-    [[nodiscard]] auto operator<=>(const Version &rhs) const {
-        return compare(rhs) <=> 0;
-    }
+    [[nodiscard]] auto operator==(const Version &rhs) const { return compare(rhs) == 0; }
+    [[nodiscard]] auto operator<=>(const Version &rhs) const { return compare(rhs) <=> 0; }
 };
 
 /**
@@ -65,9 +61,10 @@ public:
  */
 std::ostream &operator<<(std::ostream &os, const Version &object);
 
-} // namespace cqasm::version
+}  // namespace cqasm::version
 
 /**
  * std::ostream support via fmt (uses operator<<).
  */
-template <> struct fmt::formatter<cqasm::version::Version> : ostream_formatter {};
+template <>
+struct fmt::formatter<cqasm::version::Version> : ostream_formatter {};

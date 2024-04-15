@@ -5,7 +5,6 @@
 
 #pragma once
 
-
 namespace cqasm::v3x::semantic {
 
 // NOTE JvS:
@@ -15,4 +14,4 @@ namespace cqasm::v3x::semantic {
 class Variable;
 class Function;
 
-} // namespace cqasm::v3x::semantic
+}  // namespace cqasm::v3x::semantic

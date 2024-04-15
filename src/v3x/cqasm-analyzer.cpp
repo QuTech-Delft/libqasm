@@ -2,19 +2,20 @@
  * Implementation for \ref include/v3x/cqasm-analyzer.hpp "v3x/cqasm-analyzer.hpp".
  */
 
-#include "cqasm-error.hpp"
-#include "v3x/AnalyzeTreeGenAstVisitor.hpp"
 #include "v3x/cqasm-analyzer.hpp"
-#include "v3x/cqasm-core-function.hpp"
-#include "v3x/cqasm-parse-helper.hpp"
-#include "v3x/register-consteval-core-functions.hpp"
-#include "v3x/register-instructions.hpp"
 
 #include <fmt/format.h>
+
 #include <memory>  // make_unique
 #include <numbers>
 #include <stdexcept>  // runtime_error
 
+#include "cqasm-error.hpp"
+#include "v3x/AnalyzeTreeGenAstVisitor.hpp"
+#include "v3x/cqasm-core-function.hpp"
+#include "v3x/cqasm-parse-helper.hpp"
+#include "v3x/register-consteval-core-functions.hpp"
+#include "v3x/register-instructions.hpp"
 
 namespace cqasm::v3x::analyzer {
 
@@ -31,14 +32,28 @@ Analyzer::Analyzer(const primitives::Version &api_version)
     global_scope().block = tree::make<semantic::Block>();
 }
 
-[[nodiscard]] Scope &Analyzer::global_scope() { return scope_stack_.back(); }
-[[nodiscard]] Scope &Analyzer::current_scope() { return scope_stack_.front(); }
-[[nodiscard]] tree::One<semantic::Block> Analyzer::current_block() { return current_scope().block; }
-[[nodiscard]] tree::Any<semantic::Variable> &Analyzer::current_variables() { return current_scope().variables; }
+[[nodiscard]] Scope &Analyzer::global_scope() {
+    return scope_stack_.back();
+}
+[[nodiscard]] Scope &Analyzer::current_scope() {
+    return scope_stack_.front();
+}
+[[nodiscard]] tree::One<semantic::Block> Analyzer::current_block() {
+    return current_scope().block;
+}
+[[nodiscard]] tree::Any<semantic::Variable> &Analyzer::current_variables() {
+    return current_scope().variables;
+}
 
-[[nodiscard]] const Scope &Analyzer::global_scope() const { return scope_stack_.back(); }
-[[nodiscard]] const Scope &Analyzer::current_scope() const { return scope_stack_.front(); }
-[[nodiscard]] const tree::Any<semantic::Variable> &Analyzer::current_variables() const { return current_scope().variables; }
+[[nodiscard]] const Scope &Analyzer::global_scope() const {
+    return scope_stack_.back();
+}
+[[nodiscard]] const Scope &Analyzer::current_scope() const {
+    return scope_stack_.front();
+}
+[[nodiscard]] const tree::Any<semantic::Variable> &Analyzer::current_variables() const {
+    return current_scope().variables;
+}
 
 /**
  * Registers constants for pi, eu (aka e, 2.718...), tau and im (imaginary unit).
@@ -92,7 +107,7 @@ AnalysisResult Analyzer::analyze(ast::Program &ast) {
  */
 AnalysisResult Analyzer::analyze(const parser::ParseResult &parse_result) {
     if (!parse_result.errors.empty()) {
-        return AnalysisResult{ {} , parse_result.errors };
+        return AnalysisResult{ {}, parse_result.errors };
     }
     return analyze(*parse_result.root->as_program());
 }
@@ -194,10 +209,7 @@ values::Value Analyzer::resolve_function(const std::string &name, const values::
  * Registers a consteval core function.
  */
 void Analyzer::register_consteval_core_function(
-    const std::string &name,
-    const types::Types &param_types,
-    const resolver::ConstEvalCoreFunction &function) {
-
+    const std::string &name, const types::Types &param_types, const resolver::ConstEvalCoreFunction &function) {
     global_scope().consteval_core_function_table.add(name, param_types, function);
 }
 
@@ -207,10 +219,7 @@ void Analyzer::register_consteval_core_function(
  * converted to types::Types for the other overload using types::from_spec.
  */
 void Analyzer::register_consteval_core_function(
-    const std::string &name,
-    const std::string &param_types,
-    const resolver::ConstEvalCoreFunction &function) {
-
+    const std::string &name, const std::string &param_types, const resolver::ConstEvalCoreFunction &function) {
     global_scope().consteval_core_function_table.add(name, types::from_spec(param_types), function);
 }
 
@@ -223,16 +232,15 @@ void Analyzer::register_consteval_core_function(
  */
 [[nodiscard]] tree::One<semantic::Instruction> Analyzer::resolve_instruction(
     const std::string &name, const values::Values &args) const {
-
     for (const auto &scope : scope_stack_) {
         try {
-            return scope.instruction_table.resolve(name,  args);
+            return scope.instruction_table.resolve(name, args);
         } catch (const error::AnalysisError &) {
             continue;
         }
     }
-    throw resolver::ResolutionFailure{
-        fmt::format("failed to resolve instruction '{}' with argument pack {}", name, values::types_of(args)) };
+    throw resolver::ResolutionFailure{ fmt::format(
+        "failed to resolve instruction '{}' with argument pack {}", name, values::types_of(args)) };
 }
 
 /**
@@ -250,4 +258,4 @@ void Analyzer::register_instruction(const std::string &name, const std::optional
     register_instruction(instruction::Instruction{ name, param_types });
 }
 
-} // namespace cqasm::v3x::analyzer
+}  // namespace cqasm::v3x::analyzer

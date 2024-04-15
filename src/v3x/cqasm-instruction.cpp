@@ -3,8 +3,8 @@
  */
 
 #include "v3x/cqasm-instruction.hpp"
-#include "v3x/cqasm-semantic.hpp"
 
+#include "v3x/cqasm-semantic.hpp"
 
 namespace cqasm::v3x {
 
@@ -17,13 +17,12 @@ namespace instruction {
  */
 Instruction::Instruction(std::string name, const std::optional<std::string> &param_types)
 : name{ std::move(name) }
-, param_types{ types::from_spec(param_types.value_or("")) }
-{}
+, param_types{ types::from_spec(param_types.value_or("")) } {}
 
 /**
  * Equality operator.
  */
-bool Instruction::operator==(const Instruction& rhs) const {
+bool Instruction::operator==(const Instruction &rhs) const {
     return name == rhs.name && param_types == rhs.param_types;
 }
 
@@ -42,7 +41,6 @@ std::ostream &operator<<(std::ostream &os, const InstructionRef &instruction) {
 }
 
 }  // namespace instruction
-
 
 namespace primitives {
 
