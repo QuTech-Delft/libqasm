@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [ 0.6.4 ] - [ 2024-04-15 ]
+
+### Added
+
+### Changed
+
+- Fixed CMake install.
+- `generate_antlr_parser.py` writes output include files in a given `include` folder. 
+
+### Removed
+
 ## [ 0.6.3 ] - [ 2024-04-12 ]
 
 ### Added
@@ -14,7 +25,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Allow multiple `measure` instructions at the end of a program.
 
 ### Removed
-
 
 ## [ 0.6.2 ] - [ 2024-04-09 ]
 
