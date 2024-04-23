@@ -134,10 +134,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install node
-        uses: actions/setup-node@v4
+      - name: Install deno
+        uses: denoland/setup-deno@v1
         with:
-          node-version: 16.20.0
+          deno-version: v1.x
       - name: Install conan
         run: python3 -m pip install --upgrade pip conan
         shell: bash
@@ -152,10 +152,15 @@ jobs:
           conan remove -c "*/*"
           conan build . -pr=conan/profiles/emscripten -pr:b=conan/profiles/release -b missing
         shell: bash
+      - name: Rename cqasm_emscripten.js to cqasm_emscripten.mjs
+        working-directory: build/Release/emscripten
+        run: |
+          mv cqasm_emscripten.js cqasm_emscripten.mjs
+        shell: bash
       - name: Test
         working-directory: emscripten
         run: |
-          node --experimental-wasm-eh test_cqasm.js
+          deno run -A test_cqasm.ts
         shell: bash
 
   python-linux-x64:
