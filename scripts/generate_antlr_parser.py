@@ -71,8 +71,10 @@ def generate_antlr_parser(input_folder, output_source_folder, output_include_fol
             exit(5)
         # Move header files to output include folder
         output_files = os.listdir(output_source_folder)
+        print(f"Moving output include files to {output_include_folder}")
         for output_file in output_files:
             if output_file.endswith(".h"):
+                print(f"\t{output_file}")
                 shutil.move(os.path.join(output_source_folder, output_file), output_include_folder)
     except FileNotFoundError as err:
         print("Error running java: {}".format(err.strerror))

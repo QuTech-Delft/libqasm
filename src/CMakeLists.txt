@@ -109,10 +109,10 @@ set(CQASM_COMMON_SOURCES
 add_subdirectory(v3x)
 
 # Generate the lexer and the parser.
-function(antlr_target SCRIPT INPUT_DIR OUTPUT_DIR ANTLR_OUTPUTS)
+function(antlr_target SCRIPT INPUT_DIR OUTPUT_SRC_DIR OUTPUT_INC_DIR ANTLR_OUTPUTS)
     add_custom_command(
         OUTPUT ${ANTLR_OUTPUTS}
-        COMMAND ${Python3_EXECUTABLE} ${SCRIPT} ${INPUT_DIR} ${OUTPUT_DIR}
+        COMMAND ${Python3_EXECUTABLE} ${SCRIPT} ${INPUT_DIR} ${OUTPUT_SRC_DIR} ${OUTPUT_INC_DIR}
     )
 endfunction()
 
@@ -220,6 +220,7 @@ target_include_directories(cqasm-lib-obj
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/"
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include/"
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include/"
+    PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x"
     PRIVATE "${antlr4-runtime_INCLUDE_DIRS}/"
     PRIVATE "${fmt_INCLUDE_DIRS}/"
     PRIVATE "${tree-gen_INCLUDE_DIRS}/"
