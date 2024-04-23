@@ -1,20 +1,20 @@
 /** \file
- * Defines utilities for detecting and dealing with cQASM language versions.
+ * Contains the Version class.
  */
 
 #pragma once
 
-#include "cqasm-error.hpp"
+#include <fmt/ostream.h>
 
 #include <cstdint>  // int64_t
 #include <cstdio>  // FILE*
-#include <fmt/ostream.h>
 #include <memory>  // unique_ptr
 #include <optional>
 #include <ostream>
 #include <string>
 #include <vector>
 
+#include "cqasm-error.hpp"
 
 /**
  * Namespace for detecting and dealing with cQASM language versions.
@@ -52,12 +52,8 @@ public:
      */
     Version(const char *version);
 
-    [[nodiscard]] auto operator==(const Version &rhs) const {
-        return compare(rhs) == 0;
-    }
-    [[nodiscard]] auto operator<=>(const Version &rhs) const {
-        return compare(rhs) <=> 0;
-    }
+    [[nodiscard]] auto operator==(const Version &rhs) const { return compare(rhs) == 0; }
+    [[nodiscard]] auto operator<=>(const Version &rhs) const { return compare(rhs) <=> 0; }
 };
 
 /**
@@ -65,89 +61,10 @@ public:
  */
 std::ostream &operator<<(std::ostream &os, const Version &object);
 
-
-struct ScannerAdaptor {
-    virtual ~ScannerAdaptor();
-
-    virtual void parse(const std::string &file_name, Version &version) const = 0;
-};
-
-
-class ScannerFlexBison : public ScannerAdaptor {
-protected:
-    void *scanner_{ nullptr };
-    void parse_(const std::string &file_name, Version &version) const;
-public:
-    ScannerFlexBison();
-    ~ScannerFlexBison() override;
-    void parse(const std::string &file_name, Version &version) const override = 0;
-};
-
-
-class ScannerFlexBisonFile : public ScannerFlexBison {
-    FILE *fp_{ nullptr };
-public:
-    explicit ScannerFlexBisonFile(FILE *fp);
-    ~ScannerFlexBisonFile() override;
-    void parse(const std::string &file_name, Version &version) const override;
-};
-
-
-class ScannerFlexBisonString : public ScannerFlexBison {
-    const char *data_{ nullptr };
-public:
-    explicit ScannerFlexBisonString(const char *data);
-    ~ScannerFlexBisonString() override;
-    void parse(const std::string &file_name, Version &version) const override;
-};
-
-
-/**
- * Parse the given file path to get its version number.
- * Throws a ParseError if this fails.
- */
-Version parse_file(const std::string &file_path);
-
-/**
- * Parse using the given file pointer to get its version number.
- * Throws a ParseError if this fails.
- * A file_name may be given in addition for use within the ParseError thrown when version parsing fails.
- */
-Version parse_file(FILE* fp, const std::optional<std::string> &file_name);
-
-/**
- * Parse the given string as a file to get its version number.
- * A file_name may be given in addition for use within the ParseError thrown when version parsing fails.
- */
-Version parse_string(const std::string &data, const std::optional<std::string> &file_name);
-
-
-/**
- * Internal helper class for parsing cQASM file versions.
- */
-class ParseHelper {
-    /**
-     * Scanner doing the actual parsing.
-     */
-    std::unique_ptr<ScannerAdaptor> scanner_up_;
-
-    /**
-     * Name of the file being parsed.
-     */
-    std::string file_name_;
-
-public:
-    explicit ParseHelper(std::unique_ptr<ScannerAdaptor> scanner_up, const std::optional<std::string> &file_name);
-
-    /**
-     * Does the actual parsing.
-     */
-    Version parse();
-};
-
-} // namespace cqasm::version
+}  // namespace cqasm::version
 
 /**
  * std::ostream support via fmt (uses operator<<).
  */
-template <> struct fmt::formatter<cqasm::version::Version> : ostream_formatter {};
+template <>
+struct fmt::formatter<cqasm::version::Version> : ostream_formatter {};

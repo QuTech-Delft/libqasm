@@ -17,7 +17,6 @@ set(CQASM_V3X_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-values.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/register-consteval-core-functions.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/register-core-functions.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/register-instructions.cpp"
     PARENT_SCOPE
 )

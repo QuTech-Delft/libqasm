@@ -4,10 +4,6 @@ find_package(GTest REQUIRED)
 add_executable(${PROJECT_NAME}_test)
 
 # Subdirectories
-if(LIBQASM_COMPAT)
-    add_subdirectory(v10)
-endif()
-add_subdirectory(v1x)
 add_subdirectory(v3x)
 
 target_sources(${PROJECT_NAME}_test PRIVATE
@@ -15,7 +11,6 @@ target_sources(${PROJECT_NAME}_test PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-error.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-result.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-utils.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-version.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils.cpp"
 )
@@ -52,7 +47,7 @@ elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     )
 elseif(MSVC)
     target_compile_options(${PROJECT_NAME}_test PRIVATE
-        /W3 /WX /w34996
+        /WX
         /D_CONSOLE /DCONSOLE
         /D_CRT_NONSTDC_NO_DEPRECATE
         /D_CRT_SECURE_NO_WARNINGS

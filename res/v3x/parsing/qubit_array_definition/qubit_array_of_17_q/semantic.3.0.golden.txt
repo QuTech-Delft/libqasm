@@ -6,13 +6,7 @@ Program(
       items: 3
     )
   >
-  block: <
-    Block(
-      statements: []
-    )
-  >
-  functions: []
-  variables: [
+  qubit_variable_declaration: <
     Variable(
       name: q
       typ: <
@@ -22,6 +16,11 @@ Program(
       >
       annotations: []
     )
-  ]
+  >
+  block: <
+    Block(
+      statements: []
+    )
+  >
 )
 

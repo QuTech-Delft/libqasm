@@ -4,7 +4,6 @@
 
 namespace values = cqasm::v3x::values;
 
-
 /**
  * Convenience function templates for invoking operators and functions:
  *
@@ -20,9 +19,9 @@ auto invoke_unary(ParamType p) {
     using FReturnValue = typename decltype(F)::return_value;
     using FParamValue = typename decltype(F)::param_value;
 
-    auto values = values::Values{{ cqasm::tree::make<FParamValue>(p) }};
+    auto values = values::Values{ { cqasm::tree::make<FParamValue>(p) } };
     auto ret = F(values);
-    return dynamic_cast<FReturnValue&>(*ret).value;
+    return dynamic_cast<FReturnValue &>(*ret).value;
 }
 
 template <auto F, typename ParamsType>
@@ -30,9 +29,9 @@ auto invoke_binary(ParamsType a, ParamsType b) {
     using FReturnValue = typename decltype(F)::return_value;
     using FParamValue = typename decltype(F)::param_value;
 
-    auto values = values::Values{{ cqasm::tree::make<FParamValue>(a), cqasm::tree::make<FParamValue>(b) }};
+    auto values = values::Values{ { cqasm::tree::make<FParamValue>(a), cqasm::tree::make<FParamValue>(b) } };
     auto ret = F(values);
-    return dynamic_cast<FReturnValue&>(*ret).value;
+    return dynamic_cast<FReturnValue &>(*ret).value;
 }
 
 template <auto F, typename ParamsType>
@@ -40,11 +39,9 @@ auto invoke_ternary(bool condition, ParamsType if_true, ParamsType if_false) {
     using FReturnValue = typename decltype(F)::return_value;
     using FParamValue = typename decltype(F)::param_value;
 
-    auto values = values::Values{{
-        cqasm::tree::make<values::ConstBool>(condition),
+    auto values = values::Values{ { cqasm::tree::make<values::ConstBool>(condition),
         cqasm::tree::make<FParamValue>(if_true),
-        cqasm::tree::make<FParamValue>(if_false)
-    }};
+        cqasm::tree::make<FParamValue>(if_false) } };
     auto ret = F(values);
-    return dynamic_cast<FReturnValue&>(*ret).value;
+    return dynamic_cast<FReturnValue &>(*ret).value;
 }

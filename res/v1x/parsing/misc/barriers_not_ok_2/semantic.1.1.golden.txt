@@ -1,2 +1,0 @@
-ERROR
-Error at input.cq:5:1..19: failed to resolve overload for 'barrier' with argument pack (qubit reference, qubit reference)

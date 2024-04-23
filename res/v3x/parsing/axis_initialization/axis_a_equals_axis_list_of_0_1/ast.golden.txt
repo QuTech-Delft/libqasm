@@ -1,2 +1,0 @@
-ERROR
-Error at input.cq:3:15..16: mismatched input ']' expecting ','

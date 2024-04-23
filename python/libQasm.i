@@ -8,23 +8,14 @@
 %}
 
 %{
-#include "v10/qasm_ast.hpp"
-#include "v10/libQasm.hpp"
-#include "v1x/cqasm-py.hpp"
 #include "v3x/cqasm-py.hpp"
 %}
 
 %include "exception.i"
 %include "std_except.i"
 %include "std_iostream.i"
-%include "std_map.i"
-%include "std_shared_ptr.i"
 %include "std_string.i"
 %include "std_vector.i"
-
-%shared_ptr(compiler::Operation)
-%shared_ptr(compiler::OperationsCluster)
-%shared_ptr(compiler::SubCircuit)
 
 namespace std {
     %template(vectori) vector<int>;
@@ -35,27 +26,14 @@ namespace std {
 }
 
 %exception {
-    try
-    {
+    try {
         $action
         if (PyErr_Occurred()) SWIG_fail;
     }
     SWIG_CATCH_STDEXCEPT
-    catch (...)
-    {
+    catch (...) {
         SWIG_exception(SWIG_RuntimeError, "Unknown exception");
     }
 }
 
-%include "v10/qasm_ast.hpp"
-%include "v10/libQasm.hpp"
-%include "v1x/cqasm-py.hpp"
 %include "v3x/cqasm-py.hpp"
-
-namespace std {
-    %template(subcircuit_vector) vector<shared_ptr<compiler::SubCircuit>>;
-    %template(operationscluster_vector) vector<shared_ptr<compiler::OperationsCluster>>;
-    %template(operation_vector) vector<shared_ptr<compiler::Operation>>;
-    %template(twoqubitgatequbits_pair) pair<compiler::Qubits, compiler::Qubits>;
-    %template(toffoliqubits_pair) pair<compiler::Qubits, pair<compiler::Qubits, compiler::Qubits>>;
-}

@@ -32,11 +32,9 @@ class LibqasmConan(ConanFile):
         "asan_enabled": [True, False],
         "build_python": [True, False],
         "build_tests": [True, False],
-        "compat": [True, False],
         "cqasm_python_dir": [None, "ANY"],
         "python_dir": [None, "ANY"],
-        "python_ext": [None, "ANY"],
-        "tree_gen_build_tests": [True, False]
+        "python_ext": [None, "ANY"]
     }
     default_options = {
         "shared": False,
@@ -44,25 +42,17 @@ class LibqasmConan(ConanFile):
         "asan_enabled": False,
         "build_python": False,
         "build_tests": False,
-        "compat": False,
         "cqasm_python_dir": None,
         "python_dir": None,
-        "python_ext": None,
-        "tree_gen_build_tests": False
+        "python_ext": None
     }
 
     exports = "version.py", "include/version.hpp"
     exports_sources = "CMakeLists.txt", "include/*", "python/*", "res/*", "scripts/*", "src/*", "test/*"
 
     def build_requirements(self):
-        self.tool_requires("m4/1.4.19")
         self.tool_requires("tree-gen/1.0.7")
-        if self.settings.os == "Windows":
-            self.tool_requires("winflexbison/2.5.24")
-        else:
-            self.tool_requires("flex/2.6.4")
-            self.tool_requires("bison/3.8.2")
-        self.tool_requires("zulu-openjdk/11.0.19")
+        self.tool_requires("zulu-openjdk/21.0.1")
         if self.settings.arch == "wasm":
             self.tool_requires("emsdk/3.1.50")
         if self.options.build_tests:
@@ -71,7 +61,7 @@ class LibqasmConan(ConanFile):
     def requirements(self):
         self.requires("fmt/10.2.1")
         self.requires("range-v3/0.12.0")
-        self.requires("tree-gen/1.0.6")
+        self.requires("tree-gen/1.0.7")
         if not self.settings.arch == "wasm":
             self.requires("antlr4-cppruntime/4.13.1")
 
@@ -100,15 +90,14 @@ class LibqasmConan(ConanFile):
         deps.generate()
         tc = CMakeToolchain(self)
         tc.variables["ASAN_ENABLED"] = self.options.asan_enabled
+        tc.variables["BUILD_SHARED_LIBS"] = self.options.shared
         tc.variables["LIBQASM_BUILD_EMSCRIPTEN"] = self.settings.arch == "wasm"
         tc.variables["LIBQASM_BUILD_PYTHON"] = self.options.build_python
         tc.variables["LIBQASM_BUILD_TESTS"] = self.options.build_tests
-        tc.variables["LIBQASM_COMPAT"] = self.options.compat
         tc.variables["LIBQASM_CQASM_PYTHON_DIR"] = self.options.cqasm_python_dir
         tc.variables["LIBQASM_PYTHON_DIR"] = self.options.python_dir
         tc.variables["LIBQASM_PYTHON_EXT"] = self.options.python_ext
         tc.variables["PYTHON_EXECUTABLE"] = re.escape(sys.executable)
-        tc.variables["TREE_GEN_BUILD_TESTS"] = self.options.tree_gen_build_tests
         tc.generate()
         env = VirtualBuildEnv(self)
         env.generate()

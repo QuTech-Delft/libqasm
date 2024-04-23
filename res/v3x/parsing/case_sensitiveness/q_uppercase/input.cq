@@ -1,4 +1,4 @@
 version 3
 
 qubit q
-x Q
+X Q

@@ -6,12 +6,23 @@ Program(
       items: 3.0
     )
   >
+  qubit_variable_declaration: <
+    Variable(
+      name: q
+      typ: <
+        Qubit(
+          size: 1
+        )
+      >
+      annotations: []
+    )
+  >
   block: <
     Block(
       statements: [
         Instruction(
-          instruction_ref: x(qubit)
-          name: x
+          instruction_ref: X(qubit)
+          name: X
           operands: [
             VariableRef(
               variable --> <
@@ -32,17 +43,5 @@ Program(
       ]
     )
   >
-  functions: []
-  variables: [
-    Variable(
-      name: q
-      typ: <
-        Qubit(
-          size: 1
-        )
-      >
-      annotations: []
-    )
-  ]
 )
 

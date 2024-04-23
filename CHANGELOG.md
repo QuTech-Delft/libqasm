@@ -3,48 +3,69 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [ 0.5.2 ] - [ 2024-01-18 ]
-
-### Added
-
-- cQasm 3.0 parser: implemented variable declaration and initialization for `bool`, `int`, and `float`
-  (simple and array), and `axis` types.
-
-### Changed
-
-- `v3x::AnalyzeTreeGenAstVisitor` is an instance of `tree-gen` generated visitor base class.
-
-### Removed
-
-- `msvc-runtime` pip dependency on Windows.
-
-## [ 0.5.1 ] - [ 2024-01-08 ]
+## [ 0.6.4 ] - [ 2024-04-15 ]
 
 ### Added
 
 ### Changed
 
-- Fixed `upload-release-asset` steps in `.github/workflow/assets.yml`.
-- Updated `RELEASE.md`.
+- Fixed CMake install.
+- `generate_antlr_parser.py` writes output include files in a given `include` folder. 
 
 ### Removed
 
-## [ 0.5.0 ] - [ 2023-12-16 ]
+## [ 0.6.3 ] - [ 2024-04-12 ]
 
 ### Added
 
-- cQasm 3.0 parser. MVP (Minimum Viable Product) implemented. Extended v3 is a WIP.
+- `cpp-linux-x64-release-shared` test job.
+
+### Changed
+
+- Allow multiple `measure` instructions at the end of a program.
+
+### Removed
+
+## [ 0.6.2 ] - [ 2024-04-09 ]
+
+### Added
+
+- `.clang-format`.
+- `emscripten-wasm` assets job.
+
+### Changed
+
+- Fix shared library build.
+
+### Removed
+
+- `TREEN_GEN_BUILD_TESTS` option.
+
+## [ 0.6.1 ] - [ 2024-04-08 ]
+
+### Added
+
+### Changed
+
+- Fix Python interface.
+- Update GitHub Actions versions.
+
+### Removed
+
+- `m4` dependency.
+
+## [ 0.6.0 ] - [ 2024-03-28 ]
+
+### Added
+
+- cQasm 3.0 parser. MVP (Minimum Viable Product) implemented.
 - Conan as package manager.
-- res folder for resources.
 
 ### Changed
 
 - Different upgrades: C++20, CMake 3.12, Python 3.8 to 3.12.
-- GitHub workflows and jobs.
-- File reorganization to accommodate v3 parser: v10, v1x, and v3x folders. tests folder is now called test.
 
 ### Removed
 
+- cQasm 1.x support.
 - Git submodules.
-- GitHub Conda job.
-- CMake folder.

@@ -1,3 +1,0 @@
-version 3
-
-int i = false ? 10 : true ? 15 : 20

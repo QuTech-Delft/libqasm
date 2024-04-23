@@ -2,7 +2,7 @@ FROM ubuntu:22.04
 
 RUN apt-get -qq update && \
     apt-get -qq upgrade && \
-    apt-get -qq -y install bc build-essential git flex bison python3 python3-pip swig wget && \
+    apt-get -qq -y install bc build-essential git python3 python3-pip swig wget && \
     python3 -m pip install conan pytest
 
 # Install latest emsdk

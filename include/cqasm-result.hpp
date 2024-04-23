@@ -1,15 +1,15 @@
 #pragma once
 
-#include "tree-base.hpp"
-
-#include <algorithm>  // transform
 #include <fmt/format.h>
 #include <fmt/ranges.h>
+
+#include <algorithm>  // transform
 #include <numeric>  // accumulate
 #include <range/v3/view/transform.hpp>
 #include <string>
 #include <vector>
 
+#include "tree-base.hpp"
 
 namespace cqasm::result {
 
@@ -26,8 +26,9 @@ std::vector<std::string> to_strings(const Result &result) {
         ret[0] = ::tree::base::serialize(result.root);
     } else {
         ret.resize(result.errors.size() + 1);
-        std::transform(result.errors.begin(), result.errors.end(), std::next(ret.begin()),
-            [](const auto &error) { return error.what(); });
+        std::transform(result.errors.begin(), result.errors.end(), std::next(ret.begin()), [](const auto &error) {
+            return error.what();
+        });
     }
     return ret;
 }
@@ -50,9 +51,7 @@ std::string root_to_json(const Root &root) {
  */
 template <typename Result>
 std::string to_json(const Result &result) {
-    return (result.errors.empty())
-        ? root_to_json(result.root)
-        : errors_to_json(result.errors);
+    return (result.errors.empty()) ? root_to_json(result.root) : errors_to_json(result.errors);
 }
 
-} // namespace cqasm::result
+}  // namespace cqasm::result

@@ -1,7 +1,6 @@
 #include <filesystem>
 #include <string>
 
-
 namespace cqasm::test {
 
 namespace fs = std::filesystem;

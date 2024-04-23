@@ -1,2 +1,0 @@
-ERROR
-Error at input.cq:3:7..11: no viable alternative at input 'float[3.14'

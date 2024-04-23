@@ -53,7 +53,7 @@ class clean(_clean):
 
 class build_ext(_build_ext):
     def run(self):
-        from plumbum import local, FG, ProcessExecutionError
+        from plumbum import local, FG
 
         # If we were previously built in a different directory,
         # nuke the cbuild dir to prevent inane CMake errors.
@@ -83,25 +83,27 @@ class build_ext(_build_ext):
         with local.cwd(root_dir):
             # Build type can be set using an environment variable
             build_type = os.environ.get('LIBQASM_BUILD_TYPE', 'Release')
+            build_tests = os.environ.get("LIBQASM_BUILD_TESTS", "False")
 
             cmd = local['conan']['profile']['detect']['--force']
             cmd & FG
 
             cmd = (local['conan']['create']['.']
                 ['--version'][get_version()]
-                ['-s:a']['compiler.cppstd=20']
-                ['-s:a']["libqasm/*:build_type=" + build_type]
+                ['-s:h']['compiler.cppstd=20']
+                ['-s:b']['compiler.cppstd=20']
+                ['-s:h']['libqasm/*:build_type=' + build_type]
+                ['-s:b']['libqasm/*:build_type=' + build_type]
 
                 ['-o']['libqasm/*:build_python=True']
-                ['-o']['libqasm/*:build_tests=True']
+                ['-o']['libqasm/*:build_tests=' + build_tests]
                 # The Python library needs the compatibility headers
-                ['-o']["libqasm/*:compat=True"]
                 ['-o']['libqasm/*:cqasm_python_dir=' + re.escape(os.path.dirname(cqasm_target))]
                 ['-o']['libqasm/*:python_dir=' + re.escape(os.path.dirname(target))]
                 ['-o']['libqasm/*:python_ext=' + re.escape(os.path.basename(target))]
                 # (Ab)use static libs for the intermediate libraries
                 # to avoid dealing with R(UN)PATH nonsense on Linux/OSX as much as possible
-                ['-o']["libqasm/*:shared=False"]
+                ['-o']['libqasm/*:shared=False']
 
                 ['-b']['missing']
                 ['-tf']['']
@@ -142,12 +144,6 @@ class bdist_wheel(_bdist_wheel):
         if platform.system() == "Darwin":
             os.environ['MACOSX_DEPLOYMENT_TARGET'] = '10.10'
         _bdist_wheel.run(self)
-        impl_tag, abi_tag, plat_tag = self.get_tag()
-        archive_basename = "{}-{}-{}-{}".format(self.wheel_dist_name, impl_tag, abi_tag, plat_tag)
-        wheel_path = os.path.join(self.dist_dir, archive_basename + '.whl')
-        if platform.system() == "Darwin":
-            from delocate.delocating import delocate_wheel
-            delocate_wheel(wheel_path)
 
 
 class sdist(_sdist):
@@ -170,33 +166,20 @@ setup(
     long_description_content_type='text/markdown',
     author='QuTech, TU Delft',
     url='https://github.com/QuTech-Delft/libqasm',
-
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
-
         'Operating System :: POSIX :: Linux',
         'Operating System :: MacOS',
         'Operating System :: Microsoft :: Windows',
-
         'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
-
         'Topic :: Scientific/Engineering'
     ],
-
-    packages=['libQasm', 'cqasm', 'cqasm.v1x', 'cqasm.v3x'],
+    packages=['libQasm', 'cqasm', 'cqasm.v3x'],
     package_dir={'': 'pybuild/module'},
-
     # NOTE: the library build process is completely overridden to let CMake handle it.
     # setuptools implementation is horribly broken.
     # This is here just to have the rest of setuptools understand that this is a Python module with an extension in it.
-    ext_modules=[
-        Extension('libQasm._libQasm', [])
-    ],
-
+    ext_modules=[Extension('libQasm._libQasm', [])],
     cmdclass={
         'bdist': bdist,
         'bdist_wheel': bdist_wheel,
@@ -207,18 +190,12 @@ setup(
         'egg_info': egg_info,
         'sdist': sdist,
     },
-
     setup_requires=[
         'conan',
         'plumbum',
         'delocate; platform_system == "Darwin"',
     ],
-    install_requires=[
-        'numpy'
-    ],
-    tests_require=[
-        'pytest'
-    ],
-
+    install_requires=['numpy'],
+    tests_require=['pytest'],
     zip_safe=False
 )

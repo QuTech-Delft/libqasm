@@ -8,6 +8,11 @@
 
 #pragma once
 
+#include <functional>
+#include <list>
+#include <optional>
+#include <string>
+
 #include "cqasm-analysis-result.hpp"
 #include "cqasm-analyzer.hpp"
 #include "cqasm-ast.hpp"
@@ -16,12 +21,6 @@
 #include "cqasm-resolver.hpp"
 #include "cqasm-scope.hpp"
 #include "cqasm-semantic.hpp"
-
-#include <functional>
-#include <list>
-#include <optional>
-#include <string>
-
 
 /**
  * Namespace for the \ref cqasm::analyzer::Analyzer "Analyzer" class and support classes.
@@ -33,7 +32,6 @@ namespace cqasm::v3x::analyzer {
  *
  * Construction of this class is the entry point for libqasm
  * whenever you need to modify the default instruction set,
- * have a different set of supported error models,
  * or want to add additional initial mappings, operators, or functions.
  * The process is simple:
  *
@@ -61,12 +59,10 @@ protected:
     [[nodiscard]] Scope &current_scope();
     [[nodiscard]] tree::One<semantic::Block> current_block();
     [[nodiscard]] tree::Any<semantic::Variable> &current_variables();
-    [[nodiscard]] tree::Any<semantic::Function> &global_functions();
 
     [[nodiscard]] const Scope &global_scope() const;
     [[nodiscard]] const Scope &current_scope() const;
     [[nodiscard]] const tree::Any<semantic::Variable> &current_variables() const;
-    [[nodiscard]] const tree::Any<semantic::Function> &global_functions() const;
 
 public:
     /**
@@ -77,12 +73,12 @@ public:
     /**
      * Destroys a semantic analyzer.
      */
-     virtual ~Analyzer() = default;
+    virtual ~Analyzer() = default;
 
     /**
-     * Registers mappings for pi, eu (aka e, 2.718...), tau and im (imaginary unit).
+     * Registers constants for pi, eu (aka e, 2.718...), tau and im (imaginary unit).
      */
-    virtual void register_default_mappings();
+    virtual void register_default_constants();
 
     /**
      * Registers a number of default functions, such as the operator functions, and the usual trigonometric functions.
@@ -104,15 +100,7 @@ public:
      * If there are parse errors, they are moved into the AnalysisResult error list,
      * and the root node will be empty.
      */
-    [[nodiscard]] virtual AnalysisResult analyze(parser::ParseResult &&parse_result);
-
-    /**
-     * Parses and analyzes using the given version and parser closures.
-     */
-    [[nodiscard]] virtual AnalysisResult analyze(
-        const std::function<version::Version()> &version_parser,
-        const std::function<parser::ParseResult()> &parser
-    );
+    [[nodiscard]] virtual AnalysisResult analyze(const parser::ParseResult &parse_result);
 
     /**
      * Parses and analyzes the given file.
@@ -147,11 +135,6 @@ public:
     virtual void add_variable_to_current_scope(const tree::One<semantic::Variable> &variable);
 
     /**
-     * Adds a function to the global scope.
-     */
-    virtual void add_function_to_global_scope(const tree::One<semantic::Function> &function);
-
-    /**
      * Resolves a variable.
      * Throws NameResolutionFailure if no variable by the given name exists.
      */
@@ -176,9 +159,7 @@ public:
      * Registers a consteval core function.
      */
     virtual void register_consteval_core_function(
-        const std::string &name,
-        const types::Types &param_types,
-        const resolver::ConstEvalCoreFunction &function);
+        const std::string &name, const types::Types &param_types, const resolver::ConstEvalCoreFunction &function);
 
     /**
      * Convenience method for registering a consteval core function.
@@ -186,31 +167,7 @@ public:
      * converted to types::Types for the other overload using types::from_spec.
      */
     virtual void register_consteval_core_function(
-        const std::string &name,
-        const std::string &param_types,
-        const resolver::ConstEvalCoreFunction &function);
-
-    /**
-     * Registers a core function.
-     */
-    virtual void register_core_function(const function::CoreFunction &function);
-
-    /**
-     * Convenience method for registering a core function type.
-     * The arguments are passed straight to function::CoreFunction's constructor.
-     */
-    virtual void register_core_function(
-        const std::string &name,
-        const std::string &param_types,
-        const char return_type);
-
-    /**
-     * Convenience method for registering a function.
-     */
-    virtual void register_function(
-        const std::string &name,
-        const types::Types &param_types,
-        const values::FunctionRef &value);
+        const std::string &name, const std::string &param_types, const resolver::ConstEvalCoreFunction &function);
 
     /**
      * Resolves an instruction.
@@ -234,4 +191,4 @@ public:
     virtual void register_instruction(const std::string &name, const std::optional<std::string> &param_types);
 };
 
-} // namespace cqasm::v3x::analyzer
+}  // namespace cqasm::v3x::analyzer

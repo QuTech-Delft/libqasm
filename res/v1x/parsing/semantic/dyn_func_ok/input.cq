@@ -1,7 +1,0 @@
-version 1.1
-qubits 10
-
-c-x or(true, b[0]), q[0]
-c-x or(false, b[0]), q[0]
-c-x or(b[1], b[0]), q[0]
-c-x or(or(b[2], b[1]), b[0]), q[0]

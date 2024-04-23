@@ -1,14 +1,17 @@
- #pragma once
+#pragma once
+
+#include <any>
 
 #include "cqasm-ast.hpp"
 #include "v3x/CqasmParser.h"
 #include "v3x/CqasmParserVisitor.h"
 
-#include <any>
-
-namespace antlr4 { class Token; }
-namespace cqasm::v3x::parser { class CustomErrorListener; }
-
+namespace antlr4 {
+class Token;
+}
+namespace cqasm::v3x::parser {
+class CustomErrorListener;
+}
 
 namespace cqasm::v3x::parser {
 

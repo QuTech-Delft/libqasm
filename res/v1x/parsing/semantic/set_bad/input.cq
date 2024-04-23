@@ -1,7 +1,0 @@
-version 1.2
-qubits 10
-
-var i: int
-
-set i = "hello"
-set 1 = 2

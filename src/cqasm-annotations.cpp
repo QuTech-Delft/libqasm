@@ -3,16 +3,17 @@
  */
 
 #include "cqasm-annotations.hpp"
-#include "cqasm-annotations-constants.hpp"
 
 #include <algorithm>  // min, max
 #include <iostream>
 
+#include "cqasm-annotations-constants.hpp"
 
 namespace cqasm::annotations {
 
 SourceLocation::Range::Range(const Index &f, const Index &l)
-: first{ f } , last{ l } {
+: first{ f }
+, last{ l } {
     last = std::max<Index>(last, first);
 }
 
@@ -75,4 +76,4 @@ std::ostream &operator<<(std::ostream &os, const SourceLocation &object) {
     return os;
 }
 
-} // namespace cqasm::annotations
+}  // namespace cqasm::annotations

@@ -88,11 +88,6 @@ log
 # SWIG generated sources
 library/**/*_swig*
 
-.idea/
-cmake-build-*/
-
-tags
-
 # IDE's
 .project
 .cproject
@@ -105,3 +100,28 @@ conan.lock
 conanbuildinfo.txt
 conaninfo.txt
 graph_info.json
+conan_host_profile
+conan_provider.cmake
+
+# res
+ast.actual.txt
+ast.actual.json
+semantic.3.0.actual.txt
+semantic.3.0.actual.json
+
+*/*/CMakeFiles
+*/CMakeFiles/
+.idea/
+CMakeFiles/
+CTestTestfile.cmake
+Changes.patch
+DartConfiguration.tcl
+Makefile
+cmake-build-*/
+cmake_install.cmake
+src/*.cmake
+src/*/*.cmake
+tags
+test/*.cmake
+test/v3x/*.cmake
+test/v3x/cpp/*.cmake

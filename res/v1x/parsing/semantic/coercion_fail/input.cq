@@ -1,5 +1,0 @@
-version 1.0
-qubits 10
-
-# Can't coerce a vector into a 2x2 matrix
-u q[0], [1.0, 2.0, 3.0, 4.0]

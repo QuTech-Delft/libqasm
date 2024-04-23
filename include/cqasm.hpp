@@ -1,12 +1,11 @@
 /**
  * \dir
- * Contains the non-generated public header files for libqasm's new API.
+ * Contains the non-generated public header files for libqasm's v3x API.
  *
  * \file
- * Main include file for libqasm; this is what you should be `#include`ing.
+ * Main include file for libqasm; this is what you should be including.
  */
 
 #pragma once
 
-#include "v1x/cqasm.hpp"
 #include "v3x/cqasm.hpp"

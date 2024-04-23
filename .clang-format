@@ -1,0 +1,31 @@
+---
+BasedOnStyle: Google
+Language: Cpp
+AccessModifierOffset: -4
+AlignAfterOpenBracket: DontAlign
+AlignOperands: DontAlign
+AlignTrailingComments: false
+AllowAllArgumentsOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortEnumsOnASingleLine: true
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: AllIfsAndElse
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortLambdasOnASingleLine: All
+AllowShortLoopsOnASingleLine: true
+AlwaysBreakTemplateDeclarations: Yes
+BinPackArguments: false
+BreakBeforeBraces: Attach
+BreakConstructorInitializers: BeforeComma
+ColumnLimit: 120
+ConstructorInitializerIndentWidth: 0
+Cpp11BracedListStyle: false
+DerivePointerAlignment: false
+IndentWidth: 4
+LambdaBodyIndentation: OuterScope
+PackConstructorInitializers: Never
+PointerAlignment: Right
+ReflowComments: false
+SpacesBeforeTrailingComments: 2
+---

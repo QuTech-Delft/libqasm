@@ -1,8 +1,8 @@
-#include "cqasm-result.hpp"
 #include "v3x/cqasm-analysis-result.hpp"
 
 #include <fmt/format.h>
 
+#include "cqasm-result.hpp"
 
 namespace cqasm::v3x::analyzer {
 
@@ -35,4 +35,4 @@ std::string AnalysisResult::to_json() const {
     return cqasm::result::to_json(*this);
 }
 
-} // namespace cqasm::v3x::analyzer
+}  // namespace cqasm::v3x::analyzer

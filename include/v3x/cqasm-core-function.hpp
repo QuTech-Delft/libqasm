@@ -5,12 +5,12 @@
 
 #pragma once
 
-#include "cqasm-tree.hpp"
-#include "cqasm-types.hpp"
-
 #include <fmt/ostream.h>
+
 #include <string>
 
+#include "cqasm-tree.hpp"
+#include "cqasm-types.hpp"
 
 namespace cqasm::v3x::function {
 
@@ -53,15 +53,13 @@ public:
 
     CoreFunction() = default;
     ~CoreFunction() override = default;
-    CoreFunction(const CoreFunction& t) = default;
-    CoreFunction(CoreFunction&& t) noexcept = default;
-    CoreFunction& operator=(const CoreFunction& t) = default;
-    CoreFunction& operator=(CoreFunction&& t) noexcept = default;
+    CoreFunction(const CoreFunction &t) = default;
+    CoreFunction(CoreFunction &&t) noexcept = default;
+    CoreFunction &operator=(const CoreFunction &t) = default;
+    CoreFunction &operator=(CoreFunction &&t) noexcept = default;
 
-    bool operator==(const CoreFunction& rhs) const;
-    inline bool operator!=(const CoreFunction& rhs) const {
-        return !(*this == rhs);
-    }
+    bool operator==(const CoreFunction &rhs) const;
+    inline bool operator!=(const CoreFunction &rhs) const { return !(*this == rhs); }
 };
 
 /**
@@ -79,8 +77,7 @@ std::ostream &operator<<(std::ostream &os, const CoreFunction &function);
  */
 std::ostream &operator<<(std::ostream &os, const CoreFunctionRef &function);
 
-} // namespace cqasm::v3x::function
-
+}  // namespace cqasm::v3x::function
 
 namespace cqasm::v3x::primitives {
 
@@ -89,9 +86,10 @@ void serialize(const function::CoreFunctionRef &obj, ::tree::cbor::MapWriter &ma
 template <>
 function::CoreFunctionRef deserialize(const ::tree::cbor::MapReader &map);
 
-} // namespace cqasm::v3x
+}  // namespace cqasm::v3x::primitives
 
 /**
  * std::ostream support via fmt (uses operator<<).
  */
-template <> struct fmt::formatter<cqasm::v3x::function::CoreFunction> : ostream_formatter {};
+template <>
+struct fmt::formatter<cqasm::v3x::function::CoreFunction> : ostream_formatter {};

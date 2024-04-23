@@ -6,10 +6,10 @@
 
 #pragma once
 
-#include "cqasm-tree.hpp"
-
 #include <sstream>
 #include <string>
+
+#include "cqasm-tree.hpp"
 
 namespace cqasm::ast {
 
@@ -32,4 +32,4 @@ struct StringBuilder : public cqasm::tree::Base {
     void push_escape(const std::string &escape);
 };
 
-} // namespace cqasm::ast
+}  // namespace cqasm::ast

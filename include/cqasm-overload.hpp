@@ -1,14 +1,13 @@
 #pragma once
 
-#include "cqasm-overload.hpp"
-#include "cqasm-tree.hpp"
-
 #include <exception>
 #include <string>
 #include <unordered_map>
 #include <utility>  // pair
 #include <vector>
 
+#include "cqasm-overload.hpp"
+#include "cqasm-tree.hpp"
 
 /**
  * Overload templates are case-sensitive.
@@ -19,13 +18,12 @@ namespace cqasm::overload {
 struct NameResolutionFailure : public std::exception {};
 struct OverloadResolutionFailure : public std::exception {};
 
-
 //----------//
 // Overload //
 //----------//
 
 /**
- * Represents a possible overload for the parameter types of a function, gate, or error model.
+ * Represents a possible overload for the parameter types of a function, or gate.
  * T is some tag type identifying the overload.
  */
 template <class T, class TypeBase>
@@ -37,41 +35,48 @@ class Overload {
     Types param_types;
 
 public:
-    Overload(const T &tag, const Types &param_types) : tag{ tag }, param_types{ param_types} {}
-    Overload(const Overload &other) : tag{ other.tag }, param_types{ other.param_types } {}
-    Overload(Overload &&other) noexcept : tag{ std::move(other.tag) }, param_types{ other.param_types } {}
-    Overload& operator=(const Overload &other) { tag = other.tag; param_types = other.param_types; return *this; }
-    Overload& operator=(Overload &&other) noexcept { tag = std::move(other.tag); param_types = other.param_types; return *this; }
+    Overload(const T &tag, const Types &param_types)
+    : tag{ tag }
+    , param_types{ param_types } {}
+    Overload(const Overload &other)
+    : tag{ other.tag }
+    , param_types{ other.param_types } {}
+    Overload(Overload &&other) noexcept
+    : tag{ std::move(other.tag) }
+    , param_types{ other.param_types } {}
+    Overload &operator=(const Overload &other) {
+        tag = other.tag;
+        param_types = other.param_types;
+        return *this;
+    }
+    Overload &operator=(Overload &&other) noexcept {
+        tag = std::move(other.tag);
+        param_types = other.param_types;
+        return *this;
+    }
 
     /**
      * Returns the tag for this overload.
      */
-    [[nodiscard]] const T &get_tag() const {
-        return tag;
-    }
+    [[nodiscard]] const T &get_tag() const { return tag; }
 
     /**
      * Returns the number of parameters for this overload.
      */
-    [[nodiscard]] std::size_t num_params() const {
-        return param_types.size();
-    }
+    [[nodiscard]] std::size_t num_params() const { return param_types.size(); }
 
     /**
      * Returns the parameter type object for the parameter at the specified index.
      */
-    [[nodiscard]] const Type &param_type_at(std::size_t index) const {
-        return param_types.at(index);
-    }
+    [[nodiscard]] const Type &param_type_at(std::size_t index) const { return param_types.at(index); }
 };
-
 
 //------------------//
 // OverloadResolver //
 //------------------//
 
 /**
- * Represents a set of possible overloads for the parameter types of a function, gate, or error model.
+ * Represents a set of possible overloads for the parameter types of a function, or gate.
  * T is some tag type identifying the overload.
  * In case of a function, T would contain at least the return type,
  * but maybe also a lambda to represent the actual function.
@@ -93,9 +98,7 @@ public:
      * Note that ambiguous overloads are silently resolved by using the last applicable overload,
      * so more specific overloads should always be added last.
      */
-    void add_overload(const T &tag, const Types &param_types) {
-        overloads.emplace_back(tag, param_types);
-    }
+    void add_overload(const T &tag, const Types &param_types) { overloads.emplace_back(tag, param_types); }
 
     /**
      * Tries to resolve which overload belongs to the given argument list, if any.
@@ -125,7 +128,6 @@ public:
         throw OverloadResolutionFailure{};
     }
 };
-
 
 //----------------------//
 // OverloadNameResolver //
@@ -180,4 +182,4 @@ public:
     }
 };
 
-}  // cqasm::overload
+}  // namespace cqasm::overload

@@ -30,14 +30,6 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 include(FetchContent)
 
-find_package(BISON 3.0)
-find_package(FLEX 2.6.4)
-if(WIN32)
-    set(flex_win_compat --wincompat)
-else()
-    set(flex_win_compat)
-endif()
-
 find_package(Python3 REQUIRED)
 
 # antlr4-runtime
@@ -109,103 +101,7 @@ set(CQASM_COMMON_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-string-builder.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-utils.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-version.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/version.cpp"
 )
-
-# Generate the version lexer.
-flex_target(cqasm-version-lexer
-    "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-version-lexer.l"
-    "${CMAKE_CURRENT_BINARY_DIR}/cqasm-version-lexer.cpp"
-    COMPILE_FLAGS
-        "--header-file=${CMAKE_CURRENT_BINARY_DIR}/cqasm-version-lexer.hpp ${flex_win_compat}"
-)
-list(APPEND CQASM_COMMON_SOURCES ${FLEX_cqasm-version-lexer_OUTPUTS})
-
-# Generate the version parser.
-bison_target(cqasm-version-parser
-    "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-version-parser.y"
-    "${CMAKE_CURRENT_BINARY_DIR}/cqasm-version-parser.cpp"
-    COMPILE_FLAGS
-        "-rall --report-file=${CMAKE_CURRENT_BINARY_DIR}/cqasm-version-parser.txt -Werror=conflicts-sr -Werror=conflicts-rr"
-)
-list(APPEND CQASM_COMMON_SOURCES ${BISON_cqasm-version-parser_OUTPUTS})
-
-# Dependency between lexer and parser.
-add_flex_bison_dependency(
-    cqasm-version-lexer
-    cqasm-version-parser
-)
-
-#-------------------------------------------------------------------------------
-# cQASM v1.x code generation and inclusion
-#-------------------------------------------------------------------------------
-add_subdirectory(v1x)
-
-# Generate the lexer.
-flex_target(cqasm-v1x-lexer
-    "${CMAKE_CURRENT_SOURCE_DIR}/v1x/cqasm-lexer.l"
-    "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-lexer.cpp"
-    COMPILE_FLAGS
-        "--header-file=${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-lexer.hpp ${flex_win_compat}"
-)
-list(APPEND CQASM_V1X_SOURCES ${FLEX_cqasm-v1x-lexer_OUTPUTS})
-
-# Generate the parser.
-bison_target(cqasm-v1x-parser
-    "${CMAKE_CURRENT_SOURCE_DIR}/v1x/cqasm-parser.y"
-    "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-parser.cpp"
-    COMPILE_FLAGS
-        "-rall --report-file=${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-parser.txt -Werror=conflicts-sr -Werror=conflicts-rr"
-)
-list(APPEND CQASM_V1X_SOURCES ${BISON_cqasm-v1x-parser_OUTPUTS})
-
-# Dependency between lexer and parser.
-add_flex_bison_dependency(
-    cqasm-v1x-lexer
-    cqasm-v1x-parser
-)
-
-# Generate the abstract syntax tree classes.
-generate_tree_py(
-    "${TREE_GEN_EXECUTABLE}"
-    "${CMAKE_CURRENT_SOURCE_DIR}/v1x/cqasm-ast.tree"
-    "${CMAKE_CURRENT_BINARY_DIR}/../include/v1x/cqasm-ast-gen.hpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-ast-gen.cpp"
-    "${LIBQASM_GENERATED_PYTHON_FILES}/v1x/cqasm-ast-gen.py"
-)
-list(APPEND CQASM_V1X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-ast-gen.cpp")
-
-# Generate the type tree classes.
-generate_tree_py(
-    "${TREE_GEN_EXECUTABLE}"
-    "${CMAKE_CURRENT_SOURCE_DIR}/v1x/cqasm-types.tree"
-    "${CMAKE_CURRENT_BINARY_DIR}/../include/v1x/cqasm-types-gen.hpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-types-gen.cpp"
-    "${LIBQASM_GENERATED_PYTHON_FILES}/v1x/cqasm-types-gen.py"
-)
-list(APPEND CQASM_V1X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-types-gen.cpp")
-
-# Generate the semantic value classes.
-# Values can be either known at compile-time or only at runtime,
-# but their type is resolved to one of the type tree nodes at compile-time.
-generate_tree_py(
-    "${TREE_GEN_EXECUTABLE}"
-    "${CMAKE_CURRENT_SOURCE_DIR}/v1x/cqasm-values.tree"
-    "${CMAKE_CURRENT_BINARY_DIR}/../include/v1x/cqasm-values-gen.hpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-values-gen.cpp"
-    "${LIBQASM_GENERATED_PYTHON_FILES}/v1x/cqasm-values-gen.py"
-)
-list(APPEND CQASM_V1X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-values-gen.cpp")
-
-# Generate the semantic tree classes.
-generate_tree_py(
-    "${TREE_GEN_EXECUTABLE}"
-    "${CMAKE_CURRENT_SOURCE_DIR}/v1x/cqasm-semantic.tree"
-    "${CMAKE_CURRENT_BINARY_DIR}/../include/v1x/cqasm-semantic-gen.hpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-semantic-gen.cpp"
-    "${LIBQASM_GENERATED_PYTHON_FILES}/v1x/cqasm-semantic-gen.py"
-)
-list(APPEND CQASM_V1X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-semantic-gen.cpp")
 
 #-------------------------------------------------------------------------------
 # cQASM v3.x parser generation and inclusion
@@ -213,10 +109,10 @@ list(APPEND CQASM_V1X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v1x/cqasm-semantic-ge
 add_subdirectory(v3x)
 
 # Generate the lexer and the parser.
-function(antlr_target SCRIPT INPUT_DIR OUTPUT_DIR ANTLR_OUTPUTS)
+function(antlr_target SCRIPT INPUT_DIR OUTPUT_SRC_DIR OUTPUT_INC_DIR ANTLR_OUTPUTS)
     add_custom_command(
         OUTPUT ${ANTLR_OUTPUTS}
-        COMMAND ${Python3_EXECUTABLE} ${SCRIPT} ${INPUT_DIR} ${OUTPUT_DIR}
+        COMMAND ${Python3_EXECUTABLE} ${SCRIPT} ${INPUT_DIR} ${OUTPUT_SRC_DIR} ${OUTPUT_INC_DIR}
     )
 endfunction()
 
@@ -229,7 +125,8 @@ set(ANTLR_OUTPUTS
 antlr_target(
     "${CMAKE_CURRENT_SOURCE_DIR}/../scripts/generate_antlr_parser.py"
     "${CMAKE_CURRENT_SOURCE_DIR}/v3x"  # Input dir (grammar files)
-    "${CMAKE_CURRENT_BINARY_DIR}/v3x"  # Output dir (lexer and parser cpp files)
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x"  # Sources output dir (lexer and parser cpp files)
+    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x"  # Include output dir (lexer and parser h files)
     "${ANTLR_OUTPUTS}"  # List of generated files
 )
 list(APPEND CQASM_V3X_SOURCES ${ANTLR_OUTPUTS})
@@ -283,7 +180,6 @@ list(APPEND CQASM_V3X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3x/cqasm-semantic-ge
 # Main cQASM library as an object library.
 add_library(cqasm-lib-obj OBJECT
     ${CQASM_COMMON_SOURCES}
-    ${CQASM_V1X_SOURCES}
     ${CQASM_V3X_SOURCES}
 )
 if(LIBQASM_BUILD_EMSCRIPTEN)
@@ -324,26 +220,24 @@ target_include_directories(cqasm-lib-obj
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/"
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include/"
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include/"
-    PUBLIC "${antlr4-runtime_INCLUDE_DIRS}/"
-    PUBLIC "${fmt_INCLUDE_DIRS}/"
-    PUBLIC "${tree-gen_INCLUDE_DIRS}/"
+    PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x"
+    PRIVATE "${antlr4-runtime_INCLUDE_DIRS}/"
+    PRIVATE "${fmt_INCLUDE_DIRS}/"
+    PRIVATE "${tree-gen_INCLUDE_DIRS}/"
 )
 
-target_compile_features(cqasm-lib-obj PUBLIC
-    cxx_std_20
+target_compile_features(cqasm-lib-obj
+    PUBLIC cxx_std_20
 )
 
-if(LIBQASM_BUILD_EMSCRIPTEN)
-    target_link_libraries(cqasm-lib-obj
-        PRIVATE range-v3::range-v3
-    )
-else()
-    target_link_libraries(cqasm-lib-obj
-        PRIVATE antlr4_static
-        PRIVATE fmt::fmt
-        PRIVATE range-v3::range-v3
-        PRIVATE tree-gen::tree-gen
-    )
+target_link_libraries(cqasm-lib-obj PRIVATE range-v3::range-v3)
+if(NOT LIBQASM_BUILD_EMSCRIPTEN)
+    target_link_libraries(cqasm-lib-obj PRIVATE fmt::fmt tree-gen::tree-gen)
+    if(BUILD_SHARED_LIBS)
+        target_link_libraries(cqasm-lib-obj PRIVATE antlr4_shared)
+    else()
+        target_link_libraries(cqasm-lib-obj PRIVATE antlr4_static)
+    endif()
 endif()
 
 # fPIC: otherwise some weirdness happens with pthreads or something when linking statically.
@@ -352,6 +246,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
         -Wall -Wextra -Werror -Wfatal-errors
         -fPIC
         -Wno-error=deprecated-declarations
+        -Wno-error=maybe-uninitialized
         -Wno-error=restrict
         -Wno-error=sign-compare
         -Wno-error=unused-parameter
@@ -368,7 +263,7 @@ elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     )
 elseif(MSVC)
     target_compile_options(cqasm-lib-obj PRIVATE
-        /W3 /w34996  # not using /WX at the moment because the flex generated code has some warnings
+        /WX
         /D_CRT_NONSTDC_NO_DEPRECATE
         /D_CRT_SECURE_NO_WARNINGS
         /D_UNICODE /DUNICODE
@@ -422,9 +317,10 @@ install(
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
-get_target_property(INCLUDE_DIRS cqasm-lib-obj INTERFACE_INCLUDE_DIRECTORIES)
 install(
-    DIRECTORY ${INCLUDE_DIRS}
+    DIRECTORY
+        "${CMAKE_CURRENT_SOURCE_DIR}/../include/"
+        "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x"
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    PATTERN "*.hpp" PATTERN "*.inc"
+    FILES_MATCHING PATTERN "*.hpp" PATTERN "*.h" PATTERN "*.inc"
 )

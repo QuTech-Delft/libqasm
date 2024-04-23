@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:3:11..12: mismatched input '=' expecting IDENTIFIER
+Error at input.cq:3:11: token recognition error at: '=\n'
