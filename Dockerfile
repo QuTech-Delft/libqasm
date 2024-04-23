@@ -2,7 +2,7 @@ FROM ubuntu:22.04
 
 RUN apt-get -qq update && \
     apt-get -qq upgrade && \
-    apt-get -qq -y install bc build-essential git python3 python3-pip swig wget && \
+    apt-get -qq -y install bc build-essential curl git python3 python3-pip swig unzip wget && \
     python3 -m pip install conan pytest
 
 # Install latest emsdk
@@ -12,6 +12,9 @@ RUN git clone https://github.com/emscripten-core/emsdk.git && \
     ./emsdk install latest && \
     ./emsdk activate latest && \
     cd /
+
+# Install deno
+RUN curl -fsSL https://deno.land/install.sh | sh
 
 # Install CMake 3.28
 RUN version=3.28 && \
@@ -34,8 +37,10 @@ RUN conan profile detect --force && \
     conan build . -pr=conan/profiles/emscripten -pr:b=conan/profiles/release -b missing && \
     ls -hl build/Release/emscripten
 
+# Rename cqasm_emscripten.js to cqasm_emscripten.mjs
+RUN mv build/Release/emscripten/cqasm_emscripten.js build/Release/emscripten/cqasm_emscripten.mjs
+
 # Test emscripten binaries
 RUN cd emscripten && \
-    node_executable=$(find /emsdk -type f -name node) && \
-    $node_executable --experimental-wasm-eh test_cqasm.js && \
+    /root/.deno/bin/deno run -A test_cqasm.ts \
     cd /
