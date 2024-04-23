@@ -135,10 +135,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install deno
-        uses: denoland/setup-deno@v1
-        with:
-          deno-version: v1.x
         # We still need node for the em++ compilation
       - name: Install node
         uses: actions/setup-node@v4
@@ -163,6 +159,10 @@ jobs:
         run: |
           mv cqasm_emscripten.js cqasm_emscripten.mjs
         shell: bash
+      - name: Install deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
       - name: Test
         working-directory: emscripten
         run: |
