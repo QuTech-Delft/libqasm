@@ -109,10 +109,10 @@ set(CQASM_COMMON_SOURCES
 add_subdirectory(v3x)
 
 # Generate the lexer and the parser.
-function(antlr_target SCRIPT INPUT_DIR OUTPUT_DIR ANTLR_OUTPUTS)
+function(antlr_target SCRIPT INPUT_DIR OUTPUT_SRC_DIR OUTPUT_INC_DIR ANTLR_OUTPUTS)
     add_custom_command(
         OUTPUT ${ANTLR_OUTPUTS}
-        COMMAND ${Python3_EXECUTABLE} ${SCRIPT} ${INPUT_DIR} ${OUTPUT_DIR}
+        COMMAND ${Python3_EXECUTABLE} ${SCRIPT} ${INPUT_DIR} ${OUTPUT_SRC_DIR} ${OUTPUT_INC_DIR}
     )
 endfunction()
 
@@ -125,7 +125,8 @@ set(ANTLR_OUTPUTS
 antlr_target(
     "${CMAKE_CURRENT_SOURCE_DIR}/../scripts/generate_antlr_parser.py"
     "${CMAKE_CURRENT_SOURCE_DIR}/v3x"  # Input dir (grammar files)
-    "${CMAKE_CURRENT_BINARY_DIR}/v3x"  # Output dir (lexer and parser cpp files)
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x"  # Sources output dir (lexer and parser cpp files)
+    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x"  # Include output dir (lexer and parser h files)
     "${ANTLR_OUTPUTS}"  # List of generated files
 )
 list(APPEND CQASM_V3X_SOURCES ${ANTLR_OUTPUTS})
@@ -219,6 +220,7 @@ target_include_directories(cqasm-lib-obj
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/"
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include/"
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include/"
+    PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x"
     PRIVATE "${antlr4-runtime_INCLUDE_DIRS}/"
     PRIVATE "${fmt_INCLUDE_DIRS}/"
     PRIVATE "${tree-gen_INCLUDE_DIRS}/"
@@ -315,9 +317,10 @@ install(
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
-get_target_property(INCLUDE_DIRS cqasm-lib-obj INTERFACE_INCLUDE_DIRECTORIES)
 install(
-    DIRECTORY ${INCLUDE_DIRS}
+    DIRECTORY
+        "${CMAKE_CURRENT_SOURCE_DIR}/../include/"
+        "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x"
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    PATTERN "*.hpp" PATTERN "*.inc"
+    FILES_MATCHING PATTERN "*.hpp" PATTERN "*.h" PATTERN "*.inc"
 )

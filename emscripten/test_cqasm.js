@@ -12,7 +12,7 @@ wrapper().then(function(result) {
 
     try {
         var output = cqasm.get_version()
-        var expected_output = "0.6.3"
+        var expected_output = "0.6.4"
         console.log("\nThe version of libqasm compiled with emscripten is:", output);
         if (output !== expected_output) {
             console.log("\tExpected output:", expected_output)
