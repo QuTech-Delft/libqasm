@@ -4,6 +4,7 @@ on:
   push:
     branches:
     - develop
+    - siilwyn-poc-flags
   pull_request:
 
 jobs:
