@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [ 0.6.5 ] - [ 2024-04-23 ]
+
+### Added
+
+### Changed
+
+- Updated emscripten compilation flags.
+- Changed GitHub Actions `js-emscripten-wasm` job to work with `deno` instead of `node`.
+
+### Removed
+
 ## [ 0.6.4 ] - [ 2024-04-15 ]
 
 ### Added
