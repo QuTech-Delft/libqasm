@@ -1,7 +1,0 @@
-version 3
-
-def area(float r) -> float {
-     return 2 * pi * r
-}
-
-float f = area(1.)

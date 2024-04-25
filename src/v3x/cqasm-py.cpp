@@ -2,22 +2,22 @@
  * Implementation for the internal Python-wrapped functions and classes.
  */
 
-#include "cqasm-version.hpp"
-#include "v3x/cqasm-analyzer.hpp"
-#include "v3x/cqasm-parse-helper.hpp"
 #include "v3x/cqasm-py.hpp"
-#include "v3x/cqasm.hpp"
 
 #include <memory>
 #include <optional>
+
+#include "cqasm-version.hpp"
+#include "v3x/cqasm-analyzer.hpp"
+#include "v3x/cqasm-parse-helper.hpp"
+#include "v3x/cqasm.hpp"
 
 namespace v3x = cqasm::v3x;
 
 /**
  * Creates a new v3.x semantic analyzer.
- * When without_defaults is specified,
- * the default instruction set and error models are not loaded into the instruction and error model tables,
- * so you have to specify the entire instruction set using register_instruction() and register_error_model().
+ * When without_defaults is specified, the default instruction set are not loaded into the instruction table,
+ * so you have to specify the entire instruction set using register_instruction().
  * Otherwise, those functions only add to the defaults.
  * Unlike the C++ version of the analyzer class,
  * the initial mappings and functions are not configurable at all.
@@ -26,7 +26,7 @@ namespace v3x = cqasm::v3x;
 V3xAnalyzer::V3xAnalyzer(const std::string &max_version, bool without_defaults) {
     if (without_defaults) {
         analyzer = std::make_unique<v3x::analyzer::Analyzer>(max_version);
-        analyzer->register_default_mappings();
+        analyzer->register_default_constants();
         analyzer->register_default_functions();
     } else {
         analyzer = std::make_unique<v3x::analyzer::Analyzer>(v3x::default_analyzer(max_version));
@@ -138,9 +138,7 @@ std::vector<std::string> V3xAnalyzer::analyze_file(const std::string &file_name)
  * Same as analyze_file(), but instead receives the file contents directly.
  * The file_name, if specified, is only used when reporting errors.
  */
-std::vector<std::string> V3xAnalyzer::analyze_string(
-    const std::string &data, const std::string &file_name) const {
-
+std::vector<std::string> V3xAnalyzer::analyze_string(const std::string &data, const std::string &file_name) const {
     auto file_name_op = !file_name.empty() ? std::optional<std::string>{ file_name } : std::nullopt;
     const auto &parse_result = v3x::parser::parse_string(data, file_name_op);
     const auto &analysis_result = analyzer->analyze(parse_result);
@@ -160,7 +158,6 @@ std::vector<std::string> V3xAnalyzer::analyze_string(
  */
 [[nodiscard]] std::string V3xAnalyzer::analyze_string_to_json(
     const std::string &data, const std::string &file_name) const {
-
     auto file_name_op = !file_name.empty() ? std::optional<std::string>{ file_name } : std::nullopt;
     const auto &parse_result = v3x::parser::parse_string(data, file_name_op);
     const auto &analysis_result = analyzer->analyze(parse_result);

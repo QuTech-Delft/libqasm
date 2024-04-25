@@ -4,18 +4,20 @@ from urllib.request import urlopen
 from urllib import error
 
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
 
 
 def print_usage():
-    print("Usage: generate_antlr_parser.py <INPUT FOLDER> <OUTPUT FOLDER>")
+    print("Usage: generate_antlr_parser.py <INPUT FOLDER> <OUTPUT SOURCE FOLDER> <OUTPUT INCLUDE FOLDER>")
     print("Where:")
     print("    INPUT_FOLDER: folder containing the grammar files.")
-    print("    OUTPUT_FOLDER: folder where generated files will be left.")
+    print("    OUTPUT_SOURCE_FOLDER: folder where generated source files will be left.")
+    print("    OUTPUT_INCLUDE_FOLDER: folder where generated include files will be left.")
     print("Example:")
-    print("    generate_antlr_parser.py ../src/v3x ../build/Debug/src/v3x")
+    print("    generate_antlr_parser.py ../src/v3x ../build/Debug/src/v3x ../build/Debug/include/v3x")
 
 
 class AntlrJarFileDownloader:
@@ -47,7 +49,7 @@ class AntlrJarFileDownloader:
         return cls.file_path
 
 
-def generate_antlr_parser(input_folder, output_folder, antlr_jar_file_path):
+def generate_antlr_parser(input_folder, output_source_folder, output_include_folder, antlr_jar_file_path):
     print("Generating ANTLR lexer and parser files")
     try:
         completed_process = subprocess.run([
@@ -58,7 +60,7 @@ def generate_antlr_parser(input_folder, output_folder, antlr_jar_file_path):
             "-visitor",
             "-Xexact-output-dir",
             "-o",
-            "{}".format(output_folder),
+            "{}".format(output_source_folder),
             "-Dlanguage=Cpp",
             "-Werror",
             "{}/CqasmLexer.g4".format(input_folder),
@@ -67,16 +69,23 @@ def generate_antlr_parser(input_folder, output_folder, antlr_jar_file_path):
         if completed_process.returncode != 0:
             print("Error generating ANTLR lexer and parser files: {}", completed_process.returncode)
             exit(5)
+        # Move header files to output include folder
+        output_files = os.listdir(output_source_folder)
+        print(f"Moving output include files to {output_include_folder}")
+        for output_file in output_files:
+            if output_file.endswith(".h"):
+                print(f"\t{output_file}")
+                shutil.move(os.path.join(output_source_folder, output_file), output_include_folder)
     except FileNotFoundError as err:
         print("Error running java: {}".format(err.strerror))
         exit(4)
 
 
 def main(argv):
-    if len(argv) != 3:
+    if len(argv) != 4:
         print_usage()
         exit(2)
-    generate_antlr_parser(argv[1], argv[2], AntlrJarFileDownloader.get_antlr_jar_file_path())
+    generate_antlr_parser(argv[1], argv[2], argv[3], AntlrJarFileDownloader.get_antlr_jar_file_path())
 
 
 if __name__ == '__main__':

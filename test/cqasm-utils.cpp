@@ -4,7 +4,7 @@
 
 using namespace cqasm::utils;
 
-
+// clang-format off
 TEST(to_lowercase, empty_string) { EXPECT_TRUE(to_lowercase("").empty()); }
 TEST(to_lowercase, all_lowercase) { EXPECT_EQ(to_lowercase("abcd"), "abcd"); }
 TEST(to_lowercase, all_upercase) { EXPECT_EQ(to_lowercase("ABCD"), "abcd"); }
@@ -39,3 +39,4 @@ TEST(json_encode, error) {
         json_encode("failed to parse 'res/v1x/parsing/grammar/expression_recovery/input.cq'"),
         "failed to parse 'res/v1x/parsing/grammar/expression_recovery/input.cq'");
 }
+// clang-format on

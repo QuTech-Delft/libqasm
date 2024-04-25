@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include <cstdint>
 #include <fmt/ostream.h>
+
+#include <cstdint>
 #include <optional>
 #include <string>
-
 
 namespace cqasm::annotations {
 
@@ -40,8 +40,8 @@ struct SourceLocation {
         Range(const Index &f, const Index &l);
         Range(const Range &other) = default;
         Range(Range &&other) noexcept = default;
-        Range& operator=(const Range &other) = default;
-        Range& operator=(Range &&other) noexcept = default;
+        Range &operator=(const Range &other) = default;
+        Range &operator=(Range &&other) noexcept = default;
 
         bool operator==(const Range &other) const = default;
         auto operator<=>(const Range &other) const = default;
@@ -64,8 +64,8 @@ struct SourceLocation {
     explicit SourceLocation(const std::optional<std::string> &file_name, const Range &range);
     SourceLocation(const SourceLocation &other) = default;
     SourceLocation(SourceLocation &&other) noexcept = default;
-    SourceLocation& operator=(const SourceLocation &other) = default;
-    SourceLocation& operator=(SourceLocation &&other) noexcept = default;
+    SourceLocation &operator=(const SourceLocation &other) = default;
+    SourceLocation &operator=(SourceLocation &&other) noexcept = default;
 
     bool operator==(const SourceLocation &other) const = default;
     // Some versions of clang still do not implement operator<=> for std::optional
@@ -73,9 +73,7 @@ struct SourceLocation {
     // This implementation just does not check the optional file_name
     // Instead, it just assumes that, when comparing source locations, the file_name will be the same
     // This will always be the case if we are just parsing or analyzing a file or a string
-    auto operator<=>(const SourceLocation &other) const {
-        return range <=> other.range;
-    }
+    auto operator<=>(const SourceLocation &other) const { return range <=> other.range; }
 
     /**
      * Expands the location range to contain the given location in the source file.
@@ -88,9 +86,10 @@ struct SourceLocation {
  */
 std::ostream &operator<<(std::ostream &os, const SourceLocation &object);
 
-} // namespace cqasm::annotations
+}  // namespace cqasm::annotations
 
 /**
  * std::ostream support via fmt (uses operator<<).
  */
-template <> struct fmt::formatter<cqasm::annotations::SourceLocation> : ostream_formatter {};
+template <>
+struct fmt::formatter<cqasm::annotations::SourceLocation> : ostream_formatter {};

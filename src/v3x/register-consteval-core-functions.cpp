@@ -2,7 +2,6 @@
 
 #include <cassert>
 
-
 namespace cqasm::v3x::function {
 
 /**
@@ -86,4 +85,4 @@ void register_consteval_core_functions(analyzer::Analyzer *analyzer) {
     analyzer->register_consteval_core_function("abs", "i", fn_abs_i);
 }
 
-} // namespace cqasm::v3x::function
+}  // namespace cqasm::v3x::function

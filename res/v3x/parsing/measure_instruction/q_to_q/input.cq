@@ -1,5 +1,0 @@
-version 3
-
-qubit q
-
-q = measure q

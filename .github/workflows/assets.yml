@@ -3,10 +3,10 @@ name: Assets
 on:
   release:
     types:
-    - created
+      - created
   push:
     branches:
-    - 'release**'
+      - "release**"
 
 jobs:
   macos-x64:
@@ -22,8 +22,8 @@ jobs:
           - "3.12"
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+        uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
       - name: Install dependencies
@@ -37,7 +37,7 @@ jobs:
         run: |
           echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_OUTPUT
           echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_ENV
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: pypi-macos-py${{ matrix.python }}
           path: pybuild/dist/${{ env.WHEEL_NAME }}
@@ -72,12 +72,12 @@ jobs:
             swig_version: 'swig-3.0.12-19.module_el8.3.0+6167+838326ab'
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install dependencies
         run: |
           dnf install -y $SWIG_VERSION
           export PATH="/opt/python/${{ matrix.cpython_version }}/bin:$PATH"
-          python -m pip install --upgrade conan wheel auditwheel
+          python -m pip install --upgrade pip conan wheel auditwheel
       - name: Build wheel
         run: |
           export PATH="/opt/python/${{ matrix.cpython_version }}/bin:$PATH"
@@ -90,9 +90,9 @@ jobs:
         run: |
           echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_OUTPUT
           echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_ENV
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          name: pypi-linux-${{ matrix.cpython_version }}
+          name: pypi-linux-x64-${{ matrix.cpython_version }}
           path: wheelhouse/${{ env.WHEEL_NAME }}
       - uses: actions/upload-release-asset@v1
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
@@ -133,7 +133,7 @@ jobs:
             swig_version: 'swig-3.0.12-19.module_el8.4.0+2254+838326ab'
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install dependencies
         run: |
           dnf install -y $JAVA_VERSION $SWIG_VERSION
@@ -151,9 +151,9 @@ jobs:
         run: |
           echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_OUTPUT
           echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_ENV
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          name: pypi-linux-${{ matrix.cpython_version }}
+          name: pypi-linux-arm64-${{ matrix.cpython_version }}
           path: wheelhouse/${{ env.WHEEL_NAME }}
       - uses: actions/upload-release-asset@v1
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
@@ -178,8 +178,8 @@ jobs:
           - "3.12"
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+        uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
       - name: Install dependencies
@@ -193,7 +193,7 @@ jobs:
           echo "WHEEL_NAME=$(Get-ChildItem -name *.whl)" >> $env:GITHUB_OUTPUT
           echo "WHEEL_NAME=$(Get-ChildItem -name *.whl)" >> $env:GITHUB_ENV
         shell: powershell
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: pypi-windows-py${{ matrix.python }}
           path: pybuild/dist/${{ env.WHEEL_NAME }}
@@ -207,6 +207,45 @@ jobs:
           asset_name: ${{ env.WHEEL_NAME }}
           asset_content_type: application/zip
 
+  emscripten-wasm:
+    name: WASM binaries for emscripten
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type:
+          - Release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16.20.2
+      - name: Install conan
+        run: |
+          pipx install conan
+        shell: bash
+      - name: Get latest CMake
+        uses: lukka/get-cmake@latest
+        # We clean the Conan cache as a preventive measure for our runs in self-hosted runners
+        # Self-hosted runners use containers that cache Conan packages from previous runs,
+        # and that can cause different type of problems
+      - name: Configure and build
+        run: |
+          conan profile detect --force
+          conan remove -c "*/*"
+          conan build . -pr=conan/profiles/emscripten -pr:b=conan/profiles/release -b missing
+        shell: bash
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+        with:
+          files: |
+            build/Release/emscripten/cqasm_emscripten.js
+            build/Release/emscripten/cqasm_emscripten.wasm
+          token: ${{ secrets.GITHUB_TOKEN }}
+
   publish:
     name: Publish
     if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
@@ -215,13 +254,14 @@ jobs:
       - manylinux-x64
       - manylinux-arm64
       - windows-x64
+      - emscripten-wasm
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         id: download
       - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@v1.3.1
+        uses: pypa/gh-action-pypi-publish@v1.8.14
         with:
           user: __token__
           password: ${{ secrets.PYPI_TOKEN }}

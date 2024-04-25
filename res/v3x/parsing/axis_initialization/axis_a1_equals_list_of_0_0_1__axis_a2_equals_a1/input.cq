@@ -1,4 +1,0 @@
-version 3
-
-axis a1 = [0, 0, 1]
-axis a2 = a1

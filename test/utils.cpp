@@ -3,7 +3,6 @@
 #include <fstream>  // ifstream, ofstream
 #include <iterator>  // istreambuf_iterator
 
-
 namespace cqasm::test {
 
 namespace fs = std::filesystem;

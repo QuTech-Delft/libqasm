@@ -1,14 +1,15 @@
 #include "parsing.hpp"
-#include "test-register.hpp"
-#include "utils.hpp"
-#include "v3x/cqasm.hpp"
-#include "v3x/cqasm-parse-helper.hpp"
 
-#include <filesystem>
 #include <fmt/format.h>
 #include <gtest/gtest.h>
+
+#include <filesystem>
 #include <string>
 
+#include "test-register.hpp"
+#include "utils.hpp"
+#include "v3x/cqasm-parse-helper.hpp"
+#include "v3x/cqasm.hpp"
 
 namespace cqasm::v3x::test {
 
@@ -23,7 +24,8 @@ class ParsingTest : public ::testing::Test {
     fs::path path_{};
 
 public:
-    explicit ParsingTest(fs::path path) : path_{ std::move(path) } {}
+    explicit ParsingTest(fs::path path)
+    : path_{ std::move(path) } {}
 
     void TestBody() override {
         // Parse the test input file
@@ -65,10 +67,10 @@ public:
         }
 
         // If there were no errors, try semantic analysis
-        for (const auto &api_version : std::vector<std::string>( { "3.0" } )) {
+        for (const auto &api_version : std::vector<std::string>({ "3.0" })) {
             auto analyzer = cq3x::analyzer::Analyzer{ api_version };
 
-            analyzer.register_default_mappings();
+            analyzer.register_default_constants();
             analyzer.register_default_functions();
             analyzer.register_default_instructions();
 
@@ -97,8 +99,10 @@ public:
                         std::ofstream semantic_json_actual_ofs{ semantic_json_actual_file_path };
                         analysis_result.root->dump_json(semantic_json_actual_ofs);
                     }
-                    EXPECT_TRUE(cqasm::test::read_file(semantic_json_actual_file_path, semantic_json_actual_file_contents));
-                    EXPECT_TRUE(cqasm::test::read_file(semantic_json_golden_file_path, semantic_json_golden_file_contents));
+                    EXPECT_TRUE(
+                        cqasm::test::read_file(semantic_json_actual_file_path, semantic_json_actual_file_contents));
+                    EXPECT_TRUE(
+                        cqasm::test::read_file(semantic_json_golden_file_path, semantic_json_golden_file_contents));
                     EXPECT_TRUE(semantic_json_actual_file_contents == semantic_json_golden_file_contents);
                 }
             }
@@ -110,12 +114,9 @@ public:
     }
 };
 
-
 void register_tests() {
-    cqasm::test::register_tests(
-        fs::path{ "res" } / "v3x" / "parsing",
-        [=](fs::path test_path) -> ParsingTest* { return new ParsingTest(std::move(test_path)); }
-    );
+    cqasm::test::register_tests(fs::path{ "res" } / "v3x" / "parsing",
+        [=](fs::path test_path) -> ParsingTest * { return new ParsingTest(std::move(test_path)); });
 }
 
 }  // namespace cqasm::v3x::test

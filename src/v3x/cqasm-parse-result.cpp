@@ -1,6 +1,6 @@
-#include "cqasm-result.hpp"
 #include "v3x/cqasm-parse-result.hpp"
 
+#include "cqasm-result.hpp"
 
 namespace cqasm::v3x::parser {
 
@@ -20,4 +20,4 @@ std::string ParseResult::to_json() const {
     return cqasm::result::to_json(*this);
 }
 
-} // namespace cqasm::v3x::parser
+}  // namespace cqasm::v3x::parser

@@ -1,2 +1,0 @@
-ERROR
-Error at input.cq:3:13..15: extraneous input 'b1' expecting {<EOF>, NEW_LINE, ';'}

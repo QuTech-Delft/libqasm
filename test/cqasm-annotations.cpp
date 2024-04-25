@@ -2,11 +2,11 @@
 
 #include <fmt/format.h>
 #include <gmock/gmock.h>
+
 #include <optional>
 
 using namespace ::testing;
 using namespace cqasm::annotations;
-
 
 TEST(source_location_constructor, null_file_name__no_line_numbers__no_column_numbers) {
     auto location = SourceLocation{ std::nullopt, {} };

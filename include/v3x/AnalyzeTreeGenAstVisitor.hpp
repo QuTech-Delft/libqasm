@@ -1,28 +1,20 @@
 #pragma once
 
-#include "v3x/cqasm-analyzer.hpp"
-#include "v3x/cqasm-ast-gen.hpp"
-#include "v3x/cqasm-semantic-gen.hpp"
-
 #include <any>
 #include <string_view>
 #include <tuple>
 #include <utility>  // pair
 
+#include "v3x/cqasm-analyzer.hpp"
+#include "v3x/cqasm-ast-gen.hpp"
+#include "v3x/cqasm-semantic-gen.hpp"
 
 namespace cqasm::v3x::analyzer {
 
 using IndexT = values::ConstInt;
 using IndexListT = tree::Many<IndexT>;
 
-using GlobalBlockReturnT = std::tuple<
-    tree::One<semantic::Block>,
-    const tree::Any<semantic::Variable> &,
-    const tree::Any<semantic::Function> &>;
-
-using LocalBlockReturnT = std::pair<
-    tree::One<semantic::Block>,
-    const tree::Any<semantic::Variable> &>;
+using GlobalBlockReturnT = std::tuple<tree::One<semantic::Block>, const tree::Any<semantic::Variable> &>;
 
 class AnalyzeTreeGenAstVisitor : public ast::Visitor<std::any> {
 protected:
@@ -38,15 +30,10 @@ public:
     std::any visit_annotated(ast::Annotated &node) override;
     std::any visit_annotation_data(ast::AnnotationData &node) override;
     std::any visit_global_block(ast::GlobalBlock &node) override;
-    std::any visit_local_block(ast::LocalBlock &node) override;
     std::any visit_variable(ast::Variable &node) override;
-    std::any visit_initialization(ast::Initialization &node) override;
-    std::any visit_function(ast::Function &node) override;
-    std::any visit_assignment_statement(ast::AssignmentStatement &node) override;
-    std::any visit_return_statement(ast::ReturnStatement &node) override;
-    std::any visit_expression_statement(ast::ExpressionStatement &node) override;
     std::any visit_gate(ast::Gate &node) override;
     std::any visit_measure_instruction(ast::MeasureInstruction &node) override;
+    std::any visit_expression_list(ast::ExpressionList &node) override;
     std::any visit_expression(ast::Expression &node) override;
     std::any visit_unary_minus_expression(ast::UnaryMinusExpression &node) override;
     std::any visit_bitwise_not_expression(ast::BitwiseNotExpression &node) override;
@@ -78,15 +65,11 @@ public:
     std::any visit_index_item(ast::IndexItem &node) override;
     std::any visit_index_range(ast::IndexRange &ast) override;
     std::any visit_identifier(ast::Identifier &node) override;
-    std::any visit_initialization_list(ast::InitializationList &node) override;
     std::any visit_boolean_literal(ast::BooleanLiteral &node) override;
     std::any visit_integer_literal(ast::IntegerLiteral &node) override;
     std::any visit_float_literal(ast::FloatLiteral &node) override;
 
 private:
-    bool current_block_has_return_statement();
-    void current_block_return_statements_promote_or_error(const tree::Maybe<types::Node> &return_type);
-
     /**
      * Build a semantic type
      * It can be a simple type SemanticT, of size 1,
@@ -111,82 +94,27 @@ private:
         assert(!type.empty() && !type->name.empty());
         auto type_name = type->name->name;
         if (type_name == types::qubit_type_name) {
-            return build_semantic_type<types::Qubit, types::QubitArray>(*type, types::qubit_type_name); }
-        if (type_name == types::bit_type_name) {
-            return build_semantic_type<types::Bit, types::BitArray>(*type, types::bit_type_name); }
-        if (type_name == types::axis_type_name) {
-            return tree::make<types::Axis>(3); }
-        if (type_name == types::bool_type_name) {
-            return build_semantic_type<types::Bool, types::BoolArray>(*type, types::bool_type_name); }
-        if (type_name == types::integer_type_name) {
-            return build_semantic_type<types::Int, types::IntArray>(*type, types::integer_type_name); }
-        if (type_name == types::float_type_name) {
-            return build_semantic_type<types::Float, types::FloatArray>(*type, types::float_type_name); }
-        throw error::AnalysisError("unknown type \"" + type_name + "\"");
-    }
-
-    /**
-     * Transform an input array of values into an array of a given Type
-     * Pre condition: all the values in the input array can be promoted to Type
-     */
-    template <typename ConstTypeArray>
-    static tree::One<ConstTypeArray> build_array_value_from_promoted_values(
-        const values::Values &values, const types::Type &type) {
-
-        auto ret = tree::make<ConstTypeArray>();
-        ret->value.get_vec().resize(values.size());
-        std::transform(values.begin(), values.end(), ret->value.begin(),
-           [&type](const auto const_value) {
-                return values::promote(const_value, type);
-        });
-        return ret;
-    }
-
-    /**
-     * Transform an input array into a const array of Type
-     * Pre conditions:
-     *   Type can only be Bool, Int, or Real
-     *   All the values in the input array can be promoted to Type
-     */
-    [[nodiscard]] static values::Value build_value_from_promoted_values(
-        const values::Values &values, const types::Type &type);
-
-    /**
-     * Convenience function for visiting a global or a local block
-     */
-    template <typename Block>
-    void visit_block(Block &block) {
-        for (const auto &statement_ast : block.statements) {
-            try {
-                statement_ast->visit(*this);
-            } catch (error::AnalysisError &err) {
-                err.context(block);
-                result_.errors.push_back(std::move(err));
-            }
+            return build_semantic_type<types::Qubit, types::QubitArray>(*type, types::qubit_type_name);
         }
+        throw error::AnalysisError("unknown type \"" + type_name + "\"");
     }
 
     /**
      * Convenience function for visiting a function call given the function's name and arguments
      */
     values::Value visit_function_call(
-        const tree::One<ast::Identifier> &name,
-        const tree::Maybe<ast::ExpressionList> &arguments);
+        const tree::One<ast::Identifier> &name, const tree::Maybe<ast::ExpressionList> &arguments);
 
     /**
      * Convenience function for visiting unary operators
      */
-    std::any visit_unary_operator(
-        const std::string &name,
-        const tree::One<ast::Expression> &expression);
+    std::any visit_unary_operator(const std::string &name, const tree::One<ast::Expression> &expression);
 
     /**
      * Convenience function for visiting binary operators
      */
     std::any visit_binary_operator(
-        const std::string &name,
-        const tree::One<ast::Expression> &lhs,
-        const tree::One<ast::Expression> &rhs);
+        const std::string &name, const tree::One<ast::Expression> &lhs, const tree::One<ast::Expression> &rhs);
 
     /**
      * Shorthand for parsing an expression and promoting it to the given type,

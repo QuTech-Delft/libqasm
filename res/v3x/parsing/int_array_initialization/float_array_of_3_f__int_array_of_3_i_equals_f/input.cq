@@ -1,4 +1,0 @@
-version 3
-
-float[3] f
-int[3] i = f

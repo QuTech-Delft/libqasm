@@ -69,10 +69,6 @@ expression {
         name: cqasm::v3x::primitives::Str;
     }
 
-    initialization_list {
-        expr_list: One<expression_list>;
-    }
-
     function_call {
         name: One<identifier>;
         arguments: Maybe<expression_list>;
@@ -175,50 +171,17 @@ annotated {
                 typ: One<type>;
             }
 
-            # An initialization is a variable declaration plus an assignment instruction.
-            initialization {
-                var: One<variable>;
-                rhs: One<expression>;
-            }
-
             instruction {
                 gate {
                     name: One<identifier>;
                     operands: One<expression_list>;
                 }
 
-                # For some instructions, like the measure instruction,
-                # we want to differentiate between left hand side and right and side operands.
-                # For a measure instruction, the right hand side operand should be a qubit,
-                # and the left hand side operand a bit.
                 measure_instruction {
                     name: One<identifier>;
-                    lhs: One<expression>;
-                    rhs: One<expression>;
+                    operand: One<expression>;
                 }
             }
-
-            assignment_statement {
-                lhs: One<expression>;
-                rhs: One<expression>;
-            }
-
-            return_statement {
-                return_value: One<expression>;
-            }
-
-            expression_statement {
-                expression: One<expression>;
-            }
-        }
-
-        # Parameters will actually be a list of variables
-        # But that is already enforced at the grammar level
-        function {
-            name: One<identifier>;
-            parameters: One<local_block>;
-            return_type: Maybe<type>;
-            block: One<local_block>;
         }
     }
 }
@@ -229,17 +192,15 @@ version {
 
 block {
     global_block {
-        statements: Any<statement>;
-    }
-
-    local_block {
-        statements: Any<block_statement>;
+        qubit_variable_declaration: One<variable>;
+        gates: Any<gate>;
+        measure_instructions: Any<measure_instruction>;
     }
 }
 
 root {
     program {
         version: One<version>;
-        block: One<global_block>;
+        block: Maybe<global_block>;
     }
 }

@@ -44,6 +44,11 @@ annotation_data {
 annotated {
     annotations: Any<annotation_data>;
 
+    variable {
+        name: cqasm::v3x::primitives::Str;
+        typ: external One<cqasm::v3x::types::TypeBase>;
+    }
+
     statement {
         # Regular instruction (a gate, or a measure instruction).
         instruction {
@@ -51,33 +56,6 @@ annotated {
             name: cqasm::v3x::primitives::Str;
             operands: external Any<cqasm::v3x::values::ValueBase>;
         }
-
-        assignment_statement {
-            lhs: external One<cqasm::v3x::values::ValueBase>;
-            rhs: external One<cqasm::v3x::values::ValueBase>;
-        }
-
-        return_statement {
-            return_value: external One<cqasm::v3x::values::ValueBase>;
-        }
-
-        function_call_statement {
-            function_call_value: external Maybe<cqasm::v3x::values::ValueBase>;
-        }
-    }
-
-    variable {
-        name: cqasm::v3x::primitives::Str;
-        typ: external One<cqasm::v3x::types::TypeBase>;
-    }
-
-    # User defined functions
-    function {
-        name: cqasm::v3x::primitives::Str;
-        param_types: external Any<cqasm::v3x::types::TypeBase>;
-        return_type: external Maybe<cqasm::v3x::types::TypeBase>;
-        block: One<block>;
-        variables: Any<variable>;
     }
 }
 
@@ -98,12 +76,9 @@ program {
     # File version.
     version: One<version>;
 
-    # The global scope block.
-    block: One<block>;
+    # Qubit variable.
+    qubit_variable_declaration: Maybe<variable>;
 
-    # The list of functions.
-    functions: Any<function>;
-
-    # The list of variables.
-    variables: Any<variable>;
+    # Global scope block.
+    block: Maybe<block>;
 }

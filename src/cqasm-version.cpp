@@ -5,6 +5,7 @@
 #include "cqasm-version.hpp"
 
 #include <fmt/format.h>
+
 #include <memory>
 
 namespace cqasm::version {
@@ -30,7 +31,6 @@ Version::Version(const std::string &version) {
     }
 }
 
-
 /**
  * Constructs a version object from an array of chars.
  */
@@ -47,12 +47,8 @@ Version::Version(const char *version)
  */
 int Version::compare(const Version &other) const {
     for (size_t i = 0; i < this->size() || i < other.size(); i++) {
-        auto lhs = (i < this->size())
-            ? (*this)[i]
-            : 0;
-        auto rhs = (i < other.size())
-            ? other[i]
-            : 0;
+        auto lhs = (i < this->size()) ? (*this)[i] : 0;
+        auto rhs = (i < other.size()) ? other[i] : 0;
         if (lhs > rhs) {
             return 1;
         }
@@ -70,4 +66,4 @@ std::ostream &operator<<(std::ostream &os, const Version &object) {
     return os << fmt::format("{}", fmt::join(object, "."));
 }
 
-} // namespace cqasm::version
+}  // namespace cqasm::version

@@ -101,7 +101,6 @@ set(CQASM_COMMON_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-string-builder.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-utils.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-version.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/version.cpp"
 )
 
 #-------------------------------------------------------------------------------
@@ -110,10 +109,10 @@ set(CQASM_COMMON_SOURCES
 add_subdirectory(v3x)
 
 # Generate the lexer and the parser.
-function(antlr_target SCRIPT INPUT_DIR OUTPUT_DIR ANTLR_OUTPUTS)
+function(antlr_target SCRIPT INPUT_DIR OUTPUT_SRC_DIR OUTPUT_INC_DIR ANTLR_OUTPUTS)
     add_custom_command(
         OUTPUT ${ANTLR_OUTPUTS}
-        COMMAND ${Python3_EXECUTABLE} ${SCRIPT} ${INPUT_DIR} ${OUTPUT_DIR}
+        COMMAND ${Python3_EXECUTABLE} ${SCRIPT} ${INPUT_DIR} ${OUTPUT_SRC_DIR} ${OUTPUT_INC_DIR}
     )
 endfunction()
 
@@ -126,7 +125,8 @@ set(ANTLR_OUTPUTS
 antlr_target(
     "${CMAKE_CURRENT_SOURCE_DIR}/../scripts/generate_antlr_parser.py"
     "${CMAKE_CURRENT_SOURCE_DIR}/v3x"  # Input dir (grammar files)
-    "${CMAKE_CURRENT_BINARY_DIR}/v3x"  # Output dir (lexer and parser cpp files)
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x"  # Sources output dir (lexer and parser cpp files)
+    "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x"  # Include output dir (lexer and parser h files)
     "${ANTLR_OUTPUTS}"  # List of generated files
 )
 list(APPEND CQASM_V3X_SOURCES ${ANTLR_OUTPUTS})
@@ -220,26 +220,24 @@ target_include_directories(cqasm-lib-obj
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/"
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include/"
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include/"
-    PUBLIC "${antlr4-runtime_INCLUDE_DIRS}/"
-    PUBLIC "${fmt_INCLUDE_DIRS}/"
-    PUBLIC "${tree-gen_INCLUDE_DIRS}/"
+    PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x"
+    PRIVATE "${antlr4-runtime_INCLUDE_DIRS}/"
+    PRIVATE "${fmt_INCLUDE_DIRS}/"
+    PRIVATE "${tree-gen_INCLUDE_DIRS}/"
 )
 
 target_compile_features(cqasm-lib-obj
     PUBLIC cxx_std_20
 )
 
-if(LIBQASM_BUILD_EMSCRIPTEN)
-    target_link_libraries(cqasm-lib-obj
-        PRIVATE range-v3::range-v3
-    )
-else()
-    target_link_libraries(cqasm-lib-obj
-        PRIVATE antlr4_static
-        PRIVATE fmt::fmt
-        PRIVATE range-v3::range-v3
-        PRIVATE tree-gen::tree-gen
-    )
+target_link_libraries(cqasm-lib-obj PRIVATE range-v3::range-v3)
+if(NOT LIBQASM_BUILD_EMSCRIPTEN)
+    target_link_libraries(cqasm-lib-obj PRIVATE fmt::fmt tree-gen::tree-gen)
+    if(BUILD_SHARED_LIBS)
+        target_link_libraries(cqasm-lib-obj PRIVATE antlr4_shared)
+    else()
+        target_link_libraries(cqasm-lib-obj PRIVATE antlr4_static)
+    endif()
 endif()
 
 # fPIC: otherwise some weirdness happens with pthreads or something when linking statically.
@@ -248,6 +246,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
         -Wall -Wextra -Werror -Wfatal-errors
         -fPIC
         -Wno-error=deprecated-declarations
+        -Wno-error=maybe-uninitialized
         -Wno-error=restrict
         -Wno-error=sign-compare
         -Wno-error=unused-parameter
@@ -318,9 +317,10 @@ install(
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
-get_target_property(INCLUDE_DIRS cqasm-lib-obj INTERFACE_INCLUDE_DIRECTORIES)
 install(
-    DIRECTORY ${INCLUDE_DIRS}
+    DIRECTORY
+        "${CMAKE_CURRENT_SOURCE_DIR}/../include/"
+        "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x"
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    PATTERN "*.hpp" PATTERN "*.inc"
+    FILES_MATCHING PATTERN "*.hpp" PATTERN "*.h" PATTERN "*.inc"
 )

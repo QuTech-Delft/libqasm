@@ -1,14 +1,15 @@
 #include "cqasm-functions.hpp"
-#include "v3x/cqasm-primitives.hpp"
-#include "v3x/register-consteval-core-functions.hpp"
 
 #include <gmock/gmock.h>
+
+#include "v3x/cqasm-primitives.hpp"
+#include "v3x/register-consteval-core-functions.hpp"
 
 namespace function = cqasm::v3x::function;
 namespace primitives = cqasm::v3x::primitives;
 namespace values = cqasm::v3x::values;
 
-
+// clang-format off
 TEST(op_neg_f, f_0) { EXPECT_EQ((invoke_unary<function::op_neg_f>(0.)), 0.); }
 TEST(op_neg_f, f_5) { EXPECT_EQ((invoke_unary<function::op_neg_f>(5.)), -5.); }
 TEST(op_neg_f, f_m5) { EXPECT_EQ((invoke_unary<function::op_neg_f>(-5.)), 5.); }
@@ -92,3 +93,4 @@ TEST(fn_atan_f, f_point_2) { EXPECT_NEAR((invoke_unary<function::fn_atan_f>(.2))
 TEST(fn_asinh_f, f_2) { EXPECT_NEAR((invoke_unary<function::fn_asinh_f>(2.)), 1.44363, 0.00001); }
 TEST(fn_acosh_f, f_2) { EXPECT_NEAR((invoke_unary<function::fn_acosh_f>(2.)), 1.31695, 0.00001); }
 TEST(fn_atanh_f, f_point_2) { EXPECT_NEAR((invoke_unary<function::fn_atanh_f>(.2)), 0.20273, 0.00001); }
+// clang-format on

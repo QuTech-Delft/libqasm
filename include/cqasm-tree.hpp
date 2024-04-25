@@ -7,7 +7,6 @@
 #include "tree-annotatable.hpp"
 #include "tree-base.hpp"
 
-
 /**
  * Namespace for wrapping tree-gen's support library.
  */
@@ -44,4 +43,4 @@ One<T> make(Args... args) {
     return One<T>(std::make_shared<T>(args...));
 }
 
-} // namespace cqasm::tree
+}  // namespace cqasm::tree

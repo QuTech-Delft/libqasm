@@ -1,2 +1,0 @@
-ERROR
-Error at input.cq:4:8..9: type of right-hand side (float) could not be coerced to left-hand side (bool)

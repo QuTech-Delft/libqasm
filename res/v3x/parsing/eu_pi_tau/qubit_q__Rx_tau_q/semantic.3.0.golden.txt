@@ -1,0 +1,50 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  qubit_variable_declaration: <
+    Variable(
+      name: q
+      typ: <
+        Qubit(
+          size: 1
+        )
+      >
+      annotations: []
+    )
+  >
+  block: <
+    Block(
+      statements: [
+        Instruction(
+          instruction_ref: Rx(qubit, float)
+          name: Rx
+          operands: [
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: q
+                  typ: <
+                    Qubit(
+                      size: 1
+                    )
+                  >
+                  annotations: []
+                )
+              >
+            )
+            ConstFloat(
+              value: 6.28319
+            )
+          ]
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

@@ -4,15 +4,17 @@
 
 #include "cqasm-utils.hpp"
 
+#include <fmt/format.h>
+
 #include <algorithm>  // transform
 #include <cctype>  // isalnum, tolower, toupper
-#include <fmt/format.h>
 #include <range/v3/algorithm/equal.hpp>
 #include <range/v3/range/conversion.hpp>  // to
 #include <range/v3/view/transform.hpp>
 
-
 namespace cqasm::utils {
+
+// clang-format off
 
 /**
 * Makes a string lowercase.
@@ -58,4 +60,6 @@ std::string json_encode(const std::string &str) {
     return ret;
 }
 
-} // namespace cqasm::utils
+// clang-format on
+
+}  // namespace cqasm::utils

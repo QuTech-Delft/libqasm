@@ -1,24 +1,25 @@
-#include "v3x/cqasm-ast.hpp"
-#include "v3x/cqasm-parse-result.hpp"
+#include "v3x/ScannerAntlr.hpp"
+
+#include <antlr4-runtime.h>
+#include <fmt/format.h>
+
+#include <filesystem>
+
 #include "v3x/BuildTreeGenAstVisitor.hpp"
 #include "v3x/CqasmLexer.h"
 #include "v3x/CqasmParser.h"
 #include "v3x/CustomErrorListener.hpp"
-#include "v3x/ScannerAntlr.hpp"
-
-#include <antlr4-runtime.h>
-#include <filesystem>
-#include <fmt/format.h>
+#include "v3x/cqasm-ast.hpp"
+#include "v3x/cqasm-parse-result.hpp"
 
 namespace fs = std::filesystem;
-
 
 namespace cqasm::v3x::parser {
 
 ScannerAdaptor::~ScannerAdaptor() {}
 
-ScannerAntlr::ScannerAntlr(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up,
-    std::unique_ptr<CustomErrorListener> error_listener_up)
+ScannerAntlr::ScannerAntlr(
+    std::unique_ptr<BuildCustomAstVisitor> build_visitor_up, std::unique_ptr<CustomErrorListener> error_listener_up)
 : build_visitor_up_{ std::move(build_visitor_up) }
 , error_listener_up_{ std::move(error_listener_up) } {}
 
@@ -44,9 +45,8 @@ cqasm::v3x::parser::ParseResult ScannerAntlr::parse_(antlr4::ANTLRInputStream &i
 }
 
 ScannerAntlrFile::ScannerAntlrFile(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up,
-    std::unique_ptr<CustomErrorListener> error_listener_up,
-    const std::string &file_path)
-: ScannerAntlr{ std::move(build_visitor_up) , std::move(error_listener_up) }
+    std::unique_ptr<CustomErrorListener> error_listener_up, const std::string &file_path)
+: ScannerAntlr{ std::move(build_visitor_up), std::move(error_listener_up) }
 , file_path_{ file_path } {
     if (!fs::exists(file_path_) || !fs::is_regular_file(file_path_)) {
         throw cqasm::error::ParseError{ fmt::format("ScannerAntlrFile couldn't access file '{}'.", file_path_) };
@@ -62,8 +62,7 @@ cqasm::v3x::parser::ParseResult ScannerAntlrFile::parse() {
 }
 
 ScannerAntlrString::ScannerAntlrString(std::unique_ptr<BuildCustomAstVisitor> build_visitor_up,
-    std::unique_ptr<CustomErrorListener> error_listener_up,
-    const std::string &data)
+    std::unique_ptr<CustomErrorListener> error_listener_up, const std::string &data)
 : ScannerAntlr{ std::move(build_visitor_up), std::move(error_listener_up) }
 , data_{ data } {}
 

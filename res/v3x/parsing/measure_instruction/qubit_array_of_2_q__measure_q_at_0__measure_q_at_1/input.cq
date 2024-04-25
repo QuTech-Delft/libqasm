@@ -1,0 +1,5 @@
+version 3
+
+qubit[2] q
+measure q[0]
+measure q[1]

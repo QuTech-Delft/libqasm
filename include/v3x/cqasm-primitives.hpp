@@ -4,17 +4,17 @@
 
 #pragma once
 
-#include "cqasm-version.hpp"
-#include "tree-cbor.hpp"
-
-#include <array>
-#include <cstdint>
-#include <complex>
 #include <fmt/format.h>
 #include <fmt/ostream.h>
+
+#include <array>
+#include <complex>
+#include <cstdint>
 #include <string>
 #include <vector>
 
+#include "cqasm-version.hpp"
+#include "tree-cbor.hpp"
 
 namespace cqasm::v3x::primitives {
 
@@ -26,7 +26,9 @@ namespace cqasm::v3x::primitives {
  * Used in the default constructors of the generated tree nodes to ensure that there's no garbage in the nodes.
  */
 template <class T>
-T initialize() { return T(); }
+T initialize() {
+    return T();
+}
 
 /**
  * Serializes the given primitive object to CBOR.
@@ -124,7 +126,7 @@ Version deserialize(const ::tree::cbor::MapReader &map);
  */
 std::ostream &operator<<(std::ostream &os, const Axis &axis);
 
-} // namespace cqasm::v3x::primitives
+}  // namespace cqasm::v3x::primitives
 
-
-template <> struct fmt::formatter<cqasm::v3x::primitives::Axis> : fmt::ostream_formatter {};
+template <>
+struct fmt::formatter<cqasm::v3x::primitives::Axis> : fmt::ostream_formatter {};

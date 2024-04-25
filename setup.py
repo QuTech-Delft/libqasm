@@ -53,7 +53,7 @@ class clean(_clean):
 
 class build_ext(_build_ext):
     def run(self):
-        from plumbum import local, FG, ProcessExecutionError
+        from plumbum import local, FG
 
         # If we were previously built in a different directory,
         # nuke the cbuild dir to prevent inane CMake errors.
@@ -83,6 +83,7 @@ class build_ext(_build_ext):
         with local.cwd(root_dir):
             # Build type can be set using an environment variable
             build_type = os.environ.get('LIBQASM_BUILD_TYPE', 'Release')
+            build_tests = os.environ.get("LIBQASM_BUILD_TESTS", "False")
 
             cmd = local['conan']['profile']['detect']['--force']
             cmd & FG
@@ -95,7 +96,8 @@ class build_ext(_build_ext):
                 ['-s:b']['libqasm/*:build_type=' + build_type]
 
                 ['-o']['libqasm/*:build_python=True']
-                ['-o']['libqasm/*:build_tests=True']
+                ['-o']['libqasm/*:build_tests=' + build_tests]
+                # The Python library needs the compatibility headers
                 ['-o']['libqasm/*:cqasm_python_dir=' + re.escape(os.path.dirname(cqasm_target))]
                 ['-o']['libqasm/*:python_dir=' + re.escape(os.path.dirname(target))]
                 ['-o']['libqasm/*:python_ext=' + re.escape(os.path.basename(target))]
@@ -164,7 +166,6 @@ setup(
     long_description_content_type='text/markdown',
     author='QuTech, TU Delft',
     url='https://github.com/QuTech-Delft/libqasm',
-
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
         'Operating System :: POSIX :: Linux',
@@ -173,17 +174,12 @@ setup(
         'Programming Language :: Python :: 3 :: Only',
         'Topic :: Scientific/Engineering'
     ],
-
     packages=['libQasm', 'cqasm', 'cqasm.v3x'],
     package_dir={'': 'pybuild/module'},
-
     # NOTE: the library build process is completely overridden to let CMake handle it.
     # setuptools implementation is horribly broken.
     # This is here just to have the rest of setuptools understand that this is a Python module with an extension in it.
-    ext_modules=[
-        Extension('libQasm._libQasm', [])
-    ],
-
+    ext_modules=[Extension('libQasm._libQasm', [])],
     cmdclass={
         'bdist': bdist,
         'bdist_wheel': bdist_wheel,
@@ -194,18 +190,12 @@ setup(
         'egg_info': egg_info,
         'sdist': sdist,
     },
-
     setup_requires=[
         'conan',
         'plumbum',
         'delocate; platform_system == "Darwin"',
     ],
-    install_requires=[
-        'numpy'
-    ],
-    tests_require=[
-        'pytest'
-    ],
-
+    install_requires=['numpy'],
+    tests_require=['pytest'],
     zip_safe=False
 )

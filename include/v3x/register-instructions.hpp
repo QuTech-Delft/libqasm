@@ -2,7 +2,6 @@
 
 #include "cqasm-analyzer.hpp"
 
-
 namespace cqasm::v3x::instruction {
 
 /**
@@ -10,4 +9,4 @@ namespace cqasm::v3x::instruction {
  */
 void register_instructions(analyzer::Analyzer *analyzer);
 
-} // namespace cqasm::v3x::instruction
+}  // namespace cqasm::v3x::instruction

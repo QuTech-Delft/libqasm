@@ -5,11 +5,10 @@
 
 #pragma once
 
-#include "v3x/cqasm-types-gen.hpp"
-
 #include <fmt/format.h>
 #include <fmt/ostream.h>
 
+#include "v3x/cqasm-types-gen.hpp"
 
 /**
  * Namespace for the classes representing the types available within cQASM.
@@ -17,17 +16,10 @@
 namespace cqasm::v3x::types {
 
 constexpr const char *qubit_type_name = "qubit";
-constexpr const char *bit_type_name = "bit";
-constexpr const char *axis_type_name = "axis";
 constexpr const char *bool_type_name = "bool";
 constexpr const char *integer_type_name = "int";
 constexpr const char *float_type_name = "float";
-constexpr const char *complex_type_name = "complex";
 constexpr const char *qubit_array_type_name = "qubit array";
-constexpr const char *bit_array_type_name = "bit array";
-constexpr const char *bool_array_type_name = "bool array";
-constexpr const char *integer_array_type_name = "int array";
-constexpr const char *float_array_type_name = "float array";
 
 /**
  * A cQASM type.
@@ -44,17 +36,10 @@ using Types = tree::Any<TypeBase>;
  * In it, each character represents one type. The supported characters are as follows:
  *
  *  - Q = qubit
- *  - B = bit (measurement register)
- *  - a = axis (x, y, or z)
  *  - b = bool
  *  - i = int
  *  - f = float
- *  - c = complex
  *  - V = qubit array
- *  - W = bit array
- *  - X = bool array
- *  - Y = int array
- *  - Z = float array
  */
 Type from_spec(const char spec);
 Types from_spec(const std::string &spec);
@@ -79,8 +64,9 @@ std::ostream &operator<<(std::ostream &os, const Type &type);
  */
 std::ostream &operator<<(std::ostream &os, const Types &types);
 
-} // namespace cqasm::v3x::types
+}  // namespace cqasm::v3x::types
 
-
-template <> struct fmt::formatter<cqasm::v3x::types::Type> : fmt::ostream_formatter {};
-template <> struct fmt::formatter<cqasm::v3x::types::Types> : fmt::ostream_formatter {};
+template <>
+struct fmt::formatter<cqasm::v3x::types::Type> : fmt::ostream_formatter {};
+template <>
+struct fmt::formatter<cqasm::v3x::types::Types> : fmt::ostream_formatter {};

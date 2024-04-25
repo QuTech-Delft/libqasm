@@ -1,2 +1,0 @@
-ERROR
-Error at input.cq:3:10..11: expecting a const bool, const int, or const float value

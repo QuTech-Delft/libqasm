@@ -3,8 +3,8 @@
  */
 
 #include "v3x/cqasm-core-function.hpp"
-#include "v3x/cqasm-semantic.hpp"
 
+#include "v3x/cqasm-semantic.hpp"
 
 namespace cqasm::v3x::function {
 
@@ -16,13 +16,12 @@ namespace cqasm::v3x::function {
 CoreFunction::CoreFunction(std::string name, const std::string &param_types, const char return_type)
 : name{ std::move(name) }
 , param_types{ types::from_spec(param_types) }
-, return_type{ types::from_spec(return_type) }
-{}
+, return_type{ types::from_spec(return_type) } {}
 
 /**
  * Equality operator.
  */
-bool CoreFunction::operator==(const CoreFunction& rhs) const {
+bool CoreFunction::operator==(const CoreFunction &rhs) const {
     return name == rhs.name && param_types.equals(rhs.param_types) && return_type.equals(rhs.return_type);
 }
 
@@ -41,7 +40,6 @@ std::ostream &operator<<(std::ostream &os, const CoreFunctionRef &function) {
 }
 
 }  // namespace cqasm::v3x::function
-
 
 namespace cqasm::v3x::primitives {
 

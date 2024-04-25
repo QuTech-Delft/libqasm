@@ -1,2 +1,0 @@
-ERROR
-Error at input.cq:3:5..6: failed to resolve variable 'b'
