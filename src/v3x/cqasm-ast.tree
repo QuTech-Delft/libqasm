@@ -177,9 +177,14 @@ annotated {
                     operands: One<expression_list>;
                 }
 
+                # For some instructions, like the measure instruction,
+                # we want to differentiate between left hand side and right and side operands.
+                # For a measure instruction, the right hand side operand should be a qubit,
+                # and the left hand side operand a bit.
                 measure_instruction {
                     name: One<identifier>;
-                    operand: One<expression>;
+                    lhs: One<expression>;
+                    rhs: One<expression>;
                 }
             }
         }
@@ -192,15 +197,13 @@ version {
 
 block {
     global_block {
-        qubit_variable_declaration: One<variable>;
-        gates: Any<gate>;
-        measure_instructions: Any<measure_instruction>;
+        statements: Any<statement>;
     }
 }
 
 root {
     program {
         version: One<version>;
-        block: Maybe<global_block>;
+        block: One<global_block>;
     }
 }
