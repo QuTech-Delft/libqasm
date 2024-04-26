@@ -6,7 +6,11 @@ Program(
       items: 3
     )
   >
-  qubit_variable_declaration: -
-  block: -
+  block: <
+    Block(
+      statements: []
+    )
+  >
+  variables: []
 )
 

@@ -76,9 +76,9 @@ program {
     # File version.
     version: One<version>;
 
-    # Qubit variable.
-    qubit_variable_declaration: Maybe<variable>;
-
     # Global scope block.
-    block: Maybe<block>;
+    block: One<block>;
+
+    # The list of variables.
+    variables: Any<variable>;
 }

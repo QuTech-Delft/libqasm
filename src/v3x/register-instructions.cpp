@@ -30,8 +30,10 @@ void register_instructions(analyzer::Analyzer *analyzer) {
     analyzer->register_instruction("H", "V");
     analyzer->register_instruction("I", "Q");
     analyzer->register_instruction("I", "V");
-    analyzer->register_instruction("measure", "Q");
-    analyzer->register_instruction("measure", "V");
+    analyzer->register_instruction("measure", "BQ");
+    analyzer->register_instruction("measure", "WV");
+    analyzer->register_instruction("measure", "BV");
+    analyzer->register_instruction("measure", "WQ");
     analyzer->register_instruction("mX90", "Q");
     analyzer->register_instruction("mX90", "V");
     analyzer->register_instruction("mY90", "Q");
