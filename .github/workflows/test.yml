@@ -136,8 +136,8 @@ jobs:
           conan_profile_host: conan/profiles/tests-${{ matrix.build_type }}-apple_clang-macos-arm64
           shell: bash
 
-  js-emscripten-wasm:
-    name: "JS tests (em++/emscripten/wasm)"
+  ts-emscripten-wasm:
+    name: "TS tests (em++/emscripten/wasm)"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -255,7 +255,7 @@ jobs:
       - cpp-windows-x64
       - cpp-linux-arm64
       - cpp-macos-arm64
-      - js-emscripten-wasm
+      - ts-emscripten-wasm
       - python-linux-x64
       - python-macos-x64
       - python-windows-x64
