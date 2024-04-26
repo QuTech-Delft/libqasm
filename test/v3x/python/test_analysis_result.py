@@ -17,5 +17,5 @@ class TestAnalysisResult(unittest.TestCase):
         program_str = "version 3; qubit[17] q"
         v3x_analyzer = cq.Analyzer()
         actual_ast_json = v3x_analyzer.analyze_string_to_json(program_str)
-        expected_ast_json = '''{"Program":{"api_version":"3.0","version":{"Version":{"items":"3"}},"qubit_variable_declaration":{"Variable":{"name":"q","typ":{"QubitArray":{"size":"17"}},"annotations":"[]"}},"block":{"Block":{"statements":"[]"}}}}'''
+        expected_ast_json = '''{"Program":{"api_version":"3.0","version":{"Version":{"items":"3"}},"block":{"Block":{"statements":"[]"}},"variables":[{"Variable":{"name":"q","typ":{"QubitArray":{"size":"17"}},"annotations":"[]"}}]}}'''
         self.assertEqual(actual_ast_json, expected_ast_json)
