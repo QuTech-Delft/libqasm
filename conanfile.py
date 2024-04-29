@@ -4,6 +4,7 @@ import sys
 
 from conan import ConanFile
 from conan.errors import ConanInvalidConfiguration
+from conan.tools.apple import fix_apple_shared_install_name
 from conan.tools.build import check_min_cppstd
 from conan.tools.cmake import CMakeToolchain, CMakeDeps, CMake
 from conan.tools.env import VirtualBuildEnv
@@ -16,16 +17,13 @@ from version import get_version
 class LibqasmConan(ConanFile):
     name = "libqasm"
     version = get_version()
-
-    # Optional metadata
     license = "Apache-2.0"
     homepage = "https://github.com/QuTech-Delft/libqasm"
     url = "https://github.com/conan-io/conan-center-index"
     description = "Library to parse cQASM files"
     topics = ("code generation", "parser", "compiler", "quantum compilation", "quantum simulation")
-
-    # Binary configuration
     settings = "os", "compiler", "build_type", "arch"
+    package_type = "library"
     options = {
         "shared": [True, False],
         "fPIC": [True, False],
@@ -50,20 +48,19 @@ class LibqasmConan(ConanFile):
     exports = "version.py", "include/version.hpp"
     exports_sources = "CMakeLists.txt", "include/*", "python/*", "res/*", "scripts/*", "src/*", "test/*"
 
-    def build_requirements(self):
-        self.tool_requires("tree-gen/1.0.7")
-        self.tool_requires("zulu-openjdk/21.0.1")
-        if self.settings.arch == "wasm":
-            self.tool_requires("emsdk/3.1.50")
-        if self.options.build_tests:
-            self.test_requires("gtest/1.14.0")
+    @property
+    def _min_cppstd(self):
+        return "20"
 
-    def requirements(self):
-        self.requires("fmt/10.2.1")
-        self.requires("range-v3/0.12.0")
-        self.requires("tree-gen/1.0.7")
-        if not self.settings.arch == "wasm":
-            self.requires("antlr4-cppruntime/4.13.1")
+    @property
+    def _compilers_minimum_version(self):
+        return {
+            "gcc": "10",
+            "clang": "13",
+            "apple-clang": "14",
+            "Visual Studio": "16",
+            "msvc": "192"
+        }
 
     def config_options(self):
         if self.settings.os == "Windows":
@@ -72,6 +69,8 @@ class LibqasmConan(ConanFile):
     def configure(self):
         if self.options.shared:
             self.options.rm_safe("fPIC")
+        # https://github.com/QuTech-Delft/libqasm/blob/0.6.3/src/CMakeLists.txt#L234
+        self.options["antlr4-cppruntime"].shared = self.options.shared
 
     def layout(self):
         self.folders.source = "."
@@ -84,6 +83,32 @@ class LibqasmConan(ConanFile):
 
         self.cpp.source.includedirs = ["include"]
         self.cpp.build.libdirs = ["."]
+
+    def build_requirements(self):
+        self.tool_requires("tree-gen/1.0.7")
+        self.tool_requires("zulu-openjdk/21.0.1")
+        if self.settings.arch == "wasm":
+            self.tool_requires("emsdk/3.1.50")
+        if self.options.build_tests:
+            self.test_requires("gtest/1.14.0")
+
+    def validate(self):
+        if self.settings.compiler.cppstd:
+            check_min_cppstd(self, self._min_cppstd)
+        minimum_version = self._compilers_minimum_version.get(str(self.settings.compiler), False)
+        if minimum_version and Version(self.settings.compiler.version) < minimum_version:
+            raise ConanInvalidConfiguration(f"{self.ref} requires C++{self._min_cppstd},"
+                                            f"which your compiler does not support.")
+
+        if self.settings.arch != "wasm" and self.dependencies["antlr4-cppruntime"].options.shared != self.options.shared:
+            raise ConanInvalidConfiguration(f"{self.ref} requires antlr4-cppruntime to be built with the same shared option value.")
+
+    def requirements(self):
+        self.requires("fmt/10.2.1", transitive_headers=True)
+        self.requires("range-v3/0.12.0", transitive_headers=True)
+        self.requires("tree-gen/1.0.7", transitive_headers=True, transitive_libs=True)
+        if not self.settings.arch == "wasm":
+            self.requires("antlr4-cppruntime/4.13.1", transitive_headers=True)
 
     def generate(self):
         deps = CMakeDeps(self)
@@ -107,30 +132,12 @@ class LibqasmConan(ConanFile):
         cmake.configure()
         cmake.build()
 
-    def validate(self):
-        compiler = self.settings.compiler
-        version = Version(self.settings.compiler.version)
-        if compiler == "apple-clang":
-            if version < "14":
-                raise ConanInvalidConfiguration("libqasm requires at least apple-clang++ 14")
-        elif compiler == "clang":
-            if version < "13":
-                raise ConanInvalidConfiguration("libqasm requires at least clang++ 13")
-        elif compiler == "gcc":
-            if version < "10.0":
-                raise ConanInvalidConfiguration("libqasm requires at least g++ 10.0")
-        elif compiler == "msvc":
-            if version < "19.29":
-                raise ConanInvalidConfiguration("libqasm requires at least msvc 19.29")
-        else:
-            raise ConanInvalidConfiguration("Unsupported compiler")
-        if compiler.get_safe("cppstd"):
-            check_min_cppstd(self, "20")
-
     def package(self):
         copy(self, "LICENSE.md", src=self.source_folder, dst=os.path.join(self.package_folder, "licenses"))
         cmake = CMake(self)
         cmake.install()
+        fix_apple_shared_install_name(self)
+        rm(self, "*.pdb", self.package_folder, recursive=True)
 
     def package_info(self):
         self.cpp_info.libs = ["cqasm"]
