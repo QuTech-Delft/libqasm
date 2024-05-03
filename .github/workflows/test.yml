@@ -178,7 +178,7 @@ jobs:
       - name: Test
         working-directory: emscripten
         run: |
-          deno run -A test_cqasm.ts
+          deno run -A test_libqasm.ts
         shell: bash
 
   python-linux-x64:
