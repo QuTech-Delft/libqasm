@@ -217,6 +217,24 @@ jobs:
         with:
           shell: bash
 
+  python-macos-arm64:
+    name: "Python tests (macOS/arm64)"
+    runs-on: [self-hosted, ARM64, macOS]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install SWIG
+        run: |
+          brew install swig
+        shell: bash
+      - name: Export LIBQASM_BUILD_TYPE
+        run: |
+          echo "LIBQASM_BUILD_TYPE=Debug" >> $GITHUB_ENV
+        shell: bash
+      - uses: ./.github/actions/python-tests
+        with:
+          shell: bash
+
   python-windows-x64:
     name: "Python tests (Windows/x64)"
     runs-on: windows-latest
