@@ -223,9 +223,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install SWIG
+      - name: Install dependencies
         run: |
-          brew install swig
+          brew install java swig
         shell: bash
       - name: Export LIBQASM_BUILD_TYPE
         run: |
