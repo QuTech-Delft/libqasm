@@ -226,6 +226,7 @@ jobs:
       - name: Install dependencies
         run: |
           brew install java swig
+          echo "$(brew --prefix java)/bin" >> $GITHUB_PATH
         shell: bash
       - name: Export LIBQASM_BUILD_TYPE
         run: |
