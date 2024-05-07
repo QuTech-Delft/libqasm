@@ -57,7 +57,7 @@ class LibqasmConan(ConanFile):
         if self.settings.arch == "wasm":
             self.tool_requires("emsdk/3.1.50")
         if self.options.build_tests:
-            self.test_requires("gtest/1.13.0")
+            self.test_requires("gtest/1.14.0")
 
     def requirements(self):
         self.requires("fmt/10.2.1")
