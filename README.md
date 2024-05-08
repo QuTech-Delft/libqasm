@@ -74,7 +74,7 @@ They follow the `[tests](-build_type)(-compiler)(-os)(-arch)[-shared]` naming co
   - `shared`: if the library is being built in shared mode.
 
 All the profiles set the C++ standard to 20.<br/>
-All the `tests` except for `linux-x64` profiles enable Address Sanitizer.
+All the `tests`, except for `linux-x64` profiles, enable Address Sanitizer.
 
 ### Build options
 
