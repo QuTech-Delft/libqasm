@@ -171,7 +171,7 @@ This tests the library in a container with the bare minimum requirements for `li
 docker build .
 ```
 
-**Note for Windows users:** The above might fail on Windows to the `autocrlf` transformation that git does.
+**Note for Windows users:** The above might fail on Windows due to the `autocrlf` transformation that git does.
 If you are having trouble with this just create new clone of this repository using:
 
 ```
