@@ -78,7 +78,7 @@ All the `tests`, except for `linux-x64` profiles, enable Address Sanitizer.
 
 ### Build options
 
-Profiles are a shorthand for command line options. The command above could be written as well as: 
+Profiles are a shorthand for command line options. The command above could be written, similarly,  as: 
 
 ```
 conan build . -s:a compiler.cppstd=20 -s:a libqasm/*:build_type=Debug -o libqasm/*:build_tests=True -o libqasm/*:asan_enabled=True -b missing
