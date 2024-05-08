@@ -40,7 +40,7 @@ jobs:
           echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_ENV
       - uses: actions/upload-artifact@v4
         with:
-          name: pypi-macos-py${{ matrix.python }}
+          name: pypi-macos-x64-py${{ matrix.python }}
           path: pybuild/dist/${{ env.WHEEL_NAME }}
       - uses: actions/upload-release-asset@v1
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
@@ -83,7 +83,7 @@ jobs:
           echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_ENV
       - uses: actions/upload-artifact@v4
         with:
-          name: pypi-macos-py${{ matrix.python }}
+          name: pypi-macos-arm64-py${{ matrix.python }}
           path: pybuild/dist/${{ env.WHEEL_NAME }}
       - uses: actions/upload-release-asset@v1
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
