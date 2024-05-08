@@ -29,6 +29,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip conan setuptools wheel
+          brew install swig
       - name: Build wheel
         run: python setup.py bdist_wheel
       - name: Wheel path
@@ -71,6 +72,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip conan setuptools wheel
+          brew install swig
       - name: Build wheel
         run: python setup.py bdist_wheel
       - name: Wheel path
