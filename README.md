@@ -84,7 +84,7 @@ Profiles are a shorthand for command line options. The command above could be wr
 conan build . -s:a compiler.cppstd=20 -s:a libqasm/*:build_type=Debug -o libqasm/*:build_tests=True -o libqasm/*:asan_enabled=True -b missing
 ```
 
-These are the list of options that could be specified whether in a profile or in the command line:
+These is the list of options that could be specified either in a profile or in the command line:
 
 - `libqasm/*:asan_enabled={True,False}`: enables Address Sanitizer.
 - `libqasm/*:build_tests={True,False}`: builds tests or not.
