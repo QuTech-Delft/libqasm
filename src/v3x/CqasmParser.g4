@@ -11,45 +11,40 @@ options {
 // by removing the need to implement some methods,
 // which would otherwise contain boilerplate code (e.g. 'statement' and 'expression')
 
-program: versionSection bodySection? eofSection;
+program: versionSection globalBlockSection? eofSection;
+
 versionSection: statementSeparator* version;
-bodySection: variableDeclarationSection instructionsSection;
-variableDeclarationSection: statementSeparator* variableDeclaration;
-instructionsSection: gatesSection? measureInstructionsSection?;
-gatesSection: (statementSeparator* gate)+;
-measureInstructionsSection: (statementSeparator* measureInstruction)+;
+
+globalBlockSection: (statementSeparator+ globalBlockStatement)+;
+
 eofSection: statementSeparator* EOF;
 
 statementSeparator: NEW_LINE | SEMICOLON;
 
 version: VERSION VERSION_NUMBER;
 
-variableDeclaration: variableDefinition;
-
-gate: IDENTIFIER (OPEN_PARENS expression CLOSE_PARENS)? expressionList;
-
-measureInstruction: MEASURE expression;
+globalBlockStatement:
+    variableDefinition
+    | instruction
+    ;
 
 variableDefinition: type IDENTIFIER;
+
+instruction:
+    expression EQUALS MEASURE expression  # measureInstruction
+    | IDENTIFIER (OPEN_PARENS expression CLOSE_PARENS)? expressionList  # gate
+    ;
 
 type: quantumType;
 
 quantumType:
     QUBIT_TYPE arraySizeDeclaration?  # qubitType
+    | BIT_TYPE arraySizeDeclaration?  # bitType
     ;
 
 arraySizeDeclaration: OPEN_BRACKET INTEGER_LITERAL CLOSE_BRACKET;
 
 expressionList: expression (COMMA expression)*;
-
-indexList: indexEntry (COMMA indexEntry)*;
-
-// Current implementation of the semantic parser will expect constant integers
-// both for the expression in indexItem and the two expressions in indexRange
-indexEntry:
-    expression  # indexItem
-    | expression COLON expression  # indexRange
-    ;
 
 // Current implementation of the semantic parser will expect constants
 // for all the expressions of the arithmetic operators
@@ -77,4 +72,13 @@ expression:
     | BOOLEAN_LITERAL  # booleanLiteral
     | INTEGER_LITERAL  # integerLiteral
     | FLOAT_LITERAL  # floatLiteral
+    ;
+
+indexList: indexEntry (COMMA indexEntry)*;
+
+// Current implementation of the semantic parser will expect constant integers
+// both for the expression in indexItem and the two expressions in indexRange
+indexEntry:
+    expression  # indexItem
+    | expression COLON expression  # indexRange
     ;

@@ -11,6 +11,7 @@ SEMICOLON: ';';
 COLON: ':';
 COMMA: ',';
 DOT: '.';
+EQUALS: '=';
 OPEN_BRACKET: '[';
 CLOSE_BRACKET: ']';
 OPEN_PARENS: '(';
@@ -49,6 +50,7 @@ TERNARY_CONDITIONAL_OP: '?';
 VERSION: 'version' -> pushMode(VERSION_STATEMENT);
 MEASURE: 'measure';
 QUBIT_TYPE: 'qubit';
+BIT_TYPE: 'bit';
 
 // Numeric literals
 BOOLEAN_LITERAL: 'true' | 'false';

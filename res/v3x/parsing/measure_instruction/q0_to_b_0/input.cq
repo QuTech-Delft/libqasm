@@ -1,0 +1,6 @@
+version 3
+
+qubit q0
+bit[3] b
+
+b[0] = measure q0

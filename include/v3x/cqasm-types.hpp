@@ -16,10 +16,12 @@
 namespace cqasm::v3x::types {
 
 constexpr const char *qubit_type_name = "qubit";
+constexpr const char *bit_type_name = "bit";
 constexpr const char *bool_type_name = "bool";
 constexpr const char *integer_type_name = "int";
 constexpr const char *float_type_name = "float";
 constexpr const char *qubit_array_type_name = "qubit array";
+constexpr const char *bit_array_type_name = "bit array";
 
 /**
  * A cQASM type.
