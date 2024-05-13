@@ -127,8 +127,22 @@ ctest -C Debug --output-on-failure
 
 ### From Python
 
-After installation, you should be able to use the bindings for the original API by just `import libQasm`.<br/>
-The new API doesn't have Python bindings yet.
+The `libqasm` module should provide access to the `V3xAnalyzer` API:
+- `parse_file`,
+- `parse_string`,
+- `analyze_file`, and
+- `analyzer_string`.
+
+The `cqasm.v3x` module is also available for a more fine-grained use of the library.
+
+```
+import cqasm.v3x.ast
+import cqasm.v3x.instruction
+import cqasm.v3x.primitives
+import cqasm.v3x.semantic
+import cqasm.v3x.types
+import cqasm.v3x.values
+```
 
 ### From C++
 
@@ -150,6 +164,12 @@ target_link_libraries(<your target> PUBLIC libqasm::libqasm)
 Note that the following dependency is required for `libqasm` to build:
 
 * `Java JRE` >= 11
+
+The header file `cqasm.hpp` should provide access to the following API:
+- `cqasm::v3x::analyze_file`, and
+- `cqasm::v3x::analyze_string`.
+
+Again, other header files are available for a more fine-grained use of the library.
 
 ## Docker
 
