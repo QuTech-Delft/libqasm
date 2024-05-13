@@ -34,7 +34,9 @@ type_base {
     # Type of a float number (IEEE double).
     float {}
 
+    bit {}
     qubit {}
 
+    bit_array {}
     qubit_array {}
 }

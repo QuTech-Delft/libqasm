@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:3:1..4: no viable alternative at input '\n\n123'
+Error at input.cq:3:4..7: mismatched input 'abc' expecting '='

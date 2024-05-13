@@ -96,7 +96,25 @@ private:
         if (type_name == types::qubit_type_name) {
             return build_semantic_type<types::Qubit, types::QubitArray>(*type, types::qubit_type_name);
         }
+        if (type_name == types::bit_type_name) {
+            return build_semantic_type<types::Bit, types::BitArray>(*type, types::bit_type_name);
+        }
         throw error::AnalysisError("unknown type \"" + type_name + "\"");
+    }
+
+    /**
+     * Convenience function for visiting a global or a local block
+     */
+    template <typename Block>
+    void visit_block(Block &block) {
+        for (const auto &statement_ast : block.statements) {
+            try {
+                statement_ast->visit(*this);
+            } catch (error::AnalysisError &err) {
+                err.context(block);
+                result_.errors.push_back(std::move(err));
+            }
+        }
     }
 
     /**

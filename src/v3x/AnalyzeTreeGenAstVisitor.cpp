@@ -23,13 +23,9 @@ std::any AnalyzeTreeGenAstVisitor::visit_program(ast::Program &program_ast) {
     result_.root = tree::make<semantic::Program>();
     result_.root->api_version = analyzer_.api_version;
     result_.root->version = std::any_cast<tree::One<semantic::Version>>(visit_version(*program_ast.version));
-    if (!program_ast.block.empty()) {
-        auto [block, variables] = std::any_cast<GlobalBlockReturnT>(visit_global_block(*program_ast.block));
-        result_.root->block = std::move(block);
-        if (!variables.empty()) {
-            result_.root->qubit_variable_declaration = tree::Maybe<semantic::Variable>{ variables[0].get_ptr() };
-        }
-    }
+    auto [block, variables] = std::any_cast<GlobalBlockReturnT>(visit_global_block(*program_ast.block));
+    result_.root->block = std::move(block);
+    result_.root->variables = variables;
     return result_;
 }
 
@@ -62,26 +58,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_version(ast::Version &node) {
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_global_block(ast::GlobalBlock &node) {
-    visit_variable(*node.qubit_variable_declaration);
-
-    for (const auto &gate_ast : node.gates) {
-        try {
-            visit_gate(*gate_ast);
-        } catch (error::AnalysisError &err) {
-            err.context(node);
-            result_.errors.push_back(std::move(err));
-        }
-    }
-
-    for (const auto &measure_instruction_ast : node.measure_instructions) {
-        try {
-            visit_measure_instruction(*measure_instruction_ast);
-        } catch (error::AnalysisError &err) {
-            err.context(node);
-            result_.errors.push_back(std::move(err));
-        }
-    }
-
+    visit_block(node);
     return GlobalBlockReturnT{ analyzer_.current_block(), analyzer_.current_variables() };
 }
 
@@ -190,16 +167,56 @@ std::any AnalyzeTreeGenAstVisitor::visit_gate(ast::Gate &node) {
     return ret;
 }
 
+bool check_qubit_and_bit_indices_have_same_size(const values::Values &operands) {
+    size_t qubit_indices_size{};
+    size_t bit_indices_size{};
+    // Instruction operands can be, whether variables references or index references
+    // Variables can be of type qubit, bit, qubit array, or bit array
+    // Qubits and bits have a single index, arrays have a size
+    // Index references point to a qubit array or bit array
+    for (const auto &operand : operands) {
+        if (auto variable_ref = operand->as_variable_ref()) {
+            const auto &variable = *variable_ref->variable;
+            if (variable.typ->as_qubit()) {
+                qubit_indices_size += 1;
+            } else if (auto qubit_array = variable.typ->as_qubit_array()) {
+                qubit_indices_size += qubit_array->size;
+            } else if (variable.typ->as_bit()) {
+                bit_indices_size += 1;
+            } else if (auto bit_array = variable.typ->as_bit_array()) {
+                bit_indices_size += bit_array->size;
+            }
+        } else if (auto index_ref = operand->as_index_ref()) {
+            const auto &variable = *index_ref->variable;
+            if (variable.typ->as_qubit() || variable.typ->as_qubit_array()) {
+                qubit_indices_size += index_ref->indices.size();
+            } else if (variable.typ->as_bit() || variable.typ->as_bit_array()) {
+                bit_indices_size += index_ref->indices.size();
+            }
+        }
+    }
+    return qubit_indices_size == bit_indices_size;
+}
+
 std::any AnalyzeTreeGenAstVisitor::visit_measure_instruction(ast::MeasureInstruction &node) {
     auto ret = tree::Maybe<semantic::Instruction>();
     try {
         // Set operand
         // Notice operands have to be added in this order
         // Otherwise instruction resolution would fail
-        auto operands = values::Values{ std::any_cast<values::Value>(visit_expression(*node.operand)) };
+        auto operands = values::Values();
+        operands.add(std::any_cast<values::Value>(visit_expression(*node.lhs)));
+        operands.add(std::any_cast<values::Value>(visit_expression(*node.rhs)));
 
         // Resolve the instruction
         ret.set(analyzer_.resolve_instruction(node.name->name, operands));
+
+        // Check qubit and bit indices have the same size
+        if (!ret->instruction_ref.empty()) {
+            if (!check_qubit_and_bit_indices_have_same_size(operands)) {
+                throw error::AnalysisError{ "qubit and bit indices have different sizes" };
+            }
+        }
 
         // Copy annotation data
         ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
@@ -393,7 +410,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_index(ast::Index &node) {
         auto variable_ref_ptr = expression->as_variable_ref();
         const auto variable_link = variable_ref_ptr->variable;
         const auto variable_type = variable_link->typ;
-        if (variable_type->as_qubit_array()) {
+        if (variable_type->as_qubit_array() || variable_type->as_bit_array()) {
             auto indices = std::any_cast<IndexListT>(visit_index_list(*node.indices));
             check_out_of_range(indices, types::size_of(variable_type));
             auto ret = tree::make<values::IndexRef>(variable_link, indices);
