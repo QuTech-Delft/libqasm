@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:7:18..19: mismatched input '\n' expecting {'(', '+', '-', '~', '!', BOOLEAN_LITERAL, INTEGER_LITERAL, FLOAT_LITERAL, IDENTIFIER}
+Error at input.cq:7:15..18: extraneous input 'abc' expecting {<EOF>, NEW_LINE, ';'}

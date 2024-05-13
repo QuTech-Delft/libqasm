@@ -6,17 +6,6 @@ Program(
       items: 3
     )
   >
-  qubit_variable_declaration: <
-    Variable(
-      name: q
-      typ: <
-        QubitArray(
-          size: 4
-        )
-      >
-      annotations: []
-    )
-  >
   block: <
     Block(
       statements: [
@@ -72,5 +61,16 @@ Program(
       ]
     )
   >
+  variables: [
+    Variable(
+      name: q
+      typ: <
+        QubitArray(
+          size: 4
+        )
+      >
+      annotations: []
+    )
+  ]
 )
 

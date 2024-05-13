@@ -59,20 +59,17 @@ class BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
 public:
     std::any visitProgram(CqasmParser::ProgramContext *context) override;
     std::any visitVersionSection(CqasmParser::VersionSectionContext *context) override;
-    std::any visitBodySection(CqasmParser::BodySectionContext *context) override;
-    std::any visitVariableDeclarationSection(CqasmParser::VariableDeclarationSectionContext *context) override;
-    std::any visitInstructionsSection(CqasmParser::InstructionsSectionContext *context) override;
-    std::any visitGatesSection(CqasmParser::GatesSectionContext *context) override;
-    std::any visitMeasureInstructionsSection(CqasmParser::MeasureInstructionsSectionContext *context) override;
+    std::any visitGlobalBlockSection(CqasmParser::GlobalBlockSectionContext *context) override;
     std::any visitEofSection(CqasmParser::EofSectionContext *context) override;
     std::any visitStatementSeparator(CqasmParser::StatementSeparatorContext *context) override;
     std::any visitVersion(CqasmParser::VersionContext *context) override;
-    std::any visitVariableDeclaration(CqasmParser::VariableDeclarationContext *context) override;
+    std::any visitGlobalBlockStatement(CqasmParser::GlobalBlockStatementContext *context) override;
     std::any visitVariableDefinition(CqasmParser::VariableDefinitionContext *context) override;
-    std::any visitGate(CqasmParser::GateContext *context) override;
     std::any visitMeasureInstruction(CqasmParser::MeasureInstructionContext *context) override;
+    std::any visitGate(CqasmParser::GateContext *context) override;
     std::any visitType(CqasmParser::TypeContext *context) override;
     std::any visitQubitType(CqasmParser::QubitTypeContext *context) override;
+    std::any visitBitType(CqasmParser::BitTypeContext *context) override;
     std::any visitArraySizeDeclaration(CqasmParser::ArraySizeDeclarationContext *context) override;
     std::any visitExpressionList(CqasmParser::ExpressionListContext *context) override;
     std::any visitIndexList(CqasmParser::IndexListContext *context) override;

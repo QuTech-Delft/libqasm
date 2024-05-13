@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:1:12..14: extraneous input '.1' expecting {<EOF>, NEW_LINE, ';', 'qubit'}
+Error at input.cq:1:12..14: extraneous input '.1' expecting {<EOF>, NEW_LINE, ';'}
