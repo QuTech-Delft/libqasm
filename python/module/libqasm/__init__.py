@@ -20,6 +20,6 @@ if version_info[0] != 3:
 del version_info
 
 # Import the SWIG-generated module.
-from .libqasm import *
+from .libQasm import *
 
 # __all__ = [ init, schedule, compile ]
