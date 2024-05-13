@@ -1,2 +1,49 @@
-ERROR
-Error at input.cq:3:1..2: no viable alternative at input '\n\nX'
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  block: <
+    GlobalBlock(
+      statements: [
+        Gate( # input.cq:3:1..2
+          name: <
+            Identifier(
+              name: X
+            )
+          >
+          operands: <
+            ExpressionList(
+              items: [
+                Index( # input.cq:3:3..4
+                  expr: <
+                    Identifier(
+                      name: q
+                    )
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexItem(
+                          index: <
+                            IntegerLiteral( # input.cq:3:5..6
+                              value: 0
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
+                )
+              ]
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

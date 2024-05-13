@@ -75,7 +75,8 @@ def generate_antlr_parser(input_folder, output_source_folder, output_include_fol
         for output_file in output_files:
             if output_file.endswith(".h"):
                 print(f"\t{output_file}")
-                shutil.move(os.path.join(output_source_folder, output_file), output_include_folder)
+                shutil.move(os.path.join(output_source_folder, output_file),
+                            os.path.join(output_include_folder, output_file))
     except FileNotFoundError as err:
         print("Error running java: {}".format(err.strerror))
         exit(4)

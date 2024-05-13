@@ -1,0 +1,69 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  block: <
+    GlobalBlock(
+      statements: [
+        Variable( # input.cq:3:7..8
+          name: <
+            Identifier(
+              name: q
+            )
+          >
+          typ: <
+            Type( # input.cq:3:1..6
+              name: <
+                Keyword(
+                  name: qubit
+                )
+              >
+              size: -
+            )
+          >
+          annotations: []
+        )
+        Variable( # input.cq:4:5..6
+          name: <
+            Identifier(
+              name: b
+            )
+          >
+          typ: <
+            Type( # input.cq:4:1..4
+              name: <
+                Keyword(
+                  name: bit
+                )
+              >
+              size: -
+            )
+          >
+          annotations: []
+        )
+        MeasureInstruction( # input.cq:6:5..12
+          name: <
+            Identifier(
+              name: measure
+            )
+          >
+          lhs: <
+            Identifier( # input.cq:6:1..2
+              name: q
+            )
+          >
+          rhs: <
+            Identifier( # input.cq:6:13..14
+              name: b
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

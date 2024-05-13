@@ -84,6 +84,8 @@ bool check_promote(const types::Type &from_type, const types::Type &to_type) {
 types::Type element_type_of(const types::Type &type) {
     if (types::type_check(type, tree::make<types::QubitArray>())) {
         return tree::make<types::Qubit>();
+    } else if (types::type_check(type, tree::make<types::BitArray>())) {
+        return tree::make<types::Bit>();
     } else {
         throw std::runtime_error{ fmt::format("type ({}) is not of array type", type) };
     }

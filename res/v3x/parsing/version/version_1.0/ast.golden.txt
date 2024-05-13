@@ -5,6 +5,10 @@ Program(
       items: 1.0
     )
   >
-  block: -
+  block: <
+    GlobalBlock(
+      statements: []
+    )
+  >
 )
 

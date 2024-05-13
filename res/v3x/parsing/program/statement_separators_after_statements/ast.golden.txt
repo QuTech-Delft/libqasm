@@ -7,7 +7,7 @@ Program(
   >
   block: <
     GlobalBlock(
-      qubit_variable_declaration: <
+      statements: [
         Variable( # input.cq:2:7..8
           name: <
             Identifier(
@@ -26,8 +26,6 @@ Program(
           >
           annotations: []
         )
-      >
-      gates: [
         Gate( # input.cq:3:1..2
           name: <
             Identifier(
@@ -46,7 +44,6 @@ Program(
           annotations: []
         )
       ]
-      measure_instructions: []
     )
   >
 )
