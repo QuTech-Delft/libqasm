@@ -204,5 +204,5 @@ Note that `cqasm_emscripten.js` is an ES6 module. An example of how to use it wo
 cd build/Release/emscripten
 mv cqasm_emscripten.js cqasm_emscripten.mjs
 cd ../../../emscripten
-deno run -A test_cqasm.ts
+deno run -A test_libqasm.ts
 ```
