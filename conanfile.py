@@ -89,7 +89,8 @@ class LibqasmConan(ConanFile):
 
     def build_requirements(self):
         self.tool_requires("tree-gen/1.0.7")
-        self.tool_requires("zulu-openjdk/21.0.1")
+        if self.settings.arch != "armv8":
+            self.tool_requires("zulu-openjdk/21.0.1")
         if self.settings.arch == "wasm":
             self.tool_requires("emsdk/3.1.50")
         if self._should_build_test:
