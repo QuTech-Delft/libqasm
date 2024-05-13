@@ -84,12 +84,13 @@ Profiles are a shorthand for command line options. The command above could be wr
 conan build . -s:a compiler.cppstd=20 -s:a libqasm/*:build_type=Debug -o libqasm/*:build_tests=True -o libqasm/*:asan_enabled=True -b missing
 ```
 
-These is the list of options that could be specified either in a profile or in the command line:
+This is the list of options that could be specified either in a profile or in the command line:
 
 - `libqasm/*:asan_enabled={True,False}`: enables Address Sanitizer.
-- `libqasm/*:build_tests={True,False}`: builds tests or not.
 - `libqasm/*:build_type={Debug,Release}`: builds in debug or release mode.
 - `libqasm/*:shared={True,False}`: builds a shared object library instead of a static library, if applicable.
+
+Tests are enabled by default. To disable them, use `-c tools.build:skip_test=True`.
 
 ## Install
 
@@ -131,35 +132,22 @@ The new API doesn't have Python bindings yet.
 
 ### From C++
 
-The easiest way to use `libqasm` in a CMake project is to request the Conan package from a `conanfile.py`.
+`libqasm` can be requested as a Conan package from a `conanfile.py`.
 
 ```
 def build_requirements(self):
     self.tool_requires("libqasm/0.6.5")
+def requirements(self):
+    self.requires("libqasm/0.6.5")
 ```
 
-And then link against the `libqasm` library from a `CMakeLists.txt`: 
+And then linked against from a `CMakeLists.txt`: 
 
 ```
 target_link_libraries(<your target> PUBLIC libqasm::libqasm)
 ```
 
-Another option is to fetch the library and then link against it from the `CMakeLists.txt`. 
-
-```
-include(FetchContent)
-FetchContent_Declare(libqasm
-    GIT_REPOSITORY https://github.com/QuTech-Delft/libqasm.git
-    GIT_TAG "<a given libqasm git tag>"
-)
-FetchContent_MakeAvailable(libqasm)
-target_include_directories(<your target> SYSTEM PRIVATE "${libqasm_SOURCE_DIR}/include")
-target_link_libraries(<your target> PUBLIC cqasm)
-```
-
-Note that, when using `FetchContent`, the library name is `cqasm`.
-
-Note also that the following dependency is required for `libqasm` to build:
+Note that the following dependency is required for `libqasm` to build:
 
 * `Java JRE` >= 11
 

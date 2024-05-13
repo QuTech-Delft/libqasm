@@ -13,6 +13,8 @@ from conan.tools.scm import Version
 
 from version import get_version
 
+required_conan_version = ">=1.60.0 <2 || >=2.0.6"
+
 
 class LibqasmConan(ConanFile):
     name = "libqasm"
@@ -29,7 +31,6 @@ class LibqasmConan(ConanFile):
         "fPIC": [True, False],
         "asan_enabled": [True, False],
         "build_python": [True, False],
-        "build_tests": [True, False],
         "cqasm_python_dir": [None, "ANY"],
         "python_dir": [None, "ANY"],
         "python_ext": [None, "ANY"]
@@ -39,14 +40,16 @@ class LibqasmConan(ConanFile):
         "fPIC": True,
         "asan_enabled": False,
         "build_python": False,
-        "build_tests": False,
         "cqasm_python_dir": None,
         "python_dir": None,
         "python_ext": None
     }
-
     exports = "version.py", "include/version.hpp"
     exports_sources = "CMakeLists.txt", "include/*", "python/*", "res/*", "scripts/*", "src/*", "test/*"
+
+    @property
+    def _should_build_test(self):
+        return not self.conf.get("tools.build:skip_test", default=True, check_type=bool)
 
     @property
     def _min_cppstd(self):
@@ -69,8 +72,8 @@ class LibqasmConan(ConanFile):
     def configure(self):
         if self.options.shared:
             self.options.rm_safe("fPIC")
-        # https://github.com/QuTech-Delft/libqasm/blob/0.6.3/src/CMakeLists.txt#L234
-        self.options["antlr4-cppruntime"].shared = self.options.shared
+        if self.settings.arch == "wasm":
+            self.options["antlr4-cppruntime"].shared = self.options.shared
 
     def layout(self):
         self.folders.source = "."
@@ -89,7 +92,7 @@ class LibqasmConan(ConanFile):
         self.tool_requires("zulu-openjdk/21.0.1")
         if self.settings.arch == "wasm":
             self.tool_requires("emsdk/3.1.50")
-        if self.options.build_tests:
+        if self._should_build_test:
             self.test_requires("gtest/1.14.0")
 
     def validate(self):
@@ -118,7 +121,7 @@ class LibqasmConan(ConanFile):
         tc.variables["BUILD_SHARED_LIBS"] = self.options.shared
         tc.variables["LIBQASM_BUILD_EMSCRIPTEN"] = self.settings.arch == "wasm"
         tc.variables["LIBQASM_BUILD_PYTHON"] = self.options.build_python
-        tc.variables["LIBQASM_BUILD_TESTS"] = self.options.build_tests
+        tc.variables["LIBQASM_BUILD_TESTS"] = self._should_build_test
         tc.variables["LIBQASM_CQASM_PYTHON_DIR"] = self.options.cqasm_python_dir
         tc.variables["LIBQASM_PYTHON_DIR"] = self.options.python_dir
         tc.variables["LIBQASM_PYTHON_EXT"] = self.options.python_ext
