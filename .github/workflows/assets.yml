@@ -29,6 +29,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip conan setuptools wheel
+          brew install swig
       - name: Build wheel
         run: python setup.py bdist_wheel
       - name: Wheel path
@@ -39,7 +40,7 @@ jobs:
           echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_ENV
       - uses: actions/upload-artifact@v4
         with:
-          name: pypi-macos-py${{ matrix.python }}
+          name: pypi-macos-x64-py${{ matrix.python }}
           path: pybuild/dist/${{ env.WHEEL_NAME }}
       - uses: actions/upload-release-asset@v1
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
@@ -71,6 +72,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip conan setuptools wheel
+          brew install swig
       - name: Build wheel
         run: python setup.py bdist_wheel
       - name: Wheel path
@@ -81,7 +83,7 @@ jobs:
           echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_ENV
       - uses: actions/upload-artifact@v4
         with:
-          name: pypi-macos-py${{ matrix.python }}
+          name: pypi-macos-arm64-py${{ matrix.python }}
           path: pybuild/dist/${{ env.WHEEL_NAME }}
       - uses: actions/upload-release-asset@v1
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
