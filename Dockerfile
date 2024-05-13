@@ -42,5 +42,5 @@ RUN mv build/Release/emscripten/cqasm_emscripten.js build/Release/emscripten/cqa
 
 # Test emscripten binaries
 RUN cd emscripten && \
-    /root/.deno/bin/deno run -A test_cqasm.ts \
+    /root/.deno/bin/deno run -A test_libqasm.ts \
     cd /
