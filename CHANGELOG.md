@@ -18,6 +18,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Python module name from `libQasm` to `libqasm`.
 
 ### Removed
+- `python/module/libQasm` folder.
 
 
 ## [ 0.6.5 ] - [ 2024-04-23 ]
