@@ -10,8 +10,8 @@ on:
 
 jobs:
   macos-x64:
-    name: PyPI wheels for macOS
-    runs-on: macos-latest
+    name: PyPI wheels for macOS/x64
+    runs-on: macos-13  # x64
     strategy:
       matrix:
         python:
@@ -29,6 +29,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip conan setuptools wheel
+          brew install swig
       - name: Build wheel
         run: python setup.py bdist_wheel
       - name: Wheel path
@@ -39,7 +40,50 @@ jobs:
           echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_ENV
       - uses: actions/upload-artifact@v4
         with:
-          name: pypi-macos-py${{ matrix.python }}
+          name: pypi-macos-x64-py${{ matrix.python }}
+          path: pybuild/dist/${{ env.WHEEL_NAME }}
+      - uses: actions/upload-release-asset@v1
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: pybuild/dist/${{ env.WHEEL_NAME }}
+          asset_name: ${{ env.WHEEL_NAME }}
+          asset_content_type: application/zip
+
+  macos-arm64:
+    name: PyPI wheels for macOS/arm64
+    runs-on: macos-14  # arm64
+    strategy:
+      matrix:
+        python:
+          - "3.8"
+          - "3.9"
+          - "3.10"
+          - "3.11"
+          - "3.12"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip conan setuptools wheel
+          brew install swig
+      - name: Build wheel
+        run: python setup.py bdist_wheel
+      - name: Wheel path
+        id: wheel
+        working-directory: pybuild/dist/
+        run: |
+          echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_OUTPUT
+          echo "WHEEL_NAME=$(ls *.whl)" >> $GITHUB_ENV
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pypi-macos-arm64-py${{ matrix.python }}
           path: pybuild/dist/${{ env.WHEEL_NAME }}
       - uses: actions/upload-release-asset@v1
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
@@ -235,7 +279,7 @@ jobs:
         run: |
           conan profile detect --force
           conan remove -c "*/*"
-          conan build . -pr=conan/profiles/emscripten -pr:b=conan/profiles/release -b missing
+          conan build . -pr=conan/profiles/release-clang-emscripten-wasm -pr:b=conan/profiles/release -b missing
         shell: bash
       - name: Upload release asset
         uses: softprops/action-gh-release@v2
@@ -251,6 +295,7 @@ jobs:
     if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
     needs:
       - macos-x64
+      - macos-arm64
       - manylinux-x64
       - manylinux-arm64
       - windows-x64

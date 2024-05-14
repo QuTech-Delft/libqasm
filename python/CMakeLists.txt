@@ -95,7 +95,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Configure SWIG.
 set(SWIG_FILE
-    "${CMAKE_CURRENT_SOURCE_DIR}/libQasm.i"
+    "${CMAKE_CURRENT_SOURCE_DIR}/libqasm.i"
 )
 
 set_source_files_properties("${SWIG_FILE}" PROPERTIES
@@ -108,7 +108,7 @@ set(CMAKE_SWIG_OUTDIR "${CMAKE_CURRENT_BINARY_DIR}")
 
 # Run SWIG to generated the C++ source file and Python wrapper module.
 swig_add_library(
-    libQasm
+    libqasm
     TYPE MODULE
     LANGUAGE python
     SOURCES "${SWIG_FILE}"
@@ -116,14 +116,14 @@ swig_add_library(
 
 # Compile the C++ source file and link it against the cqasm library.
 if(WIN32)
-    swig_link_libraries(libQasm "${PYTHON_LIBRARIES}" cqasm)
+    swig_link_libraries(libqasm "${PYTHON_LIBRARIES}" cqasm)
 else()
-    swig_link_libraries(libQasm cqasm)
+    swig_link_libraries(libqasm cqasm)
 endif()
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set_target_properties(_libQasm PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
+    set_target_properties(_libqasm PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
 endif()
-target_include_directories(_libQasm PRIVATE "${PYTHON_INCLUDE_DIRS}")
+target_include_directories(_libqasm PRIVATE "${PYTHON_INCLUDE_DIRS}")
 
 
 #=============================================================================#
@@ -133,12 +133,12 @@ target_include_directories(_libQasm PRIVATE "${PYTHON_INCLUDE_DIRS}")
 # Install the shared object (*.pyd on Windows).
 if("${LIBQASM_PYTHON_EXT}" STREQUAL "")
     install(
-        TARGETS _libQasm
+        TARGETS _libqasm
         LIBRARY DESTINATION "${LIBQASM_PYTHON_DIR}"
     )
 else()
     install(
-        FILES "$<TARGET_FILE:_libQasm>"
+        FILES "$<TARGET_FILE:_libqasm>"
         DESTINATION "${LIBQASM_PYTHON_DIR}"
         RENAME "${LIBQASM_PYTHON_EXT}"
     )
@@ -146,7 +146,7 @@ endif()
 
 # Install the generated files.
 install(
-    FILES "${CMAKE_SWIG_OUTDIR}/libQasm.py"
+    FILES "${CMAKE_SWIG_OUTDIR}/libqasm.py"
     DESTINATION "${LIBQASM_PYTHON_DIR}"
 )
 install(

@@ -43,9 +43,9 @@ option(LIBQASM_BUILD_PYTHON
 )
 mark_as_advanced(LIBQASM_BUILD_PYTHON)
 
-# Where the "libQasm" Python module should be built.
-set(LIBQASM_PYTHON_DIR "${CMAKE_INSTALL_FULL_LIBDIR}/python/libQasm"
-    CACHE STRING "Where to install the libQasm Python module"
+# Where the 'libqasm' Python module should be built.
+set(LIBQASM_PYTHON_DIR "${CMAKE_INSTALL_FULL_LIBDIR}/python/libqasm"
+    CACHE STRING "Where to install the libqasm Python module"
 )
 mark_as_advanced(LIBQASM_PYTHON_DIR)
 

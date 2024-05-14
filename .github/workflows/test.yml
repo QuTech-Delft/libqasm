@@ -8,20 +8,6 @@ on:
   pull_request:
 
 jobs:
-  cpp-shared:
-    name: "C++ tests (shared)"
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - uses: ./.github/actions/cpp-tests
-        with:
-          build_type: Release
-          conan_profile_host: conan/profiles/release-gcc-linux-x64-shared
-          shell: bash
-
   cpp-linux-x64:
     name: "C++ tests (gcc-clang/Linux/x64)"
     runs-on: ubuntu-latest
@@ -41,43 +27,6 @@ jobs:
         with:
           build_type: ${{ matrix.build_type }}
           conan_profile_host: conan/profiles/tests-${{ matrix.build_type }}-${{ matrix.compiler }}-linux-x64
-          shell: bash
-
-  cpp-macos-x64:
-    name: "C++ tests (clang/MacOS/x64)"
-    runs-on: macos-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        build_type:
-          - Debug
-          - Release
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - uses: ./.github/actions/cpp-tests
-        with:
-          build_type: ${{ matrix.build_type }}
-          conan_profile_host: conan/profiles/tests-${{ matrix.build_type }}-apple_clang-macos-x64
-          shell: bash
-
-  cpp-windows-x64:
-    name: "C++ tests (msvc/Windows/x64)"
-    runs-on: windows-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        build_type:
-          - Debug
-          - Release
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - uses: ./.github/actions/cpp-tests
-        with:
-          build_type: ${{ matrix.build_type }}
-          conan_profile_host: conan/profiles/tests-${{ matrix.build_type }}-msvc-windows-x64
-          conan_profile_build: conan/profiles/tests-${{ matrix.build_type }}-msvc-windows-x64
           shell: bash
 
   cpp-linux-arm64:
@@ -110,9 +59,27 @@ jobs:
           conan_profile_host: conan/profiles/tests-${{ matrix.build_type }}-gcc-linux-arm64
           shell: bash
 
+  cpp-macos-x64:
+    name: "C++ tests (clang/MacOS/x64)"
+    runs-on: macos-13  # x64
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type:
+          - Debug
+          - Release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: ./.github/actions/cpp-tests
+        with:
+          build_type: ${{ matrix.build_type }}
+          conan_profile_host: conan/profiles/tests-${{ matrix.build_type }}-apple_clang-macos-x64
+          shell: bash
+
   cpp-macos-arm64:
     name: "C++ tests (clang/macos/ARM64)"
-    runs-on: [self-hosted, ARM64, macOS]
+    runs-on: macos-14  # arm64
     strategy:
       fail-fast: false
       matrix:
@@ -136,8 +103,41 @@ jobs:
           conan_profile_host: conan/profiles/tests-${{ matrix.build_type }}-apple_clang-macos-arm64
           shell: bash
 
-  js-emscripten-wasm:
-    name: "JS tests (em++/emscripten/wasm)"
+  cpp-windows-x64:
+    name: "C++ tests (msvc/Windows/x64)"
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type:
+          - Debug
+          - Release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: ./.github/actions/cpp-tests
+        with:
+          build_type: ${{ matrix.build_type }}
+          conan_profile_host: conan/profiles/tests-${{ matrix.build_type }}-msvc-windows-x64
+          conan_profile_build: conan/profiles/tests-${{ matrix.build_type }}-msvc-windows-x64
+          shell: bash
+
+  cpp-shared:
+    name: "C++ tests (shared)"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: ./.github/actions/cpp-tests
+        with:
+          build_type: Release
+          conan_profile_host: conan/profiles/release-gcc-linux-x64-shared
+          shell: bash
+
+  ts-emscripten-wasm:
+    name: "TS tests (clang/emscripten/wasm)"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -164,7 +164,7 @@ jobs:
         run: |
           conan profile detect --force
           conan remove -c "*/*"
-          conan build . -pr=conan/profiles/emscripten -pr:b=conan/profiles/release -b missing
+          conan build . -pr=conan/profiles/release-clang-emscripten-wasm -pr:b=conan/profiles/release -b missing
         shell: bash
       - name: Rename cqasm_emscripten.js to cqasm_emscripten.mjs
         working-directory: build/Release/emscripten
@@ -178,7 +178,7 @@ jobs:
       - name: Test
         working-directory: emscripten
         run: |
-          deno run -A test_cqasm.ts
+          deno run -A test_libqasm.ts
         shell: bash
 
   python-linux-x64:
@@ -201,13 +201,32 @@ jobs:
 
   python-macos-x64:
     name: "Python tests (macOS/x64)"
-    runs-on: macos-latest
+    runs-on: macos-13
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install SWIG
         run: |
           brew install swig
+        shell: bash
+      - name: Export LIBQASM_BUILD_TYPE
+        run: |
+          echo "LIBQASM_BUILD_TYPE=Debug" >> $GITHUB_ENV
+        shell: bash
+      - uses: ./.github/actions/python-tests
+        with:
+          shell: bash
+
+  python-macos-arm64:
+    name: "Python tests (macOS/arm64)"
+    runs-on: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          brew install java swig
+          echo "$(brew --prefix java)/bin" >> $GITHUB_PATH
         shell: bash
       - name: Export LIBQASM_BUILD_TYPE
         run: |
@@ -255,7 +274,7 @@ jobs:
       - cpp-windows-x64
       - cpp-linux-arm64
       - cpp-macos-arm64
-      - js-emscripten-wasm
+      - ts-emscripten-wasm
       - python-linux-x64
       - python-macos-x64
       - python-windows-x64
