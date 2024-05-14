@@ -27,8 +27,8 @@ build_dir = target_dir + os.sep + 'build'  # directory for setuptools to dump va
 dist_dir = target_dir + os.sep + 'dist'  # wheel output directory
 cbuild_dir = target_dir + os.sep + 'cbuild'  # cmake build directory
 prefix_dir = target_dir + os.sep + 'prefix'  # cmake install prefix
-srcmod_dir = pysrc_dir + os.sep + 'module'  # libQasm Python module directory, source files only
-module_dir = target_dir + os.sep + 'module'  # libQasm Python module directory, including generated file(s)
+srcmod_dir = pysrc_dir + os.sep + 'module'  # libqasm Python module directory, source files only
+module_dir = target_dir + os.sep + 'module'  # libqasm Python module directory, including generated file(s)
 
 # Copy the handwritten Python sources into the module directory that we're telling setuptools is our source directory,
 # because setuptools insists on spamming output files into that directory.
@@ -73,7 +73,7 @@ class build_ext(_build_ext):
 
         # Figure out how setuptools wants to name the extension file and where it wants to place it
         cqasm_target = os.path.abspath(self.get_ext_fullpath('cqasm._cqasm'))
-        target = os.path.abspath(self.get_ext_fullpath('libQasm._libQasm'))
+        target = os.path.abspath(self.get_ext_fullpath('libqasm._libqasm'))
 
         # Build the Python extension and install it where setuptools expects it
         if not os.path.exists(cbuild_dir):
@@ -96,7 +96,6 @@ class build_ext(_build_ext):
                 ['-s:b']['libqasm/*:build_type=' + build_type]
 
                 ['-o']['libqasm/*:build_python=True']
-                ['-o']['libqasm/*:build_tests=' + build_tests]
                 # The Python library needs the compatibility headers
                 ['-o']['libqasm/*:cqasm_python_dir=' + re.escape(os.path.dirname(cqasm_target))]
                 ['-o']['libqasm/*:python_dir=' + re.escape(os.path.dirname(target))]
@@ -108,6 +107,8 @@ class build_ext(_build_ext):
                 ['-b']['missing']
                 ['-tf']['']
             )
+            if not build_tests:
+                cmd = cmd['-c']['tools.build:skip_test=True']
             if platform.system() == "Darwin":
                 cmd = cmd['-c']['tools.build:defines=["_LIBCPP_DISABLE_AVAILABILITY"]']
             cmd & FG
@@ -161,7 +162,7 @@ class egg_info(_egg_info):
 setup(
     name='libqasm',
     version=get_version(),
-    description='libQasm Python Package',
+    description='libqasm Python Package',
     long_description=read('README.md'),
     long_description_content_type='text/markdown',
     author='QuTech, TU Delft',
@@ -174,12 +175,12 @@ setup(
         'Programming Language :: Python :: 3 :: Only',
         'Topic :: Scientific/Engineering'
     ],
-    packages=['libQasm', 'cqasm', 'cqasm.v3x'],
+    packages=['libqasm', 'cqasm', 'cqasm.v3x'],
     package_dir={'': 'pybuild/module'},
     # NOTE: the library build process is completely overridden to let CMake handle it.
     # setuptools implementation is horribly broken.
     # This is here just to have the rest of setuptools understand that this is a Python module with an extension in it.
-    ext_modules=[Extension('libQasm._libQasm', [])],
+    ext_modules=[Extension('libqasm._libqasm', [])],
     cmdclass={
         'bdist': bdist,
         'bdist_wheel': bdist_wheel,

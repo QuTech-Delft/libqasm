@@ -137,7 +137,7 @@ jobs:
           shell: bash
 
   ts-emscripten-wasm:
-    name: "TS tests (em++/emscripten/wasm)"
+    name: "TS tests (clang/emscripten/wasm)"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -164,7 +164,7 @@ jobs:
         run: |
           conan profile detect --force
           conan remove -c "*/*"
-          conan build . -pr=conan/profiles/emscripten -pr:b=conan/profiles/release -b missing
+          conan build . -pr=conan/profiles/release-clang-emscripten-wasm -pr:b=conan/profiles/release -b missing
         shell: bash
       - name: Rename cqasm_emscripten.js to cqasm_emscripten.mjs
         working-directory: build/Release/emscripten
