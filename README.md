@@ -64,27 +64,33 @@ in case it cannot find the binary packages for the current configuration (platfo
 
 ### Build profiles
 
-A group of predefined profiles is provided under the `conan/profiles` folder.
-They follow the `[tests-](debug|release)[-compat]` naming convention. For example:
-  - `release` is a Release build without tests and compatibility with the original API.
-  - `tests-debug-compat` is a Debug build with tests and compatibility enabled.
+A group of predefined profiles is provided under the `conan/profiles` folder.<br/>
+They follow the `[tests](-build_type)(-compiler)(-os)(-arch)[-shared]` naming convention:
+  - `tests`: if tests are being built.
+  - `build_type`: can be `debug` or `release`.
+  - `compiler`: `apple-clang`, `clang`, `gcc`, `msvc`.
+  - `os`: `emscripten`, `linux`, `macos`, `windows`.
+  - `arch`: `arm64`, `wasm`, `x64`.
+  - `shared`: if the library is being built in shared mode.
 
-All the profiles set the C++ standard to 20. All the `tests` profiles enable Address Sanitizer.
+All the profiles set the C++ standard to 20.<br/>
+All the `tests`, except for `linux-x64` profiles, enable Address Sanitizer.
 
 ### Build options
 
-Profiles are a shorthand for command line options. The command above could be written as well as: 
+Profiles are a shorthand for command line options. The command above could be written, similarly,  as: 
 
 ```
-conan build . -s:h compiler.cppstd=20 -s:h libqasm/*:build_type=Debug -o libqasm/*:build_tests=True -o libqasm/*:asan_enabled=True -b missing
+conan build . -s:a compiler.cppstd=20 -s:a libqasm/*:build_type=Debug -o libqasm/*:build_tests=True -o libqasm/*:asan_enabled=True -b missing
 ```
 
-These are the list of options that could be specified whether in a profile or in the command line:
+This is the list of options that could be specified either in a profile or in the command line:
 
 - `libqasm/*:asan_enabled={True,False}`: enables Address Sanitizer.
-- `libqasm/*:build_tests={True,False}`: builds tests or not.
 - `libqasm/*:build_type={Debug,Release}`: builds in debug or release mode.
 - `libqasm/*:shared={True,False}`: builds a shared object library instead of a static library, if applicable.
+
+Tests are enabled by default. To disable them, use `-c tools.build:skip_test=True`.
 
 ## Install
 
@@ -107,7 +113,7 @@ python3 -m pytest
 The `CMakeLists.txt` file in the root directory includes install targets:
 
 ```
-conan create --version 0.5.2 . -pr=tests-debug -b missing
+conan create --version 0.6.5 . -pr:a=tests-debug -b missing
 ```
 
 You can test if it works by doing:
@@ -121,30 +127,49 @@ ctest -C Debug --output-on-failure
 
 ### From Python
 
-After installation, you should be able to use the bindings for the original API by just `import libQasm`.
-The new API doesn't have Python bindings yet.
+The `libqasm` module should provide access to the `V3xAnalyzer` API:
+- `parse_file`,
+- `parse_string`,
+- `analyze_file`, and
+- `analyzer_string`.
+
+The `cqasm.v3x` module is also available for a more fine-grained use of the library.
+
+```
+import cqasm.v3x.ast
+import cqasm.v3x.instruction
+import cqasm.v3x.primitives
+import cqasm.v3x.semantic
+import cqasm.v3x.types
+import cqasm.v3x.values
+```
 
 ### From C++
 
-The easiest way to use `libqasm` in a CMake project is to fetch the library and then link against it.
+`libqasm` can be requested as a Conan package from a `conanfile.py`.
 
 ```
-include(FetchContent)
-FetchContent_Declare(cqasm
-    GIT_REPOSITORY https://github.com/QuTech-Delft/libqasm.git
-    GIT_TAG "<a given cqasm git tag>"
-)
-FetchContent_MakeAvailable(cqasm)
-target_include_directories(<your target> SYSTEM PRIVATE "${cqasm_SOURCE_DIR}/include")
-target_link_libraries(<your target> PUBLIC cqasm)
+def build_requirements(self):
+    self.tool_requires("libqasm/0.6.5")
+def requirements(self):
+    self.requires("libqasm/0.6.5")
+```
+
+And then linked against from a `CMakeLists.txt`: 
+
+```
+target_link_libraries(<your target> PUBLIC libqasm::libqasm)
 ```
 
 Note that the following dependency is required for `libqasm` to build:
 
 * `Java JRE` >= 11
 
-The original API headers are *not* included by default.
-To enable those, pass <code><nobr>-o libqasm/*:compat=True</nobr></code> as a build option to Conan.
+The header file `cqasm.hpp` should provide access to the following API:
+- `cqasm::v3x::analyze_file`, and
+- `cqasm::v3x::analyze_string`.
+
+Again, other header files are available for a more fine-grained use of the library.
 
 ## Docker
 
@@ -154,7 +179,7 @@ This tests the library in a container with the bare minimum requirements for `li
 docker build .
 ```
 
-**Note for Windows users:** The above might fail on Windows to the autocrlf transformation that git does.
+**Note for Windows users:** The above might fail on Windows due to the `autocrlf` transformation that git does.
 If you are having trouble with this just create new clone of this repository using:
 
 ```
@@ -166,9 +191,18 @@ git clone --config core.autocrlf=input git@github.com:QuTech-Delft/libqasm.git
 The generation of emscripten binaries has been tested as a cross-compilation from an ubuntu/x64 platform.
 
 ```
-conan build . -pr=conan/profiles/emscripten -pr:b=conan/profiles/release -b missing
+conan build . -pr=conan/profiles/release-clang-emscripten-wasm -pr:b=conan/profiles/release -b missing
 ```
 
 The output of this build lives in `build/Release/emscripten`:
 - `cqasm_emscripten.js`.
 - `cqasm_emscripten.wasm`.
+
+Note that `cqasm_emscripten.js` is an ES6 module. An example of how to use it would be:
+
+```
+cd build/Release/emscripten
+mv cqasm_emscripten.js cqasm_emscripten.mjs
+cd ../../../emscripten
+deno run -A test_libqasm.ts
+```

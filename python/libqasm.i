@@ -1,5 +1,5 @@
-/* libQasm_swig.i */
-%module libQasm
+/* libqasm.i */
+%module libqasm
 
 %begin %{
 #ifdef _MSC_VER

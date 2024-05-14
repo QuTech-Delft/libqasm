@@ -34,7 +34,7 @@ WORKDIR /libqasm-copy
 
 # Build emscripten binaries
 RUN conan profile detect --force && \
-    conan build . -pr=conan/profiles/emscripten -pr:b=conan/profiles/release -b missing && \
+    conan build . -pr=conan/profiles/release-clang-emscripten-wasm -pr:b=conan/profiles/release -b missing && \
     ls -hl build/Release/emscripten
 
 # Rename cqasm_emscripten.js to cqasm_emscripten.mjs
