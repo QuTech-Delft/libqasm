@@ -113,7 +113,7 @@ python3 -m pytest
 The `CMakeLists.txt` file in the root directory includes install targets:
 
 ```
-conan create --version 0.6.5 . -pr:a=tests-debug -b missing
+conan create --version 0.6.6 . -pr:a=tests-debug -b missing
 ```
 
 You can test if it works by doing:
