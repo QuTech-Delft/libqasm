@@ -6,3 +6,6 @@ libqasm/*:build_type=Debug
 
 [options]
 libqasm/*:asan_enabled=True
+
+[conf]
+tools.build:skip_test=False
