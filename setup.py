@@ -107,7 +107,7 @@ class build_ext(_build_ext):
                 ['-b']['missing']
                 ['-tf']['']
             )
-            if build_tests:
+            if build_tests == "True":
                 cmd = cmd['-c']['tools.build:skip_test=False']
             if platform.system() == "Darwin":
                 cmd = cmd['-c']['tools.build:defines=["_LIBCPP_DISABLE_AVAILABILITY"]']
