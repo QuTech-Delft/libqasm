@@ -30,6 +30,7 @@ class LibqasmConan(ConanFile):
         "shared": [True, False],
         "fPIC": [True, False],
         "asan_enabled": [True, False],
+        "build_docs": [True, False],
         "build_python": [True, False],
         "cqasm_python_dir": [None, "ANY"],
         "python_dir": [None, "ANY"],
@@ -39,6 +40,7 @@ class LibqasmConan(ConanFile):
         "shared": False,
         "fPIC": True,
         "asan_enabled": False,
+        "build_docs": False,
         "build_python": False,
         "cqasm_python_dir": None,
         "python_dir": None,
@@ -88,13 +90,13 @@ class LibqasmConan(ConanFile):
         self.cpp.build.libdirs = ["."]
 
     def build_requirements(self):
-        self.tool_requires("tree-gen/1.0.7")
+        self.tool_requires("tree-gen/1.0.8")
         if self.settings.arch != "armv8":
             self.tool_requires("zulu-openjdk/21.0.1")
         if self.settings.arch == "wasm":
             self.tool_requires("emsdk/3.1.50")
         if self._should_build_test:
-            self.test_requires("gtest/1.14.0")
+            self.test_requires("gtest/1.15.0")
 
     def validate(self):
         if self.settings.compiler.cppstd:
@@ -108,9 +110,9 @@ class LibqasmConan(ConanFile):
             raise ConanInvalidConfiguration(f"{self.ref} requires antlr4-cppruntime to be built with the same shared option value.")
 
     def requirements(self):
-        self.requires("fmt/10.2.1", transitive_headers=True)
+        self.requires("fmt/11.0.2", transitive_headers=True)
         self.requires("range-v3/0.12.0", transitive_headers=True)
-        self.requires("tree-gen/1.0.7", transitive_headers=True, transitive_libs=True)
+        self.requires("tree-gen/1.0.8", transitive_headers=True, transitive_libs=True)
         if not self.settings.arch == "wasm":
             self.requires("antlr4-cppruntime/4.13.1", transitive_headers=True)
 
@@ -120,6 +122,7 @@ class LibqasmConan(ConanFile):
         tc = CMakeToolchain(self)
         tc.variables["ASAN_ENABLED"] = self.options.asan_enabled
         tc.variables["BUILD_SHARED_LIBS"] = self.options.shared
+        tc.variables["LIBQASM_BUILD_DOCS"] = self.options.build_docs
         tc.variables["LIBQASM_BUILD_EMSCRIPTEN"] = self.settings.arch == "wasm"
         tc.variables["LIBQASM_BUILD_PYTHON"] = self.options.build_python
         tc.variables["LIBQASM_BUILD_TESTS"] = self._should_build_test

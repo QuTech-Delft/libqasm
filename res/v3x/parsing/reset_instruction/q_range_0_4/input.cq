@@ -1,0 +1,5 @@
+version 3
+
+qubit[9] q
+
+reset q[0:4]

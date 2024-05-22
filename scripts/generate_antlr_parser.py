@@ -21,7 +21,7 @@ def print_usage():
 
 
 class AntlrJarFileDownloader:
-    file_version = "4.13.0"
+    file_version = "4.13.1"
     file_name = "antlr4-{}-complete.jar".format(file_version)
     file_path = "{}/{}".format(tempfile.gettempdir(), file_name)
 

@@ -1,9 +1,9 @@
 #include "parsing.hpp"
 
-#include <fmt/format.h>
-#include <gtest/gtest.h>
-
 #include <filesystem>
+#include <fmt/format.h>
+#include <fmt/ranges.h>
+#include <gtest/gtest.h>
 #include <string>
 
 #include "test-register.hpp"

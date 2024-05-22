@@ -33,6 +33,7 @@ public:
     std::any visit_variable(ast::Variable &node) override;
     std::any visit_gate(ast::Gate &node) override;
     std::any visit_measure_instruction(ast::MeasureInstruction &node) override;
+    std::any visit_reset_instruction(ast::ResetInstruction &node) override;
     std::any visit_expression_list(ast::ExpressionList &node) override;
     std::any visit_expression(ast::Expression &node) override;
     std::any visit_unary_minus_expression(ast::UnaryMinusExpression &node) override;

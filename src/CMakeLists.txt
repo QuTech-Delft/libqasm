@@ -74,12 +74,8 @@ if(NOT range-v3_FOUND)
     add_library(range-v3::range-v3 ALIAS range-v3)
 endif()
 
-# tree-gen executable
-find_package(tree-gen REQUIRED)
-find_program(TREE_GEN_EXECUTABLE tree-gen REQUIRED)
-message(STATUS "TREE_GEN_EXECUTABLE: ${TREE_GEN_EXECUTABLE}")
-
 # tree-gen library
+find_package(tree-gen REQUIRED)
 if(NOT tree-gen_FOUND OR LIBQASM_BUILD_EMSCRIPTEN)
     message(STATUS "Fetching tree-gen")
     FetchContent_Declare(tree-gen
@@ -89,6 +85,10 @@ if(NOT tree-gen_FOUND OR LIBQASM_BUILD_EMSCRIPTEN)
     )
     FetchContent_MakeAvailable(tree-gen)
 endif()
+
+# tree-gen executable
+find_program(TREE_GEN_EXECUTABLE tree-gen REQUIRED)
+message(STATUS "TREE_GEN_EXECUTABLE: ${TREE_GEN_EXECUTABLE}")
 
 #-------------------------------------------------------------------------------
 # cQASM common code generation and inclusion
@@ -211,6 +211,7 @@ endif()
 if(LIBQASM_BUILD_EMSCRIPTEN)
     set(antlr4-runtime_INCLUDE_DIRS "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src")
     set(fmt_INCLUDE_DIRS "${fmt_SOURCE_DIR}/include")
+    set(range-v3_INCLUDE_DIRS "${range-v3_SOURCE_DIR}/include")
     set(tree-gen_INCLUDE_DIRS "${tree-gen_SOURCE_DIR}/include")
 endif()
 target_include_directories(cqasm-lib-obj
@@ -223,6 +224,7 @@ target_include_directories(cqasm-lib-obj
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include/v3x"
     PRIVATE "${antlr4-runtime_INCLUDE_DIRS}/"
     PRIVATE "${fmt_INCLUDE_DIRS}/"
+    PRIVATE "${range-v3_INCLUDE_DIRS}/"
     PRIVATE "${tree-gen_INCLUDE_DIRS}/"
 )
 
@@ -302,6 +304,7 @@ message(STATUS
     "      CMAKE_CURRENT_BINARY_DIR/../include/: ${CMAKE_CURRENT_BINARY_DIR}/../include/\n"
     "      antlr4-runtime_INCLUDE_DIRS: ${antlr4-runtime_INCLUDE_DIRS}\n"
     "      fmt_INCLUDE_DIRS: ${fmt_INCLUDE_DIRS}\n"
+    "      range-v3_INCLUDE_DIRS: ${range-v3_INCLUDE_DIRS}\n"
     "      tree-gen_INCLUDE_DIRS: ${tree-gen_INCLUDE_DIRS}\n"
 )
 

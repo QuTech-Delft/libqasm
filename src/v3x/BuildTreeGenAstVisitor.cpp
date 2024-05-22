@@ -165,6 +165,16 @@ std::any BuildTreeGenAstVisitor::visitMeasureInstruction(CqasmParser::MeasureIns
     return One<Statement>{ ret };
 }
 
+std::any BuildTreeGenAstVisitor::visitResetInstruction(CqasmParser::ResetInstructionContext *context) {
+    auto ret = tree::make<ResetInstruction>();
+    ret->name = tree::make<Identifier>(context->RESET()->getText());
+    ret->operand = context->expression()
+        ? Maybe<Expression>{ std::any_cast<One<Expression>>(context->expression()->accept(this)) }
+        : Maybe<Expression>{};
+    setNodeAnnotation(ret, context->RESET()->getSymbol());
+    return One<Statement>{ ret };
+}
+
 std::any BuildTreeGenAstVisitor::visitGate(CqasmParser::GateContext *context) {
     auto ret = tree::make<Gate>();
     ret->name = tree::make<Identifier>(context->IDENTIFIER()->getText());
