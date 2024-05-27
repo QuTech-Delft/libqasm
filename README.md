@@ -81,7 +81,7 @@ All the `tests`, except for `linux-x64` profiles, enable Address Sanitizer.
 Profiles are a shorthand for command line options. The command above could be written, similarly,  as: 
 
 ```
-conan build . -s:a compiler.cppstd=20 -s:a libqasm/*:build_type=Debug -o libqasm/*:build_tests=True -o libqasm/*:asan_enabled=True -b missing
+conan build . -s:a compiler.cppstd=20 -s:a libqasm/*:build_type=Debug -o libqasm/*:asan_enabled=True -c tools.build:skip_test=False -b missing
 ```
 
 This is the list of options that could be specified either in a profile or in the command line:
@@ -90,7 +90,7 @@ This is the list of options that could be specified either in a profile or in th
 - `libqasm/*:build_type={Debug,Release}`: builds in debug or release mode.
 - `libqasm/*:shared={True,False}`: builds a shared object library instead of a static library, if applicable.
 
-Tests are enabled by default. To disable them, use `-c tools.build:skip_test=True`.
+Tests are disabled by default. To enable them, use `-c tools.build:skip_test=False`.
 
 ## Install
 
