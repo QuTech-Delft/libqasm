@@ -13,6 +13,7 @@ jobs:
     name: PyPI wheels for macOS/x64
     runs-on: macos-13  # x64
     strategy:
+      fail-fast: false
       matrix:
         python:
 #          - "3.8"
