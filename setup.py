@@ -145,6 +145,12 @@ class bdist_wheel(_bdist_wheel):
         if platform.system() == "Darwin":
             os.environ['MACOSX_DEPLOYMENT_TARGET'] = '10.10'
         _bdist_wheel.run(self)
+        impl_tag, abi_tag, plat_tag = self.get_tag()
+        archive_basename = "{}-{}-{}-{}".format(self.wheel_dist_name, impl_tag, abi_tag, plat_tag)
+        wheel_path = os.path.join(self.dist_dir, archive_basename + '.whl')
+        if platform.system() == "Darwin":
+            from delocate.delocating import delocate_wheel
+            delocate_wheel(wheel_path)
 
 
 class sdist(_sdist):
@@ -173,6 +179,11 @@ setup(
         'Operating System :: MacOS',
         'Operating System :: Microsoft :: Windows',
         'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
         'Topic :: Scientific/Engineering'
     ],
     packages=['libqasm', 'cqasm', 'cqasm.v3x'],
