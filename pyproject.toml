@@ -1,0 +1,11 @@
+[build-system]
+requires = [
+    "setuptools",
+]
+build-backend = "setuptools.build_meta"
+
+[tool.cibuildwheel]
+before-all = "uname -a"
+#build = "cp311-manylinux_x86_64"
+test-requires = "pytest"
+test-command = "pytest {project}/test"
