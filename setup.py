@@ -13,11 +13,8 @@ from setuptools.command.build_ext import build_ext as _build_ext
 from distutils.command.build import build as _build
 from setuptools.command.install import install as _install
 from distutils.command.bdist import bdist as _bdist
-from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
 from distutils.command.sdist import sdist as _sdist
 from setuptools.command.egg_info import egg_info as _egg_info
-
-from version import get_version
 
 root_dir = os.getcwd()  # root of the repository
 src_dir = root_dir + os.sep + 'src'  # C++ source directory
@@ -89,7 +86,7 @@ class build_ext(_build_ext):
             cmd & FG
 
             cmd = (local['conan']['create']['.']
-                ['--version'][get_version()]
+                ['--version=0.6.7']
                 ['-s:h']['compiler.cppstd=20']
                 ['-s:b']['compiler.cppstd=20']
                 ['-s:h']['libqasm/*:build_type=' + build_type]
@@ -140,19 +137,6 @@ class bdist(_bdist):
         self.dist_dir = os.path.relpath(dist_dir)
 
 
-class bdist_wheel(_bdist_wheel):
-    def run(self):
-        if platform.system() == "Darwin":
-            os.environ['MACOSX_DEPLOYMENT_TARGET'] = '10.10'
-        _bdist_wheel.run(self)
-        impl_tag, abi_tag, plat_tag = self.get_tag()
-        archive_basename = "{}-{}-{}-{}".format(self.wheel_dist_name, impl_tag, abi_tag, plat_tag)
-        wheel_path = os.path.join(self.dist_dir, archive_basename + '.whl')
-        if platform.system() == "Darwin":
-            from delocate.delocating import delocate_wheel
-            delocate_wheel(wheel_path)
-
-
 class sdist(_sdist):
     def finalize_options(self):
         _sdist.finalize_options(self)
@@ -167,7 +151,7 @@ class egg_info(_egg_info):
 
 setup(
     name='libqasm',
-    version=get_version(),
+    version='0.6.7',
     description='libqasm Python Package',
     long_description=read('README.md'),
     long_description_content_type='text/markdown',
@@ -194,7 +178,6 @@ setup(
     ext_modules=[Extension('libqasm._libqasm', [])],
     cmdclass={
         'bdist': bdist,
-        'bdist_wheel': bdist_wheel,
         'build_ext': build_ext,
         'build': build,
         'install': install,
