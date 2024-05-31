@@ -7,6 +7,6 @@ build-backend = "setuptools.build_meta"
 [tool.cibuildwheel]
 before-all = "uname -a"
 build-verbosity = 3
-skip = ["cp36-*", "cp37-*", "cp38-*", "cp39-*", "cp310-*", "cp312-*", "pp*"]
+skip = ["cp36-*", "cp37-*", "pp*"]
 test-requires = "pytest"
 test-command = "pytest {project}/test"

@@ -14,7 +14,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-13]  # x64
+        # macos-13 is an x64 runner, macos-14 is an arm64 runner
+        os: [ubuntu-latest, windows-latest, macos-13, macos-14]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,6 +31,19 @@ jobs:
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
           path: ./wheelhouse/*.whl
+
+  build_sdist:
+    name: Build source distribution
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build sdist
+        run: pipx run build --sdist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-sdist
+          path: dist/*.tar.gz
 
 #  macos-x64:
 #    name: PyPI wheels for macOS/x64
