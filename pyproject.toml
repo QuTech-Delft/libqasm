@@ -1,6 +1,7 @@
 [build-system]
 requires = [
     "setuptools",
+    "swig"
 ]
 build-backend = "setuptools.build_meta"
 
