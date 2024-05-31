@@ -89,12 +89,6 @@ class build_ext(_build_ext):
                 ['--version=0.6.7']
                 ['-s:h']['compiler.cppstd=20']
                 ['-s:b']['compiler.cppstd=20']
-
-                # TODO: remove these 2 lines
-                # Temporarily checking if we can generate wheels for macos/x64 with apple-clang 14
-                ['-s:h']['compiler.version=14']
-                ['-s:b']['compiler.version=14']
-
                 ['-s:h']['libqasm/*:build_type=' + build_type]
                 ['-s:b']['libqasm/*:build_type=' + build_type]
 
