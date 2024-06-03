@@ -53,6 +53,7 @@ jobs:
         run: |
           export PATH="/opt/python/${{ matrix.cpython_version }}/bin:$PATH"
           python -m pip install cibuildwheel==2.18.1
+          dnf install -y docker
       - name: Build wheels
         run: |
           export PATH="/opt/python/${{ matrix.cpython_version }}/bin:$PATH"
