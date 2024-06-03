@@ -33,6 +33,18 @@ jobs:
     name: Build wheels on ${{ matrix.os }}
     runs-on: [self-hosted, ARM64, Linux]
     container: quay.io/pypa/manylinux${{ matrix.manylinux }}_aarch64:latest
+    strategy:
+      matrix:
+        manylinux:
+          - "_2_28"
+        cpython_version:
+          - "cp38-cp38"
+          - "cp39-cp39"
+          - "cp310-cp310"
+          - "cp311-cp311"
+          - "cp312-cp312"
+        include:
+          - manylinux: _2_28
     steps:
       - name: Checkout
         uses: actions/checkout@v4
