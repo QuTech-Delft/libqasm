@@ -12,6 +12,7 @@ skip = [
     "cp36-*", "cp37-*", "cp38-*", "cp39-*", "cp310-*", "cp312-*",
     "*i686*", "*ppc64le*", "*pypy*", "*s390x*", "*musllinux*",
     "pp*",
+    "*-win32",
 ]
 test-requires = "pytest"
 test-command = "pytest {project}/test"
