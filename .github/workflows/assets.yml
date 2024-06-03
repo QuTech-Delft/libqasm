@@ -32,6 +32,7 @@ jobs:
   cibw-wheels-linux-aarch64:
     name: Build wheels on ${{ matrix.os }}
     runs-on: [self-hosted, ARM64, Linux]
+    container: quay.io/pypa/manylinux${{ matrix.manylinux }}_aarch64:latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
