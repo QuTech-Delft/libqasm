@@ -50,9 +50,13 @@ jobs:
         uses: actions/checkout@v4
       - uses: actions/setup-python@v5
       - name: Install cibuildwheel
-        run: python -m pip install cibuildwheel==2.18.1
+        run: |
+          export PATH="/opt/python/${{ matrix.cpython_version }}/bin:$PATH"
+          python -m pip install cibuildwheel==2.18.1
       - name: Build wheels
-        run: python -m cibuildwheel --output-dir wheelhouse
+        run: |
+          export PATH="/opt/python/${{ matrix.cpython_version }}/bin:$PATH"
+          python -m cibuildwheel --output-dir wheelhouse
       - uses: actions/upload-artifact@v4
         with:
           name: cibw-wheels-linux-aarch64
