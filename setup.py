@@ -16,6 +16,25 @@ from distutils.command.bdist import bdist as _bdist
 from distutils.command.sdist import sdist as _sdist
 from setuptools.command.egg_info import egg_info as _egg_info
 
+
+# TODO: I had to copy-paste get_version from version.py here
+#  because I couldn't get 'from version import get_version' work with pyproject.toml
+def get_version(verbose=False):
+    """Extract version information from source code"""
+    inc_dir = root_dir + os.sep + "include"  # C++ include directory
+    matcher = re.compile('static const char \*version\{ "(.*)" \}')
+    version = None
+    with open(os.path.join(inc_dir, "version.hpp"), "r") as f:
+        for ln in f:
+            m = matcher.match(ln)
+            if m:
+                version = m.group(1)
+                break
+    if verbose:
+        print("get_version: %s" % version)
+    return version
+
+
 root_dir = os.getcwd()  # root of the repository
 src_dir = root_dir + os.sep + 'src'  # C++ source directory
 pysrc_dir = root_dir + os.sep + 'python'  # Python source files
@@ -86,7 +105,7 @@ class build_ext(_build_ext):
             cmd & FG
 
             cmd = (local['conan']['create']['.']
-                ['--version=0.6.7']
+                ['--version'][get_version()]
                 ['-s:h']['compiler.cppstd=20']
                 ['-s:b']['compiler.cppstd=20']
                 ['-s:h']['libqasm/*:build_type=' + build_type]
@@ -151,7 +170,7 @@ class egg_info(_egg_info):
 
 setup(
     name='libqasm',
-    version='0.6.7',
+    version=get_version(),
     description='libqasm Python Package',
     long_description=read('README.md'),
     long_description_content_type='text/markdown',
