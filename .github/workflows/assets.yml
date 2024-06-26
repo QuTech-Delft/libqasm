@@ -39,7 +39,7 @@ jobs:
     strategy:
       matrix:
         manylinux:
-          - "2014"
+          - "_2_28"
         cpython_version:
           #          - "cp38-cp38"
           #          - "cp39-cp39"
@@ -47,7 +47,7 @@ jobs:
           - "cp311-cp311"
         #          - "cp312-cp312"
         include:
-          - manylinux: "2014"
+          - manylinux: _2_28
     steps:
       - name: Checkout
         uses: actions/checkout@v4
