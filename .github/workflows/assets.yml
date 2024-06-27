@@ -15,8 +15,7 @@ jobs:
     strategy:
       matrix:
         # macos-13 is an x64 runner, macos-14 is an arm64 runner
-#        os: [ubuntu-latest, windows-latest, macos-13, macos-14]
-        os: [macos-13, macos-14]
+        os: [ubuntu-latest, windows-latest, macos-13, macos-14]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,94 +29,94 @@ jobs:
           name: cibw-wheels-${{ matrix.os }}
           path: ./wheelhouse/*.whl
 
-#  cibw-wheels-linux-arm64:
-#    name: Build wheels on linux-arm64
-#    runs-on: [self-hosted, ARM64, Linux]
-#    container:
-#      image: quay.io/pypa/manylinux${{ matrix.manylinux }}_aarch64:latest
-#      volumes:
-#        - /var/run/docker.sock:/var/run/docker.sock
-#    strategy:
-#      matrix:
-#        manylinux:
-#          - "_2_28"
-#        include:
-#          - manylinux: _2_28
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v4
-#      - uses: actions/setup-python@v5
-#      - name: Install docker
-#        run: |
-#          yum install -y yum-utils
-#          yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-#          yum install -y docker-ce-cli
-#      - name: Install cibuildwheel and build wheels
-#        run: |
-#          export PATH="/opt/python/cp312-cp312/bin:$PATH"
-#          python -m pip install cibuildwheel==2.18.1
-#          python -m cibuildwheel --output-dir wheelhouse
-#        env:
-#          CIBW_BEFORE_ALL_LINUX: yum install -y java-11-openjdk
-#      - uses: actions/upload-artifact@v4
+  cibw-wheels-linux-arm64:
+    name: Build wheels on linux-arm64
+    runs-on: [self-hosted, ARM64, Linux]
+    container:
+      image: quay.io/pypa/manylinux${{ matrix.manylinux }}_aarch64:latest
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+    strategy:
+      matrix:
+        manylinux:
+          - "_2_28"
+        include:
+          - manylinux: _2_28
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+      - name: Install docker
+        run: |
+          yum install -y yum-utils
+          yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+          yum install -y docker-ce-cli
+      - name: Install cibuildwheel and build wheels
+        run: |
+          export PATH="/opt/python/cp312-cp312/bin:$PATH"
+          python -m pip install cibuildwheel==2.18.1
+          python -m cibuildwheel --output-dir wheelhouse
+        env:
+          CIBW_BEFORE_ALL_LINUX: yum install -y java-11-openjdk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-linux-arm64
+          path: ./wheelhouse/*.whl
+
+  emscripten-wasm:
+    name: WASM binaries for emscripten
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type:
+          - Release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16.20.2
+      - name: Install conan
+        run: |
+          pipx install conan
+        shell: bash
+      - name: Get latest CMake
+        uses: lukka/get-cmake@latest
+        # We clean the Conan cache as a preventive measure for our runs in self-hosted runners
+        # Self-hosted runners use containers that cache Conan packages from previous runs,
+        # and that can cause different type of problems
+      - name: Configure and build
+        run: |
+          conan profile detect --force
+          conan remove -c "*/*"
+          conan build . -pr=conan/profiles/release-clang-emscripten-wasm -pr:b=conan/profiles/release -b missing
+        shell: bash
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+        with:
+          files: |
+            build/Release/emscripten/cqasm_emscripten.js
+            build/Release/emscripten/cqasm_emscripten.wasm
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  publish:
+    name: Publish
+    if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+    needs:
+      - cibw-wheels
+      - cibw-wheels-linux-arm64
+      - emscripten-wasm
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        id: download
+#      - name: Publish to PyPI
+#        uses: pypa/gh-action-pypi-publish@v1.8.14
 #        with:
-#          name: cibw-wheels-linux-arm64
-#          path: ./wheelhouse/*.whl
-#
-#  emscripten-wasm:
-#    name: WASM binaries for emscripten
-#    runs-on: ubuntu-latest
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        build_type:
-#          - Release
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v4
-#      - name: Install node
-#        uses: actions/setup-node@v4
-#        with:
-#          node-version: 16.20.2
-#      - name: Install conan
-#        run: |
-#          pipx install conan
-#        shell: bash
-#      - name: Get latest CMake
-#        uses: lukka/get-cmake@latest
-#        # We clean the Conan cache as a preventive measure for our runs in self-hosted runners
-#        # Self-hosted runners use containers that cache Conan packages from previous runs,
-#        # and that can cause different type of problems
-#      - name: Configure and build
-#        run: |
-#          conan profile detect --force
-#          conan remove -c "*/*"
-#          conan build . -pr=conan/profiles/release-clang-emscripten-wasm -pr:b=conan/profiles/release -b missing
-#        shell: bash
-#      - name: Upload release asset
-#        uses: softprops/action-gh-release@v2
-#        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
-#        with:
-#          files: |
-#            build/Release/emscripten/cqasm_emscripten.js
-#            build/Release/emscripten/cqasm_emscripten.wasm
-#          token: ${{ secrets.GITHUB_TOKEN }}
-#
-#  publish:
-#    name: Publish
-#    if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
-#    needs:
-#      - cibw-wheels
-#      - cibw-wheels-linux-arm64
-#      - emscripten-wasm
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Download artifacts
-#        uses: actions/download-artifact@v4
-#        id: download
-##      - name: Publish to PyPI
-##        uses: pypa/gh-action-pypi-publish@v1.8.14
-##        with:
-##          user: __token__
-##          password: ${{ secrets.PYPI_TOKEN }}
-##          packages_dir: ${{ steps.download.outputs.download-path }}/pypi-*
+#          user: __token__
+#          password: ${{ secrets.PYPI_TOKEN }}
+#          packages_dir: ${{ steps.download.outputs.download-path }}/pypi-*
