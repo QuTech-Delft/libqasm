@@ -46,15 +46,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-      - name: Install cibuildwheel
-        run: python -m pip install cibuildwheel==2.18.1
       - name: Install docker
         run: |
           yum install -y yum-utils
           yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
           yum install -y docker-ce-cli
-      - name: Build wheels
-        run: python -m cibuildwheel --output-dir wheelhouse
+      - name: Install cibuildwheel and build wheels
+        run: |
+          export PATH="/opt/python/cp312-cp312/bin:$PATH"
+          python -m pip install cibuildwheel==2.18.1
+          python -m cibuildwheel --output-dir wheelhouse
         env:
           CIBW_BEFORE_ALL_LINUX: yum install -y java-11-openjdk
       - uses: actions/upload-artifact@v4
