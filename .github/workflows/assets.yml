@@ -36,6 +36,8 @@ jobs:
       image: quay.io/pypa/manylinux${{ matrix.manylinux }}_aarch64:latest
       volumes:
         - /var/run/docker.sock:/var/run/docker.sock
+    env:
+      CIBW_BEFORE_ALL_LINUX: yum install -y java-11-openjdk
     strategy:
       matrix:
         manylinux:
@@ -56,12 +58,11 @@ jobs:
         run: |
           export PATH="/opt/python/${{ matrix.cpython_version }}/bin:$PATH"
           python -m pip install cibuildwheel==2.18.1
-      - name: Install dependencies
+      - name: Install docker
         run: |
           yum install -y yum-utils
           yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
           yum install -y docker-ce-cli
-          yum install -y java swig
       - name: Build wheels
         run: |
           export PATH="/opt/python/${{ matrix.cpython_version }}/bin:$PATH"
