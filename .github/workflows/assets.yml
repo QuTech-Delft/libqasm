@@ -29,16 +29,13 @@ jobs:
 #          name: cibw-wheels-${{ matrix.os }}
 #          path: ./wheelhouse/*.whl
 
-  cibw-wheels-linux-aarch64:
+  cibw-wheels-linux-arm64:
     name: Build wheels on ${{ matrix.os }}
     runs-on: [self-hosted, ARM64, Linux]
     container:
       image: quay.io/pypa/manylinux${{ matrix.manylinux }}_aarch64:latest
       volumes:
         - /var/run/docker.sock:/var/run/docker.sock
-    env:
-      JAVA_VERSION: ${{ matrix.java_version }}
-      SWIG_VERSION: ${{ matrix.swig_version }}
     strategy:
       matrix:
         manylinux:
@@ -51,8 +48,6 @@ jobs:
         #          - "cp312-cp312"
         include:
           - manylinux: _2_28
-            java_version: 'java-11-openjdk-11.0.21.0.9-2.el8'
-            swig_version: 'swig-3.0.12-19.module_el8.4.0+2254+838326ab'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -61,15 +56,12 @@ jobs:
         run: |
           export PATH="/opt/python/${{ matrix.cpython_version }}/bin:$PATH"
           python -m pip install cibuildwheel==2.18.1
-      - name: Install docker
+      - name: Install dependencies
         run: |
           yum install -y yum-utils
           yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
           yum install -y docker-ce-cli
-      - name: Install dependencies
-        run: |
-          dnf install -y $JAVA_VERSION $SWIG_VERSION
-          export PATH="/opt/python/${{ matrix.cpython_version }}/bin:$PATH"
+          yum install -y java swig
       - name: Build wheels
         run: |
           export PATH="/opt/python/${{ matrix.cpython_version }}/bin:$PATH"
