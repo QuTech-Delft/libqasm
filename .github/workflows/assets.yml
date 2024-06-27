@@ -36,18 +36,10 @@ jobs:
       image: quay.io/pypa/manylinux${{ matrix.manylinux }}_aarch64:latest
       volumes:
         - /var/run/docker.sock:/var/run/docker.sock
-    env:
-      CIBW_BEFORE_ALL_LINUX: yum install -y java-11-openjdk
     strategy:
       matrix:
         manylinux:
           - "_2_28"
-        cpython_version:
-          - "cp38-cp38"
-          - "cp39-cp39"
-          - "cp310-cp310"
-          - "cp311-cp311"
-          - "cp312-cp312"
         include:
           - manylinux: _2_28
     steps:
@@ -55,18 +47,16 @@ jobs:
         uses: actions/checkout@v4
       - uses: actions/setup-python@v5
       - name: Install cibuildwheel
-        run: |
-          export PATH="/opt/python/${{ matrix.cpython_version }}/bin:$PATH"
-          python -m pip install cibuildwheel==2.18.1
+        run: python -m pip install cibuildwheel==2.18.1
       - name: Install docker
         run: |
           yum install -y yum-utils
           yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
           yum install -y docker-ce-cli
       - name: Build wheels
-        run: |
-          export PATH="/opt/python/${{ matrix.cpython_version }}/bin:$PATH"
-          python -m cibuildwheel --output-dir wheelhouse
+        run: python -m cibuildwheel --output-dir wheelhouse
+        env:
+          CIBW_BEFORE_ALL_LINUX: yum install -y java-11-openjdk
       - uses: actions/upload-artifact@v4
         with:
           name: cibw-wheels-linux-arm64
