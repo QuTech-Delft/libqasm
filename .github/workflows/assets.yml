@@ -32,17 +32,20 @@ jobs:
   cibw-wheels-linux-aarch64:
     name: Build wheels on ${{ matrix.os }}
     runs-on: [self-hosted, ARM64, Linux]
-    container: quay.io/pypa/manylinux${{ matrix.manylinux }}_aarch64:latest
+    container:
+      image: quay.io/pypa/manylinux${{ matrix.manylinux }}_aarch64:latest
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
     strategy:
       matrix:
         manylinux:
           - "_2_28"
         cpython_version:
-#          - "cp38-cp38"
-#          - "cp39-cp39"
-#          - "cp310-cp310"
+          #          - "cp38-cp38"
+          #          - "cp39-cp39"
+          #          - "cp310-cp310"
           - "cp311-cp311"
-#          - "cp312-cp312"
+        #          - "cp312-cp312"
         include:
           - manylinux: _2_28
     steps:
@@ -53,7 +56,11 @@ jobs:
         run: |
           export PATH="/opt/python/${{ matrix.cpython_version }}/bin:$PATH"
           python -m pip install cibuildwheel==2.18.1
-          dnf install -y docker
+      - name: Install docker
+        run: |
+          yum install -y yum-utils
+          yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+          yum install -y docker-ce-cli
       - name: Build wheels
         run: |
           export PATH="/opt/python/${{ matrix.cpython_version }}/bin:$PATH"
