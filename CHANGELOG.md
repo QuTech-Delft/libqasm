@@ -13,7 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Fix Python MacOS/x64 (with Python > 3.11) packages.
 
 ### Removed
-
+- Python 3.8 packages generation.
 
 ## [ 0.6.6 ] - [ 2024-05-14 ]
 
