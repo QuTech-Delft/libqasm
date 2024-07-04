@@ -45,6 +45,12 @@ def serialize(typ, val):
 def deserialize(typ, val):
     if isinstance(typ, str):
         return None
+    elif isinstance(val['x'], bytes) and typ is Str:
+        # CBOR strings are serialized as bytes objects
+        # The correct conversion to Str is through a decoding
+        # Str(b'qubit', 'utf-8') would generate the string "qubit". This is the same as b'qubit'.decode('utf-8')
+        # Whereas Str(b'qubit') would generate the string "b'qubit'"
+        return Str(val['x'], 'utf-8')
     elif typ is Str:
         return Str(val['x'])
     elif typ is Bool:

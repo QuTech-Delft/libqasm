@@ -12,26 +12,26 @@ class TestV3xAnalyzer(unittest.TestCase):
         self.assertEqual(ast.version.items[0], 3)
 
         qubit_array = ast.block.statements[0]
-        self.assertEqual(qubit_array.name.name, "b'q'")
-        self.assertEqual(qubit_array.typ.name.name, "b'qubit'")
+        self.assertEqual(qubit_array.name.name, "q")
+        self.assertEqual(qubit_array.typ.name.name, "qubit")
         self.assertEqual(qubit_array.typ.size.value, 5)
 
         bit_array = ast.block.statements[1]
-        self.assertEqual(bit_array.name.name, "b'b'")
-        self.assertEqual(bit_array.typ.name.name, "b'bit'")
+        self.assertEqual(bit_array.name.name, "b")
+        self.assertEqual(bit_array.typ.name.name, "bit")
         self.assertEqual(bit_array.typ.size.value, 5)
 
         h_instruction = ast.block.statements[2]
-        self.assertEqual(h_instruction.name.name, "b'H'")
+        self.assertEqual(h_instruction.name.name, "H")
         h_operand = h_instruction.operands.items[0]
-        self.assertEqual(h_operand.expr.name, "b'q'")
+        self.assertEqual(h_operand.expr.name, "q")
         self.assertEqual(h_operand.indices.items[0].first.value, 0)
         self.assertEqual(h_operand.indices.items[0].last.value, 4)
 
         measure_instruction = ast.block.statements[3]
-        self.assertEqual(measure_instruction.name.name, "b'measure'")
-        self.assertEqual(measure_instruction.lhs.name, "b'b'")
-        self.assertEqual(measure_instruction.rhs.name, "b'q'")
+        self.assertEqual(measure_instruction.name.name, "measure")
+        self.assertEqual(measure_instruction.lhs.name, "b")
+        self.assertEqual(measure_instruction.rhs.name, "q")
 
     def test_parse_string_returning_errors(self):
         program_str = "version 3;qubit[5] q;bit[5] b;H q[0:4];b = measure"
@@ -49,9 +49,9 @@ class TestV3xAnalyzer(unittest.TestCase):
         self.assertEqual(ast.version.items[0], 3)
 
         h_instruction = ast.block.statements[0]
-        self.assertEqual(h_instruction.name, "b'H'")
+        self.assertEqual(h_instruction.name, "H")
         h_operand = h_instruction.operands[0]
-        self.assertEqual(h_operand.variable.name, "b'q'")
+        self.assertEqual(h_operand.variable.name, "q")
         self.assertIsInstance(h_operand.variable.typ, cq.types.QubitArray)
         self.assertEqual(h_operand.variable.typ.size, 5)
         self.assertEqual(h_operand.indices[0].value, 0)
@@ -61,21 +61,21 @@ class TestV3xAnalyzer(unittest.TestCase):
         self.assertEqual(h_operand.indices[4].value, 4)
 
         measure_instruction = ast.block.statements[1]
-        self.assertEqual(measure_instruction.name, "b'measure'")
+        self.assertEqual(measure_instruction.name, "measure")
         measure_bit_operand = measure_instruction.operands[0]
-        self.assertEqual(measure_bit_operand.variable.name, "b'b'")
+        self.assertEqual(measure_bit_operand.variable.name, "b")
         self.assertIsInstance(measure_bit_operand.variable.typ, cq.types.BitArray)
         self.assertEqual(measure_bit_operand.variable.typ.size, 5)
         measure_qubit_operand = measure_instruction.operands[1]
-        self.assertEqual(measure_qubit_operand.variable.name, "b'q'")
+        self.assertEqual(measure_qubit_operand.variable.name, "q")
         self.assertIsInstance(measure_qubit_operand.variable.typ, cq.types.QubitArray)
         self.assertEqual(measure_qubit_operand.variable.typ.size, 5)
 
         qubit_array = ast.variables[0]
-        self.assertEqual(qubit_array.name, "b'q'")
+        self.assertEqual(qubit_array.name, "q")
         self.assertIsInstance(qubit_array.typ, cq.types.QubitArray)
         bit_array = ast.variables[1]
-        self.assertEqual(bit_array.name, "b'b'")
+        self.assertEqual(bit_array.name, "b")
         self.assertIsInstance(bit_array.typ, cq.types.BitArray)
 
     def test_analyze_string_returning_errors(self):
