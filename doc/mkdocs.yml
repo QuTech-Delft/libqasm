@@ -36,6 +36,7 @@ nav:
   - User Guide:
     - User Guide: user-guide/user-guide.md
     - C++: user-guide/cpp.md
+    - Docker: user-guide/docker.md
     - Emscripten: user-guide/emscripten.md
     - Python: user-guide/python.md
   - Developer Guide:

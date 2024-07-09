@@ -1,4 +1,4 @@
-`libqasm` can be imported as a Python package. 
+libQASM can be imported as a Python package. 
 
 **Example**:
 

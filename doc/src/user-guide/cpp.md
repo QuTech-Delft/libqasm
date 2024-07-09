@@ -1,4 +1,4 @@
-`libqasm` can be requested as a Conan package from a `conanfile.py`.
+libQASM can be requested as a Conan package from a `conanfile.py`.
 
 ```
 def build_requirements(self):
@@ -13,9 +13,8 @@ And then linked against from a `CMakeLists.txt`:
 target_link_libraries(<your target> PUBLIC libqasm::libqasm)
 ```
 
-Note that the following dependency is required for `libqasm` to build:
-
-* `Java JRE` >= 11
+!!! note
+    You will need to have `Java JRE` >= 11 installed in case Conan needs to build libQASM.
 
 **Example**:
 
