@@ -1,0 +1,59 @@
+site_name: libQASM
+
+docs_dir: ../doc/src
+
+repo_url: https://github.com/QuTech-Delft/libqasm
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.top
+    - toc.integrate
+
+extra_javascript:
+  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js
+  - cpp_highlighting.js
+  - python_highlighting.js
+  - typescript_highlighting.js
+
+extra_css:
+  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css
+  - libqasm.css
+
+markdown_extensions:
+  - admonition
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+
+nav:
+  - Home: index.md
+  - User Guide:
+    - User Guide: user-guide/user-guide.md
+    - C++: user-guide/cpp.md
+    - Emscripten: user-guide/emscripten.md
+    - Python: user-guide/python.md
+  - Developer Guide:
+    - Dev Guide: dev-guide/dev-guide.md
+    - C++: dev-guide/cpp.md
+    - Emscripten: dev-guide/emscripten.md
+    - Python: dev-guide/python.md
+  - API:
+    - C++: api/cpp.md
+    - Emscripten: api/emscripten.md
+    - Python: api/python.md
+  - About:
+    - Release Notes: about/release-notes.md
+    - Contributing: about/contributing.md
+    - License: about/license.md
+    - Authors: about/authors.md
+
+extra:
+  version:
+    provider: mike
+  generator: false
