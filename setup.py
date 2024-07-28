@@ -14,8 +14,6 @@ from distutils.command.build import build as _build
 from setuptools.command.install import install as _install
 
 
-# TODO: I had to copy-paste get_version from version.py here
-#  because I couldn't get 'from version import get_version' work with pyproject.toml
 def get_version(verbose=False):
     """Extract version information from source code"""
     inc_dir = root_dir + os.sep + "include"  # C++ include directory
