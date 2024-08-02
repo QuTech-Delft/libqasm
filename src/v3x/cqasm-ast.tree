@@ -186,6 +186,11 @@ annotated {
                     lhs: One<expression>;
                     rhs: One<expression>;
                 }
+
+                reset_instruction {
+                    name: One<identifier>;
+                    operand: Maybe<expression>;
+                }
             }
         }
     }

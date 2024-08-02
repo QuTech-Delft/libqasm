@@ -32,6 +32,7 @@ variableDefinition: type IDENTIFIER;
 
 instruction:
     expression EQUALS MEASURE expression  # measureInstruction
+    | RESET (expression)?  # resetInstruction
     | IDENTIFIER (OPEN_PARENS expression CLOSE_PARENS)? expressionList  # gate
     ;
 

@@ -49,6 +49,7 @@ TERNARY_CONDITIONAL_OP: '?';
 // Keywords
 VERSION: 'version' -> pushMode(VERSION_STATEMENT);
 MEASURE: 'measure';
+RESET: 'reset';
 QUBIT_TYPE: 'qubit';
 BIT_TYPE: 'bit';
 
