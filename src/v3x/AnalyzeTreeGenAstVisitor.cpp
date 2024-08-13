@@ -232,6 +232,34 @@ std::any AnalyzeTreeGenAstVisitor::visit_measure_instruction(ast::MeasureInstruc
     return ret;
 }
 
+std::any AnalyzeTreeGenAstVisitor::visit_reset_instruction(ast::ResetInstruction &node) {
+    auto ret = tree::Maybe<semantic::Instruction>();
+    try {
+        // Set operand
+        // Notice operands have to be added in this order
+        // Otherwise instruction resolution would fail
+        auto operands = values::Values();
+        if (!node.operand.empty()) {
+            operands.add(std::any_cast<values::Value>(visit_expression(*node.operand)));
+        }
+
+        // Resolve the instruction
+        ret.set(analyzer_.resolve_instruction(node.name->name, operands));
+
+        // Copy annotation data
+        ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
+        ret->copy_annotation<parser::SourceLocation>(node);
+
+        // Add the statement to the current scope
+        analyzer_.add_statement_to_current_scope(ret);
+    } catch (error::AnalysisError &err) {
+        err.context(node);
+        result_.errors.push_back(std::move(err));
+        ret.reset();
+    }
+    return ret;
+}
+
 std::any AnalyzeTreeGenAstVisitor::visit_expression_list(ast::ExpressionList &node) {
     auto ret = values::Values();
     std::transform(

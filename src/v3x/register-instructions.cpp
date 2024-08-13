@@ -38,6 +38,9 @@ void register_instructions(analyzer::Analyzer *analyzer) {
     analyzer->register_instruction("mX90", "V");
     analyzer->register_instruction("mY90", "Q");
     analyzer->register_instruction("mY90", "V");
+    analyzer->register_instruction("reset", std::nullopt);
+    analyzer->register_instruction("reset", "Q");
+    analyzer->register_instruction("reset", "V");
     analyzer->register_instruction("Rx", "Qf");
     analyzer->register_instruction("Rx", "Vf");
     analyzer->register_instruction("Ry", "Qf");
