@@ -20,7 +20,7 @@ namespace cqasm::v3x::types {
  *  - i = int
  *  - f = float
  *  - V = qubit array
-  *  - W = bit array
+ *  - W = bit array
  */
 Type from_spec(const char c) {
     switch (c) {
