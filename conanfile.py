@@ -30,6 +30,7 @@ class LibqasmConan(ConanFile):
         "shared": [True, False],
         "fPIC": [True, False],
         "asan_enabled": [True, False],
+        "build_docs": [True, False],
         "build_python": [True, False],
         "cqasm_python_dir": [None, "ANY"],
         "python_dir": [None, "ANY"],
@@ -39,6 +40,7 @@ class LibqasmConan(ConanFile):
         "shared": False,
         "fPIC": True,
         "asan_enabled": False,
+        "build_docs": False,
         "build_python": False,
         "cqasm_python_dir": None,
         "python_dir": None,
@@ -120,6 +122,7 @@ class LibqasmConan(ConanFile):
         tc = CMakeToolchain(self)
         tc.variables["ASAN_ENABLED"] = self.options.asan_enabled
         tc.variables["BUILD_SHARED_LIBS"] = self.options.shared
+        tc.variables["LIBQASM_BUILD_DOCS"] = self.options.build_docs
         tc.variables["LIBQASM_BUILD_EMSCRIPTEN"] = self.settings.arch == "wasm"
         tc.variables["LIBQASM_BUILD_PYTHON"] = self.options.build_python
         tc.variables["LIBQASM_BUILD_TESTS"] = self._should_build_test

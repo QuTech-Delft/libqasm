@@ -1,0 +1,50 @@
+#!/usr/bin/python3
+
+# A script to invoke mkdocs with the correct environment.
+# Additionally, it supports deploying via mike:
+#   ./mkdocs deploy [mike-deploy-options]
+
+import errno
+import os
+import shutil
+import sys
+from subprocess import call
+
+doc_dir = os.path.dirname(os.path.normpath(__file__))
+scripts_dir = os.path.join(os.path.dirname(doc_dir), 'scripts')
+build_dir = os.path.join(os.path.dirname(doc_dir), 'build', 'Release', 'doc')
+
+# Set PYTHONPATH for the mkdocstrings handler.
+env = os.environ.copy()
+path = env.get('PYTHONPATH')
+env['PYTHONPATH'] = \
+  (path + ':' if path else '') + os.path.join(scripts_dir, 'python')
+
+config_path = os.path.join(doc_dir, 'mkdocs.yml')
+args = sys.argv[1:]
+if len(args) > 0:
+    command = args[0]
+    if command == 'deploy':
+        git_url = 'https://github.com/' if 'CI' in os.environ else 'git@github.com:'
+        site_repo = git_url + 'QuTech-Delft/libqasm.git'
+
+        site_dir = os.path.join(build_dir, 'libqasm')
+        try:
+            shutil.rmtree(site_dir)
+        except OSError as e:
+            if e.errno == errno.ENOENT:
+                pass
+        ret = call(['git', 'clone', '--depth=1', site_repo, site_dir])
+        if ret != 0:
+            sys.exit(ret)
+
+        # Copy the config to the build dir because the site is built relative to it.
+        config_build_path = os.path.join(build_dir, 'mkdocs.yml')
+        shutil.copyfile(config_path, config_build_path)
+
+        sys.exit(call(
+          ['mike'] + args + ['--config-file', config_build_path, '--branch', 'master'], cwd=site_dir, env=env)
+        )
+    elif not command.startswith('-'):
+        args += ['-f', config_path]
+sys.exit(call(['mkdocs'] + args, env=env))
