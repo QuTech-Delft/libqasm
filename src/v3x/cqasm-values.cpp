@@ -4,7 +4,6 @@
 
 #include "v3x/cqasm-values.hpp"
 
-#include <cassert>
 #include <fmt/format.h>
 #include <fmt/ranges.h>
 #include <ostream>
