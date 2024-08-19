@@ -84,3 +84,15 @@ class TestV3xAnalyzer(unittest.TestCase):
         errors = v3x_analyzer.analyze_string(program_str)
         expected_errors = ["Error at <unknown file name>:1:24..25: index 3 out of range (size 3)"]
         self.assertEqual(errors, expected_errors)
+
+    def test_to_json_vrsion(self):
+        """This test is used to check that a program with a syntactic error
+        produces the same error message both when parsing and analyzing."""
+        # res/v3x/parsing/version/vrsion
+        program_str = "vrsion 3"
+        v3x_analyzer = cq.Analyzer()
+        actual_parse_json = v3x_analyzer.parse_string_to_json(program_str)
+        actual_analyze_json = v3x_analyzer.analyze_string_to_json(program_str)
+        self.assertEqual(actual_parse_json, actual_analyze_json)
+        expected_json = '''{"errors":[{"range":{"start":{"line":1,"character":1},"end":{"line":1,"character":7}},"message":"mismatched input 'vrsion' expecting {NEW_LINE, ';', 'version'}","severity":1}]}'''
+        self.assertEqual(actual_parse_json, expected_json)
