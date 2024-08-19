@@ -5,7 +5,7 @@
 #include "cqasm-version.hpp"
 
 #include <fmt/format.h>
-
+#include <fmt/ranges.h>
 #include <memory>
 
 namespace cqasm::version {

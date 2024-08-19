@@ -5,6 +5,8 @@
 #include "v3x/cqasm-types.hpp"
 
 #include <fmt/ostream.h>
+#include <fmt/ranges.h>
+
 
 namespace cqasm::v3x::types {
 
