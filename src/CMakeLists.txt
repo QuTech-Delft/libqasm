@@ -74,12 +74,8 @@ if(NOT range-v3_FOUND)
     add_library(range-v3::range-v3 ALIAS range-v3)
 endif()
 
-# tree-gen executable
-find_package(tree-gen REQUIRED)
-find_program(TREE_GEN_EXECUTABLE tree-gen REQUIRED)
-message(STATUS "TREE_GEN_EXECUTABLE: ${TREE_GEN_EXECUTABLE}")
-
 # tree-gen library
+find_package(tree-gen REQUIRED)
 if(NOT tree-gen_FOUND OR LIBQASM_BUILD_EMSCRIPTEN)
     message(STATUS "Fetching tree-gen")
     FetchContent_Declare(tree-gen
@@ -89,6 +85,10 @@ if(NOT tree-gen_FOUND OR LIBQASM_BUILD_EMSCRIPTEN)
     )
     FetchContent_MakeAvailable(tree-gen)
 endif()
+
+# tree-gen executable
+find_program(TREE_GEN_EXECUTABLE tree-gen REQUIRED)
+message(STATUS "TREE_GEN_EXECUTABLE: ${TREE_GEN_EXECUTABLE}")
 
 #-------------------------------------------------------------------------------
 # cQASM common code generation and inclusion

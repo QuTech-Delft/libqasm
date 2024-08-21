@@ -28,6 +28,7 @@ Build outputs may go into:
 - `git`
 - `Python` 3.x plus `pip`, with the following package:
     - `conan` >= 2.0
+- `SWIG`
 
 ### ARM builds
 
@@ -48,7 +49,7 @@ For the time being, we install Java manually for this platform.
 
 ## Build
 
-This version of `libqasm` can only be compiled via the Conan package manager.
+This version of libQASM can only be compiled via the Conan package manager.
 You will need to create a default profile before using it for the first time.
 
 The installation of dependencies, as well as the compilation, can be done in one go.
@@ -63,14 +64,14 @@ conan build . -pr:a=conan/profiles/tests-debug -b missing
 !!! note
 
     - the `conan profile` command only has to be run only once, and not before every build.
-    - the `conan build` command is building `libqasm` in Debug mode with tests using the `tests-debug` profile.
+    - the `conan build` command is building libQASM in Debug mode with tests using the `tests-debug` profile.
     - the `-b missing` parameter asks `conan` to build packages from sources
       in case it cannot find the binary packages for the current configuration (platform, OS, compiler, build type...).
 
 ### Profiles
 
 A group of predefined profiles is provided under the `conan/profiles` folder.  
-They follow the `[tests|docs](-build_type)(-compiler)(-os)(-arch)[-shared]` naming convention:
+They follow the `[tests-|docs-](build_type)(-compiler)(-os)(-arch)[-shared]` naming convention:
 
 - `tests`: if tests are being built.
 - `docs`: if docs are being built.
@@ -113,7 +114,7 @@ python3 mkdocs serve
 
 ## Docker
 
-This tests the library in a container with the bare minimum requirements for `libqasm`.
+This tests the library in a container with the bare minimum requirements for libQASM.
 
 ```shell
 docker build .
