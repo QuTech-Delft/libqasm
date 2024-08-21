@@ -1,0 +1,48 @@
+name: Publish MkDocs
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+  release:
+    types:
+      - created
+
+jobs:
+  build:
+    name: Publish documentation
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type:
+          - Release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build
+        uses: ./.github/actions/cpp-tests
+        with:
+          build_type: ${{ matrix.build_type }}
+          conan_profile_host: conan/profiles/docs-${{ matrix.build_type }}-gcc-linux-x64
+          shell: bash
+      - name: Configure Git
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+          git fetch origin gh-pages:gh-pages
+      - name: Dry run
+        if: github.event_name == 'pull_request'
+        run: |
+          mkdocs build
+      - name: Upload and tag as latest
+        if: github.ref == 'refs/heads/master'
+        run: |
+          mike deploy --push latest
+          mike set-default --push latest
+      - name: Upload and tag as git tag
+        if: github.event_name == 'release' && github.event.action == 'created'
+        run: |
+          mike deploy --push ${{ github.ref }}
+          mike set-default --push latest
