@@ -13,17 +13,33 @@ jobs:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         # macos-13 is an x64 runner, macos-14 is an arm64 runner
         os: [ubuntu-latest, windows-latest, macos-13, macos-14]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Set up QEMU
+        if: runner.os == 'Linux'
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: all
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.18.1
+        env:
+          # Configure cibuildwheel to build native archs ('auto'), and some emulated ones
+          CIBW_ARCHS_LINUX: auto aarch64
       - uses: actions/setup-python@v5
       - name: Install cibuildwheel
-        run: python -m pip install cibuildwheel==2.18.1
+        run: |
+          export PATH="/opt/python/${{ matrix.cpython_version }}/bin:$PATH"
+          python -m pip install cibuildwheel==2.18.1
+          dnf install -y docker
       - name: Build wheels
-        run: python -m cibuildwheel --output-dir wheelhouse
+        run: |
+          export PATH="/opt/python/${{ matrix.cpython_version }}/bin:$PATH"
+          python -m cibuildwheel --output-dir wheelhouse
       - uses: actions/upload-artifact@v4
         with:
           name: cibw-wheels-${{ matrix.os }}

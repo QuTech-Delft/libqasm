@@ -95,13 +95,12 @@ if __name__ == "__main__":
 
 ## Documentation
 
-The [libQASM documentation](https://QuTech-Delft.github.io/OpenSquirrel/) is hosted through GitHub Pages.
+The [libQASM documentation](https://QuTech-Delft.github.io/libqasm/) is hosted through GitHub Pages.
 
 ## License
 
-libQASM is licensed under the Apache License, Version 2.0. See
-[LICENSE](https://github.com/QuTech-Delft/OpenSquirrel/blob/master/LICENSE.md) for the full
-license text.
+libQASM is licensed under the Apache License, Version 2.0.
+See [LICENSE](https://github.com/QuTech-Delft/libqasm/blob/master/LICENSE.md) for the full license text.
 
 ## Authors
 

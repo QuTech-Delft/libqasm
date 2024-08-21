@@ -30,6 +30,25 @@ def get_version(verbose=False):
     return version
 
 
+
+# TODO: I had to copy-paste get_version from version.py here
+#  because I couldn't get 'from version import get_version' work with pyproject.toml
+def get_version(verbose=False):
+    """Extract version information from source code"""
+    inc_dir = root_dir + os.sep + "include"  # C++ include directory
+    matcher = re.compile('static const char \*version\{ "(.*)" \}')
+    version = None
+    with open(os.path.join(inc_dir, "version.hpp"), "r") as f:
+        for ln in f:
+            m = matcher.match(ln)
+            if m:
+                version = m.group(1)
+                break
+    if verbose:
+        print("get_version: %s" % version)
+    return version
+
+
 root_dir = os.getcwd()  # root of the repository
 src_dir = root_dir + os.sep + 'src'  # C++ source directory
 pysrc_dir = root_dir + os.sep + 'python'  # Python source files
