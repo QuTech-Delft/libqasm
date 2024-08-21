@@ -1,4 +1,4 @@
-name: Publish MkDocs
+name: Doc
 
 on:
   pull_request:
@@ -10,8 +10,8 @@ on:
       - created
 
 jobs:
-  build:
-    name: Publish documentation
+  publish-github-pages:
+    name: Publish GitHub pages
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

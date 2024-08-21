@@ -104,8 +104,8 @@ jobs:
             build/Release/emscripten/cqasm_emscripten.wasm
           token: ${{ secrets.GITHUB_TOKEN }}
 
-  publish:
-    name: Publish
+  publish-python-packages:
+    name: Publish Python packages
     needs:
       - cibw-wheels
       - cibw-wheels-linux-arm64
