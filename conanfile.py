@@ -90,13 +90,13 @@ class LibqasmConan(ConanFile):
         self.cpp.build.libdirs = ["."]
 
     def build_requirements(self):
-        self.tool_requires("tree-gen/1.0.7")
+        self.tool_requires("tree-gen/1.0.8")
         if self.settings.arch != "armv8":
             self.tool_requires("zulu-openjdk/21.0.1")
         if self.settings.arch == "wasm":
             self.tool_requires("emsdk/3.1.50")
         if self._should_build_test:
-            self.test_requires("gtest/1.14.0")
+            self.test_requires("gtest/1.15.0")
 
     def validate(self):
         if self.settings.compiler.cppstd:
@@ -110,9 +110,9 @@ class LibqasmConan(ConanFile):
             raise ConanInvalidConfiguration(f"{self.ref} requires antlr4-cppruntime to be built with the same shared option value.")
 
     def requirements(self):
-        self.requires("fmt/10.2.1", transitive_headers=True)
+        self.requires("fmt/11.0.2", transitive_headers=True)
         self.requires("range-v3/0.12.0", transitive_headers=True)
-        self.requires("tree-gen/1.0.7", transitive_headers=True, transitive_libs=True)
+        self.requires("tree-gen/1.0.8", transitive_headers=True, transitive_libs=True)
         if not self.settings.arch == "wasm":
             self.requires("antlr4-cppruntime/4.13.1", transitive_headers=True)
 
