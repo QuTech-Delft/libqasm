@@ -427,6 +427,27 @@
   
   
     <li class="md-nav__item">
+      <a href="../../user-guide/docker/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Docker
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../user-guide/emscripten/" class="md-nav__link">
         
   
@@ -1020,6 +1041,7 @@
 <li><code>conan</code> &gt;= 2.0</li>
 </ul>
 </li>
+<li><code>SWIG</code></li>
 </ul>
 <h3 id="arm-builds">ARM builds</h3>
 <p>We are having problems when using the <code>zulu-openjdk</code> Conan package on an ARMv8 architecture.
@@ -1040,7 +1062,7 @@ For the time being, we install Java manually for this platform.</p>
 </li>
 </ul>
 <h2 id="build">Build</h2>
-<p>This version of <code>libqasm</code> can only be compiled via the Conan package manager.
+<p>This version of libQASM can only be compiled via the Conan package manager.
 You will need to create a default profile before using it for the first time.</p>
 <p>The installation of dependencies, as well as the compilation, can be done in one go.</p>
 <pre><code class="language-shell">git clone https://github.com/QuTech-Delft/libqasm.git
@@ -1052,14 +1074,14 @@ conan build . -pr:a=conan/profiles/tests-debug -b missing
 <p class="admonition-title">Note</p>
 <ul>
 <li>the <code>conan profile</code> command only has to be run only once, and not before every build.</li>
-<li>the <code>conan build</code> command is building <code>libqasm</code> in Debug mode with tests using the <code>tests-debug</code> profile.</li>
+<li>the <code>conan build</code> command is building libQASM in Debug mode with tests using the <code>tests-debug</code> profile.</li>
 <li>the <code>-b missing</code> parameter asks <code>conan</code> to build packages from sources
   in case it cannot find the binary packages for the current configuration (platform, OS, compiler, build type...).</li>
 </ul>
 </div>
 <h3 id="profiles">Profiles</h3>
 <p>A group of predefined profiles is provided under the <code>conan/profiles</code> folder.<br />
-They follow the <code>[tests|docs](-build_type)(-compiler)(-os)(-arch)[-shared]</code> naming convention:</p>
+They follow the <code>[tests-|docs-](build_type)(-compiler)(-os)(-arch)[-shared]</code> naming convention:</p>
 <ul>
 <li><code>tests</code>: if tests are being built.</li>
 <li><code>docs</code>: if docs are being built.</li>
@@ -1091,7 +1113,7 @@ cd doc
 python3 mkdocs serve
 </code></pre>
 <h2 id="docker">Docker</h2>
-<p>This tests the library in a container with the bare minimum requirements for <code>libqasm</code>.</p>
+<p>This tests the library in a container with the bare minimum requirements for libQASM.</p>
 <pre><code class="language-shell">docker build .
 </code></pre>
 <p><strong>Note for Windows users:</strong> The above might fail on Windows due to the <code>autocrlf</code> transformation that git does.

@@ -12,7 +12,7 @@
         <link rel="prev" href="../user-guide/">
       
       
-        <link rel="next" href="../emscripten/">
+        <link rel="next" href="../docker/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -423,6 +423,27 @@
 
       </a>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../docker/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Docker
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -863,7 +884,7 @@
 
   <h1>C++</h1>
 
-<p><code>libqasm</code> can be requested as a Conan package from a <code>conanfile.py</code>.</p>
+<p>libQASM can be requested as a Conan package from a <code>conanfile.py</code>.</p>
 <pre><code>def build_requirements(self):
     self.tool_requires(&quot;libqasm/0.6.6&quot;)
 def requirements(self):
@@ -872,10 +893,10 @@ def requirements(self):
 <p>And then linked against from a <code>CMakeLists.txt</code>:</p>
 <pre><code>target_link_libraries(&lt;your target&gt; PUBLIC libqasm::libqasm)
 </code></pre>
-<p>Note that the following dependency is required for <code>libqasm</code> to build:</p>
-<ul>
-<li><code>Java JRE</code> &gt;= 11</li>
-</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You will need to have <code>Java JRE</code> &gt;= 11 installed in case Conan needs to build libQASM.</p>
+</div>
 <p><strong>Example</strong>:</p>
 <pre><code class="language-cpp">#include &quot;v3x/cqasm-py.hpp&quot;
 

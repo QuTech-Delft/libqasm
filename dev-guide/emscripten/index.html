@@ -422,6 +422,27 @@
   
   
     <li class="md-nav__item">
+      <a href="../../user-guide/docker/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Docker
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../user-guide/emscripten/" class="md-nav__link">
         
   
@@ -872,8 +893,11 @@ The generation of Emscripten binaries has been tested as a cross-compilation fro
 <li><code>cqasm_emscripten.js</code>.</li>
 <li><code>cqasm_emscripten.wasm</code>.</li>
 </ul>
-<p>Note that <code>cqasm_emscripten.js</code> is an ES6 module.
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code>cqasm_emscripten.js</code> is an ES6 module.
 Its extension has to be renamed to <code>.mjs</code> before using it from Typescript code.</p>
+</div>
 <p>You can test the Emscripten binaries:</p>
 <pre><code class="language-shell">cd build/Release/emscripten
 mv cqasm_emscripten.js cqasm_emscripten.mjs
