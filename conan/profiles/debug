@@ -7,8 +7,5 @@ libqasm/*:build_type=Debug
 [options]
 libqasm/*:asan_enabled=False
 
-[conf]
-tools.build:skip_test=True
-
 [replace_requires]
 nodejs/*: nodejs/16.20.2

@@ -12,19 +12,29 @@ from distutils.command.clean import clean as _clean
 from setuptools.command.build_ext import build_ext as _build_ext
 from distutils.command.build import build as _build
 from setuptools.command.install import install as _install
-from distutils.command.bdist import bdist as _bdist
-from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
-from distutils.command.sdist import sdist as _sdist
-from setuptools.command.egg_info import egg_info as _egg_info
 
-from version import get_version
+
+def get_version(verbose=False):
+    """Extract version information from source code"""
+    inc_dir = root_dir + os.sep + "include"  # C++ include directory
+    matcher = re.compile('static const char \*version\{ "(.*)" \}')
+    version = None
+    with open(os.path.join(inc_dir, "version.hpp"), "r") as f:
+        for ln in f:
+            m = matcher.match(ln)
+            if m:
+                version = m.group(1)
+                break
+    if verbose:
+        print("get_version: %s" % version)
+    return version
+
 
 root_dir = os.getcwd()  # root of the repository
 src_dir = root_dir + os.sep + 'src'  # C++ source directory
 pysrc_dir = root_dir + os.sep + 'python'  # Python source files
 target_dir = root_dir + os.sep + 'pybuild'  # python-specific build directory
 build_dir = target_dir + os.sep + 'build'  # directory for setuptools to dump various files into
-dist_dir = target_dir + os.sep + 'dist'  # wheel output directory
 cbuild_dir = target_dir + os.sep + 'cbuild'  # cmake build directory
 prefix_dir = target_dir + os.sep + 'prefix'  # cmake install prefix
 srcmod_dir = pysrc_dir + os.sep + 'module'  # libqasm Python module directory, source files only
@@ -107,8 +117,8 @@ class build_ext(_build_ext):
                 ['-b']['missing']
                 ['-tf']['']
             )
-            if not build_tests:
-                cmd = cmd['-c']['tools.build:skip_test=True']
+            if build_tests == "True":
+                cmd = cmd['-c']['tools.build:skip_test=False']
             if platform.system() == "Darwin":
                 cmd = cmd['-c']['tools.build:defines=["_LIBCPP_DISABLE_AVAILABILITY"]']
             cmd & FG
@@ -134,31 +144,6 @@ class install(_install):
         _install.run(self)
 
 
-class bdist(_bdist):
-    def finalize_options(self):
-        _bdist.finalize_options(self)
-        self.dist_dir = os.path.relpath(dist_dir)
-
-
-class bdist_wheel(_bdist_wheel):
-    def run(self):
-        if platform.system() == "Darwin":
-            os.environ['MACOSX_DEPLOYMENT_TARGET'] = '10.10'
-        _bdist_wheel.run(self)
-
-
-class sdist(_sdist):
-    def finalize_options(self):
-        _sdist.finalize_options(self)
-        self.dist_dir = os.path.relpath(dist_dir)
-
-
-class egg_info(_egg_info):
-    def initialize_options(self):
-        _egg_info.initialize_options(self)
-        self.egg_base = os.path.relpath(module_dir)
-
-
 setup(
     name='libqasm',
     version=get_version(),
@@ -173,6 +158,10 @@ setup(
         'Operating System :: MacOS',
         'Operating System :: Microsoft :: Windows',
         'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
         'Topic :: Scientific/Engineering'
     ],
     packages=['libqasm', 'cqasm', 'cqasm.v3x'],
@@ -182,14 +171,10 @@ setup(
     # This is here just to have the rest of setuptools understand that this is a Python module with an extension in it.
     ext_modules=[Extension('libqasm._libqasm', [])],
     cmdclass={
-        'bdist': bdist,
-        'bdist_wheel': bdist_wheel,
         'build_ext': build_ext,
         'build': build,
         'install': install,
         'clean': clean,
-        'egg_info': egg_info,
-        'sdist': sdist,
     },
     setup_requires=[
         'conan',

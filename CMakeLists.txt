@@ -43,6 +43,12 @@ option(LIBQASM_BUILD_PYTHON
 )
 mark_as_advanced(LIBQASM_BUILD_PYTHON)
 
+# Whether doc should be built.
+option(LIBQASM_BUILD_DOCS
+    "whether the doc should be built and added to `make doc`"
+    OFF
+)
+
 # Where the 'libqasm' Python module should be built.
 set(LIBQASM_PYTHON_DIR "${CMAKE_INSTALL_FULL_LIBDIR}/python/libqasm"
     CACHE STRING "Where to install the libqasm Python module"
@@ -108,6 +114,11 @@ endif()
 # Add the emscripten directory.
 if(LIBQASM_BUILD_EMSCRIPTEN)
     add_subdirectory(emscripten)
+endif()
+
+# Add the doc directory.
+if(LIBQASM_BUILD_DOCS)
+    add_subdirectory(doc)
 endif()
 
 endif()  # NOT TARGET cqasm
