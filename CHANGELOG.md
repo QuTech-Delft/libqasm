@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [ 0.6.7 ] - [ 2024-05-30 ]
+
+### Added
+- `pyproject.toml`.
+- GitHub pages.
+
+### Changed
+- Fix building of tests in Conan profiles and `setup.py`.
+- Fix Python MacOS/x64 (with Python > 3.11) packages.
+- Fix deserialization of CBOR strings.
+
+### Removed
+- Python 3.8 packages generation.
+
 ## [ 0.6.6 ] - [ 2024-05-14 ]
 
 ### Added
@@ -26,8 +40,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
-- Updated emscripten compilation flags.
-- Changed GitHub Actions `js-emscripten-wasm` job to work with `deno` instead of `node`.
+- Update emscripten compilation flags.
+- Change GitHub Actions `js-emscripten-wasm` job to work with `deno` instead of `node`.
 
 ### Removed
 
@@ -37,7 +51,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
-- Fixed CMake install.
+- Fix CMake install.
 - `generate_antlr_parser.py` writes output include files in a given `include` folder. 
 
 ### Removed
