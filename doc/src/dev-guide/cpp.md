@@ -6,7 +6,7 @@ The following line will also build and cache the `libqasm` Conan package.
 
 ```shell
 conan profile detect
-conan create --version 0.6.6 . -pr:a=tests-debug -b missing
+conan create --version 0.6.7 . -pr:a=tests-debug -b missing
 ```
 
 You can test the C++ binaries:
