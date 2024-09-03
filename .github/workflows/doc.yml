@@ -25,7 +25,7 @@ jobs:
           python-version: "3.11"
       - name: Install Python dependencies
         run: |
-          python -m pip install --upgrade pip mike mkdocs-material mkdocstrings pymdown-extensions
+          python -m pip install --upgrade pip -r requirements.txt
       - name: Build
         uses: ./.github/actions/cpp-tests
         with:
