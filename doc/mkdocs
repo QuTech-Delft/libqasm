@@ -2,7 +2,7 @@
 
 # A script to invoke mkdocs with the correct environment.
 # Additionally, it supports deploying via mike:
-#   ./mkdocs deploy [mike-deploy-options]
+#   python mkdocs deploy [mike-deploy-options]
 
 import errno
 import os
@@ -10,24 +10,33 @@ import shutil
 import sys
 from subprocess import call
 
+#  libqasm
+#  |- build/Release/doc  (build_dir)
+#  |  |- libqasm         (site_dir)
+#  |  \- mkdocs.yml      (config_build_path)
+#  |- doc                (doc_dir)
+#  |  |- mkdocs          (__file__)
+#  |  \- mkdocs.yml      (config_path)
+#  \- scripts            (scripts_dir)
+#     \- python          (mkdocstrings_handlers_parent_dir)
 doc_dir = os.path.dirname(os.path.normpath(__file__))
-scripts_dir = os.path.join(os.path.dirname(doc_dir), 'scripts')
 build_dir = os.path.join(os.path.dirname(doc_dir), 'build', 'Release', 'doc')
+scripts_dir = os.path.join(os.path.dirname(doc_dir), 'scripts')
+mkdocstrings_handlers_parent_dir = os.path.join(scripts_dir, 'python')
 
 # Set PYTHONPATH for the mkdocstrings handler.
 env = os.environ.copy()
 path = env.get('PYTHONPATH')
-env['PYTHONPATH'] = \
-  (path + ':' if path else '') + os.path.join(scripts_dir, 'python')
+env['PYTHONPATH'] = (path + ':' if path else '') + mkdocstrings_handlers_parent_dir
 
 config_path = os.path.join(doc_dir, 'mkdocs.yml')
 args = sys.argv[1:]
 if len(args) > 0:
     command = args[0]
     if command == 'deploy':
+        # Check out libqasm
         git_url = 'https://github.com/' if 'CI' in os.environ else 'git@github.com:'
         site_repo = git_url + 'QuTech-Delft/libqasm.git'
-
         site_dir = os.path.join(build_dir, 'libqasm')
         try:
             shutil.rmtree(site_dir)
@@ -43,7 +52,7 @@ if len(args) > 0:
         shutil.copyfile(config_path, config_build_path)
 
         sys.exit(call(
-          ['mike'] + args + ['--config-file', config_build_path, '--branch', 'master'], cwd=site_dir, env=env)
+          ['mike'] + args + ['--config-file', config_build_path], cwd=site_dir, env=env)
         )
     elif not command.startswith('-'):
         args += ['-f', config_path]
