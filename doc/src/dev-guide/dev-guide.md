@@ -102,11 +102,9 @@ Tests are disabled by default. To enable them, use `-c tools.build:skip_test=Fal
 
 ### Documentation
 
-Build with a `docs-release-` Conan profile.
-Then serve on `http://127.0.0.1:8000/` by running the local `mkdocs` from the `doc` folder.
+Build and serve on `http://127.0.0.1:8000/` by running the local `mkdocs` from the `doc` folder.
 
 ```shell
-conan build . -pr:a=conan/profiles/docs-release-clang-linux-x64 -b missing
 cd doc
 python3 mkdocs serve
 ```
