@@ -4,6 +4,7 @@ on:
   pull_request:
   push:
     branches:
+      - develop
       - master
   release:
     types:
@@ -13,11 +14,6 @@ jobs:
   publish-github-pages:
     name: Publish GitHub pages
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        build_type:
-          - Release
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,8 +29,8 @@ jobs:
       - name: Build
         uses: ./.github/actions/cpp-tests
         with:
-          build_type: ${{ matrix.build_type }}
-          conan_profile_host: conan/profiles/docs-${{ matrix.build_type }}-gcc-linux-x64
+          build_type: Release
+          conan_profile_host: conan/profiles/docs-release-gcc-linux-x64
           shell: bash
       - name: Configure Git
         run: |
@@ -46,13 +42,13 @@ jobs:
         working-directory: doc
         run: |
           python mkdocs build
-      - name: Upload and tag as latest
-        if: github.ref == 'refs/heads/master'
+      - name: Upload and tag as latest with every push to develop branch
+        if: github.ref == 'refs/heads/develop'
         working-directory: doc
         run: |
           mike deploy --push latest
           mike set-default --push latest
-      - name: Upload and tag as git tag
+      - name: Upload and tag as git tag with every release creation on master branch
         if: github.event_name == 'release' && github.event.action == 'created'
         working-directory: doc
         run: |
