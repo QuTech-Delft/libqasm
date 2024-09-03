@@ -3,6 +3,7 @@ message(STATUS "Building docs")
 find_program(MKDOCS mkdocs REQUIRED)
 
 set(sources
+    src/about/authors.md
     src/about/contributing.md
     src/about/license.md
     src/about/release-notes.md
@@ -23,15 +24,15 @@ set(sources
 add_custom_target(doc ALL
     COMMAND ${CMAKE_COMMAND}
     -E env PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/../scripts/python
-    ${MKDOCS} build -f ${CMAKE_CURRENT_SOURCE_DIR}/mkdocs.yml
+    ${MKDOCS} build
+    -f ${CMAKE_CURRENT_SOURCE_DIR}/mkdocs.yml
     # MkDocs requires the site dir to be outside of the doc dir.
-    --site-dir ${CMAKE_CURRENT_BINARY_DIR}/html
-    --no-directory-urls
+    --site-dir ${CMAKE_CURRENT_BINARY_DIR}/site
     SOURCES ${sources}
 )
 
 include(GNUInstallDirs)
 install(
-    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html/
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/site/
     DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/doc/libqasm OPTIONAL
 )
