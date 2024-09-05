@@ -1,4 +1,4 @@
-`libqasm` can be used from a web environment via a Typescript frontend.
+libQASM can be used from a web environment via a Typescript frontend.
 
 Emscripten API only allows to input a cQASM program via a string
 and always returns a JSON string output. 
