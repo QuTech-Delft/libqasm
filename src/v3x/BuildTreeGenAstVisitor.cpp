@@ -149,16 +149,69 @@ std::any BuildTreeGenAstVisitor::visitGlobalBlockStatement(CqasmParser::GlobalBl
     } else if (auto instruction_ctx = context->instruction(); instruction_ctx) {
         return instruction_ctx->accept(this);
     }
-    throw error::AnalysisError{ "unknown local block statement type" };
+    throw error::AnalysisError{ "unknown global block statement type" };
 }
 
 std::any BuildTreeGenAstVisitor::visitVariableDefinition(CqasmParser::VariableDefinitionContext *context) {
     return One<Statement>{ visitVariable(context) };
 }
 
+std::any BuildTreeGenAstVisitor::visitInstruction(CqasmParser::InstructionContext *context) {
+    if (auto gate_instruction_ctx = context->gateInstruction(); gate_instruction_ctx) {
+        return gate_instruction_ctx->accept(this);
+    } else if (auto measure_instruction_ctx = context->measureInstruction(); measure_instruction_ctx) {
+        return measure_instruction_ctx->accept(this);
+    } else if (auto reset_instruction_ctx = context->resetInstruction(); reset_instruction_ctx) {
+        return reset_instruction_ctx->accept(this);
+    }
+    throw error::AnalysisError{ "unknown instruction type" };
+}
+
+std::any BuildTreeGenAstVisitor::visitGateInstruction(CqasmParser::GateInstructionContext *context) {
+    if (auto modified_gate_ctx = context->modifiedGate(); modified_gate_ctx) {
+        return modified_gate_ctx->accept(this);
+    } else if (auto gate_ctx = context->gate(); gate_ctx) {
+        return gate_ctx->accept(this);
+    }
+    throw error::AnalysisError{ "unknown gate instruction type" };
+}
+
+std::any BuildTreeGenAstVisitor::visitInvGate(CqasmParser::InvGateContext *context) {
+    auto ret = tree::make<InvGate>();
+    ret->name = tree::make<Keyword>(context->INV()->getText());
+    ret->operand = std::any_cast<One<GateInstruction>>(context->gateInstruction()->accept(this));
+    setNodeAnnotation(ret, context->INV()->getSymbol());
+    return One<Statement>{ ret };
+}
+
+std::any BuildTreeGenAstVisitor::visitPowGate(CqasmParser::PowGateContext *context) {
+    auto ret = tree::make<PowGate>();
+    ret->name = tree::make<Keyword>(context->POW()->getText());
+    ret->operand = std::any_cast<One<GateInstruction>>(context->gateInstruction()->accept(this));
+    setNodeAnnotation(ret, context->POW()->getSymbol());
+    return One<Statement>{ ret };
+}
+
+std::any BuildTreeGenAstVisitor::visitCtrlGate(CqasmParser::CtrlGateContext *context) {
+    auto ret = tree::make<CtrlGate>();
+    ret->name = tree::make<Keyword>(context->CTRL()->getText());
+    ret->ctrl_qubit = std::any_cast<One<Expression>>(context->expression()->accept(this));
+    ret->operand = std::any_cast<One<GateInstruction>>(context->gateInstruction()->accept(this));
+    setNodeAnnotation(ret, context->CTRL()->getSymbol());
+    return One<Statement>{ ret };
+}
+
+std::any BuildTreeGenAstVisitor::visitGate(CqasmParser::GateContext *context) {
+    auto ret = tree::make<Gate>();
+    ret->name = tree::make<Identifier>(context->IDENTIFIER()->getText());
+    ret->operands = std::any_cast<One<ExpressionList>>(visitExpressionList(context->expressionList()));
+    setNodeAnnotation(ret, context->IDENTIFIER()->getSymbol());
+    return One<Statement>{ ret };
+}
+
 std::any BuildTreeGenAstVisitor::visitMeasureInstruction(CqasmParser::MeasureInstructionContext *context) {
     auto ret = tree::make<MeasureInstruction>();
-    ret->name = tree::make<Identifier>(context->MEASURE()->getText());
+    ret->name = tree::make<Keyword>(context->MEASURE()->getText());
     ret->lhs = std::any_cast<One<Expression>>(context->expression(0)->accept(this));
     ret->rhs = std::any_cast<One<Expression>>(context->expression(1)->accept(this));
     setNodeAnnotation(ret, context->MEASURE()->getSymbol());
@@ -167,22 +220,11 @@ std::any BuildTreeGenAstVisitor::visitMeasureInstruction(CqasmParser::MeasureIns
 
 std::any BuildTreeGenAstVisitor::visitResetInstruction(CqasmParser::ResetInstructionContext *context) {
     auto ret = tree::make<ResetInstruction>();
-    ret->name = tree::make<Identifier>(context->RESET()->getText());
+    ret->name = tree::make<Keyword>(context->RESET()->getText());
     ret->operand = context->expression()
-        ? Maybe<Expression>{ std::any_cast<One<Expression>>(context->expression()->accept(this)) }
+        ? Maybe<Expression>{ std::any_cast<One<Expression>>(context->expression()->accept(this)).get_ptr() }
         : Maybe<Expression>{};
     setNodeAnnotation(ret, context->RESET()->getSymbol());
-    return One<Statement>{ ret };
-}
-
-std::any BuildTreeGenAstVisitor::visitGate(CqasmParser::GateContext *context) {
-    auto ret = tree::make<Gate>();
-    ret->name = tree::make<Identifier>(context->IDENTIFIER()->getText());
-    ret->operands = std::any_cast<One<ExpressionList>>(visitExpressionList(context->expressionList()));
-    if (context->expression()) {
-        ret->operands->items.add(std::any_cast<One<Expression>>(context->expression()->accept(this)));
-    }
-    setNodeAnnotation(ret, context->IDENTIFIER()->getSymbol());
     return One<Statement>{ ret };
 }
 
@@ -211,8 +253,9 @@ std::any BuildTreeGenAstVisitor::visitBitType(CqasmParser::BitTypeContext *conte
 }
 
 Maybe<IntegerLiteral> BuildTreeGenAstVisitor::getArraySize(CqasmParser::ArraySizeDeclarationContext *context) {
-    return (context) ? Maybe<IntegerLiteral>{ std::any_cast<One<IntegerLiteral>>(context->accept(this)).get_ptr() }
-                     : Maybe<IntegerLiteral>{};
+    return (context)
+        ? Maybe<IntegerLiteral>{ std::any_cast<One<IntegerLiteral>>(context->accept(this)).get_ptr() }
+        : Maybe<IntegerLiteral>{};
 }
 
 std::any BuildTreeGenAstVisitor::visitArraySizeDeclaration(CqasmParser::ArraySizeDeclarationContext *context) {

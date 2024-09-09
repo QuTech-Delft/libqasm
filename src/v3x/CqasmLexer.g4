@@ -50,6 +50,9 @@ TERNARY_CONDITIONAL_OP: '?';
 VERSION: 'version' -> pushMode(VERSION_STATEMENT);
 MEASURE: 'measure';
 RESET: 'reset';
+INV: 'inv';
+POW: 'pow';
+CTRL: 'ctrl';
 QUBIT_TYPE: 'qubit';
 BIT_TYPE: 'bit';
 

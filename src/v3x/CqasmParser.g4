@@ -31,10 +31,27 @@ globalBlockStatement:
 variableDefinition: type IDENTIFIER;
 
 instruction:
-    expression EQUALS MEASURE expression  # measureInstruction
-    | RESET expression?  # resetInstruction
-    | IDENTIFIER (OPEN_PARENS expression CLOSE_PARENS)? expressionList  # gate
+    measureInstruction
+    | resetInstruction
+    | gateInstruction
     ;
+
+measureInstruction: expression EQUALS MEASURE expression;
+
+resetInstruction: RESET expression?;
+
+gateInstruction:
+    modifiedGate
+    | gate
+    ;
+
+modifiedGate:
+    INV OPEN_PARENS gateInstruction CLOSE_PARENS  # invGate
+    | POW OPEN_PARENS gateInstruction CLOSE_PARENS  # powGate
+    | CTRL OPEN_PARENS expression COMMA gateInstruction CLOSE_PARENS  # ctrlGate
+    ;
+
+gate: IDENTIFIER (OPEN_PARENS expressionList CLOSE_PARENS);
 
 type: quantumType;
 

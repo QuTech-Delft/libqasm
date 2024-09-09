@@ -65,8 +65,13 @@ public:
     std::any visitVersion(CqasmParser::VersionContext *context) override;
     std::any visitGlobalBlockStatement(CqasmParser::GlobalBlockStatementContext *context) override;
     std::any visitVariableDefinition(CqasmParser::VariableDefinitionContext *context) override;
+    std::any visitInstruction(CqasmParser::InstructionContext *context) override;
     std::any visitMeasureInstruction(CqasmParser::MeasureInstructionContext *context) override;
     std::any visitResetInstruction(CqasmParser::ResetInstructionContext *context) override;
+    std::any visitGateInstruction(CqasmParser::GateInstructionContext *context) override;
+    std::any visitInvGate(CqasmParser::InvGateContext *context) override;
+    std::any visitPowGate(CqasmParser::PowGateContext *context) override;
+    std::any visitCtrlGate(CqasmParser::CtrlGateContext *context) override;
     std::any visitGate(CqasmParser::GateContext *context) override;
     std::any visitType(CqasmParser::TypeContext *context) override;
     std::any visitQubitType(CqasmParser::QubitTypeContext *context) override;

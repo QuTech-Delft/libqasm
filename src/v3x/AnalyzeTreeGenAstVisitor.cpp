@@ -39,10 +39,11 @@ std::any AnalyzeTreeGenAstVisitor::visit_version(ast::Version &node) {
             }
         }
         if (node.items != analyzer_.api_version) {
-            throw error::AnalysisError(
+            throw error::AnalysisError{
                 fmt::format("the only cQASM version supported is {}, but the cQASM file is version {}",
                     analyzer_.api_version,
-                    node.items));
+                    node.items)
+            };
         }
 
         ret->items = node.items;
@@ -127,9 +128,10 @@ values::Value promote_or_error(const values::Value &rhs_value, const types::Type
     if (auto rhs_promoted_value = values::promote(rhs_value, lhs_type); !rhs_promoted_value.empty()) {
         return rhs_promoted_value;
     }
-    throw error::AnalysisError{ fmt::format("type of right-hand side ({}) could not be coerced to left-hand side ({})",
-        values::type_of(rhs_value),
-        lhs_type) };
+    throw error::AnalysisError{
+        fmt::format("type of right-hand side ({}) could not be coerced to left-hand side ({})",
+            values::type_of(rhs_value), lhs_type)
+    };
 }
 
 /**
@@ -141,6 +143,43 @@ types::Types types_of(const tree::Any<semantic::Variable> &variables) {
         types.add(variable->typ.clone());
     }
     return types;
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_modified_gate(ast::ModifiedGate &node) {
+    auto ret = tree::Maybe<semantic::ModifiedGate>();
+    try {
+        // Set name
+        ret->name = node.name->name;
+
+        // Set operand
+        try {
+            ret->operand = std::any_cast<tree::One<semantic::ModifiedGate>>(visit_gate_instruction(*node.operand));
+        } catch (std::bad_any_cast &) {
+            ret->operand = std::any_cast<tree::One<semantic::Gate>>(visit_gate_instruction(*node.operand));
+        }
+
+        // Set control qubit
+        if (!node.ctrl_qubit.empty()) {
+            ret->ctrl_qubit = tree::Maybe<values::ValueBase>{
+                std::any_cast<values::Value>(visit_expression(*node.ctrl_qubit)).get_ptr()
+            };
+        }
+
+        // Copy annotation data
+        ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
+        ret->copy_annotation<parser::SourceLocation>(node);
+
+        // Add the statement to the current scope
+        // TODO: check this
+        //   For an expression such as inv(ctrl(q0, X(q1))), this would be adding X(q1), ctrl(q0, ...), and inv(...)
+        //   This could be solved by only doing the analyzer_add_statement_to_current_scope at visit_instruction
+        analyzer_.add_statement_to_current_scope(ret);
+    } catch (error::AnalysisError &err) {
+        err.context(node);
+        result_.errors.push_back(std::move(err));
+        ret.reset();
+    }
+    return ret;
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_gate(ast::Gate &node) {
@@ -163,7 +202,6 @@ std::any AnalyzeTreeGenAstVisitor::visit_gate(ast::Gate &node) {
         result_.errors.push_back(std::move(err));
         ret.reset();
     }
-
     return ret;
 }
 
@@ -199,7 +237,7 @@ bool check_qubit_and_bit_indices_have_same_size(const values::Values &operands) 
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_measure_instruction(ast::MeasureInstruction &node) {
-    auto ret = tree::Maybe<semantic::Instruction>();
+    auto ret = tree::Maybe<semantic::MeasureInstruction>();
     try {
         // Set operand
         // Notice operands have to be added in this order
@@ -233,7 +271,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_measure_instruction(ast::MeasureInstruc
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_reset_instruction(ast::ResetInstruction &node) {
-    auto ret = tree::Maybe<semantic::Instruction>();
+    auto ret = tree::Maybe<semantic::ResetInstruction>();
     try {
         // Set operand
         // Notice operands have to be added in this order
