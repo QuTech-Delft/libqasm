@@ -34,14 +34,17 @@ jobs:
       - name: Dry run
         if: github.event_name == 'pull_request'
         run: |
+          export PYTHONPATH=$PYTHONPATH:./scripts/python
           mkdocs build
       - name: Upload and tag as latest with every push to develop branch
         if: github.ref == 'refs/heads/develop'
         run: |
+          export PYTHONPATH=$PYTHONPATH:./scripts/python
           mike deploy --push latest
           mike set-default --push latest
       - name: Upload and tag as git tag with every release creation on master branch
         if: github.event_name == 'release' && github.event.action == 'created'
         run: |
+          export PYTHONPATH=$PYTHONPATH:./scripts/python
           python mkdocs deploy --push ${{ github.ref }}
           mike set-default --push latest
