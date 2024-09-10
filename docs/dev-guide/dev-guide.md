@@ -95,7 +95,6 @@ conan build . -s:a compiler.cppstd=20 -s:a libqasm/*:build_type=Debug -o libqasm
 This is the list of options that could be specified either in a profile or in the command line:
 
 - `libqasm/*:asan_enabled={True,False}`: enables Address Sanitizer.
-- `libqasm/*:build_docs={True,False}`: builds documentation or not.
 - `libqasm/*:build_type={Debug,Release}`: builds in debug or release mode.
 - `libqasm/*:shared={True,False}`: builds a shared object library instead of a static library, if applicable.
 
@@ -107,8 +106,12 @@ Build and serve on `http://127.0.0.1:8000/`.
 
 ```shell
 export PTYHONPATH=./scripts/python
-mike serve
+mkdocs serve
 ```
+
+!!! note
+
+    The `export` is needed to point `mkdocs` to the custom handlers used for the C++, emscripten, and Python APIs.
 
 ## Docker
 
@@ -118,8 +121,10 @@ This tests the library in a container with the bare minimum requirements for lib
 docker build .
 ```
 
-**Note for Windows users:** The above might fail on Windows due to the `autocrlf` transformation that git does.
-If you run into this issue, then create new clone of this repository:
+!!! note
+
+    The above might fail on Windows due to the `autocrlf` transformation that git does.
+    If you run into this issue, then create new clone of this repository:
 
 ```shell
 git clone --config core.autocrlf=input git@github.com:QuTech-Delft/libqasm.git
