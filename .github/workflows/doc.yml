@@ -33,7 +33,7 @@ jobs:
           git fetch origin gh-pages:gh-pages
       - name: Add mkdocs custom handlers folder to env
         run: |
-          export PYTHONPATH=$PYTHONPATH:./scripts/python
+          echo "PYTHONPATH=./scripts/python" >> $GITHUB_ENV
       - name: Dry run
         if: github.event_name == 'pull_request'
         run: |          
