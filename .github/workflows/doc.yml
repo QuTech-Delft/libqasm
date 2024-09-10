@@ -33,18 +33,15 @@ jobs:
           git fetch origin gh-pages:gh-pages
       - name: Dry run
         if: github.event_name == 'pull_request'
-        working-directory: doc
         run: |
           mkdocs build
       - name: Upload and tag as latest with every push to develop branch
         if: github.ref == 'refs/heads/develop'
-        working-directory: doc
         run: |
           mike deploy --push latest
           mike set-default --push latest
       - name: Upload and tag as git tag with every release creation on master branch
         if: github.event_name == 'release' && github.event.action == 'created'
-        working-directory: doc
         run: |
           python mkdocs deploy --push ${{ github.ref }}
           mike set-default --push latest
