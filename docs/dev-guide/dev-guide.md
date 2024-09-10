@@ -103,11 +103,11 @@ Tests are disabled by default. To enable them, use `-c tools.build:skip_test=Fal
 
 ### Documentation
 
-Build and serve on `http://127.0.0.1:8000/` by running the local `mkdocs` from the `doc` folder.
+Build and serve on `http://127.0.0.1:8000/`.
 
 ```shell
-cd doc
-python3 mkdocs serve
+export PTYHONPATH=./scripts/python
+mike serve
 ```
 
 ## Docker

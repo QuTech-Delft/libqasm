@@ -35,12 +35,12 @@ jobs:
         if: github.event_name == 'pull_request'
         working-directory: doc
         run: |
-          python mkdocs build
+          mkdocs build
       - name: Upload and tag as latest with every push to develop branch
         if: github.ref == 'refs/heads/develop'
         working-directory: doc
         run: |
-          python mkdocs deploy --push latest
+          mike deploy --push latest
           mike set-default --push latest
       - name: Upload and tag as git tag with every release creation on master branch
         if: github.event_name == 'release' && github.event.action == 'created'

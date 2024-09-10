@@ -118,7 +118,7 @@ endif()
 
 # Add the doc directory.
 if(LIBQASM_BUILD_DOCS)
-    add_subdirectory(doc)
+    add_subdirectory(docs)
 endif()
 
 endif()  # NOT TARGET cqasm

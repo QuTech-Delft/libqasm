@@ -3,22 +3,22 @@ message(STATUS "Building docs")
 find_program(MKDOCS mkdocs REQUIRED)
 
 set(sources
-    src/about/authors.md
-    src/about/contributing.md
-    src/about/license.md
-    src/about/release-notes.md
-    src/api/cpp.md
-    src/api/emscripten.md
-    src/api/python.md
-    src/dev-guide/dev-guide.md
-    src/dev-guide/cpp.md
-    src/dev-guide/emscripten.md
-    src/dev-guide/python.md
-    src/user-guide/user-guide.md
-    src/user-guide/cpp.md
-    src/user-guide/emscripten.md
-    src/user-guide/python.md
-    src/index.md
+    about/authors.md
+    about/contributing.md
+    about/license.md
+    about/release-notes.md
+    api/cpp.md
+    api/emscripten.md
+    api/python.md
+    dev-guide/dev-guide.md
+    dev-guide/cpp.md
+    dev-guide/emscripten.md
+    dev-guide/python.md
+    user-guide/user-guide.md
+    user-guide/cpp.md
+    user-guide/emscripten.md
+    user-guide/python.md
+    index.md
 )
 
 add_custom_target(doc ALL
