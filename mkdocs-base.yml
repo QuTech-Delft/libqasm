@@ -1,35 +1,7 @@
 site_name: libQASM
-
-docs_dir: ../doc/src
-
+site_dir: public
 repo_url: https://github.com/QuTech-Delft/libqasm
-
-theme:
-  name: material
-  features:
-    - navigation.tabs
-    - navigation.top
-    - toc.integrate
-
-extra_javascript:
-  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js
-  - cpp_highlighting.js
-  - python_highlighting.js
-  - typescript_highlighting.js
-
-extra_css:
-  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css
-  - libqasm.css
-
-markdown_extensions:
-  - admonition
-  - pymdownx.inlinehilite
-  - pymdownx.snippets
-
-plugins:
-  - search
-  - mkdocstrings:
-      default_handler: python
+use_directory_urls: false
 
 nav:
   - Home: index.md
@@ -54,7 +26,32 @@ nav:
     - License: about/license.md
     - Authors: about/authors.md
 
-extra:
-  version:
-    provider: mike
-  generator: false
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.top
+    - toc.integrate
+
+markdown_extensions:
+  - admonition
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+
+extra_css:
+  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css
+  - libqasm.css
+
+extra_javascript:
+  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js
+  - cpp_highlighting.js
+  - python_highlighting.js
+  - typescript_highlighting.js
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+
+watch:
+  - mkdocs-base.yml

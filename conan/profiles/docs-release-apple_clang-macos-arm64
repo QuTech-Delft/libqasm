@@ -1,5 +1,0 @@
-include(docs-release)
-
-[settings]
-compiler=apple-clang
-compiler.version=14
