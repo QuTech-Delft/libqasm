@@ -1,5 +1,8 @@
 libQASM is a library to parse cQASM programs, developed by QuTech.
 
+At the moment, libQASM only supports cQASM v3.0 programs
+(see [cQASM-spec](https://qutech-delft.github.io/cQASM-spec/latest/) for the language specification).
+
 It performs lexical, syntactic, and semantic analysis of an input program received via a file or a string.
 It produces one of the following results:
 
