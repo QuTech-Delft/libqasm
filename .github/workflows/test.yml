@@ -129,14 +129,15 @@ jobs:
       fail-fast: false
       matrix:
         build_type:
+          - Debug
           - Release
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - uses: ./.github/actions/cpp-tests
         with:
-          build_type: Release
-          conan_profile_host: conan/profiles/release-gcc-linux-x64-shared
+          build_type: ${{ matrix.build_type }}
+          conan_profile_host: conan/profiles/${{ matrix.build_type }}-gcc-linux-x64-shared
           shell: bash
 
   ts-emscripten-wasm:
