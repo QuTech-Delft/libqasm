@@ -39,11 +39,11 @@ markdown_extensions:
   - pymdownx.snippets
 
 extra_css:
-  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css
+  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/default.min.css
   - libqasm.css
 
 extra_javascript:
-  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js
+  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/highlight.min.js
   - cpp_highlighting.js
   - python_highlighting.js
   - typescript_highlighting.js
