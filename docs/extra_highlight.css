@@ -6,14 +6,6 @@ pre code.hljs {
 code.hljs {
     padding: 3px 5px
 }
-pre code [data-md-color-scheme="slate"] .hljs {
-    display: block;
-    overflow-x: auto;
-    padding: 1em
-}
-code [data-md-color-scheme="slate"] .hljs {
-    padding: 3px 5px
-}
 /*!
   Theme: Default
   Description: Original highlight.js style
@@ -23,20 +15,6 @@ code [data-md-color-scheme="slate"] .hljs {
   License: see project LICENSE
   Touched: 2021
 */
-/*
-This is left on purpose making default.css the single file that can be lifted
-as-is from the repository directly without the need for a build step
-
-Typically this "required" baseline CSS is added by `makestuff.js` during build.
-*/
-pre code.hljs {
-    display: block;
-    overflow-x: auto;
-    padding: 1em
-}
-code.hljs {
-    padding: 3px 5px
-}
 /* end baseline CSS */
 .hljs {
     background: #F3F3F3;
@@ -156,14 +134,6 @@ base0D  #7cb8bb  Functions, Methods, Attribute IDs, Headings
 base0E  #dc8cc3  Keywords, Storage, Selector, Markup Italic, Diff Changed
 base0F  #000000  Deprecated, Opening/Closing Embedded Language Tags, e.g. <?php ?>
 */
-pre code [data-md-color-scheme="slate"] .hljs {
-    display: block;
-    overflow-x: auto;
-    padding: 1em
-}
-code [data-md-color-scheme="slate"] .hljs {
-    padding: 3px 5px
-}
 [data-md-color-scheme="slate"] .hljs::selection,
 [data-md-color-scheme="slate"] .hljs::selection {
     background-color: #606060;
