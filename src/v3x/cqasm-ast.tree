@@ -173,14 +173,19 @@ annotated {
 
             instruction {
                 gate_instruction {
-                    modified_gate{
+                    gate_modifier {
                         name: One<keyword>;
-                        ctrl_qubit: Maybe<expression>;
-                        operand: One<gate_instruction>;
+                        gate: One<gate_instruction>;
 
-                        inv_gate {}
-                        pow_gate {}
-                        ctrl_gate {}
+                        inv_gate_modifier {}
+
+                        pow_gate_modifier {
+                            exponent: One<expression>;
+                        }
+
+                        ctrl_gate_modifier {
+                            ctrl_qubit: One<expression>;
+                        }
                     }
 
                     gate {

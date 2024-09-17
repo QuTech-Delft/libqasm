@@ -110,6 +110,11 @@ types::Type type_of(const Value &value) {
         }
     } else if (auto var = value->as_variable_ref()) {
         return var->variable->typ;
+    } else if (auto instruction_ref_ptr = value->as_instruction_ref()) {
+        return instruction_ref_ptr->instruction->return_type;
+    } else if (auto instruction_call = value->as_instruction_call()) {
+        instruction_ref_ptr = instruction_call->instruction_ref->as_instruction_ref();
+        return instruction_ref_ptr->instruction->return_type;
     } else {
         throw std::runtime_error("type_of unknown Value type!");
     }

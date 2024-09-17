@@ -14,11 +14,6 @@
 
 namespace cqasm::v3x::resolver {
 
-using Type = types::Type;
-using Types = types::Types;
-using Value = values::Value;
-using Values = values::Values;
-
 //---------------//
 // VariableTable //
 //---------------//
@@ -122,15 +117,16 @@ void InstructionTable::add(const instruction::Instruction &type) {
 }
 
 /**
- * Resolves an instruction.
+ * Resolves an instruction to a values::InstructionCall node.
  * Throws NameResolutionFailure if no instruction by the given name exists,
  * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
  * returns the resolved instruction node.
  * Annotation data, line number information, and the condition still need to be set by the caller.
  */
-tree::One<semantic::Instruction> InstructionTable::resolve(const std::string &name, const Values &args) const {
+Value InstructionTable::resolve(const std::string &name, const Values &args) const {
     auto [instruction_ref, promoted_args] = resolver->resolve(name, args);
-    return tree::make<semantic::Instruction>(instruction_ref, name, promoted_args);
+    auto value_instruction_ref = tree::make<values::InstructionRef>(instruction_ref);
+    return tree::make<values::InstructionCall>(value_instruction_ref, promoted_args);
 }
 
 }  // namespace cqasm::v3x::resolver

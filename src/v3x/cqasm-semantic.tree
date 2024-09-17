@@ -50,32 +50,9 @@ annotated {
     }
 
     statement {
+        # Regular instruction (a gate, a gate modifier, a measure instruction, or a reset instruction)
         instruction {
-            gate_instruction {
-                # inv(gate), pow(gate), or ctrl(qubit, gate)
-                modified_gate {
-                    name: cqasm::v3x::primitives::Str;
-                    ctrl_qubit: external Maybe<cqasm::v3x::values::ValueBase>;
-                    operand: One<gate_instruction>;
-                }
-                gate {
-                    instruction_ref: cqasm::v3x::instruction::InstructionRef;
-                    name: cqasm::v3x::primitives::Str;
-                    operands: external Any<cqasm::v3x::values::ValueBase>;
-                }
-            }
-
-            measure_instruction {
-                instruction_ref: cqasm::v3x::instruction::InstructionRef;
-                name: cqasm::v3x::primitives::Str;
-                operands: external Any<cqasm::v3x::values::ValueBase>;
-            }
-
-            reset_instruction {
-                instruction_ref: cqasm::v3x::instruction::InstructionRef;
-                name: cqasm::v3x::primitives::Str;
-                operands: external Any<cqasm::v3x::values::ValueBase>;
-            }
+            instruction_call_value: external One<cqasm::v3x::values::ValueBase>;
         }
     }
 }

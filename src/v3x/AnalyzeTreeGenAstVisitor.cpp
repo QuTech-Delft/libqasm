@@ -101,7 +101,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_variable(ast::Variable &node) {
 
         // Construct variable
         // Use the location tag of the identifier to record where the variable was defined
-        const auto identifier = node.name;
+        const auto &identifier = node.name;
         ret->name = identifier->name;
         ret->typ = type.clone();
         ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
@@ -145,24 +145,21 @@ types::Types types_of(const tree::Any<semantic::Variable> &variables) {
     return types;
 }
 
-std::any AnalyzeTreeGenAstVisitor::visit_modified_gate(ast::ModifiedGate &node) {
-    auto ret = tree::Maybe<semantic::ModifiedGate>();
+std::any AnalyzeTreeGenAstVisitor::visit_instruction(ast::Instruction &node) {
+    auto ret = tree::One<semantic::Instruction>();
     try {
-        // Set name
-        ret->name = node.name->name;
-
-        // Set operand
-        try {
-            ret->operand = std::any_cast<tree::One<semantic::ModifiedGate>>(visit_gate_instruction(*node.operand));
-        } catch (std::bad_any_cast &) {
-            ret->operand = std::any_cast<tree::One<semantic::Gate>>(visit_gate_instruction(*node.operand));
-        }
-
-        // Set control qubit
-        if (!node.ctrl_qubit.empty()) {
-            ret->ctrl_qubit = tree::Maybe<values::ValueBase>{
-                std::any_cast<values::Value>(visit_expression(*node.ctrl_qubit)).get_ptr()
-            };
+        if (auto *inv_gate_modifier_ptr = node.as_inv_gate_modifier()) {
+            ret->instruction_call_value = std::any_cast<values::Value>(visit_inv_gate_modifier(*inv_gate_modifier_ptr));
+        } else if (auto *pow_gate_modifier_ptr = node.as_pow_gate_modifier()) {
+            ret->instruction_call_value = std::any_cast<values::Value>(visit_pow_gate_modifier(*pow_gate_modifier_ptr));
+        } else if (auto *ctrl_gate_modifier_ptr = node.as_ctrl_gate_modifier()) {
+            ret->instruction_call_value = std::any_cast<values::Value>(visit_ctrl_gate_modifier(*ctrl_gate_modifier_ptr));
+        } else if (auto *measure_instruction_ptr = node.as_measure_instruction()) {
+            ret->instruction_call_value = std::any_cast<values::Value>(visit_measure_instruction(*measure_instruction_ptr));
+        } else if (auto *reset_instruction_ptr = node.as_reset_instruction()) {
+            ret->instruction_call_value = std::any_cast<values::Value>(visit_reset_instruction(*reset_instruction_ptr));
+        } else {
+            throw std::runtime_error{ "unknown Instruction node" };
         }
 
         // Copy annotation data
@@ -170,45 +167,84 @@ std::any AnalyzeTreeGenAstVisitor::visit_modified_gate(ast::ModifiedGate &node) 
         ret->copy_annotation<parser::SourceLocation>(node);
 
         // Add the statement to the current scope
-        // TODO: check this
-        //   For an expression such as inv(ctrl(q0, X(q1))), this would be adding X(q1), ctrl(q0, ...), and inv(...)
-        //   This could be solved by only doing the analyzer_add_statement_to_current_scope at visit_instruction
         analyzer_.add_statement_to_current_scope(ret);
     } catch (error::AnalysisError &err) {
         err.context(node);
         result_.errors.push_back(std::move(err));
         ret.reset();
     }
+    return ret;
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_inv_gate_modifier(ast::InvGateModifier &node) {
+    // Set operands
+    auto operands = values::Values();
+    operands.add(std::any_cast<tree::One<values::InstructionCall>>(visit_gate_instruction(*node.gate)));
+
+    // Resolve the instruction
+    const auto &name = node.name->name;
+    auto ret = analyzer_.resolve_instruction(name, operands);
+    if (ret.empty()) {
+        throw error::AnalysisError{ "could not resolve inv gate modifier" };
+    }
+
+    return ret;
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_pow_gate_modifier(ast::PowGateModifier &node) {
+    // Set operands
+    auto operands = values::Values();
+    operands.add(tree::Maybe<values::ValueBase>{
+        std::any_cast<values::Value>(visit_expression(*node.exponent)).get_ptr()
+    });
+    operands.add(std::any_cast<tree::One<values::InstructionCall>>(visit_gate_instruction(*node.gate)));
+
+    // Resolve the instruction
+    const auto &name = node.name->name;
+    auto ret = analyzer_.resolve_instruction(name, operands);
+    if (ret.empty()) {
+        throw error::AnalysisError{ "could not resolve power gate modifier" };
+    }
+
+    return ret;
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_ctrl_gate_modifier(ast::CtrlGateModifier &node) {
+    // Set operands
+    auto operands = values::Values();
+    operands.add(tree::Maybe<values::ValueBase>{
+        std::any_cast<values::Value>(visit_expression(*node.ctrl_qubit)).get_ptr()
+    });
+    operands.add(std::any_cast<tree::One<values::InstructionCall>>(visit_gate_instruction(*node.gate)));
+
+    // Resolve the instruction
+    const auto &name = node.name->name;
+    auto ret = analyzer_.resolve_instruction(name, operands);
+    if (ret.empty()) {
+        throw error::AnalysisError{ "could not resolve ctrl gate modifier" };
+    }
+
     return ret;
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_gate(ast::Gate &node) {
-    auto ret = tree::Maybe<semantic::Instruction>();
-    try {
-        // Set operand list
-        auto operands = std::any_cast<values::Values>(visit_expression_list(*node.operands));
+    // Set operands
+    auto operands = std::any_cast<values::Values>(visit_expression_list(*node.operands));
 
-        // Resolve the instruction
-        ret.set(analyzer_.resolve_instruction(node.name->name, operands));
-
-        // Copy annotation data
-        ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
-        ret->copy_annotation<parser::SourceLocation>(node);
-
-        // Add the statement to the current scope
-        analyzer_.add_statement_to_current_scope(ret);
-    } catch (error::AnalysisError &err) {
-        err.context(node);
-        result_.errors.push_back(std::move(err));
-        ret.reset();
+    // Resolve the instruction
+    const auto &name = node.name->name;
+    auto ret = analyzer_.resolve_instruction(name, operands);
+    if (ret.empty()) {
+        throw error::AnalysisError{ "could not resolve Gate instruction" };
     }
+
     return ret;
 }
 
 bool check_qubit_and_bit_indices_have_same_size(const values::Values &operands) {
     size_t qubit_indices_size{};
     size_t bit_indices_size{};
-    // Instruction operands can be, whether variables references or index references
+    // Instruction operands can be, either variables references or index references
     // Variables can be of type qubit, bit, qubit array, or bit array
     // Qubits and bits have a single index, arrays have a size
     // Index references point to a qubit array or bit array
@@ -237,64 +273,42 @@ bool check_qubit_and_bit_indices_have_same_size(const values::Values &operands) 
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_measure_instruction(ast::MeasureInstruction &node) {
-    auto ret = tree::Maybe<semantic::MeasureInstruction>();
-    try {
-        // Set operand
-        // Notice operands have to be added in this order
-        // Otherwise instruction resolution would fail
-        auto operands = values::Values();
-        operands.add(std::any_cast<values::Value>(visit_expression(*node.lhs)));
-        operands.add(std::any_cast<values::Value>(visit_expression(*node.rhs)));
+    // Set operands
+    // Notice operands have to be added in this order
+    // Otherwise instruction resolution would fail
+    auto operands = values::Values();
+    operands.add(std::any_cast<values::Value>(visit_expression(*node.lhs)));
+    operands.add(std::any_cast<values::Value>(visit_expression(*node.rhs)));
 
-        // Resolve the instruction
-        ret.set(analyzer_.resolve_instruction(node.name->name, operands));
-
-        // Check qubit and bit indices have the same size
-        if (!ret->instruction_ref.empty()) {
-            if (!check_qubit_and_bit_indices_have_same_size(operands)) {
-                throw error::AnalysisError{ "qubit and bit indices have different sizes" };
-            }
-        }
-
-        // Copy annotation data
-        ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
-        ret->copy_annotation<parser::SourceLocation>(node);
-
-        // Add the statement to the current scope
-        analyzer_.add_statement_to_current_scope(ret);
-    } catch (error::AnalysisError &err) {
-        err.context(node);
-        result_.errors.push_back(std::move(err));
-        ret.reset();
+    // Resolve the instruction
+    const auto &name = node.name->name;
+    auto ret = analyzer_.resolve_instruction(name, operands);
+    if (ret.empty()) {
+        throw error::AnalysisError{ "could not resolve measure instruction" };
     }
+
+    // Check qubit and bit indices have the same size
+    if (!check_qubit_and_bit_indices_have_same_size(operands)) {
+        throw error::AnalysisError{ "qubit and bit indices have different sizes" };
+    }
+
     return ret;
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_reset_instruction(ast::ResetInstruction &node) {
-    auto ret = tree::Maybe<semantic::ResetInstruction>();
-    try {
-        // Set operand
-        // Notice operands have to be added in this order
-        // Otherwise instruction resolution would fail
-        auto operands = values::Values();
-        if (!node.operand.empty()) {
-            operands.add(std::any_cast<values::Value>(visit_expression(*node.operand)));
-        }
-
-        // Resolve the instruction
-        ret.set(analyzer_.resolve_instruction(node.name->name, operands));
-
-        // Copy annotation data
-        ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
-        ret->copy_annotation<parser::SourceLocation>(node);
-
-        // Add the statement to the current scope
-        analyzer_.add_statement_to_current_scope(ret);
-    } catch (error::AnalysisError &err) {
-        err.context(node);
-        result_.errors.push_back(std::move(err));
-        ret.reset();
+    // Set operands
+    auto operands = values::Values();
+    if (!node.operand.empty()) {
+        operands.add(std::any_cast<values::Value>(visit_expression(*node.operand)));
     }
+
+    // Resolve the instruction
+    const auto &name = node.name->name;
+    auto ret = analyzer_.resolve_instruction(name, operands);
+    if (ret.empty()) {
+        throw error::AnalysisError{ "could not resolve reset instruction" };
+    }
+
     return ret;
 }
 

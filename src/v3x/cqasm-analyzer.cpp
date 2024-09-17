@@ -230,8 +230,7 @@ void Analyzer::register_consteval_core_function(
  * or otherwise returns the resolved instruction node.
  * Annotation data, line number information, and the condition still need to be set by the caller.
  */
-[[nodiscard]] tree::One<semantic::Instruction> Analyzer::resolve_instruction(
-    const std::string &name, const values::Values &args) const {
+[[nodiscard]] values::Value Analyzer::resolve_instruction(const std::string &name, const values::Values &args) const {
     for (const auto &scope : scope_stack_) {
         try {
             return scope.instruction_table.resolve(name, args);
@@ -254,8 +253,9 @@ void Analyzer::register_instruction(const instruction::Instruction &instruction)
  * Convenience method for registering an instruction type.
  * The arguments are passed straight to instruction::Instruction's constructor.
  */
-void Analyzer::register_instruction(const std::string &name, const std::optional<std::string> &param_types) {
-    register_instruction(instruction::Instruction{ name, param_types });
+void Analyzer::register_instruction(const std::string &name, const std::optional<std::string> &param_types,
+    const char return_type) {
+    register_instruction(instruction::Instruction{ name, param_types, return_type });
 }
 
 }  // namespace cqasm::v3x::analyzer

@@ -20,8 +20,10 @@ constexpr const char *bit_type_name = "bit";
 constexpr const char *bool_type_name = "bool";
 constexpr const char *integer_type_name = "int";
 constexpr const char *float_type_name = "float";
+constexpr const char *gate_type_name = "gate";
 constexpr const char *qubit_array_type_name = "qubit array";
 constexpr const char *bit_array_type_name = "bit array";
+constexpr const char *null_type_name = "null";
 
 /**
  * A cQASM type.
@@ -38,12 +40,16 @@ using Types = tree::Any<TypeBase>;
  * In it, each character represents one type. The supported characters are as follows:
  *
  *  - Q = qubit
+ *  - B = bit (measurement register)
  *  - b = bool
  *  - i = int
  *  - f = float
+ *  - G = gate
  *  - V = qubit array
+ *  - W = bit array
+ *  - n = null
  */
-Type from_spec(const char spec);
+Type from_spec(char spec);
 Types from_spec(const std::string &spec);
 
 /**

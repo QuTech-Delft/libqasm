@@ -168,8 +168,8 @@ std::any BuildTreeGenAstVisitor::visitInstruction(CqasmParser::InstructionContex
 }
 
 std::any BuildTreeGenAstVisitor::visitGateInstruction(CqasmParser::GateInstructionContext *context) {
-    if (auto modified_gate_ctx = context->modifiedGate(); modified_gate_ctx) {
-        return modified_gate_ctx->accept(this);
+    if (auto gate_modifier_ctx = context->gateModifier(); gate_modifier_ctx) {
+        return gate_modifier_ctx->accept(this);
     } else if (auto gate_ctx = context->gate(); gate_ctx) {
         return gate_ctx->accept(this);
     }
@@ -177,26 +177,27 @@ std::any BuildTreeGenAstVisitor::visitGateInstruction(CqasmParser::GateInstructi
 }
 
 std::any BuildTreeGenAstVisitor::visitInvGate(CqasmParser::InvGateContext *context) {
-    auto ret = tree::make<InvGate>();
+    auto ret = tree::make<InvGateModifier>();
     ret->name = tree::make<Keyword>(context->INV()->getText());
-    ret->operand = std::any_cast<One<GateInstruction>>(context->gateInstruction()->accept(this));
+    ret->gate = std::any_cast<One<GateInstruction>>(context->gateInstruction()->accept(this));
     setNodeAnnotation(ret, context->INV()->getSymbol());
     return One<Statement>{ ret };
 }
 
 std::any BuildTreeGenAstVisitor::visitPowGate(CqasmParser::PowGateContext *context) {
-    auto ret = tree::make<PowGate>();
+    auto ret = tree::make<PowGateModifier>();
     ret->name = tree::make<Keyword>(context->POW()->getText());
-    ret->operand = std::any_cast<One<GateInstruction>>(context->gateInstruction()->accept(this));
+    ret->gate = std::any_cast<One<GateInstruction>>(context->gateInstruction()->accept(this));
+    ret->exponent = std::any_cast<One<Expression>>(context->expression()->accept(this));
     setNodeAnnotation(ret, context->POW()->getSymbol());
     return One<Statement>{ ret };
 }
 
 std::any BuildTreeGenAstVisitor::visitCtrlGate(CqasmParser::CtrlGateContext *context) {
-    auto ret = tree::make<CtrlGate>();
+    auto ret = tree::make<CtrlGateModifier>();
     ret->name = tree::make<Keyword>(context->CTRL()->getText());
+    ret->gate = std::any_cast<One<GateInstruction>>(context->gateInstruction()->accept(this));
     ret->ctrl_qubit = std::any_cast<One<Expression>>(context->expression()->accept(this));
-    ret->operand = std::any_cast<One<GateInstruction>>(context->gateInstruction()->accept(this));
     setNodeAnnotation(ret, context->CTRL()->getSymbol());
     return One<Statement>{ ret };
 }

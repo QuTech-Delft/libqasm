@@ -31,7 +31,10 @@ public:
     std::any visit_annotation_data(ast::AnnotationData &node) override;
     std::any visit_global_block(ast::GlobalBlock &node) override;
     std::any visit_variable(ast::Variable &node) override;
-    std::any visit_modified_gate(ast::ModifiedGate &node) override;
+    std::any visit_instruction(ast::Instruction &node) override;
+    std::any visit_inv_gate_modifier(ast::InvGateModifier &node) override;
+    std::any visit_pow_gate_modifier(ast::PowGateModifier &node) override;
+    std::any visit_ctrl_gate_modifier(ast::CtrlGateModifier &node) override;
     std::any visit_gate(ast::Gate &node) override;
     std::any visit_measure_instruction(ast::MeasureInstruction &node) override;
     std::any visit_reset_instruction(ast::ResetInstruction &node) override;
