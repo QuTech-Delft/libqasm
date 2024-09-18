@@ -3,8 +3,10 @@
  */
 
 #include "v3x/cqasm-core-function.hpp"
-
 #include "v3x/cqasm-semantic.hpp"
+
+#include <fmt/format.h>
+
 
 namespace cqasm::v3x::function {
 
@@ -29,7 +31,7 @@ bool CoreFunction::operator==(const CoreFunction &rhs) const {
  * Stream << overload for functions.
  */
 std::ostream &operator<<(std::ostream &os, const CoreFunction &function) {
-    return os << function.name << function.param_types;
+    return os << fmt::format("{}({}) -> {}", function.name, function.param_types, function.return_type);
 }
 
 /**
@@ -41,6 +43,7 @@ std::ostream &operator<<(std::ostream &os, const CoreFunctionRef &function) {
 
 }  // namespace cqasm::v3x::function
 
+
 namespace cqasm::v3x::primitives {
 
 template <>
@@ -49,12 +52,13 @@ void serialize(const function::CoreFunctionRef &obj, ::tree::cbor::MapWriter &ma
         return;
     }
     map.append_string("n", obj->name);
-    auto aw = map.append_array("t");
+    auto aw = map.append_array("pt");
     for (const auto &t : obj->param_types) {
         aw.append_binary(::tree::base::serialize(::tree::base::Maybe<types::TypeBase>{ t.get_ptr() }));
     }
     aw.close();
-    map.append_binary("r", ::tree::base::serialize(::tree::base::Maybe<types::TypeBase>{ obj->return_type.get_ptr() }));
+    map.append_binary("rt", ::tree::base::serialize(::tree::base::Maybe<types::TypeBase>{
+        obj->return_type.get_ptr() }));
 }
 
 template <>
@@ -62,14 +66,13 @@ function::CoreFunctionRef deserialize(const ::tree::cbor::MapReader &map) {
     if (!map.count("n")) {
         return {};
     }
-
     auto ret = tree::make<function::CoreFunction>();
     ret->name = map.at("n").as_string();
-    auto ar = map.at("t").as_array();
+    auto ar = map.at("pt").as_array();
     for (const auto &element : ar) {
         ret->param_types.add(::tree::base::deserialize<types::Node>(element.as_binary()));
     }
-    ret->return_type = ::tree::base::deserialize<types::Node>(map.at("r").as_binary());
+    ret->return_type = ::tree::base::deserialize<types::Node>(map.at("rt").as_binary());
     return ret;
 }
 

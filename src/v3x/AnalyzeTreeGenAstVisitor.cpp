@@ -145,41 +145,10 @@ types::Types types_of(const tree::Any<semantic::Variable> &variables) {
     return types;
 }
 
-std::any AnalyzeTreeGenAstVisitor::visit_instruction(ast::Instruction &node) {
-    auto ret = tree::One<semantic::Instruction>();
-    try {
-        if (auto *inv_gate_modifier_ptr = node.as_inv_gate_modifier()) {
-            ret->instruction_call_value = std::any_cast<values::Value>(visit_inv_gate_modifier(*inv_gate_modifier_ptr));
-        } else if (auto *pow_gate_modifier_ptr = node.as_pow_gate_modifier()) {
-            ret->instruction_call_value = std::any_cast<values::Value>(visit_pow_gate_modifier(*pow_gate_modifier_ptr));
-        } else if (auto *ctrl_gate_modifier_ptr = node.as_ctrl_gate_modifier()) {
-            ret->instruction_call_value = std::any_cast<values::Value>(visit_ctrl_gate_modifier(*ctrl_gate_modifier_ptr));
-        } else if (auto *measure_instruction_ptr = node.as_measure_instruction()) {
-            ret->instruction_call_value = std::any_cast<values::Value>(visit_measure_instruction(*measure_instruction_ptr));
-        } else if (auto *reset_instruction_ptr = node.as_reset_instruction()) {
-            ret->instruction_call_value = std::any_cast<values::Value>(visit_reset_instruction(*reset_instruction_ptr));
-        } else {
-            throw std::runtime_error{ "unknown Instruction node" };
-        }
-
-        // Copy annotation data
-        ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
-        ret->copy_annotation<parser::SourceLocation>(node);
-
-        // Add the statement to the current scope
-        analyzer_.add_statement_to_current_scope(ret);
-    } catch (error::AnalysisError &err) {
-        err.context(node);
-        result_.errors.push_back(std::move(err));
-        ret.reset();
-    }
-    return ret;
-}
-
 std::any AnalyzeTreeGenAstVisitor::visit_inv_gate_modifier(ast::InvGateModifier &node) {
     // Set operands
     auto operands = values::Values();
-    operands.add(std::any_cast<tree::One<values::InstructionCall>>(visit_gate_instruction(*node.gate)));
+    operands.add(std::any_cast<values::Value>(node.gate->visit(*this)));
 
     // Resolve the instruction
     const auto &name = node.name->name;
@@ -194,10 +163,8 @@ std::any AnalyzeTreeGenAstVisitor::visit_inv_gate_modifier(ast::InvGateModifier 
 std::any AnalyzeTreeGenAstVisitor::visit_pow_gate_modifier(ast::PowGateModifier &node) {
     // Set operands
     auto operands = values::Values();
-    operands.add(tree::Maybe<values::ValueBase>{
-        std::any_cast<values::Value>(visit_expression(*node.exponent)).get_ptr()
-    });
-    operands.add(std::any_cast<tree::One<values::InstructionCall>>(visit_gate_instruction(*node.gate)));
+    operands.add(std::any_cast<values::Value>(visit_expression(*node.exponent)));
+    operands.add(std::any_cast<values::Value>(node.gate->visit(*this)));
 
     // Resolve the instruction
     const auto &name = node.name->name;
@@ -212,10 +179,8 @@ std::any AnalyzeTreeGenAstVisitor::visit_pow_gate_modifier(ast::PowGateModifier 
 std::any AnalyzeTreeGenAstVisitor::visit_ctrl_gate_modifier(ast::CtrlGateModifier &node) {
     // Set operands
     auto operands = values::Values();
-    operands.add(tree::Maybe<values::ValueBase>{
-        std::any_cast<values::Value>(visit_expression(*node.ctrl_qubit)).get_ptr()
-    });
-    operands.add(std::any_cast<tree::One<values::InstructionCall>>(visit_gate_instruction(*node.gate)));
+    operands.add(std::any_cast<values::Value>(visit_expression(*node.ctrl_qubit)));
+    operands.add(std::any_cast<values::Value>(node.gate->visit(*this)));
 
     // Resolve the instruction
     const auto &name = node.name->name;

@@ -1,0 +1,5 @@
+version 3
+
+qubit[2] q
+
+ctrl(q[0], X(q[1]))

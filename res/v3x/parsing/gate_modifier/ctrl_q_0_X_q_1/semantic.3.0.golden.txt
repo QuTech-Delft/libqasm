@@ -1,0 +1,86 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  block: <
+    Block(
+      statements: [
+        Instruction(
+          instruction_call_value: <
+            InstructionCall(
+              instruction_ref: <
+                InstructionRef(
+                  instruction: ctrl(qubit, gate) -> gate
+                )
+              >
+              operands: [
+                IndexRef(
+                  variable --> <
+                    Variable(
+                      name: q
+                      typ: <
+                        QubitArray(
+                          size: 2
+                        )
+                      >
+                      annotations: []
+                    )
+                  >
+                  indices: [
+                    ConstInt(
+                      value: 0
+                    )
+                  ]
+                )
+                InstructionCall(
+                  instruction_ref: <
+                    InstructionRef(
+                      instruction: X(qubit) -> gate
+                    )
+                  >
+                  operands: [
+                    IndexRef(
+                      variable --> <
+                        Variable(
+                          name: q
+                          typ: <
+                            QubitArray(
+                              size: 2
+                            )
+                          >
+                          annotations: []
+                        )
+                      >
+                      indices: [
+                        ConstInt(
+                          value: 1
+                        )
+                      ]
+                    )
+                  ]
+                )
+              ]
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+  variables: [
+    Variable(
+      name: q
+      typ: <
+        QubitArray(
+          size: 2
+        )
+      >
+      annotations: []
+    )
+  ]
+)
+

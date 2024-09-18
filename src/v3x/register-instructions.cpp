@@ -68,7 +68,7 @@ void register_instructions(analyzer::Analyzer *analyzer) {
     analyzer->register_instruction("reset", "V", 'n');
 
     analyzer->register_instruction("inv", "G", 'G');
-    analyzer->register_instruction("pow", "Gf", 'G');
+    analyzer->register_instruction("pow", "fG", 'G');
     analyzer->register_instruction("ctrl", "QG", 'G');
 }
 

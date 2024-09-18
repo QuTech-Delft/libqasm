@@ -8,9 +8,7 @@
 #include <fmt/format.h>
 
 
-namespace cqasm::v3x {
-
-namespace instruction {
+namespace cqasm::v3x::instruction {
 
 /**
  * Creates a new instruction.
@@ -47,9 +45,10 @@ std::ostream &operator<<(std::ostream &os, const InstructionRef &instruction) {
     return instruction.empty() ? os << "unresolved" : os << *instruction;
 }
 
-}  // namespace instruction
+}  // namespace cqasm::v3x::instruction
 
-namespace primitives {
+
+namespace cqasm::v3x::primitives {
 
 template <>
 void serialize(const instruction::InstructionRef &obj, ::tree::cbor::MapWriter &map) {
@@ -57,12 +56,13 @@ void serialize(const instruction::InstructionRef &obj, ::tree::cbor::MapWriter &
         return;
     }
     map.append_string("n", obj->name);
-    auto aw = map.append_array("t");
+    auto aw = map.append_array("pt");
     for (const auto &t : obj->param_types) {
         aw.append_binary(::tree::base::serialize(::tree::base::Maybe<types::TypeBase>{ t.get_ptr() }));
     }
-    map.append_binary("rt", ::tree::base::serialize(::tree::base::Maybe<types::TypeBase>{ obj->return_type }));
     aw.close();
+    map.append_binary("rt", ::tree::base::serialize(::tree::base::Maybe<types::TypeBase>{
+        obj->return_type.get_ptr() }));
 }
 
 template <>
@@ -70,15 +70,13 @@ instruction::InstructionRef deserialize(const ::tree::cbor::MapReader &map) {
     if (!map.count("n")) {
         return {};
     }
-    auto instruction = tree::make<instruction::Instruction>(map.at("n").as_string(), "", 'n');
-    auto ar = map.at("t").as_array();
+    auto ret = tree::make<instruction::Instruction>(map.at("n").as_string(), "", 'n');
+    auto ar = map.at("pt").as_array();
     for (const auto &element : ar) {
-        instruction->param_types.add(::tree::base::deserialize<types::Node>(element.as_binary()));
+        ret->param_types.add(::tree::base::deserialize<types::Node>(element.as_binary()));
     }
-    instruction->return_type = ::tree::base::deserialize<types::Node>(map.at("rt").as_string());
-    return instruction;
+    ret->return_type = ::tree::base::deserialize<types::Node>(map.at("rt").as_binary());
+    return ret;
 }
 
-}  // namespace primitives
-
-}  // namespace cqasm::v3x
+}  // namespace cqasm::v3x::primitives

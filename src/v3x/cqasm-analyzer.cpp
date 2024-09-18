@@ -224,7 +224,7 @@ void Analyzer::register_consteval_core_function(
 }
 
 /**
- * Resolves an instruction.
+ * Resolves an instruction to a values::InstructionCall node.
  * Throws NameResolutionFailure if no instruction by the given name exists,
  * OverloadResolutionFailure if no overload exists for the given arguments,
  * or otherwise returns the resolved instruction node.
