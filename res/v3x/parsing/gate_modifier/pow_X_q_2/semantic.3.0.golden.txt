@@ -14,13 +14,10 @@ Program(
             InstructionCall(
               instruction_ref: <
                 InstructionRef(
-                  instruction: pow(float, gate) -> gate
+                  instruction: pow(gate, float) -> gate
                 )
               >
               operands: [
-                ConstFloat(
-                  value: 2
-                )
                 InstructionCall(
                   instruction_ref: <
                     InstructionRef(
@@ -42,6 +39,9 @@ Program(
                       >
                     )
                   ]
+                )
+                ConstFloat(
+                  value: 2
                 )
               ]
             )

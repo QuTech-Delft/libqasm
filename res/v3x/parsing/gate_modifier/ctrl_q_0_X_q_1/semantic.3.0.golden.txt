@@ -14,28 +14,10 @@ Program(
             InstructionCall(
               instruction_ref: <
                 InstructionRef(
-                  instruction: ctrl(qubit, gate) -> gate
+                  instruction: ctrl(gate, qubit) -> gate
                 )
               >
               operands: [
-                IndexRef(
-                  variable --> <
-                    Variable(
-                      name: q
-                      typ: <
-                        QubitArray(
-                          size: 2
-                        )
-                      >
-                      annotations: []
-                    )
-                  >
-                  indices: [
-                    ConstInt(
-                      value: 0
-                    )
-                  ]
-                )
                 InstructionCall(
                   instruction_ref: <
                     InstructionRef(
@@ -60,6 +42,24 @@ Program(
                           value: 1
                         )
                       ]
+                    )
+                  ]
+                )
+                IndexRef(
+                  variable --> <
+                    Variable(
+                      name: q
+                      typ: <
+                        QubitArray(
+                          size: 2
+                        )
+                      >
+                      annotations: []
+                    )
+                  >
+                  indices: [
+                    ConstInt(
+                      value: 0
                     )
                   ]
                 )

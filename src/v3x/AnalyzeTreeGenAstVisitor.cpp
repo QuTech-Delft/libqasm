@@ -163,8 +163,8 @@ std::any AnalyzeTreeGenAstVisitor::visit_inv_gate_modifier(ast::InvGateModifier 
 std::any AnalyzeTreeGenAstVisitor::visit_pow_gate_modifier(ast::PowGateModifier &node) {
     // Set operands
     auto operands = values::Values();
-    operands.add(std::any_cast<values::Value>(visit_expression(*node.exponent)));
     operands.add(std::any_cast<values::Value>(node.gate->visit(*this)));
+    operands.add(std::any_cast<values::Value>(visit_expression(*node.exponent)));
 
     // Resolve the instruction
     const auto &name = node.name->name;
@@ -179,8 +179,8 @@ std::any AnalyzeTreeGenAstVisitor::visit_pow_gate_modifier(ast::PowGateModifier 
 std::any AnalyzeTreeGenAstVisitor::visit_ctrl_gate_modifier(ast::CtrlGateModifier &node) {
     // Set operands
     auto operands = values::Values();
-    operands.add(std::any_cast<values::Value>(visit_expression(*node.ctrl_qubit)));
     operands.add(std::any_cast<values::Value>(node.gate->visit(*this)));
+    operands.add(std::any_cast<values::Value>(visit_expression(*node.ctrl_qubit)));
 
     // Resolve the instruction
     const auto &name = node.name->name;

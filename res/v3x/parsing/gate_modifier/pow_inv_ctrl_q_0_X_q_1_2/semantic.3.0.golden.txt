@@ -14,13 +14,10 @@ Program(
             InstructionCall(
               instruction_ref: <
                 InstructionRef(
-                  instruction: pow(float, gate) -> gate
+                  instruction: pow(gate, float) -> gate
                 )
               >
               operands: [
-                ConstFloat(
-                  value: 2
-                )
                 InstructionCall(
                   instruction_ref: <
                     InstructionRef(
@@ -31,28 +28,10 @@ Program(
                     InstructionCall(
                       instruction_ref: <
                         InstructionRef(
-                          instruction: ctrl(qubit, gate) -> gate
+                          instruction: ctrl(gate, qubit) -> gate
                         )
                       >
                       operands: [
-                        IndexRef(
-                          variable --> <
-                            Variable(
-                              name: q
-                              typ: <
-                                QubitArray(
-                                  size: 2
-                                )
-                              >
-                              annotations: []
-                            )
-                          >
-                          indices: [
-                            ConstInt(
-                              value: 0
-                            )
-                          ]
-                        )
                         InstructionCall(
                           instruction_ref: <
                             InstructionRef(
@@ -80,9 +59,30 @@ Program(
                             )
                           ]
                         )
+                        IndexRef(
+                          variable --> <
+                            Variable(
+                              name: q
+                              typ: <
+                                QubitArray(
+                                  size: 2
+                                )
+                              >
+                              annotations: []
+                            )
+                          >
+                          indices: [
+                            ConstInt(
+                              value: 0
+                            )
+                          ]
+                        )
                       ]
                     )
                   ]
+                )
+                ConstFloat(
+                  value: 2
                 )
               ]
             )

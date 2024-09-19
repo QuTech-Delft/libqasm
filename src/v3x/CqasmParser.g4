@@ -47,7 +47,7 @@ gateInstruction:
 
 gateModifier:
     INV OPEN_PARENS gateInstruction CLOSE_PARENS  # invGate
-    | POW OPEN_PARENS expression COMMA gateInstruction CLOSE_PARENS  # powGate
+    | POW OPEN_PARENS gateInstruction COMMA expression CLOSE_PARENS  # powGate
     | CTRL OPEN_PARENS expression COMMA gateInstruction CLOSE_PARENS  # ctrlGate
     ;
 

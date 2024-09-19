@@ -28,7 +28,7 @@ Program(
         )
         PowGateModifier( # input.cq:5:1..4
           exponent: <
-            IntegerLiteral( # input.cq:5:5..6
+            IntegerLiteral( # input.cq:5:11..12
               value: 2
             )
           >
@@ -38,7 +38,7 @@ Program(
             )
           >
           gate: <
-            Gate( # input.cq:5:8..9
+            Gate( # input.cq:5:5..6
               name: <
                 Identifier(
                   name: X
@@ -47,7 +47,7 @@ Program(
               operands: <
                 ExpressionList(
                   items: [
-                    Identifier( # input.cq:5:10..11
+                    Identifier( # input.cq:5:7..8
                       name: q
                     )
                   ]
