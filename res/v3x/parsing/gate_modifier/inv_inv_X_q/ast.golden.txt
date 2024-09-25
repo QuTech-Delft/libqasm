@@ -26,39 +26,60 @@ Program(
           >
           annotations: []
         )
-        InvGateModifier( # input.cq:5:1..4
-          name: <
-            Keyword(
-              name: inv
-            )
-          >
+        GateInstruction(
           gate: <
-            InvGateModifier( # input.cq:5:5..8
+            ModifiableGate( # input.cq:5:1..4
               name: <
-                Keyword(
+                Identifier(
                   name: inv
                 )
               >
-              gate: <
-                Gate( # input.cq:5:9..10
+              modified_gate: <
+                ModifiableGate( # input.cq:5:5..8
                   name: <
                     Identifier(
-                      name: X
+                      name: inv
+                    )
+                  >
+                  modified_gate: <
+                    ModifiableGate( # input.cq:5:9..10
+                      name: <
+                        Identifier(
+                          name: X
+                        )
+                      >
+                      modified_gate: -
+                      operands: <
+                        ExpressionList(
+                          items: []
+                        )
+                      >
+                      annotations: []
                     )
                   >
                   operands: <
                     ExpressionList(
-                      items: [
-                        Identifier( # input.cq:5:11..12
-                          name: q
-                        )
-                      ]
+                      items: []
                     )
                   >
                   annotations: []
                 )
               >
+              operands: <
+                ExpressionList(
+                  items: []
+                )
+              >
               annotations: []
+            )
+          >
+          operands: <
+            ExpressionList(
+              items: [
+                Identifier( # input.cq:5:13..14
+                  name: q
+                )
+              ]
             )
           >
           annotations: []

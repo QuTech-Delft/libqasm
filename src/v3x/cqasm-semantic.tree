@@ -44,15 +44,46 @@ annotation_data {
 annotated {
     annotations: Any<annotation_data>;
 
+    # ------------------------------------------
+    # | Name | Full    | Resolution | Terminal |
+    # ------------------------------------------
+    # | X    | X       | X          | X        |
+    # | inv  | inv_Y   | U1_Y       | Y        |
+    # | pow  | pow_Z   | U1_Z       | Z        |
+    # | ctrl | ctrl_Rx | U2_Rx      | Rx       |
+    # ------------------------------------------
+    #
+    # Gate modifiers (inv, pow, and ctrl) act on a modified gate.
+    # pow is the only modifiable gate that has an operand.
+    modifiable_gate {
+        name: cqasm::v3x::primitives::Str;
+        modified_gate: Maybe<modifiable_gate>;
+        operands: external Any<cqasm::v3x::values::ValueBase>;
+        full_name: cqasm::v3x::primitives::Str;
+        resolution_name: cqasm::v3x::primitives::Str;
+        terminal_name: cqasm::v3x::primitives::Str;
+    }
+
     variable {
         name: cqasm::v3x::primitives::Str;
         typ: external One<cqasm::v3x::types::TypeBase>;
     }
 
     statement {
-        # Regular instruction (a gate, a gate modifier, a measure instruction, or a reset instruction)
         instruction {
-            instruction_call_value: external One<cqasm::v3x::values::ValueBase>;
+            # A gate, or a composition of gate modifiers and a gate
+            gate_instruction {
+                instruction_ref: cqasm::v3x::instruction::InstructionRef;
+                gate: One<modifiable_gate>;
+                operands: external Any<cqasm::v3x::values::ValueBase>;
+            }
+
+            # A measure instruction or a reset instruction
+            non_gate_instruction {
+                instruction_ref: cqasm::v3x::instruction::InstructionRef;
+                name: cqasm::v3x::primitives::Str;
+                operands: external Any<cqasm::v3x::values::ValueBase>;
+            }
         }
     }
 }

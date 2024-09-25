@@ -10,51 +10,64 @@ Program(
     Block(
       statements: [
         GateInstruction(
-          instruction_ref: U1_X qubit
+          instruction_ref: U2_X qubit, qubit
           gate: <
             ModifiableGate(
-              name: inv
+              name: ctrl
               modified_gate: <
                 ModifiableGate(
-                  name: inv
-                  modified_gate: <
-                    ModifiableGate(
-                      name: X
-                      modified_gate: -
-                      operands: []
-                      full_name: X
-                      resolution_name: X
-                      terminal_name: X
-                      annotations: []
-                    )
-                  >
+                  name: X
+                  modified_gate: -
                   operands: []
-                  full_name: inv_X
-                  resolution_name: U1_X
+                  full_name: X
+                  resolution_name: X
                   terminal_name: X
                   annotations: []
                 )
               >
               operands: []
-              full_name: inv_inv_X
-              resolution_name: U1_X
+              full_name: ctrl_X
+              resolution_name: U2_X
               terminal_name: X
               annotations: []
             )
           >
           operands: [
-            VariableRef(
+            IndexRef(
               variable --> <
                 Variable(
                   name: q
                   typ: <
-                    Qubit(
-                      size: 1
+                    QubitArray(
+                      size: 2
                     )
                   >
                   annotations: []
                 )
               >
+              indices: [
+                ConstInt(
+                  value: 0
+                )
+              ]
+            )
+            IndexRef(
+              variable --> <
+                Variable(
+                  name: q
+                  typ: <
+                    QubitArray(
+                      size: 2
+                    )
+                  >
+                  annotations: []
+                )
+              >
+              indices: [
+                ConstInt(
+                  value: 1
+                )
+              ]
             )
           ]
           annotations: []
@@ -66,8 +79,8 @@ Program(
     Variable(
       name: q
       typ: <
-        Qubit(
-          size: 1
+        QubitArray(
+          size: 2
         )
       >
       annotations: []

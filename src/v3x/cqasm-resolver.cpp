@@ -93,8 +93,7 @@ Value ConstEvalCoreFunctionTable::resolve(const std::string &name, const Values 
 // InstructionTable //
 //------------------//
 
-InstructionTable::InstructionTable()
-: resolver{ std::make_unique<resolver_t>() } {}
+InstructionTable::InstructionTable() : resolver{ std::make_unique<resolver_t>() } {}
 InstructionTable::~InstructionTable() = default;
 InstructionTable::InstructionTable(const InstructionTable &t)
 : resolver{ std::make_unique<resolver_t>(*t.resolver) } {}
@@ -117,16 +116,20 @@ void InstructionTable::add(const instruction::Instruction &type) {
 }
 
 /**
- * Resolves an instruction to a values::InstructionCall node.
+ * Resolves an instruction.
  * Throws NameResolutionFailure if no instruction by the given name exists,
  * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
  * returns the resolved instruction node.
  * Annotation data, line number information, and the condition still need to be set by the caller.
  */
-Value InstructionTable::resolve(const std::string &name, const Values &args) const {
+[[nodiscard]] tree::One<semantic::Instruction> InstructionTable::resolve(
+    const tree::One<semantic::ModifiableGate> &gate, const Values &args) const {
+    auto [instruction_ref, promoted_args] = resolver->resolve(gate->resolution_name, args);
+    return tree::make<semantic::GateInstruction>(instruction_ref, gate, promoted_args);
+}
+[[nodiscard]] tree::One<semantic::Instruction> InstructionTable::resolve(const std::string &name, const Values &args) const {
     auto [instruction_ref, promoted_args] = resolver->resolve(name, args);
-    auto value_instruction_ref = tree::make<values::InstructionRef>(instruction_ref);
-    return tree::make<values::InstructionCall>(value_instruction_ref, promoted_args);
+    return tree::make<semantic::NonGateInstruction>(instruction_ref, name, promoted_args);
 }
 
 }  // namespace cqasm::v3x::resolver

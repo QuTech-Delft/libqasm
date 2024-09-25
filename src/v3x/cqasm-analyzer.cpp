@@ -230,7 +230,20 @@ void Analyzer::register_consteval_core_function(
  * or otherwise returns the resolved instruction node.
  * Annotation data, line number information, and the condition still need to be set by the caller.
  */
-[[nodiscard]] values::Value Analyzer::resolve_instruction(const std::string &name, const values::Values &args) const {
+[[nodiscard]] tree::One<semantic::Instruction> Analyzer::resolve_instruction(
+    const tree::One<semantic::ModifiableGate> &gate, const values::Values &args) const {
+    for (const auto &scope : scope_stack_) {
+        try {
+            return scope.instruction_table.resolve(gate, args);
+        } catch (const error::AnalysisError &) {
+            continue;
+        }
+    }
+    throw resolver::ResolutionFailure{ fmt::format("failed to resolve instruction '{}' with argument pack ({})",
+        gate->resolution_name, values::types_of(args)) };
+}
+[[nodiscard]] tree::One<semantic::Instruction> Analyzer::resolve_instruction(const std::string &name,
+    const values::Values &args) const {
     for (const auto &scope : scope_stack_) {
         try {
             return scope.instruction_table.resolve(name, args);
@@ -238,8 +251,8 @@ void Analyzer::register_consteval_core_function(
             continue;
         }
     }
-    throw resolver::ResolutionFailure{ fmt::format(
-        "failed to resolve instruction '{}' with argument pack {}", name, values::types_of(args)) };
+    throw resolver::ResolutionFailure{ fmt::format("failed to resolve instruction '{}' with argument pack ({})",
+        name, values::types_of(args)) };
 }
 
 /**
@@ -253,9 +266,12 @@ void Analyzer::register_instruction(const instruction::Instruction &instruction)
  * Convenience method for registering an instruction type.
  * The arguments are passed straight to instruction::Instruction's constructor.
  */
-void Analyzer::register_instruction(const std::string &name, const std::optional<std::string> &param_types,
-    const char return_type) {
-    register_instruction(instruction::Instruction{ name, param_types, return_type });
+void Analyzer::register_instruction(const tree::One<semantic::ModifiableGate> &gate,
+    const std::optional<std::string> &param_types) {
+    register_instruction(instruction::Instruction{ gate->resolution_name, param_types });
+}
+void Analyzer::register_instruction(const std::string &name, const std::optional<std::string> &param_types) {
+    register_instruction(instruction::Instruction{ name, param_types });
 }
 
 }  // namespace cqasm::v3x::analyzer

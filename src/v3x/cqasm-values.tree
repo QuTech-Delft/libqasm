@@ -52,14 +52,5 @@ value_base {
         variable_ref {
             variable: external Link<cqasm::v3x::semantic::Variable>;
         }
-
-        instruction_ref {
-            instruction: cqasm::v3x::instruction::InstructionRef;
-        }
-    }
-
-    instruction_call {
-        instruction_ref: One<instruction_ref>;
-        operands: Any<value_base>;
     }
 }

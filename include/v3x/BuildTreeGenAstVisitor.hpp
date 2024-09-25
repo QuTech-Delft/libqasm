@@ -16,8 +16,6 @@ class CustomErrorListener;
 
 namespace cqasm::v3x::parser {
 
-using InstructionsSectionT = std::tuple<tree::Any<ast::Gate>, tree::Any<ast::MeasureInstruction>>;
-
 class BuildTreeGenAstVisitor : public BuildCustomAstVisitor {
     /**
      * Name of the file being parsed.

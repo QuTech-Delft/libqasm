@@ -31,12 +31,9 @@ public:
     std::any visit_annotation_data(ast::AnnotationData &node) override;
     std::any visit_global_block(ast::GlobalBlock &node) override;
     std::any visit_variable(ast::Variable &node) override;
-    std::any visit_inv_gate_modifier(ast::InvGateModifier &node) override;
-    std::any visit_pow_gate_modifier(ast::PowGateModifier &node) override;
-    std::any visit_ctrl_gate_modifier(ast::CtrlGateModifier &node) override;
-    std::any visit_gate(ast::Gate &node) override;
-    std::any visit_measure_instruction(ast::MeasureInstruction &node) override;
-    std::any visit_reset_instruction(ast::ResetInstruction &node) override;
+    std::any visit_gate_instruction(ast::GateInstruction &node) override;
+    std::any visit_modifiable_gate(ast::ModifiableGate &node) override;
+    std::any visit_non_gate_instruction(ast::NonGateInstruction &node) override;
     std::any visit_expression_list(ast::ExpressionList &node) override;
     std::any visit_expression(ast::Expression &node) override;
     std::any visit_unary_minus_expression(ast::UnaryMinusExpression &node) override;
@@ -113,20 +110,7 @@ private:
     void visit_block(Block &block) {
         for (const auto &statement_ast : block.statements) {
             try {
-                if (auto instruction_ptr = statement_ast->as_instruction()) {
-                    auto ret = tree::make<semantic::Instruction>(
-                        std::any_cast<values::Value>(instruction_ptr->visit(*this)));
-
-                    // Copy annotation data
-                    ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(
-                        visit_annotated(*instruction_ptr->as_annotated()));
-                    ret->template copy_annotation<parser::SourceLocation>(*instruction_ptr);
-
-                    // Add the statement to the current scope
-                    analyzer_.add_statement_to_current_scope(ret);
-                } else {
-                    statement_ast->visit(*this);
-                }
+                statement_ast->visit(*this);
             } catch (error::AnalysisError &err) {
                 err.context(block);
                 result_.errors.push_back(std::move(err));

@@ -117,8 +117,7 @@ public:
     /*
      * The arguments are passed directly to `instruction::Instruction`'s constructor.
      */
-    void register_instruction(const std::string &name, const std::optional<std::string> &param_types,
-        const char return_type);
+    void register_instruction(const std::string &name, const std::optional<std::string> &param_types);
 
     /**
      * Parses a file containing a cQASM v3.0 program.

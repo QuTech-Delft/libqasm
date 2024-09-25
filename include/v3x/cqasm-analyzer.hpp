@@ -176,7 +176,10 @@ public:
      * or otherwise returns the resolved instruction node.
      * Annotation data, line number information, and the condition still need to be set by the caller.
      */
-    [[nodiscard]] virtual values::Value resolve_instruction(const std::string &name, const values::Values &args) const;
+    [[nodiscard]] tree::One<semantic::Instruction> resolve_instruction(const tree::One<semantic::ModifiableGate> &gate,
+        const values::Values &args) const;
+    [[nodiscard]] virtual tree::One<semantic::Instruction> resolve_instruction(const std::string &name,
+        const values::Values &args) const;
 
     /**
      * Registers an instruction type.
@@ -187,8 +190,9 @@ public:
      * Convenience method for registering an instruction type.
      * The arguments are passed straight to instruction::Instruction's constructor.
      */
-    virtual void register_instruction(const std::string &name, const std::optional<std::string> &param_types,
-        const char return_type);
+    virtual void register_instruction(const tree::One<semantic::ModifiableGate> &gate,
+        const std::optional<std::string> &param_types);
+    virtual void register_instruction(const std::string &name, const std::optional<std::string> &param_types);
 };
 
 }  // namespace cqasm::v3x::analyzer

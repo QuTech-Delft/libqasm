@@ -39,15 +39,4 @@ type_base {
 
     bit_array {}
     qubit_array {}
-
-    # Function arguments will end up resolving to a given type
-    # For example: for f(2*sqrt(pi)), 2*sqrt(pi) will end up resolving to a float type
-    # Gate modifiers arguments also need to end up resolving to a given type
-    # The issue here is that some of these types cannot be a qubit, they have to be a gate
-    # For example, for ctrl(q0, X(q1)), the second argument has to resolve to a gate type
-    # Otherwise, ctrl(q0, q1) would be well formed. The same would happen with inv(q) or pow(2, q)
-    gate {}
-
-    # Measure and reset instructions do not resolve to a gate type, but they have to have a type though
-    null {}
 }

@@ -2,4 +2,4 @@ version 3
 
 qubit[2] q
 
-ctrl(q[0], X(q[1]))
+ctrl(X) q[0], q[1]

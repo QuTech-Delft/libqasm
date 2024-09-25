@@ -13,6 +13,14 @@
 
 namespace cqasm::v3x::instruction {
 
+constexpr const char* inv_gate_modifier_name = "inv";
+constexpr const char* pow_gate_modifier_name = "pow";
+constexpr const char* ctrl_gate_modifier_name = "ctrl";
+constexpr const char* measure_instruction_name = "measure";
+constexpr const char* reset_instruction_name = "reset";
+constexpr const char* unitary_1_gate_prefix = "U1";
+constexpr const char* unitary_2_gate_prefix = "U2";
+
 /**
  * Representation of an available instruction in the instruction set.
  * An instruction can be: a gate, a gate modifier, a measure instruction, or a reset instruction.
@@ -41,19 +49,12 @@ public:
     types::Types param_types;
 
     /**
-     * The return type that this instruction has.
-     * Gate modifiers and gates have a gate return type.
-     * Measure and reset instructions have a null return type.
-     */
-    types::Type return_type;
-
-    /**
      * Creates a new instruction.
      * param_types is a shorthand type specification string as parsed by cqasm::types::from_spec().
-     * return_type is a shorthand type specification character as parsed by cqasm::types::from_spec().
      * If you need more control, you can also manipulate param_types directly.
      */
-    Instruction(std::string name, const std::optional<std::string> &param_types, const char &return_type);
+    Instruction() = default;
+    Instruction(std::string name, const std::optional<std::string> &param_types);
 
     bool operator==(const Instruction &rhs) const;
     inline bool operator!=(const Instruction &rhs) const { return !(*this == rhs); }

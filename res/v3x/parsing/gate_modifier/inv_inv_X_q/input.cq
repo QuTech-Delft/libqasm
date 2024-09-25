@@ -2,4 +2,4 @@ version 3
 
 qubit q
 
-inv(inv(X(q)))
+inv(inv(X)) q

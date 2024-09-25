@@ -44,9 +44,8 @@ V3xAnalyzer::~V3xAnalyzer() = default;
  * Registers an instruction type.
  * The arguments are passed straight to instruction::Instruction's constructor.
  */
-void V3xAnalyzer::register_instruction(const std::string &name, const std::optional<std::string> &param_types,
-    const char return_type) {
-    analyzer->register_instruction(name, param_types, return_type);
+void V3xAnalyzer::register_instruction(const std::string &name, const std::optional<std::string> &param_types) {
+    analyzer->register_instruction(name, param_types);
 }
 
 /**

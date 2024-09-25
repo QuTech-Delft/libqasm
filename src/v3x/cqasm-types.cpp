@@ -19,10 +19,8 @@ namespace cqasm::v3x::types {
  *  - b = bool
  *  - i = int
  *  - f = float
- *  - G = gate
  *  - V = qubit array
  *  - W = bit array
- *  - n = null
  */
 Type from_spec(const char c) {
     switch (c) {
@@ -31,10 +29,8 @@ Type from_spec(const char c) {
         case 'b': return tree::make<types::Bool>();
         case 'i': return tree::make<types::Int>();
         case 'f': return tree::make<types::Float>();
-        case 'G': return tree::make<types::Gate>();
         case 'V': return tree::make<types::QubitArray>();
         case 'W': return tree::make<types::BitArray>();
-        case 'n': return tree::make<types::Null>();
         default: throw std::invalid_argument("unknown type code encountered");
     }
 }
@@ -77,14 +73,10 @@ std::ostream &operator<<(std::ostream &os, const Type &type) {
         os << types::integer_type_name;
     } else if (type->as_float()) {
         os << types::float_type_name;
-    } else if (type->as_gate()) {
-        os << types::gate_type_name;
     } else if (type->as_qubit_array()) {
         os << types::qubit_array_type_name;
     } else if (type->as_bit_array()) {
         os << types::bit_array_type_name;
-    } else if (type->as_null()) {
-        os << types::null_type_name;
     } else {
         // Fallback when no friendly repr is known
         os << *type;

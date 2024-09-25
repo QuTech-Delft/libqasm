@@ -2,4 +2,4 @@ version 3
 
 qubit q
 
-pow(X(q), 2)
+pow(X, 2) q

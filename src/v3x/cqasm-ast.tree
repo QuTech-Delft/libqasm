@@ -163,6 +163,12 @@ annotated {
     # Zero or more annotations attached to this object.
     annotations: Any<annotation_data>;
 
+    modifiable_gate {
+        name: One<identifier>;
+        modified_gate: Maybe<modifiable_gate>;
+        operands: One<expression_list>;
+    }
+
     statement {
         block_statement {
             # One variable declaration of some type.
@@ -173,40 +179,13 @@ annotated {
 
             instruction {
                 gate_instruction {
-                    gate_modifier {
-                        name: One<keyword>;
-                        gate: One<gate_instruction>;
-
-                        inv_gate_modifier {}
-
-                        pow_gate_modifier {
-                            exponent: One<expression>;
-                        }
-
-                        ctrl_gate_modifier {
-                            ctrl_qubit: One<expression>;
-                        }
-                    }
-
-                    gate {
-                        name: One<identifier>;
-                        operands: One<expression_list>;
-                    }
+                    gate: One<modifiable_gate>;
+                    operands: One<expression_list>;
                 }
 
-                # For some instructions, like the measure instruction,
-                # we want to differentiate between left hand side and right and side operands.
-                # For a measure instruction, the right hand side operand should be a qubit,
-                # and the left hand side operand a bit.
-                measure_instruction {
+                non_gate_instruction {
                     name: One<keyword>;
-                    lhs: One<expression>;
-                    rhs: One<expression>;
-                }
-
-                reset_instruction {
-                    name: One<keyword>;
-                    operand: Maybe<expression>;
+                    operands: One<expression_list>;
                 }
             }
         }

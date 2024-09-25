@@ -1,0 +1,5 @@
+version 3
+
+qubit[2] q
+
+pow(inv(ctrl(X)), 2) q[0], q[1]

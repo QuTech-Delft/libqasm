@@ -71,7 +71,7 @@ struct OverloadedNameResolver : public cqasm::overload::OverloadedNameResolver<T
             throw NameResolutionFailure{ fmt::format("failed to resolve '{}'", name) };
         } catch (const cqasm::overload::OverloadResolutionFailure &) {
             throw OverloadResolutionFailure{ fmt::format(
-                "failed to resolve overload for '{}' with argument pack {}", name, types_of(args)) };
+                "failed to resolve overload for '{}' with argument pack ({})", name, types_of(args)) };
         }
     }
 };
@@ -175,12 +175,14 @@ public:
     void add(const instruction::Instruction &type);
 
     /**
-     * Resolves an instruction to a values::InstructionCall node.
+     * Resolves an instruction.
      * Throws NameResolutionFailure if no instruction by the given name exists,
      * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
      * returns the resolved instruction node.
      */
-    [[nodiscard]] Value resolve(const std::string &name, const Values &args) const;
+    [[nodiscard]] tree::One<semantic::Instruction> resolve(const tree::One<semantic::ModifiableGate> &gate,
+        const Values &args) const;
+    [[nodiscard]] tree::One<semantic::Instruction> resolve(const std::string &name, const Values &args) const;
 };
 
 }  // namespace cqasm::v3x::resolver

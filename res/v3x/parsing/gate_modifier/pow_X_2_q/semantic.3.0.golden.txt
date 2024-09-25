@@ -13,30 +13,24 @@ Program(
           instruction_ref: U1_X qubit
           gate: <
             ModifiableGate(
-              name: inv
+              name: pow
               modified_gate: <
                 ModifiableGate(
-                  name: inv
-                  modified_gate: <
-                    ModifiableGate(
-                      name: X
-                      modified_gate: -
-                      operands: []
-                      full_name: X
-                      resolution_name: X
-                      terminal_name: X
-                      annotations: []
-                    )
-                  >
+                  name: X
+                  modified_gate: -
                   operands: []
-                  full_name: inv_X
-                  resolution_name: U1_X
+                  full_name: X
+                  resolution_name: X
                   terminal_name: X
                   annotations: []
                 )
               >
-              operands: []
-              full_name: inv_inv_X
+              operands: [
+                ConstFloat(
+                  value: 2
+                )
+              ]
+              full_name: pow_X
               resolution_name: U1_X
               terminal_name: X
               annotations: []
