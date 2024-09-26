@@ -124,20 +124,6 @@ std::any AnalyzeTreeGenAstVisitor::visit_variable(ast::Variable &node) {
 }
 
 /**
- * Promote a value to a given type,
- * or error if the promotion is not valid
- */
-values::Value promote_or_error(const values::Value &rhs_value, const types::Type &lhs_type) {
-    if (auto rhs_promoted_value = values::promote(rhs_value, lhs_type); !rhs_promoted_value.empty()) {
-        return rhs_promoted_value;
-    }
-    throw error::AnalysisError{
-        fmt::format("type of right-hand side ({}) could not be coerced to left-hand side ({})",
-            values::type_of(rhs_value), lhs_type)
-    };
-}
-
-/**
  * Convenience function for extracting the types of a list of variables.
  */
 types::Types types_of(const tree::Any<semantic::Variable> &variables) {
