@@ -12,6 +12,8 @@
 
 namespace cqasm::v3x::analyzer {
 
+using namespace instruction;
+
 AnalyzeTreeGenAstVisitor::AnalyzeTreeGenAstVisitor(Analyzer &analyzer)
 : analyzer_{ analyzer }
 , result_{} {}
@@ -149,7 +151,7 @@ types::Types types_of(const tree::Any<semantic::Variable> &variables) {
 std::any AnalyzeTreeGenAstVisitor::visit_gate_instruction(ast::GateInstruction &node) {
     auto ret = tree::make<semantic::GateInstruction>();
     try {
-        // Set gate and operand list
+        // Set gate and operands
         auto gate = std::any_cast<tree::One<semantic::ModifiableGate>>(node.gate->visit(*this));
         auto operands = std::any_cast<values::Values>(node.operands->visit(*this));
 
@@ -166,26 +168,6 @@ std::any AnalyzeTreeGenAstVisitor::visit_gate_instruction(ast::GateInstruction &
     return ret;
 }
 
-void check_modifiable_gate(const tree::One<semantic::ModifiableGate> &gate) {
-    if ((gate->name != instruction::pow_gate_modifier_name && !gate->operands.empty()) ||
-        (gate->name == instruction::pow_gate_modifier_name &&
-            !(gate->operands.size() == 1 &&
-                values::check_promote(values::type_of(gate->operands[0]), tree::make<types::Float>())))) {
-        throw error::AnalysisError{
-            fmt::format("failed to resolve modifiable gate '{} with argument pack ({})",
-                gate->full_name,
-                values::types_of(gate->operands)
-            )
-        };
-    }
-}
-
-void resolve_modifiable_gate_operands(const tree::One<semantic::ModifiableGate> &gate) {
-    if (gate->name == instruction::pow_gate_modifier_name) {
-        gate->operands[0] = promote(gate->operands[0], tree::make<types::Float>());
-    }
-}
-
 void calculate_modifiable_gate_names(tree::One<semantic::ModifiableGate> &gate) {
     if (gate->modified_gate.empty()) {
         gate->full_name = gate->name;
@@ -193,22 +175,48 @@ void calculate_modifiable_gate_names(tree::One<semantic::ModifiableGate> &gate) 
         gate->terminal_name = gate->name;
         return;
     }
-    gate->full_name = fmt::format("{}_{}", gate->name, gate->modified_gate->full_name);
-    if (gate->name != instruction::inv_gate_modifier_name &&
-        gate->name != instruction::pow_gate_modifier_name &&
-        gate->name != instruction::ctrl_gate_modifier_name) {
+    const auto &modified_gate = gate->modified_gate;
+    gate->full_name = fmt::format("{}_{}", gate->name, modified_gate->full_name);
+    gate->resolution_name = fmt::format("{}_{}",
+        (is_single_qubit_gate_modifier(gate->name))
+            ? single_qubit_modified_gate_prefix
+            : two_qubit_modified_gate_prefix,
+        modified_gate->terminal_name);
+    gate->terminal_name = modified_gate->terminal_name;
+}
+
+void check_modifiable_gate_names(const tree::One<semantic::ModifiableGate> &gate) {
+    if (!gate->modified_gate.empty()) {
+        if (!is_gate_modifier(gate->name)) {
+            throw error::AnalysisError{
+                fmt::format("invalid gate modifier: found '{}', expecting 'inv', 'pow' or 'ctrl'", gate->name) };
+        }
+        if (is_two_qubit_unitary_gate(gate->modified_gate->resolution_name)) {
+            throw error::AnalysisError{ "trying to apply a gate modifier to a multi-qubit gate" };
+        }
+    }
+}
+
+void check_modifiable_gate_operands(const tree::One<semantic::ModifiableGate> &gate) {
+    if ((!is_pow_gate_modifier(gate->name) && !gate->operands.empty()) ||
+        (is_pow_gate_modifier(gate->name) && !(gate->operands.size() == 1 &&
+            values::check_promote(values::type_of(gate->operands[0]), tree::make<types::Float>())))) {
         throw error::AnalysisError{
-            fmt::format("invalid gate modifier: found '{}', expecting 'inv', 'pow' or 'ctrl'", gate->name) };
+            fmt::format("failed to resolve 'pow' gate modifier with argument pack ({})",
+                values::types_of(gate->operands))
+        };
     }
-    if (gate->modified_gate->resolution_name.starts_with(instruction::unitary_2_gate_prefix)) {
-        throw error::AnalysisError{ "trying to apply a gate modifier to a multi-qubit gate" };
+}
+
+void check_modifiable_gate(const tree::One<semantic::ModifiableGate> &gate) {
+    check_modifiable_gate_names(gate);
+    check_modifiable_gate_operands(gate);
+}
+
+void resolve_modifiable_gate_operands(const tree::One<semantic::ModifiableGate> &gate) {
+    if (is_pow_gate_modifier(gate->name)) {
+        gate->operands[0] = promote(gate->operands[0], tree::make<types::Float>());
     }
-    if (gate->name == instruction::inv_gate_modifier_name or gate->name == instruction::pow_gate_modifier_name) {
-        gate->resolution_name = fmt::format("{}_{}", instruction::unitary_1_gate_prefix, gate->modified_gate->terminal_name);
-    } else if (gate->name == instruction::ctrl_gate_modifier_name) {
-        gate->resolution_name = fmt::format("{}_{}", instruction::unitary_2_gate_prefix, gate->modified_gate->terminal_name);
-    }
-    gate->terminal_name = gate->modified_gate->terminal_name;
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_modifiable_gate(ast::ModifiableGate &node) {
@@ -220,14 +228,16 @@ std::any AnalyzeTreeGenAstVisitor::visit_modifiable_gate(ast::ModifiableGate &no
                 std::any_cast<tree::One<semantic::ModifiableGate>>(node.modified_gate->visit(*this)).get_ptr();
         }
         ret->operands = std::any_cast<values::Values>(visit_expression_list(*node.operands));
-        calculate_modifiable_gate_names(ret);
 
         // Specific checks
         check_modifiable_gate(ret);
 
-        // Resolve the gate
+        // Calculate full name, resolution name, and terminal name
+        calculate_modifiable_gate_names(ret);
+
+        // Resolve the gate operands
         resolve_modifiable_gate_operands(ret);
-        
+
         // Copy annotation data
         ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
         ret->copy_annotation<parser::SourceLocation>(node);

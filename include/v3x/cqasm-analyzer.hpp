@@ -190,8 +190,6 @@ public:
      * Convenience method for registering an instruction type.
      * The arguments are passed straight to instruction::Instruction's constructor.
      */
-    virtual void register_instruction(const tree::One<semantic::ModifiableGate> &gate,
-        const std::optional<std::string> &param_types);
     virtual void register_instruction(const std::string &name, const std::optional<std::string> &param_types);
 };
 

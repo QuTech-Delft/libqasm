@@ -10,7 +10,7 @@ Program(
     Block(
       statements: [
         GateInstruction(
-          instruction_ref: U2_X qubit, qubit
+          instruction_ref: 2q_X qubit, qubit
           gate: <
             ModifiableGate(
               name: ctrl
@@ -27,7 +27,7 @@ Program(
               >
               operands: []
               full_name: ctrl_X
-              resolution_name: U2_X
+              resolution_name: 2q_X
               terminal_name: X
               annotations: []
             )

@@ -56,17 +56,19 @@ CQASM_ANALYSIS_ERROR(ResolutionFailure);
 //------------------------//
 
 template <class T>
-struct OverloadedNameResolver : public cqasm::overload::OverloadedNameResolver<T, types::TypeBase, values::ValueBase> {
+using BaseOverladedNameResolver = cqasm::overload::OverloadedNameResolver<T, types::TypeBase, values::ValueBase>;
+
+template <class T>
+struct OverloadedNameResolver : public BaseOverladedNameResolver<T> {
     virtual ~OverloadedNameResolver() = default;
 
     void add_overload(const std::string &name, const T &tag, const types::Types &param_types) override {
-        cqasm::overload::OverloadedNameResolver<T, types::TypeBase, values::ValueBase>::add_overload(
-            name, tag, param_types);
+        BaseOverladedNameResolver<T>::add_overload(name, tag, param_types);
     }
 
     [[nodiscard]] std::pair<T, Values> resolve(const std::string &name, const Values &args) override {
         try {
-            return cqasm::overload::OverloadedNameResolver<T, types::TypeBase, values::ValueBase>::resolve(name, args);
+            return BaseOverladedNameResolver<T>::resolve(name, args);
         } catch (const cqasm::overload::NameResolutionFailure &) {
             throw NameResolutionFailure{ fmt::format("failed to resolve '{}'", name) };
         } catch (const cqasm::overload::OverloadResolutionFailure &) {
@@ -96,7 +98,7 @@ public:
      * Resolves a variable.
      * Throws NameResolutionFailure if no variable by the given name exists.
      */
-    Value resolve(const std::string &name) const;
+    [[nodiscard]] Value resolve(const std::string &name) const;
 };
 
 //----------------------------//
@@ -175,7 +177,7 @@ public:
     void add(const instruction::Instruction &type);
 
     /**
-     * Resolves an instruction.
+     * Resolves an instruction type.
      * Throws NameResolutionFailure if no instruction by the given name exists,
      * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
      * returns the resolved instruction node.

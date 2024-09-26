@@ -266,10 +266,6 @@ void Analyzer::register_instruction(const instruction::Instruction &instruction)
  * Convenience method for registering an instruction type.
  * The arguments are passed straight to instruction::Instruction's constructor.
  */
-void Analyzer::register_instruction(const tree::One<semantic::ModifiableGate> &gate,
-    const std::optional<std::string> &param_types) {
-    register_instruction(instruction::Instruction{ gate->resolution_name, param_types });
-}
 void Analyzer::register_instruction(const std::string &name, const std::optional<std::string> &param_types) {
     register_instruction(instruction::Instruction{ name, param_types });
 }

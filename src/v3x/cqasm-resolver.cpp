@@ -30,7 +30,7 @@ void VariableTable::add(const std::string &name, const Value &value) {
  * Resolves a variable.
  * Throws NameResolutionFailure if no variable by the given name exists.
  */
-Value VariableTable::resolve(const std::string &name) const {
+[[nodiscard]] Value VariableTable::resolve(const std::string &name) const {
     if (auto entry = table.find(name); entry != table.end()) {
         return entry->second->clone();
     }
@@ -116,7 +116,7 @@ void InstructionTable::add(const instruction::Instruction &type) {
 }
 
 /**
- * Resolves an instruction.
+ * Resolves an instruction type.
  * Throws NameResolutionFailure if no instruction by the given name exists,
  * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
  * returns the resolved instruction node.

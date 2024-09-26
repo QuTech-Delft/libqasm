@@ -98,7 +98,9 @@ public:
      * Note that ambiguous overloads are silently resolved by using the last applicable overload,
      * so more specific overloads should always be added last.
      */
-    void add_overload(const T &tag, const Types &param_types) { overloads.emplace_back(tag, param_types); }
+    void add_overload(const T &tag, const Types &param_types) {
+        overloads.emplace_back(tag, param_types);
+    }
 
     /**
      * Tries to resolve which overload belongs to the given argument list, if any.
