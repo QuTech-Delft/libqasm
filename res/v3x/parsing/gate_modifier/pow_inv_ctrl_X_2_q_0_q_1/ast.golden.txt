@@ -32,28 +32,28 @@ Program(
         )
         GateInstruction(
           gate: <
-            ModifiableGate( # input.cq:5:1..4
+            UnitaryGate( # input.cq:5:1..4
               name: <
                 Identifier(
                   name: pow
                 )
               >
               modified_gate: <
-                ModifiableGate( # input.cq:5:5..8
+                UnitaryGate( # input.cq:5:5..8
                   name: <
                     Identifier(
                       name: inv
                     )
                   >
                   modified_gate: <
-                    ModifiableGate( # input.cq:5:9..13
+                    UnitaryGate( # input.cq:5:9..13
                       name: <
                         Identifier(
                           name: ctrl
                         )
                       >
                       modified_gate: <
-                        ModifiableGate( # input.cq:5:14..15
+                        UnitaryGate( # input.cq:5:14..15
                           name: <
                             Identifier(
                               name: X

@@ -12,10 +12,10 @@ Program(
         GateInstruction(
           instruction_ref: 2q_X qubit, qubit
           gate: <
-            ModifiableGate(
+            UnitaryGate(
               name: ctrl
               modified_gate: <
-                ModifiableGate(
+                UnitaryGate(
                   name: X
                   modified_gate: -
                   operands: []

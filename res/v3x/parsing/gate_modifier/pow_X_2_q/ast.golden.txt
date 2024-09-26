@@ -28,14 +28,14 @@ Program(
         )
         GateInstruction(
           gate: <
-            ModifiableGate( # input.cq:5:1..4
+            UnitaryGate( # input.cq:5:1..4
               name: <
                 Identifier(
                   name: pow
                 )
               >
               modified_gate: <
-                ModifiableGate( # input.cq:5:5..6
+                UnitaryGate( # input.cq:5:5..6
                   name: <
                     Identifier(
                       name: X

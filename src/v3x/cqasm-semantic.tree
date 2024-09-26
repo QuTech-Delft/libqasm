@@ -53,11 +53,11 @@ annotated {
     # | ctrl | ctrl_Rx | U2_Rx      | Rx       |
     # ------------------------------------------
     #
-    # Gate modifiers (inv, pow, and ctrl) act on a modified gate.
+    # A unitary gate can be a gate or a composition of gate modifiers acting on a (modified) gate.
     # pow is the only modifiable gate that has an operand.
-    modifiable_gate {
+    unitary_gate {
         name: cqasm::v3x::primitives::Str;
-        modified_gate: Maybe<modifiable_gate>;
+        modified_gate: Maybe<unitary_gate>;
         operands: external Any<cqasm::v3x::values::ValueBase>;
         full_name: cqasm::v3x::primitives::Str;
         resolution_name: cqasm::v3x::primitives::Str;
@@ -74,7 +74,7 @@ annotated {
             # A gate, or a composition of gate modifiers and a gate
             gate_instruction {
                 instruction_ref: cqasm::v3x::instruction::InstructionRef;
-                gate: One<modifiable_gate>;
+                gate: One<unitary_gate>;
                 operands: external Any<cqasm::v3x::values::ValueBase>;
             }
 

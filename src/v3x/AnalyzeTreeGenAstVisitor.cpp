@@ -152,7 +152,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_gate_instruction(ast::GateInstruction &
     auto ret = tree::make<semantic::GateInstruction>();
     try {
         // Set gate and operands
-        auto gate = std::any_cast<tree::One<semantic::ModifiableGate>>(node.gate->visit(*this));
+        auto gate = std::any_cast<tree::One<semantic::UnitaryGate>>(node.gate->visit(*this));
         auto operands = std::any_cast<values::Values>(node.operands->visit(*this));
 
         // Resolve the instruction
@@ -168,7 +168,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_gate_instruction(ast::GateInstruction &
     return ret;
 }
 
-void calculate_modifiable_gate_names(tree::One<semantic::ModifiableGate> &gate) {
+void calculate_unitary_gate_names(tree::One<semantic::UnitaryGate> &gate) {
     if (gate->modified_gate.empty()) {
         gate->full_name = gate->name;
         gate->resolution_name = gate->name;
@@ -185,7 +185,7 @@ void calculate_modifiable_gate_names(tree::One<semantic::ModifiableGate> &gate) 
     gate->terminal_name = modified_gate->terminal_name;
 }
 
-void check_modifiable_gate_names(const tree::One<semantic::ModifiableGate> &gate) {
+void check_unitary_gate_names(const tree::One<semantic::UnitaryGate> &gate) {
     if (!gate->modified_gate.empty()) {
         if (!is_gate_modifier(gate->name)) {
             throw error::AnalysisError{
@@ -197,7 +197,7 @@ void check_modifiable_gate_names(const tree::One<semantic::ModifiableGate> &gate
     }
 }
 
-void check_modifiable_gate_operands(const tree::One<semantic::ModifiableGate> &gate) {
+void check_unitary_gate_operands(const tree::One<semantic::UnitaryGate> &gate) {
     if ((!is_pow_gate_modifier(gate->name) && !gate->operands.empty()) ||
         (is_pow_gate_modifier(gate->name) && !(gate->operands.size() == 1 &&
             values::check_promote(values::type_of(gate->operands[0]), tree::make<types::Float>())))) {
@@ -208,35 +208,35 @@ void check_modifiable_gate_operands(const tree::One<semantic::ModifiableGate> &g
     }
 }
 
-void check_modifiable_gate(const tree::One<semantic::ModifiableGate> &gate) {
-    check_modifiable_gate_names(gate);
-    check_modifiable_gate_operands(gate);
+void check_unitary_gate(const tree::One<semantic::UnitaryGate> &gate) {
+    check_unitary_gate_names(gate);
+    check_unitary_gate_operands(gate);
 }
 
-void resolve_modifiable_gate_operands(const tree::One<semantic::ModifiableGate> &gate) {
+void resolve_unitary_gate_operands(const tree::One<semantic::UnitaryGate> &gate) {
     if (is_pow_gate_modifier(gate->name)) {
         gate->operands[0] = promote(gate->operands[0], tree::make<types::Float>());
     }
 }
 
-std::any AnalyzeTreeGenAstVisitor::visit_modifiable_gate(ast::ModifiableGate &node) {
-    auto ret = tree::make<semantic::ModifiableGate>();
+std::any AnalyzeTreeGenAstVisitor::visit_unitary_gate(ast::UnitaryGate &node) {
+    auto ret = tree::make<semantic::UnitaryGate>();
     try {
         ret->name = node.name->name;
         if (!node.modified_gate.empty()) {
             ret->modified_gate =
-                std::any_cast<tree::One<semantic::ModifiableGate>>(node.modified_gate->visit(*this)).get_ptr();
+                std::any_cast<tree::One<semantic::UnitaryGate>>(node.modified_gate->visit(*this)).get_ptr();
         }
         ret->operands = std::any_cast<values::Values>(visit_expression_list(*node.operands));
 
         // Specific checks
-        check_modifiable_gate(ret);
+        check_unitary_gate(ret);
 
         // Calculate full name, resolution name, and terminal name
-        calculate_modifiable_gate_names(ret);
+        calculate_unitary_gate_names(ret);
 
         // Resolve the gate operands
-        resolve_modifiable_gate_operands(ret);
+        resolve_unitary_gate_operands(ret);
 
         // Copy annotation data
         ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));

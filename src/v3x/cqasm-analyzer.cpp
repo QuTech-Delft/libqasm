@@ -231,7 +231,7 @@ void Analyzer::register_consteval_core_function(
  * Annotation data, line number information, and the condition still need to be set by the caller.
  */
 [[nodiscard]] tree::One<semantic::Instruction> Analyzer::resolve_instruction(
-    const tree::One<semantic::ModifiableGate> &gate, const values::Values &args) const {
+    const tree::One<semantic::UnitaryGate> &gate, const values::Values &args) const {
     for (const auto &scope : scope_stack_) {
         try {
             return scope.instruction_table.resolve(gate, args);
