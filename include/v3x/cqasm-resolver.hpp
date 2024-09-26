@@ -182,8 +182,8 @@ public:
      * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
      * returns the resolved instruction node.
      */
-    [[nodiscard]] tree::One<semantic::Instruction> resolve(const tree::One<semantic::UnitaryGate> &gate,
-        const Values &args) const;
+    [[nodiscard]] tree::One<semantic::Instruction> resolve(const std::string &name,
+        const tree::One<semantic::UnitaryGate> &gate, const Values &args) const;
     [[nodiscard]] tree::One<semantic::Instruction> resolve(const std::string &name, const Values &args) const;
 };
 

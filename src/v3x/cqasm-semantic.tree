@@ -59,9 +59,6 @@ annotated {
         name: cqasm::v3x::primitives::Str;
         modified_gate: Maybe<unitary_gate>;
         operands: external Any<cqasm::v3x::values::ValueBase>;
-        full_name: cqasm::v3x::primitives::Str;
-        resolution_name: cqasm::v3x::primitives::Str;
-        terminal_name: cqasm::v3x::primitives::Str;
     }
 
     variable {

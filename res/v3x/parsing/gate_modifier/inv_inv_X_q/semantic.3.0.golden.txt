@@ -22,23 +22,14 @@ Program(
                       name: X
                       modified_gate: -
                       operands: []
-                      full_name: X
-                      resolution_name: X
-                      terminal_name: X
                       annotations: []
                     )
                   >
                   operands: []
-                  full_name: inv_X
-                  resolution_name: 1q_X
-                  terminal_name: X
                   annotations: []
                 )
               >
               operands: []
-              full_name: inv_inv_X
-              resolution_name: 1q_X
-              terminal_name: X
               annotations: []
             )
           >

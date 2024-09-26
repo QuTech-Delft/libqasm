@@ -19,9 +19,6 @@ Program(
                   name: X
                   modified_gate: -
                   operands: []
-                  full_name: X
-                  resolution_name: X
-                  terminal_name: X
                   annotations: []
                 )
               >
@@ -30,9 +27,6 @@ Program(
                   value: 2
                 )
               ]
-              full_name: pow_X
-              resolution_name: 1q_X
-              terminal_name: X
               annotations: []
             )
           >

@@ -230,17 +230,17 @@ void Analyzer::register_consteval_core_function(
  * or otherwise returns the resolved instruction node.
  * Annotation data, line number information, and the condition still need to be set by the caller.
  */
-[[nodiscard]] tree::One<semantic::Instruction> Analyzer::resolve_instruction(
+[[nodiscard]] tree::One<semantic::Instruction> Analyzer::resolve_instruction(const std::string &name,
     const tree::One<semantic::UnitaryGate> &gate, const values::Values &args) const {
     for (const auto &scope : scope_stack_) {
         try {
-            return scope.instruction_table.resolve(gate, args);
+            return scope.instruction_table.resolve(name, gate, args);
         } catch (const error::AnalysisError &) {
             continue;
         }
     }
-    throw resolver::ResolutionFailure{ fmt::format("failed to resolve instruction '{}' with argument pack ({})",
-        gate->resolution_name, values::types_of(args)) };
+    throw resolver::ResolutionFailure{
+        fmt::format("failed to resolve instruction '{}' with argument pack ({})", name, values::types_of(args)) };
 }
 [[nodiscard]] tree::One<semantic::Instruction> Analyzer::resolve_instruction(const std::string &name,
     const values::Values &args) const {

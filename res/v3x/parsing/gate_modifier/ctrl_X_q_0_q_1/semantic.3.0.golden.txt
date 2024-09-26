@@ -19,16 +19,10 @@ Program(
                   name: X
                   modified_gate: -
                   operands: []
-                  full_name: X
-                  resolution_name: X
-                  terminal_name: X
                   annotations: []
                 )
               >
               operands: []
-              full_name: ctrl_X
-              resolution_name: 2q_X
-              terminal_name: X
               annotations: []
             )
           >

@@ -122,9 +122,9 @@ void InstructionTable::add(const instruction::Instruction &type) {
  * returns the resolved instruction node.
  * Annotation data, line number information, and the condition still need to be set by the caller.
  */
-[[nodiscard]] tree::One<semantic::Instruction> InstructionTable::resolve(
+[[nodiscard]] tree::One<semantic::Instruction> InstructionTable::resolve(const std::string &name,
     const tree::One<semantic::UnitaryGate> &gate, const Values &args) const {
-    auto [instruction_ref, promoted_args] = resolver->resolve(gate->resolution_name, args);
+    auto [instruction_ref, promoted_args] = resolver->resolve(name, args);
     return tree::make<semantic::GateInstruction>(instruction_ref, gate, promoted_args);
 }
 [[nodiscard]] tree::One<semantic::Instruction> InstructionTable::resolve(const std::string &name, const Values &args) const {
