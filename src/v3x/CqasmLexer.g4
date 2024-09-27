@@ -60,9 +60,9 @@ BIT_TYPE: 'bit';
 BOOLEAN_LITERAL: 'true' | 'false';
 INTEGER_LITERAL: Digit+;
 FLOAT_LITERAL:
-    Digit+ '.' Digit+ Exponent?
-    | Digit+ '.' Exponent?  // float literals can end with a dot
-    | '.' Digit+ Exponent?;  // or just start with a dot
+    Digit+ DOT Digit+ Exponent?
+    | Digit+ DOT Exponent?  // float literals can end with a dot
+    | DOT Digit+ Exponent?;  // or just start with a dot
 fragment Digit: [0-9];
 fragment Exponent: [eE][-+]?Digit+;
 
