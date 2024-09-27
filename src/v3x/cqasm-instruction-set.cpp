@@ -153,7 +153,7 @@ bool InstructionSet::is_gate_modifier(const std::string &name) const {
 }
 
 bool InstructionSet::is_measure_instruction(const std::string &name) const {
-    return name == reset_instruction_name;
+    return name == measure_instruction_name;
 }
 
 bool InstructionSet::is_reset_instruction(const std::string &name) const {
