@@ -65,7 +65,7 @@ Program(
           operands: <
             ExpressionList(
               items: [
-                Index( # input.cq:5:9..10
+                Index( # input.cq:5:8..9
                   expr: <
                     Identifier(
                       name: q
@@ -76,7 +76,7 @@ Program(
                       items: [
                         IndexItem(
                           index: <
-                            IntegerLiteral( # input.cq:5:11..12
+                            IntegerLiteral( # input.cq:5:10..11
                               value: 0
                             )
                           >
@@ -85,7 +85,7 @@ Program(
                     )
                   >
                 )
-                Index( # input.cq:5:15..16
+                Index( # input.cq:5:14..15
                   expr: <
                     Identifier(
                       name: q
@@ -96,7 +96,7 @@ Program(
                       items: [
                         IndexItem(
                           index: <
-                            IntegerLiteral( # input.cq:5:17..18
+                            IntegerLiteral( # input.cq:5:16..17
                               value: 1
                             )
                           >

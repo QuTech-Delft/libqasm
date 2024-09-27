@@ -35,7 +35,7 @@ Program(
                 )
               >
               modified_gate: <
-                UnitaryGate( # input.cq:5:5..6
+                UnitaryGate( # input.cq:5:8..9
                   name: <
                     Identifier(
                       name: X
@@ -53,7 +53,7 @@ Program(
               operands: <
                 ExpressionList(
                   items: [
-                    IntegerLiteral( # input.cq:5:8..9
+                    IntegerLiteral( # input.cq:5:5..6
                       value: 2
                     )
                   ]
@@ -65,7 +65,7 @@ Program(
           operands: <
             ExpressionList(
               items: [
-                Identifier( # input.cq:5:11..12
+                Identifier( # input.cq:5:10..11
                   name: q
                 )
               ]

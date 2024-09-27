@@ -35,13 +35,13 @@ instruction:
     | nonGateInstruction
     ;
 
-gateInstruction: modifiableGate expressionList;
+gateInstruction: unitaryGate expressionList;
 
-modifiableGate:
-    INV OPEN_PARENS modifiableGate CLOSE_PARENS  # invGate
-    | POW OPEN_PARENS modifiableGate COMMA expression CLOSE_PARENS  # powGate
-    | CTRL OPEN_PARENS modifiableGate CLOSE_PARENS  # ctrlGate
-    | IDENTIFIER  # gate
+unitaryGate:
+    INV DOT unitaryGate  # invGate
+    | POW OPEN_PARENS expression CLOSE_PARENS DOT unitaryGate  # powGate
+    | CTRL DOT unitaryGate # ctrlGate
+    | IDENTIFIER (OPEN_PARENS expression CLOSE_PARENS)?  # gate
     ;
 
 nonGateInstruction:
