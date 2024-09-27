@@ -26,13 +26,17 @@ Program(
           >
           annotations: []
         )
-        ResetInstruction( # input.cq:5:1..6
+        NonGateInstruction( # input.cq:5:1..6
           name: <
-            Identifier(
+            Keyword(
               name: reset
             )
           >
-          operand: -
+          operands: <
+            ExpressionList(
+              items: []
+            )
+          >
           annotations: []
         )
       ]

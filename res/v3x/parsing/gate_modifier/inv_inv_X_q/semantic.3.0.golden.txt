@@ -21,15 +21,15 @@ Program(
                     UnitaryGate(
                       name: X
                       modified_gate: -
-                      operands: []
+                      parameter: -
                       annotations: []
                     )
                   >
-                  operands: []
+                  parameter: -
                   annotations: []
                 )
               >
-              operands: []
+              parameter: -
               annotations: []
             )
           >

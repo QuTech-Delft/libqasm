@@ -9,8 +9,8 @@ Program(
   block: <
     Block(
       statements: [
-        Instruction(
-          instruction_ref: reset()
+        NonGateInstruction(
+          instruction_ref: reset
           name: reset
           operands: []
           annotations: []

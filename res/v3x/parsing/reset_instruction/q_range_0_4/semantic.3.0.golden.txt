@@ -9,8 +9,8 @@ Program(
   block: <
     Block(
       statements: [
-        Instruction(
-          instruction_ref: reset(qubit array)
+        NonGateInstruction(
+          instruction_ref: reset qubit array
           name: reset
           operands: [
             IndexRef(

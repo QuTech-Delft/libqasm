@@ -18,15 +18,15 @@ Program(
                 UnitaryGate(
                   name: X
                   modified_gate: -
-                  operands: []
+                  parameter: -
                   annotations: []
                 )
               >
-              operands: [
+              parameter: <
                 ConstFloat(
                   value: 2
                 )
-              ]
+              >
               annotations: []
             )
           >

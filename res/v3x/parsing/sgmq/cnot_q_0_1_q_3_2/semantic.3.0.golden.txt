@@ -9,9 +9,16 @@ Program(
   block: <
     Block(
       statements: [
-        Instruction(
-          instruction_ref: CNOT(qubit array, qubit array)
-          name: CNOT
+        GateInstruction(
+          instruction_ref: CNOT qubit array, qubit array
+          gate: <
+            UnitaryGate(
+              name: CNOT
+              modified_gate: -
+              parameter: -
+              annotations: []
+            )
+          >
           operands: [
             IndexRef(
               variable --> <

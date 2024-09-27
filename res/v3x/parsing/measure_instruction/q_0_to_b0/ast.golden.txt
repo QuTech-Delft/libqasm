@@ -48,37 +48,39 @@ Program(
           >
           annotations: []
         )
-        MeasureInstruction( # input.cq:6:6..13
+        NonGateInstruction( # input.cq:6:6..13
           name: <
-            Identifier(
+            Keyword(
               name: measure
             )
           >
-          lhs: <
-            Identifier( # input.cq:6:1..3
-              name: b0
-            )
-          >
-          rhs: <
-            Index( # input.cq:6:14..15
-              expr: <
-                Identifier(
-                  name: q
+          operands: <
+            ExpressionList(
+              items: [
+                Identifier( # input.cq:6:1..3
+                  name: b0
                 )
-              >
-              indices: <
-                IndexList(
-                  items: [
-                    IndexItem(
-                      index: <
-                        IntegerLiteral( # input.cq:6:16..17
-                          value: 0
-                        )
-                      >
+                Index( # input.cq:6:14..15
+                  expr: <
+                    Identifier(
+                      name: q
                     )
-                  ]
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexItem(
+                          index: <
+                            IntegerLiteral( # input.cq:6:16..17
+                              value: 0
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
                 )
-              >
+              ]
             )
           >
           annotations: []

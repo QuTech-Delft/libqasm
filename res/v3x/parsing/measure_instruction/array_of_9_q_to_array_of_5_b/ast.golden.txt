@@ -52,20 +52,22 @@ Program(
           >
           annotations: []
         )
-        MeasureInstruction( # input.cq:6:5..12
+        NonGateInstruction( # input.cq:6:5..12
           name: <
-            Identifier(
+            Keyword(
               name: measure
             )
           >
-          lhs: <
-            Identifier( # input.cq:6:1..2
-              name: b
-            )
-          >
-          rhs: <
-            Identifier( # input.cq:6:13..14
-              name: q
+          operands: <
+            ExpressionList(
+              items: [
+                Identifier( # input.cq:6:1..2
+                  name: b
+                )
+                Identifier( # input.cq:6:13..14
+                  name: q
+                )
+              ]
             )
           >
           annotations: []

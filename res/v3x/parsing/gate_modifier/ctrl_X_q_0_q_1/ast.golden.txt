@@ -30,7 +30,7 @@ Program(
           >
           annotations: []
         )
-        GateInstruction(
+        GateInstruction( # input.cq:5:1..5
           gate: <
             UnitaryGate( # input.cq:5:1..5
               name: <
@@ -46,19 +46,11 @@ Program(
                     )
                   >
                   modified_gate: -
-                  operands: <
-                    ExpressionList(
-                      items: []
-                    )
-                  >
+                  parameter: -
                   annotations: []
                 )
               >
-              operands: <
-                ExpressionList(
-                  items: []
-                )
-              >
+              parameter: -
               annotations: []
             )
           >

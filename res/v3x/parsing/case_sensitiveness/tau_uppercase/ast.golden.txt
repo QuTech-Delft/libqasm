@@ -26,10 +26,21 @@ Program(
           >
           annotations: []
         )
-        Gate( # input.cq:4:1..3
-          name: <
-            Identifier(
-              name: Rx
+        GateInstruction( # input.cq:4:1..3
+          gate: <
+            UnitaryGate( # input.cq:4:1..3
+              name: <
+                Identifier(
+                  name: Rx
+                )
+              >
+              modified_gate: -
+              parameter: <
+                Identifier( # input.cq:4:4..7
+                  name: TAU
+                )
+              >
+              annotations: []
             )
           >
           operands: <
@@ -37,9 +48,6 @@ Program(
               items: [
                 Identifier( # input.cq:4:9..10
                   name: q
-                )
-                Identifier( # input.cq:4:4..7
-                  name: TAU
                 )
               ]
             )

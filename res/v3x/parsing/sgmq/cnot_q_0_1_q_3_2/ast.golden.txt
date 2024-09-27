@@ -30,10 +30,17 @@ Program(
           >
           annotations: []
         )
-        Gate( # input.cq:5:1..5
-          name: <
-            Identifier(
-              name: CNOT
+        GateInstruction( # input.cq:5:1..5
+          gate: <
+            UnitaryGate( # input.cq:5:1..5
+              name: <
+                Identifier(
+                  name: CNOT
+                )
+              >
+              modified_gate: -
+              parameter: -
+              annotations: []
             )
           >
           operands: <

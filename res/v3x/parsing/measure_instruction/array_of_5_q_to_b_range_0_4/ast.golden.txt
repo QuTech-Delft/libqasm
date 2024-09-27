@@ -52,42 +52,44 @@ Program(
           >
           annotations: []
         )
-        MeasureInstruction( # input.cq:6:10..17
+        NonGateInstruction( # input.cq:6:10..17
           name: <
-            Identifier(
+            Keyword(
               name: measure
             )
           >
-          lhs: <
-            Index( # input.cq:6:1..2
-              expr: <
-                Identifier(
-                  name: b
-                )
-              >
-              indices: <
-                IndexList(
-                  items: [
-                    IndexRange(
-                      first: <
-                        IntegerLiteral( # input.cq:6:3..4
-                          value: 0
-                        )
-                      >
-                      last: <
-                        IntegerLiteral( # input.cq:6:5..6
-                          value: 4
-                        )
-                      >
+          operands: <
+            ExpressionList(
+              items: [
+                Index( # input.cq:6:1..2
+                  expr: <
+                    Identifier(
+                      name: b
                     )
-                  ]
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexRange(
+                          first: <
+                            IntegerLiteral( # input.cq:6:3..4
+                              value: 0
+                            )
+                          >
+                          last: <
+                            IntegerLiteral( # input.cq:6:5..6
+                              value: 4
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
                 )
-              >
-            )
-          >
-          rhs: <
-            Identifier( # input.cq:6:18..19
-              name: q
+                Identifier( # input.cq:6:18..19
+                  name: q
+                )
+              ]
             )
           >
           annotations: []
