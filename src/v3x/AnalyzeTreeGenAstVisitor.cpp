@@ -160,6 +160,10 @@ std::any AnalyzeTreeGenAstVisitor::visit_gate_instruction(ast::GateInstruction &
         const auto &resolution_name = get_unitary_gate_resolution_name(gate);
         ret.set(analyzer_.resolve_instruction(resolution_name, gate, operands));
 
+        // Copy annotation data
+        ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
+        ret->copy_annotation<parser::SourceLocation>(node);
+
         // Add the statement to the current scope
         analyzer_.add_statement_to_current_scope(ret);
     } catch (error::AnalysisError &err) {
@@ -208,11 +212,11 @@ std::any AnalyzeTreeGenAstVisitor::visit_unitary_gate(ast::UnitaryGate &node) {
             ret->parameter = std::any_cast<values::Value>(visit_expression(*node.parameter)).get_ptr();
         }
 
-        // Specific checks
-        check_unitary_gate(ret);
-
         // Resolve the gate
         resolve_unitary_gate(ret);
+
+        // Specific checks
+        check_unitary_gate(ret);
 
         // Copy annotation data
         ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));

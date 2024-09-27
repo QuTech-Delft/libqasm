@@ -59,6 +59,10 @@ void BuildTreeGenAstVisitor::expandNodeAnnotation(const One<Node> &node, antlr4:
     }
 }
 
+void BuildTreeGenAstVisitor::copyNodeAnnotation(const ast::One<ast::Node> &from, const ast::One<ast::Node> &to) const {
+    to->copy_annotation<annotations::SourceLocation>(*from);
+}
+
 std::int64_t BuildTreeGenAstVisitor::get_int_value(
     size_t line, size_t char_position_in_line, const std::string &text) const {
     try {
@@ -169,6 +173,8 @@ std::any BuildTreeGenAstVisitor::visitGateInstruction(CqasmParser::GateInstructi
     auto ret = tree::make<GateInstruction>();
     ret->gate = std::any_cast<One<UnitaryGate>>(context->unitaryGate()->accept(this));
     ret->operands = std::any_cast<One<ExpressionList>>(visitExpressionList(context->expressionList()));
+    // Set the instruction annotation to the annotation of its gate
+    copyNodeAnnotation(ret->gate, ret);
     return One<Statement>{ ret };
 }
 
