@@ -64,18 +64,18 @@ InstructionSet::InstructionSet()
     "CNOT", "CR", "CRk", "CZ"
 }
 , non_gate_map{
-    { measure_instruction_name, { std::nullopt, "BQ" } },
-    { measure_instruction_name, { std::nullopt, "WV" } },
-    { measure_instruction_name, { std::nullopt, "BV" } },
-    { measure_instruction_name, { std::nullopt, "WQ" } },
-    { reset_instruction_name, { std::nullopt, std::nullopt } },
-    { reset_instruction_name, { std::nullopt, "Q" } },
-    { reset_instruction_name, { std::nullopt, "V" } }
+    { "measure", { std::nullopt, "BQ" } },
+    { "measure", { std::nullopt, "WV" } },
+    { "measure", { std::nullopt, "BV" } },
+    { "measure", { std::nullopt, "WQ" } },
+    { "reset", { std::nullopt, std::nullopt } },
+    { "reset", { std::nullopt, "Q" } },
+    { "reset", { std::nullopt, "V" } }
 }
 , gate_modifier_map{
-    { inv_gate_modifier_name, std::nullopt },
-    { pow_gate_modifier_name, 'f' },
-    { ctrl_gate_modifier_name, std::nullopt },
+    { "inv", std::nullopt },
+    { "pow", 'f' },
+    { "ctrl", std::nullopt },
 }
 {}
 
