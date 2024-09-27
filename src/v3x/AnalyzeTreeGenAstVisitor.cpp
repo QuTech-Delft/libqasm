@@ -175,38 +175,24 @@ bool is_two_qubit_unitary_gate(const tree::One<semantic::UnitaryGate> &gate) {
     return InstructionSet::get_instance().is_two_qubit_unitary_gate(resolution_name);
 }
 
-void check_unitary_gate_names(const tree::One<semantic::UnitaryGate> &gate) {
-    const auto &modified_gate = gate->modified_gate;
-    if (!modified_gate.empty()) {
-        if (!InstructionSet::get_instance().is_gate_modifier(gate->name)) {
-            throw error::AnalysisError{
-                fmt::format("invalid gate modifier: found '{}', expecting 'inv', 'pow' or 'ctrl'", gate->name) };
-        }
+void check_unitary_gate(const tree::One<semantic::UnitaryGate> &gate) {
+    if (const auto &modified_gate = gate->modified_gate; !gate->modified_gate.empty()) {
         if (is_two_qubit_unitary_gate(modified_gate)) {
             throw error::AnalysisError{ "trying to apply a gate modifier to a multi-qubit gate" };
         }
     }
 }
 
-void check_unitary_gate_operands(const tree::One<semantic::UnitaryGate> &gate) {
-    if ((!InstructionSet::get_instance().is_pow_gate_modifier(gate->name) && !gate->operands.empty()) ||
-        (InstructionSet::get_instance().is_pow_gate_modifier(gate->name) && !(gate->operands.size() == 1 &&
-            values::check_promote(values::type_of(gate->operands[0]), tree::make<types::Float>())))) {
-        throw error::AnalysisError{
-            fmt::format("failed to resolve 'pow' gate modifier with argument pack ({})",
-                values::types_of(gate->operands))
-        };
-    }
-}
-
-void check_unitary_gate(const tree::One<semantic::UnitaryGate> &gate) {
-    check_unitary_gate_names(gate);
-    check_unitary_gate_operands(gate);
-}
-
-void resolve_unitary_gate_operands(const tree::One<semantic::UnitaryGate> &gate) {
-    if (InstructionSet::get_instance().is_pow_gate_modifier(gate->name)) {
-        gate->operands[0] = promote(gate->operands[0], tree::make<types::Float>());
+void resolve_unitary_gate(const tree::One<semantic::UnitaryGate> &gate) {
+    if (!gate->parameter.empty()) {
+        const auto &instruction_set = InstructionSet::get_instance();
+        const auto &param_type = instruction_set.get_instruction_param_type(gate->name);
+        if (!param_type.has_value() ||
+            !values::check_promote(values::type_of(gate->parameter), types::from_spec(param_type.value()))) {
+            throw error::AnalysisError{ fmt::format("failed to resolve '{}' with argument pack ({})",
+                gate->name, values::type_of(gate->parameter)) };
+        }
+        gate->parameter = promote(gate->parameter, types::from_spec(param_type.value()));
     }
 }
 
@@ -216,23 +202,24 @@ std::any AnalyzeTreeGenAstVisitor::visit_unitary_gate(ast::UnitaryGate &node) {
         ret->name = node.name->name;
         if (!node.modified_gate.empty()) {
             ret->modified_gate =
-                std::any_cast<tree::One<semantic::UnitaryGate>>(node.modified_gate->visit(*this)).get_ptr();
+                std::any_cast<tree::One<semantic::UnitaryGate>>(visit_unitary_gate(*node.modified_gate)).get_ptr();
         }
-        ret->operands = std::any_cast<values::Values>(visit_expression_list(*node.operands));
+        if (!node.parameter.empty()) {
+            ret->parameter = std::any_cast<values::Value>(visit_expression(*node.parameter)).get_ptr();
+        }
 
         // Specific checks
         check_unitary_gate(ret);
 
-        // Resolve the gate operands
-        resolve_unitary_gate_operands(ret);
+        // Resolve the gate
+        resolve_unitary_gate(ret);
 
         // Copy annotation data
         ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
         ret->copy_annotation<parser::SourceLocation>(node);
     } catch (error::AnalysisError &err) {
         err.context(node);
-        result_.errors.push_back(std::move(err));
-        ret.reset();
+        throw;
     }
     return ret;
 }
@@ -271,7 +258,7 @@ void check_qubit_and_bit_indices_have_same_size(const values::Values &operands) 
 }
 
 void check_non_gate_instruction(const tree::One<semantic::NonGateInstruction> &instruction) {
-    if (InstructionSet::get_instance().is_measure_instruction(instruction->name)) {
+    if (InstructionSet::get_instance().is_measure(instruction->name)) {
         check_qubit_and_bit_indices_have_same_size(instruction->operands);
     }
 }

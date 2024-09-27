@@ -167,7 +167,7 @@ annotated {
     unitary_gate {
         name: One<identifier>;
         modified_gate: Maybe<unitary_gate>;
-        operands: One<expression_list>;
+        parameter: Maybe<expression>;
     }
 
     statement {

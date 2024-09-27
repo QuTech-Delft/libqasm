@@ -113,7 +113,7 @@ InstructionTable &InstructionTable::operator=(InstructionTable &&t) noexcept {
  * Registers an instruction type.
  */
 void InstructionTable::add(const instruction::Instruction &type) {
-    resolver->add_overload(type.name, tree::make<instruction::Instruction>(type), type.param_types);
+    resolver->add_overload(type.name, tree::make<instruction::Instruction>(type), type.operand_types);
 }
 
 /**

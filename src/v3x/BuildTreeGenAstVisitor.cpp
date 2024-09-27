@@ -176,7 +176,6 @@ std::any BuildTreeGenAstVisitor::visitInvGate(CqasmParser::InvGateContext *conte
     auto ret = tree::make<UnitaryGate>();
     ret->name = tree::make<Identifier>(context->INV()->getText());
     ret->modified_gate = std::any_cast<tree::One<UnitaryGate>>(context->unitaryGate()->accept(this)).get_ptr();
-    ret->operands = tree::make<ExpressionList>();
     setNodeAnnotation(ret, context->INV()->getSymbol());
     return ret;
 }
@@ -185,8 +184,7 @@ std::any BuildTreeGenAstVisitor::visitPowGate(CqasmParser::PowGateContext *conte
     auto ret = tree::make<UnitaryGate>();
     ret->name = tree::make<Identifier>(context->POW()->getText());
     ret->modified_gate = std::any_cast<tree::One<UnitaryGate>>(context->unitaryGate()->accept(this)).get_ptr();
-    ret->operands = tree::make<ExpressionList>();
-    ret->operands->items.add(std::any_cast<One<Expression>>(context->expression()->accept(this)));
+    ret->parameter = std::any_cast<One<Expression>>(context->expression()->accept(this)).get_ptr();
     setNodeAnnotation(ret, context->POW()->getSymbol());
     return ret;
 }
@@ -195,7 +193,6 @@ std::any BuildTreeGenAstVisitor::visitCtrlGate(CqasmParser::CtrlGateContext *con
     auto ret = tree::make<UnitaryGate>();
     ret->name = tree::make<Identifier>(context->CTRL()->getText());
     ret->modified_gate = std::any_cast<tree::One<UnitaryGate>>(context->unitaryGate()->accept(this)).get_ptr();
-    ret->operands = tree::make<ExpressionList>();
     setNodeAnnotation(ret, context->CTRL()->getSymbol());
     return ret;
 }
@@ -203,9 +200,8 @@ std::any BuildTreeGenAstVisitor::visitCtrlGate(CqasmParser::CtrlGateContext *con
 std::any BuildTreeGenAstVisitor::visitGate(CqasmParser::GateContext *context) {
     auto ret = tree::make<UnitaryGate>();
     ret->name = tree::make<Identifier>(context->IDENTIFIER()->getText());
-    ret->operands = tree::make<ExpressionList>();
     if (context->expression()) {
-        ret->operands->items.add(std::any_cast<One<Expression>>(context->expression()->accept(this)));
+        ret->parameter = std::any_cast<One<Expression>>(context->expression()->accept(this)).get_ptr();
     }
     setNodeAnnotation(ret, context->IDENTIFIER()->getSymbol());
     return ret;

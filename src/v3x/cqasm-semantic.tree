@@ -49,7 +49,7 @@ annotated {
     unitary_gate {
         name: cqasm::v3x::primitives::Str;
         modified_gate: Maybe<unitary_gate>;
-        operands: external Any<cqasm::v3x::values::ValueBase>;
+        parameter: external Maybe<cqasm::v3x::values::ValueBase>;
     }
 
     variable {

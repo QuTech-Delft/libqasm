@@ -12,26 +12,26 @@ namespace cqasm::v3x::instruction {
 
 /**
  * Creates a new instruction.
- * param_types is a shorthand type specification string as parsed by cqasm::types::from_spec().
+ * operand_types is a shorthand type specification string as parsed by cqasm::types::from_spec().
  * If you need more control, you can also manipulate param_types directly.
  */
-Instruction::Instruction(std::string name, const std::optional<std::string> &param_types)
+Instruction::Instruction(std::string name, const std::optional<std::string> &operand_types)
 : name{ std::move(name) }
-, param_types{ types::from_spec(param_types.value_or("")) }
+, operand_types{ types::from_spec(operand_types.value_or("")) }
 {}
 
 /**
  * Equality operator.
  */
 bool Instruction::operator==(const Instruction &rhs) const {
-    return name == rhs.name &&param_types == rhs.param_types;
+    return name == rhs.name && operand_types == rhs.operand_types;
 }
 
 /**
  * Stream << overload for instructions.
  */
 std::ostream &operator<<(std::ostream &os, const Instruction &instruction) {
-    return os << fmt::format("{} {}", instruction.name, instruction.param_types);
+    return os << fmt::format("{} {}", instruction.name, instruction.operand_types);
 }
 
 /**
@@ -52,11 +52,11 @@ void serialize(const instruction::InstructionRef &obj, ::tree::cbor::MapWriter &
         return;
     }
     map.append_string("name", obj->name);
-    auto aw = map.append_array("param_types");
-    for (const auto &t : obj->param_types) {
-        aw.append_binary(::tree::base::serialize(::tree::base::Maybe<types::TypeBase>{ t.get_ptr() }));
+    auto operand_types_array = map.append_array("operand_types");
+    for (const auto &t : obj->operand_types) {
+        operand_types_array.append_binary(::tree::base::serialize(::tree::base::Maybe<types::TypeBase>{ t.get_ptr() }));
     }
-    aw.close();
+    operand_types_array.close();
 }
 
 template <>
@@ -66,9 +66,9 @@ instruction::InstructionRef deserialize(const ::tree::cbor::MapReader &map) {
     }
     auto ret = tree::make<instruction::Instruction>();
     ret->name = map.at("name").as_string();
-    auto ar = map.at("param_types").as_array();
-    for (const auto &element : ar) {
-        ret->param_types.add(::tree::base::deserialize<types::Node>(element.as_binary()));
+    auto operand_types_array = map.at("operand_types").as_array();
+    for (const auto &element : operand_types_array) {
+        ret->operand_types.add(::tree::base::deserialize<types::Node>(element.as_binary()));
     }
     return ret;
 }
