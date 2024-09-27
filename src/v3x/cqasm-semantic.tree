@@ -44,15 +44,6 @@ annotation_data {
 annotated {
     annotations: Any<annotation_data>;
 
-    # ------------------------------------------
-    # | Name | Full    | Resolution | Terminal |
-    # ------------------------------------------
-    # | X    | X       | X          | X        |
-    # | inv  | inv_Y   | U1_Y       | Y        |
-    # | pow  | pow_Z   | U1_Z       | Z        |
-    # | ctrl | ctrl_Rx | U2_Rx      | Rx       |
-    # ------------------------------------------
-    #
     # A unitary gate can be a gate or a composition of gate modifiers acting on a (modified) gate.
     # pow is the only modifiable gate that has an operand.
     unitary_gate {

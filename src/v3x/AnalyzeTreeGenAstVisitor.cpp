@@ -6,8 +6,8 @@
 
 #include "v3x/cqasm-analyzer.hpp"
 #include "v3x/cqasm-ast-gen.hpp"
-#include "v3x/cqasm-instruction-set.hpp"
 #include "v3x/cqasm-instruction.hpp"
+#include "v3x/cqasm-instruction-set.hpp"
 
 namespace cqasm::v3x::analyzer {
 

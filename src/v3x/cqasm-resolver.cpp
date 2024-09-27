@@ -93,7 +93,8 @@ Value ConstEvalCoreFunctionTable::resolve(const std::string &name, const Values 
 // InstructionTable //
 //------------------//
 
-InstructionTable::InstructionTable() : resolver{ std::make_unique<resolver_t>() } {}
+InstructionTable::InstructionTable()
+: resolver{ std::make_unique<resolver_t>() } {}
 InstructionTable::~InstructionTable() = default;
 InstructionTable::InstructionTable(const InstructionTable &t)
 : resolver{ std::make_unique<resolver_t>(*t.resolver) } {}
@@ -116,7 +117,7 @@ void InstructionTable::add(const instruction::Instruction &type) {
 }
 
 /**
- * Resolves an instruction type.
+ * Resolves an GateInstruction type.
  * Throws NameResolutionFailure if no instruction by the given name exists,
  * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
  * returns the resolved instruction node.
@@ -127,6 +128,14 @@ void InstructionTable::add(const instruction::Instruction &type) {
     auto [instruction_ref, promoted_args] = resolver->resolve(name, args);
     return tree::make<semantic::GateInstruction>(instruction_ref, gate, promoted_args);
 }
+
+/**
+ * Resolves an NonGateInstruction type.
+ * Throws NameResolutionFailure if no instruction by the given name exists,
+ * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
+ * returns the resolved instruction node.
+ * Annotation data, line number information, and the condition still need to be set by the caller.
+ */
 [[nodiscard]] tree::One<semantic::Instruction> InstructionTable::resolve(const std::string &name, const Values &args) const {
     auto [instruction_ref, promoted_args] = resolver->resolve(name, args);
     return tree::make<semantic::NonGateInstruction>(instruction_ref, name, promoted_args);

@@ -170,7 +170,7 @@ public:
         const std::string &name, const std::string &param_types, const resolver::ConstEvalCoreFunction &function);
 
     /**
-     * Resolves an instruction to a values::InstructionCall node.
+     * Resolves a GateInstruction.
      * Throws NameResolutionFailure if no instruction by the given name exists,
      * OverloadResolutionFailure if no overload exists for the given arguments,
      * or otherwise returns the resolved instruction node.
@@ -178,6 +178,14 @@ public:
      */
     [[nodiscard]] tree::One<semantic::Instruction> resolve_instruction(const std::string &name,
         const tree::One<semantic::UnitaryGate> &gate, const values::Values &args) const;
+
+    /**
+     * Resolves a NonGateInstruction.
+     * Throws NameResolutionFailure if no instruction by the given name exists,
+     * OverloadResolutionFailure if no overload exists for the given arguments,
+     * or otherwise returns the resolved instruction node.
+     * Annotation data, line number information, and the condition still need to be set by the caller.
+     */
     [[nodiscard]] virtual tree::One<semantic::Instruction> resolve_instruction(const std::string &name,
         const values::Values &args) const;
 

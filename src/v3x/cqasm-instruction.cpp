@@ -3,10 +3,10 @@
  */
 
 #include "v3x/cqasm-instruction.hpp"
+
 #include "v3x/cqasm-semantic.hpp"
 
 #include <fmt/format.h>
-
 
 namespace cqasm::v3x::instruction {
 

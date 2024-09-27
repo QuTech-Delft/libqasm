@@ -14,12 +14,14 @@ namespace cqasm::v3x::instruction {
 
 /**
  * Representation of an available instruction in the instruction set.
- * An instruction can be: a gate, a gate modifier, a measure instruction, or a reset instruction.
+ * An instruction can be: a gate instruction or a non-gate instruction.
+ * A gate instruction can be a gate or a composition of gate modifiers acting on a (modified) gate.
+ * A non-gate instruction can be a measure instruction, or a reset instruction.
  *
  * A number of these can be registered into libqasm by the program or library using it through
  * \ref cqasm::analyzer::Analyzer::register_instruction(const instruction::Instruction&) "register_instruction",
  * to inform libqasm of the supported instruction set.
- * For each instruction, libqasm needs to know its name, which parameters it expects, its return type,
+ * For each instruction, libqasm needs to know its name, which parameters it expects,
  * and a few extra flags in order to be able to resolve the instruction and check for errors in the cQASM file.
  * The resolved instruction type is part of the cqasm::semantic::Instruction node present in the semantic tree
  * returned through the parse result structure.

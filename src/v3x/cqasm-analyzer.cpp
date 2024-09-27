@@ -224,7 +224,7 @@ void Analyzer::register_consteval_core_function(
 }
 
 /**
- * Resolves an instruction to a values::InstructionCall node.
+ * Resolves a GateInstruction.
  * Throws NameResolutionFailure if no instruction by the given name exists,
  * OverloadResolutionFailure if no overload exists for the given arguments,
  * or otherwise returns the resolved instruction node.
@@ -242,6 +242,14 @@ void Analyzer::register_consteval_core_function(
     throw resolver::ResolutionFailure{
         fmt::format("failed to resolve instruction '{}' with argument pack ({})", name, values::types_of(args)) };
 }
+
+/**
+ * Resolves a NonGateInstruction.
+ * Throws NameResolutionFailure if no instruction by the given name exists,
+ * OverloadResolutionFailure if no overload exists for the given arguments,
+ * or otherwise returns the resolved instruction node.
+ * Annotation data, line number information, and the condition still need to be set by the caller.
+ */
 [[nodiscard]] tree::One<semantic::Instruction> Analyzer::resolve_instruction(const std::string &name,
     const values::Values &args) const {
     for (const auto &scope : scope_stack_) {
@@ -251,8 +259,8 @@ void Analyzer::register_consteval_core_function(
             continue;
         }
     }
-    throw resolver::ResolutionFailure{ fmt::format("failed to resolve instruction '{}' with argument pack ({})",
-        name, values::types_of(args)) };
+    throw resolver::ResolutionFailure{
+        fmt::format("failed to resolve instruction '{}' with argument pack ({})", name, values::types_of(args)) };
 }
 
 /**
