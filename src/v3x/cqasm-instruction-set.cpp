@@ -93,6 +93,10 @@ InstructionSet::InstructionSet()
     return non_gate_map;
 }
 
+[[nodiscard]] const GateModifierMapT& InstructionSet::get_gate_modifier_map() const {
+    return gate_modifier_map;
+}
+
 [[nodiscard]] const InstructionListT& InstructionSet::get_single_qubit_gate_list() const {
     return single_qubit_gate_list;
 }

@@ -44,6 +44,7 @@ public:
 
     [[nodiscard]] const InstructionMapT& get_gate_map() const;
     [[nodiscard]] const InstructionMapT& get_non_gate_map() const;
+    [[nodiscard]] const GateModifierMapT& get_gate_modifier_map() const;
     [[nodiscard]] const InstructionListT& get_single_qubit_gate_list() const;
     [[nodiscard]] const InstructionListT& get_two_qubit_gate_list() const;
 
