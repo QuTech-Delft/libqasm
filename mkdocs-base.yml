@@ -1,0 +1,75 @@
+site_name: libQASM
+site_dir: public
+repo_url: https://github.com/QuTech-Delft/libqasm
+use_directory_urls: false
+
+nav:
+  - Home: index.md
+  - User Guide:
+    - User Guide: user-guide/user-guide.md
+    - C++: user-guide/cpp.md
+    - Docker: user-guide/docker.md
+    - Emscripten: user-guide/emscripten.md
+    - Python: user-guide/python.md
+  - Developer Guide:
+    - Dev Guide: dev-guide/dev-guide.md
+    - C++: dev-guide/cpp.md
+    - Emscripten: dev-guide/emscripten.md
+    - Python: dev-guide/python.md
+  - API:
+    - C++: api/cpp.md
+    - Emscripten: api/emscripten.md
+    - Python: api/python.md
+  - About:
+    - Release Notes: about/release-notes.md
+    - Contributing: about/contributing.md
+    - License: about/license.md
+    - Authors: about/authors.md
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.top
+    - toc.integrate
+  palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+
+markdown_extensions:
+  - admonition
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+
+extra_css:
+  - extra_api.css
+  - extra_highlight.css
+
+extra_javascript:
+  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/highlight.min.js
+  - cpp_highlight.js
+  - python_highlight.js
+  - typescript_highlight.js
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+
+watch:
+  - mkdocs-base.yml
