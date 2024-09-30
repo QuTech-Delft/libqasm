@@ -10,7 +10,7 @@ Program(
     Block(
       statements: [
         NonGateInstruction(
-          instruction_ref: reset qubit
+          instruction_ref: reset(qubit)
           name: reset
           operands: [
             VariableRef(

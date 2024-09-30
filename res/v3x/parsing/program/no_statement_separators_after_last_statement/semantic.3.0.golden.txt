@@ -10,7 +10,7 @@ Program(
     Block(
       statements: [
         GateInstruction(
-          instruction_ref: X qubit
+          instruction_ref: X(qubit)
           unitary_gate: <
             UnitaryGate(
               name: X

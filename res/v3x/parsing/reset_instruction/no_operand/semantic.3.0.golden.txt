@@ -10,7 +10,7 @@ Program(
     Block(
       statements: [
         NonGateInstruction(
-          instruction_ref: reset
+          instruction_ref: reset()
           name: reset
           operands: []
           annotations: []

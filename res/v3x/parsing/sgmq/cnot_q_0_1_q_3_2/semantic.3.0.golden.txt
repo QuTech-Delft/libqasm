@@ -10,7 +10,7 @@ Program(
     Block(
       statements: [
         GateInstruction(
-          instruction_ref: CNOT qubit array, qubit array
+          instruction_ref: CNOT(qubit array, qubit array)
           unitary_gate: <
             UnitaryGate(
               name: CNOT

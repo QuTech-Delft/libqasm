@@ -31,7 +31,7 @@ bool Instruction::operator==(const Instruction &rhs) const {
  * Stream << overload for instructions.
  */
 std::ostream &operator<<(std::ostream &os, const Instruction &instruction) {
-    return os << fmt::format("{} {}", instruction.name, instruction.operand_types);
+    return os << fmt::format("{}({})", instruction.name, instruction.operand_types);
 }
 
 /**
