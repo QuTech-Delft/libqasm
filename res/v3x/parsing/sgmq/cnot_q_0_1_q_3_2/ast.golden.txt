@@ -31,14 +31,14 @@ Program(
           annotations: []
         )
         GateInstruction( # input.cq:5:1..5
-          gate: <
+          unitary_gate: <
             UnitaryGate( # input.cq:5:1..5
               name: <
                 Identifier(
                   name: CNOT
                 )
               >
-              modified_gate: -
+              unitary_gate: -
               parameter: -
               annotations: []
             )

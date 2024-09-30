@@ -31,14 +31,14 @@ Program(
           annotations: []
         )
         GateInstruction( # input.cq:5:1..2
-          gate: <
+          unitary_gate: <
             UnitaryGate( # input.cq:5:1..2
               name: <
                 Identifier(
                   name: H
                 )
               >
-              modified_gate: -
+              unitary_gate: -
               parameter: -
               annotations: []
             )
@@ -72,14 +72,14 @@ Program(
           annotations: []
         )
         GateInstruction( # input.cq:6:1..2
-          gate: <
+          unitary_gate: <
             UnitaryGate( # input.cq:6:1..2
               name: <
                 Identifier(
                   name: H
                 )
               >
-              modified_gate: -
+              unitary_gate: -
               parameter: -
               annotations: []
             )
@@ -113,14 +113,14 @@ Program(
           annotations: []
         )
         GateInstruction( # input.cq:7:1..5
-          gate: <
+          unitary_gate: <
             UnitaryGate( # input.cq:7:1..5
               name: <
                 Identifier(
                   name: CNOT
                 )
               >
-              modified_gate: -
+              unitary_gate: -
               parameter: -
               annotations: []
             )

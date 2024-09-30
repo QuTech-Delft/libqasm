@@ -11,10 +11,10 @@ Program(
       statements: [
         GateInstruction(
           instruction_ref: Rx qubit
-          gate: <
+          unitary_gate: <
             UnitaryGate(
               name: Rx
-              modified_gate: -
+              unitary_gate: -
               parameter: <
                 ConstFloat(
                   value: 6.28319

@@ -29,8 +29,8 @@ class InstructionSet {
 public:
     // The use of '1q' and '2q' as gate prefixes avoids any possible conflict with user defined gates
     // since an identifier cannot start with a number
-    std::string single_qubit_modified_gate_prefix = "1q";
-    std::string two_qubit_modified_gate_prefix = "2q";
+    std::string single_qubit_unitary_gate_composition_prefix = "1q";
+    std::string two_qubit_unitary_gate_composition_prefix = "2q";
 
     std::string measure_instruction_name = "measure";
     std::string reset_instruction_name = "reset";
@@ -51,9 +51,9 @@ public:
     [[nodiscard]] bool is_two_qubit_gate(const std::string &name) const;
     [[nodiscard]] bool is_gate(const std::string &name) const;
 
-    [[nodiscard]] bool is_single_qubit_modified_gate(const std::string &name) const;
-    [[nodiscard]] bool is_two_qubit_modified_gate(const std::string &name) const;
-    [[nodiscard]] bool is_modified_gate(const std::string &name) const;
+    [[nodiscard]] bool is_single_qubit_unitary_gate_composition(const std::string &name) const;
+    [[nodiscard]] bool is_two_qubit_unitary_gate_composition(const std::string &name) const;
+    [[nodiscard]] bool is_unitary_gate_composition(const std::string &name) const;
 
     [[nodiscard]] bool is_single_qubit_unitary_gate(const std::string &name) const;
     [[nodiscard]] bool is_two_qubit_unitary_gate(const std::string &name) const;

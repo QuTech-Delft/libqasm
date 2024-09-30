@@ -134,31 +134,31 @@ types::Types types_of(const tree::Any<semantic::Variable> &variables) {
 }
 
 std::string get_unitary_gate_terminal_name(const tree::One<semantic::UnitaryGate> &gate) {
-    return gate->modified_gate.empty()
+    return gate->unitary_gate.empty()
         ? gate->name
-        : get_unitary_gate_terminal_name(gate->modified_gate);
+        : get_unitary_gate_terminal_name(gate->unitary_gate);
 }
 
 std::string get_unitary_gate_resolution_name(const tree::One<semantic::UnitaryGate> &gate) {
-    return gate->modified_gate.empty()
+    return gate->unitary_gate.empty()
         ? gate->name
         : fmt::format("{}_{}",
             (InstructionSet::get_instance().is_single_qubit_gate_modifier(gate->name))
-                ? InstructionSet::get_instance().single_qubit_modified_gate_prefix
-                : InstructionSet::get_instance().two_qubit_modified_gate_prefix,
-            get_unitary_gate_terminal_name(gate->modified_gate));
+                ? InstructionSet::get_instance().single_qubit_unitary_gate_composition_prefix
+                : InstructionSet::get_instance().two_qubit_unitary_gate_composition_prefix,
+            get_unitary_gate_terminal_name(gate->unitary_gate));
 }
 
 std::any AnalyzeTreeGenAstVisitor::visit_gate_instruction(ast::GateInstruction &node) {
     auto ret = tree::make<semantic::GateInstruction>();
     try {
-        // Set gate and operands
-        auto gate = std::any_cast<tree::One<semantic::UnitaryGate>>(node.gate->visit(*this));
+        // Set unitary gate and operands
+        auto unitary_gate = std::any_cast<tree::One<semantic::UnitaryGate>>(node.unitary_gate->visit(*this));
         auto operands = std::any_cast<values::Values>(node.operands->visit(*this));
 
         // Resolve the instruction
-        const auto &resolution_name = get_unitary_gate_resolution_name(gate);
-        ret.set(analyzer_.resolve_instruction(resolution_name, gate, operands));
+        const auto &resolution_name = get_unitary_gate_resolution_name(unitary_gate);
+        ret.set(analyzer_.resolve_instruction(resolution_name, unitary_gate, operands));
 
         // Copy annotation data
         ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
@@ -180,8 +180,8 @@ bool is_two_qubit_unitary_gate(const tree::One<semantic::UnitaryGate> &gate) {
 }
 
 void check_unitary_gate(const tree::One<semantic::UnitaryGate> &gate) {
-    if (const auto &modified_gate = gate->modified_gate; !gate->modified_gate.empty()) {
-        if (is_two_qubit_unitary_gate(modified_gate)) {
+    if (const auto &unitary_gate = gate->unitary_gate; !gate->unitary_gate.empty()) {
+        if (is_two_qubit_unitary_gate(unitary_gate)) {
             throw error::AnalysisError{ "trying to apply a gate modifier to a multi-qubit gate" };
         }
     }
@@ -204,9 +204,9 @@ std::any AnalyzeTreeGenAstVisitor::visit_unitary_gate(ast::UnitaryGate &node) {
     auto ret = tree::make<semantic::UnitaryGate>();
     try {
         ret->name = node.name->name;
-        if (!node.modified_gate.empty()) {
-            ret->modified_gate =
-                std::any_cast<tree::One<semantic::UnitaryGate>>(visit_unitary_gate(*node.modified_gate)).get_ptr();
+        if (!node.unitary_gate.empty()) {
+            ret->unitary_gate =
+                std::any_cast<tree::One<semantic::UnitaryGate>>(visit_unitary_gate(*node.unitary_gate)).get_ptr();
         }
         if (!node.parameter.empty()) {
             ret->parameter = std::any_cast<values::Value>(visit_expression(*node.parameter)).get_ptr();

@@ -44,11 +44,11 @@ annotation_data {
 annotated {
     annotations: Any<annotation_data>;
 
-    # A unitary gate can be a gate or a composition of gate modifiers acting on a (modified) gate.
+    # A unitary gate can be a gate or a composition of gate modifiers acting on a unitary gate.
     # pow is the only modifiable gate that has an operand.
     unitary_gate {
         name: cqasm::v3x::primitives::Str;
-        modified_gate: Maybe<unitary_gate>;
+        unitary_gate: Maybe<unitary_gate>;
         parameter: external Maybe<cqasm::v3x::values::ValueBase>;
     }
 
@@ -62,7 +62,7 @@ annotated {
             # A gate, or a composition of gate modifiers and a gate
             gate_instruction {
                 instruction_ref: cqasm::v3x::instruction::InstructionRef;
-                gate: One<unitary_gate>;
+                unitary_gate: One<unitary_gate>;
                 operands: external Any<cqasm::v3x::values::ValueBase>;
             }
 

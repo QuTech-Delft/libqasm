@@ -15,7 +15,7 @@ namespace cqasm::v3x::instruction {
 /**
  * Representation of an available instruction in the instruction set.
  * An instruction can be: a gate instruction or a non-gate instruction.
- * A gate instruction can be a gate or a composition of gate modifiers acting on a (modified) gate.
+ * A gate instruction can be a gate or a composition of gate modifiers acting on a unitary gate.
  * A non-gate instruction can be a measure instruction, or a reset instruction.
  *
  * A number of these can be registered into libqasm by the program or library using it through

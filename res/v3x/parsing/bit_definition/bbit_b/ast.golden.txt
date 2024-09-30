@@ -9,14 +9,14 @@ Program(
     GlobalBlock(
       statements: [
         GateInstruction( # input.cq:3:1..4
-          gate: <
+          unitary_gate: <
             UnitaryGate( # input.cq:3:1..4
               name: <
                 Identifier(
                   name: Bit
                 )
               >
-              modified_gate: -
+              unitary_gate: -
               parameter: -
               annotations: []
             )

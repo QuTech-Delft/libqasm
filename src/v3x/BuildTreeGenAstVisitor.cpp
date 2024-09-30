@@ -171,17 +171,17 @@ std::any BuildTreeGenAstVisitor::visitInstruction(CqasmParser::InstructionContex
 
 std::any BuildTreeGenAstVisitor::visitGateInstruction(CqasmParser::GateInstructionContext *context) {
     auto ret = tree::make<GateInstruction>();
-    ret->gate = std::any_cast<One<UnitaryGate>>(context->unitaryGate()->accept(this));
+    ret->unitary_gate = std::any_cast<One<UnitaryGate>>(context->unitaryGate()->accept(this));
     ret->operands = std::any_cast<One<ExpressionList>>(visitExpressionList(context->expressionList()));
     // Set the instruction annotation to the annotation of its gate
-    copyNodeAnnotation(ret->gate, ret);
+    copyNodeAnnotation(ret->unitary_gate, ret);
     return One<Statement>{ ret };
 }
 
 std::any BuildTreeGenAstVisitor::visitInvGate(CqasmParser::InvGateContext *context) {
     auto ret = tree::make<UnitaryGate>();
     ret->name = tree::make<Identifier>(context->INV()->getText());
-    ret->modified_gate = std::any_cast<tree::One<UnitaryGate>>(context->unitaryGate()->accept(this)).get_ptr();
+    ret->unitary_gate = std::any_cast<tree::One<UnitaryGate>>(context->unitaryGate()->accept(this)).get_ptr();
     setNodeAnnotation(ret, context->INV()->getSymbol());
     return ret;
 }
@@ -189,7 +189,7 @@ std::any BuildTreeGenAstVisitor::visitInvGate(CqasmParser::InvGateContext *conte
 std::any BuildTreeGenAstVisitor::visitPowGate(CqasmParser::PowGateContext *context) {
     auto ret = tree::make<UnitaryGate>();
     ret->name = tree::make<Identifier>(context->POW()->getText());
-    ret->modified_gate = std::any_cast<tree::One<UnitaryGate>>(context->unitaryGate()->accept(this)).get_ptr();
+    ret->unitary_gate = std::any_cast<tree::One<UnitaryGate>>(context->unitaryGate()->accept(this)).get_ptr();
     ret->parameter = std::any_cast<One<Expression>>(context->expression()->accept(this)).get_ptr();
     setNodeAnnotation(ret, context->POW()->getSymbol());
     return ret;
@@ -198,7 +198,7 @@ std::any BuildTreeGenAstVisitor::visitPowGate(CqasmParser::PowGateContext *conte
 std::any BuildTreeGenAstVisitor::visitCtrlGate(CqasmParser::CtrlGateContext *context) {
     auto ret = tree::make<UnitaryGate>();
     ret->name = tree::make<Identifier>(context->CTRL()->getText());
-    ret->modified_gate = std::any_cast<tree::One<UnitaryGate>>(context->unitaryGate()->accept(this)).get_ptr();
+    ret->unitary_gate = std::any_cast<tree::One<UnitaryGate>>(context->unitaryGate()->accept(this)).get_ptr();
     setNodeAnnotation(ret, context->CTRL()->getSymbol());
     return ret;
 }

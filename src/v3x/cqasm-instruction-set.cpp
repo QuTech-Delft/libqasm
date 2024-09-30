@@ -113,24 +113,24 @@ InstructionSet::InstructionSet()
     return is_single_qubit_gate(name) || is_two_qubit_gate(name);
 }
 
-[[nodiscard]] bool InstructionSet::is_single_qubit_modified_gate(const std::string &name) const {
-    return name.starts_with(single_qubit_modified_gate_prefix);
+[[nodiscard]] bool InstructionSet::is_single_qubit_unitary_gate_composition(const std::string &name) const {
+    return name.starts_with(single_qubit_unitary_gate_composition_prefix);
 }
 
-[[nodiscard]] bool InstructionSet::is_two_qubit_modified_gate(const std::string &name) const {
-    return name.starts_with(two_qubit_modified_gate_prefix);
+[[nodiscard]] bool InstructionSet::is_two_qubit_unitary_gate_composition(const std::string &name) const {
+    return name.starts_with(two_qubit_unitary_gate_composition_prefix);
 }
 
-[[nodiscard]] bool InstructionSet::is_modified_gate(const std::string &name) const {
-    return is_single_qubit_modified_gate(name) || is_two_qubit_modified_gate(name);
+[[nodiscard]] bool InstructionSet::is_unitary_gate_composition(const std::string &name) const {
+    return is_single_qubit_unitary_gate_composition(name) || is_two_qubit_unitary_gate_composition(name);
 }
 
 [[nodiscard]] bool InstructionSet::is_single_qubit_unitary_gate(const std::string &name) const {
-    return is_single_qubit_gate(name) || is_single_qubit_modified_gate(name);
+    return is_single_qubit_gate(name) || is_single_qubit_unitary_gate_composition(name);
 }
 
 [[nodiscard]] bool InstructionSet::is_two_qubit_unitary_gate(const std::string &name) const {
-    return is_two_qubit_gate(name) || is_two_qubit_modified_gate(name);
+    return is_two_qubit_gate(name) || is_two_qubit_unitary_gate_composition(name);
 }
 
 [[nodiscard]] bool InstructionSet::is_unitary_gate(const std::string &name) const {
