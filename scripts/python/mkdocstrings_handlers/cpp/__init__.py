@@ -144,14 +144,14 @@ class CppHandler(BaseHandler):
         super().__init__(handler='cpp', **kwargs)
 
         headers = [
-            'cqasm-py.hpp'
+            'cqasm_python.hpp'
         ]
 
         # Run doxygen.
         cmd = ['doxygen', '-']
         scripts_dir = Path(__file__).parents[3]
         top_dir = os.path.dirname(scripts_dir)
-        include_dir = os.path.join(top_dir, 'include', 'v3x')
+        include_dir = os.path.join(top_dir, 'include', 'libqasm', 'v3x')
         self._ns2doxyxml = {}
         build_dir = os.path.join(top_dir, 'build', 'Release', 'doc', 'cpp')
         os.makedirs(build_dir, exist_ok=True)

@@ -11,7 +11,7 @@ from conan.tools.env import VirtualBuildEnv
 from conan.tools.files import copy, rm
 from conan.tools.scm import Version
 
-from version import get_version
+from versioning import get_version
 
 required_conan_version = ">=1.60.0 <2 || >=2.0.6"
 
@@ -44,7 +44,7 @@ class LibqasmConan(ConanFile):
         "python_dir": None,
         "python_ext": None
     }
-    exports = "version.py", "include/version.hpp"
+    exports = "versioning.py", "include/libqasm/versioning.hpp"
     exports_sources = "CMakeLists.txt", "include/*", "python/*", "res/*", "scripts/*", "src/*", "test/*"
 
     @property
