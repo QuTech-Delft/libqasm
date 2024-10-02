@@ -17,15 +17,19 @@ AllowShortLoopsOnASingleLine: true
 AlwaysBreakTemplateDeclarations: Yes
 BinPackArguments: false
 BreakBeforeBraces: Attach
+# Use BraceWrapping with custom BreakBeforeBraces
+# BreakBeforeBraces: Custom
+# BraceWrapping:
 BreakConstructorInitializers: BeforeComma
 ColumnLimit: 120
 ConstructorInitializerIndentWidth: 0
 Cpp11BracedListStyle: false
 DerivePointerAlignment: false
+IndentCaseLabels: true
 IndentWidth: 4
 LambdaBodyIndentation: OuterScope
 PackConstructorInitializers: Never
 PointerAlignment: Right
-ReflowComments: false
+ReflowComments: true
 SpacesBeforeTrailingComments: 2
 ---
