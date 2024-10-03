@@ -25,7 +25,7 @@ ColumnLimit: 120
 ConstructorInitializerIndentWidth: 0
 Cpp11BracedListStyle: false
 DerivePointerAlignment: false
-IndentCaseLabels: true
+IndentCaseLabels: false
 IndentWidth: 4
 LambdaBodyIndentation: OuterScope
 PackConstructorInitializers: Never
