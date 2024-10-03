@@ -23,6 +23,7 @@ jobs:
           extensions: 'hpp,cpp'
           files-changed-only: 'false'
           format-review: 'true'
+          step-summary: 'true'
           style: 'file'  # use .clang-format config file
           tidy-checks: '-*'  # disable clang-tidy checks
           version: 18
