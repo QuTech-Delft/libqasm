@@ -14,11 +14,11 @@ class AntlrCustomErrorListener : public antlr4::BaseErrorListener {
      */
     std::optional<std::string> file_name_;
 
-    void syntaxError(antlr4::Recognizer *recognizer, antlr4::Token *offendingSymbol, size_t line,
+    void syntaxError(antlr4::Recognizer* recognizer, antlr4::Token* offendingSymbol, size_t line,
         size_t charPositionInLine, const std::string& msg, std::exception_ptr e) override;
 
 public:
-    explicit AntlrCustomErrorListener(const std::optional<std::string> &file_name);
+    explicit AntlrCustomErrorListener(const std::optional<std::string>& file_name);
     void syntaxError(size_t line, size_t charPositionInLine, const std::string& msg);
 };
 
