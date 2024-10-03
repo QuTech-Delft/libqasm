@@ -957,7 +957,7 @@ This is actually a Python class that works as a binding for accessing C++ code f
 <li><p>have an optional second argument: <code>file_name</code>. It is only used when reporting errors.</p>
 </li></ul>
 </p>
-<p><b>Example</b>: <pre><code class="language-python">result = libqasm.analyze_file("grover.cq");
+<p><b>Example</b>: <pre><code class="language-python">result = libqasm.analyze_file("grover.cq")
 </code></pre> <b>Example</b>: <pre><code class="language-python">program = r'''
     version 3.0
     qubit[2] q
@@ -966,56 +966,56 @@ This is actually a Python class that works as a binding for accessing C++ code f
     CNOT q[0], q[1]
     b = measure q
 '''
-result = libqasm.parse_string_to_json(program, "bell.cq");
+result = libqasm.parse_string_to_json(program, "bell.cq")
 </code></pre> </p>
     <div class="docblock">
 <pre><code class="language-python decl"><div>@staticmethod
-parse_file(*args) -> list[str]</div></code></pre>
+parse_file(*args) -> list[str]:</div></code></pre>
 <div class="docblock-desc">
 <p>Parses a file containing a cQASM v3.0 program. </p>
         </div>
 </div>
 <div class="docblock">
 <pre><code class="language-python decl"><div>@staticmethod
-parse_file_to_json(*args) -> str</div></code></pre>
+parse_file_to_json(*args) -> str:</div></code></pre>
 <div class="docblock-desc">
 <p>Parses a file containing a cQASM v3.0 program. </p>
         </div>
 </div>
 <div class="docblock">
 <pre><code class="language-python decl"><div>@staticmethod
-parse_string(*args) -> list[str]</div></code></pre>
+parse_string(*args) -> list[str]:</div></code></pre>
 <div class="docblock-desc">
 <p>Parses a string containing a cQASM v3.0 program. </p>
         </div>
 </div>
 <div class="docblock">
 <pre><code class="language-python decl"><div>@staticmethod
-parse_string_to_json(*args) -> str</div></code></pre>
+parse_string_to_json(*args) -> str:</div></code></pre>
 <div class="docblock-desc">
 <p>Parses a string containing a cQASM v3.0 program. </p>
         </div>
 </div>
 <div class="docblock">
-<pre><code class="language-python decl"><div>analyze_file(self, *args) -> list[str]</div></code></pre>
+<pre><code class="language-python decl"><div>analyze_file(self, *args) -> list[str]:</div></code></pre>
 <div class="docblock-desc">
 <p>Parses and analyzes a file containing a cQASM v3.0 program. </p>
         </div>
 </div>
 <div class="docblock">
-<pre><code class="language-python decl"><div>analyze_file_to_json(self, *args) -> str</div></code></pre>
+<pre><code class="language-python decl"><div>analyze_file_to_json(self, *args) -> str:</div></code></pre>
 <div class="docblock-desc">
 <p>Parses and analyzes a file containing a cQASM v3.0 program. </p>
         </div>
 </div>
 <div class="docblock">
-<pre><code class="language-python decl"><div>analyze_string(self, *args) -> list[str]</div></code></pre>
+<pre><code class="language-python decl"><div>analyze_string(self, *args) -> list[str]:</div></code></pre>
 <div class="docblock-desc">
 <p>Parses and analyzes a string containing a cQASM v3.0 program. </p>
         </div>
 </div>
 <div class="docblock">
-<pre><code class="language-python decl"><div>analyze_string_to_json(self, *args) -> str</div></code></pre>
+<pre><code class="language-python decl"><div>analyze_string_to_json(self, *args) -> str:</div></code></pre>
 <div class="docblock-desc">
 <p>Parses and analyzes a string containing a cQASM v3.0 program. </p>
         </div>

@@ -936,7 +936,7 @@
 This is actually a C++ class that works as a binding for accessing C++ code from Typescript.</p>
 <div class="docblock">
 <a id="EmscriptenWrapper">
-<pre><code class="language-typescript decl"><div>struct EmscriptenWrapper;</div></code></pre>
+<pre><code class="language-cpp decl"><div>struct EmscriptenWrapper;</div></code></pre>
 </a>
 <div class="docblock-desc">
 <p>Main class for parsing and analyzing cQASM files.</p>
@@ -953,7 +953,7 @@ wrapper().then(function(result: any) {
 });
 </code></pre> </p>
     <div class="docblock">
-<pre><code class="language-typescript decl"><div>std::string get_version();</div></code></pre>
+<pre><code class="language-cpp decl"><div>std::string get_version();</div></code></pre>
 <div class="docblock-desc">
 <p>Returns the version of the <code>libqasm</code> library.</p>
 <p><b>Example</b>: <pre><code class="language-typescript">let version = cqasm.get_version()
@@ -961,7 +961,7 @@ wrapper().then(function(result: any) {
         </div>
 </div>
 <div class="docblock">
-<pre><code class="language-typescript decl"><div>std::string parse_string_to_json(const std::string& data, const std::string& file_name);</div></code></pre>
+<pre><code class="language-cpp decl"><div>std::string parse_string_to_json(const std::string& data, const std::string& file_name);</div></code></pre>
 <div class="docblock-desc">
 <p>Parses a string containing a cQASM v3.0 program.</p>
 <p>No version check is performed.</p>
@@ -980,7 +980,7 @@ let output = parse_string_to_json(program, "bell.cq")
         </div>
 </div>
 <div class="docblock">
-<pre><code class="language-typescript decl"><div>std::string analyze_string_to_json(const std::string& data, const std::string& file_name);</div></code></pre>
+<pre><code class="language-cpp decl"><div>std::string analyze_string_to_json(const std::string& data, const std::string& file_name);</div></code></pre>
 <div class="docblock-desc">
 <p>Parses and analyzes a string containing a cQASM v3.0 program.</p>
 <p>No version check is performed.</p>
