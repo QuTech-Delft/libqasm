@@ -5,6 +5,7 @@ on:
     branches:
       - develop
       - master
+      - CQT-189-based-off-make-libqasm-names-consistent
   pull_request:
 
 jobs:
@@ -13,17 +14,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: C++ Linter
+      - name: C++ linter
         uses: cpp-linter/cpp-linter-action@v2
         id: linter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           extensions: 'hpp,cpp'
+          format-review: 'true'
           style: 'file'  # use .clang-format config file
           tidy-checks: '-*'  # disable clang-tidy checks
           version: 18
-      - name: Fail fast?!
+      - name: Fail fast
         if: steps.linter.outputs.clang-format-checks-failed > 0
         run: exit 1
 
