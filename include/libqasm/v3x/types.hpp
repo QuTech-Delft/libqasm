@@ -15,13 +15,13 @@
  */
 namespace cqasm::v3x::types {
 
-constexpr const char *qubit_type_name = "qubit";
-constexpr const char *bit_type_name = "bit";
-constexpr const char *bool_type_name = "bool";
-constexpr const char *integer_type_name = "int";
-constexpr const char *float_type_name = "float";
-constexpr const char *qubit_array_type_name = "qubit array";
-constexpr const char *bit_array_type_name = "bit array";
+constexpr const char* qubit_type_name = "qubit";
+constexpr const char* bit_type_name = "bit";
+constexpr const char* bool_type_name = "bool";
+constexpr const char* integer_type_name = "int";
+constexpr const char* float_type_name = "float";
+constexpr const char* qubit_array_type_name = "qubit array";
+constexpr const char* bit_array_type_name = "bit array";
 
 /**
  * A cQASM type.
@@ -46,27 +46,27 @@ using Types = tree::Any<TypeBase>;
  *  - W = bit array
  */
 Type from_spec(char spec);
-Types from_spec(const std::string &spec);
+Types from_spec(const std::string& spec);
 
 /**
  * Returns whether the `actual` type matches the constraints of the `expected` type.
  */
-bool type_check(const Type &expected, const Type &actual);
+bool type_check(const Type& expected, const Type& actual);
 
 /**
  * Returns the number of elements of the given type.
  */
-primitives::Int size_of(const Type &type);
+primitives::Int size_of(const Type& type);
 
 /**
  * Stream << overload for a single type.
  */
-std::ostream &operator<<(std::ostream &os, const Type &type);
+std::ostream& operator<<(std::ostream& os, const Type& type);
 
 /**
  * Stream << overload for zero or more types.
  */
-std::ostream &operator<<(std::ostream &os, const Types &types);
+std::ostream& operator<<(std::ostream& os, const Types& types);
 
 }  // namespace cqasm::v3x::types
 

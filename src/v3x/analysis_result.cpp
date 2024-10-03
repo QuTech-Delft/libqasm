@@ -11,7 +11,7 @@ namespace cqasm::v3x::analyzer {
  * The exception is always an AnalysisFailed, deriving from std::runtime_error.
  * The actual error messages are in this case first written to the given output stream, defaulting to stderr.
  */
-Root AnalysisResult::unwrap(std::ostream &out) const {
+Root AnalysisResult::unwrap(std::ostream& out) const {
     if (errors.empty()) {
         return root;
     }

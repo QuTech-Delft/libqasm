@@ -62,16 +62,16 @@ template <class T>
 struct OverloadedNameResolver : public BaseOverladedNameResolver<T> {
     virtual ~OverloadedNameResolver() = default;
 
-    void add_overload(const std::string &name, const T &tag, const types::Types &param_types) override {
+    void add_overload(const std::string& name, const T& tag, const types::Types& param_types) override {
         BaseOverladedNameResolver<T>::add_overload(name, tag, param_types);
     }
 
-    [[nodiscard]] std::pair<T, Values> resolve(const std::string &name, const Values &args) override {
+    [[nodiscard]] std::pair<T, Values> resolve(const std::string& name, const Values& args) override {
         try {
             return BaseOverladedNameResolver<T>::resolve(name, args);
-        } catch (const cqasm::overload::NameResolutionFailure &) {
+        } catch (const cqasm::overload::NameResolutionFailure&) {
             throw NameResolutionFailure{ fmt::format("failed to resolve '{}'", name) };
-        } catch (const cqasm::overload::OverloadResolutionFailure &) {
+        } catch (const cqasm::overload::OverloadResolutionFailure&) {
             throw OverloadResolutionFailure{ fmt::format(
                 "failed to resolve overload for '{}' with argument pack ({})", name, types_of(args)) };
         }
@@ -92,13 +92,13 @@ public:
     /**
      * Adds a variable.
      */
-    void add(const std::string &name, const Value &value);
+    void add(const std::string& name, const Value& value);
 
     /**
      * Resolves a variable.
      * Throws NameResolutionFailure if no variable by the given name exists.
      */
-    [[nodiscard]] Value resolve(const std::string &name) const;
+    [[nodiscard]] Value resolve(const std::string& name) const;
 };
 
 //----------------------------//
@@ -109,7 +109,7 @@ public:
  * An overload of a function supported by the language, and that can can be evaluated at compile time.
  * This has to be a function accepting only constant arguments.
  */
-using ConstEvalCoreFunction = std::function<Value(const Values &)>;
+using ConstEvalCoreFunction = std::function<Value(const Values&)>;
 
 /**
  * Table of overloads of functions supported by the language, and that can be evaluated at compile time.
@@ -122,10 +122,10 @@ class ConstEvalCoreFunctionTable {
 public:
     ConstEvalCoreFunctionTable();
     ~ConstEvalCoreFunctionTable();
-    ConstEvalCoreFunctionTable(const ConstEvalCoreFunctionTable &t);
-    ConstEvalCoreFunctionTable(ConstEvalCoreFunctionTable &&t) noexcept;
-    ConstEvalCoreFunctionTable &operator=(const ConstEvalCoreFunctionTable &t);
-    ConstEvalCoreFunctionTable &operator=(ConstEvalCoreFunctionTable &&t) noexcept;
+    ConstEvalCoreFunctionTable(const ConstEvalCoreFunctionTable& t);
+    ConstEvalCoreFunctionTable(ConstEvalCoreFunctionTable&& t) noexcept;
+    ConstEvalCoreFunctionTable& operator=(const ConstEvalCoreFunctionTable& t);
+    ConstEvalCoreFunctionTable& operator=(ConstEvalCoreFunctionTable&& t) noexcept;
 
     /**
      * Registers a function.
@@ -140,7 +140,7 @@ public:
      * However, the overload resolution engine will always use the last applicable overload it finds,
      * so adding does have the effect of overriding.
      */
-    void add(const std::string &name, const Types &param_types, const ConstEvalCoreFunction &function);
+    void add(const std::string& name, const Types& param_types, const ConstEvalCoreFunction& function);
 
     /**
      * Resolves a function.
@@ -148,7 +148,7 @@ public:
      * OverloadResolutionFailure if no overload of the function exists for the given arguments, or otherwise
      * returns the value returned by the function.
      */
-    [[nodiscard]] Value resolve(const std::string &name, const Values &args) const;
+    [[nodiscard]] Value resolve(const std::string& name, const Values& args) const;
 };
 
 //------------------//
@@ -166,15 +166,15 @@ class InstructionTable {
 public:
     InstructionTable();
     ~InstructionTable();
-    InstructionTable(const InstructionTable &t);
-    InstructionTable(InstructionTable &&t) noexcept;
-    InstructionTable &operator=(const InstructionTable &t);
-    InstructionTable &operator=(InstructionTable &&t) noexcept;
+    InstructionTable(const InstructionTable& t);
+    InstructionTable(InstructionTable&& t) noexcept;
+    InstructionTable& operator=(const InstructionTable& t);
+    InstructionTable& operator=(InstructionTable&& t) noexcept;
 
     /**
      * Registers an instruction type.
      */
-    void add(const instruction::Instruction &type);
+    void add(const instruction::Instruction& type);
 
     /**
      * Resolves an GateInstruction type.
@@ -182,8 +182,8 @@ public:
      * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
      * returns the resolved instruction node.
      */
-    [[nodiscard]] tree::One<semantic::Instruction> resolve(const std::string &name,
-        const tree::One<semantic::UnitaryGate> &gate, const Values &args) const;
+    [[nodiscard]] tree::One<semantic::Instruction> resolve(
+        const std::string& name, const tree::One<semantic::UnitaryGate>& gate, const Values& args) const;
 
     /**
      * Resolves an NonGateInstruction type.
@@ -191,7 +191,7 @@ public:
      * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
      * returns the resolved instruction node.
      */
-    [[nodiscard]] tree::One<semantic::Instruction> resolve(const std::string &name, const Values &args) const;
+    [[nodiscard]] tree::One<semantic::Instruction> resolve(const std::string& name, const Values& args) const;
 };
 
 }  // namespace cqasm::v3x::resolver

@@ -6,6 +6,7 @@
 #pragma once
 
 #include <fmt/ostream.h>
+
 #include <string>
 
 #include "libqasm/tree.hpp"
@@ -48,17 +49,17 @@ public:
      * param_types is a shorthand type specification string as parsed by cqasm::types::from_spec().
      * return_type is a shorthand type specification char as parsed by cqasm::types::from_spec().
      */
-    CoreFunction(std::string name, const std::string &param_types, const char return_type);
+    CoreFunction(std::string name, const std::string& param_types, const char return_type);
 
     CoreFunction() = default;
     ~CoreFunction() override = default;
-    CoreFunction(const CoreFunction &t) = default;
-    CoreFunction(CoreFunction &&t) noexcept = default;
-    CoreFunction &operator=(const CoreFunction &t) = default;
-    CoreFunction &operator=(CoreFunction &&t) noexcept = default;
+    CoreFunction(const CoreFunction& t) = default;
+    CoreFunction(CoreFunction&& t) noexcept = default;
+    CoreFunction& operator=(const CoreFunction& t) = default;
+    CoreFunction& operator=(CoreFunction&& t) noexcept = default;
 
-    bool operator==(const CoreFunction &rhs) const;
-    inline bool operator!=(const CoreFunction &rhs) const { return !(*this == rhs); }
+    bool operator==(const CoreFunction& rhs) const;
+    inline bool operator!=(const CoreFunction& rhs) const { return !(*this == rhs); }
 };
 
 /**
@@ -69,21 +70,21 @@ using CoreFunctionRef = tree::Maybe<CoreFunction>;
 /**
  * Stream << overload for functions.
  */
-std::ostream &operator<<(std::ostream &os, const CoreFunction &function);
+std::ostream& operator<<(std::ostream& os, const CoreFunction& function);
 
 /**
  * Stream << overload for function references.
  */
-std::ostream &operator<<(std::ostream &os, const CoreFunctionRef &function);
+std::ostream& operator<<(std::ostream& os, const CoreFunctionRef& function);
 
 }  // namespace cqasm::v3x::function
 
 namespace cqasm::v3x::primitives {
 
 template <>
-void serialize(const function::CoreFunctionRef &obj, ::tree::cbor::MapWriter &map);
+void serialize(const function::CoreFunctionRef& obj, ::tree::cbor::MapWriter& map);
 template <>
-function::CoreFunctionRef deserialize(const ::tree::cbor::MapReader &map);
+function::CoreFunctionRef deserialize(const ::tree::cbor::MapReader& map);
 
 }  // namespace cqasm::v3x::primitives
 

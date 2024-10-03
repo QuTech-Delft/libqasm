@@ -11,11 +11,11 @@
 #include <stdexcept>  // runtime_error
 
 #include "libqasm/error.hpp"
-#include "libqasm/v3x/semantic_analyzer.hpp"
 #include "libqasm/v3x/core_function.hpp"
 #include "libqasm/v3x/parse_helper.hpp"
 #include "libqasm/v3x/register_consteval_core_functions.hpp"
 #include "libqasm/v3x/register_instructions.hpp"
+#include "libqasm/v3x/semantic_analyzer.hpp"
 
 namespace cqasm::v3x::analyzer {
 
@@ -23,7 +23,7 @@ namespace cqasm::v3x::analyzer {
  * Creates a new semantic analyzer.
  * Creates a global scope.
  */
-Analyzer::Analyzer(const primitives::Version &api_version)
+Analyzer::Analyzer(const primitives::Version& api_version)
 : api_version{ api_version }
 , scope_stack_{ Scope{} } {
     if (api_version != "3.0") {
@@ -32,26 +32,26 @@ Analyzer::Analyzer(const primitives::Version &api_version)
     global_scope().block = tree::make<semantic::Block>();
 }
 
-[[nodiscard]] Scope &Analyzer::global_scope() {
+[[nodiscard]] Scope& Analyzer::global_scope() {
     return scope_stack_.back();
 }
-[[nodiscard]] Scope &Analyzer::current_scope() {
+[[nodiscard]] Scope& Analyzer::current_scope() {
     return scope_stack_.front();
 }
 [[nodiscard]] tree::One<semantic::Block> Analyzer::current_block() {
     return current_scope().block;
 }
-[[nodiscard]] tree::Any<semantic::Variable> &Analyzer::current_variables() {
+[[nodiscard]] tree::Any<semantic::Variable>& Analyzer::current_variables() {
     return current_scope().variables;
 }
 
-[[nodiscard]] const Scope &Analyzer::global_scope() const {
+[[nodiscard]] const Scope& Analyzer::global_scope() const {
     return scope_stack_.back();
 }
-[[nodiscard]] const Scope &Analyzer::current_scope() const {
+[[nodiscard]] const Scope& Analyzer::current_scope() const {
     return scope_stack_.front();
 }
-[[nodiscard]] const tree::Any<semantic::Variable> &Analyzer::current_variables() const {
+[[nodiscard]] const tree::Any<semantic::Variable>& Analyzer::current_variables() const {
     return current_scope().variables;
 }
 
@@ -84,13 +84,13 @@ void Analyzer::register_default_instructions() {
 /**
  * Analyzes the given AST.
  */
-AnalysisResult Analyzer::analyze(ast::Program &ast) {
+AnalysisResult Analyzer::analyze(ast::Program& ast) {
     auto analyze_visitor_up = std::make_unique<SemanticAnalyzer>(*this);
     auto result = std::any_cast<AnalysisResult>(analyze_visitor_up->visit_program(ast));
     if (result.errors.empty()) {
         try {
             result.root.check_well_formed();
-        } catch (const std::runtime_error &err) {
+        } catch (const std::runtime_error& err) {
             fmt::print("Error: {}\nDumping semantic AST...\n---\n", err.what());
             result.root->dump_raw_pointers();
             fmt::print("---\n");
@@ -105,7 +105,7 @@ AnalysisResult Analyzer::analyze(ast::Program &ast) {
  * If there are parse errors, they are moved into the AnalysisResult error list,
  * and the root node will be empty.
  */
-AnalysisResult Analyzer::analyze(const parser::ParseResult &parse_result) {
+AnalysisResult Analyzer::analyze(const parser::ParseResult& parse_result) {
     if (!parse_result.errors.empty()) {
         return AnalysisResult{ {}, parse_result.errors };
     }
@@ -115,7 +115,7 @@ AnalysisResult Analyzer::analyze(const parser::ParseResult &parse_result) {
 /**
  * Parses and analyzes the given file.
  */
-AnalysisResult Analyzer::analyze_file(const std::string &file_name) {
+AnalysisResult Analyzer::analyze_file(const std::string& file_name) {
     return analyze(parser::parse_file(file_name, file_name));
 }
 
@@ -123,7 +123,7 @@ AnalysisResult Analyzer::analyze_file(const std::string &file_name) {
  * Parses and analyzes the given string.
  * The optional file_name argument will be used only for error messages.
  */
-AnalysisResult Analyzer::analyze_string(const std::string &data, const std::optional<std::string> &file_name) {
+AnalysisResult Analyzer::analyze_string(const std::string& data, const std::optional<std::string>& file_name) {
     return analyze(parser::parse_string(data, file_name));
 }
 
@@ -145,7 +145,7 @@ void Analyzer::pop_scope() {
 /**
  * Adds a statement to the current scope.
  */
-void Analyzer::add_statement_to_current_scope(const tree::One<semantic::Statement> &statement) {
+void Analyzer::add_statement_to_current_scope(const tree::One<semantic::Statement>& statement) {
     if (current_block().empty()) {
         throw error::AnalysisError{ "trying to add a statement but current block is empty" };
     }
@@ -167,7 +167,7 @@ void Analyzer::add_statement_to_current_scope(const tree::One<semantic::Statemen
 /**
  * Adds a variable to the current scope.
  */
-void Analyzer::add_variable_to_current_scope(const tree::One<semantic::Variable> &variable) {
+void Analyzer::add_variable_to_current_scope(const tree::One<semantic::Variable>& variable) {
     current_variables().add(variable);
 }
 
@@ -175,11 +175,11 @@ void Analyzer::add_variable_to_current_scope(const tree::One<semantic::Variable>
  * Resolves a variable.
  * Throws NameResolutionFailure if no variable by the given name exists.
  */
-values::Value Analyzer::resolve_variable(const std::string &name) const {
-    for (const auto &scope : scope_stack_) {
+values::Value Analyzer::resolve_variable(const std::string& name) const {
+    for (const auto& scope : scope_stack_) {
         try {
             return scope.variable_table.resolve(name);
-        } catch (const error::AnalysisError &) {
+        } catch (const error::AnalysisError&) {
             continue;
         }
     }
@@ -189,7 +189,7 @@ values::Value Analyzer::resolve_variable(const std::string &name) const {
 /**
  * Registers a variable.
  */
-void Analyzer::register_variable(const std::string &name, const values::Value &value) {
+void Analyzer::register_variable(const std::string& name, const values::Value& value) {
     current_scope().variable_table.add(name, value);
 }
 
@@ -201,7 +201,7 @@ void Analyzer::register_variable(const std::string &name, const values::Value &v
  * OverloadResolutionFailure if no overload of the function exists for the given arguments,
  * or otherwise returns the value returned by the function.
  */
-values::Value Analyzer::resolve_function(const std::string &name, const values::Values &args) const {
+values::Value Analyzer::resolve_function(const std::string& name, const values::Values& args) const {
     return global_scope().consteval_core_function_table.resolve(name, args);
 }
 
@@ -209,7 +209,7 @@ values::Value Analyzer::resolve_function(const std::string &name, const values::
  * Registers a consteval core function.
  */
 void Analyzer::register_consteval_core_function(
-    const std::string &name, const types::Types &param_types, const resolver::ConstEvalCoreFunction &function) {
+    const std::string& name, const types::Types& param_types, const resolver::ConstEvalCoreFunction& function) {
     global_scope().consteval_core_function_table.add(name, param_types, function);
 }
 
@@ -219,7 +219,7 @@ void Analyzer::register_consteval_core_function(
  * converted to types::Types for the other overload using types::from_spec.
  */
 void Analyzer::register_consteval_core_function(
-    const std::string &name, const std::string &param_types, const resolver::ConstEvalCoreFunction &function) {
+    const std::string& name, const std::string& param_types, const resolver::ConstEvalCoreFunction& function) {
     global_scope().consteval_core_function_table.add(name, types::from_spec(param_types), function);
 }
 
@@ -230,17 +230,17 @@ void Analyzer::register_consteval_core_function(
  * or otherwise returns the resolved instruction node.
  * Annotation data, line number information, and the condition still need to be set by the caller.
  */
-[[nodiscard]] tree::One<semantic::Instruction> Analyzer::resolve_instruction(const std::string &name,
-    const tree::One<semantic::UnitaryGate> &gate, const values::Values &args) const {
-    for (const auto &scope : scope_stack_) {
+[[nodiscard]] tree::One<semantic::Instruction> Analyzer::resolve_instruction(
+    const std::string& name, const tree::One<semantic::UnitaryGate>& gate, const values::Values& args) const {
+    for (const auto& scope : scope_stack_) {
         try {
             return scope.instruction_table.resolve(name, gate, args);
-        } catch (const error::AnalysisError &) {
+        } catch (const error::AnalysisError&) {
             continue;
         }
     }
-    throw resolver::ResolutionFailure{
-        fmt::format("failed to resolve instruction '{}' with argument pack ({})", name, values::types_of(args)) };
+    throw resolver::ResolutionFailure{ fmt::format(
+        "failed to resolve instruction '{}' with argument pack ({})", name, values::types_of(args)) };
 }
 
 /**
@@ -250,23 +250,23 @@ void Analyzer::register_consteval_core_function(
  * or otherwise returns the resolved instruction node.
  * Annotation data, line number information, and the condition still need to be set by the caller.
  */
-[[nodiscard]] tree::One<semantic::Instruction> Analyzer::resolve_instruction(const std::string &name,
-    const values::Values &args) const {
-    for (const auto &scope : scope_stack_) {
+[[nodiscard]] tree::One<semantic::Instruction> Analyzer::resolve_instruction(
+    const std::string& name, const values::Values& args) const {
+    for (const auto& scope : scope_stack_) {
         try {
             return scope.instruction_table.resolve(name, args);
-        } catch (const error::AnalysisError &) {
+        } catch (const error::AnalysisError&) {
             continue;
         }
     }
-    throw resolver::ResolutionFailure{
-        fmt::format("failed to resolve instruction '{}' with argument pack ({})", name, values::types_of(args)) };
+    throw resolver::ResolutionFailure{ fmt::format(
+        "failed to resolve instruction '{}' with argument pack ({})", name, values::types_of(args)) };
 }
 
 /**
  * Registers an instruction type.
  */
-void Analyzer::register_instruction(const instruction::Instruction &instruction) {
+void Analyzer::register_instruction(const instruction::Instruction& instruction) {
     current_scope().instruction_table.add(instruction);
 }
 
@@ -274,7 +274,7 @@ void Analyzer::register_instruction(const instruction::Instruction &instruction)
  * Convenience method for registering an instruction type.
  * The arguments are passed straight to instruction::Instruction's constructor.
  */
-void Analyzer::register_instruction(const std::string &name, const std::optional<std::string> &operand_types) {
+void Analyzer::register_instruction(const std::string& name, const std::optional<std::string>& operand_types) {
     register_instruction(instruction::Instruction{ name, operand_types });
 }
 

@@ -1,13 +1,14 @@
-#include <filesystem>
 #include <fmt/format.h>
 #include <gtest/gtest.h>
+
+#include <filesystem>
 
 namespace cqasm::test {
 
 namespace fs = std::filesystem;
 
 template <typename TestFactory>
-void register_tests(const fs::path &tests_root_path, TestFactory test_factory) {
+void register_tests(const fs::path& tests_root_path, TestFactory test_factory) {
     // Discover the tests.
     // They should live in a directory tree with the following structure:
     //
@@ -30,10 +31,10 @@ void register_tests(const fs::path &tests_root_path, TestFactory test_factory) {
     } else if (!fs::is_directory(tests_root_path)) {
         throw std::runtime_error(fmt::format("'{}' is not a directory", tests_root_path.generic_string()));
     }
-    for (const fs::directory_entry &suite : fs::directory_iterator(tests_root_path)) {
+    for (const fs::directory_entry& suite : fs::directory_iterator(tests_root_path)) {
         if (fs::is_directory(suite)) {
             auto suite_name = suite.path().filename().string();
-            for (const fs::directory_entry &test : fs::directory_iterator(suite.path())) {
+            for (const fs::directory_entry& test : fs::directory_iterator(suite.path())) {
                 auto test_name = test.path().filename().string();
                 if (fs::is_directory(test)) {
                     auto input_cq_path = test.path() / "input.cq";
@@ -44,7 +45,7 @@ void register_tests(const fs::path &tests_root_path, TestFactory test_factory) {
                             nullptr,
                             __FILE__,
                             __LINE__,
-                            [=]() -> ::testing::Test * { return test_factory(test.path()); });
+                            [=]() -> ::testing::Test* { return test_factory(test.path()); });
                     }
                 }
             }

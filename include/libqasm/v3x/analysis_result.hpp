@@ -64,7 +64,7 @@ public:
      * The exception is always an AnalysisFailed, deriving from std::runtime_error.
      * The actual error messages are in this case first written to the given output stream, defaulting to stderr.
      */
-    Root unwrap(std::ostream &out = std::cerr) const;
+    Root unwrap(std::ostream& out = std::cerr) const;
 
     /**
      * Returns a vector of strings, of which the first is reserved for the CBOR serialization of the v3.x semantic AST.

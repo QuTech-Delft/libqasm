@@ -1,12 +1,13 @@
-#include <functional>
 #include <gmock/gmock.h>
+
+#include <functional>
 
 #include "libqasm/error.hpp"
 #include "libqasm/tree.hpp"
-#include "libqasm/version.hpp"
 #include "libqasm/v3x/analyzer.hpp"
 #include "libqasm/v3x/ast.hpp"
 #include "libqasm/v3x/parse_result.hpp"
+#include "libqasm/version.hpp"
 #include "mock_analyzer.hpp"
 
 using namespace ::testing;
@@ -35,15 +36,15 @@ protected:
 
 TEST_F(AnalyzerAnalyzeTest, parser_returns_parse_result) {
     auto analyzer = Analyzer{};
-    const auto &analysis_result = analyzer.analyze(parse_result_ok);
+    const auto& analysis_result = analyzer.analyze(parse_result_ok);
     auto program = analysis_result.root->as_program();
-    const auto &version = program->version->items;
+    const auto& version = program->version->items;
     EXPECT_EQ(version, version_3_0);
 }
 TEST_F(AnalyzerAnalyzeTest, parser_returns_errors) {
     auto analyzer = Analyzer{};
-    const auto &analysis_result = analyzer.analyze(parse_result_errors);
-    const auto &error = analysis_result.errors[0];
+    const auto& analysis_result = analyzer.analyze(parse_result_errors);
+    const auto& error = analysis_result.errors[0];
     EXPECT_THAT(error.what(), ::testing::HasSubstr(parse_error_message));
 }
 
@@ -87,11 +88,11 @@ TEST_F(AnalyzerTest, add_statement_to_current_scope) {
 }
 TEST_F(AnalyzerTest, add_statement_with_source_location_information_to_current_scope) {
     MockAnalyzer analyzer{};
-    const auto &statement_source_location = annotations::SourceLocation{ "input.cq", { { 10, 20 }, { 11, 10 } } };
+    const auto& statement_source_location = annotations::SourceLocation{ "input.cq", { { 10, 20 }, { 11, 10 } } };
     statement->set_annotation(statement_source_location);
     analyzer.add_statement_to_current_scope(statement);
     EXPECT_EQ(analyzer.current_block()->statements.size(), 1);
-    const auto &block_source_location = analyzer.current_block()->get_annotation<annotations::SourceLocation>();
+    const auto& block_source_location = analyzer.current_block()->get_annotation<annotations::SourceLocation>();
     EXPECT_EQ(block_source_location.file_name, statement_source_location.file_name);
     EXPECT_EQ(block_source_location.range, statement_source_location.range);
 }
@@ -101,19 +102,19 @@ TEST_F(AnalyzerTest,
     //     10 15 20 25 30
     //  5      <
     //  8               >
-    const auto &block_initial_source_location = annotations::SourceLocation{ "input.cq", { { 5, 15 }, { 8, 30 } } };
+    const auto& block_initial_source_location = annotations::SourceLocation{ "input.cq", { { 5, 15 }, { 8, 30 } } };
     analyzer.current_block()->set_annotation(block_initial_source_location);
     //     10 15 20 25 30
     // 10   <
     // 11         >
-    const auto &statement_source_location = annotations::SourceLocation{ "input.cq", { { 10, 10 }, { 11, 20 } } };
+    const auto& statement_source_location = annotations::SourceLocation{ "input.cq", { { 10, 10 }, { 11, 20 } } };
     statement->set_annotation(statement_source_location);
     analyzer.add_statement_to_current_scope(statement);
     EXPECT_EQ(analyzer.current_block()->statements.size(), 1);
     //     10 15 20 25 30
     //  5      <
     // 11         >
-    const auto &block_final_source_location = analyzer.current_block()->get_annotation<annotations::SourceLocation>();
+    const auto& block_final_source_location = analyzer.current_block()->get_annotation<annotations::SourceLocation>();
     EXPECT_EQ(block_final_source_location.file_name, "input.cq");
     EXPECT_EQ(block_final_source_location.range, (annotations::SourceLocation::Range{ { 5, 15 }, { 11, 20 } }));
 }

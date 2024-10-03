@@ -1,5 +1,6 @@
 #include <fmt/format.h>
 #include <gmock/gmock.h>
+
 #include <memory>  // make_shared
 
 #include "libqasm/annotations.hpp"  // SourceLocation

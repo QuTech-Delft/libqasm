@@ -35,21 +35,21 @@ class Overload {
     Types param_types;
 
 public:
-    Overload(const T &tag, const Types &param_types)
+    Overload(const T& tag, const Types& param_types)
     : tag{ tag }
     , param_types{ param_types } {}
-    Overload(const Overload &other)
+    Overload(const Overload& other)
     : tag{ other.tag }
     , param_types{ other.param_types } {}
-    Overload(Overload &&other) noexcept
+    Overload(Overload&& other) noexcept
     : tag{ std::move(other.tag) }
     , param_types{ other.param_types } {}
-    Overload &operator=(const Overload &other) {
+    Overload& operator=(const Overload& other) {
         tag = other.tag;
         param_types = other.param_types;
         return *this;
     }
-    Overload &operator=(Overload &&other) noexcept {
+    Overload& operator=(Overload&& other) noexcept {
         tag = std::move(other.tag);
         param_types = other.param_types;
         return *this;
@@ -58,7 +58,7 @@ public:
     /**
      * Returns the tag for this overload.
      */
-    [[nodiscard]] const T &get_tag() const { return tag; }
+    [[nodiscard]] const T& get_tag() const { return tag; }
 
     /**
      * Returns the number of parameters for this overload.
@@ -68,7 +68,7 @@ public:
     /**
      * Returns the parameter type object for the parameter at the specified index.
      */
-    [[nodiscard]] const Type &param_type_at(std::size_t index) const { return param_types.at(index); }
+    [[nodiscard]] const Type& param_type_at(std::size_t index) const { return param_types.at(index); }
 };
 
 //------------------//
@@ -98,9 +98,7 @@ public:
      * Note that ambiguous overloads are silently resolved by using the last applicable overload,
      * so more specific overloads should always be added last.
      */
-    void add_overload(const T &tag, const Types &param_types) {
-        overloads.emplace_back(tag, param_types);
-    }
+    void add_overload(const T& tag, const Types& param_types) { overloads.emplace_back(tag, param_types); }
 
     /**
      * Tries to resolve which overload belongs to the given argument list, if any.
@@ -108,7 +106,7 @@ public:
      * otherwise the tag corresponding to the first proper overload and
      * the appropriately promoted vector of value pointers are returned.
      */
-    [[nodiscard]] std::pair<T, Values> resolve(const Values &args) {
+    [[nodiscard]] std::pair<T, Values> resolve(const Values& args) {
         for (auto overload = overloads.rbegin(); overload != overloads.rend(); ++overload) {
             if (overload->num_params() != args.size()) {
                 continue;
@@ -159,7 +157,7 @@ public:
      * Note that ambiguous overloads are silently resolved by using the last applicable overload,
      * so more specific overloads should always be added last.
      */
-    virtual void add_overload(const std::string &name, const T &tag, const Types &param_types) {
+    virtual void add_overload(const std::string& name, const T& tag, const Types& param_types) {
         if (auto entry = table.find(name); entry == table.end()) {
             auto resolver = OverloadResolver<T, TypeBase, Node>();
             resolver.add_overload(tag, param_types);
@@ -176,7 +174,7 @@ public:
      * returns the tag of the first applicable callable/overload pair and
      * the appropriately promoted vector of value pointers.
      */
-    [[nodiscard]] virtual std::pair<T, Values> resolve(const std::string &name, const Values &args) {
+    [[nodiscard]] virtual std::pair<T, Values> resolve(const std::string& name, const Values& args) {
         if (auto entry = table.find(name); entry != table.end()) {
             return entry->second.resolve(args);
         }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <gmock/gmock.h>
+
 #include <string>
 
 #include "libqasm/v3x/parse_helper.hpp"

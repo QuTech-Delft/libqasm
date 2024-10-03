@@ -24,12 +24,12 @@ struct StringBuilder : public cqasm::tree::Base {
     /**
      * Pushes a string fragment into the string.
      */
-    void push_string(const std::string &str);
+    void push_string(const std::string& str);
 
     /**
      * Pushes an escape sequence into the string.
      */
-    void push_escape(const std::string &escape);
+    void push_escape(const std::string& escape);
 };
 
 }  // namespace cqasm::ast

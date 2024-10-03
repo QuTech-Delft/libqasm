@@ -8,8 +8,8 @@
 #include <optional>
 
 #include "libqasm/v3x/analyzer.hpp"
-#include "libqasm/v3x/parse_helper.hpp"
 #include "libqasm/v3x/cqasm.hpp"
+#include "libqasm/v3x/parse_helper.hpp"
 #include "libqasm/version.hpp"
 
 namespace v3x = cqasm::v3x;
@@ -23,7 +23,7 @@ namespace v3x = cqasm::v3x;
  * the initial mappings and functions are not configurable at all.
  * The defaults for these are always used.
  */
-V3xAnalyzer::V3xAnalyzer(const std::string &max_version, bool without_defaults) {
+V3xAnalyzer::V3xAnalyzer(const std::string& max_version, bool without_defaults) {
     if (without_defaults) {
         analyzer = std::make_unique<v3x::analyzer::Analyzer>(max_version);
         analyzer->register_default_constants();
@@ -44,7 +44,7 @@ V3xAnalyzer::~V3xAnalyzer() = default;
  * Registers an instruction type.
  * The arguments are passed straight to instruction::Instruction's constructor.
  */
-void V3xAnalyzer::register_instruction(const std::string &name, const std::optional<std::string> &param_types) {
+void V3xAnalyzer::register_instruction(const std::string& name, const std::optional<std::string>& param_types) {
     analyzer->register_instruction(name, param_types);
 }
 
@@ -56,8 +56,8 @@ void V3xAnalyzer::register_instruction(const std::string &name, const std::optio
  * Any additional strings represent error messages.
  * Notice that the AST and error messages won't be available at the same time.
  */
-std::vector<std::string> V3xAnalyzer::parse_file(const std::string &file_name) {
-    const auto &parse_result = v3x::parser::parse_file(file_name, std::nullopt);
+std::vector<std::string> V3xAnalyzer::parse_file(const std::string& file_name) {
+    const auto& parse_result = v3x::parser::parse_file(file_name, std::nullopt);
     return parse_result.to_strings();
 }
 
@@ -71,8 +71,8 @@ std::vector<std::string> V3xAnalyzer::parse_file(const std::string &file_name) {
  * Every error is mapped to an LSP Diagnostic structure:
  * severity is hardcoded to 1 at the moment (value corresponding to an Error level).
  */
-std::string V3xAnalyzer::parse_file_to_json(const std::string &file_name) {
-    const auto &parse_result = v3x::parser::parse_file(file_name, std::nullopt);
+std::string V3xAnalyzer::parse_file_to_json(const std::string& file_name) {
+    const auto& parse_result = v3x::parser::parse_file(file_name, std::nullopt);
     return parse_result.to_json();
 }
 
@@ -80,9 +80,9 @@ std::string V3xAnalyzer::parse_file_to_json(const std::string &file_name) {
  * Same as parse_file(), but instead receives the file contents directly.
  * The file_name, if non-empty, is only used when reporting errors.
  */
-std::vector<std::string> V3xAnalyzer::parse_string(const std::string &data, const std::string &file_name) {
+std::vector<std::string> V3xAnalyzer::parse_string(const std::string& data, const std::string& file_name) {
     auto file_name_op = !file_name.empty() ? std::optional<std::string>{ file_name } : std::nullopt;
-    const auto &parse_result = v3x::parser::parse_string(data, file_name_op);
+    const auto& parse_result = v3x::parser::parse_string(data, file_name_op);
     return parse_result.to_strings();
 }
 
@@ -97,9 +97,9 @@ std::vector<std::string> V3xAnalyzer::parse_string(const std::string &data, cons
  * Every error is mapped to an LSP Diagnostic structure:
  * severity is hardcoded to 1 at the moment (value corresponding to an Error level).
  */
-std::string V3xAnalyzer::parse_string_to_json(const std::string &data, const std::string &file_name) {
+std::string V3xAnalyzer::parse_string_to_json(const std::string& data, const std::string& file_name) {
     auto file_name_op = !file_name.empty() ? std::optional<std::string>{ file_name } : std::nullopt;
-    const auto &parse_result = v3x::parser::parse_string(data, file_name_op);
+    const auto& parse_result = v3x::parser::parse_string(data, file_name_op);
     return parse_result.to_json();
 }
 
@@ -112,9 +112,9 @@ std::string V3xAnalyzer::parse_string_to_json(const std::string &data, const std
  * Any additional strings represent error messages.
  * Notice that the AST and error messages won't be available at the same time.
  */
-std::vector<std::string> V3xAnalyzer::analyze_file(const std::string &file_name) const {
-    const auto &parse_result = v3x::parser::parse_file(file_name, std::nullopt);
-    const auto &analysis_result = analyzer->analyze(parse_result);
+std::vector<std::string> V3xAnalyzer::analyze_file(const std::string& file_name) const {
+    const auto& parse_result = v3x::parser::parse_file(file_name, std::nullopt);
+    const auto& analysis_result = analyzer->analyze(parse_result);
     return analysis_result.to_strings();
 }
 
@@ -128,9 +128,9 @@ std::vector<std::string> V3xAnalyzer::analyze_file(const std::string &file_name)
  * Every error is mapped to an LSP Diagnostic structure:
  * severity is hardcoded to 1 at the moment (value corresponding to an Error level).
  */
-[[nodiscard]] std::string V3xAnalyzer::analyze_file_to_json(const std::string &file_name) const {
-    const auto &parse_result = v3x::parser::parse_file(file_name, std::nullopt);
-    const auto &analysis_result = analyzer->analyze(parse_result);
+[[nodiscard]] std::string V3xAnalyzer::analyze_file_to_json(const std::string& file_name) const {
+    const auto& parse_result = v3x::parser::parse_file(file_name, std::nullopt);
+    const auto& analysis_result = analyzer->analyze(parse_result);
     return analysis_result.to_json();
 }
 
@@ -138,10 +138,10 @@ std::vector<std::string> V3xAnalyzer::analyze_file(const std::string &file_name)
  * Same as analyze_file(), but instead receives the file contents directly.
  * The file_name, if specified, is only used when reporting errors.
  */
-std::vector<std::string> V3xAnalyzer::analyze_string(const std::string &data, const std::string &file_name) const {
+std::vector<std::string> V3xAnalyzer::analyze_string(const std::string& data, const std::string& file_name) const {
     auto file_name_op = !file_name.empty() ? std::optional<std::string>{ file_name } : std::nullopt;
-    const auto &parse_result = v3x::parser::parse_string(data, file_name_op);
-    const auto &analysis_result = analyzer->analyze(parse_result);
+    const auto& parse_result = v3x::parser::parse_string(data, file_name_op);
+    const auto& analysis_result = analyzer->analyze(parse_result);
     return analysis_result.to_strings();
 }
 
@@ -157,9 +157,9 @@ std::vector<std::string> V3xAnalyzer::analyze_string(const std::string &data, co
  * severity is hardcoded to 1 at the moment (value corresponding to an Error level).
  */
 [[nodiscard]] std::string V3xAnalyzer::analyze_string_to_json(
-    const std::string &data, const std::string &file_name) const {
+    const std::string& data, const std::string& file_name) const {
     auto file_name_op = !file_name.empty() ? std::optional<std::string>{ file_name } : std::nullopt;
-    const auto &parse_result = v3x::parser::parse_string(data, file_name_op);
-    const auto &analysis_result = analyzer->analyze(parse_result);
+    const auto& parse_result = v3x::parser::parse_string(data, file_name_op);
+    const auto& analysis_result = analyzer->analyze(parse_result);
     return analysis_result.to_json();
 }

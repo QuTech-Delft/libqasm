@@ -29,7 +29,8 @@ IndentCaseLabels: true
 IndentWidth: 4
 LambdaBodyIndentation: OuterScope
 PackConstructorInitializers: Never
-PointerAlignment: Right
+PointerAlignment: Left
+ReferenceAlignment: Left
 ReflowComments: true
 SpacesBeforeTrailingComments: 2
 ---

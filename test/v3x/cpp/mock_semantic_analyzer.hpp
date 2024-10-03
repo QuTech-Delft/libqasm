@@ -9,10 +9,10 @@
 namespace cqasm::v3x::analyzer {
 
 struct MockSemanticAnalyzer : public SemanticAnalyzer {
-    explicit MockSemanticAnalyzer(Analyzer &analyzer)
+    explicit MockSemanticAnalyzer(Analyzer& analyzer)
     : SemanticAnalyzer{ analyzer } {}
 
-    [[nodiscard]] AnalysisResult &result() { return result_; }
+    [[nodiscard]] AnalysisResult& result() { return result_; }
 };
 
 }  // namespace cqasm::v3x::analyzer

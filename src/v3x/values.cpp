@@ -6,6 +6,7 @@
 
 #include <fmt/format.h>
 #include <fmt/ranges.h>
+
 #include <ostream>
 #include <stdexcept>  // runtime_error
 
@@ -25,8 +26,8 @@ namespace cqasm::v3x::values {
  *
  * For a variable or a return value, a promotion is just a check.
  * If the check is successful, the variable or return value is returned
-*/
-Value promote(const Value &value, const types::Type &type) {
+ */
+Value promote(const Value& value, const types::Type& type) {
     // If the types match exactly, just return the original value
     if (types::type_check(type, type_of(value))) {
         return value;
@@ -36,7 +37,7 @@ Value promote(const Value &value, const types::Type &type) {
 
     // Booleans promote to integer
     if (type->as_int()) {
-        if (const auto &const_bool = value->as_const_bool()) {
+        if (const auto& const_bool = value->as_const_bool()) {
             ret = tree::make<values::ConstInt>(static_cast<ConstInt>(const_bool->value));
         } else if (value->as_variable_ref()) {
             if (types::type_check(type_of(value), tree::make<types::Bool>())) {
@@ -47,9 +48,9 @@ Value promote(const Value &value, const types::Type &type) {
 
     // Booleans and integers promote to float
     if (type->as_float()) {
-        if (const auto &const_bool = value->as_const_bool()) {
+        if (const auto& const_bool = value->as_const_bool()) {
             ret = tree::make<values::ConstFloat>(static_cast<ConstFloat>(const_bool->value));
-        } else if (const auto &const_int = value->as_const_int()) {
+        } else if (const auto& const_int = value->as_const_int()) {
             ret = tree::make<values::ConstFloat>(static_cast<ConstFloat>(static_cast<double>(const_int->value)));
         }
     }
@@ -65,7 +66,7 @@ Value promote(const Value &value, const types::Type &type) {
 /**
  * Checks if a from_type can be promoted to a to_type.
  */
-bool check_promote(const types::Type &from_type, const types::Type &to_type) {
+bool check_promote(const types::Type& from_type, const types::Type& to_type) {
     if (types::type_check(from_type, to_type)) {
         return true;
     } else if (from_type->as_bool()) {
@@ -80,7 +81,7 @@ bool check_promote(const types::Type &from_type, const types::Type &to_type) {
  * Returns the element type of the given type.
  * Throws an error if the given type is not of array type.
  */
-types::Type element_type_of(const types::Type &type) {
+types::Type element_type_of(const types::Type& type) {
     if (types::type_check(type, tree::make<types::QubitArray>())) {
         return tree::make<types::Qubit>();
     } else if (types::type_check(type, tree::make<types::BitArray>())) {
@@ -93,7 +94,7 @@ types::Type element_type_of(const types::Type &type) {
 /**
  * Returns the type of the given value.
  */
-types::Type type_of(const Value &value) {
+types::Type type_of(const Value& value) {
     if (value->as_const_bool()) {
         return tree::make<types::Bool>();
     } else if (value->as_const_int()) {
@@ -118,9 +119,9 @@ types::Type type_of(const Value &value) {
 /**
  * Returns the types of the given values.
  */
-types::Types types_of(const Values &values) {
+types::Types types_of(const Values& values) {
     types::Types types;
-    for (const auto &value : values) {
+    for (const auto& value : values) {
         types.add(type_of(value));
     }
     return types;
@@ -129,7 +130,7 @@ types::Types types_of(const Values &values) {
 /**
  * Returns the number of elements of the given value.
  */
-primitives::Int size_of(const Value &value) {
+primitives::Int size_of(const Value& value) {
     if (value->as_const_bool() || value->as_const_int() || value->as_const_float()) {
         return 1;
     } else if (auto index = value->as_index_ref()) {
@@ -145,7 +146,7 @@ primitives::Int size_of(const Value &value) {
  * Throws an AnalysisError if the given value is not a constant,
  * i.e. if it doesn't have a known value at this time.
  */
-void check_const(const Value &value) {
+void check_const(const Value& value) {
     if (!value->as_constant()) {
         throw error::AnalysisError("dynamic values are not supported here", &*value);
     }
@@ -155,8 +156,8 @@ void check_const(const Value &value) {
  * Throws an AnalysisError if any of the given values are not a constant,
  * i.e. if it doesn't have a known value at this time.
  */
-void check_const(const Values &values) {
-    for (const auto &value : values) {
+void check_const(const Values& values) {
+    for (const auto& value : values) {
         check_const(value);
     }
 }
@@ -164,14 +165,14 @@ void check_const(const Values &values) {
 /**
  * Stream << overload for a single value.
  */
-std::ostream &operator<<(std::ostream &os, const Value &value) {
+std::ostream& operator<<(std::ostream& os, const Value& value) {
     return (value.empty()) ? os << "NULL" : os << *value;
 }
 
 /**
  * Stream << overload for zero or more values.
  */
-std::ostream &operator<<(std::ostream &os, const Values &values) {
+std::ostream& operator<<(std::ostream& os, const Values& values) {
     return os << fmt::format("[{}]", fmt::join(values, ", "));
 }
 

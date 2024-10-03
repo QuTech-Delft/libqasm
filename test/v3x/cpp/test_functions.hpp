@@ -21,7 +21,7 @@ auto invoke_unary(ParamType p) {
 
     auto values = values::Values{ { cqasm::tree::make<FParamValue>(p) } };
     auto ret = F(values);
-    return dynamic_cast<FReturnValue &>(*ret).value;
+    return dynamic_cast<FReturnValue&>(*ret).value;
 }
 
 template <auto F, typename ParamsType>
@@ -31,7 +31,7 @@ auto invoke_binary(ParamsType a, ParamsType b) {
 
     auto values = values::Values{ { cqasm::tree::make<FParamValue>(a), cqasm::tree::make<FParamValue>(b) } };
     auto ret = F(values);
-    return dynamic_cast<FReturnValue &>(*ret).value;
+    return dynamic_cast<FReturnValue&>(*ret).value;
 }
 
 template <auto F, typename ParamsType>
@@ -43,5 +43,5 @@ auto invoke_ternary(bool condition, ParamsType if_true, ParamsType if_false) {
         cqasm::tree::make<FParamValue>(if_true),
         cqasm::tree::make<FParamValue>(if_false) } };
     auto ret = F(values);
-    return dynamic_cast<FReturnValue &>(*ret).value;
+    return dynamic_cast<FReturnValue&>(*ret).value;
 }

@@ -2,6 +2,6 @@
 
 namespace cqasm::annotations {
 
-static constexpr const char *unknown_file_name = "<unknown file name>";
+static constexpr const char* unknown_file_name = "<unknown file name>";
 
 }  // namespace cqasm::annotations

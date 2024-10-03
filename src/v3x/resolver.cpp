@@ -5,6 +5,7 @@
 #include "libqasm/v3x/resolver.hpp"
 
 #include <fmt/format.h>
+
 #include <memory>
 #include <unordered_map>
 
@@ -20,7 +21,7 @@ namespace cqasm::v3x::resolver {
 /**
  * Adds a variable.
  */
-void VariableTable::add(const std::string &name, const Value &value) {
+void VariableTable::add(const std::string& name, const Value& value) {
     table.erase(name);
     table.insert(std::make_pair(name, value));
 }
@@ -29,7 +30,7 @@ void VariableTable::add(const std::string &name, const Value &value) {
  * Resolves a variable.
  * Throws NameResolutionFailure if no variable by the given name exists.
  */
-[[nodiscard]] Value VariableTable::resolve(const std::string &name) const {
+[[nodiscard]] Value VariableTable::resolve(const std::string& name) const {
     if (auto entry = table.find(name); entry != table.end()) {
         return entry->second->clone();
     }
@@ -43,15 +44,15 @@ void VariableTable::add(const std::string &name, const Value &value) {
 ConstEvalCoreFunctionTable::ConstEvalCoreFunctionTable()
 : resolver{ std::make_unique<resolver_t>() } {}
 ConstEvalCoreFunctionTable::~ConstEvalCoreFunctionTable() = default;
-ConstEvalCoreFunctionTable::ConstEvalCoreFunctionTable(const ConstEvalCoreFunctionTable &t)
+ConstEvalCoreFunctionTable::ConstEvalCoreFunctionTable(const ConstEvalCoreFunctionTable& t)
 : resolver{ std::make_unique<resolver_t>(*t.resolver) } {}
-ConstEvalCoreFunctionTable::ConstEvalCoreFunctionTable(ConstEvalCoreFunctionTable &&t) noexcept
+ConstEvalCoreFunctionTable::ConstEvalCoreFunctionTable(ConstEvalCoreFunctionTable&& t) noexcept
 : resolver{ std::move(t.resolver) } {}
-ConstEvalCoreFunctionTable &ConstEvalCoreFunctionTable::operator=(const ConstEvalCoreFunctionTable &t) {
+ConstEvalCoreFunctionTable& ConstEvalCoreFunctionTable::operator=(const ConstEvalCoreFunctionTable& t) {
     resolver = std::make_unique<resolver_t>(resolver_t{ *t.resolver });
     return *this;
 }
-ConstEvalCoreFunctionTable &ConstEvalCoreFunctionTable::operator=(ConstEvalCoreFunctionTable &&t) noexcept {
+ConstEvalCoreFunctionTable& ConstEvalCoreFunctionTable::operator=(ConstEvalCoreFunctionTable&& t) noexcept {
     resolver = std::move(t.resolver);
     return *this;
 }
@@ -70,7 +71,7 @@ ConstEvalCoreFunctionTable &ConstEvalCoreFunctionTable::operator=(ConstEvalCoreF
  * so adding does have the effect of overriding.
  */
 void ConstEvalCoreFunctionTable::add(
-    const std::string &name, const Types &param_types, const ConstEvalCoreFunction &impl) {
+    const std::string& name, const Types& param_types, const ConstEvalCoreFunction& impl) {
     resolver->add_overload(name, impl, param_types);
 }
 
@@ -80,7 +81,7 @@ void ConstEvalCoreFunctionTable::add(
  * OverloadResolutionFailure if no overload of the function exists for the given arguments, or otherwise
  * returns the value returned by the function.
  */
-Value ConstEvalCoreFunctionTable::resolve(const std::string &name, const Values &args) const {
+Value ConstEvalCoreFunctionTable::resolve(const std::string& name, const Values& args) const {
     // Resolve the function and type-check/promote the argument list.
     auto resolution = resolver->resolve(name, args);
 
@@ -95,15 +96,15 @@ Value ConstEvalCoreFunctionTable::resolve(const std::string &name, const Values 
 InstructionTable::InstructionTable()
 : resolver{ std::make_unique<resolver_t>() } {}
 InstructionTable::~InstructionTable() = default;
-InstructionTable::InstructionTable(const InstructionTable &t)
+InstructionTable::InstructionTable(const InstructionTable& t)
 : resolver{ std::make_unique<resolver_t>(*t.resolver) } {}
-InstructionTable::InstructionTable(InstructionTable &&t) noexcept
+InstructionTable::InstructionTable(InstructionTable&& t) noexcept
 : resolver{ std::move(t.resolver) } {}
-InstructionTable &InstructionTable::operator=(const InstructionTable &t) {
+InstructionTable& InstructionTable::operator=(const InstructionTable& t) {
     resolver = std::make_unique<resolver_t>(resolver_t{ *t.resolver });
     return *this;
 }
-InstructionTable &InstructionTable::operator=(InstructionTable &&t) noexcept {
+InstructionTable& InstructionTable::operator=(InstructionTable&& t) noexcept {
     resolver = std::move(t.resolver);
     return *this;
 }
@@ -111,7 +112,7 @@ InstructionTable &InstructionTable::operator=(InstructionTable &&t) noexcept {
 /**
  * Registers an instruction type.
  */
-void InstructionTable::add(const instruction::Instruction &type) {
+void InstructionTable::add(const instruction::Instruction& type) {
     resolver->add_overload(type.name, tree::make<instruction::Instruction>(type), type.operand_types);
 }
 
@@ -122,8 +123,8 @@ void InstructionTable::add(const instruction::Instruction &type) {
  * returns the resolved instruction node.
  * Annotation data, line number information, and the condition still need to be set by the caller.
  */
-[[nodiscard]] tree::One<semantic::Instruction> InstructionTable::resolve(const std::string &name,
-    const tree::One<semantic::UnitaryGate> &gate, const Values &args) const {
+[[nodiscard]] tree::One<semantic::Instruction> InstructionTable::resolve(
+    const std::string& name, const tree::One<semantic::UnitaryGate>& gate, const Values& args) const {
     auto [instruction_ref, promoted_args] = resolver->resolve(name, args);
     return tree::make<semantic::GateInstruction>(instruction_ref, gate, promoted_args);
 }
@@ -135,7 +136,8 @@ void InstructionTable::add(const instruction::Instruction &type) {
  * returns the resolved instruction node.
  * Annotation data, line number information, and the condition still need to be set by the caller.
  */
-[[nodiscard]] tree::One<semantic::Instruction> InstructionTable::resolve(const std::string &name, const Values &args) const {
+[[nodiscard]] tree::One<semantic::Instruction> InstructionTable::resolve(
+    const std::string& name, const Values& args) const {
     auto [instruction_ref, promoted_args] = resolver->resolve(name, args);
     return tree::make<semantic::NonGateInstruction>(instruction_ref, name, promoted_args);
 }

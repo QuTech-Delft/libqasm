@@ -25,7 +25,7 @@ namespace primitives = cqasm::v3x::primitives;
 namespace cqasm::v3x::function {
 
 /**
- * Function with constant parameters 
+ * Function with constant parameters
  */
 template <typename ReturnValue, typename ParamValue, auto F>
 struct f_cp {
@@ -38,7 +38,7 @@ struct f_cp {
  */
 template <typename ReturnValue, typename ParamValue, auto F>
 struct uf_cp : public f_cp<ReturnValue, ParamValue, F> {
-    values::Value operator()(const values::Values &vs) const {
+    values::Value operator()(const values::Values& vs) const {
         values::check_const(vs);
         auto arg = vs[0].as<ParamValue>()->value;
         return tree::make<ReturnValue>(F(arg));
@@ -46,11 +46,11 @@ struct uf_cp : public f_cp<ReturnValue, ParamValue, F> {
 };
 
 /**
- * Binary function with constant parameters 
+ * Binary function with constant parameters
  */
 template <typename ReturnValue, typename ParamValue, auto F>
 struct bf_cp : public f_cp<ReturnValue, ParamValue, F> {
-    values::Value operator()(const values::Values &vs) const {
+    values::Value operator()(const values::Values& vs) const {
         values::check_const(vs);
         auto a = vs[0].as<ParamValue>()->value;
         auto b = vs[1].as<ParamValue>()->value;
@@ -59,11 +59,11 @@ struct bf_cp : public f_cp<ReturnValue, ParamValue, F> {
 };
 
 /**
- * Ternary function with constant parameters 
+ * Ternary function with constant parameters
  */
 template <typename ParamValue, auto F>
 struct tf_cp : public f_cp<ParamValue, ParamValue, F> {
-    values::Value operator()(const values::Values &vs) const {
+    values::Value operator()(const values::Values& vs) const {
         values::check_const(vs);
         auto condition = vs[0]->as_const_bool()->value;
         auto if_true = vs[1].as<ParamValue>()->value;
@@ -170,6 +170,6 @@ constexpr auto fn_abs_i = uf_cp<values::ConstInt, values::ConstInt, abs>{};
  * That is, functions supported by the language, and that can be evaluated at compile time.
  * For functions supported by the language that cannot be evaluated at compile time, see CoreFunction.
  */
-void register_consteval_core_functions(analyzer::Analyzer *analyzer);
+void register_consteval_core_functions(analyzer::Analyzer* analyzer);
 
 }  // namespace cqasm::v3x::function
