@@ -1,9 +1,9 @@
 #pragma once
 
-#include <iosfwd>  // ostream
 #include <stdexcept>  // runtime_error
 #include <string>
 #include <vector>
+#include <iosfwd>  // ostream
 
 #include "libqasm/error.hpp"
 #include "libqasm/v3x/ast.hpp"
@@ -22,7 +22,7 @@ using Root = ast::One<semantic::Program>;
 class AnalysisFailed : public std::runtime_error {
 public:
     AnalysisFailed()
-    : std::runtime_error{ "cQASM analysis failed" } {};
+    : std::runtime_error{"cQASM analysis failed"} {};
 };
 
 /**
