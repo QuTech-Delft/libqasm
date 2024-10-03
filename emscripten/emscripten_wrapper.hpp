@@ -1,8 +1,8 @@
 #pragma once
 
 #include <emscripten/bind.h>
-#include <string>
 
+#include <string>
 
 /**
  * Main class for parsing and analyzing cQASM files.
@@ -60,7 +60,7 @@ struct EmscriptenWrapper {
      *      `
      *      let output = parse_string_to_json(program, "bell.cq")
      */
-    std::string parse_string_to_json(const std::string &data, const std::string &file_name);
+    std::string parse_string_to_json(const std::string& data, const std::string& file_name);
 
     /**
      * Parses and analyzes a string containing a cQASM v3.0 program.
@@ -88,14 +88,13 @@ struct EmscriptenWrapper {
      *      `
      *      let output = analyze_string_to_json(program, "bell.cq")
      */
-    std::string analyze_string_to_json(const std::string &data, const std::string &file_name);
+    std::string analyze_string_to_json(const std::string& data, const std::string& file_name);
 };
-
 
 EMSCRIPTEN_BINDINGS(CqasmJS) {
     emscripten::class_<EmscriptenWrapper>("EmscriptenWrapper")
-    .constructor()
-    .function("get_version", &EmscriptenWrapper::get_version)
-    .function("parse_string_to_json", &EmscriptenWrapper::parse_string_to_json)
-    .function("analyze_string_to_json", &EmscriptenWrapper::analyze_string_to_json);
+        .constructor()
+        .function("get_version", &EmscriptenWrapper::get_version)
+        .function("parse_string_to_json", &EmscriptenWrapper::parse_string_to_json)
+        .function("analyze_string_to_json", &EmscriptenWrapper::analyze_string_to_json);
 }
