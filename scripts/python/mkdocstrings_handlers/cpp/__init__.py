@@ -115,9 +115,7 @@ def render_decl(d: Definition) -> str:
     if d.id is not None:
         text += f'<a id="{d.id}">\n'
     text += '<pre><code class="language-cpp decl">'
-
     text += '<div>'
-    end = ';'
     if d.is_static:
         text += 'static '
     if d.kind == 'function' or d.kind == 'variable':
@@ -125,13 +123,11 @@ def render_decl(d: Definition) -> str:
     else:
         text += d.kind + ' '
     text += d.name
-
     if d.params is not None:
         params = ', '.join([
             (p.type + ' ' if p.type else '') + p.name for p in d.params])
         text += '(' + escape_html(params) + ')'
-
-    text += end
+    text += ';'
     text += '</div>'
     text += '</code></pre>\n'
     if d.id is not None:
@@ -168,7 +164,7 @@ class CppHandler(BaseHandler):
             AUTOLINK_SUPPORT  = NO
             MACRO_EXPANSION   = YES
             PREDEFINED        = _WIN32=1 \
-                                __linux__=1 \
+                                __linux__=1
             '''
             .format(' '.join([os.path.join(include_dir, h) for h in headers]), self._doxyxml_dir)
             .encode('utf-8')
