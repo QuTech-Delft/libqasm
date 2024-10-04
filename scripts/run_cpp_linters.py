@@ -7,11 +7,11 @@ import sys
 
 def print_usage():
     print("Usage:")
-    print("    python3 run_cpp_linter.py <ROOT_FOLDER>")
+    print("    python3 run_cpp_linters.py <ROOT_FOLDER>")
     print("Where:")
     print("    ROOT_FOLDER: folder containing the .clang-format, .clang-tidy, and C++ files.")
     print("Example:")
-    print("    run_cpp_linter.py .")
+    print("    python3 run_cpp_linters.py .")
 
 
 def get_list_of_cpp_files(root_folder: os.PathLike) -> list[str]:
@@ -46,8 +46,8 @@ def run_clang_tidy(root_folder: os.PathLike):
     pass
 
 
-def run_cpp_linter(root_folder: os.PathLike):
-    print("Running C++ linter")
+def run_cpp_linters(root_folder: os.PathLike):
+    print("Running C++ linters")
     run_clang_format(root_folder)
     run_clang_tidy(root_folder)
 
@@ -56,7 +56,7 @@ def main(argv):
     if len(argv) != 2:
         print_usage()
         exit(2)
-    run_cpp_linter(os.path.abspath(argv[1]))
+    run_cpp_linters(os.path.abspath(argv[1]))
 
 if __name__ == '__main__':
     main(sys.argv)
