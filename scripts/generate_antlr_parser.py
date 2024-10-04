@@ -18,7 +18,7 @@ def print_usage():
     print("    OUTPUT_SOURCE_FOLDER: folder where generated source files will be left.")
     print("    OUTPUT_INCLUDE_FOLDER: folder where generated include files will be left.")
     print("Example:")
-    print("    generate_antlr_parser.py ../src/v3x ../build/Debug/src/v3x ../build/Debug/include/v3x")
+    print("    python3 generate_antlr_parser.py ../src/v3x ../build/Debug/src/v3x ../build/Debug/include/v3x")
 
 
 class AntlrJarFileDownloader:
