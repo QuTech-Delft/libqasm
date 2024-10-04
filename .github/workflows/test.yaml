@@ -306,7 +306,6 @@ jobs:
     # see https://github.community/t/status-check-for-a-matrix-jobs/127354/7
     name: Report status
     needs:
-      - clang-format
       - cpp-shared
       - cpp-linux-x64
       - cpp-macos-x64
