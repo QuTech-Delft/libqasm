@@ -115,14 +115,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        # We are having problems when using zulu-opendjk Conan package on an armv8 architecture.
-        # zulu-openjdk provides the Java JRE required by the ANTLR generator.
-        # So, for the time being, we are installing Java manually for this platform
-      - name: Install dependencies
-        run: |
-          brew install java
-          echo "$(brew --prefix java)/bin" >> $GITHUB_PATH
-        shell: bash
       - uses: ./.github/actions/cpp-tests
         with:
           build_type: ${{ matrix.build_type }}
@@ -261,8 +253,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Install dependencies
         run: |
-          brew install java swig
-          echo "$(brew --prefix java)/bin" >> $GITHUB_PATH
+          brew install swig
         shell: bash
       - name: Export LIBQASM_BUILD_TYPE
         run: |
