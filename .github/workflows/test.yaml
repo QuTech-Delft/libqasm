@@ -10,6 +10,7 @@ on:
 
 jobs:
   cpp-linters:
+    name: "C++ linters"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -29,7 +30,7 @@ jobs:
       - name: Fail fast
         if: steps.linter.outputs.clang-format-checks-failed > 0
         run: |
-          echo "::notice::You can fix C++ linters issues by executing: python3 ./scripts/run_cpp_linters.py ."
+          echo "::notice::Try executing 'python3 ./scripts/run_cpp_linters.py .' to fix linter issues."
           exit 1
 
   cpp-linux-x64:
