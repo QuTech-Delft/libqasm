@@ -28,7 +28,9 @@ jobs:
           version: 18
       - name: Fail fast
         if: steps.linter.outputs.clang-format-checks-failed > 0
-        run: exit 1
+        run: |
+          echo "::error Please execute python3 ./scripts/run_cpp_linters.py ."
+          exit 1
 
   cpp-linux-x64:
     name: "C++ tests (gcc-clang/Linux/x64)"
