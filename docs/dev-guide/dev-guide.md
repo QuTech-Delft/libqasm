@@ -47,6 +47,20 @@ For the time being, we install Java manually for this platform.
     - `mkdocstrings`
     - `pymdown-extensions`
 
+### Linters
+
+- `clang-format-18`
+- `clang-tidy-18`
+
+In a Linux machine, these linters can be installed with the following commands:
+
+```shell
+ wget https://apt.llvm.org/llvm.sh -O llvm_install.sh
+ chmod +x llvm_install.sh
+ ./llvm_install.sh
+ apt-get install -y clang-format-18 clang-tidy-18
+```
+
 ## Build
 
 This version of libQASM can only be compiled via the Conan package manager.
@@ -86,7 +100,7 @@ All the `tests`, except for `linux-x64` profiles, enable Address Sanitizer.
 
 ### Options
 
-Profiles are a shorthand for command line options. The command above could be written, similarly,  as:
+Profiles are a shorthand for command line options. The command above could be written, similarly, as:
 
 ```shell
 conan build . -s:a compiler.cppstd=20 -s:a libqasm/*:build_type=Debug -o libqasm/*:asan_enabled=True -c tools.build:skip_test=False -b missing
@@ -112,6 +126,23 @@ mkdocs serve
 !!! note
 
     The `export` is needed to point `mkdocs` to the custom handlers used for the C++, emscripten, and Python APIs.
+
+## Linters
+
+Continuous Integration will fail if the files don't adhere to a series of formatting and code style guidelines:
+
+- Formatting checks are defined in `.clang-format`.
+- Code style checks are defined in `.clang-tidy`.
+
+It is recommended to run these linters before pushing any change:
+
+```shell
+python3 ./scripts/run_cpp_linters.py .
+```
+
+!!! note
+
+    The linters require `clang-format-18` and `clang-tidy-18` to be installed in the system.
 
 ## Docker
 
