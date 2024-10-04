@@ -27,10 +27,11 @@ Cpp11BracedListStyle: false
 DerivePointerAlignment: false
 IndentCaseLabels: false
 IndentWidth: 4
-LambdaBodyIndentation: OuterScope
+LambdaBodyIndentation: Signature
 PackConstructorInitializers: Never
 PointerAlignment: Left
 ReferenceAlignment: Left
 ReflowComments: true
 SpacesBeforeTrailingComments: 2
+Standard: c++20
 ---
