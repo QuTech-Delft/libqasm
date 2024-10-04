@@ -22,7 +22,7 @@ void register_instructions(analyzer::Analyzer *analyzer) {
         analyzer->register_instruction(gate_name, operand_types);
     };
 
-    // Single-qubit unitary gates, e.g., inv(X), pow(X, 2), or pow(inv(X), 2)
+    // Single-qubit unitary gates, e.g., inv.X, pow(2).X, or pow(2).inv.X
     for (const auto &[gate_name, pair_params_types_operands_types] : gate_map) {
         if (instruction_set.is_single_qubit_gate(gate_name)) {
             const auto &operand_types = pair_params_types_operands_types.second;

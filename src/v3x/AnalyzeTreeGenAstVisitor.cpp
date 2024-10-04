@@ -231,7 +231,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_unitary_gate(ast::UnitaryGate &node) {
 void check_qubit_and_bit_indices_have_same_size(const values::Values &operands) {
     size_t qubit_indices_size{};
     size_t bit_indices_size{};
-    // Instruction operands can be, either variables references or index references
+    // Instruction operands can be, either variable references or index references
     // Variables can be of type qubit, bit, qubit array, or bit array
     // Qubits and bits have a single index, arrays have a size
     // Index references point to a qubit array or bit array
