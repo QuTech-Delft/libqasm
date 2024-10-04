@@ -29,7 +29,7 @@ jobs:
       - name: Fail fast
         if: steps.linter.outputs.clang-format-checks-failed > 0
         run: |
-          echo "::error Please execute python3 ./scripts/run_cpp_linters.py ."
+          echo "::notice::You can fix C++ linters issues by executing: python3 ./scripts/run_cpp_linters.py ."
           exit 1
 
   cpp-linux-x64:
