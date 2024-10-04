@@ -1,6 +1,6 @@
 version 3
 
 qubit[3] q
-bit b0
+bit b
 
-b0 = measure q
+b = measure q
