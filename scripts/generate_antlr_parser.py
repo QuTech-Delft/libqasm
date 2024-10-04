@@ -11,7 +11,8 @@ import tempfile
 
 
 def print_usage():
-    print("Usage: generate_antlr_parser.py <INPUT FOLDER> <OUTPUT SOURCE FOLDER> <OUTPUT INCLUDE FOLDER>")
+    print("Usage:")
+    print("    python3 generate_antlr_parser.py <INPUT_FOLDER> <OUTPUT_SOURCE_FOLDER> <OUTPUT_INCLUDE_FOLDER>")
     print("Where:")
     print("    INPUT_FOLDER: folder containing the grammar files.")
     print("    OUTPUT_SOURCE_FOLDER: folder where generated source files will be left.")
