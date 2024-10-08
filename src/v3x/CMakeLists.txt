@@ -7,6 +7,7 @@ set(CQASM_V3X_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-analysis-result.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-analyzer.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-core-function.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-instruction-set.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-instruction.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-parse-helper.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cqasm-parse-result.cpp"

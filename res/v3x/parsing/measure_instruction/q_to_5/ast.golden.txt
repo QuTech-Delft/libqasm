@@ -26,20 +26,22 @@ Program(
           >
           annotations: []
         )
-        MeasureInstruction( # input.cq:5:5..12
+        NonGateInstruction( # input.cq:5:5..12
           name: <
-            Identifier(
+            Keyword(
               name: measure
             )
           >
-          lhs: <
-            IntegerLiteral( # input.cq:5:1..2
-              value: 5
-            )
-          >
-          rhs: <
-            Identifier( # input.cq:5:13..14
-              name: q
+          operands: <
+            ExpressionList(
+              items: [
+                IntegerLiteral( # input.cq:5:1..2
+                  value: 5
+                )
+                Identifier( # input.cq:5:13..14
+                  name: q
+                )
+              ]
             )
           >
           annotations: []

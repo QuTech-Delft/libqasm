@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:3:5..10: mismatched input 'reset' expecting {'inv', 'pow', 'ctrl', IDENTIFIER}

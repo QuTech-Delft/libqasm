@@ -26,15 +26,19 @@ Program(
           >
           annotations: []
         )
-        ResetInstruction( # input.cq:5:1..6
+        NonGateInstruction( # input.cq:5:1..6
           name: <
-            Identifier(
+            Keyword(
               name: reset
             )
           >
-          operand: <
-            IntegerLiteral( # input.cq:5:7..8
-              value: 5
+          operands: <
+            ExpressionList(
+              items: [
+                IntegerLiteral( # input.cq:5:7..8
+                  value: 5
+                )
+              ]
             )
           >
           annotations: []

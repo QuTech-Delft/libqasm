@@ -224,14 +224,34 @@ void Analyzer::register_consteval_core_function(
 }
 
 /**
- * Resolves an instruction.
+ * Resolves a GateInstruction.
  * Throws NameResolutionFailure if no instruction by the given name exists,
  * OverloadResolutionFailure if no overload exists for the given arguments,
  * or otherwise returns the resolved instruction node.
  * Annotation data, line number information, and the condition still need to be set by the caller.
  */
-[[nodiscard]] tree::One<semantic::Instruction> Analyzer::resolve_instruction(
-    const std::string &name, const values::Values &args) const {
+[[nodiscard]] tree::One<semantic::Instruction> Analyzer::resolve_instruction(const std::string &name,
+    const tree::One<semantic::Gate> &gate, const values::Values &args) const {
+    for (const auto &scope : scope_stack_) {
+        try {
+            return scope.instruction_table.resolve(name, gate, args);
+        } catch (const error::AnalysisError &) {
+            continue;
+        }
+    }
+    throw resolver::ResolutionFailure{
+        fmt::format("failed to resolve instruction '{}' with argument pack ({})", name, values::types_of(args)) };
+}
+
+/**
+ * Resolves a NonGateInstruction.
+ * Throws NameResolutionFailure if no instruction by the given name exists,
+ * OverloadResolutionFailure if no overload exists for the given arguments,
+ * or otherwise returns the resolved instruction node.
+ * Annotation data, line number information, and the condition still need to be set by the caller.
+ */
+[[nodiscard]] tree::One<semantic::Instruction> Analyzer::resolve_instruction(const std::string &name,
+    const values::Values &args) const {
     for (const auto &scope : scope_stack_) {
         try {
             return scope.instruction_table.resolve(name, args);
@@ -239,8 +259,8 @@ void Analyzer::register_consteval_core_function(
             continue;
         }
     }
-    throw resolver::ResolutionFailure{ fmt::format(
-        "failed to resolve instruction '{}' with argument pack {}", name, values::types_of(args)) };
+    throw resolver::ResolutionFailure{
+        fmt::format("failed to resolve instruction '{}' with argument pack ({})", name, values::types_of(args)) };
 }
 
 /**
@@ -254,8 +274,8 @@ void Analyzer::register_instruction(const instruction::Instruction &instruction)
  * Convenience method for registering an instruction type.
  * The arguments are passed straight to instruction::Instruction's constructor.
  */
-void Analyzer::register_instruction(const std::string &name, const std::optional<std::string> &param_types) {
-    register_instruction(instruction::Instruction{ name, param_types });
+void Analyzer::register_instruction(const std::string &name, const std::optional<std::string> &operand_types) {
+    register_instruction(instruction::Instruction{ name, operand_types });
 }
 
 }  // namespace cqasm::v3x::analyzer

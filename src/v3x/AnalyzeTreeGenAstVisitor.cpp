@@ -2,14 +2,16 @@
 
 #include <algorithm>  // any_of, for_each, transform
 #include <any>
-#include <cassert>  // assert
 #include <iterator>  // back_inserter
-#include <range/v3/view/tail.hpp>  // tail
 
 #include "v3x/cqasm-analyzer.hpp"
 #include "v3x/cqasm-ast-gen.hpp"
+#include "v3x/cqasm-instruction.hpp"
+#include "v3x/cqasm-instruction-set.hpp"
 
 namespace cqasm::v3x::analyzer {
+
+using instruction::InstructionSet;
 
 AnalyzeTreeGenAstVisitor::AnalyzeTreeGenAstVisitor(Analyzer &analyzer)
 : analyzer_{ analyzer }
@@ -39,10 +41,11 @@ std::any AnalyzeTreeGenAstVisitor::visit_version(ast::Version &node) {
             }
         }
         if (node.items != analyzer_.api_version) {
-            throw error::AnalysisError(
+            throw error::AnalysisError{
                 fmt::format("the only cQASM version supported is {}, but the cQASM file is version {}",
                     analyzer_.api_version,
-                    node.items));
+                    node.items)
+            };
         }
 
         ret->items = node.items;
@@ -100,7 +103,7 @@ std::any AnalyzeTreeGenAstVisitor::visit_variable(ast::Variable &node) {
 
         // Construct variable
         // Use the location tag of the identifier to record where the variable was defined
-        const auto identifier = node.name;
+        const auto &identifier = node.name;
         ret->name = identifier->name;
         ret->typ = type.clone();
         ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
@@ -120,19 +123,6 @@ std::any AnalyzeTreeGenAstVisitor::visit_variable(ast::Variable &node) {
 }
 
 /**
- * Promote a value to a given type,
- * or error if the promotion is not valid
- */
-values::Value promote_or_error(const values::Value &rhs_value, const types::Type &lhs_type) {
-    if (auto rhs_promoted_value = values::promote(rhs_value, lhs_type); !rhs_promoted_value.empty()) {
-        return rhs_promoted_value;
-    }
-    throw error::AnalysisError{ fmt::format("type of right-hand side ({}) could not be coerced to left-hand side ({})",
-        values::type_of(rhs_value),
-        lhs_type) };
-}
-
-/**
  * Convenience function for extracting the types of a list of variables.
  */
 types::Types types_of(const tree::Any<semantic::Variable> &variables) {
@@ -143,14 +133,36 @@ types::Types types_of(const tree::Any<semantic::Variable> &variables) {
     return types;
 }
 
-std::any AnalyzeTreeGenAstVisitor::visit_gate(ast::Gate &node) {
-    auto ret = tree::Maybe<semantic::Instruction>();
+/**
+ * For a named gate, such as X or Rz, the terminal name will be the name of the gate.
+ * For a composition of gate modifiers acting on a named gate, the terminal name will be the name of the named gate.
+ */
+std::string get_gate_terminal_name(const tree::One<semantic::Gate> &gate) {
+    return gate->gate.empty()
+        ? gate->name
+        : get_gate_terminal_name(gate->gate);
+}
+
+std::string get_gate_resolution_name(const tree::One<semantic::Gate> &gate) {
+    return gate->gate.empty()
+        ? gate->name
+        : fmt::format("{}_{}",
+            (InstructionSet::get_instance().is_single_qubit_gate_modifier(gate->name))
+                ? InstructionSet::get_instance().single_qubit_gate_composition_prefix
+                : InstructionSet::get_instance().two_qubit_gate_composition_prefix,
+            get_gate_terminal_name(gate->gate));
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_gate_instruction(ast::GateInstruction &node) {
+    auto ret = tree::make<semantic::GateInstruction>();
     try {
-        // Set operand list
-        auto operands = std::any_cast<values::Values>(visit_expression_list(*node.operands));
+        // Set gate and operands
+        auto gate = std::any_cast<tree::One<semantic::Gate>>(node.gate->visit(*this));
+        auto operands = std::any_cast<values::Values>(node.operands->visit(*this));
 
         // Resolve the instruction
-        ret.set(analyzer_.resolve_instruction(node.name->name, operands));
+        const auto &resolution_name = get_gate_resolution_name(gate);
+        ret.set(analyzer_.resolve_instruction(resolution_name, gate, operands));
 
         // Copy annotation data
         ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
@@ -163,14 +175,65 @@ std::any AnalyzeTreeGenAstVisitor::visit_gate(ast::Gate &node) {
         result_.errors.push_back(std::move(err));
         ret.reset();
     }
-
     return ret;
 }
 
-bool check_qubit_and_bit_indices_have_same_size(const values::Values &operands) {
+bool is_two_qubit_gate(const tree::One<semantic::Gate> &gate) {
+    const auto &resolution_name = get_gate_resolution_name(gate);
+    return InstructionSet::get_instance().is_two_qubit_gate(resolution_name);
+}
+
+void check_gate(const tree::One<semantic::Gate> &gate) {
+    if (!gate->gate.empty() && is_two_qubit_gate(gate->gate)) {
+        throw error::AnalysisError{ "trying to apply a gate modifier to a multi-qubit gate" };
+    }
+}
+
+void resolve_gate(const tree::One<semantic::Gate> &gate) {
+    if (!gate->parameter.empty()) {
+        const auto &instruction_set = InstructionSet::get_instance();
+        const auto &param_type = instruction_set.get_instruction_param_type(gate->name);
+        if (!param_type.has_value() ||
+            !values::check_promote(values::type_of(gate->parameter), types::from_spec(param_type.value()))) {
+            throw error::AnalysisError{ fmt::format("failed to resolve '{}' with argument pack ({})",
+                gate->name, values::type_of(gate->parameter)) };
+        }
+        gate->parameter = promote(gate->parameter, types::from_spec(param_type.value()));
+    }
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_gate(ast::Gate &node) {
+    auto ret = tree::make<semantic::Gate>();
+    try {
+        ret->name = node.name->name;
+        if (!node.gate.empty()) {
+            ret->gate =
+                std::any_cast<tree::One<semantic::Gate>>(visit_gate(*node.gate)).get_ptr();
+        }
+        if (!node.parameter.empty()) {
+            ret->parameter = std::any_cast<values::Value>(visit_expression(*node.parameter)).get_ptr();
+        }
+
+        // Resolve the gate
+        resolve_gate(ret);
+
+        // Specific checks
+        check_gate(ret);
+
+        // Copy annotation data
+        ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
+        ret->copy_annotation<parser::SourceLocation>(node);
+    } catch (error::AnalysisError &err) {
+        err.context(node);
+        throw;
+    }
+    return ret;
+}
+
+void check_qubit_and_bit_indices_have_same_size(const values::Values &operands) {
     size_t qubit_indices_size{};
     size_t bit_indices_size{};
-    // Instruction operands can be, whether variables references or index references
+    // Instruction operands can be, either variable references or index references
     // Variables can be of type qubit, bit, qubit array, or bit array
     // Qubits and bits have a single index, arrays have a size
     // Index references point to a qubit array or bit array
@@ -195,56 +258,28 @@ bool check_qubit_and_bit_indices_have_same_size(const values::Values &operands) 
             }
         }
     }
-    return qubit_indices_size == bit_indices_size;
-}
-
-std::any AnalyzeTreeGenAstVisitor::visit_measure_instruction(ast::MeasureInstruction &node) {
-    auto ret = tree::Maybe<semantic::Instruction>();
-    try {
-        // Set operand
-        // Notice operands have to be added in this order
-        // Otherwise instruction resolution would fail
-        auto operands = values::Values();
-        operands.add(std::any_cast<values::Value>(visit_expression(*node.lhs)));
-        operands.add(std::any_cast<values::Value>(visit_expression(*node.rhs)));
-
-        // Resolve the instruction
-        ret.set(analyzer_.resolve_instruction(node.name->name, operands));
-
-        // Check qubit and bit indices have the same size
-        if (!ret->instruction_ref.empty()) {
-            if (!check_qubit_and_bit_indices_have_same_size(operands)) {
-                throw error::AnalysisError{ "qubit and bit indices have different sizes" };
-            }
-        }
-
-        // Copy annotation data
-        ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
-        ret->copy_annotation<parser::SourceLocation>(node);
-
-        // Add the statement to the current scope
-        analyzer_.add_statement_to_current_scope(ret);
-    } catch (error::AnalysisError &err) {
-        err.context(node);
-        result_.errors.push_back(std::move(err));
-        ret.reset();
+    if (qubit_indices_size != bit_indices_size) {
+        throw error::AnalysisError{ "qubit and bit indices have different sizes" };
     }
-    return ret;
 }
 
-std::any AnalyzeTreeGenAstVisitor::visit_reset_instruction(ast::ResetInstruction &node) {
-    auto ret = tree::Maybe<semantic::Instruction>();
+void check_non_gate_instruction(const tree::One<semantic::NonGateInstruction> &instruction) {
+    if (InstructionSet::get_instance().is_measure(instruction->name)) {
+        check_qubit_and_bit_indices_have_same_size(instruction->operands);
+    }
+}
+
+std::any AnalyzeTreeGenAstVisitor::visit_non_gate_instruction(ast::NonGateInstruction &node) {
+    auto ret = tree::make<semantic::NonGateInstruction>();
     try {
-        // Set operand
-        // Notice operands have to be added in this order
-        // Otherwise instruction resolution would fail
-        auto operands = values::Values();
-        if (!node.operand.empty()) {
-            operands.add(std::any_cast<values::Value>(visit_expression(*node.operand)));
-        }
+        const auto &name = node.name->name;
+        const auto &operands = std::any_cast<values::Values>(visit_expression_list(*node.operands));
 
         // Resolve the instruction
-        ret.set(analyzer_.resolve_instruction(node.name->name, operands));
+        ret.set(analyzer_.resolve_instruction(name, operands));
+
+        // Specific checks
+        check_non_gate_instruction(ret);
 
         // Copy annotation data
         ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));

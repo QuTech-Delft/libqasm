@@ -14,11 +14,6 @@
 
 namespace cqasm::v3x::resolver {
 
-using Type = types::Type;
-using Types = types::Types;
-using Value = values::Value;
-using Values = values::Values;
-
 //---------------//
 // VariableTable //
 //---------------//
@@ -35,7 +30,7 @@ void VariableTable::add(const std::string &name, const Value &value) {
  * Resolves a variable.
  * Throws NameResolutionFailure if no variable by the given name exists.
  */
-Value VariableTable::resolve(const std::string &name) const {
+[[nodiscard]] Value VariableTable::resolve(const std::string &name) const {
     if (auto entry = table.find(name); entry != table.end()) {
         return entry->second->clone();
     }
@@ -118,19 +113,32 @@ InstructionTable &InstructionTable::operator=(InstructionTable &&t) noexcept {
  * Registers an instruction type.
  */
 void InstructionTable::add(const instruction::Instruction &type) {
-    resolver->add_overload(type.name, tree::make<instruction::Instruction>(type), type.param_types);
+    resolver->add_overload(type.name, tree::make<instruction::Instruction>(type), type.operand_types);
 }
 
 /**
- * Resolves an instruction.
+ * Resolves an GateInstruction type.
  * Throws NameResolutionFailure if no instruction by the given name exists,
  * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
  * returns the resolved instruction node.
  * Annotation data, line number information, and the condition still need to be set by the caller.
  */
-tree::One<semantic::Instruction> InstructionTable::resolve(const std::string &name, const Values &args) const {
+[[nodiscard]] tree::One<semantic::Instruction> InstructionTable::resolve(const std::string &name,
+    const tree::One<semantic::Gate> &gate, const Values &args) const {
     auto [instruction_ref, promoted_args] = resolver->resolve(name, args);
-    return tree::make<semantic::Instruction>(instruction_ref, name, promoted_args);
+    return tree::make<semantic::GateInstruction>(instruction_ref, gate, promoted_args);
+}
+
+/**
+ * Resolves an NonGateInstruction type.
+ * Throws NameResolutionFailure if no instruction by the given name exists,
+ * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
+ * returns the resolved instruction node.
+ * Annotation data, line number information, and the condition still need to be set by the caller.
+ */
+[[nodiscard]] tree::One<semantic::Instruction> InstructionTable::resolve(const std::string &name, const Values &args) const {
+    auto [instruction_ref, promoted_args] = resolver->resolve(name, args);
+    return tree::make<semantic::NonGateInstruction>(instruction_ref, name, promoted_args);
 }
 
 }  // namespace cqasm::v3x::resolver

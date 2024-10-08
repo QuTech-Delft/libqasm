@@ -27,6 +27,11 @@
  */
 namespace cqasm::v3x::resolver {
 
+using Type = types::Type;
+using Types = types::Types;
+using Value = values::Value;
+using Values = values::Values;
+
 //-----------------//
 // Analysis errors //
 //-----------------//
@@ -51,22 +56,24 @@ CQASM_ANALYSIS_ERROR(ResolutionFailure);
 //------------------------//
 
 template <class T>
-struct OverloadedNameResolver : public cqasm::overload::OverloadedNameResolver<T, types::TypeBase, values::ValueBase> {
+using BaseOverladedNameResolver = cqasm::overload::OverloadedNameResolver<T, types::TypeBase, values::ValueBase>;
+
+template <class T>
+struct OverloadedNameResolver : public BaseOverladedNameResolver<T> {
     virtual ~OverloadedNameResolver() = default;
 
     void add_overload(const std::string &name, const T &tag, const types::Types &param_types) override {
-        cqasm::overload::OverloadedNameResolver<T, types::TypeBase, values::ValueBase>::add_overload(
-            name, tag, param_types);
+        BaseOverladedNameResolver<T>::add_overload(name, tag, param_types);
     }
 
-    [[nodiscard]] std::pair<T, values::Values> resolve(const std::string &name, const values::Values &args) override {
+    [[nodiscard]] std::pair<T, Values> resolve(const std::string &name, const Values &args) override {
         try {
-            return cqasm::overload::OverloadedNameResolver<T, types::TypeBase, values::ValueBase>::resolve(name, args);
+            return BaseOverladedNameResolver<T>::resolve(name, args);
         } catch (const cqasm::overload::NameResolutionFailure &) {
             throw NameResolutionFailure{ fmt::format("failed to resolve '{}'", name) };
         } catch (const cqasm::overload::OverloadResolutionFailure &) {
             throw OverloadResolutionFailure{ fmt::format(
-                "failed to resolve overload for '{}' with argument pack {}", name, values::types_of(args)) };
+                "failed to resolve overload for '{}' with argument pack ({})", name, types_of(args)) };
         }
     }
 };
@@ -79,19 +86,19 @@ struct OverloadedNameResolver : public cqasm::overload::OverloadedNameResolver<T
  * Table of all variables within a certain scope.
  */
 class VariableTable {
-    std::unordered_map<std::string, values::Value> table;
+    std::unordered_map<std::string, Value> table;
 
 public:
     /**
      * Adds a variable.
      */
-    void add(const std::string &name, const values::Value &value);
+    void add(const std::string &name, const Value &value);
 
     /**
      * Resolves a variable.
      * Throws NameResolutionFailure if no variable by the given name exists.
      */
-    values::Value resolve(const std::string &name) const;
+    [[nodiscard]] Value resolve(const std::string &name) const;
 };
 
 //----------------------------//
@@ -102,7 +109,7 @@ public:
  * An overload of a function supported by the language, and that can can be evaluated at compile time.
  * This has to be a function accepting only constant arguments.
  */
-using ConstEvalCoreFunction = std::function<values::Value(const values::Values &)>;
+using ConstEvalCoreFunction = std::function<Value(const Values &)>;
 
 /**
  * Table of overloads of functions supported by the language, and that can be evaluated at compile time.
@@ -133,7 +140,7 @@ public:
      * However, the overload resolution engine will always use the last applicable overload it finds,
      * so adding does have the effect of overriding.
      */
-    void add(const std::string &name, const types::Types &param_types, const ConstEvalCoreFunction &function);
+    void add(const std::string &name, const Types &param_types, const ConstEvalCoreFunction &function);
 
     /**
      * Resolves a function.
@@ -141,7 +148,7 @@ public:
      * OverloadResolutionFailure if no overload of the function exists for the given arguments, or otherwise
      * returns the value returned by the function.
      */
-    [[nodiscard]] values::Value resolve(const std::string &name, const values::Values &args) const;
+    [[nodiscard]] Value resolve(const std::string &name, const Values &args) const;
 };
 
 //------------------//
@@ -170,12 +177,21 @@ public:
     void add(const instruction::Instruction &type);
 
     /**
-     * Resolves an instruction.
+     * Resolves a GateInstruction type.
      * Throws NameResolutionFailure if no instruction by the given name exists,
      * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
      * returns the resolved instruction node.
      */
-    [[nodiscard]] tree::One<semantic::Instruction> resolve(const std::string &name, const values::Values &args) const;
+    [[nodiscard]] tree::One<semantic::Instruction> resolve(const std::string &name,
+        const tree::One<semantic::Gate> &gate, const Values &args) const;
+
+    /**
+     * Resolves a NonGateInstruction type.
+     * Throws NameResolutionFailure if no instruction by the given name exists,
+     * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
+     * returns the resolved instruction node.
+     */
+    [[nodiscard]] tree::One<semantic::Instruction> resolve(const std::string &name, const Values &args) const;
 };
 
 }  // namespace cqasm::v3x::resolver

@@ -88,7 +88,7 @@ std::ostream &operator<<(std::ostream &os, const Type &type) {
  * Stream << overload for zero or more types.
  */
 std::ostream &operator<<(std::ostream &os, const Types &types) {
-    return os << fmt::format("({})", fmt::join(types, ", "));
+    return os << fmt::format("{}", fmt::join(types, ", "));
 }
 
 }  // namespace cqasm::v3x::types

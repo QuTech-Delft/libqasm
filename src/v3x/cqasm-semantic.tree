@@ -44,17 +44,34 @@ annotation_data {
 annotated {
     annotations: Any<annotation_data>;
 
+    # A gate can be a named gate or a composition of gate modifiers acting on a gate.
+    # pow is the only gate modifier that has an operand.
+    gate {
+        name: cqasm::v3x::primitives::Str;
+        gate: Maybe<gate>;
+        parameter: external Maybe<cqasm::v3x::values::ValueBase>;
+    }
+
     variable {
         name: cqasm::v3x::primitives::Str;
         typ: external One<cqasm::v3x::types::TypeBase>;
     }
 
     statement {
-        # Regular instruction (a gate, or a measure instruction).
         instruction {
-            instruction_ref: cqasm::v3x::instruction::InstructionRef;
-            name: cqasm::v3x::primitives::Str;
-            operands: external Any<cqasm::v3x::values::ValueBase>;
+            # A gate, or a composition of gate modifiers and a gate
+            gate_instruction {
+                instruction_ref: cqasm::v3x::instruction::InstructionRef;
+                gate: One<gate>;
+                operands: external Any<cqasm::v3x::values::ValueBase>;
+            }
+
+            # A measure instruction or a reset instruction
+            non_gate_instruction {
+                instruction_ref: cqasm::v3x::instruction::InstructionRef;
+                name: cqasm::v3x::primitives::Str;
+                operands: external Any<cqasm::v3x::values::ValueBase>;
+            }
         }
     }
 }

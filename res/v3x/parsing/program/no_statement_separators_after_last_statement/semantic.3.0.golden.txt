@@ -9,9 +9,16 @@ Program(
   block: <
     Block(
       statements: [
-        Instruction(
+        GateInstruction(
           instruction_ref: X(qubit)
-          name: X
+          gate: <
+            Gate(
+              name: X
+              gate: -
+              parameter: -
+              annotations: []
+            )
+          >
           operands: [
             VariableRef(
               variable --> <

@@ -52,68 +52,70 @@ Program(
           >
           annotations: []
         )
-        MeasureInstruction( # input.cq:6:11..18
+        NonGateInstruction( # input.cq:6:11..18
           name: <
-            Identifier(
+            Keyword(
               name: measure
             )
           >
-          lhs: <
-            Index( # input.cq:6:1..2
-              expr: <
-                Identifier(
-                  name: b
-                )
-              >
-              indices: <
-                IndexList(
-                  items: [
-                    IndexItem(
-                      index: <
-                        IntegerLiteral( # input.cq:6:3..4
-                          value: 1
-                        )
-                      >
+          operands: <
+            ExpressionList(
+              items: [
+                Index( # input.cq:6:1..2
+                  expr: <
+                    Identifier(
+                      name: b
                     )
-                    IndexItem(
-                      index: <
-                        IntegerLiteral( # input.cq:6:6..7
-                          value: 3
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexItem(
+                          index: <
+                            IntegerLiteral( # input.cq:6:3..4
+                              value: 1
+                            )
+                          >
                         )
-                      >
-                    )
-                  ]
-                )
-              >
-            )
-          >
-          rhs: <
-            Index( # input.cq:6:19..20
-              expr: <
-                Identifier(
-                  name: q
-                )
-              >
-              indices: <
-                IndexList(
-                  items: [
-                    IndexItem(
-                      index: <
-                        IntegerLiteral( # input.cq:6:21..22
-                          value: 2
+                        IndexItem(
+                          index: <
+                            IntegerLiteral( # input.cq:6:6..7
+                              value: 3
+                            )
+                          >
                         )
-                      >
+                      ]
                     )
-                    IndexItem(
-                      index: <
-                        IntegerLiteral( # input.cq:6:24..25
-                          value: 4
-                        )
-                      >
-                    )
-                  ]
+                  >
                 )
-              >
+                Index( # input.cq:6:19..20
+                  expr: <
+                    Identifier(
+                      name: q
+                    )
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexItem(
+                          index: <
+                            IntegerLiteral( # input.cq:6:21..22
+                              value: 2
+                            )
+                          >
+                        )
+                        IndexItem(
+                          index: <
+                            IntegerLiteral( # input.cq:6:24..25
+                              value: 4
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
+                )
+              ]
             )
           >
           annotations: []

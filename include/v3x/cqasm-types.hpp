@@ -38,12 +38,14 @@ using Types = tree::Any<TypeBase>;
  * In it, each character represents one type. The supported characters are as follows:
  *
  *  - Q = qubit
+ *  - B = bit (measurement register)
  *  - b = bool
  *  - i = int
  *  - f = float
  *  - V = qubit array
+ *  - W = bit array
  */
-Type from_spec(const char spec);
+Type from_spec(char spec);
 Types from_spec(const std::string &spec);
 
 /**

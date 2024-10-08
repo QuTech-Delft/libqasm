@@ -31,9 +31,22 @@ globalBlockStatement:
 variableDefinition: type IDENTIFIER;
 
 instruction:
+    gateInstruction
+    | nonGateInstruction
+    ;
+
+gateInstruction: gate expressionList;
+
+gate:
+    INV DOT gate  # invGate
+    | POW OPEN_PARENS expression CLOSE_PARENS DOT gate  # powGate
+    | CTRL DOT gate # ctrlGate
+    | IDENTIFIER (OPEN_PARENS expression CLOSE_PARENS)?  # namedGate
+    ;
+
+nonGateInstruction:
     expression EQUALS MEASURE expression  # measureInstruction
     | RESET expression?  # resetInstruction
-    | IDENTIFIER (OPEN_PARENS expression CLOSE_PARENS)? expressionList  # gate
     ;
 
 type: quantumType;

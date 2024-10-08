@@ -7,7 +7,7 @@ header "v3x/cqasm-values-gen.hpp"
 include "cqasm-tree.hpp"
 tree_namespace cqasm::tree
 
-include "v3x/cqasm-core-function.hpp"
+include "v3x/cqasm-instruction.hpp"
 include "v3x/cqasm-primitives.hpp"
 include "v3x/cqasm-semantic-helper.hpp"
 src_include "v3x/cqasm-semantic.hpp"

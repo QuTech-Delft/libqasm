@@ -57,12 +57,13 @@ class AnalyzerTest : public ::testing::Test {
 protected:
     void SetUp() override {}
 
-    tree::One<instruction::Instruction> instruction = tree::make<instruction::Instruction>("h", "Q");
+    instruction::InstructionRef instruction_ref = tree::make<instruction::Instruction>("h", "Q");
     tree::One<semantic::Variable> qubit = tree::make<semantic::Variable>("q", tree::make<types::Qubit>());
     tree::Link<semantic::Variable> qubit_link{ qubit };
     tree::One<values::VariableRef> qubit_variable_ref = tree::make<values::VariableRef>(qubit_link);
-    tree::Any<values::ValueBase> operands = tree::Any<values::ValueBase>{ qubit_variable_ref };
-    tree::One<semantic::Instruction> statement = tree::make<semantic::Instruction>(instruction, "H", operands);
+    tree::Any<values::ValueBase> operands{ qubit_variable_ref };
+    tree::One<semantic::Gate> gate = tree::make<semantic::Gate>(instruction_ref->name);
+    tree::One<semantic::Instruction> statement = tree::make<semantic::GateInstruction>(instruction_ref, gate, operands);
 };
 
 TEST_F(AnalyzerTest, constructor) {

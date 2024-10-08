@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:5:7..10: extraneous input 'inv' expecting '.'

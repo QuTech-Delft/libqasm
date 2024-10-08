@@ -9,7 +9,7 @@ Program(
   block: <
     Block(
       statements: [
-        Instruction(
+        NonGateInstruction(
           instruction_ref: measure(bit array, qubit array)
           name: measure
           operands: [

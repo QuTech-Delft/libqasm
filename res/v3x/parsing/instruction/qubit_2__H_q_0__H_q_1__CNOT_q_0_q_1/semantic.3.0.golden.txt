@@ -9,9 +9,16 @@ Program(
   block: <
     Block(
       statements: [
-        Instruction(
+        GateInstruction(
           instruction_ref: H(qubit)
-          name: H
+          gate: <
+            Gate(
+              name: H
+              gate: -
+              parameter: -
+              annotations: []
+            )
+          >
           operands: [
             IndexRef(
               variable --> <
@@ -34,9 +41,16 @@ Program(
           ]
           annotations: []
         )
-        Instruction(
+        GateInstruction(
           instruction_ref: H(qubit)
-          name: H
+          gate: <
+            Gate(
+              name: H
+              gate: -
+              parameter: -
+              annotations: []
+            )
+          >
           operands: [
             IndexRef(
               variable --> <
@@ -59,9 +73,16 @@ Program(
           ]
           annotations: []
         )
-        Instruction(
+        GateInstruction(
           instruction_ref: CNOT(qubit, qubit)
-          name: CNOT
+          gate: <
+            Gate(
+              name: CNOT
+              gate: -
+              parameter: -
+              annotations: []
+            )
+          >
           operands: [
             IndexRef(
               variable --> <

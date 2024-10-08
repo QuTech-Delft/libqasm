@@ -10,6 +10,7 @@
 // We don't want SWIG to generate Python wrappers for the entire world.
 // Those headers are only included in the source file that provides the implementations.
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -116,7 +117,7 @@ public:
     /*
      * The arguments are passed directly to `instruction::Instruction`'s constructor.
      */
-    void register_instruction(const std::string &name, const std::string &param_types = "");
+    void register_instruction(const std::string &name, const std::optional<std::string> &param_types);
 
     /**
      * Parses a file containing a cQASM v3.0 program.

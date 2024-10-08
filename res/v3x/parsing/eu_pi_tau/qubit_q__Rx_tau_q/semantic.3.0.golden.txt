@@ -9,9 +9,20 @@ Program(
   block: <
     Block(
       statements: [
-        Instruction(
-          instruction_ref: Rx(qubit, float)
-          name: Rx
+        GateInstruction(
+          instruction_ref: Rx(qubit)
+          gate: <
+            Gate(
+              name: Rx
+              gate: -
+              parameter: <
+                ConstFloat(
+                  value: 6.28319
+                )
+              >
+              annotations: []
+            )
+          >
           operands: [
             VariableRef(
               variable --> <
@@ -25,9 +36,6 @@ Program(
                   annotations: []
                 )
               >
-            )
-            ConstFloat(
-              value: 6.28319
             )
           ]
           annotations: []
