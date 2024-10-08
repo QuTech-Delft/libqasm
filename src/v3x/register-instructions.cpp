@@ -32,7 +32,7 @@ void register_instructions(analyzer::Analyzer *analyzer) {
         }
     };
 
-    // Two-qubit gates, e.g., ctrl(X), ctrl(inv(X)), ctrl(pow(2).X), or ctrl(pow(2).inv(X))
+    // Two-qubit gates, e.g., ctrl.X, ctrl.inv.X, ctrl.pow(2).X, or ctrl.pow(2).inv.X
     for (const auto &[named_gate_name, pair_params_types_operands_types] : named_gate_map) {
         if (instruction_set.is_single_qubit_named_gate(named_gate_name)) {
             // For a single qubit named gate such as Ry, the named gate map will hold two entries,
