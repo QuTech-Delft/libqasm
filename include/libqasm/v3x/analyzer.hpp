@@ -16,7 +16,7 @@
 #include "analysis_result.hpp"
 #include "analyzer.hpp"
 #include "libqasm/v3x/ast.hpp"
-#include "core_function.hpp"
+#include "libqasm/v3x/core_function.hpp"
 #include "libqasm/v3x/parse_helper.hpp"
 #include "libqasm/v3x/resolver.hpp"
 #include "libqasm/v3x/scope.hpp"
