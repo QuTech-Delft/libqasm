@@ -22,7 +22,7 @@ class TestV3xAnalyzer(unittest.TestCase):
         self.assertEqual(bit_array.typ.size.value, 5)
 
         h_instruction = ast.block.statements[2]
-        h_gate = h_instruction.unitary_gate
+        h_gate = h_instruction.gate
         self.assertEqual(h_gate.name.name, "H")
         h_operand = h_instruction.operands.items[0]
         self.assertEqual(h_operand.expr.name, "q")
@@ -50,7 +50,7 @@ class TestV3xAnalyzer(unittest.TestCase):
         self.assertEqual(ast.version.items[0], 3)
 
         h_instruction = ast.block.statements[0]
-        h_gate = h_instruction.unitary_gate
+        h_gate = h_instruction.gate
         self.assertEqual(h_gate.name, "H")
         h_operand = h_instruction.operands[0]
         self.assertEqual(h_operand.variable.name, "q")
