@@ -183,7 +183,7 @@ public:
      * returns the resolved instruction node.
      */
     [[nodiscard]] tree::One<semantic::Instruction> resolve(const std::string &name,
-        const tree::One<semantic::UnitaryGate> &gate, const Values &args) const;
+        const tree::One<semantic::Gate> &gate, const Values &args) const;
 
     /**
      * Resolves an NonGateInstruction type.

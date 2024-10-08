@@ -11,10 +11,10 @@ Program(
       statements: [
         GateInstruction(
           instruction_ref: H(qubit)
-          unitary_gate: <
-            UnitaryGate(
+          gate: <
+            Gate(
               name: H
-              unitary_gate: -
+              gate: -
               parameter: -
               annotations: []
             )
@@ -43,10 +43,10 @@ Program(
         )
         GateInstruction(
           instruction_ref: H(qubit)
-          unitary_gate: <
-            UnitaryGate(
+          gate: <
+            Gate(
               name: H
-              unitary_gate: -
+              gate: -
               parameter: -
               annotations: []
             )
@@ -75,10 +75,10 @@ Program(
         )
         GateInstruction(
           instruction_ref: CNOT(qubit, qubit)
-          unitary_gate: <
-            UnitaryGate(
+          gate: <
+            Gate(
               name: CNOT
-              unitary_gate: -
+              gate: -
               parameter: -
               annotations: []
             )

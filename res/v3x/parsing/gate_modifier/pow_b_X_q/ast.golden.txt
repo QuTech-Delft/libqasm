@@ -45,21 +45,21 @@ Program(
           annotations: []
         )
         GateInstruction( # input.cq:6:1..4
-          unitary_gate: <
-            UnitaryGate( # input.cq:6:1..4
+          gate: <
+            Gate( # input.cq:6:1..4
               name: <
                 Identifier(
                   name: pow
                 )
               >
-              unitary_gate: <
-                UnitaryGate( # input.cq:6:8..9
+              gate: <
+                Gate( # input.cq:6:8..9
                   name: <
                     Identifier(
                       name: X
                     )
                   >
-                  unitary_gate: -
+                  gate: -
                   parameter: -
                   annotations: []
                 )

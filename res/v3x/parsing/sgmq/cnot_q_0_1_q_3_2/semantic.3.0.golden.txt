@@ -11,10 +11,10 @@ Program(
       statements: [
         GateInstruction(
           instruction_ref: CNOT(qubit array, qubit array)
-          unitary_gate: <
-            UnitaryGate(
+          gate: <
+            Gate(
               name: CNOT
-              unitary_gate: -
+              gate: -
               parameter: -
               annotations: []
             )
