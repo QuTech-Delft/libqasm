@@ -1010,7 +1010,7 @@ auto result = parse_string_to_json(program, "bell.cq");
         </div>
 </div>
 <div class="docblock">
-<pre><code class="language-cpp decl"><div>void register_instruction(const std::string& name, const std::string& param_types);</div></code></pre>
+<pre><code class="language-cpp decl"><div>void register_instruction(const std::string& name, const std::optional&lt;std::string>& param_types);</div></code></pre>
 <div class="docblock-desc">
 <p>Registers an instruction type.</p>
 <p>The <code>param_types</code> can be:<ul>
