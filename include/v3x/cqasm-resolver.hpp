@@ -177,7 +177,7 @@ public:
     void add(const instruction::Instruction &type);
 
     /**
-     * Resolves an GateInstruction type.
+     * Resolves a GateInstruction type.
      * Throws NameResolutionFailure if no instruction by the given name exists,
      * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
      * returns the resolved instruction node.
@@ -186,7 +186,7 @@ public:
         const tree::One<semantic::Gate> &gate, const Values &args) const;
 
     /**
-     * Resolves an NonGateInstruction type.
+     * Resolves a NonGateInstruction type.
      * Throws NameResolutionFailure if no instruction by the given name exists,
      * OverloadResolutionFailure if no overload exists for the given arguments, or otherwise
      * returns the resolved instruction node.
