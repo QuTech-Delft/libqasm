@@ -16,7 +16,8 @@ AntlrCustomErrorListener::AntlrCustomErrorListener(const std::optional<std::stri
 }
 
 void AntlrCustomErrorListener::syntaxError(antlr4::Recognizer * /* recognizer */, antlr4::Token *offendingSymbol,
-                                           size_t line, size_t charPositionInLine, const std::string &msg, std::exception_ptr /* e */) {
+    size_t line, size_t charPositionInLine, const std::string &msg, std::exception_ptr /* e */) {
+
     // ANTLR provides a zero-based character position in line
     // We change it here to a one-based index, which is the more human-readable,
     // and the common option in text editors
