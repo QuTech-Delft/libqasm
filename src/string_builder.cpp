@@ -1,5 +1,5 @@
 /** \file
- * Implementation for \ref include/libqasm/string_builder.hpp "string_builder.hpp".
+ * Implementation for \ref include/libqasm/string_builder.hpp "libqasm/string_builder.hpp".
  */
 
 #include "libqasm/string_builder.hpp"

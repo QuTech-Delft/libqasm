@@ -1,5 +1,5 @@
 /** \file
- * Implementation for \ref include/libqasm/v3x/values.hpp "v3x/values.hpp".
+ * Implementation for \ref include/libqasm/v3x/values.hpp "libqasm/v3x/values.hpp".
  */
 
 #include "libqasm/v3x/values.hpp"

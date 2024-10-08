@@ -1,5 +1,5 @@
 /** \file
- * Implementation for \ref include/libqasm/v3x/resolver.hpp "v3x/resolver.hpp".
+ * Implementation for \ref include/libqasm/v3x/resolver.hpp "libqasm/v3x/resolver.hpp".
  */
 
 #include "libqasm/v3x/resolver.hpp"

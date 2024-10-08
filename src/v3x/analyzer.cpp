@@ -1,5 +1,5 @@
 /** \file
- * Implementation for \ref include/libqasm/v3x/analyzer.hpp "v3x/analyzer.hpp".
+ * Implementation for \ref include/libqasm/v3x/analyzer.hpp "libqasm/v3x/analyzer.hpp".
  */
 
 #include "libqasm/v3x/analyzer.hpp"

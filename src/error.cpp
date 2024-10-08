@@ -1,5 +1,5 @@
 /** \file
- * Implementation for \ref include/libqasm/error.hpp "error.hpp".
+ * Implementation for \ref include/libqasm/error.hpp "libqasm/error.hpp".
  */
 
 #include "libqasm/error.hpp"
