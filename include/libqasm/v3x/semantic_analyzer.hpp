@@ -32,7 +32,7 @@ public:
     std::any visit_global_block(ast::GlobalBlock &node) override;
     std::any visit_variable(ast::Variable &node) override;
     std::any visit_gate_instruction(ast::GateInstruction &node) override;
-    std::any visit_unitary_gate(ast::UnitaryGate &node) override;
+    std::any visit_gate(ast::Gate &node) override;
     std::any visit_non_gate_instruction(ast::NonGateInstruction &node) override;
     std::any visit_expression_list(ast::ExpressionList &node) override;
     std::any visit_expression(ast::Expression &node) override;

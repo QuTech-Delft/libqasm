@@ -35,13 +35,13 @@ instruction:
     | nonGateInstruction
     ;
 
-gateInstruction: unitaryGate expressionList;
+gateInstruction: gate expressionList;
 
-unitaryGate:
-    INV DOT unitaryGate  # invGate
-    | POW OPEN_PARENS expression CLOSE_PARENS DOT unitaryGate  # powGate
-    | CTRL DOT unitaryGate # ctrlGate
-    | IDENTIFIER (OPEN_PARENS expression CLOSE_PARENS)?  # gate
+gate:
+    INV DOT gate  # invGate
+    | POW OPEN_PARENS expression CLOSE_PARENS DOT gate  # powGate
+    | CTRL DOT gate # ctrlGate
+    | IDENTIFIER (OPEN_PARENS expression CLOSE_PARENS)?  # namedGate
     ;
 
 nonGateInstruction:

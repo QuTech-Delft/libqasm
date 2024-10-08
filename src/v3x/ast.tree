@@ -163,10 +163,10 @@ annotated {
     # Zero or more annotations attached to this object.
     annotations: Any<annotation_data>;
 
-    # A unitary gate can be a gate or a composition of gate modifiers acting on a unitary gate.
-    unitary_gate {
+    # A gate can be a named gate or a composition of gate modifiers acting on a gate.
+    gate {
         name: One<identifier>;
-        unitary_gate: Maybe<unitary_gate>;
+        gate: Maybe<gate>;
         parameter: Maybe<expression>;
     }
 
@@ -180,7 +180,7 @@ annotated {
 
             instruction {
                 gate_instruction {
-                    unitary_gate: One<unitary_gate>;
+                    gate: One<gate>;
                     operands: One<expression_list>;
                 }
 

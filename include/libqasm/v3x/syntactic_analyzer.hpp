@@ -70,7 +70,7 @@ public:
     std::any visitInvGate(CqasmParser::InvGateContext *context) override;
     std::any visitPowGate(CqasmParser::PowGateContext *context) override;
     std::any visitCtrlGate(CqasmParser::CtrlGateContext *context) override;
-    std::any visitGate(CqasmParser::GateContext *context) override;
+    std::any visitNamedGate(CqasmParser::NamedGateContext *context) override;
     std::any visitType(CqasmParser::TypeContext *context) override;
     std::any visitQubitType(CqasmParser::QubitTypeContext *context) override;
     std::any visitBitType(CqasmParser::BitTypeContext *context) override;

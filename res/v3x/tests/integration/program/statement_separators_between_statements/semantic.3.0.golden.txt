@@ -11,10 +11,10 @@ Program(
       statements: [
         GateInstruction(
           instruction_ref: X(qubit)
-          unitary_gate: <
-            UnitaryGate(
+          gate: <
+            Gate(
               name: X
-              unitary_gate: -
+              gate: -
               parameter: -
               annotations: []
             )

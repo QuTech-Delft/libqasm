@@ -27,14 +27,14 @@ Program(
           annotations: []
         )
         GateInstruction( # input.cq:4:1..3
-          unitary_gate: <
-            UnitaryGate( # input.cq:4:1..3
+          gate: <
+            Gate( # input.cq:4:1..3
               name: <
                 Identifier(
                   name: Rx
                 )
               >
-              unitary_gate: -
+              gate: -
               parameter: <
                 Identifier( # input.cq:4:4..6
                   name: PI

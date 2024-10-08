@@ -60,7 +60,7 @@ protected:
     tree::Link<semantic::Variable> qubit_link{ qubit };
     tree::One<values::VariableRef> qubit_variable_ref = tree::make<values::VariableRef>(qubit_link);
     tree::Any<values::ValueBase> operands{ qubit_variable_ref };
-    tree::One<semantic::UnitaryGate> gate = tree::make<semantic::UnitaryGate>(instruction_ref->name);
+    tree::One<semantic::Gate> gate = tree::make<semantic::Gate>(instruction_ref->name);
     tree::One<semantic::Instruction> statement = tree::make<semantic::GateInstruction>(instruction_ref, gate, operands);
 };
 

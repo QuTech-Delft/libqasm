@@ -177,7 +177,7 @@ public:
      * Annotation data, line number information, and the condition still need to be set by the caller.
      */
     [[nodiscard]] tree::One<semantic::Instruction> resolve_instruction(const std::string &name,
-        const tree::One<semantic::UnitaryGate> &gate, const values::Values &args) const;
+        const tree::One<semantic::Gate> &gate, const values::Values &args) const;
 
     /**
      * Resolves a NonGateInstruction.
