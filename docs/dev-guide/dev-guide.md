@@ -52,7 +52,7 @@ For the time being, we install Java manually for this platform.
 - `clang-format-18`
 - `clang-tidy-18`
 
-In a Linux machine, these linters can be installed with the following commands:
+On a Linux machine, these linters can be installed with the following commands:
 
 ```shell
  wget https://apt.llvm.org/llvm.sh -O llvm_install.sh
@@ -129,7 +129,7 @@ mkdocs serve
 
 ## Linters
 
-Continuous Integration will fail if the files don't adhere to a series of formatting and code style guidelines:
+Continuous Integration will fail if the files do not adhere to a series of formatting and code style guidelines:
 
 - Formatting checks are defined in `.clang-format`.
 - Code style checks are defined in `.clang-tidy`.
@@ -142,7 +142,7 @@ python3 ./scripts/run_cpp_linters.py .
 
 !!! note
 
-    The linters require `clang-format-18` and `clang-tidy-18` to be installed in the system.
+    The linters require `clang-format-18` and `clang-tidy-18` to be installed on the system.
 
 ## Docker
 
