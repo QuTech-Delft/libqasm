@@ -34,9 +34,8 @@ def run_clang_format(root_folder: os.PathLike):
     try:
         format_file_path = os.path.join(root_folder, ".clang-format")
         file_list_str = " ".join(file_list)
-        command = f"clang-format-18 -i --style=file:{format_file_path} {file_list_str}"
-        subprocess.run(f"{command} --dry-run", shell=True)
-        subprocess.run(f"{command} --verbose", shell=True)
+        command = f"clang-format-18 -i --style=file:{format_file_path} --verbose {file_list_str}"
+        subprocess.run(command, shell=True)
     except FileNotFoundError as err:
         print("Error running clang-format: {}".format(err.strerror))
         exit(3)
