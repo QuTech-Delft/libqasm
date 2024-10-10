@@ -664,6 +664,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#linters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Linters
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -708,6 +717,15 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#linters_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Linters
+    </span>
+  </a>
   
 </li>
       
@@ -1107,6 +1125,17 @@ For the time being, we install Java manually for this platform.</p>
 </ul>
 </li>
 </ul>
+<h3 id="linters">Linters</h3>
+<ul>
+<li><code>clang-format-18</code></li>
+<li><code>clang-tidy-18</code></li>
+</ul>
+<p>On a Linux machine, these linters can be installed with the following commands:</p>
+<pre><code class="language-shell"> wget https://apt.llvm.org/llvm.sh -O llvm_install.sh
+ chmod +x llvm_install.sh
+ ./llvm_install.sh
+ apt-get install -y clang-format-18 clang-tidy-18
+</code></pre>
 <h2 id="build">Build</h2>
 <p>This version of libQASM can only be compiled via the Conan package manager.
 You will need to create a default profile before using it for the first time.</p>
@@ -1140,7 +1169,7 @@ They follow the <code>[tests-|docs-](build_type)(-compiler)(-os)(-arch)[-shared]
 <p>All the profiles set the C++ standard to 20.<br />
 All the <code>tests</code>, except for <code>linux-x64</code> profiles, enable Address Sanitizer.</p>
 <h3 id="options">Options</h3>
-<p>Profiles are a shorthand for command line options. The command above could be written, similarly,  as:</p>
+<p>Profiles are a shorthand for command line options. The command above could be written, similarly, as:</p>
 <pre><code class="language-shell">conan build . -s:a compiler.cppstd=20 -s:a libqasm/*:build_type=Debug -o libqasm/*:asan_enabled=True -c tools.build:skip_test=False -b missing
 </code></pre>
 <p>This is the list of options that could be specified either in a profile or in the command line:</p>
@@ -1158,6 +1187,19 @@ mkdocs serve
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The <code>export</code> is needed to point <code>mkdocs</code> to the custom handlers used for the C++, emscripten, and Python APIs.</p>
+</div>
+<h2 id="linters_1">Linters</h2>
+<p>Continuous Integration will fail if the files do not adhere to a series of formatting and code style guidelines:</p>
+<ul>
+<li>Formatting checks are defined in <code>.clang-format</code>.</li>
+<li>Code style checks are defined in <code>.clang-tidy</code>.</li>
+</ul>
+<p>It is recommended to run these linters before pushing any change:</p>
+<pre><code class="language-shell">python3 ./scripts/run_cpp_linters.py .
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The linters require <code>clang-format-18</code> and <code>clang-tidy-18</code> to be installed on the system.</p>
 </div>
 <h2 id="docker">Docker</h2>
 <p>This tests the library in a container with the bare minimum requirements for libQASM.</p>
