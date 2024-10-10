@@ -90,7 +90,7 @@ class TestV3xAnalyzer(unittest.TestCase):
     def test_to_json_vrsion(self):
         """This test is used to check that a program with a syntactic error
         produces the same error message both when parsing and analyzing."""
-        # res/v3x/parsing/version/vrsion
+        # res/v3x/tests/integration/version/vrsion
         program_str = "vrsion 3"
         v3x_analyzer = cq.Analyzer()
         actual_parse_json = v3x_analyzer.parse_string_to_json(program_str)

@@ -140,14 +140,14 @@ class CppHandler(BaseHandler):
         super().__init__(handler='cpp', **kwargs)
 
         headers = [
-            'cqasm-py.hpp'
+            'cqasm_python.hpp'
         ]
 
         # Run doxygen.
         cmd = ['doxygen', '-']
         scripts_dir = Path(__file__).parents[3]
         top_dir = os.path.dirname(scripts_dir)
-        include_dir = os.path.join(top_dir, 'include', 'v3x')
+        include_dir = os.path.join(top_dir, 'include', 'libqasm', 'v3x')
         self._ns2doxyxml = {}
         build_dir = os.path.join(top_dir, 'build', 'Release', 'doc', 'cpp')
         os.makedirs(build_dir, exist_ok=True)
@@ -175,7 +175,7 @@ class CppHandler(BaseHandler):
         # Merge all file-level XMLs into one to simplify search.
         self._file_doxyxml = None
         for h in headers:
-            filename = h.replace(".hpp", "_8hpp.xml")
+            filename = h.replace("_", "__").replace(".hpp", "_8hpp.xml")
             with open(os.path.join(self._doxyxml_dir, filename)) as f:
                 doxyxml = ElementTree.parse(f)
                 if self._file_doxyxml is None:

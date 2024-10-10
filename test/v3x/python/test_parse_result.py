@@ -5,7 +5,7 @@ import cqasm.v3x as cq
 
 class TestParseResult(unittest.TestCase):
     def test_to_json_with_parser_errors(self):
-        # res/v3x/parsing/qubit_array_definition/qubit_array_of_3.14
+        # res/v3x/tests/integration/qubit_array_definition/qubit_array_of_3.14
         program_str = "version 3; qubit[3.14]"
         v3x_analyzer = cq.Analyzer()
         actual_errors_json = v3x_analyzer.parse_string_to_json(program_str)
@@ -13,7 +13,7 @@ class TestParseResult(unittest.TestCase):
         self.assertEqual(actual_errors_json, expected_errors_json)
 
     def test_to_json_with_parser_ast(self):
-        # res/v3x/parsing/qubit_array_definition/qubit_array_of_0_b
+        # res/v3x/tests/integration/qubit_array_definition/qubit_array_of_0_b
         program_str = "version 3; qubit[0] q"
         v3x_analyzer = cq.Analyzer()
         actual_ast_json = v3x_analyzer.parse_string_to_json(program_str)

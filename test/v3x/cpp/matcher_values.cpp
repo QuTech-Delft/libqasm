@@ -1,10 +1,9 @@
 #include "matcher_values.hpp"
 
 #include <gmock/gmock.h>
-
 #include <ostream>
 
-#include "v3x/cqasm-semantic-gen.hpp"
+#include "libqasm/v3x/semantic_generated.hpp"
 
 namespace cqasm::v3x::values {
 

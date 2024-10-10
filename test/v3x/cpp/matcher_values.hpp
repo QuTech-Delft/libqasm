@@ -1,10 +1,9 @@
 #pragma once
 
 #include <gmock/gmock.h>
-
 #include <iosfwd>  //ostream
 
-#include "v3x/cqasm-values.hpp"
+#include "libqasm/v3x/values.hpp"
 
 namespace cqasm::v3x::values {
 
