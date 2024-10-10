@@ -20,13 +20,13 @@ BreakBeforeBraces: Attach
 # Use BraceWrapping with custom BreakBeforeBraces
 # BreakBeforeBraces: Custom
 # BraceWrapping:
+BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: BeforeComma
 ColumnLimit: 120
 ConstructorInitializerIndentWidth: 0
 Cpp11BracedListStyle: false
 DerivePointerAlignment: false
-IndentCaseLabels: false
-#IndentCaseLabels: true
+IndentCaseLabels: true
 IndentWidth: 4
 LambdaBodyIndentation: Signature
 PackConstructorInitializers: Never
