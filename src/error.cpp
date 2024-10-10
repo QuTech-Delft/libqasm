@@ -14,7 +14,7 @@ namespace cqasm::error {
  * Constructs a new error.
  * If node is a non-null annotatable with a location node, its location information is attached.
  */
-Error::Error(const std::string &message, const tree::Annotatable *node)
+Error::Error(const std::string& message, const tree::Annotatable* node)
 : std::runtime_error{ !message.empty() ? message : unknown_error_message }
 , message_{ !message.empty() ? message : unknown_error_message } {
     if (node) {
@@ -25,7 +25,7 @@ Error::Error(const std::string &message, const tree::Annotatable *node)
 /**
  * Constructs a new error from a message and a source location.
  */
-Error::Error(const std::string &message, std::shared_ptr<annotations::SourceLocation> location)
+Error::Error(const std::string& message, std::shared_ptr<annotations::SourceLocation> location)
 : std::runtime_error{ !message.empty() ? message : unknown_error_message }
 , message_{ !message.empty() ? message : unknown_error_message }
 , location_{ std::move(location) } {}
@@ -33,8 +33,8 @@ Error::Error(const std::string &message, std::shared_ptr<annotations::SourceLoca
 /**
  * Constructs a new error from a message and all the fields of a source location.
  */
-Error::Error(const std::string &message, const std::optional<std::string> &file_name,
-    const annotations::SourceLocation::Range &range)
+Error::Error(const std::string& message, const std::optional<std::string>& file_name,
+    const annotations::SourceLocation::Range& range)
 : std::runtime_error{ !message.empty() ? message.c_str() : unknown_error_message }
 , message_{ !message.empty() ? message : unknown_error_message }
 , location_{ std::make_shared<annotations::SourceLocation>(file_name, range) } {}
@@ -44,7 +44,7 @@ Error::Error(const std::string &message, const std::optional<std::string> &file_
  * if the error doesn't already have such a context.
  * If it does, this is no-op.
  */
-void Error::context(const tree::Annotatable &node) {
+void Error::context(const tree::Annotatable& node) {
     if (!location_) {
         if (auto loc = node.get_annotation_ptr<annotations::SourceLocation>()) {
             location_ = std::make_shared<annotations::SourceLocation>(*loc);
@@ -55,7 +55,7 @@ void Error::context(const tree::Annotatable &node) {
 /**
  * Returns the exception-style message.
  */
-const char *Error::what() const noexcept {
+const char* Error::what() const noexcept {
     what_message_ = fmt::format("Error{}: {}",
         location_ ? fmt::format(" at {}", *location_) : std::string{},
         !message_.empty() ? message_ : unknown_error_message);
@@ -65,7 +65,7 @@ const char *Error::what() const noexcept {
 /**
  * Stream << overload for Error.
  */
-std::ostream &operator<<(std::ostream &os, const Error &error) {
+std::ostream& operator<<(std::ostream& os, const Error& error) {
     return os << error.what();
 }
 

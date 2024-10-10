@@ -4,9 +4,10 @@
 
 #pragma once
 
+#include <fmt/ostream.h>
+
 #include <cstdint>  // int64_t
 #include <cstdio>  // FILE*
-#include <fmt/ostream.h>
 #include <memory>  // unique_ptr
 #include <optional>
 #include <ostream>
@@ -31,9 +32,10 @@ private:
      *   1 if this version is newer than the other,
      *   -1 if this version is older than the other, or
      *   0 if both versions are the same.
-     * When there is a mismatch in the number of components between the versions, missing components are interpreted as 0.
+     * When there is a mismatch in the number of components between the versions, missing components are interpreted as
+     * 0.
      */
-    [[nodiscard]] int compare(const Version &other) const;
+    [[nodiscard]] int compare(const Version& other) const;
 
 public:
     /**
@@ -44,21 +46,21 @@ public:
     /**
      * Constructs a version object from a string.
      */
-    Version(const std::string &version);
+    Version(const std::string& version);
 
     /**
      * Constructs a version object from an array of chars.
      */
-    Version(const char *version);
+    Version(const char* version);
 
-    [[nodiscard]] auto operator==(const Version &rhs) const { return compare(rhs) == 0; }
-    [[nodiscard]] auto operator<=>(const Version &rhs) const { return compare(rhs) <=> 0; }
+    [[nodiscard]] auto operator==(const Version& rhs) const { return compare(rhs) == 0; }
+    [[nodiscard]] auto operator<=>(const Version& rhs) const { return compare(rhs) <=> 0; }
 };
 
 /**
  * Stream << overload for version nodes.
  */
-std::ostream &operator<<(std::ostream &os, const Version &object);
+std::ostream& operator<<(std::ostream& os, const Version& object);
 
 }  // namespace cqasm::version
 

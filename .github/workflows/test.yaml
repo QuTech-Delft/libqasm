@@ -3,13 +3,38 @@ name: Test
 on:
   push:
     branches:
-    - develop
-    - master
+      - develop
+      - master
   pull_request:
 
 jobs:
+  cpp-linters:
+    name: "C++ linters"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run C++ linters
+        uses: cpp-linter/cpp-linter-action@v2
+        id: linter
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          extensions: 'cpp,hpp'
+          files-changed-only: 'false'
+          format-review: 'true'
+          style: 'file'  # use .clang-format config file
+          tidy-checks: '-*'  # disable clang-tidy checks
+          version: 18
+      - name: Fail fast
+        if: steps.linter.outputs.clang-format-checks-failed > 0
+        run: |
+          echo "::notice::Try executing 'python3 ./scripts/run_cpp_linters.py .' to fix linter issues."
+          exit 1
+
   cpp-linux-x64:
     name: "C++ tests (gcc-clang/Linux/x64)"
+    needs: cpp-linters
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -31,6 +56,7 @@ jobs:
 
   cpp-linux-arm64:
     name: "C++ tests (gcc/Linux/ARM64)"
+    needs: cpp-linters
     runs-on: [self-hosted, ARM64, Linux]
     container: python:3.11
     strategy:
@@ -61,6 +87,7 @@ jobs:
 
   cpp-macos-x64:
     name: "C++ tests (clang/MacOS/x64)"
+    needs: cpp-linters
     runs-on: macos-13  # x64
     strategy:
       fail-fast: false
@@ -79,6 +106,7 @@ jobs:
 
   cpp-macos-arm64:
     name: "C++ tests (clang/macos/ARM64)"
+    needs: cpp-linters
     runs-on: macos-14  # arm64
     strategy:
       fail-fast: false
@@ -89,14 +117,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        # We are having problems when using zulu-opendjk Conan package on an armv8 architecture.
-        # zulu-openjdk provides the Java JRE required by the ANTLR generator.
-        # So, for the time being, we are installing Java manually for this platform
-      - name: Install dependencies
-        run: |
-          brew install java
-          echo "$(brew --prefix java)/bin" >> $GITHUB_PATH
-        shell: bash
       - uses: ./.github/actions/cpp-tests
         with:
           build_type: ${{ matrix.build_type }}
@@ -105,6 +125,7 @@ jobs:
 
   cpp-windows-x64:
     name: "C++ tests (msvc/Windows/x64)"
+    needs: cpp-linters
     runs-on: windows-latest
     strategy:
       fail-fast: false
@@ -124,6 +145,7 @@ jobs:
 
   cpp-shared:
     name: "C++ tests (shared)"
+    needs: cpp-linters
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -142,6 +164,7 @@ jobs:
 
   ts-emscripten-wasm:
     name: "TS tests (clang/emscripten/wasm)"
+    needs: cpp-linters
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -187,6 +210,7 @@ jobs:
 
   python-linux-x64:
     name: "Python tests (Linux/x64)"
+    needs: cpp-linters
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -205,6 +229,7 @@ jobs:
 
   python-macos-x64:
     name: "Python tests (macOS/x64)"
+    needs: cpp-linters
     runs-on: macos-13
     steps:
       - name: Checkout
@@ -223,14 +248,14 @@ jobs:
 
   python-macos-arm64:
     name: "Python tests (macOS/arm64)"
+    needs: cpp-linters
     runs-on: macos-14
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install dependencies
         run: |
-          brew install java swig
-          echo "$(brew --prefix java)/bin" >> $GITHUB_PATH
+          brew install swig
         shell: bash
       - name: Export LIBQASM_BUILD_TYPE
         run: |
@@ -242,6 +267,7 @@ jobs:
 
   python-windows-x64:
     name: "Python tests (Windows/x64)"
+    needs: cpp-linters
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -256,6 +282,7 @@ jobs:
 
   docker:
     name: Docker
+    needs: cpp-linters
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU

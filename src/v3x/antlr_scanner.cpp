@@ -5,12 +5,12 @@
 
 #include <filesystem>
 
-#include "libqasm/v3x/syntactic_analyzer.hpp"
 #include "libqasm/v3x/CqasmLexer.h"
 #include "libqasm/v3x/CqasmParser.h"
 #include "libqasm/v3x/antlr_custom_error_listener.hpp"
 #include "libqasm/v3x/ast.hpp"
 #include "libqasm/v3x/parse_result.hpp"
+#include "libqasm/v3x/syntactic_analyzer.hpp"
 
 namespace fs = std::filesystem;
 
@@ -18,14 +18,14 @@ namespace cqasm::v3x::parser {
 
 ScannerAdaptor::~ScannerAdaptor() = default;
 
-AntlrScanner::AntlrScanner(
-    std::unique_ptr<BaseSyntacticAnalyzer> build_visitor_up, std::unique_ptr<AntlrCustomErrorListener> error_listener_up)
+AntlrScanner::AntlrScanner(std::unique_ptr<BaseSyntacticAnalyzer> build_visitor_up,
+    std::unique_ptr<AntlrCustomErrorListener> error_listener_up)
 : build_visitor_up_{ std::move(build_visitor_up) }
 , error_listener_up_{ std::move(error_listener_up) } {}
 
 AntlrScanner::~AntlrScanner() = default;
 
-cqasm::v3x::parser::ParseResult AntlrScanner::parse_(antlr4::ANTLRInputStream &is) {
+cqasm::v3x::parser::ParseResult AntlrScanner::parse_(antlr4::ANTLRInputStream& is) {
     CqasmLexer lexer{ &is };
     lexer.removeErrorListeners();
     lexer.addErrorListener(error_listener_up_.get());
@@ -45,8 +45,8 @@ cqasm::v3x::parser::ParseResult AntlrScanner::parse_(antlr4::ANTLRInputStream &i
 }
 
 FileAntlrScanner::FileAntlrScanner(std::unique_ptr<BaseSyntacticAnalyzer> build_visitor_up,
-    std::unique_ptr<AntlrCustomErrorListener> error_listener_up, const std::string &file_path)
-: AntlrScanner{std::move(build_visitor_up), std::move(error_listener_up) }
+    std::unique_ptr<AntlrCustomErrorListener> error_listener_up, const std::string& file_path)
+: AntlrScanner{ std::move(build_visitor_up), std::move(error_listener_up) }
 , file_path_{ file_path } {
     if (!fs::exists(file_path_) || !fs::is_regular_file(file_path_)) {
         throw cqasm::error::ParseError{ fmt::format("FileAntlrScanner couldn't access file '{}'.", file_path_) };
@@ -62,8 +62,8 @@ cqasm::v3x::parser::ParseResult FileAntlrScanner::parse() {
 }
 
 StringAntlrScanner::StringAntlrScanner(std::unique_ptr<BaseSyntacticAnalyzer> build_visitor_up,
-    std::unique_ptr<AntlrCustomErrorListener> error_listener_up, const std::string &data)
-: AntlrScanner{std::move(build_visitor_up), std::move(error_listener_up) }
+    std::unique_ptr<AntlrCustomErrorListener> error_listener_up, const std::string& data)
+: AntlrScanner{ std::move(build_visitor_up), std::move(error_listener_up) }
 , data_{ data } {}
 
 StringAntlrScanner::~StringAntlrScanner() = default;

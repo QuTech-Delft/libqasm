@@ -1,6 +1,7 @@
-#include <cstdint>  // uint32_t
 #include <fmt/format.h>
 #include <gmock/gmock.h>
+
+#include <cstdint>  // uint32_t
 #include <memory>  // make_unique, unique_ptr
 #include <stdexcept>  // runtime_error
 #include <string>
@@ -58,7 +59,7 @@ TEST_F(ParseHelperParseTest, scanner_parse_throws_parse_error) {
     ExpectScannerParseThrowsParseError();
     auto parse_helper = ParseHelper{ std::move(scanner_up), file_name };
     auto parse_result = parse_helper.parse();
-    const auto &errors = parse_result.errors;
+    const auto& errors = parse_result.errors;
     EXPECT_TRUE(errors.size() == 1);
     EXPECT_EQ(fmt::format("{}", errors[0]),
         fmt::format("Error at {}:{}:{}..{}: {}",
@@ -72,7 +73,7 @@ TEST_F(ParseHelperParseTest, scanner_parse_throws_runtime_error) {
     ExpectScannerParseThrowsRuntimeError();
     auto parse_helper = ParseHelper{ std::move(scanner_up), file_name };
     auto parse_result = parse_helper.parse();
-    const auto &errors = parse_result.errors;
+    const auto& errors = parse_result.errors;
     EXPECT_TRUE(errors.size() == 1);
     EXPECT_EQ(fmt::format("{}", errors[0]), fmt::format("Error: {}", runtime_error_message));
 }
@@ -87,7 +88,7 @@ TEST_F(ParseHelperParseTest, parse_result_errors_is_empty_and_root_is_well_forme
     auto parse_helper = ParseHelper{ std::move(scanner_up), file_name };
     auto parse_result = parse_helper.parse();
     auto program = parse_result.root->as_program();
-    const auto &version = program->version->items;
+    const auto& version = program->version->items;
     EXPECT_EQ(version, version_3_0);
 }
 

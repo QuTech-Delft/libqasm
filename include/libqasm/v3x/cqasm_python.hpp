@@ -87,7 +87,7 @@ public:
      * The initial mappings and functions are not configurable.
      * The defaults for these are always used.
      */
-    V3xAnalyzer(const std::string &max_version = "3.0", bool without_defaults = false);
+    V3xAnalyzer(const std::string& max_version = "3.0", bool without_defaults = false);
 
     /**
      * Default destructor.
@@ -117,53 +117,53 @@ public:
     /*
      * The arguments are passed directly to `instruction::Instruction`'s constructor.
      */
-    void register_instruction(const std::string &name, const std::optional<std::string> &param_types);
+    void register_instruction(const std::string& name, const std::optional<std::string>& param_types);
 
     /**
      * Parses a file containing a cQASM v3.0 program.
      */
-    static std::vector<std::string> parse_file(const std::string &file_name);
+    static std::vector<std::string> parse_file(const std::string& file_name);
 
     /**
      * Parses a file containing a cQASM v3.0 program.
      */
-    static std::string parse_file_to_json(const std::string &file_name);
+    static std::string parse_file_to_json(const std::string& file_name);
 
     /**
      * Parses a string containing a cQASM v3.0 program.
      *
      * `file_name` is optional. It is only used when reporting errors.
      */
-    static std::vector<std::string> parse_string(const std::string &data, const std::string &file_name = "");
+    static std::vector<std::string> parse_string(const std::string& data, const std::string& file_name = "");
 
     /**
      * Parses a string containing a cQASM v3.0 program.
      *
      * `file_name` is optional. It is only used when reporting errors.
      */
-    static std::string parse_string_to_json(const std::string &data, const std::string &file_name = "");
+    static std::string parse_string_to_json(const std::string& data, const std::string& file_name = "");
 
     /**
      * Parses and analyzes a file containing a cQASM v3.0 program.
      */
-    std::vector<std::string> analyze_file(const std::string &file_name) const;
+    std::vector<std::string> analyze_file(const std::string& file_name) const;
 
     /**
      * Parses and analyzes a file containing a cQASM v3.0 program.
      */
-    std::string analyze_file_to_json(const std::string &file_name) const;
+    std::string analyze_file_to_json(const std::string& file_name) const;
 
     /**
      * Parses and analyzes a string containing a cQASM v3.0 program.
      *
      * `file_name` is optional. It is only used when reporting errors.
      */
-    std::vector<std::string> analyze_string(const std::string &data, const std::string &file_name = "") const;
+    std::vector<std::string> analyze_string(const std::string& data, const std::string& file_name = "") const;
 
     /**
      * Parses and analyzes a string containing a cQASM v3.0 program.
      *
      * `file_name` is optional. It is only used when reporting errors.
      */
-    std::string analyze_string_to_json(const std::string &data, const std::string &file_name = "") const;
+    std::string analyze_string_to_json(const std::string& data, const std::string& file_name = "") const;
 };

@@ -6,6 +6,7 @@
 
 #include <fmt/format.h>
 #include <fmt/ranges.h>
+
 #include <memory>
 
 namespace cqasm::version {
@@ -13,7 +14,7 @@ namespace cqasm::version {
 /**
  * Constructs a version object from a string.
  */
-Version::Version(const std::string &version) {
+Version::Version(const std::string& version) {
     if (version.empty()) {
         return;
     }
@@ -34,7 +35,7 @@ Version::Version(const std::string &version) {
 /**
  * Constructs a version object from an array of chars.
  */
-Version::Version(const char *version)
+Version::Version(const char* version)
 : Version(std::string{ version }) {}
 
 /**
@@ -45,7 +46,7 @@ Version::Version(const char *version)
  *   0 if both versions are the same.
  * When there is a mismatch in the number of components between the versions, missing components are interpreted as 0.
  */
-int Version::compare(const Version &other) const {
+int Version::compare(const Version& other) const {
     for (size_t i = 0; i < this->size() || i < other.size(); i++) {
         auto lhs = (i < this->size()) ? (*this)[i] : 0;
         auto rhs = (i < other.size()) ? other[i] : 0;
@@ -62,7 +63,7 @@ int Version::compare(const Version &other) const {
 /**
  * Stream << overload for version nodes.
  */
-std::ostream &operator<<(std::ostream &os, const Version &object) {
+std::ostream& operator<<(std::ostream& os, const Version& object) {
     return os << fmt::format("{}", fmt::join(object, "."));
 }
 

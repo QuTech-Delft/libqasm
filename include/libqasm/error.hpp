@@ -5,6 +5,7 @@
 #pragma once
 
 #include <fmt/ostream.h>
+
 #include <optional>
 #include <string>
 #include <vector>
@@ -24,7 +25,7 @@ using AnalysisError = Error;
 using ParseErrors = std::vector<ParseError>;
 using AnalysisErrors = std::vector<AnalysisError>;
 
-static constexpr const char *unknown_error_message = "<unknown error message>";
+static constexpr const char* unknown_error_message = "<unknown error message>";
 
 /**
  * Exception used for analysis errors.
@@ -51,30 +52,30 @@ public:
      * Constructs a new error.
      * If node is a non-null annotatable with a location node, its location information is attached.
      */
-    explicit Error(const std::string &message, const tree::Annotatable *node = nullptr);
+    explicit Error(const std::string& message, const tree::Annotatable* node = nullptr);
 
     /**
      * Constructs a new error from a message and a source location.
      */
-    Error(const std::string &message, std::shared_ptr<annotations::SourceLocation> location);
+    Error(const std::string& message, std::shared_ptr<annotations::SourceLocation> location);
 
     /**
      * Constructs a new error from a message and all the fields of a source location.
      */
-    Error(const std::string &message, const std::optional<std::string> &file_name,
-        const annotations::SourceLocation::Range &range);
+    Error(const std::string& message, const std::optional<std::string>& file_name,
+        const annotations::SourceLocation::Range& range);
 
     /**
      * Sets the context of this error to the SourceLocation annotation of the given node,
      * if the error doesn't already have such a context.
      * If it does, this is no-op.
      */
-    void context(const tree::Annotatable &node);
+    void context(const tree::Annotatable& node);
 
     /**
      * Returns the message exception-style.
      */
-    const char *what() const noexcept override;
+    const char* what() const noexcept override;
 
     /**
      * Returns a string with a JSON representation of an Error.
@@ -88,7 +89,7 @@ public:
 /**
  * Stream << overload for Error.
  */
-std::ostream &operator<<(std::ostream &os, const Error &error);
+std::ostream& operator<<(std::ostream& os, const Error& error);
 
 /**
  * Defines a new analysis error class.
@@ -96,7 +97,7 @@ std::ostream &operator<<(std::ostream &os, const Error &error);
 #define CQASM_ANALYSIS_ERROR(Name)                                                         \
     class Name : public ::cqasm::error::AnalysisError {                                    \
     public:                                                                                \
-        explicit Name(std::string &&message = "", const tree::Annotatable *node = nullptr) \
+        explicit Name(std::string&& message = "", const tree::Annotatable* node = nullptr) \
         : ::cqasm::error::AnalysisError(std::move(message), node) {}                       \
     }
 

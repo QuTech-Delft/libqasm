@@ -9,7 +9,7 @@ namespace cqasm::v3x::function {
  * That is, functions supported by the language, and that can be evaluated at compile time.
  * For functions supported by the language that cannot be evaluated at compile time, see CoreFunction.
  */
-void register_consteval_core_functions(analyzer::Analyzer *analyzer) {
+void register_consteval_core_functions(analyzer::Analyzer* analyzer) {
     assert(analyzer);
 
     analyzer->register_consteval_core_function("operator-", "f", op_neg_f);

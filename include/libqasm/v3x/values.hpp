@@ -38,55 +38,55 @@ using Values = tree::Any<ValueBase>;
  * otherwise returns the constructed value by way of a smart pointer.
  * If the type was an exact match, this may return the given value without modification or a clone thereof.
  */
-Value promote(const Value &value, const types::Type &type);
+Value promote(const Value& value, const types::Type& type);
 
 /**
  * Checks if a from_type can be promoted to a to_type.
  */
-bool check_promote(const types::Type &from_type, const types::Type &to_type);
+bool check_promote(const types::Type& from_type, const types::Type& to_type);
 
 /**
  * Returns the element type of the given type.
  * Throws an error if the given type is not of array type.
  */
-types::Type element_type_of(const types::Type &type);
+types::Type element_type_of(const types::Type& type);
 
 /**
  * Returns the type of the given value.
  */
-types::Type type_of(const Value &value);
+types::Type type_of(const Value& value);
 
 /**
  * Returns the types of the given values.
  */
-types::Types types_of(const Values &values);
+types::Types types_of(const Values& values);
 
 /**
  * Returns the number of elements of the given value.
  */
-primitives::Int size_of(const Value &value);
+primitives::Int size_of(const Value& value);
 
 /**
  * Throws an AnalysisError if the given value is not a constant,
  * i.e. if it doesn't have a known value at this time.
  */
-void check_const(const Value &value);
+void check_const(const Value& value);
 
 /**
  * Throws an AnalysisError if any of the given values are not a constant,
  * i.e. if it doesn't have a known value at this time.
  */
-void check_const(const Values &values);
+void check_const(const Values& values);
 
 /**
  * Stream << overload for a single value.
  */
-std::ostream &operator<<(std::ostream &os, const Value &value);
+std::ostream& operator<<(std::ostream& os, const Value& value);
 
 /**
  * Stream << overload for zero or more values.
  */
-std::ostream &operator<<(std::ostream &os, const Values &values);
+std::ostream& operator<<(std::ostream& os, const Values& values);
 
 }  // namespace cqasm::v3x::values
 

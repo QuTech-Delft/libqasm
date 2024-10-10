@@ -1,6 +1,6 @@
-#include "libqasm/utils.hpp"
-
 #include <gtest/gtest.h>
+
+#include "libqasm/utils.hpp"
 
 using namespace cqasm::utils;
 

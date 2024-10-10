@@ -4,11 +4,12 @@
 
 #pragma once
 
+#include <fmt/format.h>
+#include <fmt/ostream.h>
+
 #include <array>
 #include <complex>
 #include <cstdint>
-#include <fmt/format.h>
-#include <fmt/ostream.h>
 #include <string>
 #include <vector>
 
@@ -33,13 +34,13 @@ T initialize() {
  * Serializes the given primitive object to CBOR.
  */
 template <typename T>
-void serialize(const T &obj, ::tree::cbor::MapWriter &map);
+void serialize(const T& obj, ::tree::cbor::MapWriter& map);
 
 /**
  * Deserializes the given primitive object from CBOR.
  */
 template <typename T>
-T deserialize(const ::tree::cbor::MapReader &map);
+T deserialize(const ::tree::cbor::MapReader& map);
 
 /**
  * String primitive used within the AST and semantic trees.
@@ -48,9 +49,9 @@ using Str = std::string;
 template <>
 Str initialize<Str>();
 template <>
-void serialize(const Str &obj, ::tree::cbor::MapWriter &map);
+void serialize(const Str& obj, ::tree::cbor::MapWriter& map);
 template <>
-Str deserialize(const ::tree::cbor::MapReader &map);
+Str deserialize(const ::tree::cbor::MapReader& map);
 
 /**
  * Axis primitive used within the semantic trees.
@@ -60,14 +61,14 @@ struct Axis {
     double y = 0.0;
     double z = 0.0;
 
-    [[nodiscard]] bool operator==(const Axis &rhs) const = default;
+    [[nodiscard]] bool operator==(const Axis& rhs) const = default;
 };
 template <>
 Axis initialize<Axis>();
 template <>
-void serialize(const Axis &obj, ::tree::cbor::MapWriter &map);
+void serialize(const Axis& obj, ::tree::cbor::MapWriter& map);
 template <>
-Axis deserialize(const ::tree::cbor::MapReader &map);
+Axis deserialize(const ::tree::cbor::MapReader& map);
 
 /**
  * Boolean primitive used within the semantic trees. Defaults to false.
@@ -76,9 +77,9 @@ using Bool = bool;
 template <>
 Bool initialize<Bool>();
 template <>
-void serialize(const Bool &obj, ::tree::cbor::MapWriter &map);
+void serialize(const Bool& obj, ::tree::cbor::MapWriter& map);
 template <>
-Bool deserialize(const ::tree::cbor::MapReader &map);
+Bool deserialize(const ::tree::cbor::MapReader& map);
 
 /**
  * Integer primitive used within the AST and semantic trees.
@@ -87,9 +88,9 @@ using Int = std::int64_t;
 template <>
 Int initialize<Int>();
 template <>
-void serialize(const Int &obj, ::tree::cbor::MapWriter &map);
+void serialize(const Int& obj, ::tree::cbor::MapWriter& map);
 template <>
-Int deserialize(const ::tree::cbor::MapReader &map);
+Int deserialize(const ::tree::cbor::MapReader& map);
 
 /**
  * Float number primitive used within the AST and semantic trees.
@@ -98,32 +99,32 @@ using Float = double;
 template <>
 Float initialize<Float>();
 template <>
-void serialize(const Float &obj, ::tree::cbor::MapWriter &map);
+void serialize(const Float& obj, ::tree::cbor::MapWriter& map);
 template <>
-Float deserialize(const ::tree::cbor::MapReader &map);
+Float deserialize(const ::tree::cbor::MapReader& map);
 
 /**
  * Complex number primitive used within the semantic trees.
  */
 using Complex = std::complex<double>;
 template <>
-void serialize(const Complex &obj, ::tree::cbor::MapWriter &map);
+void serialize(const Complex& obj, ::tree::cbor::MapWriter& map);
 template <>
-Complex deserialize(const ::tree::cbor::MapReader &map);
+Complex deserialize(const ::tree::cbor::MapReader& map);
 
 /**
  * Version number primitive used within the AST and semantic trees.
  */
 using Version = version::Version;
 template <>
-void serialize(const Version &obj, ::tree::cbor::MapWriter &map);
+void serialize(const Version& obj, ::tree::cbor::MapWriter& map);
 template <>
-Version deserialize(const ::tree::cbor::MapReader &map);
+Version deserialize(const ::tree::cbor::MapReader& map);
 
 /**
  * Stream << overload for axis nodes.
  */
-std::ostream &operator<<(std::ostream &os, const Axis &axis);
+std::ostream& operator<<(std::ostream& os, const Axis& axis);
 
 }  // namespace cqasm::v3x::primitives
 

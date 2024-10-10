@@ -8,16 +8,15 @@
 
 namespace cqasm::v3x::parser {
 
-AntlrCustomErrorListener::AntlrCustomErrorListener(const std::optional<std::string> &file_name)
+AntlrCustomErrorListener::AntlrCustomErrorListener(const std::optional<std::string>& file_name)
 : file_name_{ file_name } {
     if (file_name_.has_value() && file_name_.value().empty()) {
         file_name_ = std::nullopt;
     }
 }
 
-void AntlrCustomErrorListener::syntaxError(antlr4::Recognizer * /* recognizer */, antlr4::Token *offendingSymbol,
-    size_t line, size_t charPositionInLine, const std::string &msg, std::exception_ptr /* e */) {
-
+void AntlrCustomErrorListener::syntaxError(antlr4::Recognizer* /* recognizer */, antlr4::Token* offendingSymbol,
+    size_t line, size_t charPositionInLine, const std::string& msg, std::exception_ptr /* e */) {
     // ANTLR provides a zero-based character position in line
     // We change it here to a one-based index, which is the more human-readable,
     // and the common option in text editors
@@ -36,7 +35,7 @@ void AntlrCustomErrorListener::syntaxError(antlr4::Recognizer * /* recognizer */
             { static_cast<std::uint32_t>(line), static_cast<std::uint32_t>(end_column) } } };
 }
 
-void AntlrCustomErrorListener::syntaxError(size_t line, size_t charPositionInLine, const std::string &msg) {
+void AntlrCustomErrorListener::syntaxError(size_t line, size_t charPositionInLine, const std::string& msg) {
     syntaxError(nullptr, nullptr, line, charPositionInLine, msg, nullptr);
 }
 

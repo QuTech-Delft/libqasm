@@ -6,6 +6,7 @@
 #pragma once
 
 #include <fmt/ostream.h>
+
 #include <optional>
 
 #include "libqasm/v3x/types.hpp"
@@ -46,10 +47,10 @@ public:
      * operand_types is a shorthand type specification string as parsed by cqasm::types::from_spec().
      */
     Instruction() = default;
-    Instruction(std::string name, const std::optional<std::string> &operand_types);
+    Instruction(std::string name, const std::optional<std::string>& operand_types);
 
-    bool operator==(const Instruction &rhs) const;
-    inline bool operator!=(const Instruction &rhs) const { return !(*this == rhs); }
+    bool operator==(const Instruction& rhs) const;
+    inline bool operator!=(const Instruction& rhs) const { return !(*this == rhs); }
 };
 
 /**
@@ -60,25 +61,23 @@ using InstructionRef = tree::Maybe<Instruction>;
 /**
  * Stream << overload for instructions.
  */
-std::ostream &operator<<(std::ostream &os, const Instruction &instruction);
+std::ostream& operator<<(std::ostream& os, const Instruction& instruction);
 
 /**
  * Stream << overload for instruction references.
  */
-std::ostream &operator<<(std::ostream &os, const InstructionRef &instruction);
+std::ostream& operator<<(std::ostream& os, const InstructionRef& instruction);
 
 }  // namespace cqasm::v3x::instruction
-
 
 namespace cqasm::v3x::primitives {
 
 template <>
-void serialize(const instruction::InstructionRef &obj, ::tree::cbor::MapWriter &map);
+void serialize(const instruction::InstructionRef& obj, ::tree::cbor::MapWriter& map);
 template <>
-instruction::InstructionRef deserialize(const ::tree::cbor::MapReader &map);
+instruction::InstructionRef deserialize(const ::tree::cbor::MapReader& map);
 
 }  // namespace cqasm::v3x::primitives
-
 
 /**
  * std::ostream support via fmt (uses operator<<).

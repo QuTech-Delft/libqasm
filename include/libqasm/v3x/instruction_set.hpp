@@ -1,9 +1,9 @@
 #pragma once
 
-#include <string>
 #include <map>
 #include <optional>
 #include <set>
+#include <string>
 #include <utility>  // pair
 
 namespace cqasm::v3x::instruction {
@@ -49,32 +49,32 @@ public:
     [[nodiscard]] const InstructionListT& get_single_qubit_named_gate_list() const;
     [[nodiscard]] const InstructionListT& get_two_qubit_named_gate_list() const;
 
-    [[nodiscard]] bool is_single_qubit_named_gate(const std::string &name) const;
-    [[nodiscard]] bool is_two_qubit_named_gate(const std::string &name) const;
-    [[nodiscard]] bool is_named_gate(const std::string &name) const;
+    [[nodiscard]] bool is_single_qubit_named_gate(const std::string& name) const;
+    [[nodiscard]] bool is_two_qubit_named_gate(const std::string& name) const;
+    [[nodiscard]] bool is_named_gate(const std::string& name) const;
 
-    [[nodiscard]] bool is_single_qubit_gate_composition(const std::string &name) const;
-    [[nodiscard]] bool is_two_qubit_gate_composition(const std::string &name) const;
-    [[nodiscard]] bool is_gate_composition(const std::string &name) const;
+    [[nodiscard]] bool is_single_qubit_gate_composition(const std::string& name) const;
+    [[nodiscard]] bool is_two_qubit_gate_composition(const std::string& name) const;
+    [[nodiscard]] bool is_gate_composition(const std::string& name) const;
 
-    [[nodiscard]] bool is_single_qubit_gate(const std::string &name) const;
-    [[nodiscard]] bool is_two_qubit_gate(const std::string &name) const;
-    [[nodiscard]] bool is_gate(const std::string &name) const;
+    [[nodiscard]] bool is_single_qubit_gate(const std::string& name) const;
+    [[nodiscard]] bool is_two_qubit_gate(const std::string& name) const;
+    [[nodiscard]] bool is_gate(const std::string& name) const;
 
-    [[nodiscard]] bool is_measure(const std::string &name) const;
-    [[nodiscard]] bool is_reset(const std::string &name) const;
-    [[nodiscard]] bool is_non_gate(const std::string &name) const;
+    [[nodiscard]] bool is_measure(const std::string& name) const;
+    [[nodiscard]] bool is_reset(const std::string& name) const;
+    [[nodiscard]] bool is_non_gate(const std::string& name) const;
 
-    [[nodiscard]] bool is_inv_gate_modifier(const std::string &name) const;
-    [[nodiscard]] bool is_pow_gate_modifier(const std::string &name) const;
-    [[nodiscard]] bool is_ctrl_gate_modifier(const std::string &name) const;
-    [[nodiscard]] bool is_single_qubit_gate_modifier(const std::string &name) const;
-    [[nodiscard]] bool is_two_qubit_gate_modifier(const std::string &name) const;
-    [[nodiscard]] bool is_gate_modifier(const std::string &name) const;
+    [[nodiscard]] bool is_inv_gate_modifier(const std::string& name) const;
+    [[nodiscard]] bool is_pow_gate_modifier(const std::string& name) const;
+    [[nodiscard]] bool is_ctrl_gate_modifier(const std::string& name) const;
+    [[nodiscard]] bool is_single_qubit_gate_modifier(const std::string& name) const;
+    [[nodiscard]] bool is_two_qubit_gate_modifier(const std::string& name) const;
+    [[nodiscard]] bool is_gate_modifier(const std::string& name) const;
 
-    [[nodiscard]] std::optional<char> get_named_gate_param_type(const std::string &name) const;
-    [[nodiscard]] std::optional<char> get_gate_modifier_param_type(const std::string &name) const;
-    [[nodiscard]] std::optional<char> get_instruction_param_type(const std::string &name) const;
+    [[nodiscard]] std::optional<char> get_named_gate_param_type(const std::string& name) const;
+    [[nodiscard]] std::optional<char> get_gate_modifier_param_type(const std::string& name) const;
+    [[nodiscard]] std::optional<char> get_instruction_param_type(const std::string& name) const;
 };
 
 }  // namespace cqasm::v3x::instruction

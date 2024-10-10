@@ -17,7 +17,7 @@ from setuptools.command.install import install as _install
 def get_version(verbose=False):
     """Extract version information from source code"""
     inc_dir = os.path.join(root_dir, "include", "libqasm")  # C++ include directory
-    matcher = re.compile('static const char \*version\{ "(.*)" \}')
+    matcher = re.compile('static const char\* version\{ "(.*)" \}')
     version = None
     with open(os.path.join(inc_dir, "versioning.hpp"), "r") as f:
         for ln in f:

@@ -10,14 +10,14 @@ class InstructionSetTest : public ::testing::Test {
 protected:
     void SetUp() override {}
 
-    const InstructionSet &instruction_set = InstructionSet::get_instance();
-    const InstructionSet &instruction_set_2 = InstructionSet::get_instance();
-    const InstructionMapT &named_gate_map = instruction_set.get_named_gate_map();
-    const InstructionMapT &non_gate_map = instruction_set.get_non_gate_map();
-    const GateModifierMapT &gate_modifier_map = instruction_set.get_gate_modifier_map();
-    const InstructionListT &single_qubit_named_gate_list = instruction_set.get_single_qubit_named_gate_list();
-    const InstructionListT &two_qubit_named_gate_list = instruction_set.get_two_qubit_named_gate_list();
-    
+    const InstructionSet& instruction_set = InstructionSet::get_instance();
+    const InstructionSet& instruction_set_2 = InstructionSet::get_instance();
+    const InstructionMapT& named_gate_map = instruction_set.get_named_gate_map();
+    const InstructionMapT& non_gate_map = instruction_set.get_non_gate_map();
+    const GateModifierMapT& gate_modifier_map = instruction_set.get_gate_modifier_map();
+    const InstructionListT& single_qubit_named_gate_list = instruction_set.get_single_qubit_named_gate_list();
+    const InstructionListT& two_qubit_named_gate_list = instruction_set.get_two_qubit_named_gate_list();
+
     const size_t number_of_gate_map_entries = 48;
     const size_t number_of_non_gate_map_entries = 7;
     const size_t number_of_gate_modifier_map_entries = 3;
@@ -152,19 +152,19 @@ TEST_F(InstructionSetTest, is_gate_modifier) {
 TEST_F(InstructionSetTest, get_named_gate_param_type) {
     EXPECT_EQ(instruction_set.get_named_gate_param_type("H"), std::nullopt);
     EXPECT_EQ(instruction_set.get_named_gate_param_type("Rz"), 'f');
-    EXPECT_THAT([this]() { (void) instruction_set.get_named_gate_param_type("inv"); },
+    EXPECT_THAT([this]() { (void)instruction_set.get_named_gate_param_type("inv"); },
         ThrowsMessage<AnalysisError>(::testing::HasSubstr("couldn't find gate")));
 }
 TEST_F(InstructionSetTest, get_gate_modifier_param_type) {
     EXPECT_EQ(instruction_set.get_gate_modifier_param_type("inv"), std::nullopt);
     EXPECT_EQ(instruction_set.get_gate_modifier_param_type("pow"), 'f');
-    EXPECT_THAT([this]() { (void) instruction_set.get_gate_modifier_param_type("H"); },
+    EXPECT_THAT([this]() { (void)instruction_set.get_gate_modifier_param_type("H"); },
         ThrowsMessage<AnalysisError>(::testing::HasSubstr("couldn't find gate modifier")));
 }
 TEST_F(InstructionSetTest, get_instruction_param_type) {
     EXPECT_EQ(instruction_set.get_instruction_param_type("H"), std::nullopt);
     EXPECT_EQ(instruction_set.get_instruction_param_type("measure"), std::nullopt);
     EXPECT_EQ(instruction_set.get_instruction_param_type("pow"), 'f');
-    EXPECT_THAT([this]() { (void) instruction_set.get_instruction_param_type("1q_H"); },
+    EXPECT_THAT([this]() { (void)instruction_set.get_instruction_param_type("1q_H"); },
         ThrowsMessage<AnalysisError>(::testing::HasSubstr("couldn't find instruction")));
 }

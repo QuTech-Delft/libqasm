@@ -55,20 +55,20 @@ public:
 protected:
     std::list<Scope> scope_stack_;
 
-    [[nodiscard]] Scope &global_scope();
-    [[nodiscard]] Scope &current_scope();
+    [[nodiscard]] Scope& global_scope();
+    [[nodiscard]] Scope& current_scope();
     [[nodiscard]] tree::One<semantic::Block> current_block();
-    [[nodiscard]] tree::Any<semantic::Variable> &current_variables();
+    [[nodiscard]] tree::Any<semantic::Variable>& current_variables();
 
-    [[nodiscard]] const Scope &global_scope() const;
-    [[nodiscard]] const Scope &current_scope() const;
-    [[nodiscard]] const tree::Any<semantic::Variable> &current_variables() const;
+    [[nodiscard]] const Scope& global_scope() const;
+    [[nodiscard]] const Scope& current_scope() const;
+    [[nodiscard]] const tree::Any<semantic::Variable>& current_variables() const;
 
 public:
     /**
      * Creates a new semantic analyzer.
      */
-    explicit Analyzer(const primitives::Version &api_version = "3.0");
+    explicit Analyzer(const primitives::Version& api_version = "3.0");
 
     /**
      * Destroys a semantic analyzer.
@@ -93,26 +93,26 @@ public:
     /**
      * Analyzes the given program AST node.
      */
-    [[nodiscard]] virtual AnalysisResult analyze(ast::Program &program);
+    [[nodiscard]] virtual AnalysisResult analyze(ast::Program& program);
 
     /**
      * Analyzes the given parse result.
      * If there are parse errors, they are moved into the AnalysisResult error list,
      * and the root node will be empty.
      */
-    [[nodiscard]] virtual AnalysisResult analyze(const parser::ParseResult &parse_result);
+    [[nodiscard]] virtual AnalysisResult analyze(const parser::ParseResult& parse_result);
 
     /**
      * Parses and analyzes the given file.
      */
-    [[nodiscard]] virtual AnalysisResult analyze_file(const std::string &file_name);
+    [[nodiscard]] virtual AnalysisResult analyze_file(const std::string& file_name);
 
     /**
      * Parses and analyzes the given string.
      * The optional file_name argument will be used only for error messages.
      */
     [[nodiscard]] virtual AnalysisResult analyze_string(
-        const std::string &data, const std::optional<std::string> &file_name);
+        const std::string& data, const std::optional<std::string>& file_name);
 
     /**
      * Pushes a new empty scope to the top of the scope stack.
@@ -127,23 +127,23 @@ public:
     /**
      * Adds a statement to the current scope.
      */
-    virtual void add_statement_to_current_scope(const tree::One<semantic::Statement> &statement);
+    virtual void add_statement_to_current_scope(const tree::One<semantic::Statement>& statement);
 
     /**
      * Adds a variable to the current scope.
      */
-    virtual void add_variable_to_current_scope(const tree::One<semantic::Variable> &variable);
+    virtual void add_variable_to_current_scope(const tree::One<semantic::Variable>& variable);
 
     /**
      * Resolves a variable.
      * Throws NameResolutionFailure if no variable by the given name exists.
      */
-    [[nodiscard]] virtual values::Value resolve_variable(const std::string &name) const;
+    [[nodiscard]] virtual values::Value resolve_variable(const std::string& name) const;
 
     /**
      * Registers a variable.
      */
-    virtual void register_variable(const std::string &name, const values::Value &value);
+    virtual void register_variable(const std::string& name, const values::Value& value);
 
     /**
      * Resolves a function.
@@ -153,13 +153,13 @@ public:
      * OverloadResolutionFailure if no overload of the function exists for the given arguments,
      * or otherwise returns the value returned by the function.
      */
-    [[nodiscard]] virtual values::Value resolve_function(const std::string &name, const values::Values &args) const;
+    [[nodiscard]] virtual values::Value resolve_function(const std::string& name, const values::Values& args) const;
 
     /**
      * Registers a consteval core function.
      */
     virtual void register_consteval_core_function(
-        const std::string &name, const types::Types &param_types, const resolver::ConstEvalCoreFunction &function);
+        const std::string& name, const types::Types& param_types, const resolver::ConstEvalCoreFunction& function);
 
     /**
      * Convenience method for registering a consteval core function.
@@ -167,7 +167,7 @@ public:
      * converted to types::Types for the other overload using types::from_spec.
      */
     virtual void register_consteval_core_function(
-        const std::string &name, const std::string &param_types, const resolver::ConstEvalCoreFunction &function);
+        const std::string& name, const std::string& param_types, const resolver::ConstEvalCoreFunction& function);
 
     /**
      * Resolves a GateInstruction.
@@ -176,8 +176,8 @@ public:
      * or otherwise returns the resolved instruction node.
      * Annotation data, line number information, and the condition still need to be set by the caller.
      */
-    [[nodiscard]] tree::One<semantic::Instruction> resolve_instruction(const std::string &name,
-        const tree::One<semantic::Gate> &gate, const values::Values &args) const;
+    [[nodiscard]] tree::One<semantic::Instruction> resolve_instruction(
+        const std::string& name, const tree::One<semantic::Gate>& gate, const values::Values& args) const;
 
     /**
      * Resolves a NonGateInstruction.
@@ -186,19 +186,19 @@ public:
      * or otherwise returns the resolved instruction node.
      * Annotation data, line number information, and the condition still need to be set by the caller.
      */
-    [[nodiscard]] virtual tree::One<semantic::Instruction> resolve_instruction(const std::string &name,
-        const values::Values &args) const;
+    [[nodiscard]] virtual tree::One<semantic::Instruction> resolve_instruction(
+        const std::string& name, const values::Values& args) const;
 
     /**
      * Registers an instruction type.
      */
-    virtual void register_instruction(const instruction::Instruction &instruction);
+    virtual void register_instruction(const instruction::Instruction& instruction);
 
     /**
      * Convenience method for registering an instruction type.
      * The arguments are passed straight to instruction::Instruction's constructor.
      */
-    virtual void register_instruction(const std::string &name, const std::optional<std::string> &operand_types);
+    virtual void register_instruction(const std::string& name, const std::optional<std::string>& operand_types);
 };
 
 }  // namespace cqasm::v3x::analyzer

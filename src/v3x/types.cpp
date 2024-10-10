@@ -34,7 +34,7 @@ Type from_spec(const char c) {
     }
 }
 
-Types from_spec(const std::string &spec) {
+Types from_spec(const std::string& spec) {
     Types types;
     for (auto c : spec) {
         types.add(from_spec(c));
@@ -45,21 +45,21 @@ Types from_spec(const std::string &spec) {
 /**
  * Returns whether the `actual` type matches the constraints of the `expected` type.
  */
-bool type_check(const Type &expected, const Type &actual) {
+bool type_check(const Type& expected, const Type& actual) {
     return actual->type() == expected->type();
 }
 
 /**
  * Returns the number of elements of the given type.
  */
-primitives::Int size_of(const Type &type) {
+primitives::Int size_of(const Type& type) {
     return type->as_type_base()->size;
 }
 
 /**
  * Stream << overload for a single type.
  */
-std::ostream &operator<<(std::ostream &os, const Type &type) {
+std::ostream& operator<<(std::ostream& os, const Type& type) {
     if (type.empty()) {
         os << "!EMPTY";
     } else if (type->as_qubit()) {
@@ -86,7 +86,7 @@ std::ostream &operator<<(std::ostream &os, const Type &type) {
 /**
  * Stream << overload for zero or more types.
  */
-std::ostream &operator<<(std::ostream &os, const Types &types) {
+std::ostream& operator<<(std::ostream& os, const Types& types) {
     return os << fmt::format("{}", fmt::join(types, ", "));
 }
 

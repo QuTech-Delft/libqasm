@@ -1,10 +1,11 @@
 #include "integration_test.hpp"
 
-#include <filesystem>
 #include <fmt/format.h>
 #include <fmt/ostream.h>
 #include <fmt/ranges.h>
 #include <gtest/gtest.h>
+
+#include <filesystem>
 #include <string>
 
 #include "libqasm/v3x/cqasm.hpp"
@@ -66,7 +67,7 @@ public:
         }
 
         // If there were no errors, try semantic analysis
-        for (const auto &api_version : std::vector<std::string>({ "3.0" })) {
+        for (const auto& api_version : std::vector<std::string>({ "3.0" })) {
             auto analyzer = cq3x::analyzer::Analyzer{ api_version };
 
             analyzer.register_default_constants();
@@ -97,10 +98,8 @@ public:
                     std::ofstream semantic_json_actual_ofs{ semantic_json_actual_file_path };
                     fmt::print(semantic_json_actual_ofs, "{}", analysis_result.to_json());
                 }
-                EXPECT_TRUE(
-                    cqasm::test::read_file(semantic_json_actual_file_path, semantic_json_actual_file_contents));
-                EXPECT_TRUE(
-                    cqasm::test::read_file(semantic_json_golden_file_path, semantic_json_golden_file_contents));
+                EXPECT_TRUE(cqasm::test::read_file(semantic_json_actual_file_path, semantic_json_actual_file_contents));
+                EXPECT_TRUE(cqasm::test::read_file(semantic_json_golden_file_path, semantic_json_golden_file_contents));
                 EXPECT_TRUE(semantic_json_actual_file_contents == semantic_json_golden_file_contents);
             }
 
@@ -113,7 +112,7 @@ public:
 
 void register_tests() {
     cqasm::test::register_tests(fs::path{ "res" } / "v3x" / "tests" / "integration",
-        [=](fs::path test_path) -> IntegrationTest * { return new IntegrationTest(std::move(test_path)); });
+        [=](fs::path test_path) -> IntegrationTest* { return new IntegrationTest(std::move(test_path)); });
 }
 
 }  // namespace cqasm::v3x::test
