@@ -1,8 +1,7 @@
 #include <gmock/gmock.h>
-
 #include <iostream>
 
-#include "v3x/cpp/parsing.hpp"
+#include "v3x/cpp/integration_test.hpp"
 
 int main_impl(int argc, char **argv, std::ostream &) {
     ::testing::InitGoogleMock(&argc, argv);

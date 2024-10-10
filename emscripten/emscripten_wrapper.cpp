@@ -1,7 +1,7 @@
 #include "emscripten_wrapper.hpp"
 
-#include "v3x/cqasm-py.hpp"
-#include "version.hpp"
+#include "libqasm/v3x/cqasm_python.hpp"
+#include "libqasm/versioning.hpp"
 
 
 /**

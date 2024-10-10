@@ -19,7 +19,7 @@ target_link_libraries(<your target> PUBLIC libqasm::libqasm)
 **Example**:
 
 ```cpp
-#include "v3x/cqasm-py.hpp"
+#include "libqasm/v3x/cqasm_python.hpp"
 
 auto program = std::string{ R"(
     version 3.0

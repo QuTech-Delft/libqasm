@@ -44,7 +44,7 @@ class LibqasmConan(ConanFile):
         "python_dir": None,
         "python_ext": None
     }
-    exports = "version.py", "include/version.hpp"
+    exports = "version.py", "include/libqasm/versioning.hpp"
     exports_sources = "CMakeLists.txt", "include/*", "python/*", "res/*", "scripts/*", "src/*", "test/*"
 
     @property

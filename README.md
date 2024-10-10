@@ -47,7 +47,7 @@ We can parse or analyze this circuit, using libQASM through the following progra
 ### C++
 
 ```cpp
-#include "v3/cqasm-py.hpp"
+#include "libqasm/v3x/cqasm-python.hpp"
 
 int main() {
     auto parse_result = V3xAnalyzer::parse_file("example.cq");

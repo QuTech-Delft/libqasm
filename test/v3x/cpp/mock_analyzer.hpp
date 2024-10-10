@@ -1,11 +1,10 @@
 #pragma once
 
 #include <gmock/gmock.h>
-
 #include <string>
 
-#include "v3x/cqasm-analyzer.hpp"
-#include "v3x/cqasm-values.hpp"
+#include "libqasm/v3x/analyzer.hpp"
+#include "libqasm/v3x/values.hpp"
 
 namespace cqasm::v3x::analyzer {
 
