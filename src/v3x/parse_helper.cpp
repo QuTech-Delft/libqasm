@@ -1,5 +1,5 @@
 /** \file
- * Implementation for \ref include/libqasm/v3x/parse_helper.hpp "v3x/parse_helper.hpp".
+ * Implementation for \ref include/libqasm/v3x/parse_helper.hpp "libqasm/v3x/parse_helper.hpp".
  */
 
 #include "libqasm/v3x/parse_helper.hpp"

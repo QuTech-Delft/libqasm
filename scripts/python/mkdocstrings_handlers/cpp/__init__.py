@@ -175,7 +175,7 @@ class CppHandler(BaseHandler):
         # Merge all file-level XMLs into one to simplify search.
         self._file_doxyxml = None
         for h in headers:
-            filename = h.replace(".hpp", "_8hpp.xml")
+            filename = h.replace("_", "__").replace(".hpp", "_8hpp.xml")
             with open(os.path.join(self._doxyxml_dir, filename)) as f:
                 doxyxml = ElementTree.parse(f)
                 if self._file_doxyxml is None:

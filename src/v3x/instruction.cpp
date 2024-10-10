@@ -1,5 +1,5 @@
 /** \file
- * Implementation for \ref include/libqasm/v3x/instruction.hpp "v3x/instruction.hpp".
+ * Implementation for \ref include/libqasm/v3x/instruction.hpp "libqasm/v3x/instruction.hpp".
  */
 
 #include "libqasm/v3x/instruction.hpp"

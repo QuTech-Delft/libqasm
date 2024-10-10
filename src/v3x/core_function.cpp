@@ -1,5 +1,5 @@
 /** \file
- * Implementation for \ref include/libqasm/v3x/core_function.hpp "v3x/core_function.hpp".
+ * Implementation for \ref include/libqasm/v3x/core_function.hpp "libqasm/v3x/core_function.hpp".
  */
 
 #include "libqasm/v3x/core_function.hpp"

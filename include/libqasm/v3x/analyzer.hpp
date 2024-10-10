@@ -15,8 +15,8 @@
 
 #include "analysis_result.hpp"
 #include "analyzer.hpp"
-#include "core_function.hpp"
 #include "libqasm/v3x/ast.hpp"
+#include "libqasm/v3x/core_function.hpp"
 #include "libqasm/v3x/parse_helper.hpp"
 #include "libqasm/v3x/resolver.hpp"
 #include "libqasm/v3x/scope.hpp"
@@ -177,7 +177,7 @@ public:
      * Annotation data, line number information, and the condition still need to be set by the caller.
      */
     [[nodiscard]] tree::One<semantic::Instruction> resolve_instruction(
-        const std::string& name, const tree::One<semantic::UnitaryGate>& gate, const values::Values& args) const;
+        const std::string& name, const tree::One<semantic::Gate>& gate, const values::Values& args) const;
 
     /**
      * Resolves a NonGateInstruction.

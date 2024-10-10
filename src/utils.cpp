@@ -1,5 +1,5 @@
 /** \file
- * Implementation for \ref include/libqasm/utils.hpp "utils.hpp".
+ * Implementation for \ref include/libqasm/utils.hpp "libqasm/utils.hpp".
  */
 
 #include "libqasm/utils.hpp"

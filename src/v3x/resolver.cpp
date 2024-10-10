@@ -1,5 +1,5 @@
 /** \file
- * Implementation for \ref include/libqasm/v3x/resolver.hpp "v3x/resolver.hpp".
+ * Implementation for \ref include/libqasm/v3x/resolver.hpp "libqasm/v3x/resolver.hpp".
  */
 
 #include "libqasm/v3x/resolver.hpp"
@@ -123,8 +123,8 @@ void InstructionTable::add(const instruction::Instruction& type) {
  * returns the resolved instruction node.
  * Annotation data, line number information, and the condition still need to be set by the caller.
  */
-[[nodiscard]] tree::One<semantic::Instruction> InstructionTable::resolve(
-    const std::string& name, const tree::One<semantic::UnitaryGate>& gate, const Values& args) const {
+[[nodiscard]] tree::One<semantic::Instruction> InstructionTable::resolve(const std::string& name,
+    const tree::One<semantic::Gate> &gate, const Values& args) const {
     auto [instruction_ref, promoted_args] = resolver->resolve(name, args);
     return tree::make<semantic::GateInstruction>(instruction_ref, gate, promoted_args);
 }

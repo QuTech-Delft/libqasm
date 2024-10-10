@@ -2,7 +2,7 @@
 
 For development, see:
 
-- `include`: public headers.
+- `include/libqasm`: public headers.
 - `src`: source files.
 - `test`: test files.
 - `python`: SWIG interface.
