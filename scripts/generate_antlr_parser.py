@@ -11,14 +11,17 @@ import tempfile
 
 
 def print_usage():
-    print("Usage:")
-    print("    python3 generate_antlr_parser.py <INPUT_FOLDER> <OUTPUT_SOURCE_FOLDER> <OUTPUT_INCLUDE_FOLDER>")
-    print("Where:")
-    print("    INPUT_FOLDER: folder containing the grammar files.")
-    print("    OUTPUT_SOURCE_FOLDER: folder where generated source files will be left.")
-    print("    OUTPUT_INCLUDE_FOLDER: folder where generated include files will be left.")
-    print("Example:")
-    print("    python3 generate_antlr_parser.py ../src/v3x ../build/Debug/src/v3x ../build/Debug/include/v3x")
+    usage_str = '''
+Usage:
+    python3 generate_antlr_parser.py <INPUT_FOLDER> <OUTPUT_SOURCE_FOLDER> <OUTPUT_INCLUDE_FOLDER>
+Where:
+    INPUT_FOLDER: folder containing the grammar files.
+    OUTPUT_SOURCE_FOLDER: folder where generated source files will be left.
+    OUTPUT_INCLUDE_FOLDER: folder where generated include files will be left.
+Example:
+    python3 generate_antlr_parser.py ../src/v3x ../build/Debug/src/v3x ../build/Debug/include/v3x
+'''
+    print(usage_str)
 
 
 class AntlrJarFileDownloader:

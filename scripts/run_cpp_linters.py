@@ -6,12 +6,15 @@ import sys
 
 
 def print_usage():
-    print("Usage:")
-    print("    python3 run_cpp_linters.py <ROOT_FOLDER>")
-    print("Where:")
-    print("    ROOT_FOLDER: folder containing the .clang-format, .clang-tidy, and C++ files.")
-    print("Example:")
-    print("    python3 run_cpp_linters.py .")
+    usage_str = '''
+Usage:
+    python3 run_cpp_linters.py <ROOT_FOLDER>
+Where:
+    ROOT_FOLDER: folder containing the .clang-format, .clang-tidy, and C++ files.
+Example:
+    python3 run_cpp_linters.py .
+    '''
+    print(usage_str)
 
 
 def get_list_of_cpp_files(root_folder: os.PathLike) -> list[str]:
