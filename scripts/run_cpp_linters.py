@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import logging
 import os
 import subprocess
 import sys
@@ -14,7 +15,7 @@ Where:
 Example:
     python3 run_cpp_linters.py .
     '''
-    print(usage_str)
+    logging.info(usage_str)
 
 
 def get_list_of_cpp_files(root_folder: os.PathLike) -> list[str]:
@@ -32,7 +33,7 @@ def get_list_of_cpp_files(root_folder: os.PathLike) -> list[str]:
 
 
 def run_clang_format(root_folder: os.PathLike):
-    print("Running clang-format")
+    logging.info("Running clang-format")
     file_list = get_list_of_cpp_files(root_folder)
     try:
         format_file_path = os.path.join(root_folder, ".clang-format")
@@ -49,12 +50,13 @@ def run_clang_tidy(root_folder: os.PathLike):
 
 
 def run_cpp_linters(root_folder: os.PathLike):
-    print("Running C++ linters")
+    logging.info("Running C++ linters")
     run_clang_format(root_folder)
     run_clang_tidy(root_folder)
 
 
 def main(argv):
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
     if len(argv) != 2:
         print_usage()
         exit(2)
