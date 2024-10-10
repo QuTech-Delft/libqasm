@@ -58,7 +58,7 @@ jobs:
     name: "C++ tests (gcc/Linux/ARM64)"
     needs: cpp-linters
     runs-on: [self-hosted, ARM64, Linux]
-    container: python:3.11
+    container: arm64v8/python:3.11
     strategy:
       fail-fast: false
       matrix:
