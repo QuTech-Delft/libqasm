@@ -136,20 +136,17 @@ types::Types types_of(const tree::Any<semantic::Variable>& variables) {
  * For a named gate, such as X or Rz, the terminal name will be the name of the gate.
  * For a composition of gate modifiers acting on a named gate, the terminal name will be the name of the named gate.
  */
-std::string get_gate_terminal_name(const tree::One<semantic::Gate> &gate) {
-    return gate->gate.empty()
-        ? gate->name
-        : get_gate_terminal_name(gate->gate);
+std::string get_gate_terminal_name(const tree::One<semantic::Gate>& gate) {
+    return gate->gate.empty() ? gate->name : get_gate_terminal_name(gate->gate);
 }
 
-std::string get_gate_resolution_name(const tree::One<semantic::Gate> &gate) {
-    return gate->gate.empty()
-        ? gate->name
-        : fmt::format("{}_{}",
-            (InstructionSet::get_instance().is_single_qubit_gate_modifier(gate->name))
-                ? InstructionSet::get_instance().single_qubit_gate_composition_prefix
-                : InstructionSet::get_instance().two_qubit_gate_composition_prefix,
-            get_gate_terminal_name(gate->gate));
+std::string get_gate_resolution_name(const tree::One<semantic::Gate>& gate) {
+    return gate->gate.empty() ? gate->name
+                              : fmt::format("{}_{}",
+                                    (InstructionSet::get_instance().is_single_qubit_gate_modifier(gate->name))
+                                        ? InstructionSet::get_instance().single_qubit_gate_composition_prefix
+                                        : InstructionSet::get_instance().two_qubit_gate_composition_prefix,
+                                    get_gate_terminal_name(gate->gate));
 }
 
 std::any SemanticAnalyzer::visit_gate_instruction(ast::GateInstruction& node) {
@@ -160,7 +157,7 @@ std::any SemanticAnalyzer::visit_gate_instruction(ast::GateInstruction& node) {
         auto operands = std::any_cast<values::Values>(node.operands->visit(*this));
 
         // Resolve the instruction
-        const auto &resolution_name = get_gate_resolution_name(gate);
+        const auto& resolution_name = get_gate_resolution_name(gate);
         ret.set(analyzer_.resolve_instruction(resolution_name, gate, operands));
 
         // Copy annotation data
@@ -177,18 +174,18 @@ std::any SemanticAnalyzer::visit_gate_instruction(ast::GateInstruction& node) {
     return ret;
 }
 
-bool is_two_qubit_gate(const tree::One<semantic::Gate> &gate) {
-    const auto &resolution_name = get_gate_resolution_name(gate);
+bool is_two_qubit_gate(const tree::One<semantic::Gate>& gate) {
+    const auto& resolution_name = get_gate_resolution_name(gate);
     return InstructionSet::get_instance().is_two_qubit_gate(resolution_name);
 }
 
-void check_gate(const tree::One<semantic::Gate> &gate) {
+void check_gate(const tree::One<semantic::Gate>& gate) {
     if (!gate->gate.empty() && is_two_qubit_gate(gate->gate)) {
         throw error::AnalysisError{ "trying to apply a gate modifier to a multi-qubit gate" };
     }
 }
 
-void resolve_gate(const tree::One<semantic::Gate> &gate) {
+void resolve_gate(const tree::One<semantic::Gate>& gate) {
     if (!gate->parameter.empty()) {
         const auto& instruction_set = InstructionSet::get_instance();
         const auto& param_type = instruction_set.get_instruction_param_type(gate->name);
@@ -201,13 +198,12 @@ void resolve_gate(const tree::One<semantic::Gate> &gate) {
     }
 }
 
-std::any SemanticAnalyzer::visit_gate(ast::Gate &node) {
+std::any SemanticAnalyzer::visit_gate(ast::Gate& node) {
     auto ret = tree::make<semantic::Gate>();
     try {
         ret->name = node.name->name;
         if (!node.gate.empty()) {
-            ret->gate =
-                std::any_cast<tree::One<semantic::Gate>>(visit_gate(*node.gate)).get_ptr();
+            ret->gate = std::any_cast<tree::One<semantic::Gate>>(visit_gate(*node.gate)).get_ptr();
         }
         if (!node.parameter.empty()) {
             ret->parameter = std::any_cast<values::Value>(visit_expression(*node.parameter)).get_ptr();

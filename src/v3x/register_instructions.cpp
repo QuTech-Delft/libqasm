@@ -28,8 +28,8 @@ void register_instructions(analyzer::Analyzer* analyzer) {
     for (const auto& [named_gate_name, pair_params_types_operands_types] : named_gate_map) {
         if (instruction_set.is_single_qubit_named_gate(named_gate_name)) {
             const auto& operand_types = pair_params_types_operands_types.second;
-            const auto& single_qubit_gate_name = fmt::format("{}_{}",
-                instruction_set.single_qubit_gate_composition_prefix, named_gate_name);
+            const auto& single_qubit_gate_name =
+                fmt::format("{}_{}", instruction_set.single_qubit_gate_composition_prefix, named_gate_name);
             analyzer->register_instruction(single_qubit_gate_name, operand_types);
         }
     };
@@ -45,8 +45,8 @@ void register_instructions(analyzer::Analyzer* analyzer) {
             assert(operand_types.has_value());
             const auto& operand_types_1 = fmt::format("{}{}", "Q", operand_types.value());
             const auto& operand_types_2 = fmt::format("{}{}", "V", operand_types.value());
-            const auto& two_qubit_gate_name = fmt::format("{}_{}",
-                instruction_set.two_qubit_gate_composition_prefix, named_gate_name);
+            const auto& two_qubit_gate_name =
+                fmt::format("{}_{}", instruction_set.two_qubit_gate_composition_prefix, named_gate_name);
             analyzer->register_instruction(two_qubit_gate_name, operand_types_1);
             analyzer->register_instruction(two_qubit_gate_name, operand_types_2);
         }

@@ -23,14 +23,14 @@ namespace cqasm::v3x::types {
  */
 Type from_spec(const char c) {
     switch (c) {
-        case 'Q': return tree::make<types::Qubit>();
-        case 'B': return tree::make<types::Bit>();
-        case 'b': return tree::make<types::Bool>();
-        case 'i': return tree::make<types::Int>();
-        case 'f': return tree::make<types::Float>();
-        case 'V': return tree::make<types::QubitArray>();
-        case 'W': return tree::make<types::BitArray>();
-        default: throw std::invalid_argument("unknown type code encountered");
+    case 'Q': return tree::make<types::Qubit>();
+    case 'B': return tree::make<types::Bit>();
+    case 'b': return tree::make<types::Bool>();
+    case 'i': return tree::make<types::Int>();
+    case 'f': return tree::make<types::Float>();
+    case 'V': return tree::make<types::QubitArray>();
+    case 'W': return tree::make<types::BitArray>();
+    default: throw std::invalid_argument("unknown type code encountered");
     }
 }
 

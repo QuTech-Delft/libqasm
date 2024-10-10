@@ -78,7 +78,6 @@ InstructionSet::InstructionSet()
 }
 {}
 
-
 [[nodiscard]] /* static */ InstructionSet& InstructionSet::get_instance() {
     static InstructionSet instance;
     return instance;

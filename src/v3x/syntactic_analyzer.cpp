@@ -177,7 +177,7 @@ std::any SyntacticAnalyzer::visitGateInstruction(CqasmParser::GateInstructionCon
     return One<Statement>{ ret };
 }
 
-std::any SyntacticAnalyzer::visitInvGate(CqasmParser::InvGateContext *context) {
+std::any SyntacticAnalyzer::visitInvGate(CqasmParser::InvGateContext* context) {
     auto ret = tree::make<Gate>();
     ret->name = tree::make<Identifier>(context->INV()->getText());
     ret->gate = std::any_cast<tree::One<Gate>>(context->gate()->accept(this)).get_ptr();
@@ -185,7 +185,7 @@ std::any SyntacticAnalyzer::visitInvGate(CqasmParser::InvGateContext *context) {
     return ret;
 }
 
-std::any SyntacticAnalyzer::visitPowGate(CqasmParser::PowGateContext *context) {
+std::any SyntacticAnalyzer::visitPowGate(CqasmParser::PowGateContext* context) {
     auto ret = tree::make<Gate>();
     ret->name = tree::make<Identifier>(context->POW()->getText());
     ret->gate = std::any_cast<tree::One<Gate>>(context->gate()->accept(this)).get_ptr();
@@ -194,7 +194,7 @@ std::any SyntacticAnalyzer::visitPowGate(CqasmParser::PowGateContext *context) {
     return ret;
 }
 
-std::any SyntacticAnalyzer::visitCtrlGate(CqasmParser::CtrlGateContext *context) {
+std::any SyntacticAnalyzer::visitCtrlGate(CqasmParser::CtrlGateContext* context) {
     auto ret = tree::make<Gate>();
     ret->name = tree::make<Identifier>(context->CTRL()->getText());
     ret->gate = std::any_cast<tree::One<Gate>>(context->gate()->accept(this)).get_ptr();
@@ -202,7 +202,7 @@ std::any SyntacticAnalyzer::visitCtrlGate(CqasmParser::CtrlGateContext *context)
     return ret;
 }
 
-std::any SyntacticAnalyzer::visitNamedGate(CqasmParser::NamedGateContext *context) {
+std::any SyntacticAnalyzer::visitNamedGate(CqasmParser::NamedGateContext* context) {
     auto ret = tree::make<Gate>();
     ret->name = tree::make<Identifier>(context->IDENTIFIER()->getText());
     if (context->expression()) {
