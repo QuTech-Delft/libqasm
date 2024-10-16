@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [ 0.6.8 ] - [ 2024-10-16 ]
+
+### Added
+- Gate modifiers: `inv`, `pow`, and `ctrl`.
+- C++ linters GitHub Actions job (just running clang-format at the moment).
+
+### Changed
+- Fix bug: empty lists are written out to JSON as `"[]"` instead of `[]`.
+- More descriptive and consistent (snake case) file names. 
+- Minor fixes and tweaks to documentation.
+
+### Removed
+
+
 ## [ 0.6.7 ] - [ 2024-05-30 ]
 
 ### Added
