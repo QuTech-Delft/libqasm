@@ -59,6 +59,8 @@ jobs:
     needs: cpp-linters
     runs-on: [self-hosted, ARM64, Linux]
     container: python:3.11
+    # Run only on master (until we have a GitHub-hosted runner for Linux/ARM64)
+    if: github.ref == 'refs/heads/master'
     strategy:
       fail-fast: false
       matrix:
