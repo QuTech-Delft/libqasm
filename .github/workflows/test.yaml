@@ -59,8 +59,8 @@ jobs:
     needs: cpp-linters
     runs-on: [self-hosted, ARM64, Linux]
     container: python:3.11
-    # Run only on master (until we have a GitHub-hosted runner for Linux/ARM64)
-    if: github.ref == 'refs/heads/master'
+    # Run only when merging to develop (until we have a GitHub-hosted runner for Linux/ARM64)
+    if: github.ref == 'refs/heads/develop'
     strategy:
       fail-fast: false
       matrix:
@@ -323,13 +323,13 @@ jobs:
                contains(needs.*.result, 'failure')
             || contains(needs.*.result, 'cancelled')
             || (
-                    github.ref != 'refs/heads/master'
+                    github.ref != 'refs/heads/develop'
                  && contains(needs.*.result, 'skipped')
                  && !contains(needs.cpp-linux-arm64.result, 'skipped')
                )
             ||
                (
-                    github.ref == 'refs/heads/master'
+                    github.ref == 'refs/heads/develop'
                  && contains(needs.*.result, 'skipped')
                )
           }}
