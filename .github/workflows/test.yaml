@@ -56,7 +56,7 @@ jobs:
 
   cpp-linux-arm64:
     name: "C++ tests (gcc/Linux/ARM64)"
-    needs: cpp-linters
+#    needs: cpp-linters
     runs-on: [self-hosted, ARM64, Linux]
     container: python:3.11
     # Run only on master (until we have a GitHub-hosted runner for Linux/ARM64)
