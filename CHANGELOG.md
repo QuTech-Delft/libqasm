@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Fix bug: empty lists are written out to JSON as `"[]"` instead of `[]`.
+- Fix bug: instruction set types.
 - More descriptive and consistent (snake case) file names. 
 - Minor fixes and tweaks to documentation.
 
