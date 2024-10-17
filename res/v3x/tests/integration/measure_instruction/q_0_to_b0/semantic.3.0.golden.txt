@@ -1,0 +1,74 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  block: <
+    Block(
+      statements: [
+        NonGateInstruction(
+          instruction_ref: measure(bit, qubit)
+          name: measure
+          operands: [
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: b0
+                  typ: <
+                    Bit(
+                      size: 1
+                    )
+                  >
+                  annotations: []
+                )
+              >
+            )
+            IndexRef(
+              variable --> <
+                Variable(
+                  name: q
+                  typ: <
+                    QubitArray(
+                      size: 3
+                    )
+                  >
+                  annotations: []
+                )
+              >
+              indices: [
+                ConstInt(
+                  value: 0
+                )
+              ]
+            )
+          ]
+          annotations: []
+        )
+      ]
+    )
+  >
+  variables: [
+    Variable(
+      name: q
+      typ: <
+        QubitArray(
+          size: 3
+        )
+      >
+      annotations: []
+    )
+    Variable(
+      name: b0
+      typ: <
+        Bit(
+          size: 1
+        )
+      >
+      annotations: []
+    )
+  ]
+)
+

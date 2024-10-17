@@ -1,0 +1,101 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  block: <
+    GlobalBlock(
+      statements: [
+        Variable( # input.cq:3:10..11
+          name: <
+            Identifier(
+              name: q
+            )
+          >
+          typ: <
+            Type( # input.cq:3:1..9
+              name: <
+                Keyword(
+                  name: qubit
+                )
+              >
+              size: <
+                IntegerLiteral(
+                  value: 9
+                )
+              >
+            )
+          >
+          annotations: []
+        )
+        Variable( # input.cq:4:8..9
+          name: <
+            Identifier(
+              name: b
+            )
+          >
+          typ: <
+            Type( # input.cq:4:1..7
+              name: <
+                Keyword(
+                  name: bit
+                )
+              >
+              size: <
+                IntegerLiteral(
+                  value: 5
+                )
+              >
+            )
+          >
+          annotations: []
+        )
+        NonGateInstruction( # input.cq:6:5..12
+          name: <
+            Keyword(
+              name: measure
+            )
+          >
+          operands: <
+            ExpressionList(
+              items: [
+                Identifier( # input.cq:6:1..2
+                  name: b
+                )
+                Index( # input.cq:6:13..14
+                  expr: <
+                    Identifier(
+                      name: q
+                    )
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexRange(
+                          first: <
+                            IntegerLiteral( # input.cq:6:15..16
+                              value: 2
+                            )
+                          >
+                          last: <
+                            IntegerLiteral( # input.cq:6:17..18
+                              value: 6
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
+                )
+              ]
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

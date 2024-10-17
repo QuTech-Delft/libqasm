@@ -4,8 +4,8 @@
 
 #include <string>
 
-#include "v3x/cqasm-parse-helper.hpp"
-#include "v3x/cqasm-parse-result.hpp"
+#include "libqasm/v3x/parse_helper.hpp"
+#include "libqasm/v3x/parse_result.hpp"
 
 namespace cqasm::v3x::parser {
 

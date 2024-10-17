@@ -50,6 +50,9 @@ TERNARY_CONDITIONAL_OP: '?';
 VERSION: 'version' -> pushMode(VERSION_STATEMENT);
 MEASURE: 'measure';
 RESET: 'reset';
+INV: 'inv';
+POW: 'pow';
+CTRL: 'ctrl';
 QUBIT_TYPE: 'qubit';
 BIT_TYPE: 'bit';
 
@@ -57,9 +60,9 @@ BIT_TYPE: 'bit';
 BOOLEAN_LITERAL: 'true' | 'false';
 INTEGER_LITERAL: Digit+;
 FLOAT_LITERAL:
-    Digit+ '.' Digit+ Exponent?
-    | Digit+ '.' Exponent?  // float literals can end with a dot
-    | '.' Digit+ Exponent?;  // or just start with a dot
+    Digit+ DOT Digit+ Exponent?
+    | Digit+ DOT Exponent?  // float literals can end with a dot
+    | DOT Digit+ Exponent?;  // or just start with a dot
 fragment Digit: [0-9];
 fragment Exponent: [eE][-+]?Digit+;
 

@@ -3,6 +3,7 @@
 from urllib.request import urlopen
 from urllib import error
 
+import logging
 import os
 import shutil
 import subprocess
@@ -11,13 +12,17 @@ import tempfile
 
 
 def print_usage():
-    print("Usage: generate_antlr_parser.py <INPUT FOLDER> <OUTPUT SOURCE FOLDER> <OUTPUT INCLUDE FOLDER>")
-    print("Where:")
-    print("    INPUT_FOLDER: folder containing the grammar files.")
-    print("    OUTPUT_SOURCE_FOLDER: folder where generated source files will be left.")
-    print("    OUTPUT_INCLUDE_FOLDER: folder where generated include files will be left.")
-    print("Example:")
-    print("    generate_antlr_parser.py ../src/v3x ../build/Debug/src/v3x ../build/Debug/include/v3x")
+    usage_str = '''
+Usage:
+    python3 generate_antlr_parser.py <INPUT_FOLDER> <OUTPUT_SOURCE_FOLDER> <OUTPUT_INCLUDE_FOLDER>
+Where:
+    INPUT_FOLDER: folder containing the grammar files.
+    OUTPUT_SOURCE_FOLDER: folder where generated source files will be left.
+    OUTPUT_INCLUDE_FOLDER: folder where generated include files will be left.
+Example:
+    python3 generate_antlr_parser.py ../src/v3x ../build/Debug/src/v3x ../build/Debug/include/v3x
+'''
+    logging.info(usage_str)
 
 
 class AntlrJarFileDownloader:
@@ -33,13 +38,13 @@ class AntlrJarFileDownloader:
     def download_antlr_jar_file(cls):
         url = "https://repo1.maven.org/maven2/org/antlr/antlr4/{}/{}".format(cls.file_version, cls.file_name)
         try:
-            print("Downloading ANTLR jar file from '{}'".format(url))
+            logging.info("Downloading ANTLR jar file from '{}'".format(url))
             with urlopen(url) as response:
-                print("Writing ANTLR jar file to '{}'".format(cls.file_path))
+                logging.info("Writing ANTLR jar file to '{}'".format(cls.file_path))
                 with open(cls.file_path, "wb") as f:
                     f.write(response.read())
         except error.URLError as err:
-            print("Error downloading ANTLR jar file: {}".format(err.strerror))
+            logging.error("Error downloading ANTLR jar file: {}".format(err.strerror))
             exit(3)
 
     @classmethod
@@ -50,7 +55,7 @@ class AntlrJarFileDownloader:
 
 
 def generate_antlr_parser(input_folder, output_source_folder, output_include_folder, antlr_jar_file_path):
-    print("Generating ANTLR lexer and parser files")
+    logging.info("Generating ANTLR lexer and parser files")
     try:
         completed_process = subprocess.run([
             "java",
@@ -67,22 +72,23 @@ def generate_antlr_parser(input_folder, output_source_folder, output_include_fol
             "{}/CqasmParser.g4".format(input_folder)
         ])
         if completed_process.returncode != 0:
-            print("Error generating ANTLR lexer and parser files: {}", completed_process.returncode)
+            logging.error("Error generating ANTLR lexer and parser files: {}", completed_process.returncode)
             exit(5)
         # Move header files to output include folder
         output_files = os.listdir(output_source_folder)
-        print(f"Moving output include files to {output_include_folder}")
+        logging.info(f"Moving output include files to {output_include_folder}")
         for output_file in output_files:
             if output_file.endswith(".h"):
-                print(f"\t{output_file}")
+                logging.info(f"\t{output_file}")
                 shutil.move(os.path.join(output_source_folder, output_file),
                             os.path.join(output_include_folder, output_file))
     except FileNotFoundError as err:
-        print("Error running java: {}".format(err.strerror))
+        logging.error("Error running java: {}".format(err.strerror))
         exit(4)
 
 
 def main(argv):
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
     if len(argv) != 4:
         print_usage()
         exit(2)

@@ -1,0 +1,5 @@
+version 3
+
+qubit[2] q
+
+pow(2)inv.ctrl.X q[0], q[1]
