@@ -11,6 +11,9 @@ jobs:
   cpp-linters:
     name: "C++ linters"
     runs-on: ubuntu-latest
+    # Do not run when merging to master
+    # (until we have a fix for this cpp-linter-action issue: https://github.com/cpp-linter/cpp-linter-action/issues/274)
+    if: github.ref != 'refs/heads/master'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -59,7 +62,8 @@ jobs:
     needs: cpp-linters
     runs-on: [self-hosted, ARM64, Linux]
     container: python:3.11
-    # Run only when merging to develop (until we have a GitHub-hosted runner for Linux/ARM64)
+    # Run only when merging to develop
+    # (until we have a GitHub-hosted runner for Linux/ARM64)
     if: github.ref == 'refs/heads/develop'
     strategy:
       fail-fast: false
