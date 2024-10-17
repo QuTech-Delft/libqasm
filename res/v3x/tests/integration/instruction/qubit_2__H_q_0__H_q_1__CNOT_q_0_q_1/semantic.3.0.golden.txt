@@ -1,0 +1,141 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  block: <
+    Block(
+      statements: [
+        GateInstruction(
+          instruction_ref: H(qubit)
+          gate: <
+            Gate(
+              name: H
+              gate: -
+              parameter: -
+              annotations: []
+            )
+          >
+          operands: [
+            IndexRef(
+              variable --> <
+                Variable(
+                  name: q
+                  typ: <
+                    QubitArray(
+                      size: 2
+                    )
+                  >
+                  annotations: []
+                )
+              >
+              indices: [
+                ConstInt(
+                  value: 0
+                )
+              ]
+            )
+          ]
+          annotations: []
+        )
+        GateInstruction(
+          instruction_ref: H(qubit)
+          gate: <
+            Gate(
+              name: H
+              gate: -
+              parameter: -
+              annotations: []
+            )
+          >
+          operands: [
+            IndexRef(
+              variable --> <
+                Variable(
+                  name: q
+                  typ: <
+                    QubitArray(
+                      size: 2
+                    )
+                  >
+                  annotations: []
+                )
+              >
+              indices: [
+                ConstInt(
+                  value: 1
+                )
+              ]
+            )
+          ]
+          annotations: []
+        )
+        GateInstruction(
+          instruction_ref: CNOT(qubit, qubit)
+          gate: <
+            Gate(
+              name: CNOT
+              gate: -
+              parameter: -
+              annotations: []
+            )
+          >
+          operands: [
+            IndexRef(
+              variable --> <
+                Variable(
+                  name: q
+                  typ: <
+                    QubitArray(
+                      size: 2
+                    )
+                  >
+                  annotations: []
+                )
+              >
+              indices: [
+                ConstInt(
+                  value: 0
+                )
+              ]
+            )
+            IndexRef(
+              variable --> <
+                Variable(
+                  name: q
+                  typ: <
+                    QubitArray(
+                      size: 2
+                    )
+                  >
+                  annotations: []
+                )
+              >
+              indices: [
+                ConstInt(
+                  value: 1
+                )
+              ]
+            )
+          ]
+          annotations: []
+        )
+      ]
+    )
+  >
+  variables: [
+    Variable(
+      name: q
+      typ: <
+        QubitArray(
+          size: 2
+        )
+      >
+      annotations: []
+    )
+  ]
+)
+

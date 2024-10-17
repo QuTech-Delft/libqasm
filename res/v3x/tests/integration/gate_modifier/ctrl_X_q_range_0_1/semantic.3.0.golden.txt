@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:5:1..5: failed to resolve instruction '2q_X' with argument pack (qubit array)

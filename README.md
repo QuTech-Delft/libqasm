@@ -6,8 +6,9 @@
 ![OS](https://img.shields.io/badge/os-emscripten%20%7C%20linux%20%7C%20macos%20%7C%20windows-blue?style=flat-square)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-libQASM is a library to parse programs written in the cQASM quantum programming language, developed by QuTech. 
-At the moment, libQASM only supports cQASM v3.0 programs.
+libQASM is a library to parse cQASM programs, developed by QuTech. 
+At the moment, libQASM only supports cQASM v3.0 programs
+(see [cQASM-spec](https://qutech-delft.github.io/cQASM-spec/latest/) for the language specification).
 
 It performs lexical, syntactic, and semantic analysis of an input program received via a file or a string.
 It produces one of the following results:
@@ -16,7 +17,7 @@ It produces one of the following results:
 - A list of parsing or analysing errors. In case the input program was malformed.
 - A JSON representation of either the AST or the list of errors.
 
-It can be used within:
+It can be used from:
 
 - C++ projects (as a [Conan package](https://conan.io/center/recipes/libqasm)).
 - Python projects (as a [Python package](https://pypi.org/project/libqasm/)).
@@ -46,7 +47,7 @@ We can parse or analyze this circuit, using libQASM through the following progra
 ### C++
 
 ```cpp
-#include "v3/cqasm-py.hpp"
+#include "libqasm/v3x/cqasm-python.hpp"
 
 int main() {
     auto parse_result = V3xAnalyzer::parse_file("example.cq");

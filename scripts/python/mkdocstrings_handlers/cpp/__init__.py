@@ -115,9 +115,7 @@ def render_decl(d: Definition) -> str:
     if d.id is not None:
         text += f'<a id="{d.id}">\n'
     text += '<pre><code class="language-cpp decl">'
-
     text += '<div>'
-    end = ';'
     if d.is_static:
         text += 'static '
     if d.kind == 'function' or d.kind == 'variable':
@@ -125,13 +123,11 @@ def render_decl(d: Definition) -> str:
     else:
         text += d.kind + ' '
     text += d.name
-
     if d.params is not None:
         params = ', '.join([
             (p.type + ' ' if p.type else '') + p.name for p in d.params])
         text += '(' + escape_html(params) + ')'
-
-    text += end
+    text += ';'
     text += '</div>'
     text += '</code></pre>\n'
     if d.id is not None:
@@ -144,14 +140,14 @@ class CppHandler(BaseHandler):
         super().__init__(handler='cpp', **kwargs)
 
         headers = [
-            'cqasm-py.hpp'
+            'cqasm_python.hpp'
         ]
 
         # Run doxygen.
         cmd = ['doxygen', '-']
         scripts_dir = Path(__file__).parents[3]
         top_dir = os.path.dirname(scripts_dir)
-        include_dir = os.path.join(top_dir, 'include', 'v3x')
+        include_dir = os.path.join(top_dir, 'include', 'libqasm', 'v3x')
         self._ns2doxyxml = {}
         build_dir = os.path.join(top_dir, 'build', 'Release', 'doc', 'cpp')
         os.makedirs(build_dir, exist_ok=True)
@@ -168,7 +164,7 @@ class CppHandler(BaseHandler):
             AUTOLINK_SUPPORT  = NO
             MACRO_EXPANSION   = YES
             PREDEFINED        = _WIN32=1 \
-                                __linux__=1 \
+                                __linux__=1
             '''
             .format(' '.join([os.path.join(include_dir, h) for h in headers]), self._doxyxml_dir)
             .encode('utf-8')
@@ -179,7 +175,7 @@ class CppHandler(BaseHandler):
         # Merge all file-level XMLs into one to simplify search.
         self._file_doxyxml = None
         for h in headers:
-            filename = h.replace(".hpp", "_8hpp.xml")
+            filename = h.replace("_", "__").replace(".hpp", "_8hpp.xml")
             with open(os.path.join(self._doxyxml_dir, filename)) as f:
                 doxyxml = ElementTree.parse(f)
                 if self._file_doxyxml is None:

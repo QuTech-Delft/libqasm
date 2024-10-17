@@ -1,0 +1,39 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  block: <
+    GlobalBlock(
+      statements: [
+        GateInstruction( # input.cq:3:1..2
+          gate: <
+            Gate( # input.cq:3:1..2
+              name: <
+                Identifier(
+                  name: X
+                )
+              >
+              gate: -
+              parameter: -
+              annotations: []
+            )
+          >
+          operands: <
+            ExpressionList(
+              items: [
+                FloatLiteral( # input.cq:3:3..7
+                  value: 3.14
+                )
+              ]
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

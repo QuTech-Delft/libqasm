@@ -1,0 +1,3 @@
+ERROR
+Error at input.cq:5:5..8: trying to apply a gate modifier to a multi-qubit gate
+Error: failed to resolve instruction 'pow' with argument pack (qubit, qubit)

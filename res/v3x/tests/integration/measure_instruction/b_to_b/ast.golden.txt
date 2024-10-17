@@ -1,0 +1,53 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  block: <
+    GlobalBlock(
+      statements: [
+        Variable( # input.cq:3:5..6
+          name: <
+            Identifier(
+              name: b
+            )
+          >
+          typ: <
+            Type( # input.cq:3:1..4
+              name: <
+                Keyword(
+                  name: bit
+                )
+              >
+              size: -
+            )
+          >
+          annotations: []
+        )
+        NonGateInstruction( # input.cq:5:5..12
+          name: <
+            Keyword(
+              name: measure
+            )
+          >
+          operands: <
+            ExpressionList(
+              items: [
+                Identifier( # input.cq:5:1..2
+                  name: b
+                )
+                Identifier( # input.cq:5:13..14
+                  name: b
+                )
+              ]
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

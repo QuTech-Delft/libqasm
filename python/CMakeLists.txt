@@ -150,22 +150,22 @@ install(
     DESTINATION "${LIBQASM_PYTHON_DIR}"
 )
 install(
-    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/cqasm-ast-gen.py"
+    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/ast_generated.py"
     DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v3x"
     RENAME "ast.py"
 )
 install(
-    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/cqasm-semantic-gen.py"
+    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/semantic_generated.py"
     DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v3x"
     RENAME "semantic.py"
 )
 install(
-    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/cqasm-types-gen.py"
+    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/types_generated.py"
     DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v3x"
     RENAME "types.py"
 )
 install(
-    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/cqasm-values-gen.py"
+    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/values_generated.py"
     DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v3x"
     RENAME "values.py"
 )

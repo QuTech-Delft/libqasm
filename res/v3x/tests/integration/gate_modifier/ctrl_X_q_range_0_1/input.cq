@@ -1,0 +1,5 @@
+version 3
+
+qubit[2] q
+
+ctrl.X q[0:1]

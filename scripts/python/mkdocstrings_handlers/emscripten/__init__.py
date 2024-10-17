@@ -35,18 +35,18 @@ class Definition:
 # A map from Doxygen to HTML tags.
 tag_map = {
     'bold': 'b',
-    'emphasis': 'em',
     'computeroutput': 'code',
+    'emphasis': 'em',
     'para': 'p',
     'programlisting': 'pre',
-    'verbatim': 'pre'
+    'verbatim': 'pre',
 }
 
 # A map from Doxygen tags to text.
 tag_text_map = {
     'codeline': '',
     'highlight': '',
-    'sp': ' '
+    'sp': ' ',
 }
 
 
@@ -61,6 +61,7 @@ def doxyxml2html(nodes: List[ElementTree.Element]):
         if not tag:
             out += tag_text_map[n.tag]
         out += '<' + tag + '>' if tag else ''
+        # Emscripten examples use Typescript syntax
         out += '<code class="language-typescript">' if tag == 'pre' else ''
         if n.text:
             out += escape_html(n.text)
@@ -112,10 +113,10 @@ def render_decl(d: Definition) -> str:
     text = ''
     if d.id is not None:
         text += f'<a id="{d.id}">\n'
-    text += '<pre><code class="language-typescript decl">'
+    # Emscripten declarations use C++ syntax
+    text += '<pre><code class="language-cpp decl">'
 
     text += '<div>'
-    end = ';'
     if d.is_static:
         text += 'static '
     if d.kind == 'function' or d.kind == 'variable':
@@ -129,7 +130,7 @@ def render_decl(d: Definition) -> str:
             (p.type + ' ' if p.type else '') + p.name for p in d.params])
         text += '(' + escape_html(params) + ')'
 
-    text += end
+    text += ';'
     text += '</div>'
     text += '</code></pre>\n'
     if d.id is not None:

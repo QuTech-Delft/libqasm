@@ -49,7 +49,7 @@ tag_map = {
 tag_text_map = {
     'codeline': '',
     'highlight': '',
-    'sp': ' '
+    'sp': ' ',
 }
 
 
@@ -135,11 +135,11 @@ def render_decl(d: Definition) -> str:
             text += '(' + escape_html(params) + ')'
         if len(d.type) > 0:
             text += ' -> ' + escape_html(d.type)
+        text += ':'
     elif d.kind == 'variable':
         text += d.name + ': ' + escape_html(d.type)
     else:
         text += d.kind + ' ' + remove_namespaces_suffix(d.name)
-
     text += '</div>'
     text += '</code></pre>\n'
     if d.id is not None:
@@ -176,7 +176,7 @@ class PythonHandler(BaseHandler):
             AUTOLINK_SUPPORT  = NO
             MACRO_EXPANSION   = YES
             PREDEFINED        = _WIN32=1 \
-                                __linux__=1 \
+                                __linux__=1
             '''
             .format(' '.join([os.path.join(include_dir, h) for h in headers]), self._doxyxml_dir)
             .encode('utf-8')

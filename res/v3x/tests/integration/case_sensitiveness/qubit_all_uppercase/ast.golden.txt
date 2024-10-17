@@ -1,0 +1,39 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  block: <
+    GlobalBlock(
+      statements: [
+        GateInstruction( # input.cq:3:1..6
+          gate: <
+            Gate( # input.cq:3:1..6
+              name: <
+                Identifier(
+                  name: QUBIT
+                )
+              >
+              gate: -
+              parameter: -
+              annotations: []
+            )
+          >
+          operands: <
+            ExpressionList(
+              items: [
+                Identifier( # input.cq:3:7..8
+                  name: q
+                )
+              ]
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

@@ -1,4 +1,0 @@
-include(docs-release)
-
-[conf]
-tools.build:cxxflags=["-Wno-error=maybe-uninitialized"]
