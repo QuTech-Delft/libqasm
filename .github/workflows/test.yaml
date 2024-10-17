@@ -21,6 +21,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           extensions: 'cpp,hpp'
+          files-changed-only: 'true'
           format-review: 'true'
           style: 'file'  # use .clang-format config file
           tidy-checks: '-*'  # disable clang-tidy checks
