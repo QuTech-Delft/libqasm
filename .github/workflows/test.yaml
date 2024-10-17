@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     # Do not run when merging to master or pulling request to master
     # (until we have a fix for this cpp-linter-action issue: https://github.com/cpp-linter/cpp-linter-action/issues/274)
-    if: github.ref != 'refs/heads/master' || github.base_ref == 'refs/heads/master'
+    if: github.ref != 'refs/heads/master' && github.base_ref != 'refs/heads/master'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
