@@ -8,7 +8,7 @@
 %}
 
 %{
-#include "v3x/cqasm-py.hpp"
+#include "libqasm/v3x/cqasm_python.hpp"
 %}
 
 %include "exception.i"
@@ -36,4 +36,4 @@ namespace std {
     }
 }
 
-%include "v3x/cqasm-py.hpp"
+%include "libqasm/v3x/cqasm_python.hpp"

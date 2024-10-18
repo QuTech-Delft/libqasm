@@ -30,7 +30,6 @@ class LibqasmConan(ConanFile):
         "shared": [True, False],
         "fPIC": [True, False],
         "asan_enabled": [True, False],
-        "build_docs": [True, False],
         "build_python": [True, False],
         "cqasm_python_dir": [None, "ANY"],
         "python_dir": [None, "ANY"],
@@ -40,13 +39,12 @@ class LibqasmConan(ConanFile):
         "shared": False,
         "fPIC": True,
         "asan_enabled": False,
-        "build_docs": False,
         "build_python": False,
         "cqasm_python_dir": None,
         "python_dir": None,
         "python_ext": None
     }
-    exports = "version.py", "include/version.hpp"
+    exports = "version.py", "include/libqasm/versioning.hpp"
     exports_sources = "CMakeLists.txt", "include/*", "python/*", "res/*", "scripts/*", "src/*", "test/*"
 
     @property
@@ -90,7 +88,7 @@ class LibqasmConan(ConanFile):
         self.cpp.build.libdirs = ["."]
 
     def build_requirements(self):
-        self.tool_requires("tree-gen/1.0.8")
+        self.tool_requires("tree-gen/1.0.9")
         if self.settings.arch != "armv8":
             self.tool_requires("zulu-openjdk/21.0.1")
         if self.settings.arch == "wasm":
@@ -112,7 +110,7 @@ class LibqasmConan(ConanFile):
     def requirements(self):
         self.requires("fmt/11.0.2", transitive_headers=True)
         self.requires("range-v3/0.12.0", transitive_headers=True)
-        self.requires("tree-gen/1.0.8", transitive_headers=True, transitive_libs=True)
+        self.requires("tree-gen/1.0.9", transitive_headers=True, transitive_libs=True)
         if not self.settings.arch == "wasm":
             self.requires("antlr4-cppruntime/4.13.1", transitive_headers=True)
 
@@ -122,7 +120,6 @@ class LibqasmConan(ConanFile):
         tc = CMakeToolchain(self)
         tc.variables["ASAN_ENABLED"] = self.options.asan_enabled
         tc.variables["BUILD_SHARED_LIBS"] = self.options.shared
-        tc.variables["LIBQASM_BUILD_DOCS"] = self.options.build_docs
         tc.variables["LIBQASM_BUILD_EMSCRIPTEN"] = self.settings.arch == "wasm"
         tc.variables["LIBQASM_BUILD_PYTHON"] = self.options.build_python
         tc.variables["LIBQASM_BUILD_TESTS"] = self._should_build_test

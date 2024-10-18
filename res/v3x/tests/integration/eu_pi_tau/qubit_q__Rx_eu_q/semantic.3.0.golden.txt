@@ -1,0 +1,58 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  block: <
+    Block(
+      statements: [
+        GateInstruction(
+          instruction_ref: Rx(qubit)
+          gate: <
+            Gate(
+              name: Rx
+              gate: -
+              parameter: <
+                ConstFloat(
+                  value: 2.71828
+                )
+              >
+              annotations: []
+            )
+          >
+          operands: [
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: q
+                  typ: <
+                    Qubit(
+                      size: 1
+                    )
+                  >
+                  annotations: []
+                )
+              >
+            )
+          ]
+          annotations: []
+        )
+      ]
+    )
+  >
+  variables: [
+    Variable(
+      name: q
+      typ: <
+        Qubit(
+          size: 1
+        )
+      >
+      annotations: []
+    )
+  ]
+)
+

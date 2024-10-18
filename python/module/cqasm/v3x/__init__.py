@@ -38,7 +38,7 @@ class Analyzer(libqasm.V3xAnalyzer):
 
      **Example**:
 
-         result = libqasm.analyze_file("grover.cq");
+         result = libqasm.analyze_file("grover.cq")
 
      **Example**:
 
@@ -50,7 +50,7 @@ class Analyzer(libqasm.V3xAnalyzer):
              CNOT q[0], q[1]
              b = measure q
          '''
-         result = libqasm.parse_string_to_json(program, "bell.cq");
+         result = libqasm.parse_string_to_json(program, "bell.cq")
     """
 
     @staticmethod

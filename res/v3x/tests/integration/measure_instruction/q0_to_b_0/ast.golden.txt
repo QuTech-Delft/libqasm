@@ -1,0 +1,92 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  block: <
+    GlobalBlock(
+      statements: [
+        Variable( # input.cq:3:7..9
+          name: <
+            Identifier(
+              name: q0
+            )
+          >
+          typ: <
+            Type( # input.cq:3:1..6
+              name: <
+                Keyword(
+                  name: qubit
+                )
+              >
+              size: -
+            )
+          >
+          annotations: []
+        )
+        Variable( # input.cq:4:8..9
+          name: <
+            Identifier(
+              name: b
+            )
+          >
+          typ: <
+            Type( # input.cq:4:1..7
+              name: <
+                Keyword(
+                  name: bit
+                )
+              >
+              size: <
+                IntegerLiteral(
+                  value: 3
+                )
+              >
+            )
+          >
+          annotations: []
+        )
+        NonGateInstruction( # input.cq:6:8..15
+          name: <
+            Keyword(
+              name: measure
+            )
+          >
+          operands: <
+            ExpressionList(
+              items: [
+                Index( # input.cq:6:1..2
+                  expr: <
+                    Identifier(
+                      name: b
+                    )
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexItem(
+                          index: <
+                            IntegerLiteral( # input.cq:6:3..4
+                              value: 0
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
+                )
+                Identifier( # input.cq:6:16..18
+                  name: q0
+                )
+              ]
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

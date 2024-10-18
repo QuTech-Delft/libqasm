@@ -1,0 +1,42 @@
+# Implementation for the various classes representing the types of values available in cQASM 3.0
+source
+
+# Header file for the various classes representing the types of values available in cQASM 3.0
+header "libqasm/v3x/types_generated.hpp"
+
+// Include tree base classes.
+include "libqasm/tree.hpp"
+tree_namespace cqasm::tree
+
+// Include primitive types.
+include "libqasm/v3x/primitives.hpp"
+import cqasm.v3x.primitives
+
+// Initialization function to use to construct default values for the tree base classes and primitives
+initialize_function cqasm::v3x::primitives::initialize
+serdes_functions cqasm::v3x::primitives::serialize cqasm::v3x::primitives::deserialize
+
+
+# Namespace for the various classes representing the types of values available in cQASM 3.0
+namespace cqasm
+namespace v3x
+namespace types
+
+type_base {
+    size: cqasm::v3x::primitives::Int;
+
+    # Type of a boolean.
+    bool {}
+
+    # Type of an integer (signed 64-bit).
+    int {}
+
+    # Type of a float number (IEEE double).
+    float {}
+
+    bit {}
+    qubit {}
+
+    bit_array {}
+    qubit_array {}
+}
