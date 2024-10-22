@@ -28,8 +28,8 @@ SyntacticAnalyzer::SyntacticAnalyzer(const std::optional<std::string>& file_name
     }
 }
 
-void SyntacticAnalyzer::addErrorListener(AntlrCustomErrorListener* errorListener) {
-    error_listener_p_ = errorListener;
+void SyntacticAnalyzer::addErrorListener(AntlrCustomErrorListener* error_listener) {
+    error_listener_p_ = error_listener;
 }
 
 void SyntacticAnalyzer::syntaxError(size_t line, size_t char_position_in_line, const std::string& text) const {
@@ -239,7 +239,7 @@ std::any SyntacticAnalyzer::visitType(CqasmParser::TypeContext* context) {
 
 std::any SyntacticAnalyzer::visitQubitType(CqasmParser::QubitTypeContext* context) {
     auto ret =
-        tree::make<Type>(tree::make<Keyword>(types::qubit_type_name), getArraySize(context->arraySizeDeclaration()));
+        tree::make<Type>(tree::make<Keyword>(types::qubit_type_name), get_array_size(context->arraySizeDeclaration()));
     setNodeAnnotation(ret, context->QUBIT_TYPE()->getSymbol());
     if (context->arraySizeDeclaration()) {
         expandNodeAnnotation(ret, context->arraySizeDeclaration()->CLOSE_BRACKET()->getSymbol());
@@ -249,7 +249,7 @@ std::any SyntacticAnalyzer::visitQubitType(CqasmParser::QubitTypeContext* contex
 
 std::any SyntacticAnalyzer::visitBitType(CqasmParser::BitTypeContext* context) {
     auto ret =
-        tree::make<Type>(tree::make<Keyword>(types::bit_type_name), getArraySize(context->arraySizeDeclaration()));
+        tree::make<Type>(tree::make<Keyword>(types::bit_type_name), get_array_size(context->arraySizeDeclaration()));
     setNodeAnnotation(ret, context->BIT_TYPE()->getSymbol());
     if (context->arraySizeDeclaration()) {
         expandNodeAnnotation(ret, context->arraySizeDeclaration()->CLOSE_BRACKET()->getSymbol());
@@ -257,7 +257,7 @@ std::any SyntacticAnalyzer::visitBitType(CqasmParser::BitTypeContext* context) {
     return ret;
 }
 
-Maybe<IntegerLiteral> SyntacticAnalyzer::getArraySize(CqasmParser::ArraySizeDeclarationContext* context) {
+Maybe<IntegerLiteral> SyntacticAnalyzer::get_array_size(CqasmParser::ArraySizeDeclarationContext* context) {
     return (context) ? Maybe<IntegerLiteral>{ std::any_cast<One<IntegerLiteral>>(context->accept(this)).get_ptr() }
                      : Maybe<IntegerLiteral>{};
 }

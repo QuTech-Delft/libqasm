@@ -146,24 +146,25 @@ public:
     /**
      * Parses and analyzes a file containing a cQASM v3.0 program.
      */
-    std::vector<std::string> analyze_file(const std::string& file_name) const;
+    [[nodiscard]] std::vector<std::string> analyze_file(const std::string& file_name) const;
 
     /**
      * Parses and analyzes a file containing a cQASM v3.0 program.
      */
-    std::string analyze_file_to_json(const std::string& file_name) const;
+    [[nodiscard]] std::string analyze_file_to_json(const std::string& file_name) const;
 
     /**
      * Parses and analyzes a string containing a cQASM v3.0 program.
      *
      * `file_name` is optional. It is only used when reporting errors.
      */
-    std::vector<std::string> analyze_string(const std::string& data, const std::string& file_name = "") const;
+    [[nodiscard]] std::vector<std::string> analyze_string(
+        const std::string& data, const std::string& file_name = "") const;
 
     /**
      * Parses and analyzes a string containing a cQASM v3.0 program.
      *
      * `file_name` is optional. It is only used when reporting errors.
      */
-    std::string analyze_string_to_json(const std::string& data, const std::string& file_name = "") const;
+    [[nodiscard]] std::string analyze_string_to_json(const std::string& data, const std::string& file_name = "") const;
 };

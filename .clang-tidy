@@ -1,0 +1,47 @@
+Checks: |
+  -*,
+  clang-analyzer-*,
+  clang-diagnostic-*,
+  misc-*,
+  -misc-const-correctness,
+  -misc-include-cleaner
+  -misc-non-private-member-variables-in-classes,
+  -misc-no-recursion,
+  -misc-unused-parameters,
+  -misc-use-anonymous-namespace,
+  modernize-*,
+  -modernize-use-trailing-return-type,
+  readability-identifier-naming,
+
+CheckOptions:
+  - key: readability-identifier-naming.ClassCase
+    value: CamelCase
+  - key: readability-identifier-naming.ClassIgnoredRegexp
+    value: "bf_cp|f_cp|uf_cp"
+  - key: readability-identifier-naming.EnumCase
+    value: CamelCase
+  - key: readability-identifier-naming.FunctionCase
+    value: lower_case
+  - key: readability-identifier-naming.FunctionIgnoredRegexp
+    value: ".*_|SetUp|MOCK_METHOD|TEST|TEST_F|TestBody\
+      |DescribeNegationTo|DescribeTo|MatchAndExplain|ValuesEq\
+      |addErrorListener|copyNodeAnnotation|expandNodeAnnotation|setNodeAnnotation|syntaxError\
+      |visit.*"
+  - key: readability-identifier-naming.MemberCase
+    value: lower_case
+  - key: readability-identifier-naming.MemberIgnoredRegexp
+    value: ".*_"
+  - key: readability-identifier-naming.ParameterCase
+    value: lower_case
+  - key: readability-identifier-naming.ParameterIgnoredRegexp
+    value: ".*_|AnalysisResult|ParseResult"
+  - key: readability-identifier-naming.UnionCase
+    value: CamelCase
+  - key: readability-identifier-naming.VariableCase
+    value: lower_case
+  - key: readability-identifier-naming.IgnoreMainLikeFunctions
+    value: 1
+  - key: readability-redundant-member-init.IgnoreBaseInCopyConstructors
+    value: 1
+  - key: modernize-use-default-member-init.UseAssignment
+    value: 1

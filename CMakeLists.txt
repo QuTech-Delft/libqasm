@@ -23,6 +23,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS True)
+
 # Library type option. Default is a static library.
 option(BUILD_SHARED_LIBS
     "whether the cqasm library should be built as a shared object or as a static library"

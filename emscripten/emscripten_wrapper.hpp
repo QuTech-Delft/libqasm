@@ -91,6 +91,7 @@ struct EmscriptenWrapper {
     std::string analyze_string_to_json(const std::string& data, const std::string& file_name);
 };
 
+// NOLINTNEXTLINE
 EMSCRIPTEN_BINDINGS(CqasmJS) {
     emscripten::class_<EmscriptenWrapper>("EmscriptenWrapper")
         .constructor()

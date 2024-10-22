@@ -32,27 +32,36 @@ def get_list_of_cpp_files(root_folder: os.PathLike) -> list[str]:
     return ret
 
 
-def run_clang_format(root_folder: os.PathLike):
+def run_clang_format(root_folder: os.PathLike, file_list_str: str) -> None:
     logging.info("Running clang-format")
-    file_list = get_list_of_cpp_files(root_folder)
     try:
         format_file_path = os.path.join(root_folder, ".clang-format")
-        file_list_str = " ".join(file_list)
-        command = f"clang-format-18 -i --style=file:{format_file_path} --verbose {file_list_str}"
+        options = f"-i --style=file:{format_file_path} --verbose"
+        command = f"clang-format-18 {options} {file_list_str}"
         subprocess.run(command, shell=True)
     except FileNotFoundError as err:
         print("Error running clang-format: {}".format(err.strerror))
         exit(3)
 
 
-def run_clang_tidy(root_folder: os.PathLike):
-    pass
+def run_clang_tidy(root_folder: os.PathLike, file_list_str: str) -> None :
+    logging.info("Running clang-tidy")
+    try:
+        config_file_path = os.path.join(root_folder, ".clang-tidy")
+        options = f"--config-file={config_file_path} --fix --format-style=file --use-color"
+        command = f"clang-tidy-18 {options} {file_list_str}"
+        subprocess.run(command, shell=True)
+    except FileNotFoundError as err:
+        print("Error running clang-tidy: {}".format(err.strerror))
+        exit(4)
 
 
 def run_cpp_linters(root_folder: os.PathLike):
     logging.info("Running C++ linters")
-    run_clang_format(root_folder)
-    run_clang_tidy(root_folder)
+    file_list = get_list_of_cpp_files(root_folder)
+    file_list_str = " ".join(file_list)
+    run_clang_format(root_folder, file_list_str)
+    run_clang_tidy(root_folder, file_list_str)
 
 
 def main(argv):

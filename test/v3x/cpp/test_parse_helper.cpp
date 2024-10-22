@@ -23,19 +23,19 @@ namespace cqasm::v3x::parser {
 class ParseHelperParseTest : public ::testing::Test {
 protected:
     void SetUp() override { scanner_up = std::make_unique<MockScannerAdaptor>(); }
-    void ExpectScannerParseThrowsParseError() {
+    void expect_scanner_parse_throws_parse_error() {
         EXPECT_CALL(*scanner_up, parse())
             .WillRepeatedly(::testing::Throw(ParseError{ parse_error_message, file_name, range }));
     }
-    void ExpectScannerParseThrowsRuntimeError() {
+    void expect_scanner_parse_throws_runtime_error() {
         EXPECT_CALL(*scanner_up, parse())
             .WillRepeatedly(::testing::Throw(std::runtime_error{ runtime_error_message.c_str() }));
     }
-    void ExpectScannerParseReturnsIllFormedRoot() {
+    void expect_scanner_parse_returns_ill_formed_root() {
         auto parse_result = ParseResult{ tree::make<ast::Program>(), error::ParseErrors{} };
         EXPECT_CALL(*scanner_up, parse()).WillOnce(::testing::Return(parse_result));
     }
-    void ExpectScannerParseReturnsWellFormedRoot() {
+    void expect_scanner_parse_returns_well_formed_root() {
         auto one_version = tree::make<ast::Version>(version_3_0);
         auto one_global_block = tree::make<ast::GlobalBlock>();
         auto one_program = tree::make<ast::Program>(one_version, one_global_block);
@@ -56,7 +56,7 @@ protected:
 };
 
 TEST_F(ParseHelperParseTest, scanner_parse_throws_parse_error) {
-    ExpectScannerParseThrowsParseError();
+    expect_scanner_parse_throws_parse_error();
     auto parse_helper = ParseHelper{ std::move(scanner_up), file_name };
     auto parse_result = parse_helper.parse();
     const auto& errors = parse_result.errors;
@@ -70,7 +70,7 @@ TEST_F(ParseHelperParseTest, scanner_parse_throws_parse_error) {
             parse_error_message));
 }
 TEST_F(ParseHelperParseTest, scanner_parse_throws_runtime_error) {
-    ExpectScannerParseThrowsRuntimeError();
+    expect_scanner_parse_throws_runtime_error();
     auto parse_helper = ParseHelper{ std::move(scanner_up), file_name };
     auto parse_result = parse_helper.parse();
     const auto& errors = parse_result.errors;
@@ -78,13 +78,13 @@ TEST_F(ParseHelperParseTest, scanner_parse_throws_runtime_error) {
     EXPECT_EQ(fmt::format("{}", errors[0]), fmt::format("Error: {}", runtime_error_message));
 }
 TEST_F(ParseHelperParseTest, parse_result_errors_is_empty_and_root_is_ill_formed) {
-    ExpectScannerParseReturnsIllFormedRoot();
+    expect_scanner_parse_returns_ill_formed_root();
     auto parse_helper = ParseHelper{ std::move(scanner_up), file_name };
     EXPECT_THAT([&]() { parse_helper.parse(); },
         ThrowsMessage<error::ParseError>(::testing::HasSubstr(ill_formed_root_message)));
 }
 TEST_F(ParseHelperParseTest, parse_result_errors_is_empty_and_root_is_well_formed) {
-    ExpectScannerParseReturnsWellFormedRoot();
+    expect_scanner_parse_returns_well_formed_root();
     auto parse_helper = ParseHelper{ std::move(scanner_up), file_name };
     auto parse_result = parse_helper.parse();
     auto program = parse_result.root->as_program();

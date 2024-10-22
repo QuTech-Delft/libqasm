@@ -15,18 +15,19 @@ AntlrCustomErrorListener::AntlrCustomErrorListener(const std::optional<std::stri
     }
 }
 
-void AntlrCustomErrorListener::syntaxError(antlr4::Recognizer* /* recognizer */, antlr4::Token* offendingSymbol,
-    size_t line, size_t charPositionInLine, const std::string& msg, std::exception_ptr /* e */) {
+void AntlrCustomErrorListener::syntaxError(antlr4::Recognizer* /* recognizer */, antlr4::Token* offending_symbol,
+    size_t line, size_t char_position_in_line, const std::string& msg, std::exception_ptr /* e */) {
     // ANTLR provides a zero-based character position in line
     // We change it here to a one-based index, which is the more human-readable,
     // and the common option in text editors
-    auto start_column = charPositionInLine + 1;
+    auto start_column = char_position_in_line + 1;
 
     // Special case for EOF token
     // EOF token has a "<EOF>" text, so we avoid calculating the size of EOF from its text
     // Instead, we just return a zero size
-    size_t token_size =
-        (offendingSymbol && offendingSymbol->getType() != antlr4::Token::EOF) ? offendingSymbol->getText().size() : 0;
+    size_t token_size = (offending_symbol && offending_symbol->getType() != antlr4::Token::EOF)
+        ? offending_symbol->getText().size()
+        : 0;
     auto end_column = start_column + token_size;
 
     throw error::ParseError{ msg,
@@ -35,8 +36,8 @@ void AntlrCustomErrorListener::syntaxError(antlr4::Recognizer* /* recognizer */,
             { static_cast<std::uint32_t>(line), static_cast<std::uint32_t>(end_column) } } };
 }
 
-void AntlrCustomErrorListener::syntaxError(size_t line, size_t charPositionInLine, const std::string& msg) {
-    syntaxError(nullptr, nullptr, line, charPositionInLine, msg, nullptr);
+void AntlrCustomErrorListener::syntaxError(size_t line, size_t char_position_in_line, const std::string& msg) {
+    syntaxError(nullptr, nullptr, line, char_position_in_line, msg, nullptr);
 }
 
 }  // namespace cqasm::v3x::parser
