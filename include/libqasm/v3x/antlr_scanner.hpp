@@ -42,7 +42,7 @@ class FileAntlrScanner : public AntlrScanner {
 
 public:
     FileAntlrScanner(std::unique_ptr<BaseSyntacticAnalyzer> build_visitor_up,
-        std::unique_ptr<AntlrCustomErrorListener> error_listener_up, const std::string& file_path);
+        std::unique_ptr<AntlrCustomErrorListener> error_listener_up, std::string file_path);
 
     ~FileAntlrScanner() override;
 
@@ -54,7 +54,7 @@ class StringAntlrScanner : public AntlrScanner {
 
 public:
     StringAntlrScanner(std::unique_ptr<BaseSyntacticAnalyzer> build_visitor_up,
-        std::unique_ptr<AntlrCustomErrorListener> error_listener_up, const std::string& data);
+        std::unique_ptr<AntlrCustomErrorListener> error_listener_up, std::string data);
 
     ~StringAntlrScanner() override;
 

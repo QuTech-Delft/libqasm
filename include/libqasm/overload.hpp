@@ -6,7 +6,6 @@
 #include <utility>  // pair
 #include <vector>
 
-#include "libqasm/overload.hpp"
 #include "libqasm/tree.hpp"
 
 /**

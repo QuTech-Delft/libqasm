@@ -75,7 +75,7 @@ public:
     /**
      * Returns the message exception-style.
      */
-    const char* what() const noexcept override;
+    [[nodiscard]] const char* what() const noexcept override;
 
     /**
      * Returns a string with a JSON representation of an Error.
@@ -83,7 +83,7 @@ public:
      * Every error is mapped to an LSP Diagnostic structure:
      * Severity is hardcoded to 1 at the moment (value corresponding to an Error level)
      */
-    std::string to_json() const;
+    [[nodiscard]] std::string to_json() const;
 };
 
 /**

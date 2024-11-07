@@ -6,6 +6,7 @@
 
 namespace cqasm::v3x::instruction {
 
+// NOLINTBEGIN
 InstructionSet::InstructionSet()
 : named_gate_map{
     { "CNOT", { std::nullopt, "QQ" } },
@@ -77,6 +78,7 @@ InstructionSet::InstructionSet()
     "CNOT", "CR", "CRk", "CZ"
 }
 {}
+// NOLINTEND
 
 [[nodiscard]] /* static */ InstructionSet& InstructionSet::get_instance() {
     static InstructionSet instance;
