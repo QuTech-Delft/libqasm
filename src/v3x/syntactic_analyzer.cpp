@@ -233,6 +233,34 @@ std::any SyntacticAnalyzer::visitResetInstruction(CqasmParser::ResetInstructionC
     return One<Statement>{ ret };
 }
 
+std::any SyntacticAnalyzer::visitInitInstruction(CqasmParser::InitInstructionContext* context) {
+    auto ret = tree::make<NonGateInstruction>();
+    ret->name = tree::make<Keyword>(context->INIT()->getText());
+    ret->operands = tree::make<ExpressionList>();
+    ret->operands->items.add(std::any_cast<One<Expression>>(context->expression()->accept(this)));
+    setNodeAnnotation(ret, context->INIT()->getSymbol());
+    return One<Statement>{ ret };
+}
+
+std::any SyntacticAnalyzer::visitBarrierDirective(CqasmParser::BarrierDirectiveContext* context) {
+    auto ret = tree::make<Directive>();
+    ret->name = tree::make<Keyword>(context->BARRIER()->getText());
+    ret->operands = tree::make<ExpressionList>();
+    ret->operands->items.add(std::any_cast<One<Expression>>(context->expression()->accept(this)));
+    setNodeAnnotation(ret, context->BARRIER()->getSymbol());
+    return One<Statement>{ ret };
+}
+
+std::any SyntacticAnalyzer::visitWaitDirective(CqasmParser::WaitDirectiveContext* context) {
+    auto ret = tree::make<Directive>();
+    ret->name = tree::make<Keyword>(context->WAIT()->getText());
+    ret->parameter = std::any_cast<One<Expression>>(context->expression(0)->accept(this)).get_ptr();
+    ret->operands = tree::make<ExpressionList>();
+    ret->operands->items.add(std::any_cast<One<Expression>>(context->expression(1)->accept(this)));
+    setNodeAnnotation(ret, context->WAIT()->getSymbol());
+    return One<Statement>{ ret };
+}
+
 std::any SyntacticAnalyzer::visitType(CqasmParser::TypeContext* context) {
     return context->quantumType()->accept(this);
 }

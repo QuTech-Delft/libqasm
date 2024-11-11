@@ -189,6 +189,12 @@ annotated {
                     operands: One<expression_list>;
                 }
             }
+
+            directive {
+                name: One<keyword>;
+                parameter: Maybe<expression>;
+                operands: One<expression_list>;
+            }
         }
     }
 }
