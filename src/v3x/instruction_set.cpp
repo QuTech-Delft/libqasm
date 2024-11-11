@@ -42,6 +42,10 @@ InstructionSet::InstructionSet()
     { "S", { std::nullopt, "V" } },
     { "Sdag", { std::nullopt, "Q" } },
     { "Sdag", { std::nullopt, "V" } },
+    { "SWAP", { std::nullopt, "QQ" } },
+    { "SWAP", { std::nullopt, "QV" } },
+    { "SWAP", { std::nullopt, "VQ" } },
+    { "SWAP", { std::nullopt, "VV" } },
     { "T", { std::nullopt, "Q" } },
     { "T", { std::nullopt, "V" } },
     { "Tdag", { std::nullopt, "Q" } },
@@ -74,7 +78,7 @@ InstructionSet::InstructionSet()
     "H", "I", "mX90", "mY90", "Rx", "Ry", "Rz", "S", "Sdag", "T", "Tdag", "X", "X90", "Y", "Y90", "Z"
 }
 , two_qubit_named_gate_list{
-    "CNOT", "CR", "CRk", "CZ"
+    "CNOT", "CR", "CRk", "CZ", "SWAP"
 }
 {}
 

@@ -47,13 +47,16 @@ LOGICAL_OR_OP: '||';
 TERNARY_CONDITIONAL_OP: '?';
 
 // Keywords
-VERSION: 'version' -> pushMode(VERSION_STATEMENT);
-MEASURE: 'measure';
+VERSION: 'version' -> pushMode(VERSION_STATEMENT);  // version
+MEASURE: 'measure';  // non-unitary instructions
 RESET: 'reset';
-INV: 'inv';
+INIT: 'init';
+BARRIER: 'barrier';  // directives
+WAIT: 'wait';
+INV: 'inv';  // gate modifiers
 POW: 'pow';
 CTRL: 'ctrl';
-QUBIT_TYPE: 'qubit';
+QUBIT_TYPE: 'qubit';  // types
 BIT_TYPE: 'bit';
 
 // Numeric literals

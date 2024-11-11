@@ -26,6 +26,7 @@ version: VERSION VERSION_NUMBER;
 globalBlockStatement:
     variableDefinition
     | instruction
+    | directive
     ;
 
 variableDefinition: type IDENTIFIER;
@@ -33,6 +34,13 @@ variableDefinition: type IDENTIFIER;
 instruction:
     gateInstruction
     | nonGateInstruction
+    ;
+
+// Current implementation of the semantic parser will expect a constant integer
+// for the first expression in the WAIT directive
+directive:
+    BARRIER expression  # barrierDirective
+    | WAIT OPEN_PARENS expression CLOSE_PARENS expression  # waitDirective
     ;
 
 gateInstruction: gate expressionList;
@@ -47,6 +55,7 @@ gate:
 nonGateInstruction:
     expression EQUALS MEASURE expression  # measureInstruction
     | RESET expression?  # resetInstruction
+    | INIT expression  # initInstruction
     ;
 
 type: quantumType;
