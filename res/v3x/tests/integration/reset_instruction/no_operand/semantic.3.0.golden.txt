@@ -13,6 +13,7 @@ Program(
           instruction_ref: reset()
           name: reset
           operands: []
+          parameter: -
           annotations: []
         )
       ]
