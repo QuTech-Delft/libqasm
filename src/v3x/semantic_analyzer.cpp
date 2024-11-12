@@ -275,7 +275,8 @@ std::any SemanticAnalyzer::visit_non_gate_instruction(ast::NonGateInstruction& n
 
         // Resolve the parameter
         if (!node.parameter.empty()) {
-            ret->parameter = resolve_parameter(ret->name, std::any_cast<values::Value>(visit_expression(*node.parameter)));
+            ret->parameter =
+                resolve_parameter(ret->name, std::any_cast<values::Value>(visit_expression(*node.parameter)));
         }
 
         // Specific checks
