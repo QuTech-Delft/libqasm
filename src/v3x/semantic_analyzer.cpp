@@ -185,7 +185,7 @@ values::Value resolve_parameter(const std::string& instruction_name, const value
     if (!param_type.has_value() ||
         !values::check_promote(values::type_of(parameter), types::from_spec(param_type.value()))) {
         throw error::AnalysisError{ fmt::format(
-            "failed to resolve '{}' with argument pack ({})", instruction_name, values::type_of(parameter)) };
+            "failed to resolve '{}' with parameter type ({})", instruction_name, values::type_of(parameter)) };
     }
     return promote(parameter, types::from_spec(param_type.value()));
 }
@@ -268,9 +268,6 @@ std::any SemanticAnalyzer::visit_non_gate_instruction(ast::NonGateInstruction& n
     auto ret = tree::make<semantic::NonGateInstruction>();
     try {
         ret->name = node.name->name;
-        if (!node.parameter.empty()) {
-            ret->parameter = std::any_cast<values::Value>(visit_expression(*node.parameter)).get_ptr();
-        }
         ret->operands = std::any_cast<values::Values>(visit_expression_list(*node.operands));
 
         // Resolve the instruction
@@ -278,7 +275,7 @@ std::any SemanticAnalyzer::visit_non_gate_instruction(ast::NonGateInstruction& n
 
         // Resolve the parameter
         if (!node.parameter.empty()) {
-            ret->parameter = resolve_parameter(ret->name, ret->parameter);
+            ret->parameter = resolve_parameter(ret->name, std::any_cast<values::Value>(visit_expression(*node.parameter)));
         }
 
         // Specific checks

@@ -69,10 +69,10 @@ InstructionSet::InstructionSet()
     { "reset", { std::nullopt, std::nullopt } },
     { "reset", { std::nullopt, "Q" } },
     { "reset", { std::nullopt, "V" } },
-    { "barrier", { std::nullopt, "BQ" } },
-    { "barrier", { std::nullopt, "WV" } },
-    { "barrier", { std::nullopt, "BV" } },
-    { "barrier", { std::nullopt, "WQ" } },
+    { "init", { std::nullopt, "Q" } },
+    { "init", { std::nullopt, "V" } },
+    { "barrier", { std::nullopt, "Q" } },
+    { "barrier", { std::nullopt, "V" } },
     { "wait", { 'i', "Q" } },
     { "wait", { 'i', "V" } },
 }
@@ -206,6 +206,14 @@ InstructionSet::InstructionSet()
     throw error::AnalysisError{ fmt::format("couldn't find gate '{}'", name) };
 }
 
+[[nodiscard]] std::optional<char> InstructionSet::get_non_gate_param_type(const std::string& name) const {
+    if (const auto& it = non_gate_map.find(name); it != non_gate_map.end()) {
+        const auto& pair_param_types_operand_types = it->second;
+        return pair_param_types_operand_types.first;
+    }
+    throw error::AnalysisError{ fmt::format("couldn't find non-unitary instruction '{}'", name) };
+}
+
 [[nodiscard]] std::optional<char> InstructionSet::get_gate_modifier_param_type(const std::string& name) const {
     if (const auto& it = gate_modifier_map.find(name); it != gate_modifier_map.end()) {
         return it->second;
@@ -217,7 +225,7 @@ InstructionSet::InstructionSet()
     if (is_named_gate(name)) {
         return get_named_gate_param_type(name);
     } else if (is_non_gate(name)) {
-        return std::nullopt;
+        return get_non_gate_param_type(name);
     } else if (is_gate_modifier(name)) {
         return get_gate_modifier_param_type(name);
     }

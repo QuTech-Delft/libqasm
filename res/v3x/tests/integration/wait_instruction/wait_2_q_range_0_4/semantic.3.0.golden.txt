@@ -1,0 +1,69 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  block: <
+    Block(
+      statements: [
+        NonGateInstruction(
+          instruction_ref: wait(qubit array)
+          name: wait
+          operands: [
+            IndexRef(
+              variable --> <
+                Variable(
+                  name: q
+                  typ: <
+                    QubitArray(
+                      size: 9
+                    )
+                  >
+                  annotations: []
+                )
+              >
+              indices: [
+                ConstInt(
+                  value: 0
+                )
+                ConstInt(
+                  value: 1
+                )
+                ConstInt(
+                  value: 2
+                )
+                ConstInt(
+                  value: 3
+                )
+                ConstInt(
+                  value: 4
+                )
+              ]
+            )
+          ]
+          parameter: <
+            ConstInt(
+              value: 2
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+  variables: [
+    Variable(
+      name: q
+      typ: <
+        QubitArray(
+          size: 9
+        )
+      >
+      annotations: []
+    )
+  ]
+)
+

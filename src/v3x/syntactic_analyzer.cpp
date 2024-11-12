@@ -226,9 +226,7 @@ std::any SyntacticAnalyzer::visitResetInstruction(CqasmParser::ResetInstructionC
     auto ret = tree::make<NonGateInstruction>();
     ret->name = tree::make<Keyword>(context->RESET()->getText());
     ret->operands = tree::make<ExpressionList>();
-    if (context->expression()) {
-        ret->operands->items.add(std::any_cast<One<Expression>>(context->expression()->accept(this)));
-    }
+    ret->operands->items.add(std::any_cast<One<Expression>>(context->expression()->accept(this)));
     setNodeAnnotation(ret, context->RESET()->getSymbol());
     return One<Statement>{ ret };
 }

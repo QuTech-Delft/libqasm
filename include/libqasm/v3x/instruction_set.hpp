@@ -79,6 +79,7 @@ public:
     [[nodiscard]] bool is_gate_modifier(const std::string& name) const;
 
     [[nodiscard]] std::optional<char> get_named_gate_param_type(const std::string& name) const;
+    [[nodiscard]] std::optional<char> get_non_gate_param_type(const std::string& name) const;
     [[nodiscard]] std::optional<char> get_gate_modifier_param_type(const std::string& name) const;
     [[nodiscard]] std::optional<char> get_instruction_param_type(const std::string& name) const;
 };
