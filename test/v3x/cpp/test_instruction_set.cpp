@@ -18,11 +18,11 @@ protected:
     const InstructionListT& single_qubit_named_gate_list = instruction_set.get_single_qubit_named_gate_list();
     const InstructionListT& two_qubit_named_gate_list = instruction_set.get_two_qubit_named_gate_list();
 
-    const size_t number_of_gate_map_entries = 48;
-    const size_t number_of_non_gate_map_entries = 7;
+    const size_t number_of_gate_map_entries = 52;
+    const size_t number_of_non_gate_map_entries = 13;
     const size_t number_of_gate_modifier_map_entries = 3;
     const size_t number_of_single_qubit_named_gates = 16;
-    const size_t number_of_two_qubit_named_gates = 4;
+    const size_t number_of_two_qubit_named_gates = 5;
 };
 
 TEST_F(InstructionSetTest, get_instance) {
