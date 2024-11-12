@@ -111,6 +111,18 @@ TEST_F(InstructionSetTest, is_reset) {
     EXPECT_TRUE(instruction_set.is_reset("reset"));
     EXPECT_FALSE(instruction_set.is_reset("RESET"));
 }
+TEST_F(InstructionSetTest, is_init) {
+    EXPECT_TRUE(instruction_set.is_init("init"));
+    EXPECT_FALSE(instruction_set.is_init("INIT"));
+}
+TEST_F(InstructionSetTest, is_barrier) {
+    EXPECT_TRUE(instruction_set.is_barrier("barrier"));
+    EXPECT_FALSE(instruction_set.is_barrier("BARRIER"));
+}
+TEST_F(InstructionSetTest, is_wait) {
+    EXPECT_TRUE(instruction_set.is_wait("wait"));
+    EXPECT_FALSE(instruction_set.is_wait("WAIT"));
+}
 TEST_F(InstructionSetTest, is_non_gate) {
     EXPECT_TRUE(instruction_set.is_non_gate("measure"));
     EXPECT_TRUE(instruction_set.is_non_gate("reset"));
