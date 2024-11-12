@@ -48,7 +48,7 @@ gate:
 // for the first expression in the WAIT instruction
 nonGateInstruction:
     expression EQUALS MEASURE expression  # measureInstruction
-    | RESET expression?  # resetInstruction
+    | RESET expression  # resetInstruction
     | INIT expression  # initInstruction
     | BARRIER expression  # barrierInstruction
     | WAIT OPEN_PARENS expression CLOSE_PARENS expression  # waitInstruction

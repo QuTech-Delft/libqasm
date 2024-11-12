@@ -66,7 +66,6 @@ InstructionSet::InstructionSet()
     { "measure", { std::nullopt, "WV" } },
     { "measure", { std::nullopt, "BV" } },
     { "measure", { std::nullopt, "WQ" } },
-    { "reset", { std::nullopt, std::nullopt } },
     { "reset", { std::nullopt, "Q" } },
     { "reset", { std::nullopt, "V" } },
     { "init", { std::nullopt, "Q" } },
