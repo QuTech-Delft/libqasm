@@ -35,6 +35,9 @@ public:
 
     std::string measure_name = "measure";
     std::string reset_name = "reset";
+    std::string init_name = "init";
+    std::string barrier_name = "barrier";
+    std::string wait_name = "wait";
 
     std::string inv_gate_modifier_name = "inv";
     std::string pow_gate_modifier_name = "pow";
@@ -63,6 +66,9 @@ public:
 
     [[nodiscard]] bool is_measure(const std::string& name) const;
     [[nodiscard]] bool is_reset(const std::string& name) const;
+    [[nodiscard]] bool is_init(const std::string& name) const;
+    [[nodiscard]] bool is_barrier(const std::string& name) const;
+    [[nodiscard]] bool is_wait(const std::string& name) const;
     [[nodiscard]] bool is_non_gate(const std::string& name) const;
 
     [[nodiscard]] bool is_inv_gate_modifier(const std::string& name) const;

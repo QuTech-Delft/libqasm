@@ -68,7 +68,14 @@ InstructionSet::InstructionSet()
     { "measure", { std::nullopt, "WQ" } },
     { "reset", { std::nullopt, std::nullopt } },
     { "reset", { std::nullopt, "Q" } },
-    { "reset", { std::nullopt, "V" } } }
+    { "reset", { std::nullopt, "V" } },
+    { "barrier", { std::nullopt, "BQ" } },
+    { "barrier", { std::nullopt, "WV" } },
+    { "barrier", { std::nullopt, "BV" } },
+    { "barrier", { std::nullopt, "WQ" } },
+    { "wait", { 'i', "Q" } },
+    { "wait", { 'i', "V" } },
+}
 , gate_modifier_map{
     { "inv", std::nullopt },
     { "pow", 'f' },
@@ -151,8 +158,20 @@ InstructionSet::InstructionSet()
     return name == reset_name;
 }
 
+[[nodiscard]] bool InstructionSet::is_init(const std::string& name) const {
+    return name == init_name;
+}
+
+[[nodiscard]] bool InstructionSet::is_barrier(const std::string& name) const {
+    return name == barrier_name;
+}
+
+[[nodiscard]] bool InstructionSet::is_wait(const std::string& name) const {
+    return name == wait_name;
+}
+
 [[nodiscard]] bool InstructionSet::is_non_gate(const std::string& name) const {
-    return is_measure(name) || is_reset(name);
+    return is_measure(name) || is_reset(name) || is_init(name) || is_barrier(name) || is_wait(name);
 }
 
 [[nodiscard]] bool InstructionSet::is_inv_gate_modifier(const std::string& name) const {

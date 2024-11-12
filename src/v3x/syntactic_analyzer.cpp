@@ -242,8 +242,8 @@ std::any SyntacticAnalyzer::visitInitInstruction(CqasmParser::InitInstructionCon
     return One<Statement>{ ret };
 }
 
-std::any SyntacticAnalyzer::visitBarrierDirective(CqasmParser::BarrierDirectiveContext* context) {
-    auto ret = tree::make<Directive>();
+std::any SyntacticAnalyzer::visitBarrierInstruction(CqasmParser::BarrierInstructionContext* context) {
+    auto ret = tree::make<NonGateInstruction>();
     ret->name = tree::make<Keyword>(context->BARRIER()->getText());
     ret->operands = tree::make<ExpressionList>();
     ret->operands->items.add(std::any_cast<One<Expression>>(context->expression()->accept(this)));
@@ -251,8 +251,8 @@ std::any SyntacticAnalyzer::visitBarrierDirective(CqasmParser::BarrierDirectiveC
     return One<Statement>{ ret };
 }
 
-std::any SyntacticAnalyzer::visitWaitDirective(CqasmParser::WaitDirectiveContext* context) {
-    auto ret = tree::make<Directive>();
+std::any SyntacticAnalyzer::visitWaitInstruction(CqasmParser::WaitInstructionContext* context) {
+    auto ret = tree::make<NonGateInstruction>();
     ret->name = tree::make<Keyword>(context->WAIT()->getText());
     ret->parameter = std::any_cast<One<Expression>>(context->expression(0)->accept(this)).get_ptr();
     ret->operands = tree::make<ExpressionList>();

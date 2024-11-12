@@ -51,7 +51,7 @@ VERSION: 'version' -> pushMode(VERSION_STATEMENT);  // version
 MEASURE: 'measure';  // non-unitary instructions
 RESET: 'reset';
 INIT: 'init';
-BARRIER: 'barrier';  // directives
+BARRIER: 'barrier';
 WAIT: 'wait';
 INV: 'inv';  // gate modifiers
 POW: 'pow';

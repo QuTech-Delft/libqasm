@@ -67,8 +67,8 @@ public:
     std::any visitMeasureInstruction(CqasmParser::MeasureInstructionContext* context) override;
     std::any visitResetInstruction(CqasmParser::ResetInstructionContext* context) override;
     std::any visitInitInstruction(CqasmParser::InitInstructionContext* context) override;
-    std::any visitBarrierDirective(CqasmParser::BarrierDirectiveContext* context) override;
-    std::any visitWaitDirective(CqasmParser::WaitDirectiveContext* context) override;
+    std::any visitBarrierInstruction(CqasmParser::BarrierInstructionContext* context) override;
+    std::any visitWaitInstruction(CqasmParser::WaitInstructionContext* context) override;
     std::any visitGateInstruction(CqasmParser::GateInstructionContext* context) override;
     std::any visitInvGate(CqasmParser::InvGateContext* context) override;
     std::any visitPowGate(CqasmParser::PowGateContext* context) override;

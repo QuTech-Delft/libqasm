@@ -187,13 +187,8 @@ annotated {
                 non_gate_instruction {
                     name: One<keyword>;
                     operands: One<expression_list>;
+                    parameter: Maybe<expression>;
                 }
-            }
-
-            directive {
-                name: One<keyword>;
-                parameter: Maybe<expression>;
-                operands: One<expression_list>;
             }
         }
     }
