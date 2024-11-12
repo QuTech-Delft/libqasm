@@ -24,6 +24,7 @@ class InstructionSet {
 
     InstructionListT single_qubit_named_gate_list;
     InstructionListT two_qubit_named_gate_list;
+    InstructionListT non_gate_list;
 
     InstructionSet();
 
@@ -51,6 +52,7 @@ public:
     [[nodiscard]] const GateModifierMapT& get_gate_modifier_map() const;
     [[nodiscard]] const InstructionListT& get_single_qubit_named_gate_list() const;
     [[nodiscard]] const InstructionListT& get_two_qubit_named_gate_list() const;
+    [[nodiscard]] const InstructionListT& get_non_gate_list() const;
 
     [[nodiscard]] bool is_single_qubit_named_gate(const std::string& name) const;
     [[nodiscard]] bool is_two_qubit_named_gate(const std::string& name) const;

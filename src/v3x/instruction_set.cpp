@@ -86,6 +86,9 @@ InstructionSet::InstructionSet()
 , two_qubit_named_gate_list{
     "CNOT", "CR", "CRk", "CZ", "SWAP"
 }
+, non_gate_list{
+    "measure", "reset", "init", "barrier", "wait"
+}
 {}
 
 [[nodiscard]] /* static */ InstructionSet& InstructionSet::get_instance() {
@@ -111,6 +114,10 @@ InstructionSet::InstructionSet()
 
 [[nodiscard]] const InstructionListT& InstructionSet::get_two_qubit_named_gate_list() const {
     return two_qubit_named_gate_list;
+}
+
+[[nodiscard]] const InstructionListT& InstructionSet::get_non_gate_list() const {
+    return non_gate_list;
 }
 
 [[nodiscard]] bool InstructionSet::is_single_qubit_named_gate(const std::string& name) const {
@@ -170,7 +177,7 @@ InstructionSet::InstructionSet()
 }
 
 [[nodiscard]] bool InstructionSet::is_non_gate(const std::string& name) const {
-    return is_measure(name) || is_reset(name) || is_init(name) || is_barrier(name) || is_wait(name);
+    return non_gate_list.contains(name);
 }
 
 [[nodiscard]] bool InstructionSet::is_inv_gate_modifier(const std::string& name) const {
