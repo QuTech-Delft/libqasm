@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:5:1..8: failed to resolve instruction 'barrier' with argument pack (int)

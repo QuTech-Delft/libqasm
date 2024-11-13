@@ -1,6 +1,6 @@
 /** \file
  * This file contains the \ref cqasm::v3x::instruction::Instruction "Instruction" class and support types,
- * each instance representing an instruction (also known as gate) supported by the user.
+ * each instance representing an instruction (unitary or non-unitary) supported by the user.
  */
 
 #pragma once
@@ -15,9 +15,9 @@ namespace cqasm::v3x::instruction {
 
 /**
  * Representation of an available instruction in the instruction set.
- * An instruction can be: a gate instruction or a non-gate instruction.
+ * An instruction can be: a gate instruction (unitary) or a non-gate instruction (non-unitary).
  * A gate instruction can be a gate or a composition of gate modifiers acting on a unitary gate.
- * A non-gate instruction can be a measure instruction, or a reset instruction.
+ * A non-gate instruction can be a measure instruction, a reset instruction, or an init instruction.
  *
  * A number of these can be registered into libqasm by the program or library using it through
  * \ref cqasm::analyzer::Analyzer::register_instruction(const instruction::Instruction&) "register_instruction",
