@@ -2,9 +2,9 @@ libQASM can be requested as a Conan package from a `conanfile.py`.
 
 ```
 def build_requirements(self):
-    self.tool_requires("libqasm/0.6.8")
+    self.tool_requires("libqasm/0.6.9")
 def requirements(self):
-    self.requires("libqasm/0.6.8")
+    self.requires("libqasm/0.6.9")
 ```
 
 And then linked against from a `CMakeLists.txt`:
