@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [ 0.6.9 ] - [ 2024-11-13 ]
+
+### Added
+- `SWAP` unitary instruction.
+- `init`, `barrier`, and `wait` non-unitary instructions.
+
+### Changed
+
+### Removed
+- `reset` without qubit operands form.
+
+
 ## [ 0.6.8 ] - [ 2024-10-16 ]
 
 ### Added
@@ -32,6 +44,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 - Python 3.8 packages generation.
+
 
 ## [ 0.6.6 ] - [ 2024-05-14 ]
 
