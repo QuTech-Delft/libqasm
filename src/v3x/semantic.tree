@@ -71,6 +71,7 @@ annotated {
                 instruction_ref: cqasm::v3x::instruction::InstructionRef;
                 name: cqasm::v3x::primitives::Str;
                 operands: external Any<cqasm::v3x::values::ValueBase>;
+                parameter: external Maybe<cqasm::v3x::values::ValueBase>;
             }
         }
     }
