@@ -24,6 +24,7 @@ class InstructionSet {
 
     InstructionListT single_qubit_named_gate_list;
     InstructionListT two_qubit_named_gate_list;
+    InstructionListT non_gate_list;
 
     InstructionSet();
 
@@ -35,6 +36,9 @@ public:
 
     std::string measure_name = "measure";
     std::string reset_name = "reset";
+    std::string init_name = "init";
+    std::string barrier_name = "barrier";
+    std::string wait_name = "wait";
 
     std::string inv_gate_modifier_name = "inv";
     std::string pow_gate_modifier_name = "pow";
@@ -48,6 +52,7 @@ public:
     [[nodiscard]] const GateModifierMapT& get_gate_modifier_map() const;
     [[nodiscard]] const InstructionListT& get_single_qubit_named_gate_list() const;
     [[nodiscard]] const InstructionListT& get_two_qubit_named_gate_list() const;
+    [[nodiscard]] const InstructionListT& get_non_gate_list() const;
 
     [[nodiscard]] bool is_single_qubit_named_gate(const std::string& name) const;
     [[nodiscard]] bool is_two_qubit_named_gate(const std::string& name) const;
@@ -63,6 +68,9 @@ public:
 
     [[nodiscard]] bool is_measure(const std::string& name) const;
     [[nodiscard]] bool is_reset(const std::string& name) const;
+    [[nodiscard]] bool is_init(const std::string& name) const;
+    [[nodiscard]] bool is_barrier(const std::string& name) const;
+    [[nodiscard]] bool is_wait(const std::string& name) const;
     [[nodiscard]] bool is_non_gate(const std::string& name) const;
 
     [[nodiscard]] bool is_inv_gate_modifier(const std::string& name) const;
@@ -73,6 +81,7 @@ public:
     [[nodiscard]] bool is_gate_modifier(const std::string& name) const;
 
     [[nodiscard]] std::optional<char> get_named_gate_param_type(const std::string& name) const;
+    [[nodiscard]] std::optional<char> get_non_gate_param_type(const std::string& name) const;
     [[nodiscard]] std::optional<char> get_gate_modifier_param_type(const std::string& name) const;
     [[nodiscard]] std::optional<char> get_instruction_param_type(const std::string& name) const;
 };
