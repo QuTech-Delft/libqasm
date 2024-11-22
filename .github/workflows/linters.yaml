@@ -23,7 +23,7 @@ jobs:
         with:
           extensions: 'cpp,hpp'
           style: 'file'  # use .clang-format config file
-          tidy-checks: '-*'  # disable clang-tidy checks
+          tidy-checks: ''  # use .clang-tidy config file
           version: 18
       - name: Fail fast
         if: steps.linter.outputs.clang-format-checks-failed > 0
