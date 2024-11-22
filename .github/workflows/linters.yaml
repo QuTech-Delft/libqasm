@@ -15,6 +15,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Build C++ tests (gcc/Linux/x64)
+        uses: ./.github/actions/cpp-tests
+        with:
+          build_type: Release
+          conan_profile_host: conan/profiles/tests-release-gcc-linux-x64
+          shell: bash
       - name: Run C++ linters
         uses: cpp-linter/cpp-linter-action@v2
         id: linter
