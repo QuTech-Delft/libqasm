@@ -19,7 +19,7 @@ jobs:
         uses: ./.github/actions/cpp-tests
         with:
           build_type: Release
-          conan_profile_host: conan/profiles/tests-release-gcc-linux-x64
+          conan_profile_host: conan/profiles/tests-release-clang-emscripten-wasm
           shell: bash
       - name: Run C++ linters
         uses: cpp-linter/cpp-linter-action@v2
