@@ -34,7 +34,9 @@ jobs:
           tidy-checks: ''  # use .clang-tidy config file
           version: 18
       - name: Fail fast
-        if: steps.linter.outputs.checks-failed > 0
+#        if: steps.linter.outputs.checks-failed > 0
         run: |
-          echo "::notice::Try executing 'python3 ./scripts/run_cpp_linters.py .' to fix linter issues."
+          echo "::notice::Try: \
+              Building with 'conan build . -pr:a=conan/profiles/tests-release-gcc-linux-x64 -b missing'. \
+              And then executing 'python3 ./scripts/run_cpp_linters.py . build/Release' to fix linter issues."
           exit 1
