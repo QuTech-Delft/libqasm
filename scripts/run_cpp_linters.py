@@ -12,7 +12,7 @@ Usage:
     python3 run_cpp_linters.py <ROOT_FOLDER> [<BUILD_FOLDER>]
 Where:
     ROOT_FOLDER: folder containing the .clang-format, .clang-tidy, and C++ files.
-    BUILD_FOLDER: build folder (optional, defaulted to 'build').
+    BUILD_FOLDER: build folder (optional, defaulted to 'build/Release').
 Example:
     python3 run_cpp_linters.py . cmake-build-debug-clang-wsl
     '''
@@ -71,7 +71,7 @@ def main(argv):
         print_usage()
         exit(2)
     root_folder = os.path.abspath(argv[1])
-    build_folder = os.path.abspath(argv[2] if len(argv) == 3 else "build")
+    build_folder = os.path.abspath(argv[2] if len(argv) == 3 else os.path.join("build", "Release"))
     run_cpp_linters(root_folder, build_folder)
 
 if __name__ == '__main__':
