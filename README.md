@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/QuTech-Delft/libqasm/workflows/Test/badge.svg)](https://github.com/qutech-delft/libqasm/actions)
 [![Conan Center](https://img.shields.io/conan/v/libqasm)](https://conan.io/center/recipes/libqasm)
+[![cpp-linter](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml/badge.svg)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml)
 [![PyPI](https://badgen.net/pypi/v/libqasm)](https://pypi.org/project/libqasm/)
 ![OS](https://img.shields.io/badge/os-emscripten%20%7C%20linux%20%7C%20macos%20%7C%20windows-blue?style=flat-square)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
