@@ -15,12 +15,25 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Build C++ tests (gcc/Linux/x64)
-        uses: ./.github/actions/cpp-tests
+      - name: Install node
+        uses: actions/setup-node@v4
         with:
-          build_type: Release
-          conan_profile_host: conan/profiles/tests-release-clang-emscripten-wasm
-          shell: bash
+          node-version: 16.20.2
+      - name: Install conan
+        run: |
+          pipx install conan
+        shell: bash
+      - name: Get latest CMake
+        uses: lukka/get-cmake@latest
+        # We clean the Conan cache as a preventive measure for our runs in self-hosted runners
+        # Self-hosted runners use containers that cache Conan packages from previous runs,
+        # and that can cause different type of problems
+      - name: Configure and build TS tests (clang/emscripten/wasm)
+        run: |
+          conan profile detect --force
+          conan remove -c "*/*"
+          conan build . -pr=conan/profiles/release-clang-emscripten-wasm -pr:b=conan/profiles/release -b missing
+        shell: bash
       - name: Run C++ linters
         uses: cpp-linter/cpp-linter-action@v2
         id: linter
