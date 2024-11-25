@@ -110,8 +110,11 @@ public:
 };
 
 void register_tests() {
+    // Remove a clang-analyzer.cplusplus.NewDeleteLeaks warning in gtest/gtest.h
+    // NOLINTBEGIN
     cqasm::test::register_tests(fs::path{ "res" } / "v3x" / "tests" / "integration",
-        [=](fs::path test_path) -> IntegrationTest* { return new IntegrationTest(std::move(test_path)); });
+        [=](fs::path test_path) -> IntegrationTest* { return new IntegrationTest{ std::move(test_path) }; });
+    // NOLINTEND
 }
 
 }  // namespace cqasm::v3x::test
