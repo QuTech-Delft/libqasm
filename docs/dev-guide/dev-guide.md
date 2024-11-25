@@ -143,11 +143,12 @@ python3 ./scripts/run_cpp_linters.py .
 
 !!! note
 
-    The linters require:
-
-    - `clang-format-18` and `clang-tidy-18` to be installed on the system, and
-    - a build folder containing a `compile_commands.json`. `run_cpp_linters.py` will use `build/Release` as default,
-      but a different folder can be passed as second argument to the script.
+    - The linters require`clang-format-18` and `clang-tidy-18`. 
+    - It is mandatory to have a build before running the linters.
+        - `clang-tidy` expects to find a `compile_commands.json` in a build folder.
+    - It is recommended to build with _gcc_ and in _Release_ mode.
+        - We have observed `clang-tidy` fails to find some standard headers when compiling with _clang_.
+        - `run_cpp_linters.py` can receive a build folder as second argument, but defaults to `build/Release`.
 
 ## Docker
 
