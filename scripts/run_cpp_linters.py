@@ -14,7 +14,7 @@ Where:
     ROOT_FOLDER: folder containing the .clang-format, .clang-tidy, and C++ files.
     BUILD_FOLDER: build folder (optional, defaulted to 'build/Release').
 Example:
-    python3 run_cpp_linters.py . cmake-build-debug-clang-wsl
+    python3 run_cpp_linters.py . build/Debug
     '''
     logging.info(usage_str)
 
