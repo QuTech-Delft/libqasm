@@ -1,0 +1,51 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  block: <
+    GlobalBlock(
+      statements: [
+        Variable( # input.cq:3:7..8
+          name: <
+            Identifier(
+              name: q
+            )
+          >
+          typ: <
+            Type( # input.cq:3:1..6
+              name: <
+                Keyword(
+                  name: qubit
+                )
+              >
+              size: -
+            )
+          >
+          annotations: []
+        )
+        NonGateInstruction( # input.cq:5:1..8
+          name: <
+            Keyword(
+              name: barrier
+            )
+          >
+          operands: <
+            ExpressionList(
+              items: [
+                IntegerLiteral( # input.cq:5:9..10
+                  value: 5
+                )
+              ]
+            )
+          >
+          parameter: -
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

@@ -43,6 +43,10 @@ InstructionSet::InstructionSet()
     { "S", { std::nullopt, "V" } },
     { "Sdag", { std::nullopt, "Q" } },
     { "Sdag", { std::nullopt, "V" } },
+    { "SWAP", { std::nullopt, "QQ" } },
+    { "SWAP", { std::nullopt, "QV" } },
+    { "SWAP", { std::nullopt, "VQ" } },
+    { "SWAP", { std::nullopt, "VV" } },
     { "T", { std::nullopt, "Q" } },
     { "T", { std::nullopt, "V" } },
     { "Tdag", { std::nullopt, "Q" } },
@@ -63,9 +67,15 @@ InstructionSet::InstructionSet()
     { "measure", { std::nullopt, "WV" } },
     { "measure", { std::nullopt, "BV" } },
     { "measure", { std::nullopt, "WQ" } },
-    { "reset", { std::nullopt, std::nullopt } },
     { "reset", { std::nullopt, "Q" } },
-    { "reset", { std::nullopt, "V" } } }
+    { "reset", { std::nullopt, "V" } },
+    { "init", { std::nullopt, "Q" } },
+    { "init", { std::nullopt, "V" } },
+    { "barrier", { std::nullopt, "Q" } },
+    { "barrier", { std::nullopt, "V" } },
+    { "wait", { 'i', "Q" } },
+    { "wait", { 'i', "V" } },
+}
 , gate_modifier_map{
     { "inv", std::nullopt },
     { "pow", 'f' },
@@ -75,7 +85,10 @@ InstructionSet::InstructionSet()
     "H", "I", "mX90", "mY90", "Rx", "Ry", "Rz", "S", "Sdag", "T", "Tdag", "X", "X90", "Y", "Y90", "Z"
 }
 , two_qubit_named_gate_list{
-    "CNOT", "CR", "CRk", "CZ"
+    "CNOT", "CR", "CRk", "CZ", "SWAP"
+}
+, non_gate_list{
+    "measure", "reset", "init", "barrier", "wait"
 }
 {}
 // NOLINTEND
@@ -103,6 +116,10 @@ InstructionSet::InstructionSet()
 
 [[nodiscard]] const InstructionListT& InstructionSet::get_two_qubit_named_gate_list() const {
     return two_qubit_named_gate_list;
+}
+
+[[nodiscard]] const InstructionListT& InstructionSet::get_non_gate_list() const {
+    return non_gate_list;
 }
 
 [[nodiscard]] bool InstructionSet::is_single_qubit_named_gate(const std::string& name) const {
@@ -149,8 +166,20 @@ InstructionSet::InstructionSet()
     return name == reset_name;
 }
 
+[[nodiscard]] bool InstructionSet::is_init(const std::string& name) const {
+    return name == init_name;
+}
+
+[[nodiscard]] bool InstructionSet::is_barrier(const std::string& name) const {
+    return name == barrier_name;
+}
+
+[[nodiscard]] bool InstructionSet::is_wait(const std::string& name) const {
+    return name == wait_name;
+}
+
 [[nodiscard]] bool InstructionSet::is_non_gate(const std::string& name) const {
-    return is_measure(name) || is_reset(name);
+    return non_gate_list.contains(name);
 }
 
 [[nodiscard]] bool InstructionSet::is_inv_gate_modifier(const std::string& name) const {
@@ -185,6 +214,14 @@ InstructionSet::InstructionSet()
     throw error::AnalysisError{ fmt::format("couldn't find gate '{}'", name) };
 }
 
+[[nodiscard]] std::optional<char> InstructionSet::get_non_gate_param_type(const std::string& name) const {
+    if (const auto& it = non_gate_map.find(name); it != non_gate_map.end()) {
+        const auto& pair_param_types_operand_types = it->second;
+        return pair_param_types_operand_types.first;
+    }
+    throw error::AnalysisError{ fmt::format("couldn't find non-unitary instruction '{}'", name) };
+}
+
 [[nodiscard]] std::optional<char> InstructionSet::get_gate_modifier_param_type(const std::string& name) const {
     if (const auto& it = gate_modifier_map.find(name); it != gate_modifier_map.end()) {
         return it->second;
@@ -196,7 +233,7 @@ InstructionSet::InstructionSet()
     if (is_named_gate(name)) {
         return get_named_gate_param_type(name);
     } else if (is_non_gate(name)) {
-        return std::nullopt;
+        return get_non_gate_param_type(name);
     } else if (is_gate_modifier(name)) {
         return get_gate_modifier_param_type(name);
     }

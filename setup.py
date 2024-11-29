@@ -16,10 +16,10 @@ from setuptools.command.install import install as _install
 
 def get_version(verbose=False):
     """Extract version information from source code"""
-    inc_dir = os.path.join(root_dir, "include", "libqasm")  # C++ include directory
-    matcher = re.compile('static const char\* version\{ "(.*)" \}')
+    inc_dir = os.path.join(root_dir, 'include', 'libqasm')  # C++ include directory
+    matcher = re.compile('static const char\* version\{ "(.*)" }')
     version = None
-    with open(os.path.join(inc_dir, "versioning.hpp"), "r") as f:
+    with open(os.path.join(inc_dir, 'versioning.hpp'), 'r') as f:
         for ln in f:
             m = matcher.match(ln)
             if m:
@@ -91,9 +91,8 @@ class build_ext(_build_ext):
 
         # Configure and build using Conan
         with local.cwd(root_dir):
-            # Build type can be set using an environment variable
-            build_type = os.environ.get('LIBQASM_BUILD_TYPE', 'Release')
-            build_tests = os.environ.get("LIBQASM_BUILD_TESTS", "False")
+            build_type = os.environ.get('CMAKE_BUILD_TYPE', 'Release')
+            build_tests = os.environ.get('LIBQASM_BUILD_TESTS', 'False')
 
             cmd = local['conan']['profile']['detect']['--force']
             cmd & FG
@@ -117,9 +116,9 @@ class build_ext(_build_ext):
                 ['-b']['missing']
                 ['-tf']['']
             )
-            if build_tests == "True":
+            if build_tests == 'True':
                 cmd = cmd['-c']['tools.build:skip_test=False']
-            if platform.system() == "Darwin":
+            if platform.system() == 'Darwin':
                 cmd = cmd['-c']['tools.build:defines=["_LIBCPP_DISABLE_AVAILABILITY"]']
             cmd & FG
 

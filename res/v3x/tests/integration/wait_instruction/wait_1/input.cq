@@ -1,0 +1,5 @@
+version 3
+
+qubit q
+
+wait(1)

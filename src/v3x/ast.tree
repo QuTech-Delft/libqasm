@@ -187,6 +187,7 @@ annotated {
                 non_gate_instruction {
                     name: One<keyword>;
                     operands: One<expression_list>;
+                    parameter: Maybe<expression>;
                 }
             }
         }

@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:6:1..4: failed to resolve 'pow' with argument pack (bit)
+Error at input.cq:6:1..4: failed to resolve 'pow' with parameter type (bit)
