@@ -119,7 +119,7 @@ Tests are disabled by default. To enable them, use `-c tools.build:skip_test=Fal
 Build and serve on `http://127.0.0.1:8000/`.
 
 ```shell
-export PTYHONPATH=./scripts/python
+export PYTHONPATH=./scripts/python
 mkdocs serve
 ```
 
@@ -137,12 +137,18 @@ Continuous Integration will fail if the files do not adhere to a series of forma
 It is recommended to run these linters before pushing any change:
 
 ```shell
+conan build . -pr:a=conan/profiles/tests-release-gcc-linux-x64 -b missing
 python3 ./scripts/run_cpp_linters.py .
 ```
 
 !!! note
 
-    The linters require `clang-format-18` and `clang-tidy-18` to be installed on the system.
+    - The linters require`clang-format-18` and `clang-tidy-18`. 
+    - It is mandatory to have a build before running the linters.
+        - `clang-tidy` expects to find a `compile_commands.json` in a build folder.
+    - It is recommended to build with _gcc_ in _Release_ mode.
+        - We have observed `clang-tidy` fails to find some standard headers when compiling with _clang_.
+        - `run_cpp_linters.py` can receive a build folder as second argument, but defaults to `build/Release`.
 
 ## Docker
 

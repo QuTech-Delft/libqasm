@@ -23,7 +23,7 @@ Instruction::Instruction(std::string name, const std::optional<std::string>& ope
  * Equality operator.
  */
 bool Instruction::operator==(const Instruction& rhs) const {
-    return name == rhs.name && operand_types == rhs.operand_types;
+    return name == rhs.name && operand_types.equals(rhs.operand_types);
 }
 
 /**
@@ -59,6 +59,8 @@ void serialize(const instruction::InstructionRef& obj, ::tree::cbor::MapWriter& 
 
 template <>
 instruction::InstructionRef deserialize(const ::tree::cbor::MapReader& map) {
+    // Remove what seems to be a false positive clang-analyzer-optin.cplusplus.VirtualCall
+    // NOLINTBEGIN
     if (!map.count("name")) {
         return {};
     }
@@ -69,6 +71,7 @@ instruction::InstructionRef deserialize(const ::tree::cbor::MapReader& map) {
         ret->operand_types.add(::tree::base::deserialize<types::Node>(element.as_binary()));
     }
     return ret;
+    // NOLINTEND
 }
 
 }  // namespace cqasm::v3x::primitives

@@ -45,9 +45,9 @@ cqasm::v3x::parser::ParseResult AntlrScanner::parse_(antlr4::ANTLRInputStream& i
 }
 
 FileAntlrScanner::FileAntlrScanner(std::unique_ptr<BaseSyntacticAnalyzer> build_visitor_up,
-    std::unique_ptr<AntlrCustomErrorListener> error_listener_up, const std::string& file_path)
+    std::unique_ptr<AntlrCustomErrorListener> error_listener_up, std::string file_path)
 : AntlrScanner{ std::move(build_visitor_up), std::move(error_listener_up) }
-, file_path_{ file_path } {
+, file_path_{ std::move(file_path) } {
     if (!fs::exists(file_path_) || !fs::is_regular_file(file_path_)) {
         throw cqasm::error::ParseError{ fmt::format("FileAntlrScanner couldn't access file '{}'.", file_path_) };
     }
@@ -62,9 +62,9 @@ cqasm::v3x::parser::ParseResult FileAntlrScanner::parse() {
 }
 
 StringAntlrScanner::StringAntlrScanner(std::unique_ptr<BaseSyntacticAnalyzer> build_visitor_up,
-    std::unique_ptr<AntlrCustomErrorListener> error_listener_up, const std::string& data)
+    std::unique_ptr<AntlrCustomErrorListener> error_listener_up, std::string data)
 : AntlrScanner{ std::move(build_visitor_up), std::move(error_listener_up) }
-, data_{ data } {}
+, data_{ std::move(data) } {}
 
 StringAntlrScanner::~StringAntlrScanner() = default;
 

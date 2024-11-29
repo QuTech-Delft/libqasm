@@ -41,8 +41,10 @@ void VariableTable::add(const std::string& name, const Value& value) {
 // ConstEvalCoreFunctionTable //
 //----------------------------//
 
+// NOLINTBEGIN
 ConstEvalCoreFunctionTable::ConstEvalCoreFunctionTable()
-: resolver{ std::make_unique<resolver_t>() } {}
+: resolver{ std::make_unique<resolver_t>() } {};
+// NOLINTEND
 ConstEvalCoreFunctionTable::~ConstEvalCoreFunctionTable() = default;
 ConstEvalCoreFunctionTable::ConstEvalCoreFunctionTable(const ConstEvalCoreFunctionTable& t)
 : resolver{ std::make_unique<resolver_t>(*t.resolver) } {}
@@ -93,8 +95,10 @@ Value ConstEvalCoreFunctionTable::resolve(const std::string& name, const Values&
 // InstructionTable //
 //------------------//
 
+// NOLINTBEGIN
 InstructionTable::InstructionTable()
 : resolver{ std::make_unique<resolver_t>() } {}
+// NOLINTEND
 InstructionTable::~InstructionTable() = default;
 InstructionTable::InstructionTable(const InstructionTable& t)
 : resolver{ std::make_unique<resolver_t>(*t.resolver) } {}

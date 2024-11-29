@@ -34,7 +34,7 @@ class SyntacticAnalyzer : public BaseSyntacticAnalyzer {
     std::int64_t get_int_value(antlr4::tree::TerminalNode* node) const;
     double get_float_value(antlr4::tree::TerminalNode* node) const;
 
-    tree::Maybe<ast::IntegerLiteral> getArraySize(CqasmParser::ArraySizeDeclarationContext* context);
+    tree::Maybe<ast::IntegerLiteral> get_array_size(CqasmParser::ArraySizeDeclarationContext* context);
 
     template <typename Context>
     tree::One<ast::Variable> visitVariable(Context* context) {
@@ -107,7 +107,7 @@ public:
     std::any visitFloatLiteral(CqasmParser::FloatLiteralContext* context) override;
 
     explicit SyntacticAnalyzer(const std::optional<std::string>& file_name);
-    void addErrorListener(AntlrCustomErrorListener* errorListener) override;
+    void addErrorListener(AntlrCustomErrorListener* error_listener) override;
     void syntaxError(size_t line, size_t char_position_in_line, const std::string& text) const override;
     void setNodeAnnotation(const ast::One<ast::Node>& node, antlr4::Token* token) const override;
     void expandNodeAnnotation(const ast::One<ast::Node>& node, antlr4::Token* token) const override;

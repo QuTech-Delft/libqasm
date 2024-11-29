@@ -15,7 +15,6 @@
 
 namespace cqasm::v3x::test {
 
-namespace cq3x = cqasm::v3x;
 namespace fs = std::filesystem;
 
 /**
@@ -33,8 +32,8 @@ public:
         // Parse the test input file
         std::string input{};
         ASSERT_TRUE(cqasm::test::read_file(path_ / "input.cq", input));
-        cq3x::parser::ParseResult parse_result{};
-        parse_result = cq3x::parser::parse_string(input, "input.cq");
+        parser::ParseResult parse_result{};
+        parse_result = parser::parse_string(input, "input.cq");
 
         // Check the debug dump of the parse result
         std::string ast_actual_file_contents = parse_result.errors.empty()
@@ -68,7 +67,7 @@ public:
 
         // If there were no errors, try semantic analysis
         for (const auto& api_version : std::vector<std::string>({ "3.0" })) {
-            auto analyzer = cq3x::analyzer::Analyzer{ api_version };
+            auto analyzer = analyzer::Analyzer{ api_version };
 
             analyzer.register_default_constants();
             analyzer.register_default_functions();
@@ -111,8 +110,11 @@ public:
 };
 
 void register_tests() {
+    // Remove a clang-analyzer.cplusplus.NewDeleteLeaks warning in gtest/gtest.h
+    // NOLINTBEGIN
     cqasm::test::register_tests(fs::path{ "res" } / "v3x" / "tests" / "integration",
-        [=](fs::path test_path) -> IntegrationTest* { return new IntegrationTest(std::move(test_path)); });
+        [=](fs::path test_path) -> IntegrationTest* { return new IntegrationTest{ std::move(test_path) }; });
+    // NOLINTEND
 }
 
 }  // namespace cqasm::v3x::test
