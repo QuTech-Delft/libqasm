@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [ 1.0.0 ] - [ xxxx-yy-zz ]
+
+### Added
+- `.clang-tidy`.
+
+### Changed
+- Error when redeclaring a variable.
+
+### Removed
+
+
 ## [ 0.6.9 ] - [ 2024-11-13 ]
 
 ### Added
