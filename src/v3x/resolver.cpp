@@ -22,7 +22,9 @@ namespace cqasm::v3x::resolver {
  * Adds a variable.
  */
 void VariableTable::add(const std::string& name, const Value& value) {
-    table.erase(name);
+    if (auto entry = table.find(name); entry != table.end()) {
+        throw NameResolutionFailure{ fmt::format("trying to redeclare variable '{}'", name) };
+    }
     table.insert(std::make_pair(name, value));
 }
 
