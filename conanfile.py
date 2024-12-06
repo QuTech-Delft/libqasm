@@ -92,7 +92,7 @@ class LibqasmConan(ConanFile):
         if self.settings.arch != "armv8":
             self.tool_requires("zulu-openjdk/21.0.1")
         if self.settings.arch == "wasm":
-            self.tool_requires("emsdk/3.1.50")
+            self.tool_requires("emsdk/3.1.72")
         if self._should_build_test:
             self.test_requires("gtest/1.15.0")
 

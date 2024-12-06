@@ -6,6 +6,3 @@ libqasm/*:build_type=Debug
 
 [options]
 libqasm/*:asan_enabled=False
-
-[replace_requires]
-nodejs/*: nodejs/16.20.2
