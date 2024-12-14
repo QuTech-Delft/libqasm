@@ -3,6 +3,7 @@ BasedOnStyle: Google
 Language: Cpp
 AccessModifierOffset: -4
 AlignAfterOpenBracket: DontAlign
+AlignArrayOfStructures: Right
 AlignOperands: DontAlign
 AlignTrailingComments: false
 AllowAllArgumentsOnNextLine: true

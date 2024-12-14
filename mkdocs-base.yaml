@@ -72,4 +72,4 @@ plugins:
       default_handler: python
 
 watch:
-  - mkdocs-base.yml
+  - mkdocs-base.yaml

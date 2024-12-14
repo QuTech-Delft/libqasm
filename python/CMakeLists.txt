@@ -66,14 +66,6 @@ endif()
 message(STATUS "Found python3 include directory at ${PYTHON_INCLUDE_DIRS}")
 
 
-# SWIG ------------------------------------------------------------------------
-
-# Look for SWIG.
-find_package(SWIG REQUIRED)
-
-include(${SWIG_USE_FILE})
-
-
 #=============================================================================#
 # CMake configuration                                                         #
 #=============================================================================#
@@ -89,14 +81,20 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 
+# SWIG ------------------------------------------------------------------------
+
+# Look for SWIG.
+find_package(SWIG REQUIRED)
+
+include(${SWIG_USE_FILE})
+
+
 #=============================================================================#
 # Build the SWIG module                                                       #
 #=============================================================================#
 
 # Configure SWIG.
-set(SWIG_FILE
-    "${CMAKE_CURRENT_SOURCE_DIR}/libqasm.i"
-)
+set(SWIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/libqasm.i")
 
 set_source_files_properties("${SWIG_FILE}" PROPERTIES
     CPLUSPLUS ON

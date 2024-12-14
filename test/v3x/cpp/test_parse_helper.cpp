@@ -44,7 +44,10 @@ protected:
     }
 
     std::string file_name = "input.cq";
-    annotations::SourceLocation::Range range{ { 10, 12 }, { 10, 15 } };
+    annotations::SourceLocation::Range range{
+        { 10, 12 },
+        { 10, 15 }
+    };
 
     std::string parse_error_message = "parse error";
     std::string runtime_error_message = "runtime error";
