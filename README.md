@@ -43,7 +43,7 @@ CNOT q[0], q[1]
 b = measure q
 ```
 
-We can parse or analyze this circuit, using libQASM through the following programming language:
+We can parse or analyze this circuit using libQASM through the following programming language:
 
 ### C++
 
@@ -57,7 +57,6 @@ int main() {
     auto analysis_result = analyzer.analyze_file("example.cq");
 }
 ```
-
 
 ### Emscripten
 
