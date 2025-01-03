@@ -85,10 +85,9 @@ conan build . -pr:a=conan/profiles/tests-debug -b missing
 ### Profiles
 
 A group of predefined profiles is provided under the `conan/profiles` folder.  
-They follow the `[tests-|docs-](build_type)(-compiler)(-os)(-arch)[-shared]` naming convention:
+They follow the `[tests-](build_type)(-compiler)(-os)(-arch)[-shared]` naming convention:
 
 - `tests`: if tests are being built.
-- `docs`: if docs are being built.
 - `build_type`: can be `debug` or `release`.
 - `compiler`: `apple-clang`, `clang`, `gcc`, `msvc`.
 - `os`: `emscripten`, `linux`, `macos`, `windows`.
