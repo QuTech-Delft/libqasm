@@ -108,7 +108,7 @@ conan build . -s:a compiler.cppstd=20 -s:a libqasm/*:build_type=Debug -o libqasm
 This is the list of options that could be specified either in a profile or in the command line:
 
 - `libqasm/*:asan_enabled={True,False}`: enables Address Sanitizer.
-- `libqasm/*:build_type={Debug,Release}`: builds in debug or release mode.
+- `libqasm/*:build_type={Debug,Release}`: builds in Debug or Release mode.
 - `libqasm/*:shared={True,False}`: builds a shared object library instead of a static library, if applicable.
 
 Tests are disabled by default. To enable them, use `-c tools.build:skip_test=False`.
