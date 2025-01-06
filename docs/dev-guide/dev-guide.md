@@ -55,10 +55,10 @@ For the time being, we install Java manually for this platform.
 On a Linux machine, these linters can be installed with the following commands:
 
 ```shell
- wget https://apt.llvm.org/llvm.sh -O llvm_install.sh
- chmod +x llvm_install.sh
- ./llvm_install.sh
- apt-get install -y clang-format-18 clang-tidy-18
+wget https://apt.llvm.org/llvm.sh -O llvm_install.sh
+chmod +x llvm_install.sh
+./llvm_install.sh
+apt-get install -y clang-format-18 clang-tidy-18
 ```
 
 ## Build
