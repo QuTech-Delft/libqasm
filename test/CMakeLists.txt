@@ -41,6 +41,7 @@ elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
         -Wall -Wextra -Werror -Wfatal-errors
         -fPIC
         -Wno-error=sign-compare
+        -Wno-error=unused-parameter
         -Wno-error=unused-private-field
         -Wno-error=unused-but-set-variable
     )
