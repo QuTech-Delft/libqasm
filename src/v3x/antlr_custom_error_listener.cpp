@@ -30,10 +30,12 @@ void AntlrCustomErrorListener::syntaxError(antlr4::Recognizer* /* recognizer */,
         : 0;
     auto end_column = start_column + token_size;
 
-    throw error::ParseError{ msg,
+    throw error::ParseError{
+        msg,
         file_name_,
         { { static_cast<std::uint32_t>(line), static_cast<std::uint32_t>(start_column) },
-            { static_cast<std::uint32_t>(line), static_cast<std::uint32_t>(end_column) } } };
+          { static_cast<std::uint32_t>(line), static_cast<std::uint32_t>(end_column) } }
+    };
 }
 
 void AntlrCustomErrorListener::syntaxError(size_t line, size_t char_position_in_line, const std::string& msg) {

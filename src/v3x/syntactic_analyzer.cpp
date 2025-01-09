@@ -43,11 +43,13 @@ void SyntacticAnalyzer::syntaxError(size_t line, size_t char_position_in_line, c
  */
 void SyntacticAnalyzer::setNodeAnnotation(const ast::One<ast::Node>& node, antlr4::Token* token) const {
     auto token_size = token->getStopIndex() - token->getStartIndex() + 1;
-    node->set_annotation(annotations::SourceLocation{ file_name_,
+    node->set_annotation(annotations::SourceLocation{
+        file_name_,
         { { static_cast<std::uint32_t>(token->getLine()),
               static_cast<std::uint32_t>(token->getCharPositionInLine() + 1) },
-            { static_cast<std::uint32_t>(token->getLine()),
-                static_cast<std::uint32_t>(token->getCharPositionInLine() + 1 + token_size) } } });
+          { static_cast<std::uint32_t>(token->getLine()),
+                static_cast<std::uint32_t>(token->getCharPositionInLine() + 1 + token_size) } }
+    });
 }
 
 void SyntacticAnalyzer::expandNodeAnnotation(const One<Node>& node, antlr4::Token* token) const {

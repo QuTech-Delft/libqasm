@@ -35,7 +35,9 @@ TEST(constructor_message_node, message_and_node_with_empty_location) {
 }
 TEST(constructor_message_node, message_and_node_with_location) {
     auto node = FakeNode{};
-    node.set_annotation(SourceLocation{ "input.cq", { { 10, 12 }, { 10, 15 } } });
+    node.set_annotation(SourceLocation{
+        "input.cq", { { 10, 12 }, { 10, 15 } }
+    });
     auto err = Error{ "syntax error", &node };
     EXPECT_EQ(fmt::format("{}", err), "Error at input.cq:10:12..15: syntax error");
 }
@@ -48,11 +50,14 @@ TEST(constructor_message_location, message_and_empty_location) {
     auto err = Error{ "syntax error", std::make_shared<SourceLocation>() };
     EXPECT_EQ(fmt::format("{}", err), "Error at <unknown file name>: syntax error");
 }
+// clang-format off
 TEST(constructor_message_location, message_and_location) {
-    auto err = Error{ "syntax error",
-        std::make_shared<SourceLocation>("input.cq", SourceLocation::Range{ { 10, 12 }, { 10, 15 } }) };
+    auto err = Error{
+        "syntax error", std::make_shared<SourceLocation>("input.cq", SourceLocation::Range{ { 10, 12 }, { 10, 15 } })
+    };
     EXPECT_EQ(fmt::format("{}", err), "Error at input.cq:10:12..15: syntax error");
 }
+// clang-format on
 
 TEST(constructor_message_location_fields, empty_message) {
     auto err = Error{ "", std::nullopt, SourceLocation::Range{} };
@@ -63,16 +68,26 @@ TEST(constructor_message_location_fields, message_and_empty_location) {
     EXPECT_EQ(fmt::format("{}", err), "Error at <unknown file name>: syntax error");
 }
 TEST(constructor_message_location_fields, message_and_location) {
-    auto err = Error{ "syntax error", "input.cq", SourceLocation::Range{ { 10, 12 }, { 10, 15 } } };
+    auto err = Error{
+        "syntax error", "input.cq", SourceLocation::Range{ { 10, 12 }, { 10, 15 } }
+    };
     EXPECT_EQ(fmt::format("{}", err), "Error at input.cq:10:12..15: syntax error");
 }
 
 TEST(context, location) {
     auto node_1 = FakeNode{};
-    node_1.set_annotation(SourceLocation("input.cq", SourceLocation::Range{ { 10, 12 }, { 10, 15 } }));
+    node_1.set_annotation(SourceLocation("input.cq",
+        SourceLocation::Range{
+            { 10, 12 },
+            { 10, 15 }
+    }));
     auto err = Error{ "syntax error", &node_1 };
     auto node_2 = FakeNode{};
-    node_2.set_annotation(SourceLocation("input.cq", SourceLocation::Range{ { 20, 22 }, { 20, 25 } }));
+    node_2.set_annotation(SourceLocation("input.cq",
+        SourceLocation::Range{
+            { 20, 22 },
+            { 20, 25 }
+    }));
     err.context(node_2);
     EXPECT_EQ(fmt::format("{}", err), "Error at input.cq:10:12..15: syntax error");
 }
@@ -85,7 +100,11 @@ TEST(context, no_location_and_node_does_not_have_source_location) {
 TEST(context, no_location_and_node_has_source_location) {
     auto err = Error{ "syntax error" };
     auto node_2 = FakeNode{};
-    node_2.set_annotation(SourceLocation("input.cq", SourceLocation::Range{ { 20, 22 }, { 20, 25 } }));
+    node_2.set_annotation(SourceLocation("input.cq",
+        SourceLocation::Range{
+            { 20, 22 },
+            { 20, 25 }
+    }));
     err.context(node_2);
     EXPECT_EQ(fmt::format("{}", err), "Error at input.cq:20:22..25: syntax error");
 }
@@ -103,11 +122,15 @@ TEST(what, message_and_empty_location) {
     EXPECT_EQ(std::string{ err.what() }, "Error at <unknown file name>: syntax error");
 }
 TEST(what, message_and_location_with_unknown_file_name) {
-    auto err = Error{ "syntax error", std::nullopt, SourceLocation::Range{ { 10, 12 }, { 10, 15 } } };
+    auto err = Error{
+        "syntax error", std::nullopt, SourceLocation::Range{ { 10, 12 }, { 10, 15 } }
+    };
     EXPECT_EQ(std::string{ err.what() }, "Error at <unknown file name>:10:12..15: syntax error");
 }
 TEST(what, message_and_location_with_known_file_name) {
-    auto err = Error{ "syntax error", "input.cq", SourceLocation::Range{ { 10, 12 }, { 10, 15 } } };
+    auto err = Error{
+        "syntax error", "input.cq", SourceLocation::Range{ { 10, 12 }, { 10, 15 } }
+    };
     EXPECT_EQ(std::string{ err.what() }, "Error at input.cq:10:12..15: syntax error");
 }
 
@@ -148,7 +171,9 @@ TEST(to_json, message_and_empty_location) {
         R"(})");
 }
 TEST(to_json, message_and_location_with_unknown_file_name) {
-    auto err = Error{ "syntax error", std::nullopt, SourceLocation::Range{ { 10, 12 }, { 10, 15 } } };
+    auto err = Error{
+        "syntax error", std::nullopt, SourceLocation::Range{ { 10, 12 }, { 10, 15 } }
+    };
     EXPECT_EQ(err.to_json(),
         R"({)"
         R"("range":{)"
@@ -160,7 +185,9 @@ TEST(to_json, message_and_location_with_unknown_file_name) {
         R"(})");
 }
 TEST(to_json, message_and_location_with_known_file_name) {
-    auto err = Error{ "syntax error", "input.cq", SourceLocation::Range{ { 10, 12 }, { 10, 15 } } };
+    auto err = Error{
+        "syntax error", "input.cq", SourceLocation::Range{ { 10, 12 }, { 10, 15 } }
+    };
     EXPECT_EQ(err.to_json(),
         R"({)"
         R"("range":{)"

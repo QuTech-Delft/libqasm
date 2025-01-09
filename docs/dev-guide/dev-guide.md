@@ -55,10 +55,10 @@ For the time being, we install Java manually for this platform.
 On a Linux machine, these linters can be installed with the following commands:
 
 ```shell
- wget https://apt.llvm.org/llvm.sh -O llvm_install.sh
- chmod +x llvm_install.sh
- ./llvm_install.sh
- apt-get install -y clang-format-18 clang-tidy-18
+wget https://apt.llvm.org/llvm.sh -O llvm_install.sh
+chmod +x llvm_install.sh
+./llvm_install.sh
+apt-get install -y clang-format-18 clang-tidy-18
 ```
 
 ## Build
@@ -85,10 +85,9 @@ conan build . -pr:a=conan/profiles/tests-debug -b missing
 ### Profiles
 
 A group of predefined profiles is provided under the `conan/profiles` folder.  
-They follow the `[tests-|docs-](build_type)(-compiler)(-os)(-arch)[-shared]` naming convention:
+They follow the `[tests-](build_type)(-compiler)(-os)(-arch)[-shared]` naming convention:
 
 - `tests`: if tests are being built.
-- `docs`: if docs are being built.
 - `build_type`: can be `debug` or `release`.
 - `compiler`: `apple-clang`, `clang`, `gcc`, `msvc`.
 - `os`: `emscripten`, `linux`, `macos`, `windows`.
@@ -109,7 +108,7 @@ conan build . -s:a compiler.cppstd=20 -s:a libqasm/*:build_type=Debug -o libqasm
 This is the list of options that could be specified either in a profile or in the command line:
 
 - `libqasm/*:asan_enabled={True,False}`: enables Address Sanitizer.
-- `libqasm/*:build_type={Debug,Release}`: builds in debug or release mode.
+- `libqasm/*:build_type={Debug,Release}`: builds in Debug or Release mode.
 - `libqasm/*:shared={True,False}`: builds a shared object library instead of a static library, if applicable.
 
 Tests are disabled by default. To enable them, use `-c tools.build:skip_test=False`.
