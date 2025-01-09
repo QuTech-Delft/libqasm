@@ -930,7 +930,7 @@
 
   <h1>C++</h1>
 
-<p>libQASM can be requested as a Conan package from a <code>conanfile.py</code>.</p>
+<p>libQASM can be requested as a Conan package from a <code>conanfile.py</code>:</p>
 <pre><code>def build_requirements(self):
     self.tool_requires(&quot;libqasm/0.6.9&quot;)
 def requirements(self):
@@ -943,7 +943,7 @@ def requirements(self):
 <p class="admonition-title">Note</p>
 <p>You will need to have <code>Java JRE</code> &gt;= 11 installed in case Conan needs to build libQASM.</p>
 </div>
-<p><strong>Example</strong>:</p>
+<p>And used from a C++ program:</p>
 <pre><code class="language-cpp">#include &quot;libqasm/v3x/cqasm_python.hpp&quot;
 
 auto program = std::string{ R&quot;(

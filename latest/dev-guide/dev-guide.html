@@ -1131,10 +1131,10 @@ For the time being, we install Java manually for this platform.</p>
 <li><code>clang-tidy-18</code></li>
 </ul>
 <p>On a Linux machine, these linters can be installed with the following commands:</p>
-<pre><code class="language-shell"> wget https://apt.llvm.org/llvm.sh -O llvm_install.sh
- chmod +x llvm_install.sh
- ./llvm_install.sh
- apt-get install -y clang-format-18 clang-tidy-18
+<pre><code class="language-shell">wget https://apt.llvm.org/llvm.sh -O llvm_install.sh
+chmod +x llvm_install.sh
+./llvm_install.sh
+apt-get install -y clang-format-18 clang-tidy-18
 </code></pre>
 <h2 id="build">Build</h2>
 <p>This version of libQASM can only be compiled via the Conan package manager.
@@ -1156,10 +1156,9 @@ conan build . -pr:a=conan/profiles/tests-debug -b missing
 </div>
 <h3 id="profiles">Profiles</h3>
 <p>A group of predefined profiles is provided under the <code>conan/profiles</code> folder.<br />
-They follow the <code>[tests-|docs-](build_type)(-compiler)(-os)(-arch)[-shared]</code> naming convention:</p>
+They follow the <code>[tests-](build_type)(-compiler)(-os)(-arch)[-shared]</code> naming convention:</p>
 <ul>
 <li><code>tests</code>: if tests are being built.</li>
-<li><code>docs</code>: if docs are being built.</li>
 <li><code>build_type</code>: can be <code>debug</code> or <code>release</code>.</li>
 <li><code>compiler</code>: <code>apple-clang</code>, <code>clang</code>, <code>gcc</code>, <code>msvc</code>.</li>
 <li><code>os</code>: <code>emscripten</code>, <code>linux</code>, <code>macos</code>, <code>windows</code>.</li>
@@ -1175,7 +1174,7 @@ All the <code>tests</code>, except for <code>linux-x64</code> profiles, enable A
 <p>This is the list of options that could be specified either in a profile or in the command line:</p>
 <ul>
 <li><code>libqasm/*:asan_enabled={True,False}</code>: enables Address Sanitizer.</li>
-<li><code>libqasm/*:build_type={Debug,Release}</code>: builds in debug or release mode.</li>
+<li><code>libqasm/*:build_type={Debug,Release}</code>: builds in Debug or Release mode.</li>
 <li><code>libqasm/*:shared={True,False}</code>: builds a shared object library instead of a static library, if applicable.</li>
 </ul>
 <p>Tests are disabled by default. To enable them, use <code>-c tools.build:skip_test=False</code>.</p>
