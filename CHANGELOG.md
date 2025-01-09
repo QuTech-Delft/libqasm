@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Error when redeclaring a variable.
+- Fix clang/Linux/x64 GitHub Actions jobs (which use Ubuntu 24.04.1 since 2025).
 
 ### Removed
 
