@@ -77,7 +77,7 @@ conan build . -pr:a=conan/profiles/tests-debug -b missing
 
 !!! note
 
-    - the `conan profile` command only has to be run only once, and not before every build.
+    - the `conan profile` command has to be run only once, and not before every build.
     - the `conan build` command is building libQASM in Debug mode with tests using the `tests-debug` profile.
     - the `-b missing` parameter asks `conan` to build packages from sources
       in case it cannot find the binary packages for the current configuration (platform, OS, compiler, build type...).
@@ -133,7 +133,7 @@ Continuous Integration will fail if the files do not adhere to a series of forma
 - Formatting checks are defined in `.clang-format`.
 - Code style checks are defined in `.clang-tidy`.
 
-It is recommended to run these linters before pushing any change:
+It is recommended to run these linters before pushing any changes:
 
 ```shell
 conan build . -pr:a=conan/profiles/tests-release-gcc-linux-x64 -b missing
@@ -142,7 +142,7 @@ python3 ./scripts/run_cpp_linters.py .
 
 !!! note
 
-    - The linters require`clang-format-18` and `clang-tidy-18`. 
+    - The linters require `clang-format-18` and `clang-tidy-18`. 
     - It is mandatory to have a build before running the linters.
         - `clang-tidy` expects to find a `compile_commands.json` in a build folder.
     - It is recommended to build with _gcc_ in _Release_ mode.
