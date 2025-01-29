@@ -32,6 +32,7 @@ IndentWidth: 4
 LambdaBodyIndentation: Signature
 PackConstructorInitializers: Never
 PointerAlignment: Left
+QualifierAlignment: Left
 ReferenceAlignment: Left
 ReflowComments: true
 SpacesBeforeTrailingComments: 2
