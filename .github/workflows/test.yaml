@@ -193,7 +193,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install dependencies
+      - name: Install SWIG
         run: |
           brew install swig
         shell: bash
@@ -207,7 +207,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install dependencies
+      - name: Install SWIG
         run: |
           brew install swig
         shell: bash
