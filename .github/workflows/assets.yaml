@@ -14,8 +14,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # macos-13 is an x64 runner, macos-14 is an arm64 runner
-        os: [ubuntu-latest, windows-latest, macos-13, macos-14]
+        os: [
+          ubuntu-latest,  # Linux/x64
+          macos-13,  # MacOS/x64
+          windows-latest,  # Windows/x64
+          ubuntu-24.04-arm,  # Linux/ARM64
+          macos-14  # MacOS/ARM64
+        ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,42 +32,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: cibw-wheels-${{ matrix.os }}
-          path: ./wheelhouse/*.whl
-
-  cibw-wheels-linux-arm64:
-    name: Build wheels on linux-arm64
-    runs-on: [self-hosted, ARM64, Linux]
-    container:
-      image: python:3.12-slim
-      volumes:
-        - /var/run/docker.sock:/var/run/docker.sock
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-      - name: Install docker
-        run: |
-          apt-get update
-          apt-get install -y ca-certificates curl
-          install -m 0755 -d /etc/apt/keyrings
-          curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
-          chmod a+r /etc/apt/keyrings/docker.asc
-
-          echo \
-            "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
-            $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-            tee /etc/apt/sources.list.d/docker.list > /dev/null
-          apt-get update
-          apt-get install -y docker-ce-cli
-      - name: Install cibuildwheel and build wheels
-        run: |
-          pip install cibuildwheel==2.18.1
-          cibuildwheel --output-dir wheelhouse
-        env:
-          CIBW_BEFORE_ALL_LINUX: yum install -y java-11-openjdk
-      - uses: actions/upload-artifact@v4
-        with:
-          name: cibw-wheels-linux-arm64
           path: ./wheelhouse/*.whl
 
   emscripten-wasm:
@@ -108,7 +77,6 @@ jobs:
     name: Publish Python packages
     needs:
       - cibw-wheels
-      - cibw-wheels-linux-arm64
       - emscripten-wasm
     runs-on: ubuntu-latest
     steps:
