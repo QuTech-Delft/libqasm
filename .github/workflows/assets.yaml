@@ -25,18 +25,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        # The Linux/ARM64 runner seems to be missing Java
-      - name: Install Java and add it to the path
-        if: ${{ matrix.os == 'ubuntu-24.04-arm' }}
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y default-jre
-          echo "/usr/bin" >> $GITHUB_PATH
-          java --version
       - name: Install cibuildwheel
-        run: python -m pip install cibuildwheel==2.18.1
+        run: |
+          python -m pip install cibuildwheel==2.18.1
       - name: Build wheels
-        run: python -m cibuildwheel --output-dir wheelhouse
+        run: |
+          python -m cibuildwheel --output-dir wheelhouse
+        if: ${{ matrix.os == 'ubuntu-24.04-arm' }}
+        env:
+          CIBW_BEFORE_ALL_LINUX: sudo yum install -y java-11-openjdk
       - uses: actions/upload-artifact@v4
         with:
           name: cibw-wheels-${{ matrix.os }}
