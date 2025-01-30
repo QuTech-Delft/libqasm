@@ -33,7 +33,7 @@ jobs:
           python -m cibuildwheel --output-dir wheelhouse
         if: ${{ matrix.os == 'ubuntu-24.04-arm' }}
         env:
-          CIBW_BEFORE_ALL_LINUX: sudo yum install -y java-11-openjdk
+          CIBW_BEFORE_ALL_LINUX: yum install -y java-11-openjdk
       - uses: actions/upload-artifact@v4
         with:
           name: cibw-wheels-${{ matrix.os }}
