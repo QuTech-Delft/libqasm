@@ -195,6 +195,20 @@ jobs:
         with:
           shell: bash
 
+  python-linux-arm64:
+    name: "Python tests (Linux/arm64)"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install SWIG
+        run: |
+          sudo apt-get install -y swig
+        shell: bash
+      - uses: ./.github/actions/python-tests
+        with:
+          shell: bash
+
   python-macos-x64:
     name: "Python tests (macOS/x64)"
     runs-on: macos-13
@@ -259,6 +273,7 @@ jobs:
       - cpp-shared
       - ts-emscripten-wasm
       - python-linux-x64
+      - python-linux-arm64
       - python-macos-x64
       - python-macos-arm64
       - python-windows-x64
