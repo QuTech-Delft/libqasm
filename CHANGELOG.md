@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 - `.clang-tidy`.
+- Python Linux/ARM64 GitHub Actions job.
 
 ### Changed
 - Error when redeclaring a variable.
@@ -75,7 +76,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Python module name from `libQasm` to `libqasm`.
 
 ## Fixed
-- Python MacOS/arm64 packages.
+- Python MacOS/ARM64 packages.
 - `scripts/generate_antlr_parser.py`.
 
 ### Removed
