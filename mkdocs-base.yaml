@@ -7,19 +7,19 @@ nav:
   - Home: index.md
   - User Guide:
     - User Guide: user-guide/user-guide.md
-    - C++: user-guide/cpp.md
+    - C++: user-guide/cpp-user-guide.md
     - Docker: user-guide/docker.md
-    - Emscripten: user-guide/emscripten.md
-    - Python: user-guide/python.md
+    - Emscripten: user-guide/emscripten-user-guide.md
+    - Python: user-guide/python-user-guide.md
   - Developer Guide:
     - Dev Guide: dev-guide/dev-guide.md
-    - C++: dev-guide/cpp.md
-    - Emscripten: dev-guide/emscripten.md
-    - Python: dev-guide/python.md
+    - C++: dev-guide/cpp-dev-guide.md
+    - Emscripten: dev-guide/emscripten-dev-guide.md
+    - Python: dev-guide/python-dev-guide.md
   - API:
-    - C++: api/cpp.md
-    - Emscripten: api/emscripten.md
-    - Python: api/python.md
+    - C++: api/cpp-api.md
+    - Emscripten: api/emscripten-api.md
+    - Python: api/python-api.md
   - About:
     - Release Notes: about/release-notes.md
     - Contributing: about/contributing.md
