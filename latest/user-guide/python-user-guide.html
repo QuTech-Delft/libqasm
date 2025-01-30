@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="user-guide.html">
+        <link rel="prev" href="emscripten-user-guide.html">
       
       
-        <link rel="next" href="docker.html">
+        <link rel="next" href="../dev-guide/dev-guide.html">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -20,7 +20,7 @@
     
     
       
-        <title>C++ - libQASM</title>
+        <title>Python - libQASM</title>
       
     
     
@@ -111,7 +111,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              C++
+              Python
             
           </span>
         </div>
@@ -285,7 +285,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../api/cpp.html" class="md-tabs__link">
+        <a href="../api/cpp-api.html" class="md-tabs__link">
           
   
   API
@@ -449,17 +449,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-      <a href="cpp.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="cpp-user-guide.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -468,7 +461,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -502,7 +494,7 @@
   
   
     <li class="md-nav__item">
-      <a href="emscripten.html" class="md-nav__link">
+      <a href="emscripten-user-guide.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -520,10 +512,17 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="python.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="python-user-guide.html" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -532,6 +531,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -610,7 +610,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dev-guide/cpp.html" class="md-nav__link">
+      <a href="../dev-guide/cpp-dev-guide.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -631,7 +631,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dev-guide/emscripten.html" class="md-nav__link">
+      <a href="../dev-guide/emscripten-dev-guide.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -652,7 +652,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dev-guide/python.html" class="md-nav__link">
+      <a href="../dev-guide/python-dev-guide.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -718,7 +718,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/cpp.html" class="md-nav__link">
+      <a href="../api/cpp-api.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -739,7 +739,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/emscripten.html" class="md-nav__link">
+      <a href="../api/emscripten-api.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -760,7 +760,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/python.html" class="md-nav__link">
+      <a href="../api/python-api.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -928,37 +928,27 @@
   
 
 
-  <h1>C++</h1>
+  <h1>Python</h1>
 
-<p>libQASM can be requested as a Conan package from a <code>conanfile.py</code>:</p>
-<pre><code>def build_requirements(self):
-    self.tool_requires(&quot;libqasm/0.6.9&quot;)
-def requirements(self):
-    self.requires(&quot;libqasm/0.6.9&quot;)
+<p>libQASM can be installed as a Python package:</p>
+<pre><code class="language-shell">pip install libqasm
 </code></pre>
-<p>And then linked against from a <code>CMakeLists.txt</code>:</p>
-<pre><code>target_link_libraries(&lt;your target&gt; PUBLIC libqasm::libqasm)
-</code></pre>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>You will need to have <code>Java JRE</code> &gt;= 11 installed in case Conan needs to build libQASM.</p>
-</div>
-<p>And used from a C++ program:</p>
-<pre><code class="language-cpp">#include &quot;libqasm/v3x/cqasm_python.hpp&quot;
+<p>And then imported from a Python program:</p>
+<pre><code class="language-python">from libqasm import Analyzer
 
-auto program = std::string{ R&quot;(
+program = r'''
     version 3.0
     qubit[2] q
     bit[2] b
     H q[0]
     CNOT q[0], q[1]
     b = measure q
-)&quot; };
+'''
 
-auto parse_result = V3xAnalyzer::parse_string(program);
+parse_result = Analyzer.parse_string(program, &quot;bell.cq&quot;)
 
-auto analyzer = V3xAnalyzer();
-auto analysis_result = analyzer.analyze_string(program);
+analyzer = Analyzer()
+analysis_result = analyzer.analyze_string(program, &quot;bell.cq&quot;)
 </code></pre>
 
 

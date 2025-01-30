@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="../user-guide/python.html">
+        <link rel="prev" href="../user-guide/python-user-guide.html">
       
       
-        <link rel="next" href="cpp.html">
+        <link rel="next" href="cpp-dev-guide.html">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -290,7 +290,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../api/cpp.html" class="md-tabs__link">
+        <a href="../api/cpp-api.html" class="md-tabs__link">
           
   
   API
@@ -452,7 +452,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../user-guide/cpp.html" class="md-nav__link">
+      <a href="../user-guide/cpp-user-guide.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -494,7 +494,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../user-guide/emscripten.html" class="md-nav__link">
+      <a href="../user-guide/emscripten-user-guide.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -515,7 +515,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../user-guide/python.html" class="md-nav__link">
+      <a href="../user-guide/python-user-guide.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -754,7 +754,7 @@
   
   
     <li class="md-nav__item">
-      <a href="cpp.html" class="md-nav__link">
+      <a href="cpp-dev-guide.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -775,7 +775,7 @@
   
   
     <li class="md-nav__item">
-      <a href="emscripten.html" class="md-nav__link">
+      <a href="emscripten-dev-guide.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -796,7 +796,7 @@
   
   
     <li class="md-nav__item">
-      <a href="python.html" class="md-nav__link">
+      <a href="python-dev-guide.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -862,7 +862,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/cpp.html" class="md-nav__link">
+      <a href="../api/cpp-api.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -883,7 +883,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/emscripten.html" class="md-nav__link">
+      <a href="../api/emscripten-api.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -904,7 +904,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/python.html" class="md-nav__link">
+      <a href="../api/python-api.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1148,7 +1148,7 @@ conan build . -pr:a=conan/profiles/tests-debug -b missing
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <ul>
-<li>the <code>conan profile</code> command only has to be run only once, and not before every build.</li>
+<li>the <code>conan profile</code> command has to be run only once, and not before every build.</li>
 <li>the <code>conan build</code> command is building libQASM in Debug mode with tests using the <code>tests-debug</code> profile.</li>
 <li>the <code>-b missing</code> parameter asks <code>conan</code> to build packages from sources
   in case it cannot find the binary packages for the current configuration (platform, OS, compiler, build type...).</li>
@@ -1193,20 +1193,20 @@ mkdocs serve
 <li>Formatting checks are defined in <code>.clang-format</code>.</li>
 <li>Code style checks are defined in <code>.clang-tidy</code>.</li>
 </ul>
-<p>It is recommended to run these linters before pushing any change:</p>
+<p>It is recommended to run these linters before pushing any changes:</p>
 <pre><code class="language-shell">conan build . -pr:a=conan/profiles/tests-release-gcc-linux-x64 -b missing
 python3 ./scripts/run_cpp_linters.py .
 </code></pre>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <ul>
-<li>The linters require<code>clang-format-18</code> and <code>clang-tidy-18</code>. </li>
+<li>The linters require <code>clang-format-18</code> and <code>clang-tidy-18</code>. </li>
 <li>It is mandatory to have a build before running the linters.<ul>
 <li><code>clang-tidy</code> expects to find a <code>compile_commands.json</code> in a build folder.</li>
 </ul>
 </li>
-<li>It is recommended to build with <em>gcc</em> in <em>Release</em> mode.<ul>
-<li>We have observed <code>clang-tidy</code> fails to find some standard headers when compiling with <em>clang</em>.</li>
+<li>It is recommended to build with <code>gcc</code> in Release mode.<ul>
+<li>We have observed <code>clang-tidy</code> fails to find some standard headers when compiling with <code>clang</code>.</li>
 <li><code>run_cpp_linters.py</code> can receive a build folder as second argument, but defaults to <code>build/Release</code>.</li>
 </ul>
 </li>
