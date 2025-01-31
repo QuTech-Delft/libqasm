@@ -88,7 +88,9 @@ TEST_F(AnalyzerTest, add_statement_to_current_scope) {
 }
 TEST_F(AnalyzerTest, add_statement_with_source_location_information_to_current_scope) {
     MockAnalyzer analyzer{};
-    const auto& statement_source_location = annotations::SourceLocation{ "input.cq", { { 10, 20 }, { 11, 10 } } };
+    const auto& statement_source_location = annotations::SourceLocation{
+        "input.cq", { { 10, 20 }, { 11, 10 } }
+    };
     statement->set_annotation(statement_source_location);
     analyzer.add_statement_to_current_scope(statement);
     EXPECT_EQ(analyzer.current_block()->statements.size(), 1);
@@ -102,12 +104,16 @@ TEST_F(AnalyzerTest,
     //     10 15 20 25 30
     //  5      <
     //  8               >
-    const auto& block_initial_source_location = annotations::SourceLocation{ "input.cq", { { 5, 15 }, { 8, 30 } } };
+    const auto& block_initial_source_location = annotations::SourceLocation{
+        "input.cq", { { 5, 15 }, { 8, 30 } }
+    };
     analyzer.current_block()->set_annotation(block_initial_source_location);
     //     10 15 20 25 30
     // 10   <
     // 11         >
-    const auto& statement_source_location = annotations::SourceLocation{ "input.cq", { { 10, 10 }, { 11, 20 } } };
+    const auto& statement_source_location = annotations::SourceLocation{
+        "input.cq", { { 10, 10 }, { 11, 20 } }
+    };
     statement->set_annotation(statement_source_location);
     analyzer.add_statement_to_current_scope(statement);
     EXPECT_EQ(analyzer.current_block()->statements.size(), 1);
@@ -116,7 +122,11 @@ TEST_F(AnalyzerTest,
     // 11         >
     const auto& block_final_source_location = analyzer.current_block()->get_annotation<annotations::SourceLocation>();
     EXPECT_EQ(block_final_source_location.file_name, "input.cq");
-    EXPECT_EQ(block_final_source_location.range, (annotations::SourceLocation::Range{ { 5, 15 }, { 11, 20 } }));
+    EXPECT_EQ(block_final_source_location.range,
+        (annotations::SourceLocation::Range{
+            {  5, 15 },
+            { 11, 20 }
+    }));
 }
 
 }  // namespace cqasm::v3x::analyzer

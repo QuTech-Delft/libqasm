@@ -50,29 +50,32 @@ void serialize(const function::CoreFunctionRef& obj, ::tree::cbor::MapWriter& ma
     if (obj.empty()) {
         return;
     }
-    map.append_string("n", obj->name);
-    auto aw = map.append_array("pt");
+    map.append_string("name", obj->name);
+    auto param_types_array = map.append_array("param_types");
     for (const auto& t : obj->param_types) {
-        aw.append_binary(::tree::base::serialize(::tree::base::Maybe<types::TypeBase>{ t.get_ptr() }));
+        param_types_array.append_binary(::tree::base::serialize(::tree::base::Maybe<types::TypeBase>{ t.get_ptr() }));
     }
-    aw.close();
+    param_types_array.close();
     map.append_binary(
-        "rt", ::tree::base::serialize(::tree::base::Maybe<types::TypeBase>{ obj->return_type.get_ptr() }));
+        "return_type", ::tree::base::serialize(::tree::base::Maybe<types::TypeBase>{ obj->return_type.get_ptr() }));
 }
 
 template <>
 function::CoreFunctionRef deserialize(const ::tree::cbor::MapReader& map) {
-    if (!map.count("n")) {
+    // Remove what seems to be a false positive clang-analyzer-optin.cplusplus.VirtualCall
+    // NOLINTBEGIN
+    if (!map.count("name")) {
         return {};
     }
     auto ret = tree::make<function::CoreFunction>();
-    ret->name = map.at("n").as_string();
-    auto ar = map.at("pt").as_array();
-    for (const auto& element : ar) {
+    ret->name = map.at("name").as_string();
+    auto param_types_array = map.at("param_types").as_array();
+    for (const auto& element : param_types_array) {
         ret->param_types.add(::tree::base::deserialize<types::Node>(element.as_binary()));
     }
-    ret->return_type = ::tree::base::deserialize<types::Node>(map.at("rt").as_binary());
+    ret->return_type = ::tree::base::deserialize<types::Node>(map.at("return_type").as_binary());
     return ret;
+    // NOLINTEND
 }
 
 }  // namespace cqasm::v3x::primitives

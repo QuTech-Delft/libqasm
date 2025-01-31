@@ -3,6 +3,7 @@ BasedOnStyle: Google
 Language: Cpp
 AccessModifierOffset: -4
 AlignAfterOpenBracket: DontAlign
+AlignArrayOfStructures: Right
 AlignOperands: DontAlign
 AlignTrailingComments: false
 AllowAllArgumentsOnNextLine: true
@@ -31,6 +32,7 @@ IndentWidth: 4
 LambdaBodyIndentation: Signature
 PackConstructorInitializers: Never
 PointerAlignment: Left
+QualifierAlignment: Left
 ReferenceAlignment: Left
 ReflowComments: true
 SpacesBeforeTrailingComments: 2

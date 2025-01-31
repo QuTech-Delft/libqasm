@@ -49,14 +49,8 @@ public:
      * param_types is a shorthand type specification string as parsed by cqasm::types::from_spec().
      * return_type is a shorthand type specification char as parsed by cqasm::types::from_spec().
      */
-    CoreFunction(std::string name, const std::string& param_types, const char return_type);
-
     CoreFunction() = default;
-    ~CoreFunction() override = default;
-    CoreFunction(const CoreFunction& t) = default;
-    CoreFunction(CoreFunction&& t) noexcept = default;
-    CoreFunction& operator=(const CoreFunction& t) = default;
-    CoreFunction& operator=(CoreFunction&& t) noexcept = default;
+    CoreFunction(std::string name, const std::string& param_types, const char return_type);
 
     bool operator==(const CoreFunction& rhs) const;
     inline bool operator!=(const CoreFunction& rhs) const { return !(*this == rhs); }
