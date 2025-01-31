@@ -932,9 +932,9 @@
 
 <p>libQASM can be requested as a Conan package from a <code>conanfile.py</code>:</p>
 <pre><code>def build_requirements(self):
-    self.tool_requires(&quot;libqasm/0.6.9&quot;)
+    self.tool_requires(&quot;libqasm/1.0.0&quot;)
 def requirements(self):
-    self.requires(&quot;libqasm/0.6.9&quot;)
+    self.requires(&quot;libqasm/1.0.0&quot;)
 </code></pre>
 <p>And then linked against from a <code>CMakeLists.txt</code>:</p>
 <pre><code>target_link_libraries(&lt;your target&gt; PUBLIC libqasm::libqasm)
