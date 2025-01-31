@@ -36,6 +36,7 @@ using Values = values::Values;
 // Analysis errors //
 //-----------------//
 
+// NOLINTBEGIN
 /**
  * Exception for failed name resolutions.
  */
@@ -50,6 +51,7 @@ CQASM_ANALYSIS_ERROR(OverloadResolutionFailure);
  * Exception for failed resolutions.
  */
 CQASM_ANALYSIS_ERROR(ResolutionFailure);
+// NOLINTEND
 
 //------------------------//
 // OverloadedNameResolver //

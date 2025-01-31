@@ -11,6 +11,7 @@ The output of this build lives in `build/Release/emscripten`:
 - `cqasm_emscripten.wasm`.
 
 !!! note
+
     `cqasm_emscripten.js` is an ES6 module.
     Its extension has to be renamed to `.mjs` before using it from Typescript code.
 

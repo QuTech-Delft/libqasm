@@ -21,8 +21,10 @@ using Root = ast::One<semantic::Program>;
  */
 class AnalysisFailed : public std::runtime_error {
 public:
+    // NOLINTBEGIN
     AnalysisFailed()
     : std::runtime_error{ "cQASM analysis failed" } {};
+    // NOLINTEND
 };
 
 /**

@@ -1,6 +1,10 @@
-libQASM can be imported as a Python package. 
+libQASM can be installed as a Python package:
 
-**Example**:
+```shell
+pip install libqasm
+```
+
+And then imported from a Python program:
 
 ```python
 from libqasm import Analyzer

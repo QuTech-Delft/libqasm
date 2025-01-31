@@ -2,11 +2,12 @@ You can build the C++ binaries from the project's root directory.
 The following line will also build and cache the `libqasm` Conan package.
 
 !!! note
+
     You may need to execute the `conan profile detect` command if this is the first time you run Conan.
 
 ```shell
 conan profile detect
-conan create --version 0.6.9 . -pr:a=tests-debug -b missing
+conan create --version 1.0.0 . -pr:a=tests-debug -b missing
 ```
 
 You can test the C++ binaries:

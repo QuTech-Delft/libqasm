@@ -14,7 +14,6 @@
 #include <string>
 
 #include "analysis_result.hpp"
-#include "analyzer.hpp"
 #include "libqasm/v3x/ast.hpp"
 #include "libqasm/v3x/core_function.hpp"
 #include "libqasm/v3x/parse_helper.hpp"

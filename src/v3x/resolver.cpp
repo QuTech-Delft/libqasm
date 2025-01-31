@@ -22,7 +22,9 @@ namespace cqasm::v3x::resolver {
  * Adds a variable.
  */
 void VariableTable::add(const std::string& name, const Value& value) {
-    table.erase(name);
+    if (auto entry = table.find(name); entry != table.end()) {
+        throw NameResolutionFailure{ fmt::format("trying to redeclare variable '{}'", name) };
+    }
     table.insert(std::make_pair(name, value));
 }
 
@@ -41,8 +43,10 @@ void VariableTable::add(const std::string& name, const Value& value) {
 // ConstEvalCoreFunctionTable //
 //----------------------------//
 
+// NOLINTBEGIN
 ConstEvalCoreFunctionTable::ConstEvalCoreFunctionTable()
-: resolver{ std::make_unique<resolver_t>() } {}
+: resolver{ std::make_unique<resolver_t>() } {};
+// NOLINTEND
 ConstEvalCoreFunctionTable::~ConstEvalCoreFunctionTable() = default;
 ConstEvalCoreFunctionTable::ConstEvalCoreFunctionTable(const ConstEvalCoreFunctionTable& t)
 : resolver{ std::make_unique<resolver_t>(*t.resolver) } {}
@@ -93,8 +97,10 @@ Value ConstEvalCoreFunctionTable::resolve(const std::string& name, const Values&
 // InstructionTable //
 //------------------//
 
+// NOLINTBEGIN
 InstructionTable::InstructionTable()
 : resolver{ std::make_unique<resolver_t>() } {}
+// NOLINTEND
 InstructionTable::~InstructionTable() = default;
 InstructionTable::InstructionTable(const InstructionTable& t)
 : resolver{ std::make_unique<resolver_t>(*t.resolver) } {}

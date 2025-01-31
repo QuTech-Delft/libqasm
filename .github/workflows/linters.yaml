@@ -15,18 +15,28 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Build C++ tests (gcc-clang/Linux/x64)
+        uses: ./.github/actions/cpp-tests
+        with:
+          build_type: Release
+          conan_profile_host: conan/profiles/tests-release-gcc-linux-x64
+          shell: bash
       - name: Run C++ linters
         uses: cpp-linter/cpp-linter-action@v2
         id: linter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          database: '${{ github.workspace }}/build/Release'
           extensions: 'cpp,hpp'
+          ignore: 'emscripten/emscripten_wrapper.hpp'
           style: 'file'  # use .clang-format config file
-          tidy-checks: '-*'  # disable clang-tidy checks
+          tidy-checks: ''  # use .clang-tidy config file
           version: 18
       - name: Fail fast
-        if: steps.linter.outputs.clang-format-checks-failed > 0
+        if: steps.linter.outputs.checks-failed > 0
         run: |
-          echo "::notice::Try executing 'python3 ./scripts/run_cpp_linters.py .' to fix linter issues."
+          echo "::notice::Try running the following commands to fix and/or understand linter issues:"
+          echo "::notice::    conan build . -pr:a=conan/profiles/tests-release-gcc-linux-x64 -b missing"
+          echo "::notice::    python3 ./scripts/run_cpp_linters.py ."
           exit 1
