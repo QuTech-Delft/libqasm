@@ -261,6 +261,10 @@ std::any SyntacticAnalyzer::visitWaitInstruction(CqasmParser::WaitInstructionCon
     return One<Statement>{ ret };
 }
 
+std::any SyntacticAnalyzer::visitAsmDeclaration(CqasmParser::AsmDeclarationContext* context) {
+    throw std::runtime_error{ "SyntacticAnalyzer::visitAsmDeclaration: unimplemented" };
+}
+
 std::any SyntacticAnalyzer::visitType(CqasmParser::TypeContext* context) {
     return context->quantumType()->accept(this);
 }

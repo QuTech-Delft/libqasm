@@ -1,5 +1,9 @@
 lexer grammar CqasmLexer;
 
+@members {
+    int unmatched_inner_open_braces = 0;
+}
+
 // White spaces and comments are skipped, i.e. not passed to the parser
 WHITE_SPACE: [ \t]+ -> skip;
 SINGLE_LINE_COMMENT: '//' ~[\r\n]* -> skip;
@@ -58,6 +62,7 @@ POW: 'pow';
 CTRL: 'ctrl';
 QUBIT_TYPE: 'qubit';  // types
 BIT_TYPE: 'bit';
+ASM: 'asm'  -> pushMode(ASSEMBLY_DECLARATION);  // assembly declaration
 
 // Numeric literals
 BOOLEAN_LITERAL: 'true' | 'false';
@@ -76,7 +81,22 @@ fragment Letter: [a-zA-Z_];
 // Version mode
 //
 // Whenever we encounter a 'version' token, we enter the Version mode
-// Within the version mode, a sequence such as '3.0' will be treated as a version number, and not as a float literal
+// Within the Version mode, a sequence such as '3.0' will be treated as a version number, and not as a float literal
 mode VERSION_STATEMENT;
-VERSION_WHITESPACE: [ \t]+ -> skip;
 VERSION_NUMBER: Digit+ ('.' Digit+)? -> popMode;
+
+// Assembly declaration mode
+//
+// Whenever we encounter an 'asm' token, we enter the Assembly declaration mode
+mode ASSEMBLY_DECLARATION;
+BE_CODE_OPEN_BRACE: '{' -> pushMode(BACKEND_CODE);
+
+// Backend code
+//
+// Whenever we are in Assembly declaration mode and encounter a '{' token, we enter the Backend code mode
+mode BACKEND_CODE;
+BE_CODE: (BE_CODE_CHAR | BE_CODE_INNER_OPEN_BRACE | BE_CODE_INNER_CLOSE_BRACE)+;
+BE_CODE_CHAR: ~[{}];
+BE_CODE_INNER_OPEN_BRACE: '{' { unmatched_inner_open_braces++; };
+BE_CODE_INNER_CLOSE_BRACE: '}' { if (unmatched_inner_open_braces) { unmatched_inner_open_braces--; } };
+BE_CODE_CLOSE_BRACE: '}' { popMode(); popMode(); };
