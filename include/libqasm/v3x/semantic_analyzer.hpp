@@ -34,6 +34,7 @@ public:
     std::any visit_gate_instruction(ast::GateInstruction& node) override;
     std::any visit_gate(ast::Gate& node) override;
     std::any visit_non_gate_instruction(ast::NonGateInstruction& node) override;
+    std::any visit_asm_declaration(ast::AsmDeclaration& node) override;
     std::any visit_expression_list(ast::ExpressionList& node) override;
     std::any visit_expression(ast::Expression& node) override;
     std::any visit_unary_minus_expression(ast::UnaryMinusExpression& node) override;

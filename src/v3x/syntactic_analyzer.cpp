@@ -11,6 +11,7 @@
 
 #include "libqasm/annotations.hpp"
 #include "libqasm/tree.hpp"
+#include "libqasm/utils.hpp"
 #include "libqasm/v3x/antlr_custom_error_listener.hpp"
 #include "libqasm/v3x/ast.hpp"
 #include "libqasm/v3x/types.hpp"
@@ -19,6 +20,7 @@ namespace cqasm::v3x::parser {
 
 using namespace cqasm::v3x::ast;
 using namespace cqasm::error;
+using namespace cqasm::utils;
 
 SyntacticAnalyzer::SyntacticAnalyzer(const std::optional<std::string>& file_name)
 : file_name_{ file_name }
@@ -166,6 +168,8 @@ std::any SyntacticAnalyzer::visitInstruction(CqasmParser::InstructionContext* co
         return gate_instruction_ctx->accept(this);
     } else if (auto non_gate_instruction_ctx = context->nonGateInstruction(); non_gate_instruction_ctx) {
         return non_gate_instruction_ctx->accept(this);
+    } else if (auto asm_declaration_ctx = context->asmDeclaration(); asm_declaration_ctx) {
+        return asm_declaration_ctx->accept(this);
     }
     throw error::AnalysisError{ "unknown instruction type" };
 }
@@ -262,7 +266,10 @@ std::any SyntacticAnalyzer::visitWaitInstruction(CqasmParser::WaitInstructionCon
 }
 
 std::any SyntacticAnalyzer::visitAsmDeclaration(CqasmParser::AsmDeclarationContext* context) {
-    throw std::runtime_error{ "SyntacticAnalyzer::visitAsmDeclaration: unimplemented" };
+    auto ret = tree::make<AsmDeclaration>();
+    ret->backend_name = tree::make<Identifier>(context->IDENTIFIER()->getText());
+    ret->backend_code = remove_triple_quotes(context->RAW_TEXT_STRING()->getText());
+    return One<Statement>{ ret };
 }
 
 std::any SyntacticAnalyzer::visitType(CqasmParser::TypeContext* context) {
