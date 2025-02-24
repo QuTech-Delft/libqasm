@@ -1,0 +1,35 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  block: <
+    Block(
+      statements: [
+        AsmDeclaration(
+          backend_name: Backend
+          backend_code: cqasm::v3x::primitives::Str<<
+            
+                a ' " {} () [] b
+          >>
+          annotations: []
+        )
+      ]
+    )
+  >
+  variables: [
+    Variable(
+      name: q
+      typ: <
+        Qubit(
+          size: 1
+        )
+      >
+      annotations: []
+    )
+  ]
+)
+
