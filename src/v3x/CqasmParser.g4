@@ -55,7 +55,7 @@ nonGateInstruction:
     | WAIT OPEN_PARENS expression CLOSE_PARENS expression  # waitInstruction
     ;
 
-asmDeclaration: ASM OPEN_PARENS IDENTIFIER CLOSE_PARENS BE_CODE_OPEN_BRACE BE_CODE? BE_CODE_CLOSE_BRACE;
+asmDeclaration: ASM OPEN_PARENS IDENTIFIER CLOSE_PARENS RAW_TEXT_STRING;
 
 type: quantumType;
 
