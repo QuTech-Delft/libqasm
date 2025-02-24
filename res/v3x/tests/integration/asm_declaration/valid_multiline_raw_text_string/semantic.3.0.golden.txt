@@ -14,6 +14,9 @@ Program(
           backend_code: cqasm::v3x::primitives::Str<<
             
                 a ' " {} () [] b
+                // This is a single line comment which ends on the newline.
+                /* This is a multi-
+                line comment block */
           >>
           annotations: []
         )

@@ -4,4 +4,7 @@ qubit q
 
 asm(Backend) '''
     a ' " {} () [] b
+    // This is a single line comment which ends on the newline.
+    /* This is a multi-
+    line comment block */
 '''
