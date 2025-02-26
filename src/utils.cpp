@@ -7,6 +7,7 @@
 #include <fmt/format.h>
 
 #include <algorithm>  // for_each
+#include <cassert>  // assert
 #include <cctype>  // isalnum, tolower, toupper
 #include <range/v3/algorithm/equal.hpp>
 #include <range/v3/range/conversion.hpp>  // to
