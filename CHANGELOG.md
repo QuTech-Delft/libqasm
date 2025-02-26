@@ -10,7 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - **Removed** for now removed features.
 
 
-## [ 1.0.1 ] - [ 2025-yy-zz ]
+## [ 1.0.1 ] - [ 2025-02-26 ]
 
 ### Added
 - Assembly declaration.
