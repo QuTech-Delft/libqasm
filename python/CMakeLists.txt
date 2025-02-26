@@ -148,7 +148,7 @@ install(
     DESTINATION "${LIBQASM_PYTHON_DIR}"
 )
 install(
-    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/ast_generated.py"
+    FILES "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/syntactic_generated.py"
     DESTINATION "${LIBQASM_CQASM_PYTHON_DIR}/v3x"
     RENAME "ast.py"
 )

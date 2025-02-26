@@ -6,4 +6,4 @@
 #pragma once
 
 #include "libqasm/string_builder.hpp"
-#include "libqasm/v3x/ast_generated.hpp"
+#include "libqasm/v3x/syntactic_generated.hpp"

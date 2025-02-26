@@ -8,7 +8,7 @@
 #include "libqasm/v3x/CqasmLexer.h"
 #include "libqasm/v3x/CqasmParser.h"
 #include "libqasm/v3x/antlr_custom_error_listener.hpp"
-#include "libqasm/v3x/ast.hpp"
+#include "libqasm/v3x/syntactic.hpp"
 #include "libqasm/v3x/parse_result.hpp"
 #include "libqasm/v3x/syntactic_analyzer.hpp"
 
@@ -39,7 +39,7 @@ cqasm::v3x::parser::ParseResult AntlrScanner::parse_(antlr4::ANTLRInputStream& i
     build_visitor_up_->addErrorListener(error_listener_up_.get());
     auto custom_ast = build_visitor_up_->visitProgram(ast);
     return cqasm::v3x::parser::ParseResult{
-        std::any_cast<cqasm::v3x::ast::One<cqasm::v3x::ast::Program>>(custom_ast),  // root
+        std::any_cast<cqasm::v3x::syntactic::One<cqasm::v3x::syntactic::Program>>(custom_ast),  // root
         {}  // error
     };
 }

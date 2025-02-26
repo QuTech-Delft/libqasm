@@ -14,7 +14,7 @@
 #include <string>
 
 #include "analysis_result.hpp"
-#include "libqasm/v3x/ast.hpp"
+#include "libqasm/v3x/syntactic.hpp"
 #include "libqasm/v3x/core_function.hpp"
 #include "libqasm/v3x/parse_helper.hpp"
 #include "libqasm/v3x/resolver.hpp"
@@ -92,7 +92,7 @@ public:
     /**
      * Analyzes the given program AST node.
      */
-    [[nodiscard]] virtual AnalysisResult analyze(ast::Program& program);
+    [[nodiscard]] virtual AnalysisResult analyze(syntactic::Program& program);
 
     /**
      * Analyzes the given parse result.

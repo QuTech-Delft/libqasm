@@ -34,13 +34,13 @@ class SyntacticAnalyzer : public BaseSyntacticAnalyzer {
     std::int64_t get_int_value(antlr4::tree::TerminalNode* node) const;
     double get_float_value(antlr4::tree::TerminalNode* node) const;
 
-    tree::Maybe<ast::IntegerLiteral> get_array_size(CqasmParser::ArraySizeDeclarationContext* context);
+    tree::Maybe<syntactic::IntegerLiteral> get_array_size(CqasmParser::ArraySizeDeclarationContext* context);
 
     template <typename Context>
-    tree::One<ast::Variable> visitVariable(Context* context) {
-        auto ret = tree::make<ast::Variable>(
-            tree::One<ast::Identifier>{ tree::make<ast::Identifier>(context->IDENTIFIER()->getText()) },
-            std::any_cast<tree::One<ast::Type>>(context->type()->accept(this)));
+    tree::One<syntactic::Variable> visitVariable(Context* context) {
+        auto ret = tree::make<syntactic::Variable>(
+            tree::One<syntactic::Identifier>{ tree::make<syntactic::Identifier>(context->IDENTIFIER()->getText()) },
+            std::any_cast<tree::One<syntactic::Type>>(context->type()->accept(this)));
         setNodeAnnotation(ret, context->IDENTIFIER()->getSymbol());
         return ret;
     }
@@ -48,10 +48,10 @@ class SyntacticAnalyzer : public BaseSyntacticAnalyzer {
     template <typename RetExpressionType, typename Context>
     std::any visitBinaryExpression(Context* context, antlr4::Token* token) {
         auto ret = tree::make<RetExpressionType>(
-            std::any_cast<tree::One<ast::Expression>>(context->expression(0)->accept(this)),
-            std::any_cast<tree::One<ast::Expression>>(context->expression(1)->accept(this)));
+            std::any_cast<tree::One<syntactic::Expression>>(context->expression(0)->accept(this)),
+            std::any_cast<tree::One<syntactic::Expression>>(context->expression(1)->accept(this)));
         setNodeAnnotation(ret, token);
-        return tree::One<ast::Expression>{ ret };
+        return tree::One<syntactic::Expression>{ ret };
     }
 
 public:
@@ -109,9 +109,9 @@ public:
     explicit SyntacticAnalyzer(const std::optional<std::string>& file_name);
     void addErrorListener(AntlrCustomErrorListener* error_listener) override;
     void syntaxError(size_t line, size_t char_position_in_line, const std::string& text) const override;
-    void setNodeAnnotation(const ast::One<ast::Node>& node, antlr4::Token* token) const override;
-    void expandNodeAnnotation(const ast::One<ast::Node>& node, antlr4::Token* token) const override;
-    void copyNodeAnnotation(const ast::One<ast::Node>& from, const ast::One<ast::Node>& to) const override;
+    void setNodeAnnotation(const syntactic::One<syntactic::Node>& node, antlr4::Token* token) const override;
+    void expandNodeAnnotation(const syntactic::One<syntactic::Node>& node, antlr4::Token* token) const override;
+    void copyNodeAnnotation(const syntactic::One<syntactic::Node>& from, const syntactic::One<syntactic::Node>& to) const override;
 };
 
 }  // namespace cqasm::v3x::parser

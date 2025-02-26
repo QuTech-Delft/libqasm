@@ -84,7 +84,7 @@ void Analyzer::register_default_instructions() {
 /**
  * Analyzes the given AST.
  */
-AnalysisResult Analyzer::analyze(ast::Program& ast) {
+AnalysisResult Analyzer::analyze(syntactic::Program& ast) {
     auto analyze_visitor_up = std::make_unique<SemanticAnalyzer>(*this);
     auto result = std::any_cast<AnalysisResult>(analyze_visitor_up->visit_program(ast));
     if (result.errors.empty()) {
