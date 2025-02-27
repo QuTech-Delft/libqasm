@@ -10,6 +10,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - **Removed** for now removed features.
 
 
+## [ 1.0.1 ] - [ xxxx-yy-zz ]
+
+### Changed
+- Rename `ast` to `syntactic`.
+
+
 ## [ 1.0.0 ] - [ 2025-01-30 ]
 
 ### Added
