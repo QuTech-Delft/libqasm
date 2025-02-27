@@ -1,4 +1,4 @@
 mike==2.1.2
-mkdocs-material==9.5.29
-mkdocstrings==0.25.1
+mkdocs-material==9.6.5
+mkdocstrings==0.28.2
 pymdown-extensions==10.8.1
