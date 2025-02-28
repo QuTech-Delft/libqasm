@@ -189,6 +189,11 @@ annotated {
                     operands: One<expression_list>;
                     parameter: Maybe<expression>;
                 }
+
+                asm_declaration {
+                    backend_name: One<identifier>;
+                    backend_code: cqasm::v3x::primitives::Str;
+                }
             }
         }
     }

@@ -6,11 +6,13 @@
 
 #include <fmt/format.h>
 
-#include <algorithm>  // transform
+#include <algorithm>  // for_each
+#include <cassert>  // assert
 #include <cctype>  // isalnum, tolower, toupper
 #include <range/v3/algorithm/equal.hpp>
 #include <range/v3/range/conversion.hpp>  // to
 #include <range/v3/view/transform.hpp>
+#include <string>
 
 namespace cqasm::utils {
 
@@ -58,6 +60,15 @@ std::string json_encode(const std::string &str) {
             : std::string{ c };
     });
     return ret;
+}
+
+/**
+ * Removes the triple quotes from a raw string.
+ */
+std::string remove_triple_quotes(const std::string& str) {
+    assert(str.substr(0, 3) == "'''");
+    assert(str.substr(str.size() - 3, 3) == "'''");
+    return str.substr(3, str.size() - 6);
 }
 
 // clang-format on

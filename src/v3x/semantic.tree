@@ -66,12 +66,17 @@ annotated {
                 operands: external Any<cqasm::v3x::values::ValueBase>;
             }
 
-            # A measure instruction or a reset instruction
+            # A non-gate instruction: init, measure, reset, barrier, wait...
             non_gate_instruction {
                 instruction_ref: cqasm::v3x::instruction::InstructionRef;
                 name: cqasm::v3x::primitives::Str;
                 operands: external Any<cqasm::v3x::values::ValueBase>;
                 parameter: external Maybe<cqasm::v3x::values::ValueBase>;
+            }
+
+            asm_declaration {
+                backend_name: cqasm::v3x::primitives::Str;
+                backend_code: cqasm::v3x::primitives::Str;
             }
         }
     }

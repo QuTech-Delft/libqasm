@@ -33,6 +33,7 @@ variableDefinition: type IDENTIFIER;
 instruction:
     gateInstruction
     | nonGateInstruction
+    | asmDeclaration
     ;
 
 gateInstruction: gate expressionList;
@@ -53,6 +54,8 @@ nonGateInstruction:
     | BARRIER expression  # barrierInstruction
     | WAIT OPEN_PARENS expression CLOSE_PARENS expression  # waitInstruction
     ;
+
+asmDeclaration: ASM OPEN_PARENS IDENTIFIER CLOSE_PARENS RAW_TEXT_STRING;
 
 type: quantumType;
 
