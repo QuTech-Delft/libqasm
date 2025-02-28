@@ -6,8 +6,8 @@
 #include <vector>
 
 #include "libqasm/error.hpp"
-#include "libqasm/v3x/syntactic.hpp"
 #include "libqasm/v3x/semantic.hpp"
+#include "libqasm/v3x/syntactic.hpp"
 
 /**
  * Namespace for the \ref cqasm::analyzer::Analyzer "Analyzer" class and support classes.

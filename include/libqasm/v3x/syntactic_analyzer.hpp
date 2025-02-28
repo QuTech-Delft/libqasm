@@ -111,7 +111,8 @@ public:
     void syntaxError(size_t line, size_t char_position_in_line, const std::string& text) const override;
     void setNodeAnnotation(const syntactic::One<syntactic::Node>& node, antlr4::Token* token) const override;
     void expandNodeAnnotation(const syntactic::One<syntactic::Node>& node, antlr4::Token* token) const override;
-    void copyNodeAnnotation(const syntactic::One<syntactic::Node>& from, const syntactic::One<syntactic::Node>& to) const override;
+    void copyNodeAnnotation(
+        const syntactic::One<syntactic::Node>& from, const syntactic::One<syntactic::Node>& to) const override;
 };
 
 }  // namespace cqasm::v3x::parser

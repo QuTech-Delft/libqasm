@@ -5,8 +5,8 @@
 #include "libqasm/error.hpp"
 #include "libqasm/tree.hpp"
 #include "libqasm/v3x/analyzer.hpp"
-#include "libqasm/v3x/syntactic.hpp"
 #include "libqasm/v3x/parse_result.hpp"
+#include "libqasm/v3x/syntactic.hpp"
 #include "libqasm/version.hpp"
 #include "mock_analyzer.hpp"
 

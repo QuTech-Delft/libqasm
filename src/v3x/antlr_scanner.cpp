@@ -8,8 +8,8 @@
 #include "libqasm/v3x/CqasmLexer.h"
 #include "libqasm/v3x/CqasmParser.h"
 #include "libqasm/v3x/antlr_custom_error_listener.hpp"
-#include "libqasm/v3x/syntactic.hpp"
 #include "libqasm/v3x/parse_result.hpp"
+#include "libqasm/v3x/syntactic.hpp"
 #include "libqasm/v3x/syntactic_analyzer.hpp"
 
 namespace fs = std::filesystem;

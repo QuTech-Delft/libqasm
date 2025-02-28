@@ -8,9 +8,9 @@
 
 #include "libqasm/error.hpp"
 #include "libqasm/tree.hpp"
-#include "libqasm/v3x/syntactic.hpp"
 #include "libqasm/v3x/parse_helper.hpp"
 #include "libqasm/v3x/parse_result.hpp"
+#include "libqasm/v3x/syntactic.hpp"
 #include "libqasm/version.hpp"
 #include "mock_scanner_adaptor.hpp"
 

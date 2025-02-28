@@ -343,7 +343,8 @@ std::any SemanticAnalyzer::visit_function_call(syntactic::FunctionCall& node) {
 /**
  * Convenience function for visiting unary operators
  */
-std::any SemanticAnalyzer::visit_unary_operator(const std::string& name, const tree::One<syntactic::Expression>& expression) {
+std::any SemanticAnalyzer::visit_unary_operator(
+    const std::string& name, const tree::One<syntactic::Expression>& expression) {
     return visit_function_call(tree::make<syntactic::Identifier>(std::string{ "operator" } + name),
         tree::Maybe<syntactic::ExpressionList>{
             tree::make<syntactic::ExpressionList>(tree::Any<syntactic::Expression>{ expression }).get_ptr() });
@@ -453,7 +454,8 @@ std::any SemanticAnalyzer::visit_logical_or_expression(syntactic::LogicalOrExpre
 
 std::any SemanticAnalyzer::visit_ternary_conditional_expression(syntactic::TernaryConditionalExpression& node) {
     return visit_function_call(tree::make<syntactic::Identifier>("operator?:"),
-        tree::make<syntactic::ExpressionList>(tree::Any<syntactic::Expression>{ node.cond, node.if_true, node.if_false }));
+        tree::make<syntactic::ExpressionList>(
+            tree::Any<syntactic::Expression>{ node.cond, node.if_true, node.if_false }));
 }
 
 /**

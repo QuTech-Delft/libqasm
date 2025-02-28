@@ -63,7 +63,8 @@ void SyntacticAnalyzer::expandNodeAnnotation(const One<Node>& node, antlr4::Toke
     }
 }
 
-void SyntacticAnalyzer::copyNodeAnnotation(const syntactic::One<syntactic::Node>& from, const syntactic::One<syntactic::Node>& to) const {
+void SyntacticAnalyzer::copyNodeAnnotation(
+    const syntactic::One<syntactic::Node>& from, const syntactic::One<syntactic::Node>& to) const {
     to->copy_annotation<annotations::SourceLocation>(*from);
 }
 

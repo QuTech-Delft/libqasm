@@ -132,8 +132,8 @@ private:
     /**
      * Convenience function for visiting binary operators
      */
-    std::any visit_binary_operator(
-        const std::string& name, const tree::One<syntactic::Expression>& lhs, const tree::One<syntactic::Expression>& rhs);
+    std::any visit_binary_operator(const std::string& name, const tree::One<syntactic::Expression>& lhs,
+        const tree::One<syntactic::Expression>& rhs);
 
     /**
      * Shorthand for parsing an expression and promoting it to the given type,
