@@ -19,7 +19,9 @@ project(cqasm LANGUAGES C CXX)
 # There should be only one place for it and one version per project.
 if(NOT TARGET cqasm)
 
-set(CMAKE_CXX_STANDARD 20)
+if (NOT DEFINED CMAKE_CXX_STANDARD)
+    set(CMAKE_CXX_STANDARD 20)
+endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
