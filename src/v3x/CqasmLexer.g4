@@ -18,6 +18,7 @@ OPEN_PARENS: '(';
 CLOSE_PARENS: ')';
 PLUS: '+';  // this token is shared by UNARY_PLUS_OP and PLUS_OP
 MINUS: '-';  // this token is shared by UNARY_MINUS_OP and MINUS_OP
+TRIPLE_QUOTE: '\'\'\'';
 
 // Operators
 // UNARY_PLUS_OP: '+';
@@ -58,6 +59,7 @@ POW: 'pow';
 CTRL: 'ctrl';
 QUBIT_TYPE: 'qubit';  // types
 BIT_TYPE: 'bit';
+ASM: 'asm';  // assembly declaration
 
 // Numeric literals
 BOOLEAN_LITERAL: 'true' | 'false';
@@ -73,10 +75,14 @@ fragment Exponent: [eE][-+]?Digit+;
 IDENTIFIER: Letter (Letter | Digit)*;
 fragment Letter: [a-zA-Z_];
 
+// Raw text string
+RAW_TEXT_STRING: TRIPLE_QUOTE RawText TRIPLE_QUOTE;
+fragment RawText: (.)*?;
+
 // Version mode
 //
 // Whenever we encounter a 'version' token, we enter the Version mode
-// Within the version mode, a sequence such as '3.0' will be treated as a version number, and not as a float literal
+// Within the Version mode, a sequence such as '3.0' will be treated as a version number, and not as a float literal
 mode VERSION_STATEMENT;
-VERSION_WHITESPACE: [ \t]+ -> skip;
+VERSION_WHITE_SPACE: [ \t]+ -> skip;
 VERSION_NUMBER: Digit+ ('.' Digit+)? -> popMode;

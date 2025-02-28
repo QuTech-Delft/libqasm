@@ -169,6 +169,8 @@ std::any SyntacticAnalyzer::visitInstruction(CqasmParser::InstructionContext* co
         return gate_instruction_ctx->accept(this);
     } else if (auto non_gate_instruction_ctx = context->nonGateInstruction(); non_gate_instruction_ctx) {
         return non_gate_instruction_ctx->accept(this);
+    } else if (auto asm_declaration_ctx = context->asmDeclaration(); asm_declaration_ctx) {
+        return asm_declaration_ctx->accept(this);
     }
     throw error::AnalysisError{ "unknown instruction type" };
 }
@@ -261,6 +263,13 @@ std::any SyntacticAnalyzer::visitWaitInstruction(CqasmParser::WaitInstructionCon
     ret->operands = tree::make<ExpressionList>();
     ret->operands->items.add(std::any_cast<One<Expression>>(context->expression(1)->accept(this)));
     setNodeAnnotation(ret, context->WAIT()->getSymbol());
+    return One<Statement>{ ret };
+}
+
+std::any SyntacticAnalyzer::visitAsmDeclaration(CqasmParser::AsmDeclarationContext* context) {
+    auto ret = tree::make<AsmDeclaration>();
+    ret->backend_name = tree::make<Identifier>(context->IDENTIFIER()->getText());
+    ret->backend_code = remove_triple_quotes(context->RAW_TEXT_STRING()->getText());
     return One<Statement>{ ret };
 }
 

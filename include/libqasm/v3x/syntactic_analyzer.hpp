@@ -74,6 +74,7 @@ public:
     std::any visitPowGate(CqasmParser::PowGateContext* context) override;
     std::any visitCtrlGate(CqasmParser::CtrlGateContext* context) override;
     std::any visitNamedGate(CqasmParser::NamedGateContext* context) override;
+    std::any visitAsmDeclaration(CqasmParser::AsmDeclarationContext* context) override;
     std::any visitType(CqasmParser::TypeContext* context) override;
     std::any visitQubitType(CqasmParser::QubitTypeContext* context) override;
     std::any visitBitType(CqasmParser::BitTypeContext* context) override;

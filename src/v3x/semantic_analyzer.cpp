@@ -296,6 +296,26 @@ std::any SemanticAnalyzer::visit_non_gate_instruction(syntactic::NonGateInstruct
     return ret;
 }
 
+std::any SemanticAnalyzer::visit_asm_declaration(syntactic::AsmDeclaration& node) {
+    auto ret = tree::make<semantic::AsmDeclaration>();
+    try {
+        ret->backend_name = node.backend_name->name;
+        ret->backend_code = node.backend_code;
+
+        // Copy annotation data
+        ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
+        ret->copy_annotation<parser::SourceLocation>(node);
+
+        // Add the statement to the current scope
+        analyzer_.add_statement_to_current_scope(ret);
+    } catch (error::AnalysisError& err) {
+        err.context(node);
+        result_.errors.push_back(std::move(err));
+        ret.reset();
+    }
+    return ret;
+}
+
 std::any SemanticAnalyzer::visit_expression_list(syntactic::ExpressionList& node) {
     auto ret = values::Values();
     std::transform(
