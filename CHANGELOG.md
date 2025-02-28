@@ -10,10 +10,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - **Removed** for now removed features.
 
 
-## [ 1.0.1 ] - [ 2025-02-26 ]
+## [ 1.0.1 ] - [ xxxx-yy-zz ]
 
 ### Added
 - Assembly declaration.
+
+### Changed
+- Update to `mkdocs-material/9.6.5` and `mkdocstrings/0.28.2` versions in `requirements.txt`.
+- Do not hardcode `CMAKE_CXX_STANDARD`.
 
 
 ## [ 1.0.0 ] - [ 2025-01-30 ]
