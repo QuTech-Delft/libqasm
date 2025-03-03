@@ -33,22 +33,19 @@ include(FetchContent)
 find_package(Python3 REQUIRED)
 
 # antlr4-runtime
-find_package(antlr4-runtime)
-if(NOT antlr4-runtime_FOUND)
-    message(STATUS "Fetching antlr4-runtime")
-    # We point SOURCE_SUBDIR to a non existent directory, because we want FetchContent to download the sources,
-    # but we do not want CMake to process any subdirectory.
-    # Instead we will just build all the antlr4-runtime source files ourselves.
-    # This is needed when compiling to emscripten, because exception support is disabled by default.
-    # So if you compile C++ code using exceptions, as it is the case of the antlr4-runtime, to emscripten,
-    # and you want it to work as expected, you have to build the sources with the -fwasm-exceptions option.
-    FetchContent_Declare(antlr4-runtime
-        GIT_REPOSITORY https://github.com/antlr/antlr4.git
-        GIT_TAG "df4d68c09cdef73e023b8838a8bc7ca4dff1d1de"
-        SOURCE_SUBDIR this-directory-does-not-exist
-    )
-    FetchContent_MakeAvailable(antlr4-runtime)
-endif()
+message(STATUS "Fetching antlr4-runtime")
+# We point SOURCE_SUBDIR to a non existent directory, because we want FetchContent to download the sources,
+# but we do not want CMake to process any subdirectory.
+# Instead we will just build all the antlr4-runtime source files ourselves.
+# This is needed when compiling to emscripten, because exception support is disabled by default.
+# So if you compile C++ code using exceptions, as it is the case of the antlr4-runtime, to emscripten,
+# and you want it to work as expected, you have to build the sources with the -fwasm-exceptions option.
+FetchContent_Declare(antlr4-runtime
+    GIT_REPOSITORY https://github.com/antlr/antlr4.git
+    GIT_TAG "df4d68c09cdef73e023b8838a8bc7ca4dff1d1de"
+    SOURCE_SUBDIR this-directory-does-not-exist
+)
+FetchContent_MakeAvailable(antlr4-runtime)
 
 # fmt
 find_package(fmt)
@@ -182,18 +179,23 @@ add_library(cqasm-lib-obj OBJECT
     ${CQASM_COMMON_SOURCES}
     ${CQASM_V3X_SOURCES}
 )
+
+file(GLOB ANTLR4_CPP_RUNTIME_SOURCES
+    "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/*.cpp"
+    "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/atn/*.cpp"
+    "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/dfa/*.cpp"
+    "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/internal/*.cpp"
+    "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/misc/*.cpp"
+    "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/support/*.cpp"
+    "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/tree/*.cpp"
+    "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/tree/pattern/*.cpp"
+    "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/tree/xpath/*.cpp"
+)
+target_sources(cqasm-lib-obj
+    PRIVATE "${ANTLR4_CPP_RUNTIME_SOURCES}"
+)
+
 if(LIBQASM_BUILD_EMSCRIPTEN)
-    file(GLOB ANTLR4_CPP_RUNTIME_SOURCES
-        "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/*.cpp"
-        "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/atn/*.cpp"
-        "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/dfa/*.cpp"
-        "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/internal/*.cpp"
-        "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/misc/*.cpp"
-        "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/support/*.cpp"
-        "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/tree/*.cpp"
-        "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/tree/pattern/*.cpp"
-        "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src/tree/xpath/*.cpp"
-    )
     file(GLOB FMT_SOURCES
         "${fmt_SOURCE_DIR}/src/*"
     )
@@ -202,14 +204,13 @@ if(LIBQASM_BUILD_EMSCRIPTEN)
         "${tree-gen_SOURCE_DIR}/src/*"
     )
     target_sources(cqasm-lib-obj
-        PRIVATE "${ANTLR4_CPP_RUNTIME_SOURCES}"
         PRIVATE "${FMT_SOURCES}"
         PRIVATE "${TREE_GEN_SOURCES}"
     )
 endif()
 
+set(antlr4-runtime_INCLUDE_DIRS "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src")
 if(LIBQASM_BUILD_EMSCRIPTEN)
-    set(antlr4-runtime_INCLUDE_DIRS "${antlr4-runtime_SOURCE_DIR}/runtime/Cpp/runtime/src")
     set(fmt_INCLUDE_DIRS "${fmt_SOURCE_DIR}/include")
     set(range-v3_INCLUDE_DIRS "${range-v3_SOURCE_DIR}/include")
     set(tree-gen_INCLUDE_DIRS "${tree-gen_SOURCE_DIR}/include")
