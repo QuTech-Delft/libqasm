@@ -72,8 +72,6 @@ class LibqasmConan(ConanFile):
     def configure(self):
         if self.options.shared:
             self.options.rm_safe("fPIC")
-        if self.settings.arch == "wasm":
-            self.options["antlr4-cppruntime"].shared = self.options.shared
 
     def layout(self):
         self.folders.source = "."
@@ -104,17 +102,10 @@ class LibqasmConan(ConanFile):
             raise ConanInvalidConfiguration(f"{self.ref} requires C++{self._min_cppstd},"
                                             f"which your compiler does not support.")
 
-        if self.settings.arch != "wasm" and self.dependencies["antlr4-cppruntime"].options.shared != self.options.shared:
-            raise ConanInvalidConfiguration(f"{self.ref} requires antlr4-cppruntime to be built with the same shared option value.")
-
     def requirements(self):
         self.requires("fmt/11.0.2", transitive_headers=True)
         self.requires("range-v3/0.12.0", transitive_headers=True)
         self.requires("tree-gen/1.0.9", transitive_headers=True, transitive_libs=True)
-        # antlr4-cppruntime/4.13.1 Windows/debug builds from sources started failing with Visual Studio 2022 17.13
-        # This code is commented out until a newer Conan package fixes that build
-        # if not self.settings.arch == "wasm":
-        #     self.requires("antlr4-cppruntime/4.13.1", transitive_headers=True)
 
     def generate(self):
         deps = CMakeDeps(self)
