@@ -44,7 +44,7 @@ if(NOT antlr4-runtime_FOUND)
     # and you want it to work as expected, you have to build the sources with the -fwasm-exceptions option.
     FetchContent_Declare(antlr4-runtime
         GIT_REPOSITORY https://github.com/antlr/antlr4.git
-        GIT_TAG "7ed420ff2c78d62883875c442d75f32e73bc86c8"
+        GIT_TAG "df4d68c09cdef73e023b8838a8bc7ca4dff1d1de"
         SOURCE_SUBDIR this-directory-does-not-exist
     )
     FetchContent_MakeAvailable(antlr4-runtime)
