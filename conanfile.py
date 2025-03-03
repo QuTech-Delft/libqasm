@@ -111,8 +111,10 @@ class LibqasmConan(ConanFile):
         self.requires("fmt/11.0.2", transitive_headers=True)
         self.requires("range-v3/0.12.0", transitive_headers=True)
         self.requires("tree-gen/1.0.9", transitive_headers=True, transitive_libs=True)
-        if not self.settings.arch == "wasm":
-            self.requires("antlr4-cppruntime/4.13.1", transitive_headers=True)
+        # antlr4-cppruntime/4.13.1 Windows/debug builds from sources started failing with Visual Studio 2022 17.13
+        # This code is commented out until a newer Conan package fixes that build
+        # if not self.settings.arch == "wasm":
+        #     self.requires("antlr4-cppruntime/4.13.1", transitive_headers=True)
 
     def generate(self):
         deps = CMakeDeps(self)
