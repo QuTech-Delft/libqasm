@@ -244,8 +244,9 @@ if(CMAKE_COMPILER_IS_GNUCXX)
         -Wall -Wextra -Werror -Wfatal-errors
         -fPIC
         -Wno-error=deprecated-declarations
-        -Wno-error=uninitialized
+        -Wno-error=overloaded-virtual=
         -Wno-error=sign-compare
+        -Wno-error=uninitialized
         -Wno-error=unused-parameter
     )
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
