@@ -243,6 +243,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     target_compile_options(cqasm-lib-obj PRIVATE
         -Wall -Wextra -Werror -Wfatal-errors
         -fPIC
+        -Wno-error=array-bounds=
         -Wno-error=deprecated-declarations
         -Wno-error=overloaded-virtual=
         -Wno-error=sign-compare
