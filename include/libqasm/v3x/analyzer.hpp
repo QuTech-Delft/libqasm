@@ -14,12 +14,12 @@
 #include <string>
 
 #include "analysis_result.hpp"
-#include "libqasm/v3x/ast.hpp"
 #include "libqasm/v3x/core_function.hpp"
 #include "libqasm/v3x/parse_helper.hpp"
 #include "libqasm/v3x/resolver.hpp"
 #include "libqasm/v3x/scope.hpp"
 #include "libqasm/v3x/semantic.hpp"
+#include "libqasm/v3x/syntactic.hpp"
 
 /**
  * Namespace for the \ref cqasm::analyzer::Analyzer "Analyzer" class and support classes.
@@ -92,7 +92,7 @@ public:
     /**
      * Analyzes the given program AST node.
      */
-    [[nodiscard]] virtual AnalysisResult analyze(ast::Program& program);
+    [[nodiscard]] virtual AnalysisResult analyze(syntactic::Program& program);
 
     /**
      * Analyzes the given parse result.

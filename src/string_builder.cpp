@@ -4,7 +4,7 @@
 
 #include "libqasm/string_builder.hpp"
 
-namespace cqasm::ast {
+namespace cqasm::syntactic {
 
 /**
  * Pushes a string fragment into the string.
@@ -34,4 +34,4 @@ void StringBuilder::push_escape(const std::string& escape) {
     }
 }
 
-}  // namespace cqasm::ast
+}  // namespace cqasm::syntactic

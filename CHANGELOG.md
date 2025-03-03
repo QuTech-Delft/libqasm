@@ -18,6 +18,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Update to `mkdocs-material/9.6.5` and `mkdocstrings/0.28.2` versions in `requirements.txt`.
 - Do not hardcode `CMAKE_CXX_STANDARD`.
+- Rename `ast` to `syntactic`.
 
 
 ## [ 1.0.0 ] - [ 2025-01-30 ]

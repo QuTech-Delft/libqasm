@@ -13,14 +13,14 @@
 #include "libqasm/tree.hpp"
 #include "libqasm/utils.hpp"
 #include "libqasm/v3x/antlr_custom_error_listener.hpp"
-#include "libqasm/v3x/ast.hpp"
+#include "libqasm/v3x/syntactic.hpp"
 #include "libqasm/v3x/types.hpp"
 
 namespace cqasm::v3x::parser {
 
-using namespace cqasm::v3x::ast;
 using namespace cqasm::error;
 using namespace cqasm::utils;
+using namespace cqasm::v3x::syntactic;
 
 SyntacticAnalyzer::SyntacticAnalyzer(const std::optional<std::string>& file_name)
 : file_name_{ file_name }
@@ -43,7 +43,7 @@ void SyntacticAnalyzer::syntaxError(size_t line, size_t char_position_in_line, c
  * ANTLR provides a zero-based character position in line
  * We change it here to a one-based index, which is the more human-readable, and the common option in text editors
  */
-void SyntacticAnalyzer::setNodeAnnotation(const ast::One<ast::Node>& node, antlr4::Token* token) const {
+void SyntacticAnalyzer::setNodeAnnotation(const syntactic::One<syntactic::Node>& node, antlr4::Token* token) const {
     auto token_size = token->getStopIndex() - token->getStartIndex() + 1;
     node->set_annotation(annotations::SourceLocation{
         file_name_,
@@ -63,7 +63,8 @@ void SyntacticAnalyzer::expandNodeAnnotation(const One<Node>& node, antlr4::Toke
     }
 }
 
-void SyntacticAnalyzer::copyNodeAnnotation(const ast::One<ast::Node>& from, const ast::One<ast::Node>& to) const {
+void SyntacticAnalyzer::copyNodeAnnotation(
+    const syntactic::One<syntactic::Node>& from, const syntactic::One<syntactic::Node>& to) const {
     to->copy_annotation<annotations::SourceLocation>(*from);
 }
 
