@@ -6,11 +6,11 @@
     "url": "https://github.com/QuTech-Delft/libqasm.git"
   },
   "files": [
-    "build/Release/emscripten/cqasm_emscripten.js",
-    "build/Release/emscripten/cqasm_emscripten.wasm"
+    "./build/Release/emscripten/cqasm_emscripten.js",
+    "./build/Release/emscripten/cqasm_emscripten.wasm"
   ],
   "exports": {
-    "initWrapper": "build/Release/emscripten/cqasm_emscripten.js",
-    "cqasm.wasm": "build/Release/emscripten/cqasm_emscripten.wasm"
+    "initWrapper": "./build/Release/emscripten/cqasm_emscripten.js",
+    "cqasm.wasm": "./build/Release/emscripten/cqasm_emscripten.wasm"
   }
 }
