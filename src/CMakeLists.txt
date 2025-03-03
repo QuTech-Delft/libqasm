@@ -223,7 +223,7 @@ target_include_directories(cqasm-lib-obj
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include/"
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include/"
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../include/libqasm/v3x"
-    PRIVATE "${antlr4-runtime_INCLUDE_DIRS}/"
+    PUBLIC "${antlr4-runtime_INCLUDE_DIRS}/"
     PRIVATE "${fmt_INCLUDE_DIRS}/"
     PRIVATE "${range-v3_INCLUDE_DIRS}/"
     PRIVATE "${tree-gen_INCLUDE_DIRS}/"
@@ -236,11 +236,6 @@ target_compile_features(cqasm-lib-obj
 target_link_libraries(cqasm-lib-obj PRIVATE range-v3::range-v3)
 if(NOT LIBQASM_BUILD_EMSCRIPTEN)
     target_link_libraries(cqasm-lib-obj PRIVATE fmt::fmt tree-gen::tree-gen)
-    if(BUILD_SHARED_LIBS)
-        target_link_libraries(cqasm-lib-obj PRIVATE antlr4_shared)
-    else()
-        target_link_libraries(cqasm-lib-obj PRIVATE antlr4_static)
-    endif()
 endif()
 
 # fPIC: otherwise some weirdness happens with pthreads or something when linking statically.
