@@ -106,7 +106,7 @@ jobs:
       matrix:
         build_type:
           # Disabled temporarily. Until antlr4-cppruntime/4.13.2 builds in Windows/Debug
-          - Debug
+          #- Debug
           - Release
     steps:
       - name: Checkout
