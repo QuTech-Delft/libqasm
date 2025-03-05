@@ -2,7 +2,7 @@ include(default)
 
 [settings]
 compiler.cppstd=20
-build_type=Release
+libqasm/*:build_type=Release
 
 [options]
 libqasm/*:asan_enabled=False

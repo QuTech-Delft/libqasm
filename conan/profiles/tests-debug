@@ -2,7 +2,7 @@ include(default)
 
 [settings]
 compiler.cppstd=20
-build_type=Debug
+libqasm/*:build_type=Debug
 
 [options]
 libqasm/*:asan_enabled=True
