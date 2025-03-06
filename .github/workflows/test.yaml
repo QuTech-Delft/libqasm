@@ -105,7 +105,9 @@ jobs:
       fail-fast: false
       matrix:
         build_type:
-          - Debug
+          # Disabled temporarily.
+          # Until an antlr4-cppruntime>4.13.1 Conan package builds in Windows/Debug
+          # - Debug
           - Release
     steps:
       - name: Checkout
