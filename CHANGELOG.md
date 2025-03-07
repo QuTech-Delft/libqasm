@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 - Assembly declaration.
+- Publish WASM binaries to npm.
 
 ### Changed
 - Update to `mkdocs-material/9.6.5` and `mkdocstrings/0.28.2` versions in `requirements.txt`.
@@ -22,6 +23,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Setting of `build_type` in Conan profiles.
+
+## Removed
+- Upload WASM binaries as release assets.
 
 
 ## [ 1.0.0 ] - [ 2025-01-30 ]
