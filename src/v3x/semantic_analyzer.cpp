@@ -184,15 +184,17 @@ values::Values resolve_parameters(const std::string& instruction_name, const val
     const auto& instruction_set = InstructionSet::get_instance();
     const auto& param_types = instruction_set.get_instruction_param_types(instruction_name);
     if (param_types.has_value()) {
-        std::for_each(param_types->begin(), param_types->end(),
-            [i=0, &instruction_name, &parameters, &ret](const auto& param_type) mutable {
+        std::for_each(param_types->begin(),
+            param_types->end(),
+            [i = 0, &instruction_name, &parameters, &ret](const auto& param_type) mutable {
                 if (!values::check_promote(values::type_of(parameters[i]), types::from_spec(param_type))) {
-                    throw error::AnalysisError{ fmt::format(
-                        "failed to resolve '{}' with parameter type ({})", instruction_name, values::type_of(parameters[i])) };
+                    throw error::AnalysisError{ fmt::format("failed to resolve '{}' with parameter type ({})",
+                        instruction_name,
+                        values::type_of(parameters[i])) };
                 }
                 ret.add(promote(parameters[i], types::from_spec(param_type)));
                 i++;
-        });
+            });
     }
     return ret;
 }
