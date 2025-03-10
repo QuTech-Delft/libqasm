@@ -162,21 +162,21 @@ TEST_F(InstructionSetTest, is_gate_modifier) {
     EXPECT_FALSE(instruction_set.is_gate_modifier("reset"));
 }
 TEST_F(InstructionSetTest, get_named_gate_param_type) {
-    EXPECT_EQ(instruction_set.get_named_gate_param_type("H"), std::nullopt);
-    EXPECT_EQ(instruction_set.get_named_gate_param_type("Rz"), 'f');
-    EXPECT_THAT([this]() { (void)instruction_set.get_named_gate_param_type("inv"); },
+    EXPECT_EQ(instruction_set.get_named_gate_param_types("H"), std::nullopt);
+    EXPECT_EQ(instruction_set.get_named_gate_param_types("Rz"), "f");
+    EXPECT_THAT([this]() { (void)instruction_set.get_named_gate_param_types("inv"); },
         ThrowsMessage<AnalysisError>(::testing::HasSubstr("couldn't find gate")));
 }
 TEST_F(InstructionSetTest, get_gate_modifier_param_type) {
-    EXPECT_EQ(instruction_set.get_gate_modifier_param_type("inv"), std::nullopt);
-    EXPECT_EQ(instruction_set.get_gate_modifier_param_type("pow"), 'f');
-    EXPECT_THAT([this]() { (void)instruction_set.get_gate_modifier_param_type("H"); },
+    EXPECT_EQ(instruction_set.get_gate_modifier_param_types("inv"), std::nullopt);
+    EXPECT_EQ(instruction_set.get_gate_modifier_param_types("pow"), "f");
+    EXPECT_THAT([this]() { (void)instruction_set.get_gate_modifier_param_types("H"); },
         ThrowsMessage<AnalysisError>(::testing::HasSubstr("couldn't find gate modifier")));
 }
 TEST_F(InstructionSetTest, get_instruction_param_type) {
-    EXPECT_EQ(instruction_set.get_instruction_param_type("H"), std::nullopt);
-    EXPECT_EQ(instruction_set.get_instruction_param_type("measure"), std::nullopt);
-    EXPECT_EQ(instruction_set.get_instruction_param_type("pow"), 'f');
-    EXPECT_THAT([this]() { (void)instruction_set.get_instruction_param_type("1q_H"); },
+    EXPECT_EQ(instruction_set.get_instruction_param_types("H"), std::nullopt);
+    EXPECT_EQ(instruction_set.get_instruction_param_types("measure"), std::nullopt);
+    EXPECT_EQ(instruction_set.get_instruction_param_types("pow"), "f");
+    EXPECT_THAT([this]() { (void)instruction_set.get_instruction_param_types("1q_H"); },
         ThrowsMessage<AnalysisError>(::testing::HasSubstr("couldn't find instruction")));
 }

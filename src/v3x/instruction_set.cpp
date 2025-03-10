@@ -13,14 +13,14 @@ InstructionSet::InstructionSet()
     { "CNOT", { std::nullopt, "QV" } },
     { "CNOT", { std::nullopt, "VQ" } },
     { "CNOT", { std::nullopt, "VV" } },
-    { "CR", { 'f', "QQ" } },
-    { "CR", { 'f', "QV" } },
-    { "CR", { 'f', "VQ" } },
-    { "CR", { 'f', "VV" } },
-    { "CRk", { 'i', "QQ" } },
-    { "CRk", { 'i', "QV" } },
-    { "CRk", { 'i', "VQ" } },
-    { "CRk", { 'i', "VV" } },
+    { "CR", { "f", "QQ" } },
+    { "CR", { "f", "QV" } },
+    { "CR", { "f", "VQ" } },
+    { "CR", { "f", "VV" } },
+    { "CRk", { "i", "QQ" } },
+    { "CRk", { "i", "QV" } },
+    { "CRk", { "i", "VQ" } },
+    { "CRk", { "i", "VV" } },
     { "CZ", { std::nullopt, "QQ" } },
     { "CZ", { std::nullopt, "QV" } },
     { "CZ", { std::nullopt, "VQ" } },
@@ -33,12 +33,12 @@ InstructionSet::InstructionSet()
     { "mX90", { std::nullopt, "V" } },
     { "mY90", { std::nullopt, "Q" } },
     { "mY90", { std::nullopt, "V" } },
-    { "Rx", { 'f', "Q" } },
-    { "Rx", { 'f', "V" } },
-    { "Ry", { 'f', "Q" } },
-    { "Ry", { 'f', "V" } },
-    { "Rz", { 'f', "Q" } },
-    { "Rz", { 'f', "V" } },
+    { "Rn", { "fffff", "Q" } },
+    { "Rx", { "f", "V" } },
+    { "Ry", { "f", "Q" } },
+    { "Ry", { "f", "V" } },
+    { "Rz", { "f", "Q" } },
+    { "Rz", { "f", "V" } },
     { "S", { std::nullopt, "Q" } },
     { "S", { std::nullopt, "V" } },
     { "Sdag", { std::nullopt, "Q" } },
@@ -73,16 +73,16 @@ InstructionSet::InstructionSet()
     { "init", { std::nullopt, "V" } },
     { "barrier", { std::nullopt, "Q" } },
     { "barrier", { std::nullopt, "V" } },
-    { "wait", { 'i', "Q" } },
-    { "wait", { 'i', "V" } },
+    { "wait", { "i", "Q" } },
+    { "wait", { "i", "V" } },
 }
 , gate_modifier_map{
     { "inv", std::nullopt },
-    { "pow", 'f' },
+    { "pow", "f" },
     { "ctrl", std::nullopt },
 }
 , single_qubit_named_gate_list{
-    "H", "I", "mX90", "mY90", "Rx", "Ry", "Rz", "S", "Sdag", "T", "Tdag", "X", "X90", "Y", "Y90", "Z"
+    "H", "I", "mX90", "mY90", "Rn", "Rx", "Ry", "Rz", "S", "Sdag", "T", "Tdag", "X", "X90", "Y", "Y90", "Z"
 }
 , two_qubit_named_gate_list{
     "CNOT", "CR", "CRk", "CZ", "SWAP"
@@ -206,7 +206,7 @@ InstructionSet::InstructionSet()
     return is_inv_gate_modifier(name) || is_pow_gate_modifier(name) || is_ctrl_gate_modifier(name);
 }
 
-[[nodiscard]] std::optional<char> InstructionSet::get_named_gate_param_type(const std::string& name) const {
+[[nodiscard]] std::optional<std::string> InstructionSet::get_named_gate_param_types(const std::string& name) const {
     if (const auto& it = named_gate_map.find(name); it != named_gate_map.end()) {
         const auto& pair_param_types_operand_types = it->second;
         return pair_param_types_operand_types.first;
@@ -214,7 +214,7 @@ InstructionSet::InstructionSet()
     throw error::AnalysisError{ fmt::format("couldn't find gate '{}'", name) };
 }
 
-[[nodiscard]] std::optional<char> InstructionSet::get_non_gate_param_type(const std::string& name) const {
+[[nodiscard]] std::optional<std::string> InstructionSet::get_non_gate_param_types(const std::string& name) const {
     if (const auto& it = non_gate_map.find(name); it != non_gate_map.end()) {
         const auto& pair_param_types_operand_types = it->second;
         return pair_param_types_operand_types.first;
@@ -222,20 +222,20 @@ InstructionSet::InstructionSet()
     throw error::AnalysisError{ fmt::format("couldn't find non-unitary instruction '{}'", name) };
 }
 
-[[nodiscard]] std::optional<char> InstructionSet::get_gate_modifier_param_type(const std::string& name) const {
+[[nodiscard]] std::optional<std::string> InstructionSet::get_gate_modifier_param_types(const std::string& name) const {
     if (const auto& it = gate_modifier_map.find(name); it != gate_modifier_map.end()) {
         return it->second;
     }
     throw error::AnalysisError{ fmt::format("couldn't find gate modifier '{}'", name) };
 }
 
-[[nodiscard]] std::optional<char> InstructionSet::get_instruction_param_type(const std::string& name) const {
+[[nodiscard]] std::optional<std::string> InstructionSet::get_instruction_param_types(const std::string& name) const {
     if (is_named_gate(name)) {
-        return get_named_gate_param_type(name);
+        return get_named_gate_param_types(name);
     } else if (is_non_gate(name)) {
-        return get_non_gate_param_type(name);
+        return get_non_gate_param_types(name);
     } else if (is_gate_modifier(name)) {
-        return get_gate_modifier_param_type(name);
+        return get_gate_modifier_param_types(name);
     }
     throw error::AnalysisError{ fmt::format("couldn't find instruction '{}'", name) };
 }

@@ -167,7 +167,7 @@ annotated {
     gate {
         name: One<identifier>;
         gate: Maybe<gate>;
-        parameter: Maybe<expression>;
+        parameters: One<expression_list>;
     }
 
     statement {
@@ -187,7 +187,7 @@ annotated {
                 non_gate_instruction {
                     name: One<keyword>;
                     operands: One<expression_list>;
-                    parameter: Maybe<expression>;
+                    parameters: One<expression_list>;
                 }
 
                 asm_declaration {

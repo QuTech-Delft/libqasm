@@ -42,7 +42,7 @@ gate:
     INV DOT gate  # invGate
     | POW OPEN_PARENS expression CLOSE_PARENS DOT gate  # powGate
     | CTRL DOT gate # ctrlGate
-    | IDENTIFIER (OPEN_PARENS expression CLOSE_PARENS)?  # namedGate
+    | IDENTIFIER (OPEN_PARENS expressionList CLOSE_PARENS)?  # namedGate
     ;
 
 // Current implementation of the semantic parser will expect a constant integer
