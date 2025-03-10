@@ -46,11 +46,19 @@ Program(
                     )
                   >
                   gate: -
-                  parameter: -
+                  parameters: <
+                    ExpressionList(
+                      items: []
+                    )
+                  >
                   annotations: []
                 )
               >
-              parameter: -
+              parameters: <
+                ExpressionList(
+                  items: []
+                )
+              >
               annotations: []
             )
           >
