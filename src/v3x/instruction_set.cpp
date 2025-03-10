@@ -34,6 +34,8 @@ InstructionSet::InstructionSet()
     { "mY90", { std::nullopt, "Q" } },
     { "mY90", { std::nullopt, "V" } },
     { "Rn", { "fffff", "Q" } },
+    { "Rn", { "fffff", "V" } },
+    { "Rx", { "f", "Q" } },
     { "Rx", { "f", "V" } },
     { "Ry", { "f", "Q" } },
     { "Ry", { "f", "V" } },
