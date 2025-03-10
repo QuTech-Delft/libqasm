@@ -36,6 +36,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - clang/Linux/x64 GitHub Actions jobs (which use Ubuntu 24.04.1 since 2025).
+- `cibw-wheels` GitHub Actions job was building wheels only for Linux/ARM64.
 
 
 ## [ 0.6.9 ] - [ 2024-11-13 ]
