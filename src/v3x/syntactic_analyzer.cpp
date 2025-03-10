@@ -215,7 +215,9 @@ std::any SyntacticAnalyzer::visitCtrlGate(CqasmParser::CtrlGateContext* context)
 std::any SyntacticAnalyzer::visitNamedGate(CqasmParser::NamedGateContext* context) {
     auto ret = tree::make<Gate>();
     ret->name = tree::make<Identifier>(context->IDENTIFIER()->getText());
-    ret->parameters = std::any_cast<One<ExpressionList>>(visitExpressionList(context->expressionList()));
+    ret->parameters = context->expressionList()
+        ? std::any_cast<One<ExpressionList>>(visitExpressionList(context->expressionList()))
+        : tree::make<ExpressionList>();
     setNodeAnnotation(ret, context->IDENTIFIER()->getSymbol());
     return ret;
 }
