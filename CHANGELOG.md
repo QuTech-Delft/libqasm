@@ -10,7 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - **Removed** for now removed features.
 
 
-## [ 1.0.1 ] - [ xxxx-yy-zz ]
+## [ 1.1.0 ] - [ xxxx-yy-zz ]
 
 ### Added
 - Assembly declaration.
@@ -23,6 +23,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Setting of `build_type` in Conan profiles.
+- `cibw-wheels` GitHub Actions job was building wheels only for Linux/ARM64.
 
 
 ## [ 1.0.0 ] - [ 2025-01-30 ]
