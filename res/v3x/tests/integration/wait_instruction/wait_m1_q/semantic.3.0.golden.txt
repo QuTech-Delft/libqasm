@@ -27,11 +27,11 @@ Program(
               >
             )
           ]
-          parameter: <
+          parameters: [
             ConstInt(
               value: -1
             )
-          >
+          ]
           annotations: []
         )
       ]

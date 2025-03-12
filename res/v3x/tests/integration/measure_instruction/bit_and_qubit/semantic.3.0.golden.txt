@@ -40,7 +40,7 @@ Program(
               >
             )
           ]
-          parameter: -
+          parameters: []
           annotations: []
         )
       ]

@@ -1,2 +1,2 @@
 ERROR
-Error at input.cq:5:1..4: failed to resolve instruction '1q_x' with argument pack (qubit)
+Error at input.cq:5:5..6: couldn't find instruction 'x'
