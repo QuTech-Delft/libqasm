@@ -18,10 +18,10 @@ protected:
     const InstructionListT& single_qubit_named_gate_list = instruction_set.get_single_qubit_named_gate_list();
     const InstructionListT& two_qubit_named_gate_list = instruction_set.get_two_qubit_named_gate_list();
 
-    const size_t number_of_gate_map_entries = 52;
+    const size_t number_of_gate_map_entries = 54;
     const size_t number_of_non_gate_map_entries = 12;
     const size_t number_of_gate_modifier_map_entries = 3;
-    const size_t number_of_single_qubit_named_gates = 16;
+    const size_t number_of_single_qubit_named_gates = 17;
     const size_t number_of_two_qubit_named_gates = 5;
 };
 
@@ -162,21 +162,21 @@ TEST_F(InstructionSetTest, is_gate_modifier) {
     EXPECT_FALSE(instruction_set.is_gate_modifier("reset"));
 }
 TEST_F(InstructionSetTest, get_named_gate_param_type) {
-    EXPECT_EQ(instruction_set.get_named_gate_param_type("H"), std::nullopt);
-    EXPECT_EQ(instruction_set.get_named_gate_param_type("Rz"), 'f');
-    EXPECT_THAT([this]() { (void)instruction_set.get_named_gate_param_type("inv"); },
+    EXPECT_EQ(instruction_set.get_named_gate_param_types("H"), std::nullopt);
+    EXPECT_EQ(instruction_set.get_named_gate_param_types("Rz"), "f");
+    EXPECT_THAT([this]() { (void)instruction_set.get_named_gate_param_types("inv"); },
         ThrowsMessage<AnalysisError>(::testing::HasSubstr("couldn't find gate")));
 }
 TEST_F(InstructionSetTest, get_gate_modifier_param_type) {
-    EXPECT_EQ(instruction_set.get_gate_modifier_param_type("inv"), std::nullopt);
-    EXPECT_EQ(instruction_set.get_gate_modifier_param_type("pow"), 'f');
-    EXPECT_THAT([this]() { (void)instruction_set.get_gate_modifier_param_type("H"); },
+    EXPECT_EQ(instruction_set.get_gate_modifier_param_types("inv"), std::nullopt);
+    EXPECT_EQ(instruction_set.get_gate_modifier_param_types("pow"), "f");
+    EXPECT_THAT([this]() { (void)instruction_set.get_gate_modifier_param_types("H"); },
         ThrowsMessage<AnalysisError>(::testing::HasSubstr("couldn't find gate modifier")));
 }
 TEST_F(InstructionSetTest, get_instruction_param_type) {
-    EXPECT_EQ(instruction_set.get_instruction_param_type("H"), std::nullopt);
-    EXPECT_EQ(instruction_set.get_instruction_param_type("measure"), std::nullopt);
-    EXPECT_EQ(instruction_set.get_instruction_param_type("pow"), 'f');
-    EXPECT_THAT([this]() { (void)instruction_set.get_instruction_param_type("1q_H"); },
+    EXPECT_EQ(instruction_set.get_instruction_param_types("H"), std::nullopt);
+    EXPECT_EQ(instruction_set.get_instruction_param_types("measure"), std::nullopt);
+    EXPECT_EQ(instruction_set.get_instruction_param_types("pow"), "f");
+    EXPECT_THAT([this]() { (void)instruction_set.get_instruction_param_types("1q_H"); },
         ThrowsMessage<AnalysisError>(::testing::HasSubstr("couldn't find instruction")));
 }

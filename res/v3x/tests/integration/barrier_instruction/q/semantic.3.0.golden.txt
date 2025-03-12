@@ -27,7 +27,7 @@ Program(
               >
             )
           ]
-          parameter: -
+          parameters: []
           annotations: []
         )
       ]

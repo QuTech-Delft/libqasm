@@ -18,15 +18,15 @@ Program(
                 Gate(
                   name: X
                   gate: -
-                  parameter: -
+                  parameters: []
                   annotations: []
                 )
               >
-              parameter: <
+              parameters: [
                 ConstFloat(
                   value: 2
                 )
-              >
+              ]
               annotations: []
             )
           >

@@ -70,7 +70,11 @@ Program(
               ]
             )
           >
-          parameter: -
+          parameters: <
+            ExpressionList(
+              items: []
+            )
+          >
           annotations: []
         )
       ]

@@ -67,9 +67,13 @@ Program(
               ]
             )
           >
-          parameter: <
-            IntegerLiteral( # input.cq:5:6..7
-              value: 2
+          parameters: <
+            ExpressionList(
+              items: [
+                IntegerLiteral( # input.cq:5:6..7
+                  value: 2
+                )
+              ]
             )
           >
           annotations: []

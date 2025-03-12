@@ -39,7 +39,11 @@ Program(
                 )
               >
               gate: -
-              parameter: -
+              parameters: <
+                ExpressionList(
+                  items: []
+                )
+              >
               annotations: []
             )
           >
@@ -80,7 +84,11 @@ Program(
                 )
               >
               gate: -
-              parameter: -
+              parameters: <
+                ExpressionList(
+                  items: []
+                )
+              >
               annotations: []
             )
           >
@@ -121,7 +129,11 @@ Program(
                 )
               >
               gate: -
-              parameter: -
+              parameters: <
+                ExpressionList(
+                  items: []
+                )
+              >
               annotations: []
             )
           >
