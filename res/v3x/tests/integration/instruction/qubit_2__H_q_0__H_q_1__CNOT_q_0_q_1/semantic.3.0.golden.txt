@@ -15,7 +15,7 @@ Program(
             Gate(
               name: H
               gate: -
-              parameter: -
+              parameters: []
               annotations: []
             )
           >
@@ -47,7 +47,7 @@ Program(
             Gate(
               name: H
               gate: -
-              parameter: -
+              parameters: []
               annotations: []
             )
           >
@@ -79,7 +79,7 @@ Program(
             Gate(
               name: CNOT
               gate: -
-              parameter: -
+              parameters: []
               annotations: []
             )
           >

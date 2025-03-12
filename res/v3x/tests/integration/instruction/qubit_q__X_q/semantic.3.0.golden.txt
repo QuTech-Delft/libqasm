@@ -15,7 +15,7 @@ Program(
             Gate(
               name: X
               gate: -
-              parameter: -
+              parameters: []
               annotations: []
             )
           >

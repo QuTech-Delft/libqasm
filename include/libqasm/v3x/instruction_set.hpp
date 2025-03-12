@@ -9,13 +9,13 @@
 namespace cqasm::v3x::instruction {
 
 using InstructionNameT = std::string;
-using ParamTypeT = std::optional<char>;
+using ParamTypesT = std::optional<std::string>;
 using OperandTypesT = std::optional<std::string>;
 using KeyT = InstructionNameT;
-using ValueT = std::pair<ParamTypeT, OperandTypesT>;
+using ValueT = std::pair<ParamTypesT, OperandTypesT>;
 using InstructionMapT = std::multimap<KeyT, ValueT>;
 using InstructionListT = std::set<InstructionNameT>;
-using GateModifierMapT = std::map<KeyT, ParamTypeT>;
+using GateModifierMapT = std::map<KeyT, ParamTypesT>;
 
 class InstructionSet {
     InstructionMapT named_gate_map;
@@ -80,10 +80,10 @@ public:
     [[nodiscard]] bool is_two_qubit_gate_modifier(const std::string& name) const;
     [[nodiscard]] bool is_gate_modifier(const std::string& name) const;
 
-    [[nodiscard]] std::optional<char> get_named_gate_param_type(const std::string& name) const;
-    [[nodiscard]] std::optional<char> get_non_gate_param_type(const std::string& name) const;
-    [[nodiscard]] std::optional<char> get_gate_modifier_param_type(const std::string& name) const;
-    [[nodiscard]] std::optional<char> get_instruction_param_type(const std::string& name) const;
+    [[nodiscard]] std::optional<std::string> get_named_gate_param_types(const std::string& name) const;
+    [[nodiscard]] std::optional<std::string> get_non_gate_param_types(const std::string& name) const;
+    [[nodiscard]] std::optional<std::string> get_gate_modifier_param_types(const std::string& name) const;
+    [[nodiscard]] std::optional<std::string> get_instruction_param_types(const std::string& name) const;
 };
 
 }  // namespace cqasm::v3x::instruction

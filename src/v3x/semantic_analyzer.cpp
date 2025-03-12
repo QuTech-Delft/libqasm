@@ -179,15 +179,24 @@ bool is_two_qubit_gate(const tree::One<semantic::Gate>& gate) {
     return InstructionSet::get_instance().is_two_qubit_gate(resolution_name);
 }
 
-values::Value resolve_parameter(const std::string& instruction_name, const values::Value& parameter) {
+values::Values resolve_parameters(const std::string& instruction_name, const values::Values& parameters) {
+    auto ret = values::Values{};
     const auto& instruction_set = InstructionSet::get_instance();
-    const auto& param_type = instruction_set.get_instruction_param_type(instruction_name);
-    if (!param_type.has_value() ||
-        !values::check_promote(values::type_of(parameter), types::from_spec(param_type.value()))) {
-        throw error::AnalysisError{ fmt::format(
-            "failed to resolve '{}' with parameter type ({})", instruction_name, values::type_of(parameter)) };
+    const auto& param_types = instruction_set.get_instruction_param_types(instruction_name);
+    if (param_types.has_value()) {
+        std::for_each(param_types->begin(),
+            param_types->end(),
+            [i = 0, &instruction_name, &parameters, &ret](const auto& param_type) mutable {
+                if (!values::check_promote(values::type_of(parameters[i]), types::from_spec(param_type))) {
+                    throw error::AnalysisError{ fmt::format("failed to resolve '{}' with parameter type ({})",
+                        instruction_name,
+                        values::type_of(parameters[i])) };
+                }
+                ret.add(promote(parameters[i], types::from_spec(param_type)));
+                i++;
+            });
     }
-    return promote(parameter, types::from_spec(param_type.value()));
+    return ret;
 }
 
 void check_gate(const tree::One<semantic::Gate>& gate) {
@@ -203,14 +212,10 @@ std::any SemanticAnalyzer::visit_gate(syntactic::Gate& node) {
         if (!node.gate.empty()) {
             ret->gate = std::any_cast<tree::One<semantic::Gate>>(visit_gate(*node.gate)).get_ptr();
         }
-        if (!node.parameter.empty()) {
-            ret->parameter = std::any_cast<values::Value>(visit_expression(*node.parameter)).get_ptr();
-        }
+        ret->parameters = std::any_cast<values::Values>(visit_expression_list(*node.parameters));
 
         // Resolve the parameter
-        if (!node.parameter.empty()) {
-            ret->parameter = resolve_parameter(ret->name, ret->parameter);
-        }
+        ret->parameters = resolve_parameters(ret->name, ret->parameters);
 
         // Specific checks
         check_gate(ret);
@@ -273,10 +278,10 @@ std::any SemanticAnalyzer::visit_non_gate_instruction(syntactic::NonGateInstruct
         // Resolve the instruction
         ret = analyzer_.resolve_instruction(ret->name, ret->operands);
 
-        // Resolve the parameter
-        if (!node.parameter.empty()) {
-            ret->parameter =
-                resolve_parameter(ret->name, std::any_cast<values::Value>(visit_expression(*node.parameter)));
+        // Resolve the parameters
+        if (!node.parameters.empty()) {
+            ret->parameters =
+                resolve_parameters(ret->name, std::any_cast<values::Values>(visit_expression_list(*node.parameters)));
         }
 
         // Specific checks

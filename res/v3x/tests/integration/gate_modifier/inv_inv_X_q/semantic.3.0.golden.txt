@@ -21,15 +21,15 @@ Program(
                     Gate(
                       name: X
                       gate: -
-                      parameter: -
+                      parameters: []
                       annotations: []
                     )
                   >
-                  parameter: -
+                  parameters: []
                   annotations: []
                 )
               >
-              parameter: -
+              parameters: []
               annotations: []
             )
           >

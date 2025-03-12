@@ -56,7 +56,7 @@ Program(
               ]
             )
           ]
-          parameter: -
+          parameters: []
           annotations: []
         )
       ]

@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 - Assembly declaration.
+- `Rn` unitary instruction.
 - Publish WASM binaries to npm.
 
 ### Changed

@@ -35,9 +35,13 @@ Program(
                 )
               >
               gate: -
-              parameter: <
-                Identifier( # input.cq:4:4..7
-                  name: TAU
+              parameters: <
+                ExpressionList(
+                  items: [
+                    Identifier( # input.cq:4:4..7
+                      name: TAU
+                    )
+                  ]
                 )
               >
               annotations: []
