@@ -1,0 +1,11 @@
+.docblock {
+    border-left: .05rem solid var(--md-primary-fg-color);
+}
+
+.docblock-desc {
+    margin-left: 1em;
+}
+
+pre > code.decl {
+    white-space: pre-wrap;
+}
