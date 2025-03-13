@@ -68,14 +68,11 @@ jobs:
           conan remove -c "*/*"
           conan build . -pr=conan/profiles/release-clang-emscripten-wasm -pr:b=conan/profiles/release -b missing
         shell: bash
-      - name: Upload release asset
-        uses: softprops/action-gh-release@v2
+      - name: Publish to npm
+        uses: JS-DevTools/npm-publish@v3
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         with:
-          files: |
-            build/Release/emscripten/cqasm_emscripten.js
-            build/Release/emscripten/cqasm_emscripten.wasm
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.NPM_TOKEN }}
 
   publish-python-packages:
     name: Publish Python packages
