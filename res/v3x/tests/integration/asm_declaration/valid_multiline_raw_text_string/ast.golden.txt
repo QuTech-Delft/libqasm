@@ -1,0 +1,48 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..10
+      items: 3
+    )
+  >
+  block: <
+    GlobalBlock(
+      statements: [
+        Variable( # input.cq:3:7..8
+          name: <
+            Identifier(
+              name: q
+            )
+          >
+          typ: <
+            Type( # input.cq:3:1..6
+              name: <
+                Keyword(
+                  name: qubit
+                )
+              >
+              size: -
+            )
+          >
+          annotations: []
+        )
+        AsmDeclaration(
+          backend_name: <
+            Identifier(
+              name: Backend
+            )
+          >
+          backend_code: cqasm::v3x::primitives::Str<<
+            
+                a ' " {} () [] b
+                // This is a single line comment which ends on the newline.
+                /* This is a multi-
+                line comment block */
+          >>
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

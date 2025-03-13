@@ -9,14 +9,14 @@
 
 #include "libqasm/annotations.hpp"
 #include "libqasm/error.hpp"
-#include "libqasm/v3x/ast.hpp"
+#include "libqasm/v3x/syntactic.hpp"
 
 /**
  * Namespace for the parser functions and classes.
  */
 namespace cqasm::v3x::parser {
 
-using Root = ast::One<ast::Root>;
+using Root = syntactic::One<syntactic::Root>;
 
 /**
  * Parse result information.

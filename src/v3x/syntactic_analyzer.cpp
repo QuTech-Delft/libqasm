@@ -11,14 +11,16 @@
 
 #include "libqasm/annotations.hpp"
 #include "libqasm/tree.hpp"
+#include "libqasm/utils.hpp"
 #include "libqasm/v3x/antlr_custom_error_listener.hpp"
-#include "libqasm/v3x/ast.hpp"
+#include "libqasm/v3x/syntactic.hpp"
 #include "libqasm/v3x/types.hpp"
 
 namespace cqasm::v3x::parser {
 
-using namespace cqasm::v3x::ast;
 using namespace cqasm::error;
+using namespace cqasm::utils;
+using namespace cqasm::v3x::syntactic;
 
 SyntacticAnalyzer::SyntacticAnalyzer(const std::optional<std::string>& file_name)
 : file_name_{ file_name }
@@ -41,7 +43,7 @@ void SyntacticAnalyzer::syntaxError(size_t line, size_t char_position_in_line, c
  * ANTLR provides a zero-based character position in line
  * We change it here to a one-based index, which is the more human-readable, and the common option in text editors
  */
-void SyntacticAnalyzer::setNodeAnnotation(const ast::One<ast::Node>& node, antlr4::Token* token) const {
+void SyntacticAnalyzer::setNodeAnnotation(const syntactic::One<syntactic::Node>& node, antlr4::Token* token) const {
     auto token_size = token->getStopIndex() - token->getStartIndex() + 1;
     node->set_annotation(annotations::SourceLocation{
         file_name_,
@@ -61,7 +63,8 @@ void SyntacticAnalyzer::expandNodeAnnotation(const One<Node>& node, antlr4::Toke
     }
 }
 
-void SyntacticAnalyzer::copyNodeAnnotation(const ast::One<ast::Node>& from, const ast::One<ast::Node>& to) const {
+void SyntacticAnalyzer::copyNodeAnnotation(
+    const syntactic::One<syntactic::Node>& from, const syntactic::One<syntactic::Node>& to) const {
     to->copy_annotation<annotations::SourceLocation>(*from);
 }
 
@@ -166,6 +169,8 @@ std::any SyntacticAnalyzer::visitInstruction(CqasmParser::InstructionContext* co
         return gate_instruction_ctx->accept(this);
     } else if (auto non_gate_instruction_ctx = context->nonGateInstruction(); non_gate_instruction_ctx) {
         return non_gate_instruction_ctx->accept(this);
+    } else if (auto asm_declaration_ctx = context->asmDeclaration(); asm_declaration_ctx) {
+        return asm_declaration_ctx->accept(this);
     }
     throw error::AnalysisError{ "unknown instruction type" };
 }
@@ -183,6 +188,7 @@ std::any SyntacticAnalyzer::visitInvGate(CqasmParser::InvGateContext* context) {
     auto ret = tree::make<Gate>();
     ret->name = tree::make<Identifier>(context->INV()->getText());
     ret->gate = std::any_cast<tree::One<Gate>>(context->gate()->accept(this)).get_ptr();
+    ret->parameters = tree::make<ExpressionList>();
     setNodeAnnotation(ret, context->INV()->getSymbol());
     return ret;
 }
@@ -191,7 +197,8 @@ std::any SyntacticAnalyzer::visitPowGate(CqasmParser::PowGateContext* context) {
     auto ret = tree::make<Gate>();
     ret->name = tree::make<Identifier>(context->POW()->getText());
     ret->gate = std::any_cast<tree::One<Gate>>(context->gate()->accept(this)).get_ptr();
-    ret->parameter = std::any_cast<One<Expression>>(context->expression()->accept(this)).get_ptr();
+    ret->parameters = tree::make<ExpressionList>();
+    ret->parameters->items.add(std::any_cast<tree::One<Expression>>(context->expression()->accept(this)));
     setNodeAnnotation(ret, context->POW()->getSymbol());
     return ret;
 }
@@ -200,6 +207,7 @@ std::any SyntacticAnalyzer::visitCtrlGate(CqasmParser::CtrlGateContext* context)
     auto ret = tree::make<Gate>();
     ret->name = tree::make<Identifier>(context->CTRL()->getText());
     ret->gate = std::any_cast<tree::One<Gate>>(context->gate()->accept(this)).get_ptr();
+    ret->parameters = tree::make<ExpressionList>();
     setNodeAnnotation(ret, context->CTRL()->getSymbol());
     return ret;
 }
@@ -207,9 +215,9 @@ std::any SyntacticAnalyzer::visitCtrlGate(CqasmParser::CtrlGateContext* context)
 std::any SyntacticAnalyzer::visitNamedGate(CqasmParser::NamedGateContext* context) {
     auto ret = tree::make<Gate>();
     ret->name = tree::make<Identifier>(context->IDENTIFIER()->getText());
-    if (context->expression()) {
-        ret->parameter = std::any_cast<One<Expression>>(context->expression()->accept(this)).get_ptr();
-    }
+    ret->parameters = context->expressionList()
+        ? std::any_cast<One<ExpressionList>>(visitExpressionList(context->expressionList()))
+        : tree::make<ExpressionList>();
     setNodeAnnotation(ret, context->IDENTIFIER()->getSymbol());
     return ret;
 }
@@ -217,6 +225,7 @@ std::any SyntacticAnalyzer::visitNamedGate(CqasmParser::NamedGateContext* contex
 std::any SyntacticAnalyzer::visitMeasureInstruction(CqasmParser::MeasureInstructionContext* context) {
     auto ret = tree::make<NonGateInstruction>();
     ret->name = tree::make<Keyword>(context->MEASURE()->getText());
+    ret->parameters = tree::make<ExpressionList>();
     ret->operands = tree::make<ExpressionList>();
     ret->operands->items.add(std::any_cast<One<Expression>>(context->expression(0)->accept(this)));
     ret->operands->items.add(std::any_cast<One<Expression>>(context->expression(1)->accept(this)));
@@ -227,6 +236,7 @@ std::any SyntacticAnalyzer::visitMeasureInstruction(CqasmParser::MeasureInstruct
 std::any SyntacticAnalyzer::visitResetInstruction(CqasmParser::ResetInstructionContext* context) {
     auto ret = tree::make<NonGateInstruction>();
     ret->name = tree::make<Keyword>(context->RESET()->getText());
+    ret->parameters = tree::make<ExpressionList>();
     ret->operands = tree::make<ExpressionList>();
     ret->operands->items.add(std::any_cast<One<Expression>>(context->expression()->accept(this)));
     setNodeAnnotation(ret, context->RESET()->getSymbol());
@@ -236,6 +246,7 @@ std::any SyntacticAnalyzer::visitResetInstruction(CqasmParser::ResetInstructionC
 std::any SyntacticAnalyzer::visitInitInstruction(CqasmParser::InitInstructionContext* context) {
     auto ret = tree::make<NonGateInstruction>();
     ret->name = tree::make<Keyword>(context->INIT()->getText());
+    ret->parameters = tree::make<ExpressionList>();
     ret->operands = tree::make<ExpressionList>();
     ret->operands->items.add(std::any_cast<One<Expression>>(context->expression()->accept(this)));
     setNodeAnnotation(ret, context->INIT()->getSymbol());
@@ -245,6 +256,7 @@ std::any SyntacticAnalyzer::visitInitInstruction(CqasmParser::InitInstructionCon
 std::any SyntacticAnalyzer::visitBarrierInstruction(CqasmParser::BarrierInstructionContext* context) {
     auto ret = tree::make<NonGateInstruction>();
     ret->name = tree::make<Keyword>(context->BARRIER()->getText());
+    ret->parameters = tree::make<ExpressionList>();
     ret->operands = tree::make<ExpressionList>();
     ret->operands->items.add(std::any_cast<One<Expression>>(context->expression()->accept(this)));
     setNodeAnnotation(ret, context->BARRIER()->getSymbol());
@@ -254,10 +266,18 @@ std::any SyntacticAnalyzer::visitBarrierInstruction(CqasmParser::BarrierInstruct
 std::any SyntacticAnalyzer::visitWaitInstruction(CqasmParser::WaitInstructionContext* context) {
     auto ret = tree::make<NonGateInstruction>();
     ret->name = tree::make<Keyword>(context->WAIT()->getText());
-    ret->parameter = std::any_cast<One<Expression>>(context->expression(0)->accept(this)).get_ptr();
+    ret->parameters = tree::make<ExpressionList>();
+    ret->parameters->items.add(std::any_cast<One<Expression>>(context->expression(0)->accept(this)));
     ret->operands = tree::make<ExpressionList>();
     ret->operands->items.add(std::any_cast<One<Expression>>(context->expression(1)->accept(this)));
     setNodeAnnotation(ret, context->WAIT()->getSymbol());
+    return One<Statement>{ ret };
+}
+
+std::any SyntacticAnalyzer::visitAsmDeclaration(CqasmParser::AsmDeclarationContext* context) {
+    auto ret = tree::make<AsmDeclaration>();
+    ret->backend_name = tree::make<Identifier>(context->IDENTIFIER()->getText());
+    ret->backend_code = remove_triple_quotes(context->RAW_TEXT_STRING()->getText());
     return One<Statement>{ ret };
 }
 

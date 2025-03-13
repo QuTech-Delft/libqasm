@@ -8,9 +8,9 @@
 
 #include "libqasm/error.hpp"
 #include "libqasm/tree.hpp"
-#include "libqasm/v3x/ast.hpp"
 #include "libqasm/v3x/parse_helper.hpp"
 #include "libqasm/v3x/parse_result.hpp"
+#include "libqasm/v3x/syntactic.hpp"
 #include "libqasm/version.hpp"
 #include "mock_scanner_adaptor.hpp"
 
@@ -32,13 +32,13 @@ protected:
             .WillRepeatedly(::testing::Throw(std::runtime_error{ runtime_error_message.c_str() }));
     }
     void expect_scanner_parse_returns_ill_formed_root() {
-        auto parse_result = ParseResult{ tree::make<ast::Program>(), error::ParseErrors{} };
+        auto parse_result = ParseResult{ tree::make<syntactic::Program>(), error::ParseErrors{} };
         EXPECT_CALL(*scanner_up, parse()).WillOnce(::testing::Return(parse_result));
     }
     void expect_scanner_parse_returns_well_formed_root() {
-        auto one_version = tree::make<ast::Version>(version_3_0);
-        auto one_global_block = tree::make<ast::GlobalBlock>();
-        auto one_program = tree::make<ast::Program>(one_version, one_global_block);
+        auto one_version = tree::make<syntactic::Version>(version_3_0);
+        auto one_global_block = tree::make<syntactic::GlobalBlock>();
+        auto one_program = tree::make<syntactic::Program>(one_version, one_global_block);
         auto parse_result = ParseResult{ one_program, error::ParseErrors{} };
         EXPECT_CALL(*scanner_up, parse()).WillOnce(::testing::Return(parse_result));
     }

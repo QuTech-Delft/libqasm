@@ -6,15 +6,15 @@
 #include <vector>
 
 #include "libqasm/error.hpp"
-#include "libqasm/v3x/ast.hpp"
 #include "libqasm/v3x/semantic.hpp"
+#include "libqasm/v3x/syntactic.hpp"
 
 /**
  * Namespace for the \ref cqasm::analyzer::Analyzer "Analyzer" class and support classes.
  */
 namespace cqasm::v3x::analyzer {
 
-using Root = ast::One<semantic::Program>;
+using Root = syntactic::One<semantic::Program>;
 
 /**
  * Exception thrown by AnalysisResult::unwrap() when the cQASM file fails to parse.
@@ -53,7 +53,7 @@ public:
      * don't care about things like pretty-printing error messages for your users
      * in a different way than what unwrap() does for you.
      */
-    ast::One<semantic::Program> root;
+    syntactic::One<semantic::Program> root;
 
     /**
      * List of accumulated errors.

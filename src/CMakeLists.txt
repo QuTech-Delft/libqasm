@@ -131,16 +131,6 @@ antlr_target(
 )
 list(APPEND CQASM_V3X_SOURCES ${ANTLR_OUTPUTS})
 
-# Generate the abstract syntax tree classes.
-generate_tree_py(
-    "${TREE_GEN_EXECUTABLE}"
-    "${CMAKE_CURRENT_SOURCE_DIR}/v3x/ast.tree"
-    "${CMAKE_CURRENT_BINARY_DIR}/../include/libqasm/v3x/ast_generated.hpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/v3x/ast_generated.cpp"
-    "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/ast_generated.py"
-)
-list(APPEND CQASM_V3X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3x/ast_generated.cpp")
-
 # Generate the type tree classes.
 generate_tree_py(
     "${TREE_GEN_EXECUTABLE}"
@@ -162,6 +152,16 @@ generate_tree_py(
     "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/values_generated.py"
 )
 list(APPEND CQASM_V3X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3x/values_generated.cpp")
+
+# Generate the syntactic tree classes.
+generate_tree_py(
+    "${TREE_GEN_EXECUTABLE}"
+    "${CMAKE_CURRENT_SOURCE_DIR}/v3x/syntactic.tree"
+    "${CMAKE_CURRENT_BINARY_DIR}/../include/libqasm/v3x/syntactic_generated.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/v3x/syntactic_generated.cpp"
+    "${LIBQASM_GENERATED_PYTHON_FILES}/v3x/syntactic_generated.py"
+)
+list(APPEND CQASM_V3X_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/v3x/syntactic_generated.cpp")
 
 # Generate the semantic tree classes.
 generate_tree_py(

@@ -2,7 +2,7 @@
 source
 
 # Header file for the abstract syntax tree node classes
-header "libqasm/v3x/ast_generated.hpp"
+header "libqasm/v3x/syntactic_generated.hpp"
 
 // Include tree base classes.
 include "libqasm/tree.hpp"
@@ -24,7 +24,7 @@ location cqasm::annotations::SourceLocation
 # Namespace for the abstract syntax tree node classes
 namespace cqasm
 namespace v3x
-namespace ast
+namespace syntactic
 
 keyword {
     name: cqasm::v3x::primitives::Str;
@@ -167,7 +167,7 @@ annotated {
     gate {
         name: One<identifier>;
         gate: Maybe<gate>;
-        parameter: Maybe<expression>;
+        parameters: One<expression_list>;
     }
 
     statement {
@@ -187,7 +187,12 @@ annotated {
                 non_gate_instruction {
                     name: One<keyword>;
                     operands: One<expression_list>;
-                    parameter: Maybe<expression>;
+                    parameters: One<expression_list>;
+                }
+
+                asm_declaration {
+                    backend_name: One<identifier>;
+                    backend_code: cqasm::v3x::primitives::Str;
                 }
             }
         }

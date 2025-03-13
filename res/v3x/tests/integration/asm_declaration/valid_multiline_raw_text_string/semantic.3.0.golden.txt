@@ -1,0 +1,38 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3
+    )
+  >
+  block: <
+    Block(
+      statements: [
+        AsmDeclaration(
+          backend_name: Backend
+          backend_code: cqasm::v3x::primitives::Str<<
+            
+                a ' " {} () [] b
+                // This is a single line comment which ends on the newline.
+                /* This is a multi-
+                line comment block */
+          >>
+          annotations: []
+        )
+      ]
+    )
+  >
+  variables: [
+    Variable(
+      name: q
+      typ: <
+        Qubit(
+          size: 1
+        )
+      >
+      annotations: []
+    )
+  ]
+)
+

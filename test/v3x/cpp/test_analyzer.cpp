@@ -5,8 +5,8 @@
 #include "libqasm/error.hpp"
 #include "libqasm/tree.hpp"
 #include "libqasm/v3x/analyzer.hpp"
-#include "libqasm/v3x/ast.hpp"
 #include "libqasm/v3x/parse_result.hpp"
+#include "libqasm/v3x/syntactic.hpp"
 #include "libqasm/version.hpp"
 #include "mock_analyzer.hpp"
 
@@ -24,14 +24,14 @@ protected:
 
     version::Version version_3_0 = "3.0";
 
-    tree::One<ast::Version> version = tree::make<ast::Version>(version_3_0);
-    tree::One<ast::GlobalBlock> global_block = tree::make<ast::GlobalBlock>();
-    tree::One<ast::Program> program = tree::make<ast::Program>(version, global_block);
+    tree::One<syntactic::Version> version = tree::make<syntactic::Version>(version_3_0);
+    tree::One<syntactic::GlobalBlock> global_block = tree::make<syntactic::GlobalBlock>();
+    tree::One<syntactic::Program> program = tree::make<syntactic::Program>(version, global_block);
     parser::ParseResult parse_result_ok = parser::ParseResult{ program, error::ParseErrors{} };
 
     std::string parse_error_message{ "parse error" };
     error::ParseErrors parse_errors{ error::ParseError{ parse_error_message } };
-    parser::ParseResult parse_result_errors = parser::ParseResult{ tree::make<ast::Program>(), parse_errors };
+    parser::ParseResult parse_result_errors = parser::ParseResult{ tree::make<syntactic::Program>(), parse_errors };
 };
 
 TEST_F(AnalyzerAnalyzeTest, parser_returns_parse_result) {
