@@ -31,4 +31,9 @@ std::string url_encode(const std::string& str);
  */
 std::string json_encode(const std::string& str);
 
+/**
+ * Removes the triple quotes from a raw string.
+ */
+std::string remove_triple_quotes(const std::string& str);
+
 }  // namespace cqasm::utils

@@ -5,9 +5,9 @@
 #include <iterator>  // back_inserter
 
 #include "libqasm/v3x/analyzer.hpp"
-#include "libqasm/v3x/ast_generated.hpp"
 #include "libqasm/v3x/instruction.hpp"
 #include "libqasm/v3x/instruction_set.hpp"
+#include "libqasm/v3x/syntactic_generated.hpp"
 
 namespace cqasm::v3x::analyzer {
 
@@ -17,11 +17,11 @@ SemanticAnalyzer::SemanticAnalyzer(Analyzer& analyzer)
 : analyzer_{ analyzer }
 , result_{} {}
 
-std::any SemanticAnalyzer::visit_node(ast::Node& /* node */) {
+std::any SemanticAnalyzer::visit_node(syntactic::Node& /* node */) {
     throw error::AnalysisError{ "unimplemented" };
 }
 
-std::any SemanticAnalyzer::visit_program(ast::Program& program_ast) {
+std::any SemanticAnalyzer::visit_program(syntactic::Program& program_ast) {
     result_.root = tree::make<semantic::Program>();
     result_.root->api_version = analyzer_.api_version;
     result_.root->version = std::any_cast<tree::One<semantic::Version>>(visit_version(*program_ast.version));
@@ -31,7 +31,7 @@ std::any SemanticAnalyzer::visit_program(ast::Program& program_ast) {
     return result_;
 }
 
-std::any SemanticAnalyzer::visit_version(ast::Version& node) {
+std::any SemanticAnalyzer::visit_version(syntactic::Version& node) {
     auto ret = tree::make<semantic::Version>();
     try {
         // Check API version
@@ -59,20 +59,20 @@ std::any SemanticAnalyzer::visit_version(ast::Version& node) {
     return ret;
 }
 
-std::any SemanticAnalyzer::visit_global_block(ast::GlobalBlock& node) {
+std::any SemanticAnalyzer::visit_global_block(syntactic::GlobalBlock& node) {
     visit_block(node);
     return GlobalBlockReturnT{ analyzer_.current_block(), analyzer_.current_variables() };
 }
 
-std::any SemanticAnalyzer::visit_annotated(ast::Annotated& node) {
+std::any SemanticAnalyzer::visit_annotated(syntactic::Annotated& node) {
     auto ret = tree::Any<semantic::AnnotationData>();
     for (const auto& annotation_data_ast : node.annotations) {
-        ret.add(std::any_cast<ast::One<semantic::AnnotationData>>(visit_annotation_data(*annotation_data_ast)));
+        ret.add(std::any_cast<syntactic::One<semantic::AnnotationData>>(visit_annotation_data(*annotation_data_ast)));
     }
     return ret;
 }
 
-std::any SemanticAnalyzer::visit_annotation_data(ast::AnnotationData& node) {
+std::any SemanticAnalyzer::visit_annotation_data(syntactic::AnnotationData& node) {
     auto ret = tree::make<semantic::AnnotationData>();
     try {
         ret->interface = node.interface->name;
@@ -94,7 +94,7 @@ std::any SemanticAnalyzer::visit_annotation_data(ast::AnnotationData& node) {
     return ret;
 }
 
-std::any SemanticAnalyzer::visit_variable(ast::Variable& node) {
+std::any SemanticAnalyzer::visit_variable(syntactic::Variable& node) {
     auto ret = tree::make<semantic::Variable>();
     try {
         // Build semantic type from syntactic type
@@ -149,7 +149,7 @@ std::string get_gate_resolution_name(const tree::One<semantic::Gate>& gate) {
                                     get_gate_terminal_name(gate->gate));
 }
 
-std::any SemanticAnalyzer::visit_gate_instruction(ast::GateInstruction& node) {
+std::any SemanticAnalyzer::visit_gate_instruction(syntactic::GateInstruction& node) {
     auto ret = tree::make<semantic::GateInstruction>();
     try {
         // Set gate and operands
@@ -179,15 +179,24 @@ bool is_two_qubit_gate(const tree::One<semantic::Gate>& gate) {
     return InstructionSet::get_instance().is_two_qubit_gate(resolution_name);
 }
 
-values::Value resolve_parameter(const std::string& instruction_name, const values::Value& parameter) {
+values::Values resolve_parameters(const std::string& instruction_name, const values::Values& parameters) {
+    auto ret = values::Values{};
     const auto& instruction_set = InstructionSet::get_instance();
-    const auto& param_type = instruction_set.get_instruction_param_type(instruction_name);
-    if (!param_type.has_value() ||
-        !values::check_promote(values::type_of(parameter), types::from_spec(param_type.value()))) {
-        throw error::AnalysisError{ fmt::format(
-            "failed to resolve '{}' with parameter type ({})", instruction_name, values::type_of(parameter)) };
+    const auto& param_types = instruction_set.get_instruction_param_types(instruction_name);
+    if (param_types.has_value()) {
+        std::for_each(param_types->begin(),
+            param_types->end(),
+            [i = 0, &instruction_name, &parameters, &ret](const auto& param_type) mutable {
+                if (!values::check_promote(values::type_of(parameters[i]), types::from_spec(param_type))) {
+                    throw error::AnalysisError{ fmt::format("failed to resolve '{}' with parameter type ({})",
+                        instruction_name,
+                        values::type_of(parameters[i])) };
+                }
+                ret.add(promote(parameters[i], types::from_spec(param_type)));
+                i++;
+            });
     }
-    return promote(parameter, types::from_spec(param_type.value()));
+    return ret;
 }
 
 void check_gate(const tree::One<semantic::Gate>& gate) {
@@ -196,21 +205,17 @@ void check_gate(const tree::One<semantic::Gate>& gate) {
     }
 }
 
-std::any SemanticAnalyzer::visit_gate(ast::Gate& node) {
+std::any SemanticAnalyzer::visit_gate(syntactic::Gate& node) {
     auto ret = tree::make<semantic::Gate>();
     try {
         ret->name = node.name->name;
         if (!node.gate.empty()) {
             ret->gate = std::any_cast<tree::One<semantic::Gate>>(visit_gate(*node.gate)).get_ptr();
         }
-        if (!node.parameter.empty()) {
-            ret->parameter = std::any_cast<values::Value>(visit_expression(*node.parameter)).get_ptr();
-        }
+        ret->parameters = std::any_cast<values::Values>(visit_expression_list(*node.parameters));
 
         // Resolve the parameter
-        if (!node.parameter.empty()) {
-            ret->parameter = resolve_parameter(ret->name, ret->parameter);
-        }
+        ret->parameters = resolve_parameters(ret->name, ret->parameters);
 
         // Specific checks
         check_gate(ret);
@@ -264,7 +269,7 @@ void check_non_gate_instruction(const tree::One<semantic::NonGateInstruction>& i
     }
 }
 
-std::any SemanticAnalyzer::visit_non_gate_instruction(ast::NonGateInstruction& node) {
+std::any SemanticAnalyzer::visit_non_gate_instruction(syntactic::NonGateInstruction& node) {
     auto ret = tree::make<semantic::NonGateInstruction>();
     try {
         ret->name = node.name->name;
@@ -273,10 +278,10 @@ std::any SemanticAnalyzer::visit_non_gate_instruction(ast::NonGateInstruction& n
         // Resolve the instruction
         ret = analyzer_.resolve_instruction(ret->name, ret->operands);
 
-        // Resolve the parameter
-        if (!node.parameter.empty()) {
-            ret->parameter =
-                resolve_parameter(ret->name, std::any_cast<values::Value>(visit_expression(*node.parameter)));
+        // Resolve the parameters
+        if (!node.parameters.empty()) {
+            ret->parameters =
+                resolve_parameters(ret->name, std::any_cast<values::Values>(visit_expression_list(*node.parameters)));
         }
 
         // Specific checks
@@ -296,7 +301,27 @@ std::any SemanticAnalyzer::visit_non_gate_instruction(ast::NonGateInstruction& n
     return ret;
 }
 
-std::any SemanticAnalyzer::visit_expression_list(ast::ExpressionList& node) {
+std::any SemanticAnalyzer::visit_asm_declaration(syntactic::AsmDeclaration& node) {
+    auto ret = tree::make<semantic::AsmDeclaration>();
+    try {
+        ret->backend_name = node.backend_name->name;
+        ret->backend_code = node.backend_code;
+
+        // Copy annotation data
+        ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
+        ret->copy_annotation<parser::SourceLocation>(node);
+
+        // Add the statement to the current scope
+        analyzer_.add_statement_to_current_scope(ret);
+    } catch (error::AnalysisError& err) {
+        err.context(node);
+        result_.errors.push_back(std::move(err));
+        ret.reset();
+    }
+    return ret;
+}
+
+std::any SemanticAnalyzer::visit_expression_list(syntactic::ExpressionList& node) {
     auto ret = values::Values();
     std::transform(
         node.items.begin(), node.items.end(), std::back_inserter(ret.get_vec()), [this](const auto& expression_ast) {
@@ -305,7 +330,7 @@ std::any SemanticAnalyzer::visit_expression_list(ast::ExpressionList& node) {
     return ret;
 }
 
-std::any SemanticAnalyzer::visit_expression(ast::Expression& node) {
+std::any SemanticAnalyzer::visit_expression(syntactic::Expression& node) {
     try {
         auto ret = std::any_cast<values::Value>(node.visit(*this));
         ret->copy_annotation<parser::SourceLocation>(node);
@@ -320,7 +345,7 @@ std::any SemanticAnalyzer::visit_expression(ast::Expression& node) {
  * Convenience function for visiting a function call given the function's name and arguments
  */
 values::Value SemanticAnalyzer::visit_function_call(
-    const tree::One<ast::Identifier>& name, const tree::Maybe<ast::ExpressionList>& arguments) {
+    const tree::One<syntactic::Identifier>& name, const tree::Maybe<syntactic::ExpressionList>& arguments) {
     auto function_arguments = values::Values();
     if (!arguments.empty()) {
         std::for_each(
@@ -336,124 +361,126 @@ values::Value SemanticAnalyzer::visit_function_call(
     return ret;
 }
 
-std::any SemanticAnalyzer::visit_function_call(ast::FunctionCall& node) {
+std::any SemanticAnalyzer::visit_function_call(syntactic::FunctionCall& node) {
     return visit_function_call(node.name, node.arguments);
 }
 
 /**
  * Convenience function for visiting unary operators
  */
-std::any SemanticAnalyzer::visit_unary_operator(const std::string& name, const tree::One<ast::Expression>& expression) {
-    return visit_function_call(tree::make<ast::Identifier>(std::string{ "operator" } + name),
-        tree::Maybe<ast::ExpressionList>{
-            tree::make<ast::ExpressionList>(tree::Any<ast::Expression>{ expression }).get_ptr() });
+std::any SemanticAnalyzer::visit_unary_operator(
+    const std::string& name, const tree::One<syntactic::Expression>& expression) {
+    return visit_function_call(tree::make<syntactic::Identifier>(std::string{ "operator" } + name),
+        tree::Maybe<syntactic::ExpressionList>{
+            tree::make<syntactic::ExpressionList>(tree::Any<syntactic::Expression>{ expression }).get_ptr() });
 }
 
 /**
  * Convenience function for visiting binary operators
  */
 std::any SemanticAnalyzer::visit_binary_operator(
-    const std::string& name, const tree::One<ast::Expression>& lhs, const tree::One<ast::Expression>& rhs) {
-    return visit_function_call(tree::make<ast::Identifier>(std::string{ "operator" } + name),
-        tree::Maybe<ast::ExpressionList>{
-            tree::make<ast::ExpressionList>(tree::Any<ast::Expression>{ lhs, rhs }).get_ptr() });
+    const std::string& name, const tree::One<syntactic::Expression>& lhs, const tree::One<syntactic::Expression>& rhs) {
+    return visit_function_call(tree::make<syntactic::Identifier>(std::string{ "operator" } + name),
+        tree::Maybe<syntactic::ExpressionList>{
+            tree::make<syntactic::ExpressionList>(tree::Any<syntactic::Expression>{ lhs, rhs }).get_ptr() });
 }
 
-std::any SemanticAnalyzer::visit_unary_minus_expression(ast::UnaryMinusExpression& node) {
+std::any SemanticAnalyzer::visit_unary_minus_expression(syntactic::UnaryMinusExpression& node) {
     return visit_unary_operator("-", node.expr);
 }
 
-std::any SemanticAnalyzer::visit_bitwise_not_expression(ast::BitwiseNotExpression& node) {
+std::any SemanticAnalyzer::visit_bitwise_not_expression(syntactic::BitwiseNotExpression& node) {
     return visit_unary_operator("~", node.expr);
 }
 
-std::any SemanticAnalyzer::visit_logical_not_expression(ast::LogicalNotExpression& node) {
+std::any SemanticAnalyzer::visit_logical_not_expression(syntactic::LogicalNotExpression& node) {
     return visit_unary_operator("!", node.expr);
 }
 
-std::any SemanticAnalyzer::visit_power_expression(ast::PowerExpression& node) {
+std::any SemanticAnalyzer::visit_power_expression(syntactic::PowerExpression& node) {
     return visit_binary_operator("**", node.lhs, node.rhs);
 }
 
-std::any SemanticAnalyzer::visit_product_expression(ast::ProductExpression& node) {
+std::any SemanticAnalyzer::visit_product_expression(syntactic::ProductExpression& node) {
     return visit_binary_operator("*", node.lhs, node.rhs);
 }
 
-std::any SemanticAnalyzer::visit_division_expression(ast::DivisionExpression& node) {
+std::any SemanticAnalyzer::visit_division_expression(syntactic::DivisionExpression& node) {
     return visit_binary_operator("/", node.lhs, node.rhs);
 }
 
-std::any SemanticAnalyzer::visit_modulo_expression(ast::ModuloExpression& node) {
+std::any SemanticAnalyzer::visit_modulo_expression(syntactic::ModuloExpression& node) {
     return visit_binary_operator("%", node.lhs, node.rhs);
 }
 
-std::any SemanticAnalyzer::visit_addition_expression(ast::AdditionExpression& node) {
+std::any SemanticAnalyzer::visit_addition_expression(syntactic::AdditionExpression& node) {
     return visit_binary_operator("+", node.lhs, node.rhs);
 }
 
-std::any SemanticAnalyzer::visit_subtraction_expression(ast::SubtractionExpression& node) {
+std::any SemanticAnalyzer::visit_subtraction_expression(syntactic::SubtractionExpression& node) {
     return visit_binary_operator("-", node.lhs, node.rhs);
 }
 
-std::any SemanticAnalyzer::visit_shift_left_expression(ast::ShiftLeftExpression& node) {
+std::any SemanticAnalyzer::visit_shift_left_expression(syntactic::ShiftLeftExpression& node) {
     return visit_binary_operator("<<", node.lhs, node.rhs);
 }
 
-std::any SemanticAnalyzer::visit_shift_right_expression(ast::ShiftRightExpression& node) {
+std::any SemanticAnalyzer::visit_shift_right_expression(syntactic::ShiftRightExpression& node) {
     return visit_binary_operator(">>", node.lhs, node.rhs);
 }
 
-std::any SemanticAnalyzer::visit_cmp_gt_expression(ast::CmpGtExpression& node) {
+std::any SemanticAnalyzer::visit_cmp_gt_expression(syntactic::CmpGtExpression& node) {
     return visit_binary_operator(">", node.lhs, node.rhs);
 }
 
-std::any SemanticAnalyzer::visit_cmp_lt_expression(ast::CmpLtExpression& node) {
+std::any SemanticAnalyzer::visit_cmp_lt_expression(syntactic::CmpLtExpression& node) {
     return visit_binary_operator("<", node.lhs, node.rhs);
 }
 
-std::any SemanticAnalyzer::visit_cmp_ge_expression(ast::CmpGeExpression& node) {
+std::any SemanticAnalyzer::visit_cmp_ge_expression(syntactic::CmpGeExpression& node) {
     return visit_binary_operator(">=", node.lhs, node.rhs);
 }
 
-std::any SemanticAnalyzer::visit_cmp_le_expression(ast::CmpLeExpression& node) {
+std::any SemanticAnalyzer::visit_cmp_le_expression(syntactic::CmpLeExpression& node) {
     return visit_binary_operator("<=", node.lhs, node.rhs);
 }
 
-std::any SemanticAnalyzer::visit_cmp_eq_expression(ast::CmpEqExpression& node) {
+std::any SemanticAnalyzer::visit_cmp_eq_expression(syntactic::CmpEqExpression& node) {
     return visit_binary_operator("==", node.lhs, node.rhs);
 }
 
-std::any SemanticAnalyzer::visit_cmp_ne_expression(ast::CmpNeExpression& node) {
+std::any SemanticAnalyzer::visit_cmp_ne_expression(syntactic::CmpNeExpression& node) {
     return visit_binary_operator("!=", node.lhs, node.rhs);
 }
 
-std::any SemanticAnalyzer::visit_bitwise_and_expression(ast::BitwiseAndExpression& node) {
+std::any SemanticAnalyzer::visit_bitwise_and_expression(syntactic::BitwiseAndExpression& node) {
     return visit_binary_operator("&", node.lhs, node.rhs);
 }
 
-std::any SemanticAnalyzer::visit_bitwise_xor_expression(ast::BitwiseXorExpression& node) {
+std::any SemanticAnalyzer::visit_bitwise_xor_expression(syntactic::BitwiseXorExpression& node) {
     return visit_binary_operator("^", node.lhs, node.rhs);
 }
 
-std::any SemanticAnalyzer::visit_bitwise_or_expression(ast::BitwiseOrExpression& node) {
+std::any SemanticAnalyzer::visit_bitwise_or_expression(syntactic::BitwiseOrExpression& node) {
     return visit_binary_operator("|", node.lhs, node.rhs);
 }
 
-std::any SemanticAnalyzer::visit_logical_and_expression(ast::LogicalAndExpression& node) {
+std::any SemanticAnalyzer::visit_logical_and_expression(syntactic::LogicalAndExpression& node) {
     return visit_binary_operator("&&", node.lhs, node.rhs);
 }
 
-std::any SemanticAnalyzer::visit_logical_xor_expression(ast::LogicalXorExpression& node) {
+std::any SemanticAnalyzer::visit_logical_xor_expression(syntactic::LogicalXorExpression& node) {
     return visit_binary_operator("^^", node.lhs, node.rhs);
 }
 
-std::any SemanticAnalyzer::visit_logical_or_expression(ast::LogicalOrExpression& node) {
+std::any SemanticAnalyzer::visit_logical_or_expression(syntactic::LogicalOrExpression& node) {
     return visit_binary_operator("||", node.lhs, node.rhs);
 }
 
-std::any SemanticAnalyzer::visit_ternary_conditional_expression(ast::TernaryConditionalExpression& node) {
-    return visit_function_call(tree::make<ast::Identifier>("operator?:"),
-        tree::make<ast::ExpressionList>(tree::Any<ast::Expression>{ node.cond, node.if_true, node.if_false }));
+std::any SemanticAnalyzer::visit_ternary_conditional_expression(syntactic::TernaryConditionalExpression& node) {
+    return visit_function_call(tree::make<syntactic::Identifier>("operator?:"),
+        tree::make<syntactic::ExpressionList>(
+            tree::Any<syntactic::Expression>{ node.cond, node.if_true, node.if_false }));
 }
 
 /**
@@ -467,7 +494,7 @@ void check_out_of_range(const IndexListT& indices, primitives::Int size) {
     }
 }
 
-std::any SemanticAnalyzer::visit_index(ast::Index& node) {
+std::any SemanticAnalyzer::visit_index(syntactic::Index& node) {
     try {
         auto expression = std::any_cast<values::Value>(visit_expression(*node.expr));
         auto variable_ref_ptr = expression->as_variable_ref();
@@ -488,7 +515,7 @@ std::any SemanticAnalyzer::visit_index(ast::Index& node) {
     }
 }
 
-std::any SemanticAnalyzer::visit_index_list(ast::IndexList& index_list_ast) {
+std::any SemanticAnalyzer::visit_index_list(syntactic::IndexList& index_list_ast) {
     auto ret = IndexListT{};
     for (const auto& index_entry : index_list_ast.items) {
         if (auto index_item = index_entry->as_index_item()) {
@@ -504,14 +531,14 @@ std::any SemanticAnalyzer::visit_index_list(ast::IndexList& index_list_ast) {
     return ret;
 }
 
-std::any SemanticAnalyzer::visit_index_item(ast::IndexItem& index_item_ast) {
+std::any SemanticAnalyzer::visit_index_item(syntactic::IndexItem& index_item_ast) {
     auto index_item = visit_const_int(*index_item_ast.index);
     auto index_value_sp = tree::make<IndexT>(index_item);
     index_value_sp->copy_annotation<parser::SourceLocation>(index_item_ast);
     return index_value_sp;
 }
 
-std::any SemanticAnalyzer::visit_index_range(ast::IndexRange& index_range_ast) {
+std::any SemanticAnalyzer::visit_index_range(syntactic::IndexRange& index_range_ast) {
     auto first = visit_const_int(*index_range_ast.first);
     auto last = visit_const_int(*index_range_ast.last);
     if (first > last) {
@@ -526,7 +553,7 @@ std::any SemanticAnalyzer::visit_index_range(ast::IndexRange& index_range_ast) {
     return ret;
 }
 
-std::any SemanticAnalyzer::visit_identifier(ast::Identifier& node) {
+std::any SemanticAnalyzer::visit_identifier(syntactic::Identifier& node) {
     return analyzer_.resolve_variable(node.name);
 }
 
@@ -539,17 +566,17 @@ void check_initialization_list_element_type(const values::Value& value) {
     }
 }
 
-std::any SemanticAnalyzer::visit_boolean_literal(ast::BooleanLiteral& node) {
+std::any SemanticAnalyzer::visit_boolean_literal(syntactic::BooleanLiteral& node) {
     auto ret = tree::make<values::ConstBool>(node.value);
     return values::Value{ ret };
 }
 
-std::any SemanticAnalyzer::visit_integer_literal(ast::IntegerLiteral& node) {
+std::any SemanticAnalyzer::visit_integer_literal(syntactic::IntegerLiteral& node) {
     auto ret = tree::make<values::ConstInt>(node.value);
     return values::Value{ ret };
 }
 
-std::any SemanticAnalyzer::visit_float_literal(ast::FloatLiteral& node) {
+std::any SemanticAnalyzer::visit_float_literal(syntactic::FloatLiteral& node) {
     auto ret = tree::make<values::ConstFloat>(node.value);
     return values::Value{ ret };
 }
@@ -557,7 +584,7 @@ std::any SemanticAnalyzer::visit_float_literal(ast::FloatLiteral& node) {
 /**
  * Shorthand for parsing an expression to a constant integer.
  */
-primitives::Int SemanticAnalyzer::visit_const_int(ast::Expression& expression) {
+primitives::Int SemanticAnalyzer::visit_const_int(syntactic::Expression& expression) {
     if (auto int_value = visit_as<types::Int>(expression); !int_value.empty()) {
         if (auto const_int_value = int_value->as_const_int()) {
             return const_int_value->value;

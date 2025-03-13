@@ -10,6 +10,26 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - **Removed** for now removed features.
 
 
+## [ 1.1.0 ] - [ 2025-03-13 ]
+
+### Added
+- Assembly declaration.
+- `Rn` unitary instruction.
+- Publish WASM binaries to npm.
+
+### Changed
+- Update to `mkdocs-material/9.6.5` and `mkdocstrings/0.28.2` versions in `requirements.txt`.
+- Do not hardcode `CMAKE_CXX_STANDARD`.
+- Rename `ast` to `syntactic`.
+
+### Fixed
+- Setting of `build_type` in Conan profiles.
+- `cibw-wheels` GitHub Actions job was building wheels only for Linux/ARM64.
+
+## Removed
+- Upload WASM binaries as release assets.
+
+
 ## [ 1.0.0 ] - [ 2025-01-30 ]
 
 ### Added

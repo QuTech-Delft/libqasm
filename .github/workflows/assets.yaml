@@ -31,9 +31,8 @@ jobs:
       - name: Build wheels
         run: |
           python -m cibuildwheel --output-dir wheelhouse
-        if: ${{ matrix.os == 'ubuntu-24.04-arm' }}
         env:
-          CIBW_BEFORE_ALL_LINUX: yum install -y java-11-openjdk
+          CIBW_BEFORE_ALL_LINUX: ${{ (matrix.os == 'ubuntu-24.04-arm') && 'yum install -y java-11-openjdk' || ':' }}
       - uses: actions/upload-artifact@v4
         with:
           name: cibw-wheels-${{ matrix.os }}
@@ -69,14 +68,11 @@ jobs:
           conan remove -c "*/*"
           conan build . -pr=conan/profiles/release-clang-emscripten-wasm -pr:b=conan/profiles/release -b missing
         shell: bash
-      - name: Upload release asset
-        uses: softprops/action-gh-release@v2
+      - name: Publish to npm
+        uses: JS-DevTools/npm-publish@v3
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         with:
-          files: |
-            build/Release/emscripten/cqasm_emscripten.js
-            build/Release/emscripten/cqasm_emscripten.wasm
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.NPM_TOKEN }}
 
   publish-python-packages:
     name: Publish Python packages

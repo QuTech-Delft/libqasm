@@ -11,7 +11,7 @@
 
 #include <algorithm>  // all_of, for_each
 
-#include "libqasm/v3x/ast.hpp"
+#include "libqasm/v3x/syntactic.hpp"
 #include "libqasm/v3x/types.hpp"
 #include "libqasm/v3x/values_generated.hpp"
 

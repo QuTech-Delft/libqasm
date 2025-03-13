@@ -15,11 +15,11 @@ Program(
             Gate(
               name: Rx
               gate: -
-              parameter: <
+              parameters: [
                 ConstFloat(
                   value: 3.14159
                 )
-              >
+              ]
               annotations: []
             )
           >

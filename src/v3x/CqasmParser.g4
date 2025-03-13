@@ -33,6 +33,7 @@ variableDefinition: type IDENTIFIER;
 instruction:
     gateInstruction
     | nonGateInstruction
+    | asmDeclaration
     ;
 
 gateInstruction: gate expressionList;
@@ -41,7 +42,7 @@ gate:
     INV DOT gate  # invGate
     | POW OPEN_PARENS expression CLOSE_PARENS DOT gate  # powGate
     | CTRL DOT gate # ctrlGate
-    | IDENTIFIER (OPEN_PARENS expression CLOSE_PARENS)?  # namedGate
+    | IDENTIFIER (OPEN_PARENS expressionList CLOSE_PARENS)?  # namedGate
     ;
 
 // Current implementation of the semantic parser will expect a constant integer
@@ -53,6 +54,8 @@ nonGateInstruction:
     | BARRIER expression  # barrierInstruction
     | WAIT OPEN_PARENS expression CLOSE_PARENS expression  # waitInstruction
     ;
+
+asmDeclaration: ASM OPEN_PARENS IDENTIFIER CLOSE_PARENS RAW_TEXT_STRING;
 
 type: quantumType;
 

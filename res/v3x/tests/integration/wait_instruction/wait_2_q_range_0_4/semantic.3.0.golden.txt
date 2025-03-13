@@ -44,11 +44,11 @@ Program(
               ]
             )
           ]
-          parameter: <
+          parameters: [
             ConstInt(
               value: 2
             )
-          >
+          ]
           annotations: []
         )
       ]

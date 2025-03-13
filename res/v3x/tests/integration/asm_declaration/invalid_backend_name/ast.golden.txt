@@ -1,0 +1,2 @@
+ERROR
+Error at input.cq:5:5..8: mismatched input '100' expecting IDENTIFIER
