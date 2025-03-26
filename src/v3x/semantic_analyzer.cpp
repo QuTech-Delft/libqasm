@@ -149,6 +149,38 @@ std::string get_gate_resolution_name(const tree::One<semantic::Gate>& gate) {
                                     get_gate_terminal_name(gate->gate));
 }
 
+void check_qubit_operands_indices_have_same_size(const values::Values& operands) {
+    auto qubit_operands_indices_size = std::vector<size_t>(operands.size());
+    // Instruction operands can be, either variable references or index references
+    // Variables can be of type qubit or qubit array
+    // Qubits have a single index, arrays have a size
+    // Index references point to a qubit array
+    for (size_t i = 0; i < operands.size(); ++i) {
+        if (auto variable_ref = operands[i]->as_variable_ref()) {
+            const auto& variable = *variable_ref->variable;
+            if (variable.typ->as_qubit()) {
+                qubit_operands_indices_size[i] += 1;
+            } else if (auto qubit_array = variable.typ->as_qubit_array()) {
+                qubit_operands_indices_size[i] += qubit_array->size;
+            }
+        } else if (auto index_ref = operands[i]->as_index_ref()) {
+            const auto& variable = *index_ref->variable;
+            if (variable.typ->as_qubit() || variable.typ->as_qubit_array()) {
+                qubit_operands_indices_size[i] += index_ref->indices.size();
+            }
+        }
+    }
+    if (std::adjacent_find(qubit_operands_indices_size.begin(),
+            qubit_operands_indices_size.end(),
+            std::not_equal_to<>()) != qubit_operands_indices_size.end()) {
+        throw error::AnalysisError{ "qubit operands indices have different sizes" };
+    }
+}
+
+void check_gate_instruction(const tree::One<semantic::GateInstruction>& instruction) {
+    check_qubit_operands_indices_have_same_size(instruction->operands);
+}
+
 std::any SemanticAnalyzer::visit_gate_instruction(syntactic::GateInstruction& node) {
     auto ret = tree::make<semantic::GateInstruction>();
     try {
@@ -159,6 +191,9 @@ std::any SemanticAnalyzer::visit_gate_instruction(syntactic::GateInstruction& no
         // Resolve the instruction
         const auto& resolution_name = get_gate_resolution_name(gate);
         ret = analyzer_.resolve_instruction(resolution_name, gate, operands);
+
+        // Specific checks
+        check_gate_instruction(ret);
 
         // Copy annotation data
         ret->annotations = std::any_cast<tree::Any<semantic::AnnotationData>>(visit_annotated(*node.as_annotated()));
