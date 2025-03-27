@@ -1,0 +1,5 @@
+version 3
+
+qubit[4] q
+
+CNOT q[0], q[3, 2]
