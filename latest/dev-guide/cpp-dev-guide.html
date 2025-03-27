@@ -959,11 +959,11 @@ The following line will also build and cache the <code>libqasm</code> Conan pack
 <p>You may need to execute the <code>conan profile detect</code> command if this is the first time you run Conan.</p>
 </div>
 <pre><code class="language-shell">conan profile detect
-conan create --version 1.1.0 . -pr:a=tests-debug -b missing
+conan create --version 1.2.0 . -pr:a=tests-debug -b missing
 </code></pre>
 <p>You can test the C++ binaries:</p>
 <pre><code class="language-shell">cd test/Debug
-ctest -C Debug --output-on-failure
+ctest -C Debug --output-on-failure --parallel 10
 </code></pre>
 
 
