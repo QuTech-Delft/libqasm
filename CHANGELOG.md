@@ -10,6 +10,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - **Removed** for now removed features.
 
 
+## [ 1.2.0 ] - [ 2025-03-27 ]
+
+### Added
+- Semantic analyzer check for same number of indices in each qubit operand.
+
+
 ## [ 1.1.0 ] - [ 2025-03-13 ]
 
 ### Added
