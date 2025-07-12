@@ -220,14 +220,16 @@ values::Values resolve_parameters(const std::string& instruction_name, const val
     const auto& param_types = instruction_set.get_instruction_param_types(instruction_name);
     if (param_types.has_value()) {
         if (parameters.size() != param_types->size()) {
-            throw error::AnalysisError{ fmt::format("Instruction '{}' expects {} parameters, but got {}.",
-                instruction_name, param_types->size(), parameters.size()) };
+            throw error::AnalysisError{ fmt::format("instruction '{}' expects {} parameters, but got {}.",
+                instruction_name,
+                param_types->size(),
+                parameters.size()) };
         }
         std::for_each(param_types->begin(),
             param_types->end(),
-            i = 0, &instruction_name, &parameters, &ret mutable {
+            [i = 0, &instruction_name, &parameters, &ret](const auto& param_type) mutable {
                 if (!values::check_promote(values::type_of(parameters[i]), types::from_spec(param_type))) {
-                    throw error::AnalysisError{ fmt::format("Failed to resolve '{}' with parameter type ({})",
+                    throw error::AnalysisError{ fmt::format("failed to resolve '{}' with parameter type ({})",
                         instruction_name,
                         values::type_of(parameters[i])) };
                 }
@@ -237,7 +239,6 @@ values::Values resolve_parameters(const std::string& instruction_name, const val
     }
     return ret;
 }
-
 
 void check_gate(const tree::One<semantic::Gate>& gate) {
     if (!gate->gate.empty() && is_two_qubit_gate(gate->gate)) {
