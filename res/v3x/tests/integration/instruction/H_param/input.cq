@@ -1,0 +1,5 @@
+version 3.0
+
+qubit q
+
+H(0,1) q

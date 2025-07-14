@@ -86,6 +86,27 @@ class TestV3xAnalyzer(unittest.TestCase):
         errors = v3x_analyzer.analyze_string(program_str)
         expected_errors = ["Error at <unknown file name>:1:24..25: index 3 out of range (size 3)"]
         self.assertEqual(errors, expected_errors)
+    
+    def test_analyze_string_returning_errors_h(self):
+        program_str = "version 3;qubit q;H(0, 1) q"
+        v3x_analyzer = cq.Analyzer()
+        errors = v3x_analyzer.analyze_string(program_str)
+        expected_errors = ["Error at <unknown file name>:1:19..20: instruction 'H' expects 0 parameters, but got 2."]
+        self.assertEqual(errors, expected_errors)
+    
+    def test_analyze_string_returning_errors_rx(self):
+        program_str = "version 3;qubit q;Rx(0, 1) q"
+        v3x_analyzer = cq.Analyzer()
+        errors = v3x_analyzer.analyze_string(program_str)
+        expected_errors = ["Error at <unknown file name>:1:19..21: instruction 'Rx' expects 1 parameters, but got 2."]
+        self.assertEqual(errors, expected_errors)
+    
+    def test_analyze_string_returning_errors_rn(self):
+        program_str = "version 3;qubit q;Rn(0, 1) q"
+        v3x_analyzer = cq.Analyzer()
+        errors = v3x_analyzer.analyze_string(program_str)
+        expected_errors = ["Error at <unknown file name>:1:19..21: instruction 'Rn' expects 5 parameters, but got 2."]
+        self.assertEqual(errors, expected_errors)
 
     def test_to_json_vrsion(self):
         """This test is used to check that a program with a syntactic error
