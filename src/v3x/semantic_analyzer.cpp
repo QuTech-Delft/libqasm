@@ -218,11 +218,16 @@ values::Values resolve_parameters(const std::string& instruction_name, const val
     auto ret = values::Values{};
     const auto& instruction_set = InstructionSet::get_instance();
     const auto& param_types = instruction_set.get_instruction_param_types(instruction_name);
+    if (!param_types.has_value()) {
+        if (!parameters.empty()) {
+            throw error::AnalysisError{ fmt::format("instruction '{}' expects no parameters, but got {}.",
+                instruction_name, parameters.size()) };
+        }
+        return ret; // No parameters expected, and none provided — return empty result
+    }
     if (parameters.size() != param_types->size()) {
         throw error::AnalysisError{ fmt::format("instruction '{}' expects {} parameters, but got {}.",
-            instruction_name,
-            param_types->size(),
-            parameters.size()) };
+            instruction_name, param_types->size(), parameters.size()) };
     }
     if (param_types.has_value()) {
         std::for_each(param_types->begin(),

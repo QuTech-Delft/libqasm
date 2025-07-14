@@ -91,7 +91,7 @@ class TestV3xAnalyzer(unittest.TestCase):
         program_str = "version 3;qubit q;H(0, 1) q"
         v3x_analyzer = cq.Analyzer()
         errors = v3x_analyzer.analyze_string(program_str)
-        expected_errors = ["Error at <unknown file name>:1:19..20: instruction 'H' expects 0 parameters, but got 2."]
+        expected_errors = ["Error at <unknown file name>:1:19..20: instruction 'H' expects no parameters, but got 2."]
         self.assertEqual(errors, expected_errors)
     
     def test_analyze_string_returning_errors_rx(self):
