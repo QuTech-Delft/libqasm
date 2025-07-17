@@ -14,7 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 - Semantic analyzer check for same number of indices in each qubit operand.
-
+- Support for Python 3.13.
 
 ## [ 1.1.0 ] - [ 2025-03-13 ]
 
