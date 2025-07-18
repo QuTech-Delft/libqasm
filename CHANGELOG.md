@@ -11,8 +11,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [ M.m.P ] - [ xxxx-y-zz ]
 
-### Added
-- Semantic analyzer checks if the number of provided instruction parameters are correct.
+### Fixed
+- Semantic analyzer throws exception if the number of provided instruction parameters are incorrect.
 
 
 ## [ 1.2.0 ] - [ 2025-03-27 ]
