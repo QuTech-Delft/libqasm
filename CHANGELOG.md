@@ -9,6 +9,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - **Fixed** for any bug fixes.
 - **Removed** for now removed features.
 
+## [ M.m.P ] - [ xxxx-y-zz ]
+
+### Fixed
+- Semantic analyzer throws exception if the number of provided instruction parameters are incorrect.
+
 
 ## [ 1.2.0 ] - [ 2025-03-27 ]
 
