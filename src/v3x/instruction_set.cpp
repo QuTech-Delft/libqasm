@@ -33,6 +33,8 @@ InstructionSet::InstructionSet()
     { "mX90", { std::nullopt, "V" } },
     { "mY90", { std::nullopt, "Q" } },
     { "mY90", { std::nullopt, "V" } },
+    { "mZ90", { std::nullopt, "Q" } },
+    { "mZ90", { std::nullopt, "V" } },
     { "Rn", { "fffff", "Q" } },
     { "Rn", { "fffff", "V" } },
     { "Rx", { "f", "Q" } },
@@ -53,6 +55,8 @@ InstructionSet::InstructionSet()
     { "T", { std::nullopt, "V" } },
     { "Tdag", { std::nullopt, "Q" } },
     { "Tdag", { std::nullopt, "V" } },
+    { "U", { "fff", "Q" } },
+    { "U", { "fff", "V" } },
     { "X", { std::nullopt, "Q" } },
     { "X", { std::nullopt, "V" } },
     { "X90", { std::nullopt, "Q" } },
@@ -62,7 +66,9 @@ InstructionSet::InstructionSet()
     { "Y90", { std::nullopt, "Q" } },
     { "Y90", { std::nullopt, "V" } },
     { "Z", { std::nullopt, "Q" } },
-    { "Z", { std::nullopt, "V" } }
+    { "Z", { std::nullopt, "V" } },
+    { "Z90", { std::nullopt, "Q" } },
+    { "Z90", { std::nullopt, "V" } }
 }
 , non_gate_map{
     { "measure", { std::nullopt, "BQ" } },
@@ -84,7 +90,7 @@ InstructionSet::InstructionSet()
     { "ctrl", std::nullopt },
 }
 , single_qubit_named_gate_list{
-    "H", "I", "mX90", "mY90", "Rn", "Rx", "Ry", "Rz", "S", "Sdag", "T", "Tdag", "X", "X90", "Y", "Y90", "Z"
+    "H", "I", "mX90", "mY90", "mZ90", "Rn", "Rx", "Ry", "Rz", "S", "Sdag", "T", "Tdag", "U", "X", "X90", "Y", "Y90", "Z", "Z90"
 }
 , two_qubit_named_gate_list{
     "CNOT", "CR", "CRk", "CZ", "SWAP"
