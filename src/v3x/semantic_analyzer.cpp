@@ -217,6 +217,36 @@ bool is_two_qubit_gate(const tree::One<semantic::Gate>& gate) {
 values::Values resolve_parameters(const std::string& instruction_name, const values::Values& parameters) {
     auto ret = values::Values{};
     const auto& instruction_set = InstructionSet::get_instance();
+
+    if (instruction_set.is_non_gate(instruction_name)) {
+        const auto& param_types =
+            instruction_set.get_non_gate_param_types_with_param_count(instruction_name, parameters.size());
+        bool found_with_zero_params = (!param_types.has_value() && parameters.empty());
+
+        if (!found_with_zero_params && !param_types.has_value()) {
+            throw error::AnalysisError{ fmt::format("instruction '{}' does not have an overload with {} parameters.",
+                instruction_name,
+                parameters.size()) };
+        }
+
+        if (found_with_zero_params) { return ret; }  // No parameters expected, and none provided — return empty result
+
+        if (param_types.has_value()) {
+            std::for_each(param_types->begin(),
+                param_types->end(),
+                [i = 0, &instruction_name, &parameters, &ret](const auto& param_type) mutable {
+                    if (!values::check_promote(values::type_of(parameters[i]), types::from_spec(param_type))) {
+                        throw error::AnalysisError{ fmt::format("failed to resolve '{}' with parameter type ({})",
+                            instruction_name,
+                            values::type_of(parameters[i])) };
+                    }
+                    ret.add(promote(parameters[i], types::from_spec(param_type)));
+                    i++;
+                });
+        }
+        return ret;
+    }
+
     const auto& param_types = instruction_set.get_instruction_param_types(instruction_name);
     if (!param_types.has_value()) {
         if (!parameters.empty()) {

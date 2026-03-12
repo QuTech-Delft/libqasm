@@ -75,6 +75,10 @@ InstructionSet::InstructionSet()
     { "measure", { std::nullopt, "WV" } },
     { "measure", { std::nullopt, "BV" } },
     { "measure", { std::nullopt, "WQ" } },
+    { "measure", { "fff", "BQ" } },
+    { "measure", { "fff", "WV" } },
+    { "measure", { "fff", "BV" } },
+    { "measure", { "fff", "WQ" } },
     { "reset", { std::nullopt, "Q" } },
     { "reset", { std::nullopt, "V" } },
     { "init", { std::nullopt, "Q" } },
@@ -246,6 +250,24 @@ InstructionSet::InstructionSet()
         return get_gate_modifier_param_types(name);
     }
     throw error::AnalysisError{ fmt::format("couldn't find instruction '{}'", name) };
+}
+
+[[nodiscard]] std::optional<std::string> InstructionSet::get_non_gate_param_types_with_param_count(
+    const std::string& name, size_t param_count) const {
+    const auto& range = non_gate_map.equal_range(name);
+    for (auto it = range.first; it != range.second; ++it) {
+        const auto& param_types = it->second.first;
+        if (!param_types.has_value()) {
+            if (param_count == 0) {
+                return param_types;
+            }
+        } else {
+            if (param_types->size() == param_count) {
+                return param_types;
+            }
+        }
+    }
+    return std::nullopt;
 }
 
 }  // namespace cqasm::v3x::instruction

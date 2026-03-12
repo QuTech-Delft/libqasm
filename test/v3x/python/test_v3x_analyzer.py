@@ -4,6 +4,27 @@ import cqasm.v3x as cq
 
 
 class TestV3xAnalyzer(unittest.TestCase):
+
+    def test_measure_instruction_overload(self):
+        program_str = "version 3;qubit q;bit b;b = measure q;b = measure(1,0,0) q"
+        v3x_analyzer = cq.Analyzer()
+        ast = v3x_analyzer.analyze_string(program_str)
+
+        measure_no_param = ast.block.statements[0]
+        self.assertEqual(measure_no_param.name, "measure")
+
+        measure_param = ast.block.statements[1]
+        self.assertEqual(measure_param.name, "measure")
+        self.assertEqual(measure_param.parameters[0].value, 1)
+        self.assertEqual(measure_param.parameters[1].value, 0)
+        self.assertEqual(measure_param.parameters[2].value, 0)
+
+        program_str_invalid_param = "version 3;qubit q;bit b;b = measure(1,0) q"
+        v3x_analyzer_invalid_param = cq.Analyzer()
+        errors = v3x_analyzer_invalid_param.analyze_string(program_str_invalid_param)
+        expected_errors = ["Error at <unknown file name>:1:29..36: instruction 'measure' does not have an overload with 2 parameters."]
+        self.assertEqual(errors, expected_errors)
+
     def test_parse_string_returning_ast(self):
         program_str = "version 3;qubit[5] q;bit[5] b;H q[0:4];b = measure q"
         v3x_analyzer = cq.Analyzer()
@@ -38,7 +59,6 @@ class TestV3xAnalyzer(unittest.TestCase):
         program_str = "version 3;qubit[5] q;bit[5] b;H q[0:4];b = measure"
         v3x_analyzer = cq.Analyzer()
         errors = v3x_analyzer.parse_string(program_str)
-        print(errors)
         expected_errors = ["Error at <unknown file name>:1:51: mismatched input '<EOF>' expecting {'(', '+', '-', '~', '!', BOOLEAN_LITERAL, INTEGER_LITERAL, FLOAT_LITERAL, IDENTIFIER}"]
         self.assertEqual(errors, expected_errors)
 
