@@ -229,7 +229,9 @@ values::Values resolve_parameters(const std::string& instruction_name, const val
                 parameters.size()) };
         }
 
-        if (found_with_zero_params) { return ret; }  // No parameters expected, and none provided — return empty result
+        if (found_with_zero_params) {
+            return ret;
+        }  // No parameters expected, and none provided — return empty result
 
         if (param_types.has_value()) {
             std::for_each(param_types->begin(),
