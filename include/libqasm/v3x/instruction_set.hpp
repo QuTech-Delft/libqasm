@@ -84,6 +84,8 @@ public:
     [[nodiscard]] std::optional<std::string> get_non_gate_param_types(const std::string& name) const;
     [[nodiscard]] std::optional<std::string> get_gate_modifier_param_types(const std::string& name) const;
     [[nodiscard]] std::optional<std::string> get_instruction_param_types(const std::string& name) const;
+    [[nodiscard]] std::optional<std::string> get_non_gate_param_types_with_param_count(
+        const std::string& name, size_t param_count) const;
 };
 
 }  // namespace cqasm::v3x::instruction

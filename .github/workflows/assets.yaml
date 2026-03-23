@@ -16,7 +16,7 @@ jobs:
       matrix:
         os: [
           ubuntu-latest,  # Linux/x64
-          macos-13,  # MacOS/x64
+          macos-15-intel,  # MacOS/x64
           windows-latest,  # Windows/x64
           ubuntu-24.04-arm,  # Linux/ARM64
           macos-14  # MacOS/ARM64
