@@ -9,7 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - **Fixed** for any bug fixes.
 - **Removed** for now removed features.
 
-## [ M.m.P ] - [ yyyy-mm-dd ]
+## [ 1.3.0 ] - [ yyyy-mm-dd ]
 
 ### Added
 - `U`, `Z90`, and `mZ90` unitary instructions.
