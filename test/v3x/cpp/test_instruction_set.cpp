@@ -18,10 +18,10 @@ protected:
     const InstructionListT& single_qubit_named_gate_list = instruction_set.get_single_qubit_named_gate_list();
     const InstructionListT& two_qubit_named_gate_list = instruction_set.get_two_qubit_named_gate_list();
 
-    const size_t number_of_gate_map_entries = 54;
-    const size_t number_of_non_gate_map_entries = 12;
+    const size_t number_of_gate_map_entries = 60;
+    const size_t number_of_non_gate_map_entries = 16;
     const size_t number_of_gate_modifier_map_entries = 3;
-    const size_t number_of_single_qubit_named_gates = 17;
+    const size_t number_of_single_qubit_named_gates = 20;
     const size_t number_of_two_qubit_named_gates = 5;
 };
 
@@ -179,4 +179,10 @@ TEST_F(InstructionSetTest, get_instruction_param_type) {
     EXPECT_EQ(instruction_set.get_instruction_param_types("pow"), "f");
     EXPECT_THAT([this]() { (void)instruction_set.get_instruction_param_types("1q_H"); },
         ThrowsMessage<AnalysisError>(::testing::HasSubstr("couldn't find instruction")));
+}
+
+TEST_F(InstructionSetTest, get_non_gate_param_types_with_param_count) {
+    EXPECT_EQ(instruction_set.get_non_gate_param_types_with_param_count("measure", 0), std::nullopt);
+    EXPECT_EQ(instruction_set.get_non_gate_param_types_with_param_count("measure", 3), "fff");
+    EXPECT_EQ(instruction_set.get_non_gate_param_types_with_param_count("measure", 1), std::nullopt);
 }

@@ -48,7 +48,7 @@ gate:
 // Current implementation of the semantic parser will expect a constant integer
 // for the first expression in the WAIT instruction
 nonGateInstruction:
-    expression EQUALS MEASURE expression  # measureInstruction
+    expression EQUALS MEASURE (OPEN_PARENS expressionList CLOSE_PARENS)? expression  # measureInstruction
     | RESET expression  # resetInstruction
     | INIT expression  # initInstruction
     | BARRIER expression  # barrierInstruction

@@ -33,6 +33,8 @@ InstructionSet::InstructionSet()
     { "mX90", { std::nullopt, "V" } },
     { "mY90", { std::nullopt, "Q" } },
     { "mY90", { std::nullopt, "V" } },
+    { "mZ90", { std::nullopt, "Q" } },
+    { "mZ90", { std::nullopt, "V" } },
     { "Rn", { "fffff", "Q" } },
     { "Rn", { "fffff", "V" } },
     { "Rx", { "f", "Q" } },
@@ -53,6 +55,8 @@ InstructionSet::InstructionSet()
     { "T", { std::nullopt, "V" } },
     { "Tdag", { std::nullopt, "Q" } },
     { "Tdag", { std::nullopt, "V" } },
+    { "U", { "fff", "Q" } },
+    { "U", { "fff", "V" } },
     { "X", { std::nullopt, "Q" } },
     { "X", { std::nullopt, "V" } },
     { "X90", { std::nullopt, "Q" } },
@@ -62,13 +66,19 @@ InstructionSet::InstructionSet()
     { "Y90", { std::nullopt, "Q" } },
     { "Y90", { std::nullopt, "V" } },
     { "Z", { std::nullopt, "Q" } },
-    { "Z", { std::nullopt, "V" } }
+    { "Z", { std::nullopt, "V" } },
+    { "Z90", { std::nullopt, "Q" } },
+    { "Z90", { std::nullopt, "V" } }
 }
 , non_gate_map{
     { "measure", { std::nullopt, "BQ" } },
     { "measure", { std::nullopt, "WV" } },
     { "measure", { std::nullopt, "BV" } },
     { "measure", { std::nullopt, "WQ" } },
+    { "measure", { "fff", "BQ" } },
+    { "measure", { "fff", "WV" } },
+    { "measure", { "fff", "BV" } },
+    { "measure", { "fff", "WQ" } },
     { "reset", { std::nullopt, "Q" } },
     { "reset", { std::nullopt, "V" } },
     { "init", { std::nullopt, "Q" } },
@@ -84,7 +94,7 @@ InstructionSet::InstructionSet()
     { "ctrl", std::nullopt },
 }
 , single_qubit_named_gate_list{
-    "H", "I", "mX90", "mY90", "Rn", "Rx", "Ry", "Rz", "S", "Sdag", "T", "Tdag", "X", "X90", "Y", "Y90", "Z"
+    "H", "I", "mX90", "mY90", "mZ90", "Rn", "Rx", "Ry", "Rz", "S", "Sdag", "T", "Tdag", "U", "X", "X90", "Y", "Y90", "Z", "Z90"
 }
 , two_qubit_named_gate_list{
     "CNOT", "CR", "CRk", "CZ", "SWAP"
@@ -240,6 +250,24 @@ InstructionSet::InstructionSet()
         return get_gate_modifier_param_types(name);
     }
     throw error::AnalysisError{ fmt::format("couldn't find instruction '{}'", name) };
+}
+
+[[nodiscard]] std::optional<std::string> InstructionSet::get_non_gate_param_types_with_param_count(
+    const std::string& name, size_t param_count) const {
+    const auto& range = non_gate_map.equal_range(name);
+    for (auto it = range.first; it != range.second; ++it) {
+        const auto& param_types = it->second.first;
+        if (!param_types.has_value()) {
+            if (param_count == 0) {
+                return param_types;
+            }
+        } else {
+            if (param_types->size() == param_count) {
+                return param_types;
+            }
+        }
+    }
+    return std::nullopt;
 }
 
 }  // namespace cqasm::v3x::instruction

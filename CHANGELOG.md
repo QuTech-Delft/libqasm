@@ -9,6 +9,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - **Fixed** for any bug fixes.
 - **Removed** for now removed features.
 
+## [ 1.3.0 ] - [ 2026-03-23 ]
+
+### Added
+- `U`, `Z90`, and `mZ90` unitary instructions.
+- The `measure` instruction also accepts (3 float) parameters to specify measurement axis.
+
+
 ## [ 1.2.1 ] - [ 2025-07-28 ]
 
 ### Added
