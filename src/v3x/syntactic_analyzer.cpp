@@ -225,7 +225,9 @@ std::any SyntacticAnalyzer::visitNamedGate(CqasmParser::NamedGateContext* contex
 std::any SyntacticAnalyzer::visitMeasureInstruction(CqasmParser::MeasureInstructionContext* context) {
     auto ret = tree::make<NonGateInstruction>();
     ret->name = tree::make<Keyword>(context->MEASURE()->getText());
-    ret->parameters = tree::make<ExpressionList>();
+    ret->parameters = context->expressionList()
+        ? std::any_cast<One<ExpressionList>>(visitExpressionList(context->expressionList()))
+        : tree::make<ExpressionList>();
     ret->operands = tree::make<ExpressionList>();
     ret->operands->items.add(std::any_cast<One<Expression>>(context->expression(0)->accept(this)));
     ret->operands->items.add(std::any_cast<One<Expression>>(context->expression(1)->accept(this)));

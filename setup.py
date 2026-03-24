@@ -93,6 +93,11 @@ class build_ext(_build_ext):
         with local.cwd(root_dir):
             build_type = os.environ.get('CMAKE_BUILD_TYPE', 'Release')
             build_tests = os.environ.get('LIBQASM_BUILD_TESTS', 'False')
+            # Optional Conan build patterns to force source builds (e.g. m4/flex/bison in manylinux).
+            extra_build_patterns = [
+                pattern for pattern in os.environ.get('LIBQASM_CONAN_BUILD_PATTERNS', '').split()
+                if pattern
+            ]
 
             cmd = local['conan']['profile']['detect']['--force']
             cmd & FG
@@ -116,6 +121,8 @@ class build_ext(_build_ext):
                 ['-b']['missing']
                 ['-tf']['']
             )
+            for pattern in extra_build_patterns:
+                cmd = cmd['-b'][pattern]
             if build_tests == 'True':
                 cmd = cmd['-c']['tools.build:skip_test=False']
             if platform.system() == 'Darwin':

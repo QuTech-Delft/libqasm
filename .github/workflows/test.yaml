@@ -62,7 +62,7 @@ jobs:
 
   cpp-macos-x64:
     name: "C++ tests (clang/MacOS/x64)"
-    runs-on: macos-13  # x64
+    runs-on: macos-15-intel  # x64
     strategy:
       fail-fast: false
       matrix:
@@ -213,7 +213,7 @@ jobs:
 
   python-macos-x64:
     name: "Python tests (macOS/x64)"
-    runs-on: macos-13
+    runs-on: macos-15-intel
     steps:
       - name: Checkout
         uses: actions/checkout@v4

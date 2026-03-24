@@ -2,8 +2,8 @@
 
 namespace cqasm {
 
-static const char* version{ "1.2.1" };
-static const char* release_year{ "2025" };
+static const char* version{ "1.3.0" };
+static const char* release_year{ "2026" };
 
 [[nodiscard]] [[maybe_unused]] static const char* get_version() {
     return version;
