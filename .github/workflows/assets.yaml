@@ -8,6 +8,10 @@ on:
     branches:
       - "release**"
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   cibw-wheels:
     name: Build wheels on ${{ matrix.os }}
@@ -53,7 +57,8 @@ jobs:
       - name: Install node
         uses: actions/setup-node@v4
         with:
-          node-version: 16.20.2
+          node-version: 24
+          registry-url: https://registry.npmjs.org
       - name: Install conan
         run: |
           pipx install conan
@@ -65,15 +70,13 @@ jobs:
         # and that can cause different type of problems
       - name: Configure and build
         run: |
-          conan profile detect --force
-          conan remove -c "*/*"
-          conan build . -pr=conan/profiles/release-clang-emscripten-wasm -pr:b=conan/profiles/release -b missing
+          pipx run conan profile detect --force
+          pipx run conan remove -c "*/*"
+          pipx run conan build . -pr=conan/profiles/release-clang-emscripten-wasm -pr:b=conan/profiles/release -b missing
         shell: bash
       - name: Publish to npm
-        uses: JS-DevTools/npm-publish@v3
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
+        run: npm publish
 
   publish-python-packages:
     name: Publish Python packages
