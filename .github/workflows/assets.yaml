@@ -84,14 +84,18 @@ jobs:
       - cibw-wheels
       - emscripten-wasm
     runs-on: ubuntu-latest
+    environment:
+      name: pypi
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         id: download
+        with:
+          pattern: cibw-wheels-*
+          path: dist
+          merge-multiple: true
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@v1.13.0
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         with:
-          user: __token__
-          password: ${{ secrets.PYPI_TOKEN }}
-          packages-dir: ${{ steps.download.outputs.download-path }}/cibw-*
+          packages-dir: dist
