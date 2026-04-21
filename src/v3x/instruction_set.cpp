@@ -230,7 +230,7 @@ InstructionSet::InstructionSet()
 }
 
 [[nodiscard]] bool InstructionSet::is_measure(const std::string& name) const {
-    return name == measure_list.contains(name);
+    return measure_list.contains(name);
 }
 
 [[nodiscard]] bool InstructionSet::is_reset(const std::string& name) const {
