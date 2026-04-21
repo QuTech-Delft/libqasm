@@ -154,6 +154,9 @@ InstructionSet::InstructionSet()
 , non_gate_list{
     "measure", "measureX", "measureY", "measureZ", "reset", "init", "barrier", "wait"
 }
+, measure_list{
+    "measure", "measureX", "measureY", "measureZ"
+}
 {}
 // NOLINTEND
 
@@ -184,6 +187,10 @@ InstructionSet::InstructionSet()
 
 [[nodiscard]] const InstructionListT& InstructionSet::get_non_gate_list() const {
     return non_gate_list;
+}
+
+[[nodiscard]] const InstructionListT& InstructionSet::get_measure_list() const {
+    return measure_list;
 }
 
 [[nodiscard]] bool InstructionSet::is_single_qubit_named_gate(const std::string& name) const {
@@ -223,7 +230,7 @@ InstructionSet::InstructionSet()
 }
 
 [[nodiscard]] bool InstructionSet::is_measure(const std::string& name) const {
-    return name == measure_name;
+    return name == measure_list.contains(name);
 }
 
 [[nodiscard]] bool InstructionSet::is_reset(const std::string& name) const {
