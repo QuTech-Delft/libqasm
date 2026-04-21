@@ -105,7 +105,13 @@ TEST_F(InstructionSetTest, is_gate) {
 }
 TEST_F(InstructionSetTest, is_measure) {
     EXPECT_TRUE(instruction_set.is_measure("measure"));
+    EXPECT_TRUE(instruction_set.is_measure("measureX"));
+    EXPECT_TRUE(instruction_set.is_measure("measureY"));
+    EXPECT_TRUE(instruction_set.is_measure("measureZ"));
     EXPECT_FALSE(instruction_set.is_measure("MEASURE"));
+    EXPECT_FALSE(instruction_set.is_measure("measure_z"));
+    EXPECT_FALSE(instruction_set.is_measure("MEASUREz"));
+    EXPECT_FALSE(instruction_set.is_measure("MEASUREZ"));
 }
 TEST_F(InstructionSetTest, is_reset) {
     EXPECT_TRUE(instruction_set.is_reset("reset"));
