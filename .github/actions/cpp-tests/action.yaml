@@ -20,7 +20,6 @@ runs:
   steps:
     - name: Install conan
       run: |
-        python3 -m pip install --upgrade pip setuptools
         pipx install conan
       shell: ${{ inputs.shell }}
     - name: Get latest CMake
