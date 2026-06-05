@@ -18,11 +18,11 @@ protected:
     const InstructionListT& single_qubit_named_gate_list = instruction_set.get_single_qubit_named_gate_list();
     const InstructionListT& two_qubit_named_gate_list = instruction_set.get_two_qubit_named_gate_list();
 
-    const size_t number_of_gate_map_entries = 60;
-    const size_t number_of_non_gate_map_entries = 16;
+    const size_t number_of_gate_map_entries = 100;
+    const size_t number_of_non_gate_map_entries = 28;
     const size_t number_of_gate_modifier_map_entries = 3;
     const size_t number_of_single_qubit_named_gates = 20;
-    const size_t number_of_two_qubit_named_gates = 5;
+    const size_t number_of_two_qubit_named_gates = 15;
 };
 
 TEST_F(InstructionSetTest, get_instance) {
@@ -105,7 +105,13 @@ TEST_F(InstructionSetTest, is_gate) {
 }
 TEST_F(InstructionSetTest, is_measure) {
     EXPECT_TRUE(instruction_set.is_measure("measure"));
+    EXPECT_TRUE(instruction_set.is_measure("measureX"));
+    EXPECT_TRUE(instruction_set.is_measure("measureY"));
+    EXPECT_TRUE(instruction_set.is_measure("measureZ"));
     EXPECT_FALSE(instruction_set.is_measure("MEASURE"));
+    EXPECT_FALSE(instruction_set.is_measure("measure_z"));
+    EXPECT_FALSE(instruction_set.is_measure("MEASUREz"));
+    EXPECT_FALSE(instruction_set.is_measure("MEASUREZ"));
 }
 TEST_F(InstructionSetTest, is_reset) {
     EXPECT_TRUE(instruction_set.is_reset("reset"));

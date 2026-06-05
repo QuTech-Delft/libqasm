@@ -21,14 +21,46 @@ InstructionSet::InstructionSet()
     { "CRk", { "i", "QV" } },
     { "CRk", { "i", "VQ" } },
     { "CRk", { "i", "VV" } },
+    { "CV", { std::nullopt, "QQ" } },
+    { "CV", { std::nullopt, "QV" } },
+    { "CV", { std::nullopt, "VQ" } },
+    { "CV", { std::nullopt, "VV" } },
+    { "CY", { std::nullopt, "QQ" } },
+    { "CY", { std::nullopt, "QV" } },
+    { "CY", { std::nullopt, "VQ" } },
+    { "CY", { std::nullopt, "VV" } },
     { "CZ", { std::nullopt, "QQ" } },
     { "CZ", { std::nullopt, "QV" } },
     { "CZ", { std::nullopt, "VQ" } },
     { "CZ", { std::nullopt, "VV" } },
+    { "DCNOT", { std::nullopt, "QQ" } },
+    { "DCNOT", { std::nullopt, "QV" } },
+    { "DCNOT", { std::nullopt, "VQ" } },
+    { "DCNOT", { std::nullopt, "VV" } },
+    { "ECR", { std::nullopt, "QQ" } },
+    { "ECR", { std::nullopt, "QV" } },
+    { "ECR", { std::nullopt, "VQ" } },
+    { "ECR", { std::nullopt, "VV" } },
     { "H", { std::nullopt, "Q" } },
     { "H", { std::nullopt, "V" } },
     { "I", { std::nullopt, "Q" } },
     { "I", { std::nullopt, "V" } },
+    { "InvSqrtSWAP", { std::nullopt, "QQ" } },
+    { "InvSqrtSWAP", { std::nullopt, "QV" } },
+    { "InvSqrtSWAP", { std::nullopt, "VQ" } },
+    { "InvSqrtSWAP", { std::nullopt, "VV" } },
+    { "ISWAP", { std::nullopt, "QQ" } },
+    { "ISWAP", { std::nullopt, "QV" } },
+    { "ISWAP", { std::nullopt, "VQ" } },
+    { "ISWAP", { std::nullopt, "VV" } },
+    { "M", { std::nullopt, "QQ" } },
+    { "M", { std::nullopt, "QV" } },
+    { "M", { std::nullopt, "VQ" } },
+    { "M", { std::nullopt, "VV" } },
+    { "MS", { std::nullopt, "QQ" } },
+    { "MS", { std::nullopt, "QV" } },
+    { "MS", { std::nullopt, "VQ" } },
+    { "MS", { std::nullopt, "VV" } },
     { "mX90", { std::nullopt, "Q" } },
     { "mX90", { std::nullopt, "V" } },
     { "mY90", { std::nullopt, "Q" } },
@@ -47,6 +79,14 @@ InstructionSet::InstructionSet()
     { "S", { std::nullopt, "V" } },
     { "Sdag", { std::nullopt, "Q" } },
     { "Sdag", { std::nullopt, "V" } },
+    { "SqrtISWAP", { std::nullopt, "QQ" } },
+    { "SqrtISWAP", { std::nullopt, "QV" } },
+    { "SqrtISWAP", { std::nullopt, "VQ" } },
+    { "SqrtISWAP", { std::nullopt, "VV" } },
+    { "SqrtSWAP", { std::nullopt, "QQ" } },
+    { "SqrtSWAP", { std::nullopt, "QV" } },
+    { "SqrtSWAP", { std::nullopt, "VQ" } },
+    { "SqrtSWAP", { std::nullopt, "VV" } },
     { "SWAP", { std::nullopt, "QQ" } },
     { "SWAP", { std::nullopt, "QV" } },
     { "SWAP", { std::nullopt, "VQ" } },
@@ -75,6 +115,18 @@ InstructionSet::InstructionSet()
     { "measure", { std::nullopt, "WV" } },
     { "measure", { std::nullopt, "BV" } },
     { "measure", { std::nullopt, "WQ" } },
+    { "measureX", { std::nullopt, "BQ" } },
+    { "measureX", { std::nullopt, "WV" } },
+    { "measureX", { std::nullopt, "BV" } },
+    { "measureX", { std::nullopt, "WQ" } },
+    { "measureY", { std::nullopt, "BQ" } },
+    { "measureY", { std::nullopt, "WV" } },
+    { "measureY", { std::nullopt, "BV" } },
+    { "measureY", { std::nullopt, "WQ" } },
+    { "measureZ", { std::nullopt, "BQ" } },
+    { "measureZ", { std::nullopt, "WV" } },
+    { "measureZ", { std::nullopt, "BV" } },
+    { "measureZ", { std::nullopt, "WQ" } },
     { "measure", { "fff", "BQ" } },
     { "measure", { "fff", "WV" } },
     { "measure", { "fff", "BV" } },
@@ -97,10 +149,13 @@ InstructionSet::InstructionSet()
     "H", "I", "mX90", "mY90", "mZ90", "Rn", "Rx", "Ry", "Rz", "S", "Sdag", "T", "Tdag", "U", "X", "X90", "Y", "Y90", "Z", "Z90"
 }
 , two_qubit_named_gate_list{
-    "CNOT", "CR", "CRk", "CZ", "SWAP"
+    "CNOT", "CR", "CRk", "CV", "CY", "CZ", "DCNOT", "ECR", "InvSqrtSWAP", "ISWAP", "M", "MS", "SqrtISWAP", "SqrtSWAP", "SWAP"
 }
 , non_gate_list{
-    "measure", "reset", "init", "barrier", "wait"
+    "measure", "measureX", "measureY", "measureZ", "reset", "init", "barrier", "wait"
+}
+, measure_list{
+    "measure", "measureX", "measureY", "measureZ"
 }
 {}
 // NOLINTEND
@@ -132,6 +187,10 @@ InstructionSet::InstructionSet()
 
 [[nodiscard]] const InstructionListT& InstructionSet::get_non_gate_list() const {
     return non_gate_list;
+}
+
+[[nodiscard]] const InstructionListT& InstructionSet::get_measure_list() const {
+    return measure_list;
 }
 
 [[nodiscard]] bool InstructionSet::is_single_qubit_named_gate(const std::string& name) const {
@@ -171,7 +230,7 @@ InstructionSet::InstructionSet()
 }
 
 [[nodiscard]] bool InstructionSet::is_measure(const std::string& name) const {
-    return name == measure_name;
+    return measure_list.contains(name);
 }
 
 [[nodiscard]] bool InstructionSet::is_reset(const std::string& name) const {
