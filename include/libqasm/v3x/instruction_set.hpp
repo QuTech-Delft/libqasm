@@ -25,6 +25,7 @@ class InstructionSet {
     InstructionListT single_qubit_named_gate_list;
     InstructionListT two_qubit_named_gate_list;
     InstructionListT non_gate_list;
+    InstructionListT measure_list;
 
     InstructionSet();
 
@@ -34,7 +35,6 @@ public:
     std::string single_qubit_gate_composition_prefix = "1q";
     std::string two_qubit_gate_composition_prefix = "2q";
 
-    std::string measure_name = "measure";
     std::string reset_name = "reset";
     std::string init_name = "init";
     std::string barrier_name = "barrier";
@@ -53,6 +53,7 @@ public:
     [[nodiscard]] const InstructionListT& get_single_qubit_named_gate_list() const;
     [[nodiscard]] const InstructionListT& get_two_qubit_named_gate_list() const;
     [[nodiscard]] const InstructionListT& get_non_gate_list() const;
+    [[nodiscard]] const InstructionListT& get_measure_list() const;
 
     [[nodiscard]] bool is_single_qubit_named_gate(const std::string& name) const;
     [[nodiscard]] bool is_two_qubit_named_gate(const std::string& name) const;
