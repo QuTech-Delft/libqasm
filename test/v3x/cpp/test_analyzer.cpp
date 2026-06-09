@@ -71,7 +71,7 @@ TEST_F(AnalyzerAnalyzeTest, analyze_string_with_measure_aliases) {
     const auto& analysis_result = analyzer.analyze_string(program, "input.cq");
 
     EXPECT_TRUE(analysis_result.errors.empty());
-    ASSERT_TRUE(static_cast<bool>(analysis_result.root));
+    ASSERT_TRUE(analysis_result.root.is_well_formed());
 
     const auto semantic_dump = fmt::format("{}", *analysis_result.root);
     EXPECT_THAT(semantic_dump, ::testing::HasSubstr("instruction_ref: measureX(bit, qubit)"));
