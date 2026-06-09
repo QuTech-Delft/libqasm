@@ -1,0 +1,7 @@
+include(tests-debug)
+
+[platform_tool_requires]
+m4/1.4.19
+
+[buildenv]
+PATH+=(path)C:/msys64/usr/bin
