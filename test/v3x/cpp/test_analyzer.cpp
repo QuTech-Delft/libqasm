@@ -1,3 +1,4 @@
+#include <fmt/format.h>
 #include <gmock/gmock.h>
 
 #include <functional>
@@ -46,6 +47,36 @@ TEST_F(AnalyzerAnalyzeTest, parser_returns_errors) {
     const auto& analysis_result = analyzer.analyze(parse_result_errors);
     const auto& error = analysis_result.errors[0];
     EXPECT_THAT(error.what(), ::testing::HasSubstr(parse_error_message));
+}
+
+TEST_F(AnalyzerAnalyzeTest, analyze_string_with_measure_aliases) {
+    auto analyzer = Analyzer{};
+    analyzer.register_default_constants();
+    analyzer.register_default_functions();
+    analyzer.register_default_instructions();
+
+    const auto program = std::string{
+        "version 3\n"
+        "qubit qx\n"
+        "qubit qy\n"
+        "qubit qz\n"
+        "bit bx\n"
+        "bit by\n"
+        "bit bz\n"
+        "bx = measureX qx\n"
+        "by = measureY qy\n"
+        "bz = measureZ qz\n"
+    };
+
+    const auto& analysis_result = analyzer.analyze_string(program, "input.cq");
+
+    EXPECT_TRUE(analysis_result.errors.empty());
+    ASSERT_TRUE(analysis_result.root.is_well_formed());
+
+    const auto semantic_dump = fmt::format("{}", *analysis_result.root);
+    EXPECT_THAT(semantic_dump, ::testing::HasSubstr("instruction_ref: measureX(bit, qubit)"));
+    EXPECT_THAT(semantic_dump, ::testing::HasSubstr("instruction_ref: measureY(bit, qubit)"));
+    EXPECT_THAT(semantic_dump, ::testing::HasSubstr("instruction_ref: measureZ(bit, qubit)"));
 }
 
 //--------------//

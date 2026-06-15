@@ -49,7 +49,7 @@ TERNARY_CONDITIONAL_OP: '?';
 
 // Keywords
 VERSION: 'version' -> pushMode(VERSION_STATEMENT);  // version
-MEASURE: 'measure';  // non-unitary instructions
+MEASURE: 'measure' ('X' | 'Y' | 'Z')?;  // non-unitary instructions
 RESET: 'reset';
 INIT: 'init';
 BARRIER: 'barrier';

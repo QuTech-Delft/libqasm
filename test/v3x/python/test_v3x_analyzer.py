@@ -25,6 +25,34 @@ class TestV3xAnalyzer(unittest.TestCase):
         expected_errors = ["Error at <unknown file name>:1:29..36: instruction 'measure' does not have an overload with 2 parameters."]
         self.assertEqual(errors, expected_errors)
 
+    def test_measure_aliases(self):
+        program_str = (
+            "version 3;"
+            "qubit qx;qubit qy;qubit qz;"
+            "bit bx;bit by;bit bz;"
+            "bx = measureX qx;"
+            "by = measureY qy;"
+            "bz = measureZ qz"
+        )
+        v3x_analyzer = cq.Analyzer()
+        ast = v3x_analyzer.analyze_string(program_str)
+
+        for statement, expected_name, expected_bit, expected_qubit in zip(
+            ast.block.statements,
+            ("measureX", "measureY", "measureZ"),
+            ("bx", "by", "bz"),
+            ("qx", "qy", "qz"),
+        ):
+            self.assertEqual(statement.name, expected_name)
+
+            bit_operand = statement.operands[0]
+            self.assertEqual(bit_operand.variable.name, expected_bit)
+            self.assertIsInstance(bit_operand.variable.typ, cq.types.Bit)
+
+            qubit_operand = statement.operands[1]
+            self.assertEqual(qubit_operand.variable.name, expected_qubit)
+            self.assertIsInstance(qubit_operand.variable.typ, cq.types.Qubit)
+
     def test_parse_string_returning_ast(self):
         program_str = "version 3;qubit[5] q;bit[5] b;H q[0:4];b = measure q"
         v3x_analyzer = cq.Analyzer()
