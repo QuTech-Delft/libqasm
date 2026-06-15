@@ -9,11 +9,18 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - **Fixed** for any bug fixes.
 - **Removed** for now removed features.
 
+## [ 1.4.1 ] - [ 2026-06-15 ]
+
+### Fixed
+- Aliases `measureX`, `measureY`, and `measureZ`, for the `measure` instruction, recognized as tokens by the lexer.
+
+
 ## [ 1.4.0 ] - [ 2026-06-05 ]
 
 ### Added
 - `CV`, `CY`, `DCNOT`, `ECR`, `ISWAP`, `InvSqrtSWAP`, `M`, `MS`, `SqrtISWAP`, and `SqrtSWAP` unitary instructions.
 - Aliases `measureX`, `measureY`, and `measureZ`, for the `measure` instruction along the respective axes.
+
 
 ## [ 1.3.0 ] - [ 2026-03-23 ]
 
