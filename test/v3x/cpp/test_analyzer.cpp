@@ -160,4 +160,68 @@ TEST_F(AnalyzerTest,
     }));
 }
 
+//------------------------------------//
+// AnalyzerAnalyzeThreeQubitGateTest  //
+//------------------------------------//
+
+class AnalyzerAnalyzeThreeQubitGateTest : public ::testing::Test {
+protected:
+    void SetUp() override {
+        analyzer.register_default_constants();
+        analyzer.register_default_functions();
+        analyzer.register_default_instructions();
+    }
+    Analyzer analyzer{};
+};
+
+TEST_F(AnalyzerAnalyzeThreeQubitGateTest, analyze_ccnot) {
+    const auto program = std::string{
+        "version 3\n"
+        "qubit[3] q\n"
+        "CCNOT q[0], q[1], q[2]\n"
+    };
+    const auto& result = analyzer.analyze_string(program, "input.cq");
+    EXPECT_TRUE(result.errors.empty());
+    ASSERT_TRUE(result.root.is_well_formed());
+    const auto dump = fmt::format("{}", *result.root);
+    EXPECT_THAT(dump, ::testing::HasSubstr("instruction_ref: CCNOT(qubit, qubit, qubit)"));
+}
+
+TEST_F(AnalyzerAnalyzeThreeQubitGateTest, analyze_ccx) {
+    const auto program = std::string{
+        "version 3\n"
+        "qubit[3] q\n"
+        "CCX q[0], q[1], q[2]\n"
+    };
+    const auto& result = analyzer.analyze_string(program, "input.cq");
+    EXPECT_TRUE(result.errors.empty());
+    ASSERT_TRUE(result.root.is_well_formed());
+    const auto dump = fmt::format("{}", *result.root);
+    EXPECT_THAT(dump, ::testing::HasSubstr("instruction_ref: CCX(qubit, qubit, qubit)"));
+}
+
+TEST_F(AnalyzerAnalyzeThreeQubitGateTest, analyze_cswap) {
+    const auto program = std::string{
+        "version 3\n"
+        "qubit[3] q\n"
+        "CSWAP q[0], q[1], q[2]\n"
+    };
+    const auto& result = analyzer.analyze_string(program, "input.cq");
+    EXPECT_TRUE(result.errors.empty());
+    ASSERT_TRUE(result.root.is_well_formed());
+    const auto dump = fmt::format("{}", *result.root);
+    EXPECT_THAT(dump, ::testing::HasSubstr("instruction_ref: CSWAP(qubit, qubit, qubit)"));
+}
+
+TEST_F(AnalyzerAnalyzeThreeQubitGateTest, modifier_on_three_qubit_gate_is_rejected) {
+    const auto program = std::string{
+        "version 3\n"
+        "qubit[3] q\n"
+        "inv.CCNOT q[0], q[1], q[2]\n"
+    };
+    const auto& result = analyzer.analyze_string(program, "input.cq");
+    EXPECT_FALSE(result.errors.empty());
+    EXPECT_THAT(result.errors[0].what(), ::testing::HasSubstr("trying to apply a gate modifier to a multi-qubit gate"));
+}
+
 }  // namespace cqasm::v3x::analyzer

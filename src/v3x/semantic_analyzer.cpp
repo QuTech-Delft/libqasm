@@ -214,6 +214,11 @@ bool is_two_qubit_gate(const tree::One<semantic::Gate>& gate) {
     return InstructionSet::get_instance().is_two_qubit_gate(resolution_name);
 }
 
+bool is_three_qubit_gate(const tree::One<semantic::Gate>& gate) {
+    const auto& resolution_name = get_gate_resolution_name(gate);
+    return InstructionSet::get_instance().is_three_qubit_gate(resolution_name);
+}
+
 values::Values resolve_parameters(const std::string& instruction_name, const values::Values& parameters) {
     auto ret = values::Values{};
     const auto& instruction_set = InstructionSet::get_instance();
@@ -280,7 +285,7 @@ values::Values resolve_parameters(const std::string& instruction_name, const val
 }
 
 void check_gate(const tree::One<semantic::Gate>& gate) {
-    if (!gate->gate.empty() && is_two_qubit_gate(gate->gate)) {
+    if (!gate->gate.empty() && (is_two_qubit_gate(gate->gate) || is_three_qubit_gate(gate->gate))) {
         throw error::AnalysisError{ "trying to apply a gate modifier to a multi-qubit gate" };
     }
 }

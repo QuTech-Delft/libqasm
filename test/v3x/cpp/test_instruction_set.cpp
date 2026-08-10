@@ -17,12 +17,14 @@ protected:
     const GateModifierMapT& gate_modifier_map = instruction_set.get_gate_modifier_map();
     const InstructionListT& single_qubit_named_gate_list = instruction_set.get_single_qubit_named_gate_list();
     const InstructionListT& two_qubit_named_gate_list = instruction_set.get_two_qubit_named_gate_list();
+    const InstructionListT& three_qubit_named_gate_list = instruction_set.get_three_qubit_named_gate_list();
 
-    const size_t number_of_gate_map_entries = 100;
+    const size_t number_of_gate_map_entries = 124;
     const size_t number_of_non_gate_map_entries = 28;
     const size_t number_of_gate_modifier_map_entries = 3;
     const size_t number_of_single_qubit_named_gates = 20;
     const size_t number_of_two_qubit_named_gates = 15;
+    const size_t number_of_three_qubit_named_gates = 3;
 };
 
 TEST_F(InstructionSetTest, get_instance) {
@@ -43,6 +45,9 @@ TEST_F(InstructionSetTest, get_single_qubit_named_gate_list) {
 TEST_F(InstructionSetTest, get_two_qubit_named_gate_list) {
     EXPECT_EQ(two_qubit_named_gate_list.size(), number_of_two_qubit_named_gates);
 }
+TEST_F(InstructionSetTest, get_three_qubit_named_gate_list) {
+    EXPECT_EQ(three_qubit_named_gate_list.size(), number_of_three_qubit_named_gates);
+}
 TEST_F(InstructionSetTest, is_single_qubit_named_gate) {
     EXPECT_TRUE(instruction_set.is_single_qubit_named_gate("H"));
     EXPECT_FALSE(instruction_set.is_single_qubit_named_gate("h"));
@@ -57,13 +62,26 @@ TEST_F(InstructionSetTest, is_two_qubit_named_gate) {
     EXPECT_FALSE(instruction_set.is_two_qubit_named_gate("2q_H"));
     EXPECT_FALSE(instruction_set.is_two_qubit_named_gate("ctrl"));
 }
+TEST_F(InstructionSetTest, is_three_qubit_named_gate) {
+    EXPECT_TRUE(instruction_set.is_three_qubit_named_gate("CCNOT"));
+    EXPECT_TRUE(instruction_set.is_three_qubit_named_gate("CCX"));
+    EXPECT_TRUE(instruction_set.is_three_qubit_named_gate("CSWAP"));
+    EXPECT_FALSE(instruction_set.is_three_qubit_named_gate("ccnot"));
+    EXPECT_FALSE(instruction_set.is_three_qubit_named_gate("H"));
+    EXPECT_FALSE(instruction_set.is_three_qubit_named_gate("CNOT"));
+    EXPECT_FALSE(instruction_set.is_three_qubit_named_gate("3q_H"));
+    EXPECT_FALSE(instruction_set.is_three_qubit_named_gate("ctrl"));
+}
 TEST_F(InstructionSetTest, is_named_gate) {
     EXPECT_TRUE(instruction_set.is_named_gate("H"));
     EXPECT_TRUE(instruction_set.is_named_gate("CNOT"));
+    EXPECT_TRUE(instruction_set.is_named_gate("CCNOT"));
     EXPECT_FALSE(instruction_set.is_named_gate("h"));
     EXPECT_FALSE(instruction_set.is_named_gate("cnot"));
+    EXPECT_FALSE(instruction_set.is_named_gate("ccnot"));
     EXPECT_FALSE(instruction_set.is_named_gate("1q_H"));
     EXPECT_FALSE(instruction_set.is_named_gate("2q_H"));
+    EXPECT_FALSE(instruction_set.is_named_gate("3q_H"));
     EXPECT_FALSE(instruction_set.is_named_gate("inv"));
 }
 TEST_F(InstructionSetTest, is_single_qubit_gate_composition) {
@@ -80,6 +98,14 @@ TEST_F(InstructionSetTest, is_two_qubit_gate_composition) {
     EXPECT_FALSE(instruction_set.is_two_qubit_gate_composition("1q_H"));
     EXPECT_FALSE(instruction_set.is_two_qubit_gate_composition("inv"));
 }
+TEST_F(InstructionSetTest, is_three_qubit_gate_composition) {
+    EXPECT_TRUE(instruction_set.is_three_qubit_gate_composition("3q_H"));
+    EXPECT_FALSE(instruction_set.is_three_qubit_gate_composition("H"));
+    EXPECT_FALSE(instruction_set.is_three_qubit_gate_composition("CCNOT"));
+    EXPECT_FALSE(instruction_set.is_three_qubit_gate_composition("1q_H"));
+    EXPECT_FALSE(instruction_set.is_three_qubit_gate_composition("2q_H"));
+    EXPECT_FALSE(instruction_set.is_three_qubit_gate_composition("inv"));
+}
 TEST_F(InstructionSetTest, is_single_qubit_gate) {
     EXPECT_TRUE(instruction_set.is_single_qubit_gate("H"));
     EXPECT_FALSE(instruction_set.is_single_qubit_gate("CNOT"));
@@ -93,12 +119,26 @@ TEST_F(InstructionSetTest, is_two_qubit_gate) {
     EXPECT_FALSE(instruction_set.is_two_qubit_gate("1q_H"));
     EXPECT_TRUE(instruction_set.is_two_qubit_gate("2q_H"));
     EXPECT_FALSE(instruction_set.is_two_qubit_gate("inv"));
+    EXPECT_FALSE(instruction_set.is_two_qubit_gate("CCNOT"));
+}
+TEST_F(InstructionSetTest, is_three_qubit_gate) {
+    EXPECT_FALSE(instruction_set.is_three_qubit_gate("H"));
+    EXPECT_FALSE(instruction_set.is_three_qubit_gate("CNOT"));
+    EXPECT_TRUE(instruction_set.is_three_qubit_gate("CCNOT"));
+    EXPECT_TRUE(instruction_set.is_three_qubit_gate("CCX"));
+    EXPECT_TRUE(instruction_set.is_three_qubit_gate("CSWAP"));
+    EXPECT_FALSE(instruction_set.is_three_qubit_gate("1q_H"));
+    EXPECT_FALSE(instruction_set.is_three_qubit_gate("2q_H"));
+    EXPECT_TRUE(instruction_set.is_three_qubit_gate("3q_H"));
+    EXPECT_FALSE(instruction_set.is_three_qubit_gate("inv"));
 }
 TEST_F(InstructionSetTest, is_gate) {
     EXPECT_TRUE(instruction_set.is_gate("H"));
     EXPECT_TRUE(instruction_set.is_gate("CNOT"));
+    EXPECT_TRUE(instruction_set.is_gate("CCNOT"));
     EXPECT_TRUE(instruction_set.is_gate("1q_H"));
     EXPECT_TRUE(instruction_set.is_gate("2q_H"));
+    EXPECT_TRUE(instruction_set.is_gate("3q_H"));
     EXPECT_FALSE(instruction_set.is_gate("inv"));
     EXPECT_FALSE(instruction_set.is_gate("measure"));
     EXPECT_FALSE(instruction_set.is_gate("reset"));

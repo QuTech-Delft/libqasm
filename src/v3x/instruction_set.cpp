@@ -9,6 +9,30 @@ namespace cqasm::v3x::instruction {
 // NOLINTBEGIN
 InstructionSet::InstructionSet()
 : named_gate_map{
+    { "CCNOT", { std::nullopt, "QQQ" } },
+    { "CCNOT", { std::nullopt, "QQV" } },
+    { "CCNOT", { std::nullopt, "QVQ" } },
+    { "CCNOT", { std::nullopt, "QVV" } },
+    { "CCNOT", { std::nullopt, "VQQ" } },
+    { "CCNOT", { std::nullopt, "VQV" } },
+    { "CCNOT", { std::nullopt, "VVQ" } },
+    { "CCNOT", { std::nullopt, "VVV" } },
+    { "CCX", { std::nullopt, "QQQ" } },
+    { "CCX", { std::nullopt, "QQV" } },
+    { "CCX", { std::nullopt, "QVQ" } },
+    { "CCX", { std::nullopt, "QVV" } },
+    { "CCX", { std::nullopt, "VQQ" } },
+    { "CCX", { std::nullopt, "VQV" } },
+    { "CCX", { std::nullopt, "VVQ" } },
+    { "CCX", { std::nullopt, "VVV" } },
+    { "CSWAP", { std::nullopt, "QQQ" } },
+    { "CSWAP", { std::nullopt, "QQV" } },
+    { "CSWAP", { std::nullopt, "QVQ" } },
+    { "CSWAP", { std::nullopt, "QVV" } },
+    { "CSWAP", { std::nullopt, "VQQ" } },
+    { "CSWAP", { std::nullopt, "VQV" } },
+    { "CSWAP", { std::nullopt, "VVQ" } },
+    { "CSWAP", { std::nullopt, "VVV" } },
     { "CNOT", { std::nullopt, "QQ" } },
     { "CNOT", { std::nullopt, "QV" } },
     { "CNOT", { std::nullopt, "VQ" } },
@@ -151,6 +175,9 @@ InstructionSet::InstructionSet()
 , two_qubit_named_gate_list{
     "CNOT", "CR", "CRk", "CV", "CY", "CZ", "DCNOT", "ECR", "InvSqrtSWAP", "ISWAP", "M", "MS", "SqrtISWAP", "SqrtSWAP", "SWAP"
 }
+, three_qubit_named_gate_list{
+    "CCNOT", "CCX", "CSWAP"
+}
 , non_gate_list{
     "measure", "measureX", "measureY", "measureZ", "reset", "init", "barrier", "wait"
 }
@@ -185,6 +212,10 @@ InstructionSet::InstructionSet()
     return two_qubit_named_gate_list;
 }
 
+[[nodiscard]] const InstructionListT& InstructionSet::get_three_qubit_named_gate_list() const {
+    return three_qubit_named_gate_list;
+}
+
 [[nodiscard]] const InstructionListT& InstructionSet::get_non_gate_list() const {
     return non_gate_list;
 }
@@ -201,8 +232,12 @@ InstructionSet::InstructionSet()
     return two_qubit_named_gate_list.contains(name);
 }
 
+[[nodiscard]] bool InstructionSet::is_three_qubit_named_gate(const std::string& name) const {
+    return three_qubit_named_gate_list.contains(name);
+}
+
 [[nodiscard]] bool InstructionSet::is_named_gate(const std::string& name) const {
-    return is_single_qubit_named_gate(name) || is_two_qubit_named_gate(name);
+    return is_single_qubit_named_gate(name) || is_two_qubit_named_gate(name) || is_three_qubit_named_gate(name);
 }
 
 [[nodiscard]] bool InstructionSet::is_single_qubit_gate_composition(const std::string& name) const {
@@ -213,8 +248,12 @@ InstructionSet::InstructionSet()
     return name.starts_with(two_qubit_gate_composition_prefix);
 }
 
+[[nodiscard]] bool InstructionSet::is_three_qubit_gate_composition(const std::string& name) const {
+    return name.starts_with(three_qubit_gate_composition_prefix);
+}
+
 [[nodiscard]] bool InstructionSet::is_gate_composition(const std::string& name) const {
-    return is_single_qubit_gate_composition(name) || is_two_qubit_gate_composition(name);
+    return is_single_qubit_gate_composition(name) || is_two_qubit_gate_composition(name) || is_three_qubit_gate_composition(name);
 }
 
 [[nodiscard]] bool InstructionSet::is_single_qubit_gate(const std::string& name) const {
@@ -223,6 +262,10 @@ InstructionSet::InstructionSet()
 
 [[nodiscard]] bool InstructionSet::is_two_qubit_gate(const std::string& name) const {
     return is_two_qubit_named_gate(name) || is_two_qubit_gate_composition(name);
+}
+
+[[nodiscard]] bool InstructionSet::is_three_qubit_gate(const std::string& name) const {
+    return is_three_qubit_named_gate(name) || is_three_qubit_gate_composition(name);
 }
 
 [[nodiscard]] bool InstructionSet::is_gate(const std::string& name) const {
