@@ -253,7 +253,8 @@ InstructionSet::InstructionSet()
 }
 
 [[nodiscard]] bool InstructionSet::is_gate_composition(const std::string& name) const {
-    return is_single_qubit_gate_composition(name) || is_two_qubit_gate_composition(name) || is_three_qubit_gate_composition(name);
+    return is_single_qubit_gate_composition(name) || is_two_qubit_gate_composition(name) ||
+        is_three_qubit_gate_composition(name);
 }
 
 [[nodiscard]] bool InstructionSet::is_single_qubit_gate(const std::string& name) const {
