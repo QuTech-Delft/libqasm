@@ -1,0 +1,5 @@
+version 3
+
+qubit[3] q
+
+CCNOT q[0], q[1], q[2]
