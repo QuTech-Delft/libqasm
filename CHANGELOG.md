@@ -9,6 +9,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - **Fixed** for any bug fixes.
 - **Removed** for now removed features.
 
+## [ 1.5.0 ] - [ 2026-10-01 ]
+
+### Added
+- `CCX`, `CCNOT`, and `CSWAP` unitary instructions.
+
+
 ## [ 1.4.1 ] - [ 2026-06-15 ]
 
 ### Fixed
