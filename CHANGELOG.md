@@ -9,6 +9,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - **Fixed** for any bug fixes.
 - **Removed** for now removed features.
 
+## [ 1.5.0 ] - [ 2026-10-01 ]
+
+### Added
+- `CCX`, `CCNOT`, and `CSWAP` unitary instructions.
+
+
 ## [ 1.4.1 ] - [ 2026-06-15 ]
 
 ### Fixed
@@ -21,10 +27,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `CV`, `CY`, `DCNOT`, `ECR`, `ISWAP`, `InvSqrtSWAP`, `M`, `MS`, `SqrtISWAP`, and `SqrtSWAP` unitary instructions.
 - Aliases `measureX`, `measureY`, and `measureZ`, for the `measure` instruction along the respective axes.
 
-<<<<<<< HEAD
-=======
 
->>>>>>> develop
 ## [ 1.3.0 ] - [ 2026-03-23 ]
 
 ### Added

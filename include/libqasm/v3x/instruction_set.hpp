@@ -24,6 +24,7 @@ class InstructionSet {
 
     InstructionListT single_qubit_named_gate_list;
     InstructionListT two_qubit_named_gate_list;
+    InstructionListT three_qubit_named_gate_list;
     InstructionListT non_gate_list;
     InstructionListT measure_list;
 
@@ -34,6 +35,7 @@ public:
     // since an identifier cannot start with a number
     std::string single_qubit_gate_composition_prefix = "1q";
     std::string two_qubit_gate_composition_prefix = "2q";
+    std::string three_qubit_gate_composition_prefix = "3q";
 
     std::string reset_name = "reset";
     std::string init_name = "init";
@@ -52,19 +54,23 @@ public:
     [[nodiscard]] const GateModifierMapT& get_gate_modifier_map() const;
     [[nodiscard]] const InstructionListT& get_single_qubit_named_gate_list() const;
     [[nodiscard]] const InstructionListT& get_two_qubit_named_gate_list() const;
+    [[nodiscard]] const InstructionListT& get_three_qubit_named_gate_list() const;
     [[nodiscard]] const InstructionListT& get_non_gate_list() const;
     [[nodiscard]] const InstructionListT& get_measure_list() const;
 
     [[nodiscard]] bool is_single_qubit_named_gate(const std::string& name) const;
     [[nodiscard]] bool is_two_qubit_named_gate(const std::string& name) const;
+    [[nodiscard]] bool is_three_qubit_named_gate(const std::string& name) const;
     [[nodiscard]] bool is_named_gate(const std::string& name) const;
 
     [[nodiscard]] bool is_single_qubit_gate_composition(const std::string& name) const;
     [[nodiscard]] bool is_two_qubit_gate_composition(const std::string& name) const;
+    [[nodiscard]] bool is_three_qubit_gate_composition(const std::string& name) const;
     [[nodiscard]] bool is_gate_composition(const std::string& name) const;
 
     [[nodiscard]] bool is_single_qubit_gate(const std::string& name) const;
     [[nodiscard]] bool is_two_qubit_gate(const std::string& name) const;
+    [[nodiscard]] bool is_three_qubit_gate(const std::string& name) const;
     [[nodiscard]] bool is_gate(const std::string& name) const;
 
     [[nodiscard]] bool is_measure(const std::string& name) const;

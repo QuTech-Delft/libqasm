@@ -167,3 +167,42 @@ class TestV3xAnalyzer(unittest.TestCase):
         self.assertEqual(actual_parse_json, actual_analyze_json)
         expected_json = '''{"errors":[{"range":{"start":{"line":1,"character":1},"end":{"line":1,"character":7}},"message":"mismatched input 'vrsion' expecting {NEW_LINE, ';', 'version'}","severity":1}]}'''
         self.assertEqual(actual_parse_json, expected_json)
+
+    def test_ccnot_three_qubit_gate(self):
+        program_str = "version 3;qubit[3] q;CCNOT q[0], q[1], q[2]"
+        v3x_analyzer = cq.Analyzer()
+        ast = v3x_analyzer.analyze_string(program_str)
+
+        ccnot_instruction = ast.block.statements[0]
+        self.assertEqual(ccnot_instruction.gate.name, "CCNOT")
+        self.assertEqual(len(ccnot_instruction.operands), 3)
+        for i, operand in enumerate(ccnot_instruction.operands):
+            self.assertIsInstance(operand.variable.typ, cq.types.QubitArray)
+            self.assertEqual(operand.variable.name, "q")
+            self.assertEqual(operand.indices[0].value, i)
+
+    def test_ccx_three_qubit_gate(self):
+        program_str = "version 3;qubit[3] q;CCX q[0], q[1], q[2]"
+        v3x_analyzer = cq.Analyzer()
+        ast = v3x_analyzer.analyze_string(program_str)
+
+        ccx_instruction = ast.block.statements[0]
+        self.assertEqual(ccx_instruction.gate.name, "CCX")
+        self.assertEqual(len(ccx_instruction.operands), 3)
+
+    def test_cswap_three_qubit_gate(self):
+        program_str = "version 3;qubit[3] q;CSWAP q[0], q[1], q[2]"
+        v3x_analyzer = cq.Analyzer()
+        ast = v3x_analyzer.analyze_string(program_str)
+
+        cswap_instruction = ast.block.statements[0]
+        self.assertEqual(cswap_instruction.gate.name, "CSWAP")
+        self.assertEqual(len(cswap_instruction.operands), 3)
+
+    def test_modifier_on_three_qubit_gate_is_rejected(self):
+        program_str = "version 3;qubit[3] q;inv.CCNOT q[0], q[1], q[2]"
+        v3x_analyzer = cq.Analyzer()
+        errors = v3x_analyzer.analyze_string(program_str)
+        self.assertIsInstance(errors, list)
+        self.assertGreater(len(errors), 0)
+        self.assertIn("trying to apply a gate modifier to a multi-qubit gate", errors[0])
