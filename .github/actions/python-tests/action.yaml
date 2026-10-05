@@ -4,13 +4,16 @@ inputs:
   shell:
     required: true
     description: Which shell to use for the `run` command
+  python-version:
+    required: true
+    description: Python version to test
 
 runs:
   using: composite
   steps:
     - uses: actions/setup-python@v5
       with:
-        python-version: "3.13"
+        python-version: ${{ inputs.python-version }}
     - name: Get latest CMake
       uses: lukka/get-cmake@latest
     - name: Install Python dependencies
