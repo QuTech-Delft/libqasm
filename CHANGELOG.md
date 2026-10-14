@@ -9,6 +9,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - **Fixed** for any bug fixes.
 - **Removed** for now removed features.
 
+## [ 1.6.0 ] - [ 2026-10-13 ]
+
+### Added
+- Support for Python 3.14.
+
+
 ## [ 1.5.0 ] - [ 2026-10-01 ]
 
 ### Added
