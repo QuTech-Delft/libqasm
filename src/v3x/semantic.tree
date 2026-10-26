@@ -79,6 +79,14 @@ annotated {
                 backend_code: cqasm::v3x::primitives::Str;
             }
         }
+
+        comment {
+            text: cqasm::v3x::primitives::Str;
+            start_line: cqasm::v3x::primitives::Int;
+            start_column: cqasm::v3x::primitives::Int;
+            end_line: cqasm::v3x::primitives::Int;
+            end_column: cqasm::v3x::primitives::Int;
+        }
     }
 }
 

@@ -195,6 +195,10 @@ annotated {
                     backend_code: cqasm::v3x::primitives::Str;
                 }
             }
+
+            comment {
+                text: cqasm::v3x::primitives::Str;
+            }
         }
     }
 }

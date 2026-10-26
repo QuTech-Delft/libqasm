@@ -1,0 +1,9 @@
+version 3.0
+qubit[2] q
+// before H
+H q[0]
+/* between H
+   and CNOT */
+CNOT q[0], q[1]
+X q[1] // after X
+/* before Y */ Y q[0]
