@@ -68,6 +68,46 @@ void SyntacticAnalyzer::copyNodeAnnotation(
     to->copy_annotation<annotations::SourceLocation>(*from);
 }
 
+One<Comment> SyntacticAnalyzer::makeComment(antlr4::Token* token) const {
+    const auto& text = token->getText();
+    auto ret = tree::make<Comment>(text);
+    setNodeAnnotation(ret, token);
+    auto& range = ret->get_annotation_ptr<annotations::SourceLocation>()->range;
+    range.last = range.first;
+    for (size_t index = 0; index < text.size(); ++index) {
+        if (text[index] == '\r' && index + 1 < text.size() && text[index + 1] == '\n') {
+            continue;
+        }
+        if (text[index] == '\r' || text[index] == '\n') {
+            ++range.last.line;
+            range.last.column = 1;
+        } else {
+            ++range.last.column;
+        }
+    }
+    return ret;
+}
+
+void SyntacticAnalyzer::addComments(Program& program, const std::vector<antlr4::Token*>& tokens) const {
+    for (auto* token : tokens) {
+        if (token->getType() != CqasmParser::SINGLE_LINE_COMMENT &&
+            token->getType() != CqasmParser::MULTI_LINE_COMMENT) {
+            continue;
+        }
+        auto comment = makeComment(token);
+        const auto& comment_start = comment->get_annotation_ptr<annotations::SourceLocation>()->range.first;
+        size_t position = 0;
+        for (const auto& statement : program.block->statements) {
+            const auto* statement_location = statement->get_annotation_ptr<annotations::SourceLocation>();
+            if (statement_location && statement_location->range.first > comment_start) {
+                break;
+            }
+            ++position;
+        }
+        program.block->statements.add(One<Statement>{ comment }, static_cast<tree::signed_size_t>(position));
+    }
+}
+
 std::int64_t SyntacticAnalyzer::get_int_value(
     size_t line, size_t char_position_in_line, const std::string& text) const {
     try {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <any>
+#include <vector>
 
 #include "libqasm/v3x/CqasmParser.h"
 #include "libqasm/v3x/CqasmParserVisitor.h"
@@ -23,6 +24,7 @@ public:
     virtual void expandNodeAnnotation(const syntactic::One<syntactic::Node>& node, antlr4::Token* token) const = 0;
     virtual void copyNodeAnnotation(
         const syntactic::One<syntactic::Node>& from, const syntactic::One<syntactic::Node>& to) const = 0;
+    virtual void addComments(syntactic::Program& program, const std::vector<antlr4::Token*>& tokens) const = 0;
 };
 
 }  // namespace cqasm::v3x::parser
