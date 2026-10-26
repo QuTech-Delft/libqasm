@@ -41,8 +41,7 @@ cqasm::v3x::parser::ParseResult AntlrScanner::parse_(antlr4::ANTLRInputStream& i
     auto custom_ast = build_visitor_up_->visitProgram(ast);
     auto program = std::any_cast<syntactic::One<syntactic::Program>>(custom_ast);
     for (auto* token : tokens.getTokens()) {
-        if (token->getType() != CqasmLexer::SINGLE_LINE_COMMENT &&
-            token->getType() != CqasmLexer::MULTI_LINE_COMMENT) {
+        if (token->getType() != CqasmLexer::SINGLE_LINE_COMMENT && token->getType() != CqasmLexer::MULTI_LINE_COMMENT) {
             continue;
         }
 
