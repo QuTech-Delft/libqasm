@@ -10,11 +10,11 @@ Program(
     Block(
       statements: [
         Comment(
-          text: /* comment between version keyword and number */
+          text: /* comment after version */
           start_line: 1
-          start_column: 9
+          start_column: 13
           end_line: 1
-          end_column: 57
+          end_column: 40
           annotations: []
         )
         Comment(

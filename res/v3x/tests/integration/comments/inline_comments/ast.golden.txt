@@ -1,15 +1,15 @@
 SUCCESS
 Program(
   version: <
-    Version( # input.cq:1:58..61
+    Version( # input.cq:1:9..12
       items: 3.0
     )
   >
   block: <
     GlobalBlock(
       statements: [
-        Comment( # input.cq:1:9..57
-          text: /* comment between version keyword and number */
+        Comment( # input.cq:1:13..40
+          text: /* comment after version */
           annotations: []
         )
         Variable( # input.cq:2:7..8

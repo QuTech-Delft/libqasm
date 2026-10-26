@@ -85,6 +85,4 @@ fragment RawText: (.)*?;
 // Within the Version mode, a sequence such as '3.0' will be treated as a version number, and not as a float literal
 mode VERSION_STATEMENT;
 VERSION_WHITE_SPACE: [ \t]+ -> skip;
-VERSION_SINGLE_LINE_COMMENT: '//' ~[\r\n]* -> type(SINGLE_LINE_COMMENT), channel(HIDDEN);
-VERSION_MULTI_LINE_COMMENT: '/*' .*? '*/' -> type(MULTI_LINE_COMMENT), channel(HIDDEN);
 VERSION_NUMBER: Digit+ ('.' Digit+)? -> popMode;
