@@ -1,0 +1,3 @@
+version 3.0 /* comment after version */
+qubit q // comment after declaration
+X q /* comment after instruction */

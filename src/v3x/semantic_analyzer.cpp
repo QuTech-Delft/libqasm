@@ -406,6 +406,20 @@ std::any SemanticAnalyzer::visit_asm_declaration(syntactic::AsmDeclaration& node
     return ret;
 }
 
+std::any SemanticAnalyzer::visit_comment(syntactic::Comment& node) {
+    auto ret = tree::make<semantic::Comment>();
+    ret->text = node.text;
+    if (const auto* source_location = node.get_annotation_ptr<parser::SourceLocation>()) {
+        ret->start_line = source_location->range.first.line;
+        ret->start_column = source_location->range.first.column;
+        ret->end_line = source_location->range.last.line;
+        ret->end_column = source_location->range.last.column;
+        ret->copy_annotation<parser::SourceLocation>(node);
+    }
+    analyzer_.add_statement_to_current_scope(ret);
+    return ret;
+}
+
 std::any SemanticAnalyzer::visit_expression_list(syntactic::ExpressionList& node) {
     auto ret = values::Values();
     std::transform(

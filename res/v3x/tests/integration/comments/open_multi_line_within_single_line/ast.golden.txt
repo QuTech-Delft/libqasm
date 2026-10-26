@@ -7,7 +7,12 @@ Program(
   >
   block: <
     GlobalBlock(
-      statements: []
+      statements: [
+        Comment( # input.cq:3:1..77
+          text: // This is a single line comment /* This is an open multi-line comment block
+          annotations: []
+        )
+      ]
     )
   >
 )

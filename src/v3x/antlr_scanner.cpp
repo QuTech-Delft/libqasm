@@ -38,8 +38,10 @@ cqasm::v3x::parser::ParseResult AntlrScanner::parse_(antlr4::ANTLRInputStream& i
 
     build_visitor_up_->addErrorListener(error_listener_up_.get());
     auto custom_ast = build_visitor_up_->visitProgram(ast);
+    auto program = std::any_cast<syntactic::One<syntactic::Program>>(custom_ast);
+    build_visitor_up_->addComments(*program, tokens.getTokens());
     return cqasm::v3x::parser::ParseResult{
-        std::any_cast<cqasm::v3x::syntactic::One<cqasm::v3x::syntactic::Program>>(custom_ast),  // root
+        program,  // root
         {}  // error
     };
 }

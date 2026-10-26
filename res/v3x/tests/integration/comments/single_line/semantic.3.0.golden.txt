@@ -8,7 +8,16 @@ Program(
   >
   block: <
     Block(
-      statements: []
+      statements: [
+        Comment(
+          text: // This is a single line comment which ends on the newline.
+          start_line: 3
+          start_column: 1
+          end_line: 3
+          end_column: 60
+          annotations: []
+        )
+      ]
     )
   >
   variables: []
