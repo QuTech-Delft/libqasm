@@ -7,7 +7,20 @@ Program(
   >
   block: <
     GlobalBlock(
-      statements: []
+      statements: [
+        Comment( # input.cq:1:1..8
+          text: // blah
+          annotations: []
+        )
+        Comment( # input.cq:2:1..4:4
+          text: cqasm::v3x::primitives::Str<<
+            /* foo
+             *
+             */
+          >>
+          annotations: []
+        )
+      ]
     )
   >
 )

@@ -1,9 +1,9 @@
 lexer grammar CqasmLexer;
 
-// White spaces and comments are skipped, i.e. not passed to the parser
+// White space is skipped; comments are hidden from the parser but retained in the token stream.
 WHITE_SPACE: [ \t]+ -> skip;
-SINGLE_LINE_COMMENT: '//' ~[\r\n]* -> skip;
-MULTI_LINE_COMMENT: '/*' .*? '*/' -> skip;
+SINGLE_LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
+MULTI_LINE_COMMENT: '/*' .*? '*/' -> channel(HIDDEN);
 
 // Signs
 NEW_LINE: '\r'?'\n';

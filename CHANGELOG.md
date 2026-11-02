@@ -9,6 +9,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - **Fixed** for any bug fixes.
 - **Removed** for now removed features.
 
+## [ M.m.P ] - [ yyyy-mm-dd ]
+
+### Added
+- Preserve single-line and multi-line comments in the syntactic and semantic ASTs.
+
 ## [ 1.6.0 ] - [ 2026-10-13 ]
 
 ### Added

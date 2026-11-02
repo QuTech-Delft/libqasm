@@ -8,7 +8,20 @@ Program(
   >
   block: <
     Block(
-      statements: []
+      statements: [
+        Comment(
+          text: cqasm::v3x::primitives::Str<<
+            /* This is a multi-
+            // This is a single line comment which ends on the newline.
+            line comment block */
+          >>
+          start_line: 3
+          start_column: 1
+          end_line: 5
+          end_column: 22
+          annotations: []
+        )
+      ]
     )
   >
   variables: []

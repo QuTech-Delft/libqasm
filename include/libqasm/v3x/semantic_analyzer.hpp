@@ -35,6 +35,7 @@ public:
     std::any visit_gate(syntactic::Gate& node) override;
     std::any visit_non_gate_instruction(syntactic::NonGateInstruction& node) override;
     std::any visit_asm_declaration(syntactic::AsmDeclaration& node) override;
+    std::any visit_comment(syntactic::Comment& node) override;
     std::any visit_expression_list(syntactic::ExpressionList& node) override;
     std::any visit_expression(syntactic::Expression& node) override;
     std::any visit_unary_minus_expression(syntactic::UnaryMinusExpression& node) override;

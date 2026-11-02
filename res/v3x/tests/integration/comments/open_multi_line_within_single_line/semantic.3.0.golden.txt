@@ -8,7 +8,16 @@ Program(
   >
   block: <
     Block(
-      statements: []
+      statements: [
+        Comment(
+          text: // This is a single line comment /* This is an open multi-line comment block
+          start_line: 3
+          start_column: 1
+          end_line: 3
+          end_column: 77
+          annotations: []
+        )
+      ]
     )
   >
   variables: []

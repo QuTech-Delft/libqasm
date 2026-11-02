@@ -1,0 +1,16 @@
+version 3.0
+
+qubit[2] /* comment 1 */  q
+
+init /* comment 2 */ q
+
+H /* comment 3 */ q[0]
+CNOT /* comment 4 */ q[0], q[1]
+CNOT q[0], /* comment 5 */ q[1]
+CNOT q[0], /* comment 
+6 */ q[1]
+
+
+
+
+

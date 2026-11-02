@@ -1,0 +1,256 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..12
+      items: 3.0
+    )
+  >
+  block: <
+    GlobalBlock(
+      statements: [
+        Variable( # input.cq:2:10..11
+          name: <
+            Identifier(
+              name: q
+            )
+          >
+          typ: <
+            Type( # input.cq:2:1..9
+              name: <
+                Keyword(
+                  name: qubit
+                )
+              >
+              size: <
+                IntegerLiteral(
+                  value: 2
+                )
+              >
+            )
+          >
+          annotations: []
+        )
+        Comment( # input.cq:3:1..12
+          text: // before H
+          annotations: []
+        )
+        GateInstruction( # input.cq:4:1..2
+          gate: <
+            Gate( # input.cq:4:1..2
+              name: <
+                Identifier(
+                  name: H
+                )
+              >
+              gate: -
+              parameters: <
+                ExpressionList(
+                  items: []
+                )
+              >
+              annotations: []
+            )
+          >
+          operands: <
+            ExpressionList(
+              items: [
+                Index( # input.cq:4:3..4
+                  expr: <
+                    Identifier(
+                      name: q
+                    )
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexItem(
+                          index: <
+                            IntegerLiteral( # input.cq:4:5..6
+                              value: 0
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
+                )
+              ]
+            )
+          >
+          annotations: []
+        )
+        Comment( # input.cq:5:1..6:15
+          text: cqasm::v3x::primitives::Str<<
+            /* between H
+               and CNOT */
+          >>
+          annotations: []
+        )
+        GateInstruction( # input.cq:7:1..5
+          gate: <
+            Gate( # input.cq:7:1..5
+              name: <
+                Identifier(
+                  name: CNOT
+                )
+              >
+              gate: -
+              parameters: <
+                ExpressionList(
+                  items: []
+                )
+              >
+              annotations: []
+            )
+          >
+          operands: <
+            ExpressionList(
+              items: [
+                Index( # input.cq:7:6..7
+                  expr: <
+                    Identifier(
+                      name: q
+                    )
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexItem(
+                          index: <
+                            IntegerLiteral( # input.cq:7:8..9
+                              value: 0
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
+                )
+                Index( # input.cq:7:12..13
+                  expr: <
+                    Identifier(
+                      name: q
+                    )
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexItem(
+                          index: <
+                            IntegerLiteral( # input.cq:7:14..15
+                              value: 1
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
+                )
+              ]
+            )
+          >
+          annotations: []
+        )
+        GateInstruction( # input.cq:8:1..2
+          gate: <
+            Gate( # input.cq:8:1..2
+              name: <
+                Identifier(
+                  name: X
+                )
+              >
+              gate: -
+              parameters: <
+                ExpressionList(
+                  items: []
+                )
+              >
+              annotations: []
+            )
+          >
+          operands: <
+            ExpressionList(
+              items: [
+                Index( # input.cq:8:3..4
+                  expr: <
+                    Identifier(
+                      name: q
+                    )
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexItem(
+                          index: <
+                            IntegerLiteral( # input.cq:8:5..6
+                              value: 1
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
+                )
+              ]
+            )
+          >
+          annotations: []
+        )
+        Comment( # input.cq:8:8..18
+          text: // after X
+          annotations: []
+        )
+        Comment( # input.cq:9:1..15
+          text: /* before Y */
+          annotations: []
+        )
+        GateInstruction( # input.cq:9:16..17
+          gate: <
+            Gate( # input.cq:9:16..17
+              name: <
+                Identifier(
+                  name: Y
+                )
+              >
+              gate: -
+              parameters: <
+                ExpressionList(
+                  items: []
+                )
+              >
+              annotations: []
+            )
+          >
+          operands: <
+            ExpressionList(
+              items: [
+                Index( # input.cq:9:18..19
+                  expr: <
+                    Identifier(
+                      name: q
+                    )
+                  >
+                  indices: <
+                    IndexList(
+                      items: [
+                        IndexItem(
+                          index: <
+                            IntegerLiteral( # input.cq:9:20..21
+                              value: 0
+                            )
+                          >
+                        )
+                      ]
+                    )
+                  >
+                )
+              ]
+            )
+          >
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+
