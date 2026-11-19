@@ -10,7 +10,7 @@ on:
 jobs:
   cpp-linux-x64:
     name: "C++ tests (gcc-clang/Linux/x64)"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -121,7 +121,7 @@ jobs:
 
   cpp-shared:
     name: "C++ tests (shared)"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -140,7 +140,7 @@ jobs:
 
   ts-emscripten-wasm:
     name: "TS tests (clang/emscripten/wasm)"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -185,7 +185,7 @@ jobs:
 
   python-linux-x64:
     name: "Python tests (Linux/x64)"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -204,7 +204,7 @@ jobs:
 
   python-linux-arm64:
     name: "Python tests (Linux/arm64)"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     strategy:
       fail-fast: false
       matrix:
@@ -276,7 +276,7 @@ jobs:
 
   docker:
     name: Docker
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -306,7 +306,7 @@ jobs:
       - python-windows-x64
       - docker
     if: ${{ always() }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check all job status
         # see https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#needs-context
