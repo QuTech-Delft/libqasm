@@ -81,7 +81,7 @@ jobs:
 
   cpp-macos-arm64:
     name: "C++ tests (clang/macos/ARM64)"
-    runs-on: macos-14  # ARM4
+    runs-on: macos-15  # ARM64
     strategy:
       fail-fast: false
       matrix:
@@ -242,7 +242,7 @@ jobs:
 
   python-macos-arm64:
     name: "Python tests (macOS/arm64)"
-    runs-on: macos-14
+    runs-on: macos-15
     strategy:
       fail-fast: false
       matrix:
