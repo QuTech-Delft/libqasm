@@ -27,7 +27,7 @@ Example:
 
 class AntlrJarFileDownloader:
     file_version = "4.13.1"
-    file_name = "antlr4-{}-complete.jar".format(file_version)
+    file_name = "antlr-{}-complete.jar".format(file_version)
     file_path = "{}/{}".format(tempfile.gettempdir(), file_name)
 
     @classmethod
@@ -37,8 +37,7 @@ class AntlrJarFileDownloader:
     @classmethod
     def download_antlr_jar_file(cls):
         urls = (
-            "https://repo.maven.apache.org/maven2/org/antlr/antlr4/{}/{}".format(cls.file_version, cls.file_name),
-            "https://repo1.maven.org/maven2/org/antlr/antlr4/{}/{}".format(cls.file_version, cls.file_name),
+            "https://www.antlr.org/download/{}".format(cls.file_name),
         )
         for url in urls:
             try:
