@@ -8,10 +8,6 @@ on:
     branches:
       - "release**"
 
-permissions:
-  id-token: write
-  contents: read
-
 jobs:
   cibw-wheels:
     name: Build wheels on ${{ matrix.os }}
@@ -19,11 +15,11 @@ jobs:
     strategy:
       matrix:
         os: [
-          ubuntu-latest,  # Linux/x64
+          ubuntu-24.04,  # Linux/x64
           macos-15-intel,  # MacOS/x64
           windows-latest,  # Windows/x64
           ubuntu-24.04-arm,  # Linux/ARM64
-          macos-14  # MacOS/ARM64
+          macos-15  # MacOS/ARM64
         ]
     steps:
       - name: Checkout
@@ -46,7 +42,7 @@ jobs:
 
   emscripten-wasm:
     name: WASM binaries for emscripten
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -58,8 +54,7 @@ jobs:
       - name: Install node
         uses: actions/setup-node@v4
         with:
-          node-version: 24
-          registry-url: https://registry.npmjs.org
+          node-version: 16.20.2
       - name: Install conan
         run: |
           pipx install conan
@@ -71,32 +66,30 @@ jobs:
         # and that can cause different type of problems
       - name: Configure and build
         run: |
-          pipx run conan profile detect --force
-          pipx run conan remove -c "*/*"
-          pipx run conan build . -pr=conan/profiles/release-clang-emscripten-wasm -pr:b=conan/profiles/release -b missing
+          conan profile detect --force
+          conan remove -c "*/*"
+          conan build . -pr=conan/profiles/release-clang-emscripten-wasm -pr:b=conan/profiles/release -b missing
         shell: bash
       - name: Publish to npm
+        uses: JS-DevTools/npm-publish@v3
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
-        run: npm publish
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
 
   publish-python-packages:
     name: Publish Python packages
     needs:
       - cibw-wheels
       - emscripten-wasm
-    runs-on: ubuntu-latest
-    environment:
-      name: pypi
+    runs-on: ubuntu-24.04
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         id: download
-        with:
-          pattern: cibw-wheels-*
-          path: dist
-          merge-multiple: true
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@v1.13.0
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         with:
-          packages-dir: dist
+          user: __token__
+          password: ${{ secrets.PYPI_TOKEN }}
+          packages-dir: ${{ steps.download.outputs.download-path }}/cibw-*

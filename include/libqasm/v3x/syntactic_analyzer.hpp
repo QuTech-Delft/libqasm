@@ -36,6 +36,8 @@ class SyntacticAnalyzer : public BaseSyntacticAnalyzer {
 
     tree::Maybe<syntactic::IntegerLiteral> get_array_size(CqasmParser::ArraySizeDeclarationContext* context);
 
+    tree::One<syntactic::Comment> makeComment(antlr4::Token* token) const;
+
     template <typename Context>
     tree::One<syntactic::Variable> visitVariable(Context* context) {
         auto ret = tree::make<syntactic::Variable>(
@@ -114,6 +116,7 @@ public:
     void expandNodeAnnotation(const syntactic::One<syntactic::Node>& node, antlr4::Token* token) const override;
     void copyNodeAnnotation(
         const syntactic::One<syntactic::Node>& from, const syntactic::One<syntactic::Node>& to) const override;
+    void addComments(syntactic::Program& program, const std::vector<antlr4::Token*>& tokens) const override;
 };
 
 }  // namespace cqasm::v3x::parser

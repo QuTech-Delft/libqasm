@@ -1,0 +1,78 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3.0
+    )
+  >
+  block: <
+    Block(
+      statements: [
+        Comment(
+          text: /* comment after version */
+          start_line: 1
+          start_column: 13
+          end_line: 1
+          end_column: 40
+          annotations: []
+        )
+        Comment(
+          text: // comment after declaration
+          start_line: 2
+          start_column: 9
+          end_line: 2
+          end_column: 37
+          annotations: []
+        )
+        GateInstruction(
+          instruction_ref: X(qubit)
+          gate: <
+            Gate(
+              name: X
+              gate: -
+              parameters: []
+              annotations: []
+            )
+          >
+          operands: [
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: q
+                  typ: <
+                    Qubit(
+                      size: 1
+                    )
+                  >
+                  annotations: []
+                )
+              >
+            )
+          ]
+          annotations: []
+        )
+        Comment(
+          text: /* comment after instruction */
+          start_line: 3
+          start_column: 5
+          end_line: 3
+          end_column: 36
+          annotations: []
+        )
+      ]
+    )
+  >
+  variables: [
+    Variable(
+      name: q
+      typ: <
+        Qubit(
+          size: 1
+        )
+      >
+      annotations: []
+    )
+  ]
+)
+
