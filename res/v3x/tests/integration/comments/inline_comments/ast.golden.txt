@@ -1,0 +1,73 @@
+SUCCESS
+Program(
+  version: <
+    Version( # input.cq:1:9..12
+      items: 3.0
+    )
+  >
+  block: <
+    GlobalBlock(
+      statements: [
+        Comment( # input.cq:1:13..40
+          text: /* comment after version */
+          annotations: []
+        )
+        Variable( # input.cq:2:7..8
+          name: <
+            Identifier(
+              name: q
+            )
+          >
+          typ: <
+            Type( # input.cq:2:1..6
+              name: <
+                Keyword(
+                  name: qubit
+                )
+              >
+              size: -
+            )
+          >
+          annotations: []
+        )
+        Comment( # input.cq:2:9..37
+          text: // comment after declaration
+          annotations: []
+        )
+        GateInstruction( # input.cq:3:1..2
+          gate: <
+            Gate( # input.cq:3:1..2
+              name: <
+                Identifier(
+                  name: X
+                )
+              >
+              gate: -
+              parameters: <
+                ExpressionList(
+                  items: []
+                )
+              >
+              annotations: []
+            )
+          >
+          operands: <
+            ExpressionList(
+              items: [
+                Identifier( # input.cq:3:3..4
+                  name: q
+                )
+              ]
+            )
+          >
+          annotations: []
+        )
+        Comment( # input.cq:3:5..36
+          text: /* comment after instruction */
+          annotations: []
+        )
+      ]
+    )
+  >
+)
+

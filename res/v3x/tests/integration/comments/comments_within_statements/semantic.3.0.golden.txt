@@ -1,0 +1,281 @@
+SUCCESS
+Program(
+  api_version: 3.0
+  version: <
+    Version(
+      items: 3.0
+    )
+  >
+  block: <
+    Block(
+      statements: [
+        Comment(
+          text: /* comment 1 */
+          start_line: 3
+          start_column: 10
+          end_line: 3
+          end_column: 25
+          annotations: []
+        )
+        NonGateInstruction(
+          instruction_ref: init(qubit array)
+          name: init
+          operands: [
+            VariableRef(
+              variable --> <
+                Variable(
+                  name: q
+                  typ: <
+                    QubitArray(
+                      size: 2
+                    )
+                  >
+                  annotations: []
+                )
+              >
+            )
+          ]
+          parameters: []
+          annotations: []
+        )
+        Comment(
+          text: /* comment 2 */
+          start_line: 5
+          start_column: 6
+          end_line: 5
+          end_column: 21
+          annotations: []
+        )
+        GateInstruction(
+          instruction_ref: H(qubit)
+          gate: <
+            Gate(
+              name: H
+              gate: -
+              parameters: []
+              annotations: []
+            )
+          >
+          operands: [
+            IndexRef(
+              variable --> <
+                Variable(
+                  name: q
+                  typ: <
+                    QubitArray(
+                      size: 2
+                    )
+                  >
+                  annotations: []
+                )
+              >
+              indices: [
+                ConstInt(
+                  value: 0
+                )
+              ]
+            )
+          ]
+          annotations: []
+        )
+        Comment(
+          text: /* comment 3 */
+          start_line: 7
+          start_column: 3
+          end_line: 7
+          end_column: 18
+          annotations: []
+        )
+        GateInstruction(
+          instruction_ref: CNOT(qubit, qubit)
+          gate: <
+            Gate(
+              name: CNOT
+              gate: -
+              parameters: []
+              annotations: []
+            )
+          >
+          operands: [
+            IndexRef(
+              variable --> <
+                Variable(
+                  name: q
+                  typ: <
+                    QubitArray(
+                      size: 2
+                    )
+                  >
+                  annotations: []
+                )
+              >
+              indices: [
+                ConstInt(
+                  value: 0
+                )
+              ]
+            )
+            IndexRef(
+              variable --> <
+                Variable(
+                  name: q
+                  typ: <
+                    QubitArray(
+                      size: 2
+                    )
+                  >
+                  annotations: []
+                )
+              >
+              indices: [
+                ConstInt(
+                  value: 1
+                )
+              ]
+            )
+          ]
+          annotations: []
+        )
+        Comment(
+          text: /* comment 4 */
+          start_line: 8
+          start_column: 6
+          end_line: 8
+          end_column: 21
+          annotations: []
+        )
+        GateInstruction(
+          instruction_ref: CNOT(qubit, qubit)
+          gate: <
+            Gate(
+              name: CNOT
+              gate: -
+              parameters: []
+              annotations: []
+            )
+          >
+          operands: [
+            IndexRef(
+              variable --> <
+                Variable(
+                  name: q
+                  typ: <
+                    QubitArray(
+                      size: 2
+                    )
+                  >
+                  annotations: []
+                )
+              >
+              indices: [
+                ConstInt(
+                  value: 0
+                )
+              ]
+            )
+            IndexRef(
+              variable --> <
+                Variable(
+                  name: q
+                  typ: <
+                    QubitArray(
+                      size: 2
+                    )
+                  >
+                  annotations: []
+                )
+              >
+              indices: [
+                ConstInt(
+                  value: 1
+                )
+              ]
+            )
+          ]
+          annotations: []
+        )
+        Comment(
+          text: /* comment 5 */
+          start_line: 9
+          start_column: 12
+          end_line: 9
+          end_column: 27
+          annotations: []
+        )
+        GateInstruction(
+          instruction_ref: CNOT(qubit, qubit)
+          gate: <
+            Gate(
+              name: CNOT
+              gate: -
+              parameters: []
+              annotations: []
+            )
+          >
+          operands: [
+            IndexRef(
+              variable --> <
+                Variable(
+                  name: q
+                  typ: <
+                    QubitArray(
+                      size: 2
+                    )
+                  >
+                  annotations: []
+                )
+              >
+              indices: [
+                ConstInt(
+                  value: 0
+                )
+              ]
+            )
+            IndexRef(
+              variable --> <
+                Variable(
+                  name: q
+                  typ: <
+                    QubitArray(
+                      size: 2
+                    )
+                  >
+                  annotations: []
+                )
+              >
+              indices: [
+                ConstInt(
+                  value: 1
+                )
+              ]
+            )
+          ]
+          annotations: []
+        )
+        Comment(
+          text: cqasm::v3x::primitives::Str<<
+            /* comment 
+            6 */
+          >>
+          start_line: 10
+          start_column: 12
+          end_line: 11
+          end_column: 5
+          annotations: []
+        )
+      ]
+    )
+  >
+  variables: [
+    Variable(
+      name: q
+      typ: <
+        QubitArray(
+          size: 2
+        )
+      >
+      annotations: []
+    )
+  ]
+)
+

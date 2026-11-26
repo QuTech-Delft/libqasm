@@ -27,7 +27,7 @@ Example:
 
 class AntlrJarFileDownloader:
     file_version = "4.13.1"
-    file_name = "antlr4-{}-complete.jar".format(file_version)
+    file_name = "antlr-{}-complete.jar".format(file_version)
     file_path = "{}/{}".format(tempfile.gettempdir(), file_name)
 
     @classmethod
@@ -36,16 +36,22 @@ class AntlrJarFileDownloader:
 
     @classmethod
     def download_antlr_jar_file(cls):
-        url = "https://repo1.maven.org/maven2/org/antlr/antlr4/{}/{}".format(cls.file_version, cls.file_name)
-        try:
-            logging.info("Downloading ANTLR jar file from '{}'".format(url))
-            with urlopen(url) as response:
+        urls = (
+            "https://www.antlr.org/download/{}".format(cls.file_name),
+        )
+        for url in urls:
+            try:
+                logging.info("Downloading ANTLR jar file from '{}'".format(url))
+                with urlopen(url, timeout=30) as response:
+                    jar = response.read()
                 logging.info("Writing ANTLR jar file to '{}'".format(cls.file_path))
                 with open(cls.file_path, "wb") as f:
-                    f.write(response.read())
-        except error.URLError as err:
-            logging.error("Error downloading ANTLR jar file: {}".format(err.strerror))
-            exit(3)
+                    f.write(jar)
+                return
+            except error.URLError as err:
+                logging.warning("Failed to download ANTLR jar from '{}': {}".format(url, err.reason))
+        logging.error("Failed to download ANTLR jar file from Maven Central mirrors")
+        exit(3)
 
     @classmethod
     def get_antlr_jar_file_path(cls):
