@@ -1,0 +1,103 @@
+pre code.hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 1em
+}
+code.hljs {
+    padding: 3px 5px
+}
+/*!
+  Theme: Default
+  Description: Original highlight.js style
+  Author: (c) Ivan Sagalaev <maniac@softwaremaniacs.org>
+  Maintainer: @highlightjs/core-team
+  Website: https://highlightjs.org/
+  License: see project LICENSE
+  Touched: 2021
+  Source: https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/default.min.css
+*/
+.hljs{background:#f3f3f3;color:#444}
+.hljs-comment{color:#697070}
+.hljs-punctuation,
+.hljs-tag{color:#444a}
+.hljs-tag
+.hljs-attr,
+.hljs-tag
+.hljs-name{color:#444}
+.hljs-attribute,
+.hljs-doctag,
+.hljs-keyword,
+.hljs-meta
+.hljs-keyword,
+.hljs-name,
+.hljs-selector-tag{font-weight:700}
+.hljs-deletion,
+.hljs-number,
+.hljs-quote,
+.hljs-selector-class,
+.hljs-selector-id,
+.hljs-string,
+.hljs-template-tag,
+.hljs-type{color:#800}
+.hljs-section,
+.hljs-title{color:#800;font-weight:700}
+.hljs-link,
+.hljs-operator,
+.hljs-regexp,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-symbol,
+.hljs-template-variable,
+.hljs-variable{color:#ab5656}
+.hljs-literal{color:#695}
+.hljs-addition,
+.hljs-built_in,
+.hljs-bullet,
+.hljs-code{color:#397300}
+.hljs-meta{color:#1f7199}
+.hljs-meta
+.hljs-string{color:#38a}
+.hljs-emphasis{font-style:italic}
+.hljs-strong{font-weight:700}
+/*!
+  Theme: one-atom-dark
+  Source: https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/atom-one-dark.min.css
+*/
+[data-md-color-scheme="slate"] .hljs{color:#abb2bf;background:#282c34}
+[data-md-color-scheme="slate"] .hljs-comment,
+[data-md-color-scheme="slate"] .hljs-quote{color:#5c6370;font-style:italic}
+[data-md-color-scheme="slate"] .hljs-doctag,
+[data-md-color-scheme="slate"] .hljs-formula,
+[data-md-color-scheme="slate"] .hljs-keyword{color:#c678dd}
+[data-md-color-scheme="slate"] .hljs-deletion,
+[data-md-color-scheme="slate"] .hljs-name,
+[data-md-color-scheme="slate"] .hljs-section,
+[data-md-color-scheme="slate"] .hljs-selector-tag,
+[data-md-color-scheme="slate"] .hljs-subst{color:#e06c75}
+[data-md-color-scheme="slate"] .hljs-literal{color:#56b6c2}
+[data-md-color-scheme="slate"] .hljs-addition,
+[data-md-color-scheme="slate"] .hljs-attribute,
+[data-md-color-scheme="slate"] .hljs-meta
+[data-md-color-scheme="slate"] .hljs-string,
+[data-md-color-scheme="slate"] .hljs-string{color:#98c379}
+[data-md-color-scheme="slate"] .hljs-attr,
+[data-md-color-scheme="slate"] .hljs-number,
+[data-md-color-scheme="slate"] .hljs-selector-attr,
+[data-md-color-scheme="slate"] .hljs-selector-class,
+[data-md-color-scheme="slate"] .hljs-selector-pseudo,
+[data-md-color-scheme="slate"] .hljs-template-variable,
+[data-md-color-scheme="slate"] .hljs-type,
+[data-md-color-scheme="slate"] .hljs-variable{color:#d19a66}
+[data-md-color-scheme="slate"] .hljs-bullet,
+[data-md-color-scheme="slate"] .hljs-link,
+[data-md-color-scheme="slate"] .hljs-meta,
+[data-md-color-scheme="slate"] .hljs-selector-id,
+[data-md-color-scheme="slate"] .hljs-symbol,
+[data-md-color-scheme="slate"] .hljs-title{color:#61aeee}
+[data-md-color-scheme="slate"] .hljs-built_in,
+[data-md-color-scheme="slate"] .hljs-class
+[data-md-color-scheme="slate"] .hljs-title,
+[data-md-color-scheme="slate"] .hljs-title.class_{color:#e6c07b}
+[data-md-color-scheme="slate"] .hljs-emphasis{font-style:italic}
+[data-md-color-scheme="slate"] .hljs-strong{font-weight:700}
+[data-md-color-scheme="slate"] .hljs-link{text-decoration:underline}
